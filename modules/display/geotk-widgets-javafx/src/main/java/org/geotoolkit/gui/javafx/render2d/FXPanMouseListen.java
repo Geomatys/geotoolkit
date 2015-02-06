@@ -19,9 +19,10 @@ public class FXPanMouseListen extends AbstractMouseHandler {
     private double startY;
     private double lastX;
     private double lastY;
-    private MouseButton mousebutton = null;
+    
+    protected MouseButton mousebutton = null;
 
-    private final FXAbstractNavigationHandler owner;
+    protected final FXAbstractNavigationHandler owner;
     private final double zoomFactor;
 
     public FXPanMouseListen(final FXAbstractNavigationHandler owner) {
@@ -44,6 +45,7 @@ public class FXPanMouseListen extends AbstractMouseHandler {
         startY = e.getY();
         lastX = startX;
         lastY = startY;
+        mousebutton = e.getButton();
     }
 
     @Override
@@ -53,11 +55,6 @@ public class FXPanMouseListen extends AbstractMouseHandler {
         lastX = 0;
         lastY = 0;
         mousebutton = e.getButton();
-
-//        if (!owner.isStateFull()) {
-//            owner.decorationPane.setBuffer(owner.map.getCanvas().getSnapShot());
-//            owner.decorationPane.setCoord(0, 0, owner.map.getWidth(), owner.map.getHeight(), true);
-//        }
     }
 
     @Override

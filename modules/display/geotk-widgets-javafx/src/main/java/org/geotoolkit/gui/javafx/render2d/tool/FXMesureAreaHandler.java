@@ -46,6 +46,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.javafx.render2d.FXAbstractNavigationHandler;
 import org.geotoolkit.gui.javafx.render2d.shape.FXGeometryLayer;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
+import org.geotoolkit.gui.javafx.render2d.FXPanMouseListen;
 import org.geotoolkit.gui.javafx.render2d.navigation.AbstractMouseHandler;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
@@ -142,25 +143,14 @@ public class FXMesureAreaHandler extends FXAbstractNavigationHandler {
     }
     
     
-    private class MouseListen extends AbstractMouseHandler {
+    private class MouseListen extends FXPanMouseListen {
 
-        private double startX;
-        private double startY;
-        private MouseButton mousebutton;
-
+        public MouseListen() {
+            super(FXMesureAreaHandler.this);
+        }
+        
         @Override
         public void mouseClicked(final MouseEvent e) {
-            startX = e.getX();
-            startY = e.getY();
-            mousebutton = e.getButton();
-        }
-
-        @Override
-        public void mousePressed(final MouseEvent e) {
-            startX = e.getX();
-            startY = e.getY();
-
-            mousebutton = e.getButton();
             if (mousebutton == MouseButton.PRIMARY) {
                 //add a coordinate
                 final AffineTransform2D trs = map.getCanvas().getObjectiveToDisplay();
@@ -179,30 +169,6 @@ public class FXMesureAreaHandler extends FXAbstractNavigationHandler {
                 coords.clear();
                 updateGeometry();
             }
-        }
-
-        @Override
-        public void mouseExited(final MouseEvent e) {
-            decorationPane.setFill(false);
-            decorationPane.setCoord(-10, -10,-10, -10, true);
-        }
-
-        @Override
-        public void mouseMoved(final MouseEvent e){
-            startX = e.getX();
-            startY = e.getY();
-        }
-        
-        @Override
-        public void mouseWheelMoved(final ScrollEvent e) {
-            final double rotate = -e.getDeltaY();
-
-            if(rotate<0){
-                scale(new Point2D.Double(startX, startY),zoomFactor);
-            }else if(rotate>0){
-                scale(new Point2D.Double(startX, startY),1d/zoomFactor);
-            }
-
         }
     }
     

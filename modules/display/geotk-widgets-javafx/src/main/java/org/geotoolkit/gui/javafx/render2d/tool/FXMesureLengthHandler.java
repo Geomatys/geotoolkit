@@ -43,6 +43,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.javafx.render2d.FXAbstractNavigationHandler;
 import org.geotoolkit.gui.javafx.render2d.shape.FXGeometryLayer;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
+import org.geotoolkit.gui.javafx.render2d.FXPanMouseListen;
 import org.geotoolkit.gui.javafx.render2d.navigation.AbstractMouseHandler;
 import org.geotoolkit.internal.Loggers;
 
@@ -126,28 +127,16 @@ public class FXMesureLengthHandler extends FXAbstractNavigationHandler {
                     MeasureUtilities.calculateLenght(geoms.get(0), 
                     map.getCanvas().getObjectiveCRS2D(), uiUnit.getValue())));
         }
-        
     }
     
-    
-    private class MouseListen extends AbstractMouseHandler {
-
-        private double startX;
-        private double startY;
-        private MouseButton mousebutton;
-
-        @Override
-        public void mouseClicked(final MouseEvent e) {
-            startX = e.getX();
-            startY = e.getY();
-            mousebutton = e.getButton();
+    private class MouseListen extends FXPanMouseListen {
+        
+        public MouseListen() {
+            super(FXMesureLengthHandler.this);
         }
 
         @Override
-        public void mousePressed(final MouseEvent e) {
-            startX = e.getX();
-            startY = e.getY();
-
+        public void mouseClicked(final MouseEvent e) {
             mousebutton = e.getButton();
             if (mousebutton == MouseButton.PRIMARY) {
                 //add a coordinate
@@ -166,30 +155,6 @@ public class FXMesureLengthHandler extends FXAbstractNavigationHandler {
                 coords.clear();
                 updateGeometry();
             }
-        }
-
-        @Override
-        public void mouseExited(final MouseEvent e) {
-            decorationPane.setFill(false);
-            decorationPane.setCoord(-10, -10,-10, -10, true);
-        }
-
-        @Override
-        public void mouseMoved(final MouseEvent e){
-            startX = e.getX();
-            startY = e.getY();
-        }
-        
-        @Override
-        public void mouseWheelMoved(final ScrollEvent e) {
-            final double rotate = -e.getDeltaY();
-
-            if(rotate<0){
-                scale(new Point2D.Double(startX, startY),zoomFactor);
-            }else if(rotate>0){
-                scale(new Point2D.Double(startX, startY),1d/zoomFactor);
-            }
-
         }
     }
     
