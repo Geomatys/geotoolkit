@@ -3095,7 +3095,7 @@ public class TiffImageReader extends SpatialImageReader {
             if (imageStream != null) return imageStream;
             else if (currentInput instanceof ImageInputStream) return (ImageInputStream) currentInput;
         }
-
+        if (channel != null && currentInput instanceof File) channel.close();
         channel = openChannel(currentInput);
         if (currentInput instanceof FileInputStream) ((SeekableByteChannel)channel).position(fileChannelPositionBegin);
         buffer = null;
@@ -3305,6 +3305,7 @@ public class TiffImageReader extends SpatialImageReader {
                 return true;
             } finally {
                 if (channel instanceof SeekableByteChannel) ((SeekableByteChannel) channel).position(position);
+                if (source instanceof File) channel.close();
             }
         }
 
