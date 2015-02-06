@@ -765,7 +765,6 @@ public final class DefaultPortrayalService implements PortrayalService{
             writer = XImageIO.getWriterByMIMEType(mime, outputDef.getOutput(), image);
         }
 
-        ImageOutputStream stream = null;
         try{
             final ImageWriteParam param = writer.getDefaultWriteParam();
 
@@ -797,8 +796,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             final ImageWriterSpi spi = writer.getOriginatingProvider();
 
             if (!ImageIOUtilities.isValidType(spi.getOutputTypes(), output)) {
-                stream = ImageIO.createImageOutputStream(output);
-                output = stream;
+                output = ImageIO.createImageOutputStream(output);
             }
             writer.setOutput(output);
             try{
@@ -807,10 +805,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                 throw new IOException(ex.getLocalizedMessage()+toImageInformation(image), ex);
             }
         }finally{
-            writer.dispose();
-            if (stream != null) {
-                stream.close();
-            }
+            ImageIOUtilities.releaseWriter(writer);
         }
     }
 
