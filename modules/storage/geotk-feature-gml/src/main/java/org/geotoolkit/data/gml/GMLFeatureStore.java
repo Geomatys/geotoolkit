@@ -17,19 +17,24 @@
 package org.geotoolkit.data.gml;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.xml.stream.XMLStreamException;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -38,6 +43,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataFileStore;
 import org.opengis.filter.Filter;
@@ -45,6 +51,7 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
+ * GML feature store.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -93,14 +100,30 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public Set<Name> getNames() throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public synchronized Set<Name> getNames() throws DataStoreException {
+        if(featureType==null){
+            final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
+            reader.setReadEmbeddedFeatureType(true);
+            try {
+                Object obj = reader.read(file);
+                if(obj instanceof FeatureCollection){
+                    featureType = ((FeatureCollection)obj).getFeatureType();
+                }else{
+                    throw new DataStoreException("File does not contain a FeatureCollection, found a "+obj);
+                }
+            } catch (IOException | XMLStreamException ex) {
+                throw new DataStoreException(ex.getMessage(),ex);
+            } finally{
+                reader.dispose();
+            }
+        }
+        return Collections.singleton(featureType.getName());
     }
-
 
     @Override
     public FeatureType getFeatureType(Name typeName) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        typeCheck(typeName);
+        return featureType;
     }
 
     @Override
@@ -119,11 +142,28 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        typeCheck(query.getTypeName());
+
+        final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(featureType);
+        final FeatureCollection col;
+        try {
+            Object obj = reader.read(file);
+            if(obj instanceof FeatureCollection){
+                col = (FeatureCollection)obj;
+            }else{
+                throw new DataStoreException("File does not contain a FeatureCollection, found a "+obj);
+            }
+        } catch (IOException | XMLStreamException ex) {
+            throw new DataStoreException(ex.getMessage(),ex);
+        } finally{
+            reader.dispose();
+        }
+
+        final FeatureReader freader = GenericWrapFeatureIterator.wrapToReader(col.iterator(),featureType);
+        return handleRemaining(freader, query);
     }
 
     // WRITING SUPPORT : TODO //////////////////////////////////////////////////
-
 
     @Override
     public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
