@@ -284,7 +284,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             //force alpha if image do not get any "invalid data" rule (Ex : No-data in image or color map).
                             dataCoverage = getReadyToResampleCoverage(dataCoverage, sourceSymbol);
                             
-                            
+
                             final GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, width, height), tmp);
 
                             final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
@@ -318,18 +318,18 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 return;
             }
 
-            if (isReprojected) {
-                /*
-                 * If we have a reprojection we assume all mathtransforms concatenation from dataCrs to displayCrs 
-                 */
-                renderingContext.switchToDisplayCRS(); 
-            } else {
+//            if (isReprojected) {
+//                /*
+//                 * If we have a reprojection we assume all mathtransforms concatenation from dataCrs to displayCrs 
+//                 */
+//                renderingContext.switchToDisplayCRS(); 
+//            } else {
                 /*
                  * If we haven't got any reprojection we delegate affine transformation to java2D
                  * we must switch to objectiveCRS for grid coverage
                  */
                 renderingContext.switchToObjectiveCRS();
-            }
+//            }
             
             ////////////////////////////////////////////////////////////////////
             // 4 - Apply style                                                //
@@ -337,7 +337,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             RenderedImage dataImage = applyStyle(ref, dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), sourceSymbol, hints, isReprojected);
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-
+            
             ////////////////////////////////////////////////////////////////////
             // 5 - Correct cross meridian problems / render                   //
             ////////////////////////////////////////////////////////////////////
