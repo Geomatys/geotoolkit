@@ -60,6 +60,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.w3c.dom.Node;
 
 /**
+ * Reader class to convert an XSD to OGC Feature Type.
  *
  * @author Guilhem Legal (Geomatys)
  * @author Johann Sorel (Geomatys)
@@ -68,14 +69,13 @@ import org.w3c.dom.Node;
 public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFeatureTypeReader {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
-
     private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
 
-    private final Map<String, Schema> knownSchemas = new HashMap<String, Schema>();
+    private final Map<String, Schema> knownSchemas = new HashMap<>();
+    private final Map<QName, Element> knownElements = new HashMap<>();
+    private final Map<String,String> locationMap = new HashMap<>();
 
-    private final Map<QName, Element> knownElements = new HashMap<QName, Element>();
-
-    private static final List<String> EXCLUDED_SCHEMA = new ArrayList<String>();
+    private static final List<String> EXCLUDED_SCHEMA = new ArrayList<>();
     static {
         EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
         EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
@@ -84,6 +84,19 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     }
 
     public JAXBFeatureTypeReader() {
+        this(null);
+    }
+
+    /**
+     *
+     * @param locationMap xsd imports or resources are often online, this map allows to replace
+     *      resources locations by new locations. It can be used to relocated toward a local file to
+     *      use offline for example.
+     */
+    public JAXBFeatureTypeReader(Map<String,String> locationMap) {
+        if(locationMap!=null){
+            this.locationMap.putAll(locationMap);
+        }
     }
 
     /**
@@ -257,7 +270,15 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             if (attr instanceof Import || attr instanceof Include) {
                 final String schemalocation = Utils.getIncludedLocation(baseLocation, attr);
                 if (schemalocation != null && !knownSchemas.containsKey(schemalocation) && !EXCLUDED_SCHEMA.contains(schemalocation)) {
-                    final Schema importedSchema = Utils.getDistantSchema(schemalocation);
+                    //check for a relocation
+                    final String relocation = locationMap.get(schemalocation);
+                    final Schema importedSchema;
+                    if(relocation!=null){
+                        importedSchema = Utils.getDistantSchema(relocation);
+                    }else{
+                        importedSchema = Utils.getDistantSchema(schemalocation);
+                    }
+                    
                     if (importedSchema != null) {
                         knownSchemas.put(schemalocation, importedSchema);
                         final String newBaseLocation = getNewBaseLocation(schemalocation, baseLocation);

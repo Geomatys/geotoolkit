@@ -27,6 +27,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -407,19 +408,57 @@ public class Utils {
                 final URL schemaUrl = new URL(location);
                 final Unmarshaller u = XSDMarshallerPool.getInstance().acquireUnmarshaller();
                 final Object obj = u.unmarshal(schemaUrl.openStream());
+                XSDMarshallerPool.getInstance().recycle(u);
                 if (obj instanceof Schema) {
                     return (Schema) obj;
                 } else {
                     LOGGER.log(Level.WARNING, "Bad content for imported schema:{0}", location);
                 }
-                XSDMarshallerPool.getInstance().recycle(u);
 
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, "IO exception trying to retrieve imported schema:" + location, ex);
             } catch (JAXBException ex) {
                 LOGGER.log(Level.WARNING, "JAXB exception while reading imported schema:" + location, ex);
             }
+        }else{
+            //try to open the path as a file or resources
+            File f = new File(location);
+            if(f.exists()){
+                try {
+                    final Unmarshaller u = XSDMarshallerPool.getInstance().acquireUnmarshaller();
+                    final Object obj = u.unmarshal(f);
+                    XSDMarshallerPool.getInstance().recycle(u);
+                    if (obj instanceof Schema) {
+                        return (Schema) obj;
+                    } else {
+                        LOGGER.log(Level.WARNING, "Bad content for imported schema:{0}", location);
+                    }
+                }catch (JAXBException ex) {
+                    LOGGER.log(Level.WARNING, "JAXB exception while reading imported schema:" + location, ex);
+                }
+            }else{
+                //try a jar resource
+                final URL schemaUrl = Utils.class.getResource(location);
+                if(schemaUrl!=null){
+                    try {
+                        final Unmarshaller u = XSDMarshallerPool.getInstance().acquireUnmarshaller();
+                        final Object obj = u.unmarshal(schemaUrl.openStream());
+                        XSDMarshallerPool.getInstance().recycle(u);
+                        if (obj instanceof Schema) {
+                            return (Schema) obj;
+                        } else {
+                            LOGGER.log(Level.WARNING, "Bad content for imported schema:{0}", location);
+                        }
+
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.WARNING, "IO exception trying to retrieve imported schema:" + location, ex);
+                    } catch (JAXBException ex) {
+                        LOGGER.log(Level.WARNING, "JAXB exception while reading imported schema:" + location, ex);
+                    }
+                }
+            }
         }
+        LOGGER.log(Level.WARNING, "Schema ressource not found:" + location);
         return null;
     }
 
