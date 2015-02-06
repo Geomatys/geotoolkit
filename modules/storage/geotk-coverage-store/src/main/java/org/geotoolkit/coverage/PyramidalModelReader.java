@@ -426,8 +426,6 @@ public class PyramidalModelReader extends GridCoverageReader{
         final double scale     = mosaic.getScale();
         final double tileSpanX = scale * tileSize.width;
         final double tileSpanY = scale * tileSize.height;
-        final int gridWidth    = gridSize.width;
-        final int gridHeight   = gridSize.height;
 
         //find all the tiles we need --------------------------------------
         final double epsilon = 1e-6;
@@ -435,35 +433,11 @@ public class PyramidalModelReader extends GridCoverageReader{
         final double bBoxMaxX = envelopOfInterest.getMaximum(xAxis);
         final double bBoxMinY = envelopOfInterest.getMinimum(yAxis);
         final double bBoxMaxY = envelopOfInterest.getMaximum(yAxis);
-//        final double epsilon = 1e-6;
-//        final double bBoxMinX = wantedEnv.getMinimum(xAxis);
-//        final double bBoxMaxX = wantedEnv.getMaximum(xAxis);
-//        final double bBoxMinY = wantedEnv.getMinimum(yAxis);
-//        final double bBoxMaxY = wantedEnv.getMaximum(yAxis);
-//        double tileMinCol = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
-//        double tileMaxCol = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
-//        double tileMinRow = Math.floor( (tileMatrixMaxY - bBoxMaxY) / tileSpanY + epsilon);
-//        double tileMaxRow = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY - epsilon)+1;
+        
         int tileMinCol = (int) ((bBoxMinX - tileMatrixMinX) / tileSpanX);
-//        int tileMaxCol = (int) ((bBoxMaxX - tileMatrixMinX + tileSpanX - 1) / tileSpanX);
         int tileMaxCol = (int) StrictMath.ceil((bBoxMaxX - tileMatrixMinX) / tileSpanX);
         int tileMinRow = (int) ((tileMatrixMaxY - bBoxMaxY) / tileSpanY);
         int tileMaxRow = (int) StrictMath.ceil((tileMatrixMaxY - bBoxMinY) / tileSpanY);
-        
-        double tileMinCol2 = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
-        double tileMaxCol2 = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
-        double tileMinRow2 = Math.floor( (tileMatrixMaxY - bBoxMaxY) / tileSpanY + epsilon);
-        double tileMaxRow2 = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY - epsilon)+1;
-        System.out.println("before tileMinCol : "+tileMinCol2+" next : "+tileMinCol);
-        System.out.println("before tileMaxCol : "+tileMaxCol2+" next : "+tileMaxCol);
-        System.out.println("before tileMinRow : "+tileMinRow2+" next : "+tileMinRow);
-        System.out.println("before tileMaxRow : "+tileMaxRow2+" next : "+tileMaxRow);
-//
-//        //ensure we dont go out of the grid
-//        tileMinCol = XMath.clamp(tileMinCol, 0, gridWidth);
-//        tileMaxCol = XMath.clamp(tileMaxCol, 0, gridWidth);
-//        tileMinRow = XMath.clamp(tileMinRow, 0, gridHeight);
-//        tileMaxRow = XMath.clamp(tileMaxRow, 0, gridHeight);
 
         RenderedImage image = null;
         if(deferred){
@@ -499,8 +473,6 @@ public class PyramidalModelReader extends GridCoverageReader{
                 throw new CoverageStoreException(ex.getMessage(),ex);
             }
 
-            int n = 0;
-            
             while(true){
                 Object obj = null;
                 try {
@@ -542,13 +514,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                             ImageIOUtilities.releaseReader(reader);
                         }
                     }
-
-//                    if (tileImage != null)
-//                    try {
-//                        ImageIO.write(tileImage, "geotiff", new File("/home/rmarechal/Documents/image/test"+(n++)+".tiff"));
-//                    } catch (IOException ex) {
-//                        Logger.getLogger(PyramidalModelReader.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
+                    
                     if(image == null){
                         image = BufferedImageUtilities.createImage(
                                 (int)(tileMaxCol-tileMinCol)*tileSize.width, 
