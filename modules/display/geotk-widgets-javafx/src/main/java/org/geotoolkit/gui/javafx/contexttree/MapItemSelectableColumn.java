@@ -17,9 +17,12 @@
 
 package org.geotoolkit.gui.javafx.contexttree;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 
@@ -35,12 +38,18 @@ public class MapItemSelectableColumn extends TreeTableColumn<Object,Boolean>{
         setMinWidth(26);
         setMaxWidth(26);
 
-        setCellValueFactory(param -> FXUtilities.beanProperty(((CellDataFeatures)param).getValue().getValue(), "selectable", Boolean.class));
+        setCellValueFactory((CellDataFeatures<Object, Boolean> param) -> {
+            try {
+                return FXUtilities.beanProperty(((CellDataFeatures)param).getValue().getValue(), "selectable", Boolean.class);                
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        });
         setCellFactory((TreeTableColumn<Object, Boolean> param) -> new SelectableCell());
     }
 
     private static final class SelectableCell extends TreeTableCell{
-        
+                
         public SelectableCell() {
             setFont(FXUtilities.FONTAWESOME);
             setOnMouseClicked(this::mouseClick);
@@ -57,7 +66,7 @@ public class MapItemSelectableColumn extends TreeTableColumn<Object,Boolean>{
         protected void updateItem(Object item, boolean empty) {
             super.updateItem(item, empty);
 
-            if(!empty){
+            if(!empty && item != null){
                 setText(Boolean.TRUE.equals(item) ? FontAwesomeIcons.ICON_UNLOCK : FontAwesomeIcons.ICON_LOCK);
             }else{
                 setText(null);
