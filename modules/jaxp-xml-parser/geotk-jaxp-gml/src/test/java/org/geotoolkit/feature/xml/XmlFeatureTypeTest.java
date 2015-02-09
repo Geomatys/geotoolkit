@@ -134,6 +134,24 @@ public class XmlFeatureTypeTest {
     }
 
     @Test
+    public void testReadInheritType() throws JAXBException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/inheritType.xsd"));
+
+        FeatureType type = null;
+        for(FeatureType ft : types){
+            if(ft.getName().getLocalPart().equals("SF_SpatialSamplingFeature")){
+                type = ft;
+            }
+        }
+
+        assertNotNull(type);
+        assertEquals(6, type.getDescriptors().size());
+
+    }
+
+    @Test
     public void testWriteSimpleFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
         final File temp = File.createTempFile("gml", ".xml");
         temp.deleteOnExit();

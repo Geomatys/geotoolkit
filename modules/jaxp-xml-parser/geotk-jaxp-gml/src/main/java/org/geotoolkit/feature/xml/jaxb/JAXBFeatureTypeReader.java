@@ -320,7 +320,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                     }
 
                     if (isFeature) {
-                        result.add(getFeatureTypeFromSchema(element.getName(), type, typeName.getNamespaceURI()));
+                        final FeatureType ft = (FeatureType) getComplexTypeFromSchema(type, typeName.getNamespaceURI(), element.getName() , true);
+                        result.add(ft);
 
                     } else if (type == null && findSimpleType(typeName.getLocalPart()) == null) {
                         LOGGER.log(Level.WARNING, "Unable to find a the declaration of type {0} in schemas.", typeName.getLocalPart());
@@ -347,7 +348,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             final QName typeName = element.getType();
             if (typeName != null) {
                 final ComplexType type = findComplexType(typeName.getLocalPart());
-                return getFeatureTypeFromSchema(name, type, typeName.getNamespaceURI());
+                return (FeatureType) getComplexTypeFromSchema(type, typeName.getNamespaceURI(), name , true);
             } else {
                 LOGGER.log(Level.WARNING, "the element:{0} has no type", name);
             }
@@ -355,47 +356,59 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return null;
     }
 
-    private FeatureType getFeatureTypeFromSchema(final String name, final ComplexType type, final String namespace) throws SchemaException {
-        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        if (type != null) {
-            builder.setName(new DefaultName(namespace, name));
-            final ComplexContent content = type.getComplexContent();
-            if (content != null) {
-                final ExtensionType ext = content.getExtension();
-                if (ext != null) {
-                    // TODO handle base
-                    builder.getProperties().addAll(getGroupAttributes(namespace, ext.getSequence()));
-                }
+    private org.geotoolkit.feature.type.ComplexType getComplexTypeFromSchema(ComplexType type, final String namespace, final String name, boolean featureType) throws SchemaException {
+
+
+        if(type==null){
+            //search for the complexType
+            for(Schema schema : knownSchemas.values()){
+                if(!schema.getTargetNamespace().equalsIgnoreCase(namespace)) continue;
+                type = schema.getComplexTypeByName(name);
+                if(type!=null) break;
             }
-            return builder.buildFeatureType();
         }
-        LOGGER.log(Level.WARNING, "no declared type for:{0}", name);
-        return null;
-    }
 
-    private org.geotoolkit.feature.type.ComplexType getComplexTypeFromSchema(final String namespace, final String name) throws SchemaException {
+        if(type==null){
+            LOGGER.log(Level.WARNING, "Unable to find complex type for:{0}", name);
+            return null;
+        }
 
-        //search for a schema with given namespace
-        for(Schema schema : knownSchemas.values()){
-            if(!schema.getTargetNamespace().equalsIgnoreCase(namespace)) continue;
-            final ComplexType complexType = schema.getComplexTypeByName(name);
-            if(complexType==null) continue;
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        final String properName;
+        if (name.endsWith("Type")) {
+            properName = name.substring(0, name.lastIndexOf("Type"));
+        } else {
+            properName = name;
+        }
+        builder.setName(new DefaultName(namespace, properName));
+        builder.getProperties().addAll(getGroupAttributes(namespace, type.getSequence()));
 
-            final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-            final String properName;
-            if (name.endsWith("Type")) {
-                properName = name.substring(0, name.lastIndexOf("Type"));
-            } else {
-                properName = name;
+        final ComplexContent content = type.getComplexContent();
+        if (content != null) {
+            final ExtensionType ext = content.getExtension();
+            if (ext != null) {
+                // TODO handle base
+                final QName base = ext.getBase();
+                if(base!=null){
+                    final FeatureType parent = (FeatureType) getComplexTypeFromSchema(null, base.getNamespaceURI(), base.getLocalPart(), true);
+                    if(parent!=null){
+                        builder.setSuperType(parent);
+                        if(!"AbstractFeature".equals(parent.getName().getLocalPart())){
+                            //we don't declare the base feature attribute types.
+                            builder.getProperties().addAll(parent.getDescriptors());
+                        }
+                    }
+                }
+
+                builder.getProperties().addAll(getGroupAttributes(namespace, ext.getSequence()));
             }
-            builder.setName(new DefaultName(namespace, properName));
-            builder.getProperties().addAll(getGroupAttributes(namespace, complexType.getSequence()));
+        }
 
+        if(featureType){
+            return builder.buildFeatureType();
+        }else{
             return builder.buildType();
         }
-
-        LOGGER.log(Level.WARNING, "Unable to find complex type for:{0}", name);
-        return null;
     }
 
     private List<AttributeDescriptor> getGroupAttributes(String namespace, Group group) throws SchemaException {
@@ -478,7 +491,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             } else {
                 cname = typeName;
             }
-            final org.geotoolkit.feature.type.ComplexType cType = getComplexTypeFromSchema(elementType.getNamespaceURI(), cname);
+            final org.geotoolkit.feature.type.ComplexType cType = getComplexTypeFromSchema(null,elementType.getNamespaceURI(), cname, false);
             if (cType != null) {
                 final AttributeDescriptor desc = adb.create(cType, new DefaultName(namespace, elementName), null, min, max, nillable, null);
                 return desc;
