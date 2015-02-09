@@ -25,9 +25,9 @@ import jidefx.scene.control.field.NumberField;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXNumberCell<S> extends FXTableCell<S, Object> {
+public class FXNumberCell<S> extends FXTableCell<S, Number> {
     private final FXNumberSpinner field = new FXNumberSpinner();
-
+    
     public FXNumberCell(NumberField.NumberType type) {
         field.getNumberField().setNumberType(type);
         setGraphic(field);
@@ -54,7 +54,7 @@ public class FXNumberCell<S> extends FXTableCell<S, Object> {
     }
 
     @Override
-    public void commitEdit(Object newValue) {
+    public void commitEdit(Number newValue) {
         itemProperty().set(newValue);
         super.commitEdit(newValue);
         updateItem(newValue, false);
@@ -67,19 +67,13 @@ public class FXNumberCell<S> extends FXTableCell<S, Object> {
     }
 
     @Override
-    protected void updateItem(Object item, boolean empty) {
+    protected void updateItem(Number item, boolean empty) {
         super.updateItem(item, empty);
-        setText(null);
         setGraphic(null);
         if (item != null) {
-            if(item instanceof Float || item instanceof Double){
-                final String str = DecimalFormat.getNumberInstance().format(((Number)item).doubleValue());
-                setText(str);
-            }else{
-                final String str = DecimalFormat.getIntegerInstance().format(((Number)item).doubleValue());
-                setText(str);
-            }
-            
+            setText(DecimalFormat.getNumberInstance().format(item));
+        } else {
+            setText(null);
         }
     }
     
