@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:sam="http://www.opengis.net/sampling/2.0"
+    targetNamespace="http://www.opengis.net/sampling/2.0"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    version="2.0.2">
+
+    <import
+        namespace="http://www.opengis.net/gml/3.2"
+        schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+
+    <group name="SF_CommonProperties">
+        <sequence>
+            <element name="attString"           maxOccurs="1" minOccurs="1" nillable="true" type="string"/>
+            <element name="attShort"            maxOccurs="1" minOccurs="1" nillable="true" type="short"/>
+            <element name="attInteger"          maxOccurs="1" minOccurs="1" nillable="true" type="integer"/>
+            <element name="attLong"             maxOccurs="1" minOccurs="1" nillable="true" type="long"/>
+            <element name="attDouble"           maxOccurs="1" minOccurs="1" nillable="true" type="double"/>
+        </sequence>
+    </group>
+
+    <complexType name="SF_SamplingFeatureType">
+        <complexContent>
+            <extension base="gml:AbstractFeatureType">
+                <sequence>
+                    <group ref="sam:SF_CommonProperties"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="SF_SamplingFeature" type="sam:SF_SamplingFeatureType" abstract="true" substitutionGroup="gml:AbstractFeature"/>
+
+</schema>
