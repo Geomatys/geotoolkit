@@ -60,6 +60,8 @@ import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
 
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.ModifiableFeatureTypeFactory;
+import org.geotoolkit.feature.type.ModifiableType;
 import org.geotoolkit.xsd.xml.v2001.Group;
 import org.geotoolkit.xsd.xml.v2001.GroupRef;
 import org.geotoolkit.xsd.xml.v2001.NamedGroup;
@@ -78,11 +80,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
     private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
 
-    private final Map<String, Schema> knownSchemas = new HashMap<>();
-    private final Map<QName, Element> knownElements = new HashMap<>();
-    private final Map<QName, NamedGroup> knownGroups = new HashMap<>();
-    private final Map<String,String> locationMap = new HashMap<>();
-
     private static final List<String> EXCLUDED_SCHEMA = new ArrayList<>();
     static {
         EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
@@ -90,6 +87,84 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.2.1/base/gml.xsd");
         EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
     }
+
+    /**
+     * default relocations
+     * used by all reader instances
+     */
+    private static final Map<String,String> RELOCATIONS = new HashMap<>();
+    static {
+
+        //GML 3.2.1
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/gml.xsd","/xsd/gml/3.2.1/gml.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/dynamicFeature.xsd","/xsd/gml/3.2.1/dynamicFeature.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/feature.xsd","/xsd/gml/3.2.1/feature.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/geometryAggregates.xsd","/xsd/gml/3.2.1/geometryAggregates.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/geometryPrimitives.xsd","/xsd/gml/3.2.1/geometryPrimitives.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/geometryBasic2d.xsd","/xsd/gml/3.2.1/geometryBasic2d.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/geometryBasic0d1d.xsd","/xsd/gml/3.2.1/geometryBasic0d1d.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/measures.xsd","/xsd/gml/3.2.1/measures.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/units.xsd","/xsd/gml/3.2.1/units.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/dictionary.xsd","/xsd/gml/3.2.1/dictionary.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/gmlBase.xsd","/xsd/gml/3.2.1/gmlBase.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/basicTypes.xsd","/xsd/gml/3.2.1/basicTypes.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/temporal.xsd","/xsd/gml/3.2.1/temporal.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/direction.xsd","/xsd/gml/3.2.1/direction.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/topology.xsd","/xsd/gml/3.2.1/topology.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/geometryComplexes.xsd","/xsd/gml/3.2.1/geometryComplexes.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/coverage.xsd","/xsd/gml/3.2.1/coverage.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/valueObjects.xsd","/xsd/gml/3.2.1/valueObjects.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/grids.xsd","/xsd/gml/3.2.1/grids.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/coordinateReferenceSystems.xsd","/xsd/gml/3.2.1/coordinateReferenceSystems.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/coordinateSystems.xsd","/xsd/gml/3.2.1/coordinateSystems.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/referenceSystems.xsd","/xsd/gml/3.2.1/referenceSystems.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/datums.xsd","/xsd/gml/3.2.1/datums.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/coordinateOperations.xsd","/xsd/gml/3.2.1/coordinateOperations.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/observation.xsd","/xsd/gml/3.2.1/observation.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/temporalReferenceSystems.xsd","/xsd/gml/3.2.1/temporalReferenceSystems.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/temporalTopology.xsd","/xsd/gml/3.2.1/temporalTopology.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/deprecatedTypes.xsd","/xsd/gml/3.2.1/deprecatedTypes.xsd");
+
+        //ISO 19139 Metadata
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd","/xsd/iso/19139/20070417/gmd/gmd.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/metadataApplication.xsd","/xsd/iso/19139/20070417/gmd/metadataApplication.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/metadataEntity.xsd","/xsd/iso/19139/20070417/gmd/metadataEntity.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/spatialRepresentation.xsd","/xsd/iso/19139/20070417/gmd/spatialRepresentation.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/citation.xsd","/xsd/iso/19139/20070417/gmd/citation.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/referenceSystem.xsd","/xsd/iso/19139/20070417/gmd/referenceSystem.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/extent.xsd","/xsd/iso/19139/20070417/gmd/extent.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/metadataExtension.xsd","/xsd/iso/19139/20070417/gmd/metadataExtension.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/content.xsd","/xsd/iso/19139/20070417/gmd/content.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/applicationSchema.xsd","/xsd/iso/19139/20070417/gmd/applicationSchema.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/portrayalCatalogue.xsd","/xsd/iso/19139/20070417/gmd/portrayalCatalogue.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/dataQuality.xsd","/xsd/iso/19139/20070417/gmd/dataQuality.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/identification.xsd","/xsd/iso/19139/20070417/gmd/identification.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/constraints.xsd","/xsd/iso/19139/20070417/gmd/constraints.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/distribution.xsd","/xsd/iso/19139/20070417/gmd/distribution.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/maintenance.xsd","/xsd/iso/19139/20070417/gmd/maintenance.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gmd/freeText.xsd","/xsd/iso/19139/20070417/gmd/freeText.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd","/xsd/iso/19139/20070417/gco/gco.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gco/basicTypes.xsd","/xsd/iso/19139/20070417/gco/basicTypes.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gco/gcoBase.xsd","/xsd/iso/19139/20070417/gco/gcoBase.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gss/gss.xsd","/xsd/iso/19139/20070417/gss/gss.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gss/geometry.xsd","/xsd/iso/19139/20070417/gss/geometry.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gts/gts.xsd","/xsd/iso/19139/20070417/gts/gts.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gts/temporalObjects.xsd","/xsd/iso/19139/20070417/gts/temporalObjects.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gsr/gsr.xsd","/xsd/iso/19139/20070417/gsr/gsr.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/iso/19139/20070417/gsr/spatialReferencing.xsd","/xsd/iso/19139/20070417/gsr/spatialReferencing.xsd");
+
+        //XML
+        RELOCATIONS.put("http://www.w3.org/1999/xlink.xsd","/xsd/1999/xlink.xsd");
+        RELOCATIONS.put("http://www.w3.org/2001/xml.xsd","/xsd/2001/xml.xsd");
+    }
+
+
+    private final Map<String, Schema> knownSchemas = new HashMap<>();
+    private final Map<QName, Element> knownElements = new HashMap<>();
+    private final Map<QName, NamedGroup> knownGroups = new HashMap<>();
+    private final Map<String,String> locationMap = new HashMap<>();
+
+    private final Map<QName,org.geotoolkit.feature.type.ComplexType> typeCache = new HashMap<>();
 
     public JAXBFeatureTypeReader() {
         this(null);
@@ -102,6 +177,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      *      use offline for example.
      */
     public JAXBFeatureTypeReader(Map<String,String> locationMap) {
+        //default relocations
+        this.locationMap.putAll(RELOCATIONS);
+        
         if(locationMap!=null){
             this.locationMap.putAll(locationMap);
         }
@@ -124,7 +202,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
     }
 
-     /**
+    /**
      * {@inheritDoc }
      */
     @Override
@@ -172,7 +250,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
     }
 
-     /**
+    /**
      * {@inheritDoc }
      */
     @Override
@@ -206,7 +284,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
     }
 
-     /**
+    /**
      * {@inheritDoc }
      */
     @Override
@@ -222,7 +300,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
     }
 
-     /**
+    /**
      * {@inheritDoc }
      */
     @Override
@@ -238,7 +316,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
     }
 
-     /**
+    /**
      * {@inheritDoc }
      */
     @Override
@@ -271,7 +349,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     }
 
     public List<FeatureType> getAllFeatureTypeFromSchema(final Schema schema, final String baseLocation) throws SchemaException {
-        final List<FeatureType> result = new ArrayList<FeatureType>();
+        final List<FeatureType> result = new ArrayList<>();
 
         // first we look for imported xsd
         for (OpenAttrs attr: schema.getIncludeOrImportOrRedefine()) {
@@ -306,24 +384,13 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 knownElements.put(new QName(schema.getTargetNamespace(), element.getName()), element);
                 final QName typeName = element.getType();
                 if (typeName != null) {
-                    final ComplexType type = findComplexType(typeName.getLocalPart());
+                    final ComplexType type = findComplexType(typeName);
 
-                    //loop on parent types until we find a Feature type
-                    boolean isFeature = false;
-                    ComplexType search = type;
-                    while(search!=null){
-                        isFeature = search.extendFeature();
-                        if(isFeature) break;
-                        if(search.getComplexContent()==null || search.getComplexContent().getExtension()==null) break;
-                        final QName base = search.getComplexContent().getExtension().getBase();
-                        search = findComplexType(base.getLocalPart());
-                    }
-
-                    if (isFeature) {
-                        final FeatureType ft = (FeatureType) getComplexTypeFromSchema(type, typeName.getNamespaceURI(), element.getName() , true);
+                    if (isFeatureType(type)) {
+                        final FeatureType ft = (FeatureType) getComplexTypeFromSchema(type, typeName.getNamespaceURI(), element.getName());
                         result.add(ft);
 
-                    } else if (type == null && findSimpleType(typeName.getLocalPart()) == null) {
+                    } else if (type == null && findSimpleType(typeName) == null) {
                         LOGGER.log(Level.WARNING, "Unable to find a the declaration of type {0} in schemas.", typeName.getLocalPart());
                         continue;
                     }
@@ -347,8 +414,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         if (element != null) {
             final QName typeName = element.getType();
             if (typeName != null) {
-                final ComplexType type = findComplexType(typeName.getLocalPart());
-                return (FeatureType) getComplexTypeFromSchema(type, typeName.getNamespaceURI(), name , true);
+                final ComplexType type = findComplexType(typeName);
+                return (FeatureType) getComplexTypeFromSchema(type, typeName.getNamespaceURI(), name);
             } else {
                 LOGGER.log(Level.WARNING, "the element:{0} has no type", name);
             }
@@ -356,16 +423,31 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return null;
     }
 
-    private org.geotoolkit.feature.type.ComplexType getComplexTypeFromSchema(ComplexType type, final String namespace, final String name, boolean featureType) throws SchemaException {
+    /**
+     * Check if the given complex type inherit from FeatureType.
+     * 
+     * @param search
+     * @return true if this type is a feature type.
+     */
+    private boolean isFeatureType(ComplexType search){
+        //loop on parent types until we find a Feature type
+        while(search!=null){
+            if(search.extendFeature()) return true;
+            if(search.getComplexContent()==null || search.getComplexContent().getExtension()==null) break;
+            final QName base = search.getComplexContent().getExtension().getBase();
+            search = findComplexType(base);
+        }
+        return false;
+    }
 
+    private org.geotoolkit.feature.type.ComplexType getComplexTypeFromSchema(ComplexType type, final String namespace, final String name) throws SchemaException {
+
+        final QName qname = new QName(namespace, name);
+        final org.geotoolkit.feature.type.ComplexType ct = typeCache.get(qname);
+        if(ct!=null) return ct;
 
         if(type==null){
-            //search for the complexType
-            for(Schema schema : knownSchemas.values()){
-                if(!schema.getTargetNamespace().equalsIgnoreCase(namespace)) continue;
-                type = schema.getComplexTypeByName(name);
-                if(type!=null) break;
-            }
+            type = findComplexType(qname);
         }
 
         if(type==null){
@@ -373,7 +455,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             return null;
         }
 
-        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        final boolean isFeatureType = isFeatureType(type);
+
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder(new ModifiableFeatureTypeFactory());
         final String properName;
         if (name.endsWith("Type")) {
             properName = name.substring(0, name.lastIndexOf("Type"));
@@ -381,39 +465,39 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             properName = name;
         }
         builder.setName(new DefaultName(namespace, properName));
-        builder.getProperties().addAll(getGroupAttributes(namespace, type.getSequence()));
+        final ModifiableType finalType = (ModifiableType) ((isFeatureType) ? builder.buildFeatureType() : builder.buildType());
+        typeCache.put(qname, finalType);
+        
+        finalType.getDescriptors().addAll(getGroupAttributes(namespace, type.getSequence()));
 
         final ComplexContent content = type.getComplexContent();
         if (content != null) {
             final ExtensionType ext = content.getExtension();
             if (ext != null) {
-                // TODO handle base
                 final QName base = ext.getBase();
                 if(base!=null){
-                    final FeatureType parent = (FeatureType) getComplexTypeFromSchema(null, base.getNamespaceURI(), base.getLocalPart(), true);
+                    final org.geotoolkit.feature.type.ComplexType parent = (org.geotoolkit.feature.type.ComplexType)
+                            getComplexTypeFromSchema(null, base.getNamespaceURI(), base.getLocalPart());
                     if(parent!=null){
-                        builder.setSuperType(parent);
+                        finalType.changeParent(parent);
                         if(!"AbstractFeature".equals(parent.getName().getLocalPart())){
                             //we don't declare the base feature attribute types.
-                            builder.getProperties().addAll(parent.getDescriptors());
+                            finalType.getDescriptors().addAll(parent.getDescriptors());
                         }
                     }
                 }
 
-                builder.getProperties().addAll(getGroupAttributes(namespace, ext.getSequence()));
+                finalType.getDescriptors().addAll(getGroupAttributes(namespace, ext.getSequence()));
             }
         }
+        finalType.rebuildPropertyMap();
 
-        if(featureType){
-            return builder.buildFeatureType();
-        }else{
-            return builder.buildType();
-        }
+        return finalType;
     }
 
     private List<AttributeDescriptor> getGroupAttributes(String namespace, Group group) throws SchemaException {
         if(group==null) return Collections.EMPTY_LIST;
-
+        
         final List<AttributeDescriptor> atts = new ArrayList<>();
 
         final List<Object> particles = group.getParticle();
@@ -442,7 +526,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     }
 
     private AttributeDescriptor elementToAttribute(final Element attributeElement, final String namespace) throws SchemaException {
-
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
 
         final Element currentElement;
@@ -491,7 +574,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             } else {
                 cname = typeName;
             }
-            final org.geotoolkit.feature.type.ComplexType cType = getComplexTypeFromSchema(null,elementType.getNamespaceURI(), cname, false);
+            final org.geotoolkit.feature.type.ComplexType cType = getComplexTypeFromSchema(null,elementType.getNamespaceURI(), cname);
             if (cType != null) {
                 final AttributeDescriptor desc = adb.create(cType, new DefaultName(namespace, elementName), null, min, max, nillable, null);
                 return desc;
@@ -524,9 +607,10 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return newBaseLocation;
     }
 
-    private ComplexType findComplexType(final String typeName) {
+    private ComplexType findComplexType(QName typeName) {
         for (Schema schema : knownSchemas.values()) {
-            final ComplexType type = schema.getComplexTypeByName(typeName);
+            if(!schema.getTargetNamespace().equalsIgnoreCase(typeName.getNamespaceURI())) continue;
+            final ComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
             if (type != null) {
                 return type;
             }
@@ -534,18 +618,19 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return null;
     }
 
-    private SimpleType findSimpleType(final String typeName) {
+    private SimpleType findSimpleType(final QName typeName) {
 
         // look in the schemas
         for (Schema schema : knownSchemas.values()) {
-            final SimpleType type = schema.getSimpleTypeByName(typeName);
+            if(!schema.getTargetNamespace().equalsIgnoreCase(typeName.getNamespaceURI())) continue;
+            final SimpleType type = schema.getSimpleTypeByName(typeName.getLocalPart());
             if (type != null) {
                 return type;
             }
         }
         // look in primitive types
-        if (Utils.existPrimitiveType(typeName)) {
-            return new LocalSimpleType(typeName);
+        if (Utils.existPrimitiveType(typeName.getLocalPart())) {
+            return new LocalSimpleType(typeName.getLocalPart());
         }
         return null;
     }

@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.feature.type;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArraysExt;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
@@ -42,16 +40,16 @@ public class ModifiableComplexType extends DefaultComplexType implements Modifia
             final boolean identified, final boolean isAbstract, final List<Filter> restrictions,
             final AttributeType superType, final InternationalString description) {
         super(name, properties, identified, isAbstract, restrictions, superType, description);
+        this.descriptorsList = new ArrayList<>(this.descriptorsList);
     }
 
     @Override
     public void changeProperty(final int index, PropertyDescriptor desc) {
         if(desc==null){
-            descriptors = ArraysExt.remove(descriptors, index, 1);
+            this.descriptorsList.remove(index);
         }else{
-            descriptors[index] = desc;
+            this.descriptorsList.set(index,desc);
         }
-        this.descriptorsList = UnmodifiableArrayList.wrap(this.descriptors);
         rebuildPropertyMap();
     }
 
@@ -74,4 +72,9 @@ public class ModifiableComplexType extends DefaultComplexType implements Modifia
         }
     }
 
+    @Override
+    public void rebuildPropertyMap(){
+        this.descriptors = descriptorsList.toArray(new PropertyDescriptor[0]);
+        super.rebuildPropertyMap();
+    }
 }

@@ -16,15 +16,10 @@
  */
 package org.geotoolkit.feature.type;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
@@ -43,24 +38,16 @@ public class ModifiableSimpleFeaturetype extends DefaultSimpleFeatureType implem
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
             final List<Filter> restrictions, final AttributeType superType, final InternationalString description) {
         super(name, schema, defaultGeometry, isAbstract, restrictions, superType, description);
+        this.descriptorsList = new ArrayList<>(this.descriptorsList);
     }
 
     @Override
     public void changeProperty(final int index, PropertyDescriptor desc) {
         if(desc==null){
-            descriptors = ArraysExt.remove(descriptors, index, 1);
+            this.descriptorsList.remove(index);
         }else{
-            descriptors[index] = desc;
+            this.descriptorsList.set(index,desc);
         }
-        this.descriptorsList = UnmodifiableArrayList.wrap(this.descriptors);
-        
-        //for faster access
-        types = new AttributeType[descriptors.length];
-        for(int i=0; i<descriptors.length;i++){
-            types[i] = (AttributeType) descriptors[i].getType();
-        }
-        typesList = UnmodifiableArrayList.wrap(types);
-        
         rebuildPropertyMap();
     }
 
@@ -83,4 +70,15 @@ public class ModifiableSimpleFeaturetype extends DefaultSimpleFeatureType implem
         }
     }
 
+    @Override
+    public void rebuildPropertyMap(){
+        this.descriptors = descriptorsList.toArray(new PropertyDescriptor[0]);
+        //for faster access
+        types = new AttributeType[descriptors.length];
+        for(int i=0; i<descriptors.length;i++){
+            types[i] = (AttributeType) descriptors[i].getType();
+        }
+        typesList = UnmodifiableArrayList.wrap(types);
+        super.rebuildPropertyMap();
+    }
 }

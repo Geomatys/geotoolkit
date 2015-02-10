@@ -17,9 +17,6 @@
 package org.geotoolkit.feature.type;
 
 import java.util.List;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
  * ComplexType giving access to a modifiable list of descriptors.
@@ -35,5 +32,7 @@ public interface ModifiableType extends ComplexType {
 
     @Override
     List<PropertyDescriptor> getDescriptors();
+
+    void rebuildPropertyMap();
 
 }
