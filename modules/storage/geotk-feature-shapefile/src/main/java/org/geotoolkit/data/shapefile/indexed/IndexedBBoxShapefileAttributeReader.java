@@ -132,7 +132,7 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
             //we are sure we need it
             moveToNextShape();
 
-            if (goodRecs.isSafe()) {
+            if (goodRecs!=null && goodRecs.isSafe()) {
 
                 //check minSize
                 if (minRes && !(minResX <= (record.maxX - record.minX) || minResY <= (record.maxY - record.minY))) {
