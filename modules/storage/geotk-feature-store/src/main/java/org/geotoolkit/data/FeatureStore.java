@@ -33,6 +33,7 @@ import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -176,6 +177,20 @@ public abstract class FeatureStore extends DataStore{
      * @throws DataStoreException if typeName doesn't exist or feature store internal error.
      */
     public abstract FeatureType getFeatureType(Name typeName) throws DataStoreException;
+
+    /**
+     * Get all feature types used for given type name.
+     * A type or any sub property may have sub types.
+     * This method will return the main type at index 0 and all variations
+     * afterward.
+     * If the type is simple or has no sub types then this method will
+     * return a list with one element which is the same as the one from {@link #getFeatureType(org.geotoolkit.feature.type.Name)}.
+     *
+     * @param typeName name of the searched type
+     * @return List of complextype
+     * @throws DataStoreException 
+     */
+    public abstract List<ComplexType> getFeatureTypeHierarchy(Name typeName) throws DataStoreException;
 
     /**
      * Some kind of queries may define a custom language statement.

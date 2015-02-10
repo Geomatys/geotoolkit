@@ -55,6 +55,7 @@ import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.Name;
@@ -212,6 +213,19 @@ public abstract class AbstractFeatureStore extends FeatureStore {
         }
 
         throw new DataStoreException("Can not deduce feature type of query : " + query);
+    }
+
+    /**
+     * Default implementation, will return a list with the single feature tpe from method
+     * {@link #getFeatureType(org.geotoolkit.feature.type.Name) }
+     * 
+     * @param typeName
+     * @return
+     * @throws DataStoreException
+     */
+    @Override
+    public List<ComplexType> getFeatureTypeHierarchy(Name typeName) throws DataStoreException {
+        return Collections.singletonList((ComplexType)getFeatureType(typeName));
     }
 
     /**
