@@ -26,7 +26,7 @@ import jidefx.scene.control.field.NumberField;
  * @author Johann Sorel (Geomatys)
  */
 public class FXNumberCell<S> extends FXTableCell<S, Number> {
-    private final FXNumberSpinner field = new FXNumberSpinner();
+    protected final FXNumberSpinner field = new FXNumberSpinner();
     
     public FXNumberCell(NumberField.NumberType type) {
         field.getNumberField().setNumberType(type);
@@ -77,4 +77,20 @@ public class FXNumberCell<S> extends FXTableCell<S, Number> {
         }
     }
     
+    public static class Float<T> extends FXNumberCell<T> {
+
+        public Float(NumberField.NumberType type) {
+            super(type);
+        }
+
+        @Override
+        public void commitEdit(Number newValue) {
+            super.commitEdit(newValue.floatValue()); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void terminateEdit() {
+            super.commitEdit(this.field.valueProperty().get().floatValue());
+        }
+    }
 }
