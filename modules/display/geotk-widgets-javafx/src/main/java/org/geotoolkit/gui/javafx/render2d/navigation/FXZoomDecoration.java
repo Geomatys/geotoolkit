@@ -27,6 +27,8 @@ import javafx.scene.shape.Rectangle;
 /**
  * Zoom pan decoration
  *
+ * TODO : use buffer
+ * 
  * @author Johann Sorel
  * @module pending
  */

@@ -8,7 +8,10 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.gui.javafx.render2d.navigation.AbstractMouseHandler;
 
 /**
- *
+ * Mouse handler which allows to move on map using drag&drop. Also contains
+ * processes for zoom on mouse wheel.
+ * 
+ * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)
  */
 public class FXPanMouseListen extends AbstractMouseHandler {
@@ -43,8 +46,8 @@ public class FXPanMouseListen extends AbstractMouseHandler {
     public void mouseClicked(final MouseEvent e) {
         startX = e.getX();
         startY = e.getY();
-        lastX = startX;
-        lastY = startY;
+        lastX = 0;
+        lastY = 0;
         mousebutton = e.getButton();
     }
 
@@ -63,13 +66,17 @@ public class FXPanMouseListen extends AbstractMouseHandler {
         double endY = e.getY();
 
         if (!owner.isStateFull()) {
-            owner.decorationPane.setBuffer(null);
 
-            if (mousebutton == MouseButton.PRIMARY || mousebutton == MouseButton.SECONDARY) {
-                owner.decorationPane.setFill(false);
-                owner.decorationPane.setCoord(-10, -10, -10, -10, false);
+            if ((lastX != 0 || lastY != 0) && 
+                    (mousebutton == MouseButton.PRIMARY || mousebutton == MouseButton.SECONDARY)) {
                 owner.processDrag(startX, startY, endX, endY);
             }
+            
+            // Release decoration only when drag is finished, so user will still 
+            // see part of the map during repaint.
+            owner.decorationPane.setFill(false);
+            owner.decorationPane.setCoord(-10, -10, -10, -10, false);
+            owner.decorationPane.setBuffer(null);
         }
 
         lastX = 0;
@@ -110,15 +117,9 @@ public class FXPanMouseListen extends AbstractMouseHandler {
     }
 
     @Override
-    public void mouseMoved(final MouseEvent e) {
+    public void mouseWheelMoved(final ScrollEvent e) {
         startX = e.getX();
         startY = e.getY();
-        lastX = startX;
-        lastY = startY;
-    }
-
-    @Override
-    public void mouseWheelMoved(final ScrollEvent e) {
         double rotate = -e.getDeltaY();
         if (rotate < 0) {
             owner.scale(new Point2D.Double(startX, startY), zoomFactor);
