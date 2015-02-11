@@ -22,7 +22,7 @@
     </xsd:complexType>
    <xsd:complexType name="AddressPropertyType">
       <xsd:sequence>
-         <xsd:element name="Address" type="gml:AddressType" xmlns:gml="http://www.opengis.net/gml"/>
+         <xsd:element name="Address" type="gml:AddressType" xmlns:gml="http://www.opengis.net/gml" nillable="false" minOccurs="1" maxOccurs="1" />
       </xsd:sequence>
    </xsd:complexType>
    <xsd:complexType name="AddressType">

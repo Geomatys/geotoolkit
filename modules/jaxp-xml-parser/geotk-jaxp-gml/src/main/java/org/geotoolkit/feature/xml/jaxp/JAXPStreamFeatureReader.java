@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2010, Geomatys
+ *    (C) 2009-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -272,6 +272,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     }
 
     private ComplexAttribute readFeature(final String id, final ComplexType featureType) throws XMLStreamException {
+        return readFeature(id, featureType, featureType.getName());
+    }
+
+    private ComplexAttribute readFeature(final String id, final ComplexType featureType, final Name tagName) throws XMLStreamException {
 
         /*
          * We create a map and a collection because we can encounter two cases :
@@ -284,8 +288,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
          * we add the all the created properties in it (so we can put multiple
          * properties with the same name).
          */
-        final Map<Name,Property> namedProperties = new LinkedHashMap<Name, Property>();
-        final Collection<Property> propertyContainer = new ArrayList<Property>();
+        final Map<Name,Property> namedProperties = new LinkedHashMap<>();
+        final Collection<Property> propertyContainer = new ArrayList<>();
 
         while (reader.hasNext()) {
             int event = reader.next();
@@ -363,14 +367,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     }
 
                 } else if (propertyType instanceof ComplexType) {
-                    // skip the Class Mark
-                    while (reader.hasNext()) {
-                        if (reader.next() == START_ELEMENT) {
-                            break;
-                        }
-                    }
 
-                    final ComplexAttribute catt = readFeature(null, (ComplexType) propertyType);
+                    final ComplexAttribute catt = readFeature(null, (ComplexType) propertyType, propName);
                     if (pdesc.getMaxOccurs() > 1) {
                         propertyContainer.add(FF.createComplexAttribute(catt.getProperties(), (AttributeDescriptor) pdesc, null));
                     } else {
@@ -444,7 +442,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 final QName q = reader.getName();
                 if (q.getLocalPart().equals("featureMember")) {
                     break;
-                } else if (Utils.getNameFromQname(q).equals(featureType.getName())) {
+                } else if (Utils.getNameFromQname(q).equals(tagName)) {
                     break;
                 }
             }

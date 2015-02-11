@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -212,6 +212,15 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
         }
 
+        writeComplexProperties(feature);
+
+        writer.writeEndElement();
+    }
+
+    private void writeComplexProperties(final ComplexAttribute feature) throws XMLStreamException {
+
+        final ComplexType type = feature.getType();
+
         //write properties in the type order
         for(final PropertyDescriptor desc : type.getDescriptors()){
             final Collection<Property> props = feature.getProperties(desc.getName());
@@ -228,7 +237,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     } else {
                         writer.writeStartElement(nameProperty);
                     }
-                    writeFeature((ComplexAttribute)a, false);
+                    writeComplexProperties((ComplexAttribute)a);
                     writer.writeEndElement();
 
                 } else if (valueA instanceof Collection && !(typeA instanceof GeometryType)) {
@@ -347,8 +356,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
         }
 
-        writer.writeEndElement();
     }
+
 
     /**
      *

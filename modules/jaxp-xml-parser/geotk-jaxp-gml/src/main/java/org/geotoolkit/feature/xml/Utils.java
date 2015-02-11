@@ -135,6 +135,7 @@ public class Utils {
         CLASS_BINDING.put("time",               Date.class);
         CLASS_BINDING.put("duration",           String.class);
         CLASS_BINDING.put("CalDate",            String.class); //TODO should be date
+        CLASS_BINDING.put("anyType",            String.class);
 
         // GML geometry types
         CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);
@@ -163,6 +164,9 @@ public class Utils {
         CLASS_BINDING.put("RingPropertyType",              LinearRing.class);
         CLASS_BINDING.put("LinearRing",                    LinearRing.class);
         CLASS_BINDING.put("LinearRingPropertyType",        LinearRing.class);
+        //GML other types
+        CLASS_BINDING.put("StringOrRefType",               String.class);
+
     }
 
     public static boolean isGeometricType(final QName elementType) {
@@ -282,7 +286,7 @@ public class Utils {
      */
     public static QName getQNameFromType(final PropertyType type, final String gmlVersion) {
         if (type instanceof ComplexType) {
-            return new QName(type.getName().getNamespaceURI(), type.getName().getLocalPart() + "PropertyType");
+            return new QName(type.getName().getNamespaceURI(), getNameWithTypeSuffix(type.getName().getLocalPart()));
         } else {
             final Class binding = type.getBinding();
             if (binding != null) {
@@ -486,4 +490,21 @@ public class Utils {
             return schemaLocation;
         }
     }
+
+    public static String getNameWithTypeSuffix(String name){
+        if(name.endsWith("Type")){
+            return name;
+        }else{
+            return name+="Type";
+        }
+    }
+
+    public static String getNameWithoutTypeSuffix(String name){
+        if(name.endsWith("Type")){
+            return name.substring(0,name.length()-4);
+        }else{
+            return name;
+        }
+    }
+
 }

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,11 +24,13 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.URL;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
@@ -65,6 +67,8 @@ import org.geotoolkit.feature.type.ModifiableType;
 import org.geotoolkit.xsd.xml.v2001.Group;
 import org.geotoolkit.xsd.xml.v2001.GroupRef;
 import org.geotoolkit.xsd.xml.v2001.NamedGroup;
+import org.geotoolkit.xsd.xml.v2001.Restriction;
+import org.geotoolkit.xsd.xml.v2001.Union;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.w3c.dom.Node;
 
@@ -352,6 +356,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         final List<FeatureType> result = new ArrayList<>();
 
         // first we look for imported xsd
+        // NOTE : we must list and fill the knownshemas map before analyzing
+        // some xsd have cyclic references : core -> sub1 + sub2 , sub1 -> core
+        final List<Entry<Schema,String>> refs = new ArrayList<>();
         for (OpenAttrs attr: schema.getIncludeOrImportOrRedefine()) {
             if (attr instanceof Import || attr instanceof Include) {
                 final String schemalocation = Utils.getIncludedLocation(baseLocation, attr);
@@ -368,13 +375,19 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                     if (importedSchema != null) {
                         knownSchemas.put(schemalocation, importedSchema);
                         final String newBaseLocation = getNewBaseLocation(schemalocation, baseLocation);
-                        result.addAll(getAllFeatureTypeFromSchema(importedSchema, newBaseLocation));
+                        refs.add(new AbstractMap.SimpleEntry<>(importedSchema, newBaseLocation));
                     } else {
                         LOGGER.log(Level.WARNING, "Unable to retrieve imported schema:{0}", schemalocation);
                     }
                 }
             }
         }
+
+        //analyze each schema
+        for(Entry<Schema,String> entry : refs){
+            result.addAll(getAllFeatureTypeFromSchema(entry.getKey(), entry.getValue()));
+        }
+
 
         // then we look for feature type and groups
         for (OpenAttrs opAtts : schema.getSimpleTypeOrComplexTypeOrGroup()) {
@@ -387,7 +400,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                     final ComplexType type = findComplexType(typeName);
 
                     if (isFeatureType(type)) {
-                        final FeatureType ft = (FeatureType) getComplexTypeFromSchema(type, typeName.getNamespaceURI(), element.getName());
+                        final org.geotoolkit.feature.type.ComplexType ct = getType(typeName.getNamespaceURI(), type);
+                        final FeatureType ft = (FeatureType) ct;
                         result.add(ft);
 
                     } else if (type == null && findSimpleType(typeName) == null) {
@@ -395,7 +409,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                         continue;
                     }
                 } else {
-                    LOGGER.log(Level.WARNING, "null typeName for element:{0}", element.getName());
+                    LOGGER.log(Level.WARNING, "null typeName for element : {0}", element.getName());
                 }
             }else if(opAtts instanceof NamedGroup){
                 final NamedGroup group = (NamedGroup) opAtts;
@@ -415,7 +429,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             final QName typeName = element.getType();
             if (typeName != null) {
                 final ComplexType type = findComplexType(typeName);
-                return (FeatureType) getComplexTypeFromSchema(type, typeName.getNamespaceURI(), name);
+                final org.geotoolkit.feature.type.ComplexType ct = getType(typeName.getNamespaceURI(), type);
+                return (FeatureType)ct;
             } else {
                 LOGGER.log(Level.WARNING, "the element:{0} has no type", name);
             }
@@ -440,30 +455,35 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return false;
     }
 
-    private org.geotoolkit.feature.type.ComplexType getComplexTypeFromSchema(ComplexType type, final String namespace, final String name) throws SchemaException {
-
-        final QName qname = new QName(namespace, name);
+    private org.geotoolkit.feature.type.ComplexType getType(QName qname) throws SchemaException{
         final org.geotoolkit.feature.type.ComplexType ct = typeCache.get(qname);
         if(ct!=null) return ct;
 
-        if(type==null){
-            type = findComplexType(qname);
-        }
+        final ComplexType type = findComplexType(qname);
 
         if(type==null){
-            LOGGER.log(Level.WARNING, "Unable to find complex type for:{0}", name);
+            LOGGER.log(Level.WARNING, "Unable to find complex type for name : {0}", qname);
             return null;
+        }else{
+            return getType(qname.getNamespaceURI(), type);
         }
+    }
+
+    private org.geotoolkit.feature.type.ComplexType getType(String namespace, ComplexType type) throws SchemaException{
+        final QName qname = new QName(namespace, type.getName());
+        final org.geotoolkit.feature.type.ComplexType ct = typeCache.get(qname);
+        if(ct!=null) return ct;
 
         final boolean isFeatureType = isFeatureType(type);
 
         final FeatureTypeBuilder builder = new FeatureTypeBuilder(new ModifiableFeatureTypeFactory());
-        final String properName;
-        if (name.endsWith("Type")) {
-            properName = name.substring(0, name.lastIndexOf("Type"));
-        } else {
-            properName = name;
+        String properName = qname.getLocalPart();
+        
+        //we remove the 'Type' extension for feature types.
+        if (isFeatureType && properName.endsWith("Type")) {
+            properName = properName.substring(0, properName.lastIndexOf("Type"));
         }
+
         builder.setName(new DefaultName(namespace, properName));
         final ModifiableType finalType = (ModifiableType) ((isFeatureType) ? builder.buildFeatureType() : builder.buildType());
         typeCache.put(qname, finalType);
@@ -476,11 +496,10 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             if (ext != null) {
                 final QName base = ext.getBase();
                 if(base!=null){
-                    final org.geotoolkit.feature.type.ComplexType parent = (org.geotoolkit.feature.type.ComplexType)
-                            getComplexTypeFromSchema(null, base.getNamespaceURI(), base.getLocalPart());
+                    final org.geotoolkit.feature.type.ComplexType parent = getType(base);
                     if(parent!=null){
                         finalType.changeParent(parent);
-                        if(!"AbstractFeature".equals(parent.getName().getLocalPart())){
+                        if(!"AbstractFeatureType".equals(parent.getName().getLocalPart())){
                             //we don't declare the base feature attribute types.
                             finalType.getDescriptors().addAll(parent.getDescriptors());
                         }
@@ -550,7 +569,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             LOGGER.log(Level.WARNING, "unable to find the type of element:{0}", currentElement.getName());
             return null;
         }
-        final String typeName    = elementType.getLocalPart();
         final String elementName = currentElement.getName();
         final Integer minAtt     = currentElement.getMinOccurs();
         final String maxxAtt     = currentElement.getMaxOccurs();
@@ -566,35 +584,40 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
         knownElements.put(new QName(namespace, elementName), currentElement);
         CoordinateReferenceSystem crs = null;
-        if ((typeName.endsWith("PropertyType") || typeName.endsWith("Type")) && !Utils.isGeometricType(elementType)) {
 
-            final String cname;
-            if (typeName.endsWith("PropertyType")) {
-                cname = typeName.substring(0, typeName.lastIndexOf("PropertyType")) + "Type";
-            } else {
-                cname = typeName;
-            }
-            final org.geotoolkit.feature.type.ComplexType cType = getComplexTypeFromSchema(null,elementType.getNamespaceURI(), cname);
-            if (cType != null) {
-                final AttributeDescriptor desc = adb.create(cType, new DefaultName(namespace, elementName), null, min, max, nillable, null);
-                return desc;
-            }
-
-        } else {
+        if(Utils.isGeometricType(elementType)){
             final Class c = Utils.getTypeFromQName(elementType);
             if (c == null) {
-                throw new SchemaException("The attribute:" + elementName + " does no have a declared type.");
-            }
-            if (Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)) {
-                final AttributeDescriptor desc = adb.create(new DefaultName(namespace, elementName), c, crs, min, max, nillable, null);
-                return desc;
+                throw new SchemaException("The attribute : " + currentElement + " does no have a declared type.");
+            } else if (Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)) {
+                return adb.create(new DefaultName(namespace, elementName), c, crs, min, max, nillable, null);
             } else {
-                final AttributeDescriptor desc = adb.create(new DefaultName(namespace, elementName), c, min, max, nillable, null);
-                return desc;
+                return adb.create(new DefaultName(namespace, elementName), c, min, max, nillable, null);
+            }
+        }else{
+            
+            //search simple types
+            final SimpleType simpleType = findSimpleType(elementType);
+            if(simpleType != null){
+                elementType = resolveSimpleTypeValueName(simpleType);
+            }else{
+                //search in complex types
+                final org.geotoolkit.feature.type.ComplexType cType = getType(elementType);
+                if (cType != null) {
+                    return adb.create(cType, new DefaultName(namespace, elementName), null, min, max, nillable, null);
+                }
+            }
+
+            //search in knowned types
+            final Class c = Utils.getTypeFromQName(elementType);
+            if (c == null) {
+                throw new SchemaException("The attribute : " + currentElement + " does no have a declared type.");
+            } else if (Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)) {
+                return adb.create(new DefaultName(namespace, elementName), c, crs, min, max, nillable, null);
+            } else {
+                return adb.create(new DefaultName(namespace, elementName), c, min, max, nillable, null);
             }
         }
-
-        return null;
     }
 
     private String getNewBaseLocation(final String schemalocation, final String oldBaseLocation) {
@@ -634,4 +657,53 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
         return null;
     }
+
+    private QName resolveSimpleTypeValueName(SimpleType simpleType){
+        final Restriction restriction = simpleType.getRestriction();
+        if(restriction!=null){
+            QName base = restriction.getBase();
+            if(base!=null){
+                return base;
+            }
+            final LocalSimpleType localSimpleType = restriction.getSimpleType();
+            if(localSimpleType!=null){
+                return resolveSimpleTypeValueName(localSimpleType);
+            }
+
+            return null;
+        }
+
+        // TODO union can be a collection of anything
+        // collection ? array ? Object.class ? most exact type ?
+        final Union union = simpleType.getUnion();
+        if(union !=null){
+            final QName name = union.getMemberTypes().get(0);
+            final SimpleType refType = findSimpleType(name);
+            return resolveSimpleTypeValueName(refType);
+        }
+
+        //TODO list type
+        final org.geotoolkit.xsd.xml.v2001.List list = simpleType.getList();
+        if(list!=null){
+            final QName subTypeName = list.getItemType();
+            if(subTypeName!=null){
+                final SimpleType refType = findSimpleType(subTypeName);
+                if(refType!=null){
+                    return resolveSimpleTypeValueName(refType);
+                }
+                return subTypeName;
+            }
+            final LocalSimpleType subtype = list.getSimpleType();
+            if(subtype!=null){
+                return resolveSimpleTypeValueName(simpleType);
+            }
+        }
+
+        if(Utils.existPrimitiveType(simpleType.getName())){
+            return new QName(null, simpleType.getName());
+        }else{
+            return null;
+        }
+    }
+
 }

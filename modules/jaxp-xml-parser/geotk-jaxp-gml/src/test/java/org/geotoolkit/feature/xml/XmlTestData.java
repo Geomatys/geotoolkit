@@ -146,7 +146,7 @@ public class XmlTestData {
 
 
         ftb.reset();
-        ftb.setName(GML_NAMESPACE,"Address");
+        ftb.setName(GML_NAMESPACE,"AddressType");
         ftb.add(new DefaultName(GML_NAMESPACE,"streetName"),           String.class,            1,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"streetNumber"),         String.class,            1,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"city"),                 String.class,            1,1,true,null);
@@ -154,6 +154,11 @@ public class XmlTestData {
         ftb.add(new DefaultName(GML_NAMESPACE,"postalCode"),           String.class,            1,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"country"),              String.class,            0,1,true,null);
         final ComplexType adress = ftb.buildType();
+
+        ftb.reset();
+        ftb.setName(GML_NAMESPACE,"AddressPropertyType");
+        ftb.add(adress, new DefaultName(GML_NAMESPACE,"Address"),  null,                    1,1,false,null);
+        final ComplexType mailadress = ftb.buildType();
 
         ftb.reset();
         ftb.setName(GML_NAMESPACE,"Person");
@@ -164,7 +169,7 @@ public class XmlTestData {
         ftb.add(new DefaultName(GML_NAMESPACE,"sex"),                  String.class,            1,1,true,null);
         //ftb.add(new DefaultName(GML_NAMESPACE,"spouse"),               Person.class,            0,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"location"),             Point.class,        crs, 0,1,true,null);
-        ftb.add(adress, new DefaultName(GML_NAMESPACE,"mailAddress"),  null,                    0,1,true,null);
+        ftb.add(mailadress, new DefaultName(GML_NAMESPACE,"mailAddress"),  null,                    0,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"phone"),                String.class,            0,Integer.MAX_VALUE,true,null);
 
         complexType = ftb.buildFeatureType();
@@ -265,8 +270,9 @@ public class XmlTestData {
         location.setValue(GF.createPoint(new Coordinate(10, 10)));
         complexFeature.getProperties().add(location);
 
+
         final ComplexAttribute address = (ComplexAttribute) FeatureUtilities.defaultProperty(
-                complexType.getDescriptor("mailAddress"));
+                mailadress.getDescriptor("Address"));
         address.getProperty("streetName").setValue("Main");
         address.getProperty("streetNumber").setValue("10");
         address.getProperty("city").setValue("SomeTown");
@@ -276,7 +282,13 @@ public class XmlTestData {
         country.setValue("Canada");
         address.getProperties().add(country);
 
-        complexFeature.getProperties().add(address);
+
+        final ComplexAttribute mailAddress = (ComplexAttribute) FeatureUtilities.defaultProperty(
+                complexType.getDescriptor("mailAddress"));
+        mailAddress.getProperties().clear();
+        mailAddress.getProperties().add(address);
+
+        complexFeature.getProperties().add(mailAddress);
 
         final Property phone = FeatureUtilities.defaultProperty(complexType.getDescriptor("phone"));
         phone.setValue(Arrays.asList("4161234567", "4168901234"));
