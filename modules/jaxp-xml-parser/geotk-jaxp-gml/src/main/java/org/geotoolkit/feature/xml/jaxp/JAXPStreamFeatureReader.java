@@ -64,14 +64,12 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import static javax.xml.stream.events.XMLEvent.*;
 import net.iharder.Base64;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.util.FactoryException;
@@ -465,14 +463,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             }
         }
 
-        if (featureType instanceof SimpleFeatureType) {
-            //we must ensure we have the rigth number of properties
-            final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder((SimpleFeatureType)featureType);
-            for(Property p : namedProperties.values()){
-                sfb.set(p.getName(), p.getValue());
-            }
-            return sfb.buildFeature(id);
-        } else if (featureType instanceof FeatureType) {
+        if (featureType instanceof FeatureType) {
             return FF.createFeature(propertyContainer, (FeatureType)featureType, id);
         } else {
             return FF.createComplexAttribute(propertyContainer, (ComplexType)featureType, null);
@@ -590,13 +581,13 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
      * Return a MarshallerPool depending on the property BINDING_PACKAGE.
      *
      * accepted values : "JTSWrapper" or null (default). => JTSWrapperMarshallerPool
-     *                   "GML"                           => GMLMarshallerPool
+     *                   "GML"      (default).                     => GMLMarshallerPool
      */
     private MarshallerPool getPool() {
         final String bindingPackage = (String) properties.get(BINDING_PACKAGE);
-        if (bindingPackage == null || "JTSWrapper".equals(bindingPackage)) {
+        if ("JTSWrapper".equals(bindingPackage)) {
             return JTSWrapperMarshallerPool.getInstance();
-        } else if ("GML".equals(bindingPackage)) {
+        } else if (bindingPackage == null || "GML".equals(bindingPackage)) {
             return GMLMarshallerPool.getInstance();
         } else {
             throw new IllegalArgumentException("Unexpected property value for BINDING_PACKAGE:" + bindingPackage);

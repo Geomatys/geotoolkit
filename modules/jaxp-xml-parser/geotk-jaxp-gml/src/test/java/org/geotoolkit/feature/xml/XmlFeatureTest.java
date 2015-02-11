@@ -140,6 +140,7 @@ public class XmlFeatureTest {
          */
 
         final XmlFeatureReader reader = new JAXPStreamFeatureReader(simpleTypeFull);
+        reader.getProperties().put(JAXPStreamFeatureReader.BINDING_PACKAGE, "JTSWrapper");
         obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc.xml"));
 

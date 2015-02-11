@@ -24,17 +24,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.opengis.feature.PropertyType;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 import org.geotoolkit.feature.Feature;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 
 /**
  *
@@ -62,7 +57,7 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
 
     @Override
     public boolean isSimple() {
-        return false;
+        return FeatureTypeUtilities.isSimple(this);
     }
 
     @Override
