@@ -30,7 +30,9 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -400,68 +402,72 @@ public class Utils {
         return result;
     }
 
+    public static URL resolveURL(URL base, String location) throws MalformedURLException, URISyntaxException{
+        //try an url
+        if (location.startsWith("http://") || location.startsWith("https://")) {
+            return new URL(location);
+        }
+
+        //try to file
+        File f = new File(location);
+        if(f.exists()){
+            return f.toURI().toURL();
+        }
+
+        //try a jar resource
+        final URL jarUrl = Utils.class.getResource(location);
+        if(jarUrl!=null){
+            return jarUrl;
+        }
+
+        //try to resolve a relative path
+        if(base!=null){
+            f = new File(base.toURI());
+            if(f.exists()){
+                if(f.isFile()){
+                    f = f.getParentFile();
+                }
+                f = new File(f, location);
+                if(f.exists()){
+                    return f.toURI().toURL();
+                }
+            }
+        }
+
+        throw new MalformedURLException("Could not resolve xsd location : "+location);
+    }
+
      /**
      * Retrieve an XSD schema from a http location
      * @param location
      * @return
      */
     public static Schema getDistantSchema(final String location) {
-        if (location.startsWith("http://")) {
-            try {
-                LOGGER.log(Level.INFO, "retrieving:{0}", location);
-                final URL schemaUrl = new URL(location);
-                final Unmarshaller u = XSDMarshallerPool.getInstance().acquireUnmarshaller();
-                final Object obj = u.unmarshal(schemaUrl.openStream());
-                XSDMarshallerPool.getInstance().recycle(u);
-                if (obj instanceof Schema) {
-                    return (Schema) obj;
-                } else {
-                    LOGGER.log(Level.WARNING, "Bad content for imported schema:{0}", location);
-                }
-
-            } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, "IO exception trying to retrieve imported schema:" + location, ex);
-            } catch (JAXBException ex) {
-                LOGGER.log(Level.WARNING, "JAXB exception while reading imported schema:" + location, ex);
-            }
-        }else{
-            //try to open the path as a file or resources
-            File f = new File(location);
-            if(f.exists()){
-                try {
-                    final Unmarshaller u = XSDMarshallerPool.getInstance().acquireUnmarshaller();
-                    final Object obj = u.unmarshal(f);
-                    XSDMarshallerPool.getInstance().recycle(u);
-                    if (obj instanceof Schema) {
-                        return (Schema) obj;
-                    } else {
-                        LOGGER.log(Level.WARNING, "Bad content for imported schema:{0}", location);
-                    }
-                }catch (JAXBException ex) {
-                    LOGGER.log(Level.WARNING, "JAXB exception while reading imported schema:" + location, ex);
-                }
-            }else{
-                //try a jar resource
-                final URL schemaUrl = Utils.class.getResource(location);
-                if(schemaUrl!=null){
-                    try {
-                        final Unmarshaller u = XSDMarshallerPool.getInstance().acquireUnmarshaller();
-                        final Object obj = u.unmarshal(schemaUrl.openStream());
-                        XSDMarshallerPool.getInstance().recycle(u);
-                        if (obj instanceof Schema) {
-                            return (Schema) obj;
-                        } else {
-                            LOGGER.log(Level.WARNING, "Bad content for imported schema:{0}", location);
-                        }
-
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.WARNING, "IO exception trying to retrieve imported schema:" + location, ex);
-                    } catch (JAXBException ex) {
-                        LOGGER.log(Level.WARNING, "JAXB exception while reading imported schema:" + location, ex);
-                    }
-                }
-            }
+        final URL schemaUrl;
+        try {
+            schemaUrl = resolveURL(null, location);
+        } catch (MalformedURLException | URISyntaxException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            return null;
         }
+
+        try {
+            LOGGER.log(Level.FINE, "retrieving:{0}", location);
+            final Unmarshaller u = XSDMarshallerPool.getInstance().acquireUnmarshaller();
+            final Object obj = u.unmarshal(schemaUrl.openStream());
+            XSDMarshallerPool.getInstance().recycle(u);
+            if (obj instanceof Schema) {
+                return (Schema) obj;
+            } else {
+                LOGGER.log(Level.WARNING, "Bad content for imported schema:{0}", location);
+            }
+
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "IO exception trying to retrieve imported schema:" + location, ex);
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.WARNING, "JAXB exception while reading imported schema:" + location, ex);
+        }
+
         LOGGER.log(Level.WARNING, "Schema ressource not found:" + location);
         return null;
     }

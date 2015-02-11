@@ -18,10 +18,13 @@
 package org.geotoolkit.feature.xml.jaxp;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -99,6 +102,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
      */
     private static final String GML = "http://www.opengis.net/gml";
 
+    private URL base = null;
+
     public JAXPStreamFeatureReader() {
         this(new ArrayList<FeatureType>());
     }
@@ -131,6 +136,20 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         return read();
     }
 
+    @Override
+    public void setInput(Object input) throws IOException, XMLStreamException {
+        super.setInput(input);
+        if(input instanceof URL){
+            base = (URL) input;
+        }else if(input instanceof URI){
+            base =((URI)input).toURL();
+        }else if(input instanceof File){
+            base = ((File)input).toURI().toURL();
+        }else{
+            base = null;
+        }
+    }
+
     /**
      * Start to read An object from the XML datasource.
      * @return A feature or featureCollection described in the XML stream.
@@ -153,18 +172,16 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         if (!(namespace.equalsIgnoreCase("http://www.opengis.net/gml") || namespace.equalsIgnoreCase("http://www.opengis.net/wfs")) && i + 1 < urls.length) {
                             final String fturl = urls[i + 1];
                             try {
-                                final URL url = new URL(fturl);
+                                final URL url = Utils.resolveURL(base, fturl);
                                 List<FeatureType> fts = (List<FeatureType>) featureTypeReader.read(url.openStream());
                                 for (FeatureType ft : fts) {
                                     if (!featureTypes.contains(ft)) {
                                         featureTypes.add(ft);
                                     }
                                 }
-                            } catch (MalformedURLException ex) {
+                            } catch (MalformedURLException | URISyntaxException ex) {
                                 LOGGER.log(Level.WARNING, null, ex);
-                            } catch (IOException ex) {
-                                LOGGER.log(Level.WARNING, null, ex);
-                            } catch (JAXBException ex) {
+                            } catch (IOException | JAXBException ex) {
                                 LOGGER.log(Level.WARNING, null, ex);
                             }
                             i = i + 2;
