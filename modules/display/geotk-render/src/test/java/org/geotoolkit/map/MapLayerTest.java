@@ -72,21 +72,6 @@ public class MapLayerTest extends TestCase{
     }
 
     @Test
-    public void testContextCreation() {
-
-        try{
-            MapBuilder.createContext(null);
-            throw new IllegalArgumentException("Creating mapcontext with null crs shoudl raise an error");
-        }catch(Exception ex){
-            //ok
-        }
-
-        MapContext context = MapBuilder.createContext(CommonCRS.WGS84.normalizedGeographic());
-        assertNotNull(context);
-        assertNotNull(context.getCoordinateReferenceSystem());
-    }
-
-    @Test
     public void testCollectionLayer() {
 
         try{

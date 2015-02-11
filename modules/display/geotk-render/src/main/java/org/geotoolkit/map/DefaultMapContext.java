@@ -134,18 +134,25 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
 
             if (!env.isAllNaN()) {
 
+                boolean addToResult = false;
                 if ((sourceCrs != null) && (crs != null) && !CRS.equalsIgnoreMetadata(sourceCrs,crs)) {
                     try {
                         env = new GeneralEnvelope(CRS.transform(env, crs));
-                        if (result == null) {
-                            result = env;
-                        } else {
-                            result.add(env);
-                        }
+                        addToResult = true;
                     } catch (TransformException e) {
                         LOGGER.log(Level.WARNING,
                                 "Data source and map context coordinate system differ, yet it was not possible to get a projected bounds estimate...",
                                 e);
+                    }
+                } else {
+                    addToResult = true;
+                }
+
+                if (addToResult) {
+                    if (result == null) {
+                        result = env;
+                    } else {
+                        result.add(env);
                     }
                 }
             }
