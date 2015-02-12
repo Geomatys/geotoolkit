@@ -190,7 +190,14 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 }
 
                 final Name name  = Utils.getNameFromQname(reader.getName());
-                final String id  = reader.getAttributeValue(GML, "id");
+                String id = "no-gml-id";
+                for(int i=0,n=reader.getAttributeCount();i<n;i++){
+                    final QName attName = reader.getAttributeName(i);
+                    //search and id property from any namespace
+                    if("id".equals(attName.getLocalPart()) && attName.getNamespaceURI().startsWith(GML)){
+                        id = reader.getAttributeValue(i);
+                    }
+                }
                 final StringBuilder expectedFeatureType = new StringBuilder();
 
                 if (name.getLocalPart().equals("FeatureCollection")) {
