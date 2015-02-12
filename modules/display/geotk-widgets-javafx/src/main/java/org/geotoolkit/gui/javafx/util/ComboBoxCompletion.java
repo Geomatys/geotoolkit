@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.javafx.util;
 
+import java.util.regex.Pattern;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
@@ -68,9 +69,9 @@ public class ComboBoxCompletion {
             return;
         }
         
-        final String searchText = comboBox.getEditor().getText().toLowerCase();
+        final Pattern searchPattern = Pattern.compile("(?i)"+comboBox.getEditor().getText());
         final ObservableList list = FXCollections.observableArrayList(
-                baseData.filtered((Object t) -> comboBox.getConverter().toString(t).toLowerCase().startsWith(searchText))
+                baseData.filtered((Object t) -> searchPattern.matcher(comboBox.getConverter().toString(t)).find())
         );
         
         comboBox.setItems(list);
