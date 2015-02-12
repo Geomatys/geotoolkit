@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.gui.javafx.util;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,9 +36,12 @@ import javafx.scene.control.TableCell;
  * @param <T>
  */
 public class FXEnumTableCell<S, T extends Enum> extends TableCell<S, T> {
+    
+    private final Class<T> enumClass;
     private final ComboBox<T> field = new ComboBox<>();
 
-    public FXEnumTableCell() {
+    public FXEnumTableCell(final Class<T> enumClass) {
+        this.enumClass = enumClass;
         field.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -49,14 +56,15 @@ public class FXEnumTableCell<S, T extends Enum> extends TableCell<S, T> {
 
     @Override
     public void startEdit() {
-        T value = getItem();
-        T[] values = (T[]) value.getClass().getEnumConstants();
-        field.setItems(FXCollections.observableArrayList(Arrays.asList(values)));
-        field.getSelectionModel().select(value);
-        super.startEdit();
-        setText(null);
-        setGraphic(field);
-        field.requestFocus();
+            T[] values = (T[]) enumClass.getEnumConstants();
+            field.setItems(FXCollections.observableArrayList(Arrays.asList(values)));
+            T value = getItem();
+            field.setValue(value);
+            field.getSelectionModel().select(value);
+            super.startEdit();
+            setText(null);
+            setGraphic(field);
+            field.requestFocus();
     }
 
     @Override
