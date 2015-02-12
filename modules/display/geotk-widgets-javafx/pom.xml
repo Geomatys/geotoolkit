@@ -87,7 +87,7 @@
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>0.4.4</version>
+            <version>0.6</version>
         </dependency>
         <dependency>
             <groupId>com.jidesoft</groupId>
