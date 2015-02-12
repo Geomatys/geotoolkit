@@ -34,6 +34,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
@@ -94,11 +95,11 @@ public class FXCoordinateBar extends GridPane {
             
             //update scale box
             Platform.runLater(() -> {
-                cbox.valueProperty().removeListener(action);
+                scaleCombo.valueProperty().removeListener(action);
                 try {
                     final double scale = map.getCanvas().getGeographicScale();
-                    cbox.setValue((long)scale);
-                    cbox.valueProperty().addListener(action);
+                    scaleCombo.setValue((long)scale);
+                    scaleCombo.valueProperty().addListener(action);
                 } catch (TransformException ex) {
                     Loggers.JAVAFX.log(Level.WARNING, null, ex);
                 }
@@ -122,7 +123,7 @@ public class FXCoordinateBar extends GridPane {
     
     
     private final StatusBar statusBar = new StatusBar();
-    private final ComboBox cbox = new ComboBox();
+    private final ComboBox scaleCombo = new ComboBox();
     private final ColorPicker colorPicker = new ColorPicker(Color.WHITE);
     private final FXCRSButton crsButton = new FXCRSButton();
     private final ToggleButton sliderButton = new ToggleButton(null, new ImageView(GeotkFX.ICON_SLIDERS));
@@ -183,16 +184,16 @@ public class FXCoordinateBar extends GridPane {
         
         statusBar.getLeftItems().add(sliderButton);
         
-        cbox.getItems().addAll(  1000l,
+        scaleCombo.getItems().addAll(  1000l,
                                  5000l,
                                 20000l,
                                 50000l,
                                100000l,
                                500000l);
-        cbox.setEditable(true);
-        cbox.setConverter(new LongStringConverter());
+        scaleCombo.setEditable(true);
+        scaleCombo.setConverter(new LongStringConverter());
         
-        statusBar.getRightItems().add(cbox);
+        statusBar.getRightItems().add(scaleCombo);
         statusBar.getRightItems().add(colorPicker);
         statusBar.getRightItems().add(crsButton);
         
@@ -223,6 +224,12 @@ public class FXCoordinateBar extends GridPane {
             }
         });
         
+        // Set button tooltips
+        sliderButton.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "temporalTooltip")));
+        statusBar.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "coordinateTooltip")));
+        scaleCombo.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "scaleTooltip")));
+        colorPicker.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "bgColorTooltip")));
+        crsButton.setTooltip(new Tooltip(GeotkFX.getString(FXCoordinateBar.class, "crsTooltip")));
     }
     
     public void setCrsButtonVisible(boolean visible){
@@ -251,7 +258,7 @@ public class FXCoordinateBar extends GridPane {
      * @param scales 
      */
     public void setScaleBoxValues(Long[] scales){
-        cbox.getItems().setAll(Arrays.asList(scales));
+        scaleCombo.getItems().setAll(Arrays.asList(scales));
     }
         
     private class myListener implements EventHandler<MouseEvent>{
