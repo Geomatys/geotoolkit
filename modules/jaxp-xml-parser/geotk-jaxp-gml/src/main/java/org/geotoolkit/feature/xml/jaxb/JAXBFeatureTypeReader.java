@@ -98,10 +98,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
     private static final List<String> EXCLUDED_SCHEMA = new ArrayList<>();
     static {
-//        EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
-//        EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
-//        EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.2.1/base/gml.xsd");
-//        EXCLUDED_SCHEMA.add("http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
     }
 
     /**
@@ -110,6 +106,39 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     private static final Map<String,String> RELOCATIONS = new HashMap<>();
     static {
+
+        //GML 3.1.1
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd","/xsd/gml/3.1.1/gml.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/dynamicFeature.xsd","/xsd/gml/3.1.1/dynamicFeature.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd","/xsd/gml/3.1.1/feature.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/geometryBasic2d.xsd","/xsd/gml/3.1.1/geometryBasic2d.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/geometryBasic0d1d.xsd","/xsd/gml/3.1.1/geometryBasic0d1d.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/measures.xsd","/xsd/gml/3.1.1/measures.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/units.xsd","/xsd/gml/3.1.1/units.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/dictionary.xsd","/xsd/gml/3.1.1/dictionary.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/gmlBase.xsd","/xsd/gml/3.1.1/gmlBase.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/basicTypes.xsd","/xsd/gml/3.1.1/basicTypes.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/temporal.xsd","/xsd/gml/3.1.1/temporal.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/direction.xsd","/xsd/gml/3.1.1/direction.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/topology.xsd","/xsd/gml/3.1.1/topology.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/geometryComplexes.xsd","/xsd/gml/3.1.1/geometryComplexes.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/geometryAggregates.xsd","/xsd/gml/3.1.1/geometryAggregates.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/geometryPrimitives.xsd","/xsd/gml/3.1.1/geometryPrimitives.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/coverage.xsd","/xsd/gml/3.1.1/coverage.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/valueObjects.xsd","/xsd/gml/3.1.1/valueObjects.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/grids.xsd","/xsd/gml/3.1.1/grids.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/coordinateReferenceSystems.xsd","/xsd/gml/3.1.1/coordinateReferenceSystems.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/coordinateSystems.xsd","/xsd/gml/3.1.1/coordinateSystems.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/referenceSystems.xsd","/xsd/gml/3.1.1/referenceSystems.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/datums.xsd","/xsd/gml/3.1.1/datums.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/coordinateOperations.xsd","/xsd/gml/3.1.1/coordinateOperations.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/dataQuality.xsd","/xsd/gml/3.1.1/dataQuality.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/observation.xsd","/xsd/gml/3.1.1/observation.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/defaultStyle.xsd","/xsd/gml/3.1.1/defaultStyle.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/smil/smil20.xsd","/xsd/gml/3.1.1/smil20.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/smil/smil20-language.xsd","/xsd/gml/3.1.1/smil20-language.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/temporalReferenceSystems.xsd","/xsd/gml/3.1.1/temporalReferenceSystems.xsd");
+        RELOCATIONS.put("http://schemas.opengis.net/gml/3.1.1/base/temporalTopology.xsd","/xsd/gml/3.1.1/temporalTopology.xsd");
 
         //GML 3.2.1
         RELOCATIONS.put("http://schemas.opengis.net/gml/3.2.1/gml.xsd","/xsd/gml/3.2.1/gml.xsd");
@@ -176,12 +205,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
 
     private final Map<String, Schema> knownSchemas = new HashMap<>();
-    private final Map<QName, Element> knownElements = new HashMap<>();
-    private final Map<QName, NamedGroup> knownGroups = new HashMap<>();
     private final Map<String,String> locationMap = new HashMap<>();
 
     private final Map<QName,org.geotoolkit.feature.type.ComplexType> typeCache = new HashMap<>();
-    private final Map<QName,AttributeDescriptor> attCache = new HashMap<>();
 
     public JAXBFeatureTypeReader() {
         this(null);
@@ -207,16 +233,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public List<FeatureType> read(final String xml) throws JAXBException {
-        try {
-            final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
-            final Schema schema   = (Schema) unmarshaller.unmarshal(new StringReader(xml));
-            POOL.recycle(unmarshaller);
-            knownSchemas.put("unknow location", schema);
-            final String location = null;
-            return getAllFeatureTypeFromSchema(schema, location);
-        } catch (SchemaException ex) {
-            throw new JAXBException(ex.getMessage(),ex);
-        }
+        return read(new StringReader(xml));
     }
 
     /**
@@ -422,7 +439,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
             if(opAtts instanceof TopLevelElement){
                 final TopLevelElement element = (TopLevelElement) opAtts;
-                knownElements.put(new QName(schema.getTargetNamespace(), element.getName()), element);
                 final QName typeName = element.getType();
                 if (typeName != null) {
                     final ComplexType type = findComplexType(typeName);
@@ -439,11 +455,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 } else {
                     LOGGER.log(Level.WARNING, "null typeName for element : {0}", element.getName());
                 }
-            }else if(opAtts instanceof NamedGroup){
-                final NamedGroup group = (NamedGroup) opAtts;
-                final String name = group.getName();
-                final QName qname = new QName(schema.getTargetNamespace(), name);
-                knownGroups.put(qname, group);
             }
         }
     }
@@ -611,7 +622,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
     private List<AttributeDescriptor> getGroupAttributes(String namespace, Group group) throws SchemaException {
         if(group==null) return Collections.EMPTY_LIST;
-        
+
         final List<AttributeDescriptor> atts = new ArrayList<>();
 
         final List<Object> particles = group.getParticle();
@@ -768,7 +779,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
         
         if (elementType != null) {
-            knownElements.put(new QName(namespace, elementName), attributeElement);
 
             if(Utils.isGeometricType(elementType)){
                 final Class c = Utils.getTypeFromQName(elementType);
@@ -798,6 +808,10 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 }
                 atb.setBinding(c);
             }
+        }
+
+        if(atb.getBinding()==null){
+            atb.setBinding(Object.class);
         }
 
         adb.setType(atb.buildType());
