@@ -1,1 +1,2 @@
 org.geotoolkit.util.converter.StringToColorConverter
+org.geotoolkit.util.converter.ColorToStringConverter
