@@ -71,7 +71,8 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
     /**
      * Empty constructor used by JAXB.
      */
-    TimeInstantType(){}
+    public TimeInstantType(){
+    }
 
     public TimeInstantType(final AbstractTimePosition timePosition) {
         this(null, timePosition);
