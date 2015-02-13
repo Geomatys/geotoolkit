@@ -17,8 +17,6 @@
 
 package org.geotoolkit.feature.xml.jaxb;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -80,8 +78,9 @@ import org.geotoolkit.xsd.xml.v2001.GroupRef;
 import org.geotoolkit.xsd.xml.v2001.NamedAttributeGroup;
 import org.geotoolkit.xsd.xml.v2001.NamedGroup;
 import org.geotoolkit.xsd.xml.v2001.Restriction;
+import org.geotoolkit.xsd.xml.v2001.SimpleContent;
+import org.geotoolkit.xsd.xml.v2001.SimpleRestrictionType;
 import org.geotoolkit.xsd.xml.v2001.Union;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.w3c.dom.Node;
 
 /**
@@ -539,8 +538,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
         //read complex content if defined
         final ComplexContent content = type.getComplexContent();
+        ExtensionType ext = null;
         if (content != null) {
-            final ExtensionType ext = content.getExtension();
+            ext = content.getExtension();
             if (ext != null) {
                 final QName base = ext.getBase();
                 if(base!=null){
@@ -555,8 +555,55 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 }
 
                 finalType.getDescriptors().addAll(getGroupAttributes(namespace, ext.getSequence()));
+
+                //read attributes
+                final List<Annotated> attexts = ext.getAttributeOrAttributeGroup();
+                if(attexts!=null){
+                    for(Annotated att : attexts){
+                        if(att instanceof Attribute){
+                            finalType.getDescriptors().add(getAnnotatedAttributes(namespace, (Attribute) att));
+                        }else if(att instanceof AttributeGroupRef){
+                            finalType.getDescriptors().addAll(getAnnotatedAttributes(namespace, (AttributeGroupRef) att));
+                        }
+                    }
+                }
             }
+
+            //TODO restrictions
         }
+
+        //read simple content type if defined
+        final SimpleContent simpleContent = type.getSimpleContent();
+        if(simpleContent!=null){
+            final ExtensionType sext = simpleContent.getExtension();
+            final SimpleRestrictionType restriction = simpleContent.getRestriction();
+
+            if(sext!=null){
+                //simple type base, it must be : this is the content of the tag <tag>XXX<tag>
+                //it is not named, so we call it value
+                final QName base = sext.getBase();
+                final Class valueType = Utils.getTypeFromQName(base);
+
+                final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                finalType.getDescriptors().add(adb.create(new DefaultName(qname.getNamespaceURI(), ""), valueType, 0, 1, false, null));
+
+                //read attributes
+                final List<Annotated> attexts = sext.getAttributeOrAttributeGroup();
+                if(attexts!=null){
+                    for(Annotated att : attexts){
+                        if(att instanceof Attribute){
+                            finalType.getDescriptors().add(getAnnotatedAttributes(namespace, (Attribute) att));
+                        }else if(att instanceof AttributeGroupRef){
+                            finalType.getDescriptors().addAll(getAnnotatedAttributes(namespace, (AttributeGroupRef) att));
+                        }
+                    }
+                }
+            }
+
+            //TODO restrictions
+
+        }
+
         finalType.rebuildPropertyMap();
 
         return finalType;
@@ -575,15 +622,13 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
             if(particle instanceof Element){
                 final Element ele = (Element) particle;
-                
-
                 final AttributeDescriptor att = elementToAttribute(ele, namespace);
                 if(att!=null)atts.add(att);
                 
             }else if(particle instanceof GroupRef){
                 final GroupRef ref = (GroupRef) particle;
                 final QName groupRef = ref.getRef();
-                final NamedGroup ng = knownGroups.get(groupRef);
+                final NamedGroup ng = findGlobalGroup(groupRef);
                 atts.addAll(getGroupAttributes(namespace, ng));
 
             }else if(particle instanceof ExplicitGroup){
@@ -603,7 +648,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
         if(att.getRef()!=null){
             //copy properties from parent
-            final Attribute attRef = findGloabalAttribute(att.getRef());
+            final Attribute attRef = findGlobalAttribute(att.getRef());
             final AttributeDescriptor atDesc = getAnnotatedAttributes(namespace, attRef);
             adb.copy(atDesc);
             atb.copy(atDesc.getType());
@@ -664,92 +709,99 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
     private AttributeDescriptor elementToAttribute(final Element attributeElement, final String namespace) throws SchemaException {
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
 
-        final Element currentElement;
-        if (attributeElement.getRef() != null ) {
-            currentElement = findGlobalElement(attributeElement.getRef());
-            if (currentElement == null) {
+        if (attributeElement.getRef() != null) {
+            final Element parentElement = findGlobalElement(attributeElement.getRef());
+            if (parentElement == null) {
                 throw new SchemaException("unable to find referenced element : "+ attributeElement.getRef());
             }
-        } else {
-            currentElement = attributeElement;
+            final AttributeDescriptor parentDesc = elementToAttribute(parentElement, namespace);
+            adb.copy(parentDesc);
+            adb.setType(parentDesc.getType());
+            atb.copy(parentDesc.getType());
         }
 
-        //get properties
-        final String elementName = currentElement.getName();
-        final Integer minAtt     = currentElement.getMinOccurs();
-        final String maxxAtt     = currentElement.getMaxOccurs();
-        final boolean nillable   = currentElement.isNillable();
-        final int min = (minAtt == null) ? 1 : minAtt;
-        final int max;
-        if (maxxAtt == null) {
-            max = 1;
-        } else if (maxxAtt.equalsIgnoreCase("unbounded")) {
-            max = Integer.MAX_VALUE;
-        } else {
-            max = Integer.parseInt(maxxAtt);
+        //override properties which are defined
+        final Integer minAtt = attributeElement.getMinOccurs();
+        if(minAtt!=null){
+            adb.setMinOccurs(minAtt);
         }
-        final Name attName = new DefaultName(namespace, elementName);
+
+        final String maxxAtt = attributeElement.getMaxOccurs();
+        if("unbounded".equalsIgnoreCase(maxxAtt)) {
+            adb.setMaxOccurs(Integer.MAX_VALUE);
+        } else if(maxxAtt!=null){
+            adb.setMaxOccurs(Integer.parseInt(maxxAtt));
+        }
+
+        adb.setNillable(attributeElement.isNillable());
+
+
+        final String elementName = attributeElement.getName();
+        if(elementName!=null){
+            final Name attName = new DefaultName(namespace, elementName);
+            adb.setName(attName);
+            if(atb.getName()==null){
+                atb.setName(attName);
+            }
+        }
 
         //try to extract complex type
-        if(currentElement.getComplexType()!=null){
+        if(attributeElement.getComplexType()!=null){
             final org.geotoolkit.feature.type.ComplexType type = getType(namespace,
-                    currentElement.getComplexType(),currentElement.getName());
-            return adb.create(type, attName, min, max, nillable, null);
+                    attributeElement.getComplexType(),attributeElement.getName());
+            adb.setType(type);
         }
 
-        QName elementType = currentElement.getType();
+        if(adb.getType() instanceof org.geotoolkit.feature.type.ComplexType){
+            return adb.buildDescriptor();
+        }
+
+        QName elementType = attributeElement.getType();
         // Try to extract base from a SimpleType
-        if (elementType == null && currentElement.getSimpleType() != null) {
-            final LocalSimpleType simpleType = currentElement.getSimpleType();
+        if (elementType == null && attributeElement.getSimpleType() != null) {
+            final LocalSimpleType simpleType = attributeElement.getSimpleType();
             if (simpleType.getRestriction() != null) {
                 elementType = simpleType.getRestriction().getBase();
             }
         }
         
+        if (elementType != null) {
+            knownElements.put(new QName(namespace, elementName), attributeElement);
 
-
-        if (elementType == null) {
-            LOGGER.log(Level.WARNING, "unable to find the type of element : {0}", currentElement.getName());
-            return null;
-        }
-        
-        knownElements.put(new QName(namespace, elementName), currentElement);
-        CoordinateReferenceSystem crs = null;
-
-        if(Utils.isGeometricType(elementType)){
-            final Class c = Utils.getTypeFromQName(elementType);
-            if (c == null) {
-                throw new SchemaException("The attribute : " + currentElement + " does no have a declared type.");
-            } else if (Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)) {
-                return adb.create(attName, c, crs, min, max, nillable, null);
-            } else {
-                return adb.create(attName, c, min, max, nillable, null);
-            }
-        }else{
-            
-            //search simple types
-            final SimpleType simpleType = findSimpleType(elementType);
-            if(simpleType != null){
-                elementType = resolveSimpleTypeValueName(simpleType);
-            }else{
-                //search in complex types
-                final org.geotoolkit.feature.type.ComplexType cType = getType(elementType);
-                if (cType != null) {
-                    return adb.create(cType, attName, null, min, max, nillable, null);
+            if(Utils.isGeometricType(elementType)){
+                final Class c = Utils.getTypeFromQName(elementType);
+                if (c == null) {
+                    throw new SchemaException("The attribute : " + attributeElement + " does no have a declared type.");
                 }
-            }
+                atb.setBinding(c);
+            }else{
 
-            //search in knowned types
-            final Class c = Utils.getTypeFromQName(elementType);
-            if (c == null) {
-                throw new SchemaException("The attribute : " + currentElement + " does no have a declared type.");
-            } else if (Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)) {
-                return adb.create(attName, c, crs, min, max, nillable, null);
-            } else {
-                return adb.create(attName, c, min, max, nillable, null);
+                //search simple types
+                final SimpleType simpleType = findSimpleType(elementType);
+                if(simpleType != null){
+                    elementType = resolveSimpleTypeValueName(simpleType);
+                }else{
+                    //search in complex types
+                    final org.geotoolkit.feature.type.ComplexType cType = getType(elementType);
+                    if (cType != null) {
+                        adb.setType(cType);
+                        return adb.buildDescriptor();
+                    }
+                }
+
+                //search in knowned types
+                final Class c = Utils.getTypeFromQName(elementType);
+                if (c == null) {
+                    throw new SchemaException("The attribute : " + attributeElement + " does no have a declared type.");
+                }
+                atb.setBinding(c);
             }
         }
+
+        adb.setType(atb.buildType());
+        return adb.buildDescriptor();
     }
 
     private String getNewBaseLocation(final String schemalocation, final String oldBaseLocation) {
@@ -774,7 +826,24 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return null;
     }
 
-    private Attribute findGloabalAttribute(final QName typeName) {
+    private NamedGroup findGlobalGroup(final QName typeName) {
+        // look in the schemas
+        for (Entry<String,Schema> entry : knownSchemas.entrySet()) {
+            final Schema schema = entry.getValue();
+            if(!schema.getTargetNamespace().equalsIgnoreCase(typeName.getNamespaceURI())) continue;
+            for(OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()){
+                if(att instanceof NamedGroup){
+                    final NamedGroup candidate = (NamedGroup) att;
+                    if(candidate.getName().equals(typeName.getLocalPart())){
+                        return candidate;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private Attribute findGlobalAttribute(final QName typeName) {
         // look in the schemas
         for (Entry<String,Schema> entry : knownSchemas.entrySet()) {
             final Schema schema = entry.getValue();
@@ -844,7 +913,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         //test reference
         type = att.getRef();
         if(type!=null){
-            final Attribute parentAtt = findGloabalAttribute(type);
+            final Attribute parentAtt = findGlobalAttribute(type);
             if(parentAtt==null){
                 throw new SchemaException("The attribute : " + type + " has not been found.");
             }

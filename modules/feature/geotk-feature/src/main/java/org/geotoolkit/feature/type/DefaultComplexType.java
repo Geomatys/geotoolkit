@@ -22,20 +22,12 @@ import java.io.StringWriter;
 import java.util.*;
 
 import org.opengis.feature.Attribute;
-import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.io.TableAppender;
 
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AssociationType;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
