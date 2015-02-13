@@ -57,12 +57,21 @@ public class XmlFeatureTypeTest {
     public void tearDown() {
     }
 
+    private static void removeGMLBaseTypes(List<FeatureType> types){
+        for(int i=types.size()-1;i>=0;i--){
+            final FeatureType candidate = types.get(i);
+            if(Utils.GML_FEATURE_TYPES.contains(candidate.getName())){
+                types.remove(i);
+            }
+        }
+    }
+
     @Test
     public void testReadSimpleFeatureType() throws JAXBException {
         final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
         final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType.xsd"));
-
+        removeGMLBaseTypes(types);
         assertEquals(1, types.size());
         assertEquals(simpleTypeFull, types.get(0));
     }
@@ -72,7 +81,7 @@ public class XmlFeatureTypeTest {
         final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
         final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType2.xsd"));
-
+        removeGMLBaseTypes(types);
         assertEquals(1, types.size());
         assertEquals(simpleTypeFull, types.get(0));
     }
@@ -82,7 +91,7 @@ public class XmlFeatureTypeTest {
         final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
         final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/MultiGeomType.xsd"));
-
+        removeGMLBaseTypes(types);
         assertEquals(1, types.size());
         assertEquals(multiGeomType, types.get(0));
     }
@@ -92,7 +101,7 @@ public class XmlFeatureTypeTest {
         final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
         final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/wfs1.xsd"));
-
+        removeGMLBaseTypes(types);
         assertEquals(1, types.size());
         //assertEquals(multiGeomType, types.get(0));
     }
@@ -102,7 +111,7 @@ public class XmlFeatureTypeTest {
         final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
         final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"));
-
+        removeGMLBaseTypes(types);
         assertEquals(1, types.size());
         assertEquals(complexType, types.get(0));
     }
@@ -112,6 +121,7 @@ public class XmlFeatureTypeTest {
         final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
         final URL url = new URL("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
         final List<FeatureType> types = reader.read(url);
+        removeGMLBaseTypes(types);
         System.out.println("RESULT:" + types);
     }
 
@@ -148,6 +158,25 @@ public class XmlFeatureTypeTest {
 
         assertNotNull(type);
         assertEquals(6, type.getDescriptors().size());
+
+    }
+
+    @Test
+    public void testAttributesType() throws JAXBException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeWithAttribute.xsd"));
+
+        FeatureType type = null;
+        for(FeatureType ft : types){
+            if(ft.getName().getLocalPart().equals("TestSimple")){
+                type = ft;
+            }
+        }
+
+        System.out.println(type);
+//        assertNotNull(type);
+//        assertEquals(6, type.getDescriptors().size());
 
     }
 

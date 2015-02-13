@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema elementFormDefault="qualified" 
+    targetNamespace="http://www.opengis.net/gml/3.2"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd" namespace="http://www.opengis.net/gml/3.2"/>
+    <xsd:element xmlns:gml="http://www.opengis.net/gml/3.2" name="TestSimple" type="gml:TestSimpleType" substitutionGroup="gml:_Feature"/>
+    <xsd:complexType name="TestSimpleType">
+        <xsd:complexContent>
+            <xsd:extension xmlns:gml="http://www.opengis.net/gml/3.2" base="gml:AbstractFeatureType" >
+                <xsd:sequence>
+                    <xsd:element name="ID"                  maxOccurs="1" minOccurs="1" nillable="true" type="xsd:integer"/>
+                    <xsd:element name="eleString"           maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>
+                    <xsd:element name="eleInteger"          maxOccurs="1" minOccurs="1" nillable="true" type="xsd:integer"/>
+                </xsd:sequence>
+                <xsd:attribute name="attString" type="string" default="hello"/>
+                <xsd:attribute name="attInteger" type="xsd:integer" default="23"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+</xsd:schema>

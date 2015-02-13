@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -38,11 +38,15 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,13 +74,34 @@ public class Utils {
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml");
 
     private static final DateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'Z'");
+    
+    private static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
+    private static final String GML_321_NAMESPACE = "http://www.opengis.net/gml/3.2";
+    public static final Set<Name> GML_FEATURE_TYPES;
     static{
         timestampFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-    }
-
-    private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'Z'");
-    static{
         dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+
+        GML_FEATURE_TYPES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new Name[]{
+            new DefaultName(GML_311_NAMESPACE, "AbstractFeatureCollection"),
+            new DefaultName(GML_311_NAMESPACE, "FeatureCollection"),
+            new DefaultName(GML_311_NAMESPACE, "AbstractCoverage"),
+            new DefaultName(GML_311_NAMESPACE, "AbstractContinuousCoverage"),
+            new DefaultName(GML_311_NAMESPACE, "AbstractDiscreteCoverage"),
+            new DefaultName(GML_311_NAMESPACE, "Observation"),
+            new DefaultName(GML_311_NAMESPACE, "DirectedObservation"),
+            new DefaultName(GML_311_NAMESPACE, "DirectedObservationAtDistance"),
+            new DefaultName(GML_321_NAMESPACE, "AbstractFeatureCollection"),
+            new DefaultName(GML_321_NAMESPACE, "FeatureCollection"),
+            new DefaultName(GML_321_NAMESPACE, "AbstractCoverage"),
+            new DefaultName(GML_321_NAMESPACE, "AbstractContinuousCoverage"),
+            new DefaultName(GML_321_NAMESPACE, "AbstractDiscreteCoverage"),
+            new DefaultName(GML_321_NAMESPACE, "Observation"),
+            new DefaultName(GML_321_NAMESPACE, "DirectedObservation"),
+            new DefaultName(GML_321_NAMESPACE, "DirectedObservationAtDistance")
+        })));
+
     }
 
     private Utils() {}
@@ -113,7 +138,7 @@ public class Utils {
         return qname;
     }
 
-    private static final Map<String, Class> CLASS_BINDING = new HashMap<String, Class>();
+    private static final Map<String, Class> CLASS_BINDING = new HashMap<>();
     static {
         CLASS_BINDING.put("long",     Long.class);
         CLASS_BINDING.put("integer",  Integer.class);
@@ -138,6 +163,10 @@ public class Utils {
         CLASS_BINDING.put("duration",           String.class);
         CLASS_BINDING.put("CalDate",            String.class); //TODO should be date
         CLASS_BINDING.put("anyType",            String.class);
+        CLASS_BINDING.put("ID",                 String.class);
+        CLASS_BINDING.put("StringOrRefType",    String.class);
+        CLASS_BINDING.put("token",              String.class);
+        CLASS_BINDING.put("NCName",             String.class);
 
         // GML geometry types
         CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);
@@ -166,8 +195,6 @@ public class Utils {
         CLASS_BINDING.put("RingPropertyType",              LinearRing.class);
         CLASS_BINDING.put("LinearRing",                    LinearRing.class);
         CLASS_BINDING.put("LinearRingPropertyType",        LinearRing.class);
-        //GML other types
-        CLASS_BINDING.put("StringOrRefType",               String.class);
 
     }
 
@@ -249,9 +276,6 @@ public class Utils {
          NAME_BINDING.put(byte[].class,        new QName("http://www.w3.org/2001/XMLSchema", "base64Binary"));
 
     }
-
-    private static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
-    private static final String GML_321_NAMESPACE = "http://www.opengis.net/gml/3.2";
 
     private static final Map<Class, QName> GEOMETRY_NAME_BINDING_311 = new HashMap<Class, QName>();
     static {
