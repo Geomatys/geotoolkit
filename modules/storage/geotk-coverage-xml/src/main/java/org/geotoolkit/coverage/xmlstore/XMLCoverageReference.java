@@ -80,7 +80,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     private String packMode = ViewType.RENDERED.name();
 
     @XmlElement(name="SampleDimension")
-    private List<XMLSampleDimension> sampleDimensions;
+    private List<XMLSampleDimension> sampleDimensions = null;
 
     @XmlElement(name="NumDimension")
     private int numDimension;
@@ -287,7 +287,8 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     @Override
     public synchronized List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
         if (cacheDimensions == null) {
-            if (sampleDimensions == null || sampleDimensions.isEmpty()) return null;
+            if (sampleDimensions == null) return null; 
+            assert !sampleDimensions.isEmpty() : "XmlCoverageReference.getSampleDimension : sampleDimension should not be empty.";
             cacheDimensions = new CopyOnWriteArrayList<>();
             for (XMLSampleDimension xsd : sampleDimensions) {
                 cacheDimensions.add(xsd.buildSampleDimension());
@@ -301,7 +302,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      */
     @Override
     public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
-        if (dimensions == null) return;
+        if (dimensions == null || dimensions.isEmpty()) return;
         this.cacheDimensions = null; //clear cache
 
         if (sampleDimensions == null) sampleDimensions = new CopyOnWriteArrayList<>();
@@ -313,6 +314,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             dim.setSampleType(sdt);
             sampleDimensions.add(dim);
         }
+        assert !sampleDimensions.isEmpty() : "XmlCoverageReference.setSampleDimension : sampleDimension should not be empty.";
         save();
     }
 

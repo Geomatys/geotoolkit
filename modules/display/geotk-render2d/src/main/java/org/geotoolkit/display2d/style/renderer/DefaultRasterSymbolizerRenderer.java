@@ -25,6 +25,7 @@ import java.awt.image.*;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import javax.media.jai.RenderedOp;
 
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -165,11 +167,40 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 bounds = fixEnvelopeWithQuery(queryValues, bounds, coverageMapLayerCRS);
                 resolution = fixResolutionWithCRS(resolution, coverageMapLayerCRS);
             }
-
+            
+            /*
+             * Study rendering context envelope and internal coverage envelope.
+             * For exemple if we store data with a third dimension or more, with the 2 dimensional renderer
+             * it is possible to miss some internal stored datas.
+             * To avoid this comportement we can "complete"(fill) render envelope with missing dimensions.
+             */
+            final GridCoverageReader reader = ref.acquireReader();
+            final Envelope dataBBox = reader.getGridGeometry(ref.getImageIndex()).getEnvelope();
+            ref.recycle(reader);
+            final Envelope paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, bounds);
+            assert paramEnvelope.getCoordinateReferenceSystem() != null : "DefaultRasterSymbolizerRenderer : CRS from param envelope cannot be null.";
+            final double[] paramRes = new double[paramEnvelope.getDimension()];
+            Arrays.fill(paramRes, 1);
+            
+            //-- todo : resolution in static method in referencingUtilities
+            //-- Define new resolution value adapted for paramEnvelope crs
+            assert bounds.getDimension() == 2 : "DefaultRasterSymbolizerRenderer : displays bounds will be able to have dimension = 2.";
+            final int displayWidth = (int) ((bounds.getSpan(0) + resolution[0] - 1) / resolution[0]);
+            final Envelope targetBounds = CRS.transform(bounds, CRSUtilities.getCRS2D(paramEnvelope.getCoordinateReferenceSystem()));
+            final double newResolution = targetBounds.getSpan(0) / displayWidth;
+            //----------------- end new resolution computing ---------------------
+            
+            final int minPOrdi = CoverageUtilities.getMinOrdinate(paramEnvelope.getCoordinateReferenceSystem());
+            paramRes[minPOrdi] = paramRes[minPOrdi + 1] = newResolution; 
+            //-- Attention ici on affecte la meme valeur de resolution car pour 
+            // le moment on a une seule et unique valeur pour l'ensemble du plan horizontal. 
+            // A changer le jour ou nous ferons des resolutions multi-dimentionnelles. 
+            //--------------------------------------------------------------------
+            
             final GridCoverageReadParam param = new GridCoverageReadParam();
-            param.setEnvelope(bounds);
-            param.setResolution(resolution);
-
+            param.setEnvelope(paramEnvelope);
+            param.setResolution(paramRes);
+            
             GridCoverage2D dataCoverage;
             GridCoverage2D elevationCoverage;
             try {
@@ -858,6 +889,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         } else {
             final GridCoverage2D photoCvg = source.view(ViewType.PHOTOGRAPHIC);
             RenderedImage img = photoCvg.getRenderedImage();
+            final int datatype = img.getSampleModel().getDataType();
+            if (datatype != DataBuffer.TYPE_BYTE && datatype != DataBuffer.TYPE_USHORT) return source; 
             RenderedImage imga = forceAlpha(img);
 
             if (imga != img) {

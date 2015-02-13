@@ -143,7 +143,7 @@ public class DefaultCoverageFinder extends CoverageFinder {
 
             final DirectPosition ul = candidate.getUpperLeftCorner();
             final double scale = candidate.getScale();
-            if(scale!=bestScale) continue;
+            if (scale != bestScale) continue;
 
             result.add(candidate);
         }

@@ -35,6 +35,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.Numbers;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -284,6 +285,8 @@ public strictfp class ThirdPartyMetaDataReader {
         double[] minSV = new double[samplePerPixels];
         double[] maxSV = new double[samplePerPixels];
         
+        Class typeClass = null;
+        
         if (minSampleValues != null && maxSampleValues != null) {  
             assert minSampleValues.length == samplePerPixels;            
             assert maxSampleValues.length == samplePerPixels;
@@ -306,6 +309,7 @@ public strictfp class ThirdPartyMetaDataReader {
                     case Byte.SIZE : {
                         min = 0;
                         max = 255;
+                        typeClass = Byte.class;
                         break;
                     }
                     case Short.SIZE : {
@@ -316,6 +320,7 @@ public strictfp class ThirdPartyMetaDataReader {
                             min = 0;
                             max = 0xFFFF;
                         }
+                        typeClass = Short.class;
                         break;
                     }
                     case Integer.SIZE : {
@@ -328,11 +333,13 @@ public strictfp class ThirdPartyMetaDataReader {
                             min = Integer.MIN_VALUE;
                             max = Integer.MAX_VALUE;
                         }
+                        typeClass = Integer.class;
                         break;
                     }
                     case Double.SIZE : {
                         min = Double.MIN_VALUE;
                         max = Double.MAX_VALUE;
+                        typeClass = Double.class;
                         break;
                     }
                     default : throw new IllegalStateException("Unknow sample type");
@@ -340,6 +347,29 @@ public strictfp class ThirdPartyMetaDataReader {
                 Arrays.fill(minSV, min);
                 Arrays.fill(maxSV, max);
         } 
+        
+        //-- in case where min and max sample values are define in tiff metadata.
+        if (typeClass == null) {
+            switch (bitsPerSamples) {
+                case Byte.SIZE : {
+                    typeClass = Byte.class;
+                    break;
+                }
+                case Short.SIZE : {
+                    typeClass = Short.class;
+                    break;
+                }
+                case Integer.SIZE : {
+                    typeClass = Integer.class;
+                    break;
+                }
+                case Double.SIZE : {
+                    typeClass = Double.class;
+                    break;
+                }
+                default : throw new IllegalStateException("Unknow sample type");
+            }
+        }
         
         for (int b = 0; b < samplePerPixels; b++) {
             if (accessor.childCount() >= samplePerPixels) {
@@ -350,19 +380,28 @@ public strictfp class ThirdPartyMetaDataReader {
             
             final List<Category> categories = new ArrayList<>();
             if (realFillValue != null) {
-                    categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), realFillValue[b]));
+                    categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), 
+                                           getTypedRangeNumber(typeClass, realFillValue[b], true, realFillValue[b], true)));
+                    
                     if (minSV[b] < realFillValue[b] && realFillValue[b] < maxSV[b]) {
+                        
                         categories.add(new Category("data", null, 
-                            NumberRange.create(minSV[b], true, realFillValue[b], false), scaleZ, offsetZ));
+                                getTypedRangeNumber(typeClass, minSV[b], true, realFillValue[b], false), scaleZ, offsetZ));
                         categories.add(new Category("data", null, 
-                            NumberRange.create(realFillValue[b], false, maxSV[b], true), scaleZ, offsetZ));
+                                getTypedRangeNumber(typeClass, realFillValue[b], false, maxSV[b], true), scaleZ, offsetZ));
+                        
                     } else {
+                        
                         categories.add(new Category("data", null, 
-                            NumberRange.create(minSV[b], !(minSV[b] == realFillValue[b]), maxSV[b], !(maxSV[b] == realFillValue[b])), scaleZ, offsetZ));
+                            getTypedRangeNumber(typeClass, 
+                                                minSV[b], !(minSV[b] == realFillValue[b]), 
+                                                maxSV[b], !(maxSV[b] == realFillValue[b])), scaleZ, offsetZ));
                     }
                 } else {
+                
                     categories.add(new Category("data", null, 
-                            NumberRange.create(minSV[b], true, maxSV[b], true), scaleZ, offsetZ));
+                            getTypedRangeNumber(typeClass, minSV[b], true, maxSV[b], true), scaleZ, offsetZ));
+                    
                 }
             final GridSampleDimension dim = new GridSampleDimension(""+b, categories.toArray(new Category[categories.size()]), null);
             accessor.setDimension(dim, Locale.ENGLISH);
@@ -370,5 +409,24 @@ public strictfp class ThirdPartyMetaDataReader {
                 accessor.setAttribute("realFillValue", realFillValue[b]);
             }
         }
+    }
+    
+    /**
+     * Returns an appropriate {@link NumberRange} from given parameters.
+     * 
+     * @param <T> type of internal data.
+     * @param type type of internal data.
+     * @param min minimum range value.
+     * @param isMinIncluded {@code true} if minimum value is considered as include into range interval else false (exclusive).
+     * @param max maximum range value.
+     * @param isMaxIncluded {@code true} if maximum value is considered as include into range interval else false (exclusive).
+     * @return appropriate range value casted in expected type.
+     */
+    private static <T extends Number & Comparable<T>> NumberRange<T> getTypedRangeNumber(final Class<T> type,
+            final double min, final boolean isMinIncluded,
+            final double max, final boolean isMaxIncluded)
+    {
+        return new NumberRange(type, Numbers.cast(min, type), isMinIncluded,
+                                     Numbers.cast(max, type), isMaxIncluded);
     }
 }

@@ -478,6 +478,9 @@ public class XMLMosaic implements GridMosaic {
                 out = ImageIO.createImageOutputStream(f);
                 writer.setOutput(out);
             }
+            if (out == null) {
+                out = ImageIO.createImageOutputStream(f);
+            }
             writer.write(image);
             if (tileExist != null) {
                 final int ti = getTileIndex(col, row);

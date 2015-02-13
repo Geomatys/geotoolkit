@@ -106,29 +106,41 @@ public class XMLCategory {
         this.function = function;
     }
 
-    public Category buildCategory(){
-        final TransferFunction f = new TransferFunction();
-        if(FUNCTION_LINEAR.equals(function)){
-            f.setType(TransferFunctionType.LINEAR);
-        }else if(FUNCTION_EXPONENTIAL.equals(function)){
-            f.setType(TransferFunctionType.EXPONENTIAL);
-        }else{
-            throw new IllegalArgumentException("Unsupported transform : "+function);
+    /**
+     * Build Category from its internal unmarshalling attributs.
+     * 
+     * @return Expected {@link Category} build from its unmarshalled attributs.
+     * @throws IllegalArgumentException if internal transfer function is not known.
+     */
+    public Category buildCategory() {
+        MathTransform1D sampleToGeophysics = null;
+        //-- if function != null means categories own a quantitative unit. 
+        //-- For example it is not NOData category but exits more other reason.
+        if (function != null) {
+            final TransferFunction f = new TransferFunction();
+            if (FUNCTION_LINEAR.equals(function)) {
+                f.setType(TransferFunctionType.LINEAR);
+            } else if (FUNCTION_EXPONENTIAL.equals(function)) {
+                f.setType(TransferFunctionType.EXPONENTIAL);
+            } else {
+                throw new IllegalArgumentException("Unsupported transform : "+function);
+            }
+            f.setScale(c1);
+            f.setOffset(c0);
+            sampleToGeophysics = f.getTransform();
         }
-        f.setScale(c1);
-        f.setOffset(c0);
-        final MathTransform1D sampleToGeophysics = f.getTransform();
+        
         final NumberRange range = NumberRange.create(lower, true, upper, true);
 
         final Color[] cols = new Color[colors.length];
-        for(int i=0;i<cols.length;i++){
+        for(int i = 0; i < cols.length; i++) {
             cols[i] = ObjectConverters.convert(colors[i], Color.class);
         }
         final Category cat;
-        if(Double.isNaN(lower) || lower==upper){
+        if (Double.isNaN(lower) || lower == upper) {
             cat = new Category(name, cols[0], lower);
-        }else{
-            cat = new Category(name, cols, range, sampleToGeophysics);
+        } else {
+            cat = new Category(name, cols, range, sampleToGeophysics);//-- sampletogeophysic may be null. 
         }
         return cat;
     }
@@ -149,20 +161,22 @@ public class XMLCategory {
         upper = range.getMaxDouble();
 
         final MathTransform1D trs = category.getSampleToGeophysics();
-        final TransferFunction f = new TransferFunction();
-        f.setTransform(trs);
-        if (TransferFunctionType.LINEAR.equals(f.getType())) {
-            function = FUNCTION_LINEAR;
-            c0 = f.getOffset();
-            c1 = f.getScale();
-        }if (TransferFunctionType.EXPONENTIAL.equals(f.getType())) {
-            function = FUNCTION_EXPONENTIAL;
-            c0 = f.getOffset();
-            c1 = f.getScale();
-        }else{
-            throw new IllegalArgumentException("Unsupported 1D transform : "+trs);
+        if (trs != null) { //-- if category != NODATA. trs == null for nodata is expected comportement
+            final TransferFunction f = new TransferFunction();
+            f.setTransform(trs);
+            if (TransferFunctionType.LINEAR.equals(f.getType())) {
+                function = FUNCTION_LINEAR;
+                c0 = f.getOffset();
+                c1 = f.getScale();
+            } else if (TransferFunctionType.EXPONENTIAL.equals(f.getType())) {
+                function = FUNCTION_EXPONENTIAL;
+                c0 = f.getOffset();
+                c1 = f.getScale();
+            }else{
+                throw new IllegalArgumentException("Unsupported 1D transform : "+trs);
+            }
         }
-
+            
         category.getRange();
     }
 
