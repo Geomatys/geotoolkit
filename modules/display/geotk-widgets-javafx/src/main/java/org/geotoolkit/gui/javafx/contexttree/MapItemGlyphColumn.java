@@ -27,6 +27,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.ImageView;
@@ -42,6 +43,7 @@ import org.geotoolkit.gui.javafx.layer.style.FXStyleColorMapPane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleSimplePane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleXMLPane;
 import org.geotoolkit.gui.javafx.util.ButtonTreeTableCell;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -98,6 +100,8 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
                             return candidate;
                         }
                     });
+            
+            button.setTooltip(new Tooltip(GeotkFX.getString(MapItemGlyphColumn.class, "tooltip")));
         }
         
         @Override

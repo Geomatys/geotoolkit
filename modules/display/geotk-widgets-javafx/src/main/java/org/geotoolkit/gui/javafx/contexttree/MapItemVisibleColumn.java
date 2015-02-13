@@ -17,11 +17,15 @@
 
 package org.geotoolkit.gui.javafx.contexttree;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.input.MouseEvent;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
+import org.geotoolkit.internal.GeotkFX;
 
 /**
  *
@@ -29,6 +33,11 @@ import org.geotoolkit.gui.javafx.util.FXUtilities;
  */
 public class MapItemVisibleColumn extends TreeTableColumn{
 
+
+    private static final Tooltip VIEW_TOOLTIP = new Tooltip(
+            GeotkFX.getString(MapItemVisibleColumn.class, "viewTooltip"));
+    private static final Tooltip HIDE_TOOLTIP = new Tooltip(
+            GeotkFX.getString(MapItemVisibleColumn.class, "hideTooltip"));
     public MapItemVisibleColumn() { 
         setEditable(true);
         setPrefWidth(26);
@@ -44,6 +53,17 @@ public class MapItemVisibleColumn extends TreeTableColumn{
         public VisibleCell() {
             setFont(FXUtilities.FONTAWESOME);
             setOnMouseClicked(this::mouseClick);
+            textProperty().addListener(new ChangeListener<String>() {
+
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (FontAwesomeIcons.ICON_EYE_SLASH.equals(newValue)) {
+                        setTooltip(VIEW_TOOLTIP);
+                    } else {
+                        setTooltip(HIDE_TOOLTIP);
+                    }
+                }
+            });
         }
 
         private void mouseClick(MouseEvent event){

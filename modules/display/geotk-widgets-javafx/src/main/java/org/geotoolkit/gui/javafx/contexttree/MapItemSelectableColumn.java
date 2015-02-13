@@ -17,14 +17,15 @@
 
 package org.geotoolkit.gui.javafx.contexttree;
 
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Callback;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
+import org.geotoolkit.internal.GeotkFX;
 
 /**
  *
@@ -32,6 +33,11 @@ import org.geotoolkit.gui.javafx.util.FXUtilities;
  */
 public class MapItemSelectableColumn extends TreeTableColumn<Object,Boolean>{
 
+    private static final Tooltip LOCK_TOOLTIP = new Tooltip(
+            GeotkFX.getString(MapItemSelectableColumn.class, "lockTooltip"));
+    private static final Tooltip UNLOCK_TOOLTIP = new Tooltip(
+            GeotkFX.getString(MapItemSelectableColumn.class, "unlockTooltip"));
+    
     public MapItemSelectableColumn() {
         setEditable(true);
         setPrefWidth(26);
@@ -53,6 +59,17 @@ public class MapItemSelectableColumn extends TreeTableColumn<Object,Boolean>{
         public SelectableCell() {
             setFont(FXUtilities.FONTAWESOME);
             setOnMouseClicked(this::mouseClick);
+            textProperty().addListener(new ChangeListener<String>() {
+
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (FontAwesomeIcons.ICON_LOCK.equals(newValue)) {
+                        setTooltip(UNLOCK_TOOLTIP);
+                    } else {
+                        setTooltip(LOCK_TOOLTIP);
+                    }
+                }
+            });
         }
 
         private void mouseClick(MouseEvent event){

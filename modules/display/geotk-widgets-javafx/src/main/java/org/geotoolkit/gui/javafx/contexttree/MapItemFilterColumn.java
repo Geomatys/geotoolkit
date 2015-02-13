@@ -19,6 +19,7 @@ package org.geotoolkit.gui.javafx.contexttree;
 
 import java.util.function.Function;
 import java.util.logging.Level;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.ImageView;
 import org.geotoolkit.cql.CQLException;
@@ -54,7 +55,7 @@ public class MapItemFilterColumn extends TreeTableColumn<MapItem, MapItem>{
                     return t instanceof FeatureMapLayer;
                 }
             },null);
-            
+            button.setTooltip(new Tooltip(GeotkFX.getString(MapItemFilterColumn.class, "tooltip")));
         }
 
         @Override
