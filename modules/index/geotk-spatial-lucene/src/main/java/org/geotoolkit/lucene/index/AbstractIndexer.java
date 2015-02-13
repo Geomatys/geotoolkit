@@ -128,7 +128,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             needCreation = true;
             setFileDirectory(currentIndexDirectory);
         } else {
-            LOGGER.log(logLevel, "Index already created.");
+            LOGGER.finer("Index already created.");
             deleteOldIndexDir(configDirectory, indexID, currentIndexDirectory.getName());
             // must be set before reading tree
             setFileDirectory(currentIndexDirectory);

@@ -204,14 +204,15 @@ public class LuceneIndexSearcher extends IndexLucene {
      */
     private void initIdentifiersList() throws IOException {
         final Map<Integer, String> temp = new HashMap<>();
-        final long nbDoc = searcher.collectionStatistics("id").maxDoc();
+        final int nbValidDoc = searcher.getIndexReader().numDocs(); // do not take in count deleted document
+        final long nbDoc = searcher.collectionStatistics("id").maxDoc(); // contains deleted document
         for (int i = 0; i < nbDoc; i++) {
             final String metadataID = getMatchingID(searcher.doc(i));
             temp.put(i, metadataID);
         }
         identifiers.clear();
         identifiers.putAll(temp);
-        LOGGER.log(logLevel, "{0} records found.", identifiers.size());
+        LOGGER.log(logLevel, "{0} records found.", nbValidDoc);
     }
 
     /**
