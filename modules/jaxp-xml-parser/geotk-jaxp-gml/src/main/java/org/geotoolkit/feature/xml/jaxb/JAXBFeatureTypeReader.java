@@ -24,6 +24,7 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -214,6 +215,14 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
     public JAXBFeatureTypeReader() {
         this(null);
+    }
+
+    public boolean isSkipStandardObjectProperties() {
+        return skipStandardObjectProperties;
+    }
+
+    public void setSkipStandardObjectProperties(boolean skip) {
+        this.skipStandardObjectProperties = skip;
     }
 
     /**
@@ -540,15 +549,15 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         if(atts!=null){
             for(Annotated att : atts){
                 if(att instanceof Attribute){
-                    finalType.getDescriptors().add(getAnnotatedAttributes(namespace, (Attribute) att));
+                    addOrReplace(finalType.getDescriptors(), getAnnotatedAttributes(namespace, (Attribute) att));
                 }else if(att instanceof AttributeGroupRef){
-                    finalType.getDescriptors().addAll(getAnnotatedAttributes(namespace, (AttributeGroupRef) att));
+                    addOrReplace(finalType.getDescriptors(), getAnnotatedAttributes(namespace, (AttributeGroupRef) att));
                 }
             }
         }
 
         //read sequence properties
-        finalType.getDescriptors().addAll(getGroupAttributes(namespace, type.getSequence()));
+        addOrReplace(finalType.getDescriptors(), getGroupAttributes(namespace, type.getSequence()));
 
         //read complex content if defined
         final ComplexContent content = type.getComplexContent();
@@ -560,10 +569,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 if(base!=null){
                     final org.geotoolkit.feature.type.ComplexType parent = getType(base);
                     if(parent!=null){
+                        addOrReplace(finalType.getDescriptors(), parent.getDescriptors());
                         if(!Utils.GML_FEATURE_TYPES.contains(parent.getName())){
                             finalType.changeParent(parent);
-                            //we don't declare the base feature attribute types.
-                            finalType.getDescriptors().addAll(parent.getDescriptors());
                         }
                     }
                 }
@@ -573,15 +581,15 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 if(attexts!=null){
                     for(Annotated att : attexts){
                         if(att instanceof Attribute){
-                            finalType.getDescriptors().add(getAnnotatedAttributes(namespace, (Attribute) att));
+                            addOrReplace(finalType.getDescriptors(), getAnnotatedAttributes(namespace, (Attribute) att));
                         }else if(att instanceof AttributeGroupRef){
-                            finalType.getDescriptors().addAll(getAnnotatedAttributes(namespace, (AttributeGroupRef) att));
+                            addOrReplace(finalType.getDescriptors(), getAnnotatedAttributes(namespace, (AttributeGroupRef) att));
                         }
                     }
                 }
                 
                 //sequence attributes
-                finalType.getDescriptors().addAll(getGroupAttributes(namespace, ext.getSequence()));
+                addOrReplace(finalType.getDescriptors(), getGroupAttributes(namespace, ext.getSequence()));
             }
 
             //TODO restrictions
@@ -596,7 +604,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             if(sext!=null){
                 //simple type base, it must be : this is the content of the tag <tag>XXX<tag>
                 //it is not named, so we call it value
-                final QName base = sext.getBase();
+                QName base = sext.getBase();
+                final SimpleType st = findSimpleType(base);
+                if(st!=null) base = resolveSimpleTypeValueName(st);
                 final Class valueType = Utils.getTypeFromQName(base);
 
                 final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
@@ -607,15 +617,44 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 if(attexts!=null){
                     for(Annotated att : attexts){
                         if(att instanceof Attribute){
-                            finalType.getDescriptors().add(getAnnotatedAttributes(namespace, (Attribute) att));
+                            addOrReplace(finalType.getDescriptors(), getAnnotatedAttributes(namespace, (Attribute) att));
                         }else if(att instanceof AttributeGroupRef){
-                            finalType.getDescriptors().addAll(getAnnotatedAttributes(namespace, (AttributeGroupRef) att));
+                            addOrReplace(finalType.getDescriptors(), getAnnotatedAttributes(namespace, (AttributeGroupRef) att));
                         }
                     }
                 }
             }
 
-            //TODO restrictions
+            if(restriction!=null){
+
+                QName base = restriction.getBase();
+                if(base !=null){
+                    final ComplexType sct = findComplexType(base);
+                    if(sct!=null){
+                        final org.geotoolkit.feature.type.ComplexType tct = getType(namespace, sct, null);
+                        addOrReplace(finalType.getDescriptors(), tct.getDescriptors());
+                    }else{
+                        final SimpleType st = findSimpleType(base);
+                        if(st!=null) base = resolveSimpleTypeValueName(st);
+                        final Class valueType = Utils.getTypeFromQName(base);
+                        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                        addOrReplace(finalType.getDescriptors(), adb.create(new DefaultName(qname.getNamespaceURI(), ""), valueType, 0, 1, false, null));
+                    }
+                }
+
+
+                //read attributes
+                final List<Annotated> attexts = restriction.getAttributeOrAttributeGroup();
+                if(attexts!=null){
+                    for(Annotated att : attexts){
+                        if(att instanceof Attribute){
+                            addOrReplace(finalType.getDescriptors(), getAnnotatedAttributes(namespace, (Attribute) att));
+                        }else if(att instanceof AttributeGroupRef){
+                            addOrReplace(finalType.getDescriptors(), getAnnotatedAttributes(namespace, (AttributeGroupRef) att));
+                        }
+                    }
+                }
+            }
 
         }
 
@@ -640,10 +679,10 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
     }
 
-    private List<AttributeDescriptor> getGroupAttributes(String namespace, Group group) throws SchemaException {
+    private List<PropertyDescriptor> getGroupAttributes(String namespace, Group group) throws SchemaException {
         if(group==null) return Collections.EMPTY_LIST;
 
-        final List<AttributeDescriptor> atts = new ArrayList<>();
+        final List<PropertyDescriptor> atts = new ArrayList<>();
 
         final List<Object> particles = group.getParticle();
         for(Object particle : particles){
@@ -718,22 +757,22 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return adb.buildDescriptor();
     }
 
-    private List<AttributeDescriptor> getAnnotatedAttributes(final String namespace, final AttributeGroup group) throws SchemaException{
-        final List<AttributeDescriptor> descs = new ArrayList<>();
+    private List<PropertyDescriptor> getAnnotatedAttributes(final String namespace, final AttributeGroup group) throws SchemaException{
+        final List<PropertyDescriptor> descs = new ArrayList<>();
         final List<Annotated> atts = group.getAttributeOrAttributeGroup();
         if(atts!=null){
             for(Annotated att : atts){
                 if(att instanceof Attribute){
-                    descs.add(getAnnotatedAttributes(namespace, (Attribute) att));
+                    addOrReplace(descs, getAnnotatedAttributes(namespace, (Attribute) att));
                 }else if(att instanceof AttributeGroupRef){
-                    descs.addAll(getAnnotatedAttributes(namespace, (AttributeGroupRef)att));
+                    addOrReplace(descs, getAnnotatedAttributes(namespace, (AttributeGroupRef)att));
                 }
             }
         }
         final QName ref = group.getRef();
         if(ref!=null){
             final NamedAttributeGroup refGroup = findAttributeGroup(ref);
-            descs.addAll(getAnnotatedAttributes(namespace, refGroup));
+            addOrReplace(descs, getAnnotatedAttributes(namespace, refGroup));
         }
         return descs;
     }
@@ -1030,6 +1069,34 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             return new QName(null, simpleType.getName());
         }else{
             return null;
+        }
+    }
+
+    private static void addOrReplace(List<PropertyDescriptor> descs, PropertyDescriptor pd){
+        loop:
+        for(int i=0;i<descs.size();i++){
+            if(descs.get(i).getName().equals(pd.getName())){
+                //replace existing property
+                descs.set(i, pd);
+                return;
+            }
+        }
+        //add new property
+        descs.add(pd);
+    }
+
+    private static void addOrReplace(List<PropertyDescriptor> descs, Collection<? extends PropertyDescriptor> toAdd){
+        loop:
+        for(PropertyDescriptor pd : toAdd){
+            for(int i=0;i<descs.size();i++){
+                if(descs.get(i).getName().equals(pd.getName())){
+                    //replace existing property
+                    descs.set(i, pd);
+                    break loop;
+                }
+            }
+            //add new property
+            descs.add(pd);
         }
     }
 

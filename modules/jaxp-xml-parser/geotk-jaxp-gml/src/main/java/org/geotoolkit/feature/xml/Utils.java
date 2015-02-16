@@ -105,7 +105,10 @@ public class Utils {
             new DefaultName(GML_321_NAMESPACE, "AbstractDiscreteCoverage"),
             new DefaultName(GML_321_NAMESPACE, "Observation"),
             new DefaultName(GML_321_NAMESPACE, "DirectedObservation"),
-            new DefaultName(GML_321_NAMESPACE, "DirectedObservationAtDistance")
+            new DefaultName(GML_321_NAMESPACE, "DirectedObservationAtDistance"),
+            new DefaultName(GML_321_NAMESPACE, "DynamicFeatureCollection"),
+            new DefaultName(GML_321_NAMESPACE, "DynamicFeature"),
+            new DefaultName(GML_321_NAMESPACE, "DiscreteCoverage")
         })));
 
         GML_STANDARD_OBJECT_PROPERTIES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new Name[]{
@@ -197,6 +200,8 @@ public class Utils {
         CLASS_BINDING.put("StringOrRefType",    String.class);
         CLASS_BINDING.put("token",              String.class);
         CLASS_BINDING.put("NCName",             String.class);
+        CLASS_BINDING.put("TimePositionUnion",  String.class);
+
 
         // GML geometry types
         CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);

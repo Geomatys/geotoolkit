@@ -30,6 +30,7 @@ import java.net.URLConnection;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
+import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.xml.DomCompare;
@@ -37,6 +38,8 @@ import org.geotoolkit.xml.DomCompare;
 import org.junit.*;
 
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.PropertyType;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.feature.xml.XmlTestData.*;
@@ -177,6 +180,37 @@ public class XmlFeatureTypeTest {
         assertNotNull(type);
         assertEquals(simpleTypeWithAtts, types.get(0));
 
+    }
+
+    @Test
+    public void testReadSimpleFeatureEmpty() throws JAXBException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeEmpty.xsd"));
+        removeGMLBaseTypes(types);
+        assertEquals(1, types.size());
+        assertEquals(simpleTypeEmpty, types.get(0));
+    }
+
+    @Test
+    public void testReadSimpleFeatureEmpty2() throws JAXBException {
+        final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        reader.setSkipStandardObjectProperties(false);
+        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeEmpty.xsd"));
+        removeGMLBaseTypes(types);
+        assertEquals(1, types.size());
+
+        //TODO we should check all properties
+        final FeatureType type = types.get(0);
+        final PropertyDescriptor idesc = type.getDescriptor("identifier");
+        assertNotNull(idesc);
+        final PropertyType itype = idesc.getType();
+        assertTrue(itype instanceof ComplexType);
+        assertEquals("CodeWithAuthorityType", itype.getName().getLocalPart());
+        final ComplexType ct = (ComplexType) itype;
+        assertEquals(2, ct.getDescriptors().size());
+        
     }
 
     @Test

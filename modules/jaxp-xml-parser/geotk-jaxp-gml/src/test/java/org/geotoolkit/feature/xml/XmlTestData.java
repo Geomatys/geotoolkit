@@ -69,6 +69,7 @@ public class XmlTestData {
     public static SimpleFeatureType simpleTypeBasic;
     public static SimpleFeatureType simpleTypeFull;
     public static FeatureType simpleTypeWithAtts;
+    public static FeatureType simpleTypeEmpty;
     public static SimpleFeature simpleFeatureFull;
     public static SimpleFeature simpleFeature1;
     public static SimpleFeature simpleFeature2;
@@ -185,6 +186,14 @@ public class XmlTestData {
         ftb.add(new DefaultName(GML_32_NAMESPACE,"eleString"),            String.class);
         ftb.add(new DefaultName(GML_32_NAMESPACE,"eleInteger"),           Integer.class);
         simpleTypeWithAtts = ftb.buildFeatureType();
+
+        ftb.reset();
+        ftb.setName(GML_32_NAMESPACE,"TestSimple");
+        simpleTypeEmpty = ftb.buildFeatureType();
+
+        ftb.reset();
+        ftb.setName(GML_32_NAMESPACE,"TestSimple");
+        simpleTypeEmpty = ftb.buildFeatureType();
 
 
         ////////////////////////////////////////////////////////////////////////
