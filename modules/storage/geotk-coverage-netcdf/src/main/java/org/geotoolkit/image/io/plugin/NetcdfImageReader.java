@@ -37,6 +37,7 @@ import java.net.URI;
 import java.io.File;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.awt.geom.AffineTransform;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import javax.imageio.IIOException;
@@ -63,6 +64,8 @@ import ucar.nc2.NetcdfFile;
 
 import org.opengis.coverage.grid.GridEnvelope;
 
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.image.io.Protocol;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.FileImageReader;
@@ -75,10 +78,13 @@ import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.DimensionManager;
-import org.geotoolkit.internal.image.io.IIOImageHelper;
+import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.NetcdfVariable;
+import org.geotoolkit.internal.image.io.SupportFiles;
+import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.referencing.adapters.NetcdfCRS;
 import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
@@ -779,6 +785,43 @@ public class NetcdfImageReader extends FileImageReader implements
     }
 
     /**
+     * Creates metadata from {@code .tfw} and {@code .prj} files, if they are present.
+     * This is used as a workaround for NetCDF files with insufficient information in
+     * global attributes. If there is no {@code .tfw} file, then this method returns
+     * {@code null}.
+     */
+    private SpatialMetadata createMetadataFromWorldFiles(final int imageIndex) throws IOException {
+        AffineTransform gridToCRS = null;
+        CoordinateReferenceSystem crs = null;
+        Object input = IOUtilities.changeExtension(this.input, "tfw");
+        if (input != null) try {
+            gridToCRS = SupportFiles.parseTFW(IOUtilities.open(input), input);
+        } catch (FileNotFoundException e) {
+            // Ignore. TODO: refactor in Apache SIS in order to check if file exists.
+        }
+        input = IOUtilities.changeExtension(this.input, "prj");
+        if (input != null) try {
+            crs = PrjFiles.read(IOUtilities.open(input), true);
+        } catch (FileNotFoundException e) {
+            // Ignore. TODO: refactor in Apache SIS in order to check if file exists.
+        }
+        if (gridToCRS != null || crs != null) {
+            final SpatialMetadata metadata = new SpatialMetadata(false, this, null);
+            if (gridToCRS != null) {
+                final int width  = getWidth (imageIndex);
+                final int height = getHeight(imageIndex);
+                new GridDomainAccessor(metadata).setAll(gridToCRS, new Rectangle(width, height),
+                        null, PixelOrientation.UPPER_LEFT);
+            }
+            if (crs != null) {
+                new ReferencingBuilder(metadata).setCoordinateReferenceSystem(crs);
+            }
+            return metadata;
+        }
+        return null;
+    }
+
+    /**
      * Creates a new stream or image metadata. This method is invoked automatically when first
      * needed.
      *
@@ -793,6 +836,14 @@ public class NetcdfImageReader extends FileImageReader implements
          */
         if (imageIndex < 0) {
             return new NetcdfMetadata(this, dataset);
+        } else {
+            final SpatialMetadata metadata = createMetadataFromWorldFiles(imageIndex);
+            if (metadata != null) {
+                return metadata;
+            }
+            // TODO: we should try to read other information too. For now we presume
+            // that when we need this workaround, the NetCDF metadata were very poor
+            // anyway.
         }
         /*
          * If the image index is used for navigating through a third dimension, then the
