@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -69,6 +70,7 @@ import org.geotoolkit.feature.type.ModifiableFeatureTypeFactory;
 import org.geotoolkit.feature.type.ModifiableFeaturetype;
 import org.geotoolkit.feature.type.ModifiableType;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.xsd.xml.v2001.Annotated;
 import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroup;
@@ -204,6 +206,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     }
 
 
+    private boolean skipStandardObjectProperties = true;
     private final Map<String, Schema> knownSchemas = new HashMap<>();
     private final Map<String,String> locationMap = new HashMap<>();
 
@@ -565,8 +568,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                     }
                 }
 
-                finalType.getDescriptors().addAll(getGroupAttributes(namespace, ext.getSequence()));
-
                 //read attributes
                 final List<Annotated> attexts = ext.getAttributeOrAttributeGroup();
                 if(attexts!=null){
@@ -578,6 +579,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                         }
                     }
                 }
+                
+                //sequence attributes
+                finalType.getDescriptors().addAll(getGroupAttributes(namespace, ext.getSequence()));
             }
 
             //TODO restrictions
@@ -615,9 +619,25 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
         }
 
+        removeAttributes(finalType, Utils.GML_ABSTRACT_FEATURE_PROPERTIES);
+
+        //remove standard object properties if requested
+        if(skipStandardObjectProperties){
+            removeAttributes(finalType, Utils.GML_STANDARD_OBJECT_PROPERTIES);
+        }
+
         finalType.rebuildPropertyMap();
 
         return finalType;
+    }
+
+    private static void removeAttributes(ModifiableType type, Set<Name> propNames){
+        final List<PropertyDescriptor> descs = type.getDescriptors();
+        for(int i=descs.size()-1;i>=0;i--){
+            if(propNames.contains(descs.get(i).getName())){
+                descs.remove(i);
+            }
+        }
     }
 
     private List<AttributeDescriptor> getGroupAttributes(String namespace, Group group) throws SchemaException {

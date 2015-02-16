@@ -79,11 +79,15 @@ public class Utils {
     private static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
     private static final String GML_321_NAMESPACE = "http://www.opengis.net/gml/3.2";
     public static final Set<Name> GML_FEATURE_TYPES;
+    public static final Set<Name> GML_STANDARD_OBJECT_PROPERTIES;
+    public static final Set<Name> GML_ABSTRACT_FEATURE_PROPERTIES;
     static{
         timestampFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
 
         GML_FEATURE_TYPES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new Name[]{
+            //3.1.1
+            new DefaultName(GML_311_NAMESPACE, "AbstractFeatureType"),
             new DefaultName(GML_311_NAMESPACE, "AbstractFeatureCollection"),
             new DefaultName(GML_311_NAMESPACE, "FeatureCollection"),
             new DefaultName(GML_311_NAMESPACE, "AbstractCoverage"),
@@ -92,6 +96,8 @@ public class Utils {
             new DefaultName(GML_311_NAMESPACE, "Observation"),
             new DefaultName(GML_311_NAMESPACE, "DirectedObservation"),
             new DefaultName(GML_311_NAMESPACE, "DirectedObservationAtDistance"),
+            //3.2.1
+            new DefaultName(GML_321_NAMESPACE, "AbstractFeatureType"),
             new DefaultName(GML_321_NAMESPACE, "AbstractFeatureCollection"),
             new DefaultName(GML_321_NAMESPACE, "FeatureCollection"),
             new DefaultName(GML_321_NAMESPACE, "AbstractCoverage"),
@@ -100,6 +106,30 @@ public class Utils {
             new DefaultName(GML_321_NAMESPACE, "Observation"),
             new DefaultName(GML_321_NAMESPACE, "DirectedObservation"),
             new DefaultName(GML_321_NAMESPACE, "DirectedObservationAtDistance")
+        })));
+
+        GML_STANDARD_OBJECT_PROPERTIES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new Name[]{
+            //3.1.1
+            new DefaultName(GML_311_NAMESPACE, "metaDataProperty"),
+            new DefaultName(GML_311_NAMESPACE, "description"),
+            new DefaultName(GML_311_NAMESPACE, "name"),
+            //3.2.1
+            new DefaultName(GML_321_NAMESPACE, "metaDataProperty"),
+            new DefaultName(GML_321_NAMESPACE, "description"),
+            new DefaultName(GML_321_NAMESPACE, "descriptionReference"),
+            new DefaultName(GML_321_NAMESPACE, "name"),
+            new DefaultName(GML_321_NAMESPACE, "identifier")
+        })));
+
+        GML_ABSTRACT_FEATURE_PROPERTIES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new Name[]{
+            //3.1.1
+            new DefaultName(GML_311_NAMESPACE, "@id"),
+            new DefaultName(GML_311_NAMESPACE, "boundedBy"),
+            new DefaultName(GML_311_NAMESPACE, "location"),
+            //3.2.1
+            new DefaultName(GML_321_NAMESPACE, "@id"),
+            new DefaultName(GML_321_NAMESPACE, "boundedBy"),
+            new DefaultName(GML_321_NAMESPACE, "location")
         })));
 
     }

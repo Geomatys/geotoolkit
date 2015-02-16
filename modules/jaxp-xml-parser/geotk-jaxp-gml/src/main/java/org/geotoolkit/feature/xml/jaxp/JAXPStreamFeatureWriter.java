@@ -212,9 +212,42 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
         }
 
+        writeAttributeProperties(feature);
+
         writeComplexProperties(feature);
 
         writer.writeEndElement();
+    }
+
+    private void writeAttributeProperties(final ComplexAttribute feature) throws XMLStreamException {
+
+        final ComplexType type = feature.getType();
+
+        //write properties in the type order
+        for(final PropertyDescriptor desc : type.getDescriptors()){
+            final Collection<Property> props = feature.getProperties(desc.getName());
+            for (Property a : props) {
+                final Object valueA = a.getValue();
+                final Name nameA = a.getName();
+                String nameProperty = nameA.getLocalPart();
+                String namespaceProperty = nameA.getNamespaceURI();
+
+                if(!isAttributeProperty(nameA)) continue;
+
+                //remove the @
+                nameProperty = nameProperty.substring(1);
+
+                String value = Utils.getStringValue(valueA);
+                if (value != null) {
+                    if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
+                        writer.writeAttribute(namespaceProperty, nameProperty, value);
+                    } else {
+                        writer.writeAttribute(nameProperty, value);
+                    }
+                }
+            }
+        }
+
     }
 
     private void writeComplexProperties(final ComplexAttribute feature) throws XMLStreamException {
@@ -230,6 +263,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 final Name nameA = a.getName();
                 final String nameProperty = nameA.getLocalPart();
                 String namespaceProperty = nameA.getNamespaceURI();
+
+                if(isAttributeProperty(nameA)) continue;
 
                 if (a instanceof ComplexAttribute) {
                     if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
@@ -496,4 +531,10 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             streamWriter.writeEndElement();
         }
     }
+
+
+    private static boolean isAttributeProperty(Name name){
+        return name.getLocalPart().charAt(0) == '@';
+    }
+
 }

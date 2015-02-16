@@ -82,7 +82,8 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     /**
      * Static variables refering to GML model.
      */
-    public static final String GML_NAMESPACE = "http://www.opengis.net/gml";
+    public static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
+    public static final String GML_32_NAMESPACE = "http://www.opengis.net/gml/3.2";
     public static final String GML_NAME = "name";
     public static final String GML_DESCRIPTION = "description";
 
@@ -610,9 +611,9 @@ public abstract class AbstractFeatureStore extends FeatureStore {
 
     public static Name ensureGMLNS(final String namespace, final String local){
         if(local.equals(GML_NAME)){
-            return new DefaultName(GML_NAMESPACE, GML_NAME);
+            return new DefaultName(GML_311_NAMESPACE, GML_NAME);
         }else if(local.equals(GML_DESCRIPTION)){
-            return new DefaultName(GML_NAMESPACE, GML_DESCRIPTION);
+            return new DefaultName(GML_311_NAMESPACE, GML_DESCRIPTION);
         }else{
             return new DefaultName(namespace, local);
         }
@@ -627,10 +628,10 @@ public abstract class AbstractFeatureStore extends FeatureStore {
             adb.reset();
             adb.copy((AttributeDescriptor) desc);
             if(desc.getName().getLocalPart().equals(GML_NAME)){
-                adb.setName(GML_NAMESPACE, GML_NAME);
+                adb.setName(GML_311_NAMESPACE, GML_NAME);
                 ftb.add(adb.buildDescriptor());
             }else if(desc.getName().getLocalPart().equals(GML_DESCRIPTION)){
-                adb.setName(GML_NAMESPACE, GML_DESCRIPTION);
+                adb.setName(GML_311_NAMESPACE, GML_DESCRIPTION);
                 ftb.add(adb.buildDescriptor());
             }else{
                 ftb.add(desc);

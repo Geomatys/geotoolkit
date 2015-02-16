@@ -20,7 +20,7 @@ package org.geotoolkit.data.om;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashMap;
 import java.util.Map;
-import static org.geotoolkit.data.AbstractFeatureStore.GML_NAMESPACE;
+import static org.geotoolkit.data.AbstractFeatureStore.GML_311_NAMESPACE;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.FeatureType;
@@ -35,8 +35,8 @@ public class OMFeatureTypes {
     private static final String OM_NAMESPACE = "http://www.opengis.net/sampling/1.0";
     //protected static final Name OM_TN_SAMPLINGPOINT = new DefaultName(OM_NAMESPACE, "SamplingPoint");
 
-    protected static final Name ATT_DESC     = new DefaultName(GML_NAMESPACE, "description");
-    protected static final Name ATT_NAME     = new DefaultName(GML_NAMESPACE, "name");
+    protected static final Name ATT_DESC     = new DefaultName(GML_311_NAMESPACE, "description");
+    protected static final Name ATT_NAME     = new DefaultName(GML_311_NAMESPACE, "name");
     protected static final Name ATT_SAMPLED  = new DefaultName(OM_NAMESPACE, "sampledFeature");
     protected static final Name ATT_POSITION = new DefaultName(OM_NAMESPACE, "position");
 

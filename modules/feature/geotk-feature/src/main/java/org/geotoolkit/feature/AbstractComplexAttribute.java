@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import java.util.Set;
 import org.apache.sis.io.TableAppender;
@@ -199,6 +200,39 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
 
         return sb.toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Property)) {
+            return false;
+        }
+
+        Property other = (Property) obj;
+
+        final PropertyDescriptor descriptor = getDescriptor();
+        if (!Objects.equals(descriptor, other.getDescriptor())) {
+            return false;
+        }
+        final PropertyType type = getType();
+        if (!Objects.equals(type, other.getType())) {
+            return false;
+        }
+        final Object value = getValue();
+        final Object otherValue = other.getValue();
+        if(value instanceof Collection && otherValue instanceof Collection){
+            //order doesn't matter, TODO we should do a loop on properties from type
+            return ((Collection)value).containsAll((Collection) otherValue) &&
+                    ((Collection)otherValue).containsAll((Collection) value);
+        }else{
+            return Objects.deepEquals(value, other.getValue());
+        }
+    }
+
+
 
 
     private static final String BLANCK = "\u00A0\u00A0\u00A0\u00A0";

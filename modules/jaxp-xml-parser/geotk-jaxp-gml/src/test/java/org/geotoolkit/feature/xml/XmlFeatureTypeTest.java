@@ -174,9 +174,8 @@ public class XmlFeatureTypeTest {
             }
         }
 
-        System.out.println(type);
-//        assertNotNull(type);
-//        assertEquals(6, type.getDescriptors().size());
+        assertNotNull(type);
+        assertEquals(simpleTypeWithAtts, types.get(0));
 
     }
 

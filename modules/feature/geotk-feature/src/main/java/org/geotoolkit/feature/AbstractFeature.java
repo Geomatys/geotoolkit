@@ -178,6 +178,15 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
 
     @Override
     public void setPropertyValue(String name, Object value) throws IllegalArgumentException {
-        getProperty(name).setValue(value);
+        Property prop = getProperty(name);
+        if(prop==null){
+            final PropertyDescriptor desc = getType().getDescriptor(name);
+            if(desc==null){
+                throw new IllegalArgumentException("No property for name : "+name);
+            }
+            prop = FeatureUtilities.defaultProperty(desc);
+            getProperties().add(prop);
+        }
+        prop.setValue(value);
     }
 }

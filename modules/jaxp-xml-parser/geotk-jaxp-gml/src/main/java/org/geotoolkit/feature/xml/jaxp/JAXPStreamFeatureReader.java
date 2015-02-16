@@ -74,6 +74,7 @@ import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.Numbers;
+import org.geotoolkit.feature.Attribute;
 
 
 /**
@@ -312,6 +313,19 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
          */
         final Map<Name,Property> namedProperties = new LinkedHashMap<>();
         final Collection<Property> propertyContainer = new ArrayList<>();
+
+        //read attributes
+        final int nbAtts = reader.getAttributeCount();
+        for(int i=0;i<nbAtts;i++){
+            final QName attName = reader.getAttributeName(i);
+            final PropertyDescriptor pd = featureType.getDescriptor("@"+attName.getLocalPart());
+            if(pd!=null){
+                final String attVal = reader.getAttributeValue(i);
+                final Attribute att = FF.createAttribute(ObjectConverters.convert(attVal, pd.getType().getBinding()), (AttributeDescriptor) pd, null);
+                namedProperties.put(pd.getName(),att);
+                propertyContainer.add(att);
+            }
+        }
 
         while (reader.hasNext()) {
             int event = reader.next();

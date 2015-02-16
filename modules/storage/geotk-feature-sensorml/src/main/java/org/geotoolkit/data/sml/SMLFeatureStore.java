@@ -140,9 +140,9 @@ public class SMLFeatureStore extends AbstractFeatureStore {
 
 
     // Shared attributes
-    private static final Name ATT_DESC        = new DefaultName(GML_NAMESPACE, "description");
-    private static final Name ATT_NAME        = new DefaultName(GML_NAMESPACE, "name");
-    private static final Name ATT_CODESPACE   = new DefaultName(GML_NAMESPACE, "codespace");
+    private static final Name ATT_DESC        = new DefaultName(GML_311_NAMESPACE, "description");
+    private static final Name ATT_NAME        = new DefaultName(GML_311_NAMESPACE, "name");
+    private static final Name ATT_CODESPACE   = new DefaultName(GML_311_NAMESPACE, "codespace");
     private static final Name ATT_KEYWORDS    = new DefaultName(SML_NAMESPACE, "keywords");
     private static final Name ATT_KEYWORD     = new DefaultName(SML_NAMESPACE, "keyword");
     private static final Name ATT_LOCATION    = new DefaultName(SML_NAMESPACE, "location");

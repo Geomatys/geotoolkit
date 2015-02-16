@@ -475,6 +475,23 @@ public class FeatureTypeBuilder {
             final boolean nillable, final Map<Object,Object> userData) {
         return add(name,binding,null,min,max,nillable,userData);
     }
+    /**
+     *
+     * @param name
+     * @param binding
+     * @param min
+     * @param max
+     * @param nillable
+     * @param defaultValue
+     * @param userData
+     * @return the created AttributeDescriptor
+     */
+    public AttributeDescriptor add(final Name name, final Class binding, final int min, final int max,
+            final boolean nillable, Object defaultValue, final Map<Object,Object> userData) {
+        final AttributeDescriptor desc = attributeDescBuilder.create(name, binding, null, min, max, nillable, defaultValue,userData);
+        add(desc);
+        return desc;
+    }
 
     /**
      * Adds a new geometric attribute w/ provided name, class, and spatial
