@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import javax.media.jai.Histogram;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
@@ -139,7 +141,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * to define an applet of black colors to replace with alpha data.
      */
     private static final int COLOR_TOLERANCE = 13;
-
+    
     public DefaultRasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){
         super(service,symbol,context);
     }
@@ -177,7 +179,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final GridCoverageReader reader = ref.acquireReader();
             final Envelope dataBBox = reader.getGridGeometry(ref.getImageIndex()).getEnvelope();
             ref.recycle(reader);
-            final Envelope paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, bounds);
+            final GeneralEnvelope paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, bounds);
+            
+            //-- Check if projected coverage intersect view area.
+            if (paramEnvelope.isEmpty()) {
+                LOGGER.log(Level.FINE, "Current Coverage "+projectedCoverage.getLayer().getName()+" doesn't intersect renderer requested area.");
+                return;
+            }
             assert paramEnvelope.getCoordinateReferenceSystem() != null : "DefaultRasterSymbolizerRenderer : CRS from param envelope cannot be null.";
             final double[] paramRes = new double[paramEnvelope.getDimension()];
             Arrays.fill(paramRes, 1);
@@ -185,9 +193,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //-- todo : resolution in static method in referencingUtilities
             //-- Define new resolution value adapted for paramEnvelope crs
             assert bounds.getDimension() == 2 : "DefaultRasterSymbolizerRenderer : displays bounds will be able to have dimension = 2.";
-            final int displayWidth = (int) ((bounds.getSpan(0) + resolution[0] - 1) / resolution[0]);
+//            final int displayWidth = (int) ((bounds.getSpan(0) + resolution[0] - 1) / resolution[0]);
+            final int displayWidth = (int) StrictMath.ceil(bounds.getSpan(0) / resolution[0]);
             final Envelope targetBounds = CRS.transform(bounds, CRSUtilities.getCRS2D(paramEnvelope.getCoordinateReferenceSystem()));
             final double newResolution = targetBounds.getSpan(0) / displayWidth;
+            assert newResolution > 0 : "DefaultRasterSymbolizerRenderer : new resolution must be positive.";
             //----------------- end new resolution computing ---------------------
             
             final int minPOrdi = CoverageUtilities.getMinOrdinate(paramEnvelope.getCoordinateReferenceSystem());
@@ -213,14 +223,16 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 //which causes the disjoint domain exception
                 final GeneralEnvelope objCovEnv = new GeneralEnvelope(CRS.transform(layerBounds, bounds.getCoordinateReferenceSystem()));
                 objCovEnv.intersect(bounds);
-                if(objCovEnv.isEmpty()){
-                    return; //the coverage envelope does not intersect the canvas envelope.
+                if (objCovEnv.isEmpty()) {
+                    LOGGER.log(Level.FINE, "Current Coverage "+projectedCoverage.getLayer().getName()+" doesn't intersect renderer requested area.");
+                    return; //-- the coverage envelope does not intersect the canvas envelope.
                 }
                 param.setEnvelope(objCovEnv);
                 try {
-                    dataCoverage = projectedCoverage.getCoverage(param);
+                    dataCoverage      = projectedCoverage.getCoverage(param);
                     elevationCoverage = projectedCoverage.getElevationCoverage(param);
                 } catch (DisjointCoverageDomainException exd) {
+                    LOGGER.log(Level.FINE, "Current Coverage "+projectedCoverage.getLayer().getName()+" doesn't intersect renderer requested area.");
                     //we tried
                     return;
                 }

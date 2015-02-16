@@ -309,7 +309,7 @@ public strictfp class ThirdPartyMetaDataReader {
                     case Byte.SIZE : {
                         min = 0;
                         max = 255;
-                        typeClass = Byte.class;
+                        typeClass = Integer.class;
                         break;
                     }
                     case Short.SIZE : {
@@ -320,7 +320,7 @@ public strictfp class ThirdPartyMetaDataReader {
                             min = 0;
                             max = 0xFFFF;
                         }
-                        typeClass = Short.class;
+                        typeClass = Integer.class;
                         break;
                     }
                     case Integer.SIZE : {
@@ -328,12 +328,13 @@ public strictfp class ThirdPartyMetaDataReader {
                             //-- Float
                             min = Float.MIN_VALUE;
                             max = Float.MAX_VALUE;
+                            typeClass = Float.class;
                         } else {
                             //-- integer
                             min = Integer.MIN_VALUE;
                             max = Integer.MAX_VALUE;
+                            typeClass = Integer.class;
                         }
-                        typeClass = Integer.class;
                         break;
                     }
                     case Double.SIZE : {
@@ -351,23 +352,21 @@ public strictfp class ThirdPartyMetaDataReader {
         //-- in case where min and max sample values are define in tiff metadata.
         if (typeClass == null) {
             switch (bitsPerSamples) {
-                case Byte.SIZE : {
-                    typeClass = Byte.class;
-                    break;
-                }
-                case Short.SIZE : {
-                    typeClass = Short.class;
-                    break;
-                }
-                case Integer.SIZE : {
-                    typeClass = Integer.class;
-                    break;
-                }
                 case Double.SIZE : {
                     typeClass = Double.class;
                     break;
                 }
-                default : throw new IllegalStateException("Unknow sample type");
+                default : {
+                    if (sampleFormat == 3) {
+                        //-- Float
+                        assert bitsPerSamples == Float.SIZE : "ThirdPartyMetadataReader : bitsPerSample == Integer.size expected, found bitsPerSample = "+bitsPerSamples;
+                        typeClass = Float.class;
+                    } else {
+                        //-- integer
+                        typeClass = Integer.class;
+                    }
+                    break;
+                }
             }
         }
         
