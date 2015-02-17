@@ -46,6 +46,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.*;
@@ -237,6 +238,22 @@ public class XmlFeatureTest {
     }
 
     @Test
+    public void testWriteFeatureWithNil() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException{
+
+        final File temp = File.createTempFile("gml", ".xml");
+        temp.deleteOnExit();
+        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter("3.2.1", "1.1.0", null);
+        writer.write(nilFeature, temp);
+        writer.dispose();
+
+        String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/FeatureWithNil.xml"));
+        expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
+        DomCompare.compare(expResult, temp);
+    }
+
+
+    @Test
     public void testWriteSimpleFeatureElement() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException, TransformerConfigurationException, TransformerException{
         final File temp = File.createTempFile("gml", ".xml");
@@ -254,7 +271,7 @@ public class XmlFeatureTest {
         xformer.transform(source, resultxml);
 
 
-        String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
+        String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureDom.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
         DomCompare.compare(expResult, temp);
     }

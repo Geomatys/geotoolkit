@@ -214,6 +214,16 @@ public class XmlFeatureTypeTest {
     }
 
     @Test
+    public void testReadTypeWithNil() throws JAXBException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/TypeWithNil.xsd"));
+        removeGMLBaseTypes(types);
+        assertEquals(1, types.size());
+        assertEquals(typeWithNil, types.get(0));
+    }
+
+    @Test
     public void testWriteSimpleFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
         final File temp = File.createTempFile("gml", ".xml");
         temp.deleteOnExit();

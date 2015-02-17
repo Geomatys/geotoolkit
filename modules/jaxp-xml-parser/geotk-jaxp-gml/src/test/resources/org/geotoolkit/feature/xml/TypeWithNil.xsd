@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <xsd:schema elementFormDefault="qualified" 
     targetNamespace="http://www.opengis.net/gml/3.2"
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <xsd:import schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd" namespace="http://www.opengis.net/gml/3.2"/>
     <xsd:element xmlns:gml="http://www.opengis.net/gml/3.2" name="TestSimple" type="gml:TestSimpleType" substitutionGroup="gml:_Feature"/>
     <xsd:complexType name="TestSimpleType">
         <xsd:complexContent>
             <xsd:extension xmlns:gml="http://www.opengis.net/gml/3.2" base="gml:AbstractFeatureType" >
-                <xsd:attribute name="attString" type="string" default="hello"/>
-                <xsd:attribute name="attInteger" type="xsd:integer" default="23"/>
                 <xsd:sequence>
-                    <xsd:element name="ID"                  maxOccurs="1" minOccurs="1" nillable="true" type="xsd:integer"/>
-                    <xsd:element name="eleString"           maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>
-                    <xsd:element name="eleInteger"          maxOccurs="1" minOccurs="1" nillable="true" type="xsd:integer"/>
+                    <xsd:element name="record" minOccurs="0" maxOccurs="1" nillable="true" type="gml:SubRecordType"/>
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="SubRecordType">
+            <xsd:sequence>
+                <xsd:element name="attString" maxOccurs="1" minOccurs="1" nillable="false" type="xsd:string"/>
+            </xsd:sequence>
+            <xsd:attribute name="nilReason" type="gml:NilReasonType"/>
     </xsd:complexType>
 </xsd:schema>

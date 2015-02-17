@@ -41,6 +41,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -71,6 +72,7 @@ public class XmlTestData {
     public static FeatureType simpleTypeWithAtts;
     public static FeatureType simpleTypeEmpty;
     public static FeatureType simpleTypeEmpty2;
+    public static FeatureType typeWithNil;
     public static SimpleFeature simpleFeatureFull;
     public static SimpleFeature simpleFeature1;
     public static SimpleFeature simpleFeature2;
@@ -79,6 +81,7 @@ public class XmlTestData {
     public static Feature complexFeature;
     public static Feature featureWithAttributes;
     public static Feature emptyFeature;
+    public static Feature nilFeature;
 
     public static FeatureType multiGeomType;
 
@@ -182,8 +185,8 @@ public class XmlTestData {
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
-        ftb.add(new DefaultName(GML_32_NAMESPACE,"@attString"),           String.class,0,1,true,"hello",null);
-        ftb.add(new DefaultName(GML_32_NAMESPACE,"@attInteger"),          Integer.class,0,1,true,23,null);
+        ftb.add(new DefaultName(GML_32_NAMESPACE,"@attString"),           String.class,0,1,false,"hello",null);
+        ftb.add(new DefaultName(GML_32_NAMESPACE,"@attInteger"),          Integer.class,0,1,false,23,null);
         ftb.add(new DefaultName(GML_32_NAMESPACE,"ID"),                   Integer.class);
         ftb.add(new DefaultName(GML_32_NAMESPACE,"eleString"),            String.class);
         ftb.add(new DefaultName(GML_32_NAMESPACE,"eleInteger"),           Integer.class);
@@ -204,6 +207,16 @@ public class XmlTestData {
         ftb.add(identifierType, new DefaultName(GML_32_NAMESPACE,"identifier"), null, 0, 1, true, null);
         simpleTypeEmpty2 = ftb.buildFeatureType();
 
+        ftb.reset();
+        ftb.setName(GML_32_NAMESPACE,"SubRecordType");
+        ftb.add(new DefaultName(GML_32_NAMESPACE,"@nilReason"), String.class,0,1,false,null,null);
+        ftb.add(new DefaultName(GML_32_NAMESPACE,"attString"), String.class,1,1,false,null,null);
+        final ComplexType subRecordType = ftb.buildType();
+
+        ftb.reset();
+        ftb.setName(GML_32_NAMESPACE,"TestSimple");
+        ftb.add(subRecordType, new DefaultName(GML_32_NAMESPACE,"record"), null, 0, 1, true, null);
+        typeWithNil = ftb.buildFeatureType();
 
         ////////////////////////////////////////////////////////////////////////
         // FEATURES ////////////////////////////////////////////////////////////
@@ -346,6 +359,15 @@ public class XmlTestData {
         prop.getProperty("").setValue("some text");
         prop.getProperty("@codeBase").setValue("something");
         emptyFeature.getProperties().add(prop);
+
+        //feature with a nil complex property
+        nilFeature = FeatureUtilities.defaultFeature(typeWithNil, "id-156");
+        final ComplexAttribute propnil = (ComplexAttribute) FeatureUtilities.defaultProperty(typeWithNil.getDescriptor("record"));
+        final Attribute att = (Attribute) FeatureUtilities.defaultProperty(propnil.getType().getDescriptor("@nilReason"));
+        att.setValue("unknown");
+        propnil.getProperties().add(att);
+        nilFeature.getProperties().add(propnil);
+
 
     }
 

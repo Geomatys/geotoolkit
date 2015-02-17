@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gml:TestSimple xmlns:gml="http://www.opengis.net/gml/3.2" gml:id="id-156" gml:attString="some text" gml:attInteger="456" >
+<gml:TestSimple xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="id-156" gml:attString="some text" gml:attInteger="456" >
     <gml:ID>36</gml:ID>
     <gml:eleString>stringValue</gml:eleString>
     <gml:eleInteger>23</gml:eleInteger>

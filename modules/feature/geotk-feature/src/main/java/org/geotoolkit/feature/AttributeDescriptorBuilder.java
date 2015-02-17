@@ -374,14 +374,6 @@ public class AttributeDescriptorBuilder {
 
     public AttributeDescriptor create(final PropertyType at, final Name name, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, Object defaultValue, final Map<Object,Object> userData){
-        if(!nillable && defaultValue==null){
-            //search for the best default value.
-            try {
-                defaultValue = FeatureUtilities.defaultValue(at.getBinding());
-            } catch (Exception e) {
-                //do nothing
-            }
-        }
 
         final AttributeDescriptor desc;
         if(at instanceof GeometryType){

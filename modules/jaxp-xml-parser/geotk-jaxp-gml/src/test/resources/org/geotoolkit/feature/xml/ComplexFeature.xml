@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gml:Person xmlns:gml="http://www.opengis.net/gml" gml:id="id-0">
+<gml:Person xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="id-0">
     <gml:insuranceNumber>345678345</gml:insuranceNumber>
     <gml:lastName>Smith</gml:lastName>
     <gml:firstName>John</gml:firstName>

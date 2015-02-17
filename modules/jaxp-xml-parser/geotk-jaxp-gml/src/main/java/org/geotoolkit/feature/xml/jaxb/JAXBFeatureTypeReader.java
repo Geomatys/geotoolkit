@@ -740,6 +740,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         //find min/max occurences
         adb.setMinOccurs((use==null || "optional".equals(use)) ? 0 : 1);
         adb.setMaxOccurs(1);
+        adb.setNillable(false);
 
         //search in knowned types
         final Class c = Utils.getTypeFromQName(type);
@@ -807,7 +808,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
         adb.setNillable(attributeElement.isNillable());
 
-
         final String elementName = attributeElement.getName();
         if(elementName!=null){
             final Name attName = new DefaultName(namespace, elementName);
@@ -874,6 +874,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
 
         adb.setType(atb.buildType());
+
+
+
         return adb.buildDescriptor();
     }
 

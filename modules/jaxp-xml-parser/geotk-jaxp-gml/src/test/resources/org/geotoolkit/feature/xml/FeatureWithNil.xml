@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gml:TestSimple xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="id-156">
-    <gml:identifier gml:codeBase="something">some text</gml:identifier>
+    <gml:record xsi:nil="true" gml:nilReason="unknown" />
 </gml:TestSimple>

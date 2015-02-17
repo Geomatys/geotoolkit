@@ -72,6 +72,8 @@ import org.opengis.util.FactoryException;
  */
 public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeatureWriter {
 
+    private static final String XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
+
     /**
      * The pool of marshallers used for marshalling geometries.
      */
@@ -201,6 +203,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
             if (root) {
                 writer.writeNamespace("gml", gmlNamespace);
+                writer.writeNamespace("xsi", XSI_NAMESPACE);
                 if (!namespace.equals(gmlNamespace)) {
                     writer.writeNamespace(prefix.prefix, namespace);
                 }
@@ -212,16 +215,28 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
         }
 
-        writeAttributeProperties(feature);
-
         writeComplexProperties(feature);
 
         writer.writeEndElement();
     }
 
-    private void writeAttributeProperties(final ComplexAttribute feature) throws XMLStreamException {
+    /**
+     * Write atribute properties.
+     * If we found a nil reason than return is true
+     *
+     * TODO this is not a perfect way to know if a propery is null.
+     * but if we don't declare the property then we don't know the reason either...
+     *
+     *
+     * @param feature
+     * @return
+     * @throws XMLStreamException
+     */
+    private boolean writeAttributeProperties(final ComplexAttribute feature) throws XMLStreamException {
 
         final ComplexType type = feature.getType();
+
+        boolean nil = false;
 
         //write properties in the type order
         for(final PropertyDescriptor desc : type.getDescriptors()){
@@ -237,6 +252,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 //remove the @
                 nameProperty = nameProperty.substring(1);
 
+                if("nilReason".equals(nameProperty)) nil = true;
+
                 String value = Utils.getStringValue(valueA);
                 if (value != null) {
                     if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
@@ -248,6 +265,12 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
         }
 
+        if(nil){
+            //add the xsi:nill attribute
+            writer.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "nil","true");
+        }
+
+        return nil;
     }
 
     private void writeComplexProperties(final ComplexAttribute feature) throws XMLStreamException {
@@ -256,8 +279,9 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         if(isPrimitiveType(type)){
             //this type is in reality a single xml element with attributes
-            writeAttributeProperties(feature);
-            
+            final boolean isNil = writeAttributeProperties(feature);
+            if(isNil) return;
+
             //write the value
             Object value = "";
             for(Property prop : feature.getProperties()){
@@ -271,6 +295,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
 
         }else{
+            final boolean isNil = writeAttributeProperties(feature);
+            if(isNil) return;
 
             //write properties in the type order
             for(final PropertyDescriptor desc : type.getDescriptors()){
@@ -447,8 +473,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         writer.writeNamespace("gml", gmlNamespace);
         writer.writeNamespace("wfs", wfsNamespace);
         if (schemaLocation != null && !schemaLocation.equals("")) {
-            writer.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            writer.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
+            writer.writeNamespace("xsi", XSI_NAMESPACE);
+            writer.writeAttribute("xsi", XSI_NAMESPACE, "schemaLocation", schemaLocation);
         }
 
         /*
