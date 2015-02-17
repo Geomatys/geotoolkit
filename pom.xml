@@ -163,7 +163,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <!-- this profile is for javafx widgets -->
     <profile>
         <id>jdk8</id>
@@ -176,8 +176,8 @@
            Global properties.
        =========================================================== -->
   <properties>
-    <geoapi.version>4.0-SNAPSHOT</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>0.5-jdk7-SNAPSHOT</sis.version>
+    <geoapi.version>4.0-M02</geoapi.version> <!-- Must be same than the version used by SIS. -->
+    <sis.version>0.5-jdk7</sis.version>
     <derby.version>10.10.1.1</derby.version> <!-- If updated, need to search occurrences in APT files. -->
     <netcdf.version>4.3.21</netcdf.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
