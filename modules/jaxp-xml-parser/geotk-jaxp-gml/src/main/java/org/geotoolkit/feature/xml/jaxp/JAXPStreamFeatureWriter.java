@@ -254,143 +254,161 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         final ComplexType type = feature.getType();
 
-        //write properties in the type order
-        for(final PropertyDescriptor desc : type.getDescriptors()){
-            final Collection<Property> props = feature.getProperties(desc.getName());
-            for (Property a : props) {
-                final Object valueA = a.getValue();
-                final PropertyType typeA = a.getType();
-                final Name nameA = a.getName();
-                final String nameProperty = nameA.getLocalPart();
-                String namespaceProperty = nameA.getNamespaceURI();
+        if(isPrimitiveType(type)){
+            //this type is in reality a single xml element with attributes
+            writeAttributeProperties(feature);
+            
+            //write the value
+            Object value = "";
+            for(Property prop : feature.getProperties()){
+                if(prop.getName().getLocalPart().isEmpty()){
+                    value = prop.getValue();
+                    break;
+                }
+            }
+            
+            writer.writeCharacters(Utils.getStringValue(value));
 
-                if(isAttributeProperty(nameA)) continue;
 
-                if (a instanceof ComplexAttribute) {
-                    if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
-                        writer.writeStartElement(namespaceProperty, nameProperty);
+        }else{
+
+            //write properties in the type order
+            for(final PropertyDescriptor desc : type.getDescriptors()){
+                final Collection<Property> props = feature.getProperties(desc.getName());
+                for (Property a : props) {
+                    final Object valueA = a.getValue();
+                    final PropertyType typeA = a.getType();
+                    final Name nameA = a.getName();
+                    final String nameProperty = nameA.getLocalPart();
+                    String namespaceProperty = nameA.getNamespaceURI();
+
+                    if(isAttributeProperty(nameA)) continue;
+
+                    if (a instanceof ComplexAttribute) {
+                        if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
+                            writer.writeStartElement(namespaceProperty, nameProperty);
+                        } else {
+                            writer.writeStartElement(nameProperty);
+                        }
+                        writeComplexProperties((ComplexAttribute)a);
+                        writer.writeEndElement();
+
+                    } else if (valueA instanceof Collection && !(typeA instanceof GeometryType)) {
+                        for (Object value : (Collection)valueA) {
+                            if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
+                                writer.writeStartElement(namespaceProperty, nameProperty);
+                            } else {
+                                writer.writeStartElement(nameProperty);
+                            }
+                            writer.writeCharacters(Utils.getStringValue(value));
+                            writer.writeEndElement();
+                        }
+
+                    } else if (valueA != null && valueA.getClass().isArray() && !(typeA instanceof GeometryType)) {
+                        final int length = Array.getLength(valueA);
+                        for (int i = 0; i < length; i++){
+                            if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
+                                writer.writeStartElement(namespaceProperty, nameProperty);
+                            } else {
+                                writer.writeStartElement(nameProperty);
+                            }
+                            final Object value = Array.get(valueA, i);
+                            final String textValue;
+                            if (value != null && value.getClass().isArray()) { // matrix
+                                final StringBuilder sb = new StringBuilder();
+                                final int length2 = Array.getLength(value);
+                                for (int j = 0; j < length2; j++) {
+                                    final Object subValue = Array.get(value, j);
+                                    sb.append(Utils.getStringValue(subValue)).append(" ");
+                                }
+                                textValue = sb.toString();
+                            } else {
+                                textValue = Utils.getStringValue(value);
+                            }
+                            writer.writeCharacters(textValue);
+                            writer.writeEndElement();
+
+                        }
+
+                    } else if (valueA instanceof Map && !(typeA instanceof GeometryType)) {
+                        final Map<?,?> map = (Map)valueA;
+                        for (Entry<?,?> entry : map.entrySet()) {
+                            if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
+                                writer.writeStartElement(namespaceProperty, nameProperty);
+                            } else {
+                                writer.writeStartElement(nameProperty);
+                            }
+                            final Object key = entry.getKey();
+                            if (key != null) {
+                                writer.writeAttribute("name", (String)key);
+                            }
+                            writer.writeCharacters(Utils.getStringValue(entry.getValue()));
+                            writer.writeEndElement();
+                        }
+
+                    } else if (!(typeA instanceof GeometryType)) {
+                        String value = Utils.getStringValue(valueA);
+                        if (value != null || (value == null && !a.isNillable())) {
+
+                            if ((nameProperty.equals("name") || nameProperty.equals("description")) && !gmlNamespace.equals(namespaceProperty)) {
+                                namespaceProperty = gmlNamespace;
+                                LOGGER.finer("the property name and description of a feature must have the GML namespace");
+                            }
+                            if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
+                                writer.writeStartElement(namespaceProperty, nameProperty);
+                            } else {
+                                writer.writeStartElement(nameProperty);
+                            }
+                            if (value != null) {
+                                writer.writeCharacters(value);
+                            }
+                            writer.writeEndElement();
+                        }
+
+                    // we add the geometry
                     } else {
-                        writer.writeStartElement(nameProperty);
-                    }
-                    writeComplexProperties((ComplexAttribute)a);
-                    writer.writeEndElement();
 
-                } else if (valueA instanceof Collection && !(typeA instanceof GeometryType)) {
-                    for (Object value : (Collection)valueA) {
-                        if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
-                            writer.writeStartElement(namespaceProperty, nameProperty);
-                        } else {
-                            writer.writeStartElement(nameProperty);
-                        }
-                        writer.writeCharacters(Utils.getStringValue(value));
-                        writer.writeEndElement();
-                    }
-
-                } else if (valueA != null && valueA.getClass().isArray() && !(typeA instanceof GeometryType)) {
-                    final int length = Array.getLength(valueA);
-                    for (int i = 0; i < length; i++){
-                        if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
-                            writer.writeStartElement(namespaceProperty, nameProperty);
-                        } else {
-                            writer.writeStartElement(nameProperty);
-                        }
-                        final Object value = Array.get(valueA, i);
-                        final String textValue;
-                        if (value != null && value.getClass().isArray()) { // matrix
-                            final StringBuilder sb = new StringBuilder();
-                            final int length2 = Array.getLength(value);
-                            for (int j = 0; j < length2; j++) {
-                                final Object subValue = Array.get(value, j);
-                                sb.append(Utils.getStringValue(subValue)).append(" ");
+                        if (valueA != null) {
+                            if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
+                                writer.writeStartElement(namespaceProperty, nameProperty);
+                            } else {
+                                writer.writeStartElement(nameProperty);
                             }
-                            textValue = sb.toString();
-                        } else {
-                            textValue = Utils.getStringValue(value);
-                        }
-                        writer.writeCharacters(textValue);
-                        writer.writeEndElement();
-
-                    }
-
-                } else if (valueA instanceof Map && !(typeA instanceof GeometryType)) {
-                    final Map<?,?> map = (Map)valueA;
-                    for (Entry<?,?> entry : map.entrySet()) {
-                        if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
-                            writer.writeStartElement(namespaceProperty, nameProperty);
-                        } else {
-                            writer.writeStartElement(nameProperty);
-                        }
-                        final Object key = entry.getKey();
-                        if (key != null) {
-                            writer.writeAttribute("name", (String)key);
-                        }
-                        writer.writeCharacters(Utils.getStringValue(entry.getValue()));
-                        writer.writeEndElement();
-                    }
-
-                } else if (!(typeA instanceof GeometryType)) {
-                    String value = Utils.getStringValue(valueA);
-                    if (value != null || (value == null && !a.isNillable())) {
-
-                        if ((nameProperty.equals("name") || nameProperty.equals("description")) && !gmlNamespace.equals(namespaceProperty)) {
-                            namespaceProperty = gmlNamespace;
-                            LOGGER.finer("the property name and description of a feature must have the GML namespace");
-                        }
-                        if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
-                            writer.writeStartElement(namespaceProperty, nameProperty);
-                        } else {
-                            writer.writeStartElement(nameProperty);
-                        }
-                        if (value != null) {
-                            writer.writeCharacters(value);
-                        }
-                        writer.writeEndElement();
-                    }
-
-                // we add the geometry
-                } else {
-
-                    if (valueA != null) {
-                        if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
-                            writer.writeStartElement(namespaceProperty, nameProperty);
-                        } else {
-                            writer.writeStartElement(nameProperty);
-                        }
-                        final CoordinateReferenceSystem crs = ((GeometryType)typeA).getCoordinateReferenceSystem();
-                        final JAXBElement element;
-                        final MarshallerPool POOL;
-                        if ("3.1.1".equals(gmlVersion)) {
-                            final Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, crs);
-                            element = OBJECT_FACTORY.buildAnyGeometry(isoGeometry);
-                            POOL = GML_31_POOL;
-                        } else if ("3.2.1".equals(gmlVersion)) {
-                            AbstractGeometry gmlGeometry = null;
+                            final CoordinateReferenceSystem crs = ((GeometryType)typeA).getCoordinateReferenceSystem();
+                            final JAXBElement element;
+                            final MarshallerPool POOL;
+                            if ("3.1.1".equals(gmlVersion)) {
+                                final Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, crs);
+                                element = OBJECT_FACTORY.buildAnyGeometry(isoGeometry);
+                                POOL = GML_31_POOL;
+                            } else if ("3.2.1".equals(gmlVersion)) {
+                                AbstractGeometry gmlGeometry = null;
+                                try {
+                                    gmlGeometry = JTStoGeometry.toGML(gmlVersion, (com.vividsolutions.jts.geom.Geometry) valueA,  crs);
+                                } catch (FactoryException ex) {
+                                    LOGGER.log(Level.WARNING, "Factory exception when transforming JTS geometry to GML binding", ex);
+                                }
+                                element = GML32_FACTORY.buildAnyGeometry(gmlGeometry);
+                                POOL = GML_32_POOL;
+                            } else {
+                                throw new IllegalArgumentException("Unexpected GML version:" + gmlVersion);
+                            }
                             try {
-                                gmlGeometry = JTStoGeometry.toGML(gmlVersion, (com.vividsolutions.jts.geom.Geometry) valueA,  crs);
-                            } catch (FactoryException ex) {
-                                LOGGER.log(Level.WARNING, "Factory exception when transforming JTS geometry to GML binding", ex);
+                                final Marshaller marshaller;
+                                marshaller = POOL.acquireMarshaller();
+                                marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+                                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+                                marshaller.marshal(element, writer);
+                                POOL.recycle(marshaller);
+                            } catch (JAXBException ex) {
+                                LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
                             }
-                            element = GML32_FACTORY.buildAnyGeometry(gmlGeometry);
-                            POOL = GML_32_POOL;
-                        } else {
-                            throw new IllegalArgumentException("Unexpected GML version:" + gmlVersion);
+                            writer.writeEndElement();
                         }
-                        try {
-                            final Marshaller marshaller;
-                            marshaller = POOL.acquireMarshaller();
-                            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-                            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
-                            marshaller.marshal(element, writer);
-                            POOL.recycle(marshaller);
-                        } catch (JAXBException ex) {
-                            LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
-                        }
-                        writer.writeEndElement();
                     }
                 }
             }
         }
-
     }
 
 
@@ -533,8 +551,30 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     }
 
 
-    private static boolean isAttributeProperty(Name name){
-        return name.getLocalPart().charAt(0) == '@';
+    /**
+     *
+     * @param name
+     * @return true if property is an atribute, starts by a @
+     */
+    public static boolean isAttributeProperty(Name name){
+        final String localPart = name.getLocalPart();
+        return !localPart.isEmpty() && localPart.charAt(0) == '@';
+    }
+
+    /**
+     * XML can have primitive types with attributes.
+     * We decompose them in a complex type with an empty name attribute and @properties.
+     *
+     * @param type
+     * @return
+     */
+    public static boolean isPrimitiveType(ComplexType type){
+        for(PropertyDescriptor desc : type.getDescriptors()){
+            if(desc.getName().getLocalPart().isEmpty()){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

@@ -114,6 +114,18 @@ public class XmlFeatureTest {
     }
 
     @Test
+    public void testReadSimpleFeatureEmpty() throws JAXBException, IOException, XMLStreamException{
+        final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(simpleTypeEmpty2);
+        Object obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureEmpty.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof Feature);
+        Feature result = (Feature) obj;
+        assertEquals(emptyFeature, result);
+    }
+
+    @Test
     public void testReadSimpleFeatureOldEnc() throws JAXBException, IOException, XMLStreamException{
 
         final XmlFeatureReader readerGml = new JAXPStreamFeatureReader(simpleTypeFull);
@@ -205,6 +217,21 @@ public class XmlFeatureTest {
         writer.dispose();
 
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureWithAttribute.xml"));
+        expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
+        DomCompare.compare(expResult, temp);
+    }
+
+    @Test
+    public void testWriteSimpleFeaturePrimitiveWithAtts() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException{
+
+        final File temp = File.createTempFile("gml", ".xml");
+        temp.deleteOnExit();
+        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter("3.2.1", "1.1.0", null);
+        writer.write(emptyFeature, temp);
+        writer.dispose();
+
+        String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureEmpty.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
         DomCompare.compare(expResult, temp);
     }

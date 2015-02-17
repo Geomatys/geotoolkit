@@ -70,6 +70,7 @@ public class XmlTestData {
     public static SimpleFeatureType simpleTypeFull;
     public static FeatureType simpleTypeWithAtts;
     public static FeatureType simpleTypeEmpty;
+    public static FeatureType simpleTypeEmpty2;
     public static SimpleFeature simpleFeatureFull;
     public static SimpleFeature simpleFeature1;
     public static SimpleFeature simpleFeature2;
@@ -77,6 +78,7 @@ public class XmlTestData {
     public static FeatureCollection collectionSimple;
     public static Feature complexFeature;
     public static Feature featureWithAttributes;
+    public static Feature emptyFeature;
 
     public static FeatureType multiGeomType;
 
@@ -192,8 +194,15 @@ public class XmlTestData {
         simpleTypeEmpty = ftb.buildFeatureType();
 
         ftb.reset();
+        ftb.setName(GML_32_NAMESPACE,"identifier");
+        ftb.add(new DefaultName(GML_32_NAMESPACE,""), String.class,1,1,true,null);
+        ftb.add(new DefaultName(GML_32_NAMESPACE,"@codeBase"), String.class,1,1,true,null);
+        final ComplexType identifierType = ftb.buildType();
+
+        ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
-        simpleTypeEmpty = ftb.buildFeatureType();
+        ftb.add(identifierType, new DefaultName(GML_32_NAMESPACE,"identifier"), null, 0, 1, true, null);
+        simpleTypeEmpty2 = ftb.buildFeatureType();
 
 
         ////////////////////////////////////////////////////////////////////////
@@ -330,7 +339,14 @@ public class XmlTestData {
         featureWithAttributes.setPropertyValue("@attString", "some text");
         featureWithAttributes.setPropertyValue("@attInteger", 456);
 
-        
+
+        //feature with gml identifier property
+        emptyFeature = FeatureUtilities.defaultFeature(simpleTypeEmpty2, "id-156");
+        final ComplexAttribute prop = (ComplexAttribute) FeatureUtilities.defaultProperty(simpleTypeEmpty2.getDescriptor("identifier"));
+        prop.getProperty("").setValue("some text");
+        prop.getProperty("@codeBase").setValue("something");
+        emptyFeature.getProperties().add(prop);
+
     }
 
 }
