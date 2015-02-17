@@ -23,8 +23,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -472,8 +475,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         writer.writeNamespace("gml", gmlNamespace);
         writer.writeNamespace("wfs", wfsNamespace);
+        writer.writeNamespace("xsi", XSI_NAMESPACE);
         if (schemaLocation != null && !schemaLocation.equals("")) {
-            writer.writeNamespace("xsi", XSI_NAMESPACE);
             writer.writeAttribute("xsi", XSI_NAMESPACE, "schemaLocation", schemaLocation);
         }
 
@@ -491,10 +494,10 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         FeatureType type = featureCollection.getFeatureType();
         if (type != null && type.getName() != null) {
-            String namespace = type.getName().getNamespaceURI();
-            if (namespace != null && !(namespace.equals("http://www.opengis.net/gml") || namespace.equals("http://www.opengis.net/gml/3.2")) && !namespace.isEmpty()) {
-                Prefix prefix    = getPrefix(namespace);
-                writer.writeNamespace(prefix.prefix, namespace);
+            for(String n : listAllNamespaces(type)){
+                if (n != null && !(n.equals("http://www.opengis.net/gml") || n.equals("http://www.opengis.net/gml/3.2")) && !n.isEmpty()) {
+                    writer.writeNamespace(getPrefix(n).prefix, n);
+                }
             }
         }
          /*
@@ -534,6 +537,33 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             writer.close();
         }
 
+    }
+
+    private static Set<String> listAllNamespaces(PropertyType type){
+        final Set<String> ns = new HashSet<>();
+        final Set<Name> visited = new HashSet<>();
+        listAllNamespaces(type, ns, visited);
+        return ns;
+    }
+
+    private static void listAllNamespaces(PropertyType type, Set<String> ns, Set<Name> visited){
+        final Name name = type.getName();
+        if(visited.contains(name)){
+            //avoid cyclic loops
+            return;
+        }
+        visited.add(name);
+        String nsuri = type.getName().getNamespaceURI();
+        if(nsuri!=null) ns.add(nsuri);
+
+        if(type instanceof ComplexType){
+            final ComplexType ct = (ComplexType) type;
+            for(PropertyDescriptor pd : ct.getDescriptors()){
+                nsuri = pd.getName().getNamespaceURI();
+                if(nsuri!=null) ns.add(nsuri);
+                listAllNamespaces(pd.getType(), ns, visited);
+            }
+        }
     }
 
     private void writeBounds(final Envelope bounds, final XMLStreamWriter streamWriter) throws XMLStreamException {

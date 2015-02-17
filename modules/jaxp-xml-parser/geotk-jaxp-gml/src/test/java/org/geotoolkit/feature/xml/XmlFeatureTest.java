@@ -377,7 +377,7 @@ public class XmlFeatureTest {
         xformer.transform(source, resultxml);
 
 
-        String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml"));
+        String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimpleDom.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
 
         String s = temp.toString();
