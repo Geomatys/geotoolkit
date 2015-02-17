@@ -192,15 +192,21 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             
             //-- todo : resolution in static method in referencingUtilities
             //-- Define new resolution value adapted for paramEnvelope crs
-            assert bounds.getDimension() == 2 : "DefaultRasterSymbolizerRenderer : displays bounds will be able to have dimension = 2.";
+//            assert bounds.getDimension() == 2 : "DefaultRasterSymbolizerRenderer : displays bounds will be able to have dimension = 2.";
 //            final int displayWidth = (int) ((bounds.getSpan(0) + resolution[0] - 1) / resolution[0]);
-            final int displayWidth = (int) StrictMath.ceil(bounds.getSpan(0) / resolution[0]);
-            final Envelope targetBounds = CRS.transform(bounds, CRSUtilities.getCRS2D(paramEnvelope.getCoordinateReferenceSystem()));
+            final int minBOrdi = CRSUtilities.firstHorizontalAxis(paramEnvelope.getCoordinateReferenceSystem());
+            final CoordinateReferenceSystem bound2DCrs = CRSUtilities.getCRS2D(bounds.getCoordinateReferenceSystem());
+            final GeneralEnvelope bound2D = new GeneralEnvelope(bound2DCrs);
+            bound2D.setRange(0, bounds.getMinimum(minBOrdi), bounds.getMaximum(minBOrdi));
+            bound2D.setRange(1, bounds.getMinimum(minBOrdi + 1), bounds.getMaximum(minBOrdi + 1));
+            
+            final int displayWidth = (int) StrictMath.ceil(bound2D.getSpan(0) / resolution[0]);
+            final Envelope targetBounds = CRS.transform(bound2D, CRSUtilities.getCRS2D(paramEnvelope.getCoordinateReferenceSystem()));
             final double newResolution = targetBounds.getSpan(0) / displayWidth;
             assert newResolution > 0 : "DefaultRasterSymbolizerRenderer : new resolution must be positive.";
             //----------------- end new resolution computing ---------------------
             
-            final int minPOrdi = CoverageUtilities.getMinOrdinate(paramEnvelope.getCoordinateReferenceSystem());
+            final int minPOrdi = CRSUtilities.firstHorizontalAxis(paramEnvelope.getCoordinateReferenceSystem());
             paramRes[minPOrdi] = paramRes[minPOrdi + 1] = newResolution; 
             //-- Attention ici on affecte la meme valeur de resolution car pour 
             // le moment on a une seule et unique valeur pour l'ensemble du plan horizontal. 
@@ -217,17 +223,26 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 dataCoverage = projectedCoverage.getCoverage(param);
                 elevationCoverage = projectedCoverage.getElevationCoverage(param);
             } catch (DisjointCoverageDomainException ex) {
-                //LOGGER.log(Level.INFO, ex.getMessage());
 
                 //since the visible envelope can be much larger, we may obtain NaN when transforming the envelope
                 //which causes the disjoint domain exception
-                final GeneralEnvelope objCovEnv = new GeneralEnvelope(CRS.transform(layerBounds, bounds.getCoordinateReferenceSystem()));
-                objCovEnv.intersect(bounds);
-                if (objCovEnv.isEmpty()) {
+                //-- find intersection between layerBound and renderingContextBound into RENDERINGCONTEXT SPACE !!!
+                final GeneralEnvelope interRender = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(bounds, layerBounds);
+                if (interRender.isEmpty()) {
                     LOGGER.log(Level.FINE, "Current Coverage "+projectedCoverage.getLayer().getName()+" doesn't intersect renderer requested area.");
                     return; //-- the coverage envelope does not intersect the canvas envelope.
                 }
-                param.setEnvelope(objCovEnv);
+                //-- reproject intersection into COVERAGE SPACE
+                final GeneralEnvelope secondLayerBound = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, interRender);
+                if (interRender.isEmpty()) {
+                    LOGGER.log(Level.FINE, "Current Coverage "+projectedCoverage.getLayer().getName()+" doesn't intersect renderer requested area.");
+                    return; //-- the coverage envelope does not intersect the canvas envelope.
+                }
+                final CoordinateReferenceSystem paramCrs = (param.getCoordinateReferenceSystem() != null) ? param.getCoordinateReferenceSystem() : param.getEnvelope().getCoordinateReferenceSystem();
+                assert CRS.equalsIgnoreMetadata(secondLayerBound.getCoordinateReferenceSystem(), param.getCoordinateReferenceSystem()) 
+                       : "DefaultRasterSymbolizerRenderer : param Crs and layer Crs must be equals. Expected CRS = "+layerBounds.getCoordinateReferenceSystem()+". Found paramCrs = "+paramCrs;
+                
+                param.setEnvelope(secondLayerBound);
                 try {
                     dataCoverage      = projectedCoverage.getCoverage(param);
                     elevationCoverage = projectedCoverage.getElevationCoverage(param);
