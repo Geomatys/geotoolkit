@@ -118,6 +118,7 @@ class DefaultWritableDirectByteIterator extends DefaultDirectByteIterator {
      */
     @Override
     public void close() {
+        super.close();
         writableRenderedImage.releaseWritableTile(prectX, prectY);
     }
 
@@ -135,7 +136,6 @@ class DefaultWritableDirectByteIterator extends DefaultDirectByteIterator {
     @Override
     public void setSampleDouble(double value) {
         currentWritableDataArray[dataCursor] = (byte) Math.round(value);
-        super.close();
     }
 
     /**
