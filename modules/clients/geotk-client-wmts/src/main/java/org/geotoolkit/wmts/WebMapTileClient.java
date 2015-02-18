@@ -18,7 +18,9 @@ package org.geotoolkit.wmts;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +28,6 @@ import org.geotoolkit.client.AbstractCoverageClient;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageType;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.parameter.Parameters;
@@ -57,6 +58,18 @@ public class WebMapTileClient extends AbstractCoverageClient {
 
     private Capabilities capabilities;
     private DataNode rootNode = null;
+
+    /**
+     * Defines the timeout in milliseconds for the GetCapabilities request.
+     * default is 10 seconds.
+     */
+    private static final long TIMEOUT_GETCAPS = 10000L;
+
+    /**
+     * The request header map for this server
+     * that contains a set of key-value for HTTP header fields (user-agent, referer, accept-language...)
+     */
+    private final Map<String,String> requestHeaderMap = new HashMap<>();
 
     /**
      * Builds a web map server with the given server url and version.
@@ -140,10 +153,22 @@ public class WebMapTileClient extends AbstractCoverageClient {
     }
 
     /**
-     * Returns the {@linkplain AbstractWMSCapabilities capabilities} response for this
-     * request.
+     * Returns the {@linkplain Capabilities capabilities} response for this request.
+     *
+     * @return {@linkplain Capabilities capabilities} response but never {@code null}.
+     * @see {@link #getCapabilities(long)}
      */
     public Capabilities getCapabilities() {
+        return getCapabilities(TIMEOUT_GETCAPS);
+    }
+
+    /**
+     * Returns the {@linkplain Capabilities capabilities} response for this
+     * request.
+     *
+     * @param timeout Timeout in milliseconds
+     */
+    public Capabilities getCapabilities(final long timeout) {
 
         if (capabilities != null) {
             return capabilities;
@@ -152,8 +177,12 @@ public class WebMapTileClient extends AbstractCoverageClient {
         final Thread thread = new Thread() {
             @Override
             public void run() {
+                final GetCapabilitiesRequest getCaps =  createGetCapabilities();
+                //Filling the request header map from the map of the layer's server
+                final Map<String, String> headerMap = getRequestHeaderMap();
+                getCaps.getHeaderMap().putAll(headerMap);
                 try {
-                    capabilities = WMTSBindingUtilities.unmarshall(createGetCapabilities().getResponseStream(), getVersion());
+                    capabilities = WMTSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
@@ -168,11 +197,11 @@ public class WebMapTileClient extends AbstractCoverageClient {
         thread.start();
         final long start = System.currentTimeMillis();
         try {
-            thread.join(10000);
+            thread.join(timeout);
         } catch (InterruptedException ex) {
             LOGGER.log(Level.WARNING, "The thread to obtain GetCapabilities doesn't answer.", ex);
         }
-        if ((System.currentTimeMillis() - start) > 10000) {
+        if ((System.currentTimeMillis() - start) > timeout) {
             LOGGER.log(Level.WARNING, "TimeOut error, the server takes too much time to answer. ");
         }
 
@@ -216,6 +245,14 @@ public class WebMapTileClient extends AbstractCoverageClient {
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
+    }
+
+    /**
+     * Returns the request header map for this server.
+     * @return {@code Map}
+     */
+    public Map<String,String> getRequestHeaderMap() {
+        return requestHeaderMap;
     }
 
     @Override
