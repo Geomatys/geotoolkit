@@ -10,10 +10,7 @@
           - package         Also package source code.
           - sign-artifacts  Apply GPG signature on the JAR files.
      ======================================================================= -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <prerequisites>
@@ -28,7 +25,7 @@
   <groupId>org.geotoolkit</groupId>
   <artifactId>geotoolkit</artifactId>
   <packaging>pom</packaging>
-  <version>4.x-SNAPSHOT</version>
+  <version>4.0-M03-SNAPSHOT</version>
   <name>Geotoolkit.org</name>
   <url>http://www.geotoolkit.org/</url>
 
@@ -913,7 +910,7 @@
           </links>
 
           <!-- Enables the Javadoc tool to interpret a simple, one-argument
-               custom block tag tagname in doc comments. Note: <placement/>
+               custom block tag tagname in doc comments. Note: <placement />
                should be a combination of the letters Xaoptcmf. -->
           <tags>
             <tag><placement>t</placement> <name>goal</name>        <head>Maven goal:</head></tag>
