@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.ows.xml.v110.DescriptionType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -68,7 +67,7 @@ import org.geotoolkit.util.Utilities;
     "matrixHeight"
 })
 @XmlRootElement(name = "TileMatrix")
-public class TileMatrix extends DescriptionType {
+public class TileMatrix extends DescriptionType implements Comparable<TileMatrix>{
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
     private CodeType identifier;
@@ -327,6 +326,14 @@ public class TileMatrix extends DescriptionType {
         }
         return sb.toString();
 
+    }
+
+    @Override
+    public int compareTo(TileMatrix o) {
+        if(o==null){
+            return 1;
+        }
+        return Double.valueOf(this.getScaleDenominator()).compareTo(o.getScaleDenominator());
     }
 
 }
