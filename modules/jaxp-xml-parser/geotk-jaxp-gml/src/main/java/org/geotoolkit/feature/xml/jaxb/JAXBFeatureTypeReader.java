@@ -503,6 +503,15 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return false;
     }
 
+    public org.geotoolkit.feature.type.ComplexType getComplexType(Name name) throws SchemaException{
+        return getType(new QName(name.getNamespaceURI(), name.getLocalPart()));
+    }
+
+    public AttributeDescriptor getElementType(Name name) throws SchemaException{
+        final Element parentElement = findGlobalElement(new QName(name.getNamespaceURI(), name.getLocalPart()));
+        return elementToAttribute(parentElement, name.getNamespaceURI());
+    }
+
     private org.geotoolkit.feature.type.ComplexType getType(QName qname) throws SchemaException{
         final org.geotoolkit.feature.type.ComplexType ct = typeCache.get(qname);
         if(ct!=null) return ct;
