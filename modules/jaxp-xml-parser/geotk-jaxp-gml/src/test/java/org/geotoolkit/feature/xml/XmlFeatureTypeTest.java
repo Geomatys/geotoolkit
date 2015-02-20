@@ -178,7 +178,7 @@ public class XmlFeatureTypeTest {
         }
 
         assertNotNull(type);
-        assertEquals(simpleTypeWithAtts, types.get(0));
+        assertEquals(typeWithAtts, types.get(0));
 
     }
 
@@ -189,7 +189,7 @@ public class XmlFeatureTypeTest {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeEmpty.xsd"));
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
-        assertEquals(simpleTypeEmpty, types.get(0));
+        assertEquals(typeEmpty, types.get(0));
     }
 
     @Test

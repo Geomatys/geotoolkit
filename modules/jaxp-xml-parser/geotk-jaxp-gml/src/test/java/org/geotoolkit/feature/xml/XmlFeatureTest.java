@@ -104,7 +104,7 @@ public class XmlFeatureTest {
 
     @Test
     public void testReadSimpleFeatureWithAtts() throws JAXBException, IOException, XMLStreamException{
-        final XmlFeatureReader reader = new JAXPStreamFeatureReader(simpleTypeWithAtts);
+        final XmlFeatureReader reader = new JAXPStreamFeatureReader(typeWithAtts);
         Object obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureWithAttribute.xml"));
         reader.dispose();
@@ -116,14 +116,14 @@ public class XmlFeatureTest {
 
     @Test
     public void testReadSimpleFeatureEmpty() throws JAXBException, IOException, XMLStreamException{
-        final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(simpleTypeEmpty2);
+        final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(typeEmpty2);
         Object obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureEmpty.xml"));
         reader.dispose();
 
         assertTrue(obj instanceof Feature);
         Feature result = (Feature) obj;
-        assertEquals(emptyFeature, result);
+        assertEquals(featureEmpty, result);
     }
 
     @Test
@@ -223,13 +223,27 @@ public class XmlFeatureTest {
     }
 
     @Test
+    public void testWriteSimpleFeatureWithObjectProperty() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException{
+        final File temp = File.createTempFile("gml", ".xml");
+        temp.deleteOnExit();
+        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter("3.2.1", "1.1.0", null);
+        writer.write(featureWithObject, temp);
+        writer.dispose();
+
+        String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureWithObjectProperty.xml"));
+        expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
+        DomCompare.compare(expResult, temp);
+    }
+
+    @Test
     public void testWriteSimpleFeaturePrimitiveWithAtts() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException{
 
         final File temp = File.createTempFile("gml", ".xml");
         temp.deleteOnExit();
         final XmlFeatureWriter writer = new JAXPStreamFeatureWriter("3.2.1", "1.1.0", null);
-        writer.write(emptyFeature, temp);
+        writer.write(featureEmpty, temp);
         writer.dispose();
 
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureEmpty.xml"));
@@ -244,7 +258,7 @@ public class XmlFeatureTest {
         final File temp = File.createTempFile("gml", ".xml");
         temp.deleteOnExit();
         final XmlFeatureWriter writer = new JAXPStreamFeatureWriter("3.2.1", "1.1.0", null);
-        writer.write(nilFeature, temp);
+        writer.write(featureNil, temp);
         writer.dispose();
 
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/FeatureWithNil.xml"));
@@ -392,7 +406,7 @@ public class XmlFeatureTest {
         temp.deleteOnExit();
         final XmlFeatureWriter writer = new JAXPStreamFeatureWriter();
         final StringWriter sw = new StringWriter();
-        writer.write(complexFeature, temp);
+        writer.write(featureComplex, temp);
         writer.dispose();
 
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/ComplexFeature.xml"));
@@ -411,7 +425,7 @@ public class XmlFeatureTest {
 
         Feature result = (Feature) obj;
 
-        assertEquals(complexFeature, result);
+        assertEquals(featureComplex, result);
 
         final XmlFeatureReader readerGml = new JAXPStreamFeatureReader(complexType);
         readerGml.getProperties().put(JAXPStreamFeatureReader.BINDING_PACKAGE, "GML");
@@ -421,7 +435,7 @@ public class XmlFeatureTest {
         assertTrue(obj instanceof Feature);
 
         result =  (Feature) obj;
-        assertEquals(complexFeature, result);
+        assertEquals(featureComplex, result);
     }
     
     protected static String getStringResponse(URLConnection conec) throws UnsupportedEncodingException, IOException {

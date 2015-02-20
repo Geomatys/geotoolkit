@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,14 +43,18 @@ import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.Attribute;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
@@ -69,19 +74,21 @@ public class XmlTestData {
 
     public static SimpleFeatureType simpleTypeBasic;
     public static SimpleFeatureType simpleTypeFull;
-    public static FeatureType simpleTypeWithAtts;
-    public static FeatureType simpleTypeEmpty;
-    public static FeatureType simpleTypeEmpty2;
+    public static FeatureType typeWithAtts;
+    public static FeatureType typeWithObject;
+    public static FeatureType typeEmpty;
+    public static FeatureType typeEmpty2;
     public static FeatureType typeWithNil;
     public static SimpleFeature simpleFeatureFull;
     public static SimpleFeature simpleFeature1;
     public static SimpleFeature simpleFeature2;
     public static SimpleFeature simpleFeature3;
     public static FeatureCollection collectionSimple;
-    public static Feature complexFeature;
+    public static Feature featureComplex;
     public static Feature featureWithAttributes;
-    public static Feature emptyFeature;
-    public static Feature nilFeature;
+    public static Feature featureWithObject;
+    public static Feature featureEmpty;
+    public static Feature featureNil;
 
     public static FeatureType multiGeomType;
 
@@ -190,11 +197,16 @@ public class XmlTestData {
         ftb.add(new DefaultName(GML_32_NAMESPACE,"ID"),                   Integer.class);
         ftb.add(new DefaultName(GML_32_NAMESPACE,"eleString"),            String.class);
         ftb.add(new DefaultName(GML_32_NAMESPACE,"eleInteger"),           Integer.class);
-        simpleTypeWithAtts = ftb.buildFeatureType();
+        typeWithAtts = ftb.buildFeatureType();
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
-        simpleTypeEmpty = ftb.buildFeatureType();
+        ftb.add(new DefaultName(GML_32_NAMESPACE,"value"),                Object.class);
+        typeWithObject = ftb.buildFeatureType();
+
+        ftb.reset();
+        ftb.setName(GML_32_NAMESPACE,"TestSimple");
+        typeEmpty = ftb.buildFeatureType();
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"identifier");
@@ -205,7 +217,7 @@ public class XmlTestData {
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
         ftb.add(identifierType, new DefaultName(GML_32_NAMESPACE,"identifier"), null, 0, 1, true, null);
-        simpleTypeEmpty2 = ftb.buildFeatureType();
+        typeEmpty2 = ftb.buildFeatureType();
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"SubRecordType");
@@ -303,19 +315,19 @@ public class XmlTestData {
         ((AbstractFeatureCollection)collectionSimple).setId("one of a kind ID");
 
 
-        complexFeature = FeatureUtilities.defaultFeature(complexType, "id-0");
-        complexFeature.getProperty("insuranceNumber").setValue(new Integer(345678345));
-        complexFeature.getProperty("lastName").setValue("Smith");
-        complexFeature.getProperty("firstName").setValue("John");
+        featureComplex = FeatureUtilities.defaultFeature(complexType, "id-0");
+        featureComplex.getProperty("insuranceNumber").setValue(new Integer(345678345));
+        featureComplex.getProperty("lastName").setValue("Smith");
+        featureComplex.getProperty("firstName").setValue("John");
 
         //final Property age = FeatureUtilities.defaultProperty(complexType.getDescriptor("age"));
         //age.setValue(new Integer(35));
-        complexFeature.getProperty("age").setValue(new Integer(35));
-        complexFeature.getProperty("sex").setValue("male");
+        featureComplex.getProperty("age").setValue(new Integer(35));
+        featureComplex.getProperty("sex").setValue("male");
 
         final Property location = FeatureUtilities.defaultProperty(complexType.getDescriptor("position"));
         location.setValue(GF.createPoint(new Coordinate(10, 10)));
-        complexFeature.getProperties().add(location);
+        featureComplex.getProperties().add(location);
 
 
         final ComplexAttribute address = (ComplexAttribute) FeatureUtilities.defaultProperty(
@@ -335,38 +347,50 @@ public class XmlTestData {
         mailAddress.getProperties().clear();
         mailAddress.getProperties().add(address);
 
-        complexFeature.getProperties().add(mailAddress);
+        featureComplex.getProperties().add(mailAddress);
 
         final Property phone = FeatureUtilities.defaultProperty(complexType.getDescriptor("phone"));
         phone.setValue(Arrays.asList("4161234567", "4168901234"));
-        complexFeature.getProperties().add(phone);
+        featureComplex.getProperties().add(phone);
 
         EPSG_VERSION = CRS.getVersion("EPSG").toString();
         
         
         //feature with attributes
-        featureWithAttributes = FeatureUtilities.defaultFeature(simpleTypeWithAtts, "id-156");
+        featureWithAttributes = FeatureUtilities.defaultFeature(typeWithAtts, "id-156");
         featureWithAttributes.setPropertyValue("ID", 36);
         featureWithAttributes.setPropertyValue("eleString", "stringValue");
         featureWithAttributes.setPropertyValue("eleInteger", 23);
         featureWithAttributes.setPropertyValue("@attString", "some text");
         featureWithAttributes.setPropertyValue("@attInteger", 456);
 
+        //feature with object
+        final FeatureTypeBuilder ctb = new FeatureTypeBuilder();
+        ctb.setName("http://www.opengis.net/gml/3.2","quantityType");
+        ctb.add(new DefaultName("http://www.opengis.net/gml/3.2", "scale"), double.class);
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        final AttributeDescriptor adesc = adb.create(ctb.buildType(), new DefaultName("http://www.opengis.net/gml/3.2", "quantity"), 1, 1, true, null);
+
+        final ComplexAttribute propQuantity = (ComplexAttribute) FeatureUtilities.defaultProperty(adesc);
+        propQuantity.getProperty("scale").setValue(3.14);
+        featureWithObject = FeatureUtilities.defaultFeature(typeWithObject, "id-156");
+        featureWithObject.setPropertyValue("value", propQuantity);
+
 
         //feature with gml identifier property
-        emptyFeature = FeatureUtilities.defaultFeature(simpleTypeEmpty2, "id-156");
-        final ComplexAttribute prop = (ComplexAttribute) FeatureUtilities.defaultProperty(simpleTypeEmpty2.getDescriptor("identifier"));
+        featureEmpty = FeatureUtilities.defaultFeature(typeEmpty2, "id-156");
+        final ComplexAttribute prop = (ComplexAttribute) FeatureUtilities.defaultProperty(typeEmpty2.getDescriptor("identifier"));
         prop.getProperty("").setValue("some text");
         prop.getProperty("@codeBase").setValue("something");
-        emptyFeature.getProperties().add(prop);
+        featureEmpty.getProperties().add(prop);
 
         //feature with a nil complex property
-        nilFeature = FeatureUtilities.defaultFeature(typeWithNil, "id-156");
+        featureNil = FeatureUtilities.defaultFeature(typeWithNil, "id-156");
         final ComplexAttribute propnil = (ComplexAttribute) FeatureUtilities.defaultProperty(typeWithNil.getDescriptor("record"));
         final Attribute att = (Attribute) FeatureUtilities.defaultProperty(propnil.getType().getDescriptor("@nilReason"));
         att.setValue("unknown");
         propnil.getProperties().add(att);
-        nilFeature.getProperties().add(propnil);
+        featureNil.getProperties().add(propnil);
 
 
     }

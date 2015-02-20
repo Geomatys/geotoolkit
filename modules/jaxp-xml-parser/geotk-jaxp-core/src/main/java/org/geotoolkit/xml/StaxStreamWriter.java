@@ -17,6 +17,7 @@
 
 package org.geotoolkit.xml;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -146,7 +147,8 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
 
         if(output instanceof File){
             targetStream = new FileOutputStream((File)output);
-            output = targetStream;
+            final BufferedOutputStream bout = new BufferedOutputStream(targetStream);
+            output = bout;
         }
 
         writer = toWriter(output);

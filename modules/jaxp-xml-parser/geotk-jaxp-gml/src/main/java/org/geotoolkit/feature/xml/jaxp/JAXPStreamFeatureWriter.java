@@ -221,6 +221,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         writeComplexProperties(feature);
 
         writer.writeEndElement();
+        writer.flush();
     }
 
     /**
@@ -376,8 +377,10 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         }
 
                     } else if (!(typeA instanceof GeometryType)) {
-                        String value = Utils.getStringValue(valueA);
-                        if (value != null || (value == null && !a.isNillable())) {
+
+                        //simple type
+                        String value = (valueA instanceof Property) ? null : Utils.getStringValue(valueA);
+                        if (valueA instanceof Property || value != null || (value == null && !a.isNillable())) {
 
                             if ((nameProperty.equals("name") || nameProperty.equals("description")) && !gmlNamespace.equals(namespaceProperty)) {
                                 namespaceProperty = gmlNamespace;
@@ -388,7 +391,29 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                             } else {
                                 writer.writeStartElement(nameProperty);
                             }
-                            if (value != null) {
+
+                            if(valueA instanceof Property){
+                                //some types, like Observation & Measurement have Object types which can be
+                                //properties again, we ensure to write then as proper xml tags
+                                final Property prop = (Property) valueA;
+                                final Name propName = prop.getName();
+                                final String namespaceURI = propName.getNamespaceURI();
+                                final String localPart = propName.getLocalPart();
+                                if (namespaceURI != null && !namespaceURI.isEmpty()) {
+                                    writer.writeStartElement(namespaceURI, localPart);
+                                } else {
+                                    writer.writeStartElement(localPart);
+                                }
+                                if(prop instanceof ComplexAttribute){
+                                    writeComplexProperties((ComplexAttribute)prop);
+                                }else{
+                                    value = Utils.getStringValue(prop.getValue());
+                                    if(value!=null){
+                                        writer.writeCharacters(value);
+                                    }
+                                }
+                                writer.writeEndElement();
+                            }else if (value != null) {
                                 writer.writeCharacters(value);
                             }
                             writer.writeEndElement();
