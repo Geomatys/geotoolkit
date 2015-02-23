@@ -34,6 +34,7 @@ import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.ImageIOUtilities;
 
@@ -459,15 +460,20 @@ public final class CoverageUtilities {
             pyramid = container.createPyramid(crs);
         }
 
+        //-- those parameters can change if another mosaic already exist
+        final DirectPosition newUpperleft = new GeneralDirectPosition(crs);
+        //-- We found the second horizontale axis dimension.
+        final int maxHorizOrdinate = CRSUtilities.firstHorizontalAxis(crs) + 1;
+        for (int d = 0; d < crs.getCoordinateSystem().getDimension(); d++) {
+            final double v = (d == maxHorizOrdinate) ? envelope.getMaximum(d) : envelope.getMinimum(d);
+            newUpperleft.setOrdinate(d, v);
+        }
+        
         //generate each mosaic
         for (final double scale : scales) {
             final double gridWidth  = envelope.getSpan(0) / (scale*tileSize.width);
             final double gridHeight = envelope.getSpan(1) / (scale*tileSize.height);
 
-            //those parameters can change if another mosaic already exist
-            DirectPosition upperleft = new GeneralDirectPosition(crs);
-            upperleft.setOrdinate(0, envelope.getMinimum(0));
-            upperleft.setOrdinate(1, envelope.getMaximum(1));
             Dimension tileDim = tileSize;
             Dimension gridSize = new Dimension( (int)(Math.ceil(gridWidth)), (int)(Math.ceil(gridHeight)));
 
@@ -476,10 +482,6 @@ public final class CoverageUtilities {
             int index = 0;
             for (GridMosaic m : pyramid.getMosaics()) {
                 if (m.getScale() == scale) {
-                    //this mosaic definition replaces the given one
-                    upperleft = m.getUpperLeftCorner();
-                    tileDim = m.getTileSize();
-                    gridSize = m.getGridSize();
                     mosaicFound = true;
                     break;
                 }
@@ -488,7 +490,7 @@ public final class CoverageUtilities {
 
             if (!mosaicFound) {
                 //create a new mosaic
-                container.createMosaic(pyramid.getId(),gridSize, tileDim, upperleft, scale);
+                container.createMosaic(pyramid.getId(),gridSize, tileDim, newUpperleft, scale);
             }
         }
 
