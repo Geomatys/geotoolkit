@@ -576,7 +576,8 @@ public class Resample {
                         //-- if destination coordinate transformation is out of source boundary.
                         if (!interpol.checkInterpolate(srcX, srcY)) {
                             while (band < numBands && destIterator.next()) {
-                                if (fillValue != null) destIterator.setSampleDouble(fillValue[band++]);
+                                if (fillValue != null) destIterator.setSampleDouble(fillValue[band]);
+                                band++;
                             }
                         } else {
                             while (band < numBands && destIterator.next()) {
