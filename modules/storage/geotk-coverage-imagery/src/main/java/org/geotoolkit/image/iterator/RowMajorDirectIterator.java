@@ -76,6 +76,12 @@ public abstract class RowMajorDirectIterator extends DefaultDirectIterator {
                 // If we reach raster limit in y axis, we must take next raster below. We also check if we reached end
                 // of iteration area.
                 if (++currentY >= maxY && ++tY >= tMaxY) {
+                    //-- initialize attribut with expected values to throw exception if another next() is  called.
+                    band = -1;
+                    tX = tMaxX;
+                    tY = tMaxY;
+                    if (currentY - 1 >= maxY)//-- at first out currentY == maxY and with another next() currenty = maxY + 1.
+                        throw new IllegalStateException("Out of raster boundary. Illegal next call, you should rewind iterator first.");
                     return false;
                 }
             }
@@ -84,7 +90,6 @@ public abstract class RowMajorDirectIterator extends DefaultDirectIterator {
         } else {
             dataCursor += bandSteps[band];
         }
-
         return true;
     }
 

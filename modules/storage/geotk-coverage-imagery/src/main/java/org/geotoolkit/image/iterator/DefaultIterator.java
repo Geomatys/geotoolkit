@@ -101,7 +101,16 @@ class DefaultIterator extends PixelIterator {
                 if (++y == maxY) {
                     if (++tX == tMaxX) {
                         tX = tMinX;
-                        if (++tY == tMaxY) return false;
+                        if (++tY >= tMaxY) {
+                            //-- initialize attribut with expected values to throw exception if another next() is  called.
+                            band = rasterNumBand - 1;
+                            x = maxX - 1;
+                            y = maxY - 1;
+                            tX = tMaxX - 1;
+                            if ((tY - 1) >= tMaxY)//-- at first out tY == tMaxY and with another next() tY = tMaxY + 1.
+                                throw new IllegalStateException("Out of raster boundary. Illegal next call, you should rewind iterator first.");
+                            return false;
+                        }
                     }
                     //initialize from new tile(raster).
                     updateCurrentRaster(tX, tY);

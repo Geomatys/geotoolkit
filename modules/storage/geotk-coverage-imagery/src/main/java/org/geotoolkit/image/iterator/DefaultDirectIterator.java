@@ -189,10 +189,10 @@ abstract class DefaultDirectIterator extends PixelIterator {
                 if (++tX >= tMaxX) {
                     tX = tMinX;
                     if (++tY >= tMaxY) {
+                        //-- initialize attribut with expected values to throw exception if another next() is  called.
                         band = -1;
                         tX = tMaxX;
-                        tY = tMaxY;
-                        if ((dataCursor - cursorStep) >= (currentRaster.getHeight() * scanLineStride))
+                        if (tY - 1 >= tMaxY)//-- at first out tY == tMaxY and with another next() tY = tMaxY + 1.
                             throw new IllegalStateException("Out of raster boundary. Illegal next call, you should rewind iterator first.");
                         return false;
                     }

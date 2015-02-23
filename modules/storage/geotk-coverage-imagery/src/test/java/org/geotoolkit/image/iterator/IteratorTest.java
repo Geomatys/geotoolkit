@@ -784,6 +784,31 @@ public abstract class IteratorTest {
             //ok
         }
     }
+    
+    /**
+     * Test catching exception with another next() method call, after have already traveled all the image.
+     */
+    @Test
+    public void unappropriateMultiNextCallTest() {
+        minx = 0;
+        miny = 0;
+        width = 40;
+        height = 20;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        numBand = 3;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
+        setPixelIterator(renderedImage);
+        while (pixIterator.next()) {
+            //-- do nothing, we want go to the end of the iteration
+        }
+        try {
+            pixIterator.next();
+            Assert.fail("test should had failed");
+        } catch (IllegalStateException e) {
+            //ok
+        }
+    }
 
     /**
      * Test about getNumBands methods
