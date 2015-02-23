@@ -49,6 +49,7 @@ import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.data.memory.GenericCachedFeatureIterator;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.geotoolkit.feature.ComplexAttribute;
 
@@ -532,6 +533,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         // we write each feature member of the collection
         FeatureIterator iterator = featureCollection.iterator();
+        //parallale data loading
+        iterator = GenericCachedFeatureIterator.wrap(iterator, 128);
         try {
             while (iterator.hasNext()) {
                 final Feature f = iterator.next();
