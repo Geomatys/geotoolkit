@@ -188,7 +188,14 @@ abstract class DefaultDirectIterator extends PixelIterator {
             if ((dataCursor += cursorStep) >= maxBanks) {
                 if (++tX >= tMaxX) {
                     tX = tMinX;
-                    if (++tY >= tMaxY) return false;
+                    if (++tY >= tMaxY) {
+                        band = -1;
+                        tX = tMaxX;
+                        tY = tMaxY;
+                        if ((dataCursor - cursorStep) >= (currentRaster.getHeight() * scanLineStride))
+                            throw new IllegalStateException("Out of raster boundary. Illegal next call, you should rewind iterator first.");
+                        return false;
+                    }
                 }
                 updateCurrentRaster(tX, tY);
             } else {
