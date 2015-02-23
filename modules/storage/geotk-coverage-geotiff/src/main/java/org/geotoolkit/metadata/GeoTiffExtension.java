@@ -117,7 +117,7 @@ public abstract class GeoTiffExtension {
         CoordinateReferenceSystem crs = rb.getCoordinateReferenceSystem(CoordinateReferenceSystem.class);
         final List<CoordinateReferenceSystem> crss = ReferencingUtilities.decompose(crs);
         int axisIndex = -1;
-        int inc=0;
+        int inc = 0;
         for(CoordinateReferenceSystem cs : crss){
             if(cs.equals(axisCrs)){
                 axisIndex = inc;
@@ -126,7 +126,7 @@ public abstract class GeoTiffExtension {
             inc += cs.getCoordinateSystem().getDimension();
         }
 
-        if(axisIndex<0){
+        if (axisIndex < 0) {
             //this axis is not declared, add it
             final Map<String,Object> params = new HashMap<>();
             params.put("name", crs.getName().getCode()+"/"+axisCrs.getName().getCode());
@@ -135,7 +135,7 @@ public abstract class GeoTiffExtension {
 
             //calculate new transform values
             final List<double[]> offsetVectors = new ArrayList(rectifiedGrid.getOffsetVectors());
-            for(int i=0;i<offsetVectors.size();i++){
+            for (int i = 0; i < offsetVectors.size(); i++) {
                 double[] vector = offsetVectors.get(i);
                 vector = Arrays.copyOf(vector, vector.length+1);
                 offsetVectors.set(i, vector);
@@ -147,7 +147,7 @@ public abstract class GeoTiffExtension {
             //new origin
             final DirectPosition oldOrigin = rectifiedGrid.getOrigin();
             final GeneralDirectPosition newOrigin = new GeneralDirectPosition(crs);
-            for(int i=0,n=oldOrigin.getDimension();i<n;i++){
+            for (int i = 0, n = oldOrigin.getDimension(); i < n; i++) {
                 newOrigin.setOrdinate(i, oldOrigin.getOrdinate(i));
             }
             newOrigin.setOrdinate(oldOrigin.getDimension(), value);
@@ -156,18 +156,17 @@ public abstract class GeoTiffExtension {
             final int[][] limits = acc.getLimits();
             limits[0] = Arrays.copyOf(limits[0], limits[0].length+1);
             limits[1] = Arrays.copyOf(limits[1], limits[1].length+1);
-            limits[1][limits[1].length-1] = 1;
-
+//            limits[1][limits[1].length-1] = 1;
 
             //set new values
             acc.setOrigin(newOrigin.getCoordinate());
             acc.setLimits(limits[0], limits[1]);
             acc.clearOffsetVectors();
-            for(double[] ov : offsetVectors){
+            for (double[] ov : offsetVectors) {
                 acc.addOffsetVector(ov);
             }
 
-        }else{
+        } else {
             //axis already exist, update the value
 
             //new origin
