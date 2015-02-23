@@ -72,7 +72,9 @@ public class BufferProcess extends AbstractProcess {
     protected void execute() {
         final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
         final double inputDistance                          = value(DISTANCE_IN, inputParameters).doubleValue();
-        final boolean inputLenient                          = value(LENIENT_TRANSFORM_IN, inputParameters);
+        Boolean inputLenient                                = value(LENIENT_TRANSFORM_IN, inputParameters);
+
+        if (inputLenient == null) inputLenient = Boolean.TRUE;
 
         final FeatureCollection resultFeatureList =
                 new BufferFeatureCollection(inputFeatureList, inputDistance, inputLenient);
@@ -86,7 +88,6 @@ public class BufferProcess extends AbstractProcess {
      * @param oldFeature
      * @param newType
      * @param distance
-     * @param unit
      * @param lenient
      * @return a Feature
      * @throws FactoryException

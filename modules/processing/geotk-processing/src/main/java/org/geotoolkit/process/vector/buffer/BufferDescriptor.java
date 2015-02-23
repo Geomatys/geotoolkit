@@ -62,7 +62,7 @@ public final class BufferDescriptor extends VectorDescriptor {
         DISTANCE_PROPERTIES.put(IdentifiedObject.REMARKS_KEY, "Input buffer distance in meters.");
     }
     /**
-     * Mandatory - Buffer distance
+     * Mandatory - Buffer distance in meters
      */
     public static final ParameterDescriptor<Double> DISTANCE_IN = 
             new DefaultParameterDescriptor(DISTANCE_PROPERTIES, Double.class, null, 1.0, null, null, SI.METRE, true);
