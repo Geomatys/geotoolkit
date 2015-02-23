@@ -771,7 +771,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
     ////////////////////////////////////////////////////////////////////////////
 
 
-    private static StringBuilder toStringBuilder(Object candidate){
+    protected static StringBuilder toStringBuilder(Object candidate){
         if(candidate instanceof StringBuilder){
             return (StringBuilder) candidate;
         }else{
@@ -784,7 +784,7 @@ public class PostgresFilterToSQL implements FilterToSQL {
      * @param candidate
      * @return double unchanged if not an infinite.
      */
-    private static double checkInfinites(final double candidate){
+    protected static double checkInfinites(final double candidate){
         if(candidate == Double.NEGATIVE_INFINITY){
             return Double.MIN_VALUE;
         }else if(candidate == Double.POSITIVE_INFINITY){

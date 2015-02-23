@@ -17,12 +17,18 @@
 
 package org.geotoolkit.filter;
 
+import java.util.ArrayList;
+import java.util.List;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.PrepareFilterVisitor;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.feature.type.ComplexType;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.Not;
+import org.opengis.filter.Or;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 
@@ -75,5 +81,28 @@ public final class FilterUtilities extends Static {
         ensureNonNull("expression", exp);
         return (Boolean) exp.accept(IsStaticExpressionVisitor.VISITOR, null);
     }
-    
+
+    /**
+     * Convert a logic OR in and AND filter.
+     *
+     * (a OR b) =  NOT (NOT a AND NOT b)
+     *
+     * @param filter
+     * @param ff
+     * @return Not filter
+     */
+    public static Not orToAnd(final Or filter, FilterFactory ff) {
+        if(ff==null) ff = FactoryFinder.getFilterFactory(null);
+        
+        final List<Filter> children = filter.getChildren();
+        final int size = children.size();
+        final List<Filter> newChildren = new ArrayList<>(size);
+        for(int i=0;i<size;i++) {
+            Filter f = children.get(i);
+            f = (f instanceof Not) ? ((Not)f).getFilter() : ff.not(f);
+            newChildren.add(f);
+        }
+        return ff.not(ff.and(newChildren));
+    }
+
 }
