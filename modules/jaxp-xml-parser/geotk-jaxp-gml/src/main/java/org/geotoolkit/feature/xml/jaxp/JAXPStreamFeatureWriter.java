@@ -520,7 +520,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         FeatureType type = featureCollection.getFeatureType();
         if (type != null && type.getName() != null) {
-            for(String n : listAllNamespaces(type)){
+            for(String n : Utils.listAllNamespaces(type)){
                 if (n != null && !(n.equals("http://www.opengis.net/gml") || n.equals("http://www.opengis.net/gml/3.2")) && !n.isEmpty()) {
                     writer.writeNamespace(getPrefix(n).prefix, n);
                 }
@@ -565,33 +565,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             writer.close();
         }
 
-    }
-
-    private static Set<String> listAllNamespaces(PropertyType type){
-        final Set<String> ns = new HashSet<>();
-        final Set<Name> visited = new HashSet<>();
-        listAllNamespaces(type, ns, visited);
-        return ns;
-    }
-
-    private static void listAllNamespaces(PropertyType type, Set<String> ns, Set<Name> visited){
-        final Name name = type.getName();
-        if(visited.contains(name)){
-            //avoid cyclic loops
-            return;
-        }
-        visited.add(name);
-        String nsuri = type.getName().getNamespaceURI();
-        if(nsuri!=null) ns.add(nsuri);
-
-        if(type instanceof ComplexType){
-            final ComplexType ct = (ComplexType) type;
-            for(PropertyDescriptor pd : ct.getDescriptors()){
-                nsuri = pd.getName().getNamespaceURI();
-                if(nsuri!=null) ns.add(nsuri);
-                listAllNamespaces(pd.getType(), ns, visited);
-            }
-        }
     }
 
     private void writeBounds(final Envelope bounds, final XMLStreamWriter streamWriter) throws XMLStreamException {

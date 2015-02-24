@@ -62,6 +62,7 @@ import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 
 /**
@@ -342,7 +343,8 @@ public class Utils {
     /**
      * Return a QName intended to be used in a xsd XML file fro mthe specified class.
      *
-     * @param binding A prmitive type Class.
+     * @param type A prmitive type Class.
+     * @param gmlVersion
      * @return A QName describing the class.
      */
     public static QName getQNameFromType(final PropertyType type, final String gmlVersion) {
@@ -368,6 +370,13 @@ public class Utils {
                 // maybe we can find a better way to handle Enum. for now we set a String value
                 } else if (binding.isEnum()){
                     result = new QName("http://www.w3.org/2001/XMLSchema", "string");
+                    
+                } else if (binding.equals(Object.class)) {
+                  if ("3.2.1".equals(gmlVersion)) {
+                        result = new QName(GML_321_NAMESPACE, "AbstractObject");
+                    } else {
+                        result = new QName(GML_311_NAMESPACE, "_Object");
+                    } 
                 } else {
                     result = NAME_BINDING.get(binding);
                 }
@@ -569,6 +578,62 @@ public class Utils {
             return name.substring(0,name.length()-4);
         }else{
             return name;
+        }
+    }
+    
+    public static Set<String> listAllSubNamespaces(PropertyType type, String namespace){
+        final Set<String> ns = new HashSet<>();
+        final Set<Name> visited = new HashSet<>();
+        listAllSubNamespaces(type, ns, visited, namespace);
+        return ns;
+    }
+    
+    private static void listAllSubNamespaces(PropertyType type, Set<String> ns, Set<Name> visited, final String namespace){
+        final Name name = type.getName();
+        if(visited.contains(name)){
+            //avoid cyclic loops
+            return;
+        }
+        visited.add(name);
+        String typeUri = type.getName().getNamespaceURI();
+        //if(nsuri!=null) ns.add(nsuri);
+
+        if(type instanceof ComplexType){
+            final ComplexType ct = (ComplexType) type;
+            for(PropertyDescriptor pd : ct.getDescriptors()){
+                if (typeUri.equals(namespace)) {
+                    String nsuri = pd.getName().getNamespaceURI();
+                    if(nsuri!=null) ns.add(nsuri);
+                }
+                listAllSubNamespaces(pd.getType(), ns, visited, namespace);
+            }
+        }
+    }
+    
+    public static Set<String> listAllNamespaces(PropertyType type){
+        final Set<String> ns = new HashSet<>();
+        final Set<Name> visited = new HashSet<>();
+        listAllNamespaces(type, ns, visited);
+        return ns;
+    }
+
+    private static void listAllNamespaces(PropertyType type, Set<String> ns, Set<Name> visited){
+        final Name name = type.getName();
+        if(visited.contains(name)){
+            //avoid cyclic loops
+            return;
+        }
+        visited.add(name);
+        String nsuri = type.getName().getNamespaceURI();
+        if(nsuri!=null) ns.add(nsuri);
+
+        if(type instanceof ComplexType){
+            final ComplexType ct = (ComplexType) type;
+            for(PropertyDescriptor pd : ct.getDescriptors()){
+                nsuri = pd.getName().getNamespaceURI();
+                if(nsuri!=null) ns.add(nsuri);
+                listAllNamespaces(pd.getType(), ns, visited);
+            }
         }
     }
 

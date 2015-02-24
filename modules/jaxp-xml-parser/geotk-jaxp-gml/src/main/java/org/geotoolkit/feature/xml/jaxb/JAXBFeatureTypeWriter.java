@@ -20,9 +20,12 @@ package org.geotoolkit.feature.xml.jaxb;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
@@ -73,7 +76,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
 
     private int lastUnknowPrefix = 0;
 
-    private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
+    private final Map<String, String> unknowNamespaces = new HashMap<>();
 
     private final String gmlVersion;
 
@@ -161,7 +164,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
                 schema.addImport(GML_IMPORT_311);
             }
             for (FeatureType ftype : featureTypes) {
-                fillSchemaWithFeatureType(ftype, schema);
+                fillSchemaWithFeatureType(ftype, schema, true);
             }
         }
         return schema;
@@ -180,52 +183,82 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
             } else {
                 schema.addImport(GML_IMPORT_311);
             }
-            fillSchemaWithFeatureType(featureType, schema);
+            fillSchemaWithFeatureType(featureType, schema, true);
+            return schema;
+        }
+        return null;
+    }
+    
+    @Override
+    public Schema getExternalSchemaFromFeatureType(final String namespace, final List<FeatureType> featureTypes) {
+        if (featureTypes != null && featureTypes.size() > 0) {
+            final Schema schema = new Schema(FormChoice.QUALIFIED, namespace);
+            if ("3.2.1".equals(gmlVersion)) {
+                schema.addImport(GML_IMPORT_321);
+            } else {
+                schema.addImport(GML_IMPORT_311);
+            }
+            for (FeatureType ftype : featureTypes) {
+                fillSchemaWithFeatureType(ftype, schema, false);
+            }
             return schema;
         }
         return null;
     }
 
-    private void fillSchemaWithFeatureType(final FeatureType featureType, final Schema schema) {
+    private void fillSchemaWithFeatureType(final FeatureType featureType, final Schema schema, boolean addTopElement) {
         final String typeNamespace    = featureType.getName().getNamespaceURI();
         final String elementName      = featureType.getName().getLocalPart();
         final String typeName         = elementName + "Type";
-        final TopLevelElement topElement;
-        if ("3.2.1".equals(gmlVersion)) {
-            topElement = new TopLevelElement(elementName, new QName(typeNamespace, typeName), ABSTRACT_FEATURE_NAME_321);
-        } else {
-            topElement = new TopLevelElement(elementName, new QName(typeNamespace, typeName), ABSTRACT_FEATURE_NAME_311);
+        
+        if (addTopElement) {
+            final TopLevelElement topElement;
+            if ("3.2.1".equals(gmlVersion)) {
+                topElement = new TopLevelElement(elementName, new QName(typeNamespace, typeName), ABSTRACT_FEATURE_NAME_321);
+            } else {
+                topElement = new TopLevelElement(elementName, new QName(typeNamespace, typeName), ABSTRACT_FEATURE_NAME_311);
+            }
+            schema.addElement(topElement);
         }
-        schema.addElement(topElement);
+        Set<String> alreadyWritten = new HashSet<>();
 
         final ExplicitGroup sequence  = new ExplicitGroup();
         for (final PropertyDescriptor pdesc : featureType.getDescriptors()) {
-            writeProperty(pdesc, sequence, schema);
+            writeProperty(pdesc, sequence, schema, alreadyWritten);
         }
-        final ComplexContent content  = getComplexContent(sequence);
-        schema.addComplexType(1, new TopLevelComplexType(typeName, content));
+        if (addTopElement) {
+            final ComplexContent content  = getComplexContent(sequence);
+            schema.addComplexType(1, new TopLevelComplexType(typeName, content));
+        }
     }
 
-    private void writeComplexType(final ComplexType ctype, final Schema schema) {
-        // PropertyType
+    private void writeComplexType(final ComplexType ctype, final Schema schema, Set<String> alreadyWritten) {
         final Name ptypeName = ctype.getName();
+        
+        // PropertyType
+        
         final String nameWithSuffix = Utils.getNameWithTypeSuffix(ptypeName.getLocalPart());
 
+        boolean write = schema.getTargetNamespace().equals(ptypeName.getNamespaceURI());
+        
         //search if this type has already been written
-        if(schema.getComplexTypeByName(nameWithSuffix)!=null) return;
+        if(alreadyWritten.contains(nameWithSuffix)) return;
+        alreadyWritten.add(nameWithSuffix);
 
 
         //complex type
         final ExplicitGroup sequence  = new ExplicitGroup();
-        schema.addComplexType(new TopLevelComplexType(nameWithSuffix, sequence));
+        if (write) {
+            schema.addComplexType(new TopLevelComplexType(nameWithSuffix, sequence));
+        }
 
         for (final PropertyDescriptor pdesc : ctype.getDescriptors()) {
-            writeProperty(pdesc, sequence, schema);
+            writeProperty(pdesc, sequence, schema, alreadyWritten);
         }
 
     }
 
-    private void writeProperty(final PropertyDescriptor pdesc, final ExplicitGroup sequence, final Schema schema) {
+    private void writeProperty(final PropertyDescriptor pdesc, final ExplicitGroup sequence, final Schema schema, final Set<String> alreadyWritten) {
         final PropertyType pType = pdesc.getType();
         final String name        = pdesc.getName().getLocalPart();
         final QName type         = Utils.getQNameFromType(pType, gmlVersion);
@@ -242,7 +275,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
 
         // for a complexType we have to add 2 complexType (PropertyType and type)
         if (pType instanceof ComplexType) {
-            writeComplexType((ComplexType)pType, schema);
+            writeComplexType((ComplexType)pType, schema, alreadyWritten);
         }
     }
 

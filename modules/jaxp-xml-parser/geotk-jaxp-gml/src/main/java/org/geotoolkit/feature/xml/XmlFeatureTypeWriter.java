@@ -81,4 +81,6 @@ public interface XmlFeatureTypeWriter extends Configurable {
      * @return
      */
     Schema getSchemaFromFeatureType(FeatureType featureType);
+    
+    Schema getExternalSchemaFromFeatureType(final String namespace, final List<FeatureType> featureTypes);
 }
