@@ -290,7 +290,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             //write the value
             Object value = "";
             for(Property prop : feature.getProperties()){
-                if(prop.getName().getLocalPart().isEmpty()){
+                if(Utils.VALUE_PROPERTY_NAME.equals(prop.getName().getLocalPart())){
                     value = prop.getValue();
                     break;
                 }
@@ -627,7 +627,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      */
     public static boolean isPrimitiveType(ComplexType type){
         for(PropertyDescriptor desc : type.getDescriptors()){
-            if(desc.getName().getLocalPart().isEmpty()){
+            if(Utils.VALUE_PROPERTY_NAME.equals(desc.getName().getLocalPart())){
                 return true;
             }
         }

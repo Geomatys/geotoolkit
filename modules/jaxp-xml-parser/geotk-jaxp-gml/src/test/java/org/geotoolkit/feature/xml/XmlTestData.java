@@ -210,7 +210,7 @@ public class XmlTestData {
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"identifier");
-        ftb.add(new DefaultName(GML_32_NAMESPACE,""), String.class,1,1,true,null);
+        ftb.add(new DefaultName(GML_32_NAMESPACE,Utils.VALUE_PROPERTY_NAME), String.class,1,1,true,null);
         ftb.add(new DefaultName(GML_32_NAMESPACE,"@codeBase"), String.class,1,1,true,null);
         final ComplexType identifierType = ftb.buildType();
 
@@ -380,7 +380,7 @@ public class XmlTestData {
         //feature with gml identifier property
         featureEmpty = FeatureUtilities.defaultFeature(typeEmpty2, "id-156");
         final ComplexAttribute prop = (ComplexAttribute) FeatureUtilities.defaultProperty(typeEmpty2.getDescriptor("identifier"));
-        prop.getProperty("").setValue("some text");
+        prop.getProperty(Utils.VALUE_PROPERTY_NAME).setValue("some text");
         prop.getProperty("@codeBase").setValue("something");
         featureEmpty.getProperties().add(prop);
 

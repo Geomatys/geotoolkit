@@ -72,6 +72,13 @@ import org.geotoolkit.feature.type.PropertyType;
  */
 public class Utils {
 
+    /**
+     * This named is used for complex simple element to indicate the real node value opposed to attribute values
+     * Tested cases :
+     * "",".","$value",":value","#value" conflict with xpath qname constraint
+     */
+    public static final String VALUE_PROPERTY_NAME = "_value";
+
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml");
 
     private static final DateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");

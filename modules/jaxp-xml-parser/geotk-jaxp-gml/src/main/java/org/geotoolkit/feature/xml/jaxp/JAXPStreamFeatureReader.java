@@ -330,7 +330,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         if(JAXPStreamFeatureWriter.isPrimitiveType(featureType)){
             //read a false complex type : primitive type with attributes
             final String text = reader.getElementText();
-            final PropertyDescriptor pd = featureType.getDescriptor("");
+            final PropertyDescriptor pd = featureType.getDescriptor(Utils.VALUE_PROPERTY_NAME);
             final Attribute att = FF.createAttribute(ObjectConverters.convert(text, pd.getType().getBinding()), (AttributeDescriptor) pd, null);
             namedProperties.put(pd.getName(),att);
             propertyContainer.add(att);

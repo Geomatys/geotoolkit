@@ -619,7 +619,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 final Class valueType = Utils.getTypeFromQName(base);
 
                 final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                finalType.getDescriptors().add(adb.create(new DefaultName(qname.getNamespaceURI(), ""), valueType, 0, 1, false, null));
+                finalType.getDescriptors().add(adb.create(new DefaultName(qname.getNamespaceURI(), Utils.VALUE_PROPERTY_NAME), valueType, 0, 1, false, null));
 
                 //read attributes
                 final List<Annotated> attexts = sext.getAttributeOrAttributeGroup();
@@ -647,7 +647,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                         if(st!=null) base = resolveSimpleTypeValueName(st);
                         final Class valueType = Utils.getTypeFromQName(base);
                         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                        addOrReplace(finalType.getDescriptors(), adb.create(new DefaultName(qname.getNamespaceURI(), ""), valueType, 0, 1, false, null));
+                        addOrReplace(finalType.getDescriptors(), adb.create(new DefaultName(qname.getNamespaceURI(), Utils.VALUE_PROPERTY_NAME), valueType, 0, 1, false, null));
                     }
                 }
 

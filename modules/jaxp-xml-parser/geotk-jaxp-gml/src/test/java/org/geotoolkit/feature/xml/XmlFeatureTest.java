@@ -61,6 +61,8 @@ import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.geotoolkit.util.FileUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.filter.DefaultPropertyName;
+import org.opengis.filter.expression.Expression;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -248,6 +250,10 @@ public class XmlFeatureTest {
 
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureEmpty.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
+
+
+        final Expression exp = new DefaultPropertyName("/identifier/_value");
+        Object v = exp.evaluate(featureEmpty);
         DomCompare.compare(expResult, temp);
     }
 
