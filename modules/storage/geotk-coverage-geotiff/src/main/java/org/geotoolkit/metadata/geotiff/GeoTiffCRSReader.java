@@ -1044,9 +1044,9 @@ final class GeoTiffCRSReader {
                     + linearUnit.toString());
         }
         return new DefaultCartesianCS(name(Vocabulary.formatInternational(Vocabulary.Keys.PROJECTED).toString()),
-                new DefaultCoordinateSystemAxis(name(Vocabulary.formatInternational(Vocabulary.Keys.EASTING)), "E",
+                new DefaultCoordinateSystemAxis(name(Vocabulary.formatInternational(Vocabulary.Keys.EASTING).toString()), "E",
                 AxisDirection.EAST, linearUnit),
-                new DefaultCoordinateSystemAxis(name(Vocabulary.formatInternational(Vocabulary.Keys.NORTHING)), "N",
+                new DefaultCoordinateSystemAxis(name(Vocabulary.formatInternational(Vocabulary.Keys.NORTHING).toString()), "N",
                 AxisDirection.NORTH, linearUnit));
     }
 
@@ -1293,7 +1293,7 @@ final class GeoTiffCRSReader {
         return desc.getName().getCode();
     }
 
-    private static Map<String,?> name(final CharSequence name) {
+    private static Map<String,?> name(final String name) {
         return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
     }
 }
