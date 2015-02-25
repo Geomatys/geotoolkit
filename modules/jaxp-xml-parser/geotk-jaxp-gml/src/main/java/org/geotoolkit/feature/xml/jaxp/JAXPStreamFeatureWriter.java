@@ -533,8 +533,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         // we write each feature member of the collection
         FeatureIterator iterator = featureCollection.iterator();
-        //parallale data loading
-        iterator = GenericCachedFeatureIterator.wrap(iterator, 128);
         try {
             while (iterator.hasNext()) {
                 final Feature f = iterator.next();
