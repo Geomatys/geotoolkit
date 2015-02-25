@@ -719,18 +719,22 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return atts;
     }
 
-    private AttributeDescriptor getAnnotatedAttributes(final String namespace, final Attribute att) throws SchemaException{
+    private AttributeDescriptor getAnnotatedAttributes(String namespace, final Attribute att) throws SchemaException{
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
         adb.reset();
         atb.reset();
 
         if(att.getRef()!=null){
+            namespace = att.getRef().getNamespaceURI();
             //copy properties from parent
             final Attribute attRef = findGlobalAttribute(att.getRef());
             final AttributeDescriptor atDesc = getAnnotatedAttributes(namespace, attRef);
             adb.copy(atDesc);
+            adb.setName(namespace, atDesc.getName().getLocalPart());
             atb.copy(atDesc.getType());
+        } else {
+            namespace = null;
         }
 
         final String id = att.getId();
