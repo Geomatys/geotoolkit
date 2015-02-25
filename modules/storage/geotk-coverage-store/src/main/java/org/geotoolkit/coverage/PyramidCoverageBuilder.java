@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageReader;
 import javax.swing.ProgressMonitor;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.storage.DataStoreException;
@@ -34,7 +35,6 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.image.coverage.CombineIterator;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.LanczosInterpolation;
@@ -331,12 +331,16 @@ public class PyramidCoverageBuilder {
                 final Envelope gcEnv = gitenv.next();
                 //-- temporary reprojection
                 //-- try later to concatene gridtocrs + findmathtransform srcCrs -> outCrs
-                final Envelope envDest = Envelopes.transform(gcEnv, crs);
+                final GeneralEnvelope envDest = GeneralEnvelope.castOrCopy(Envelopes.transform(gcEnv, crs));
                 
                 //set upperLeft ordinate
                 for (int d = 0; d < outDim; d++) {
-                    if (d != minOrdi0 && d != minOrdi1)
+                    if (d != minOrdi0 && d != minOrdi1) {
                         upperLeft.setOrdinate(d, envDest.getMedian(d));
+                    } else {
+                        //-- set horizontal crs part coordinates from out envelope into destination envelope  
+                        envDest.setRange(d, outEnv.getMinimum(d), outEnv.getMaximum(d));
+                    }
                 }
                 final GridCoverageReadParam rp = new GridCoverageReadParam();
                 rp.setEnvelope(envDest);
@@ -664,14 +668,19 @@ public class PyramidCoverageBuilder {
 
             //one pyramid for each CoordinateReferenceSystem.
             final Pyramid pyram         = getOrCreatePyramid(pm, crs);
-            final CombineIterator itEnv = new CombineIterator(new GeneralEnvelope(outEnv));
+//            final CombineIterator itEnv = new CombineIterator(new GeneralEnvelope(outEnv));
             final GridCombineIterator gitenv = new GridCombineIterator(new GeneralGridGeometry(currentGridGeometry));
             while (gitenv.hasNext()) {
-                final Envelope envDest = Envelopes.transform(gitenv.next(), crs);
-                //set upperLeft ordinate
+                final GeneralEnvelope envDest = GeneralEnvelope.castOrCopy(Envelopes.transform(gitenv.next(), crs));
+                
                 for (int d = 0; d < outDim; d++) {
-                    if (d != minOrdi0 && d != minOrdi1)
+                    if (d != minOrdi0 && d != minOrdi1) {
+                        //set upperLeft ordinate
                         upperLeft.setOrdinate(d, envDest.getMedian(d));
+                    } else {
+                        //-- set horizontal crs part coordinates from out envelope into destination envelope  
+                        envDest.setRange(d, outEnv.getMinimum(d), outEnv.getMaximum(d));
+                    }
                 }
                 rp.clear();
                 rp.setEnvelope(envDest);
@@ -866,11 +875,19 @@ public class PyramidCoverageBuilder {
                 final CoordinateReferenceSystem crs = outEnv.getCoordinateReferenceSystem();
                 final int minOrdi0 = CoverageUtilities.getMinOrdinate(crs);
                 final int minOrdi1 = minOrdi0 + 1;
+                final int outDim   = crs.getCoordinateSystem().getDimension();
 //                final CombineIterator itEnv = new CombineIterator(new GeneralEnvelope(outEnv));
                 final GridCombineIterator gitEnv = new GridCombineIterator(new GeneralGridGeometry(currentGridGeom));
                 while (gitEnv.hasNext()) {
                     final Envelope envGit = gitEnv.next();
-                    final Envelope envDest = Envelopes.transform(envGit, crs);
+                    final GeneralEnvelope envDest = GeneralEnvelope.castOrCopy(Envelopes.transform(envGit, crs));
+                    for (int d = 0; d < outDim; d++) {
+                    if (d == minOrdi0 || d == minOrdi1) {
+                        //-- set horizontal crs part coordinates from out envelope into destination envelope  
+                        envDest.setRange(d, outEnv.getMinimum(d), outEnv.getMaximum(d));
+                    }
+                }
+                    //-- set horizontal crs part coordinates from out envelope into destination envelope  
                     for (double pixelScal : resolution_Per_Envelope.get(outEnv)) {
                         final int nbrtx   = (int) Math.ceil((envDest.getSpan(minOrdi0) / pixelScal) / tileWidth);
                         final int nbrty   = (int) Math.ceil((envDest.getSpan(minOrdi1) / pixelScal) / tileHeight);
