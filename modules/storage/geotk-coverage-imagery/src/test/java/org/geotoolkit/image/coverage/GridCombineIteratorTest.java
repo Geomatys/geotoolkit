@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
@@ -54,10 +55,11 @@ public strictfp class GridCombineIteratorTest {
      */
     @Test
     public void test2D() {
+        final CoordinateReferenceSystem crsTest = PredefinedCRS.CARTESIAN_2D;
         final int[] gridLow   = new int[]{0,0};
         final int[] gridHigh = new int[]{1,1};
         GeneralGridEnvelope extent = new GeneralGridEnvelope(gridLow, gridHigh, true);
-        GridCombineIterator it = new GridCombineIterator(extent, PredefinedCRS.CARTESIAN_2D, new AffineTransform2D());
+        GridCombineIterator it = new GridCombineIterator(extent, crsTest, new AffineTransform2D());
         final List<Envelope> listEnvelope = new ArrayList<Envelope>();
         while (it.hasNext()) {
             listEnvelope.add(it.next());
@@ -70,13 +72,14 @@ public strictfp class GridCombineIteratorTest {
         //-- test with exclusive high border 
         //-- should return only low point
         extent = new GeneralGridEnvelope(gridLow, gridHigh, false);
-        it = new GridCombineIterator(extent, PredefinedCRS.CARTESIAN_2D, new AffineTransform2D());
+        it = new GridCombineIterator(extent, crsTest, new AffineTransform2D());
         listEnvelope.clear();
         while (it.hasNext()) {
             listEnvelope.add(it.next());
         }
         assertTrue(listEnvelope.size() == 1);
         result = listEnvelope.get(0);
+        assertSame(result.getCoordinateReferenceSystem(), crsTest);
         
         checkEnvelope(result, gridLow[0], gridLow[1], gridLow[0], gridLow[1]);
         
@@ -86,25 +89,27 @@ public strictfp class GridCombineIteratorTest {
         gridHigh[1] = 11;
         
         extent = new GeneralGridEnvelope(gridLow, gridHigh, true);
-        it = new GridCombineIterator(extent, PredefinedCRS.CARTESIAN_2D, new AffineTransform2D(2,0,0,3,-3,5));
+        it = new GridCombineIterator(extent, crsTest, new AffineTransform2D(2,0,0,3,-3,5));
         listEnvelope.clear();
         while (it.hasNext()) {
             listEnvelope.add(it.next());
         }
         assertTrue(listEnvelope.size() == 1);
         result = listEnvelope.get(0);
+        assertSame(result.getCoordinateReferenceSystem(), crsTest);
         
         checkEnvelope(result, -13, -16, 23, 38);
         
         //-- test with exclusive high border
         extent = new GeneralGridEnvelope(gridLow, gridHigh, false);
-        it = new GridCombineIterator(extent, PredefinedCRS.CARTESIAN_2D, new AffineTransform2D(2,0,0,3,-3,5));
+        it = new GridCombineIterator(extent, crsTest, new AffineTransform2D(2,0,0,3,-3,5));
         listEnvelope.clear();
         while (it.hasNext()) {
             listEnvelope.add(it.next());
         }
         assertTrue(listEnvelope.size() == 1);
         result = listEnvelope.get(0);
+        assertSame(result.getCoordinateReferenceSystem(), crsTest);
         
         checkEnvelope(result, -13, -16, 21, 35);
     }
@@ -122,9 +127,9 @@ public strictfp class GridCombineIteratorTest {
         final int[] gridHigh = new int[]{1, 1, 1};
         GeneralGridEnvelope extent = new GeneralGridEnvelope(gridLow, gridHigh, true);
         
-        CoordinateReferenceSystem crs3D = new DefaultCompoundCRS(map, PredefinedCRS.CARTESIAN_2D, CommonCRS.Temporal.JAVA.crs());
+        final CoordinateReferenceSystem crs3D = new DefaultCompoundCRS(map, PredefinedCRS.CARTESIAN_2D, CommonCRS.Temporal.JAVA.crs());
         
-        MatrixSIS mat = Matrices.createDiagonal(4, 4);//-- identity
+        final MatrixSIS mat = Matrices.createDiagonal(4, 4);//-- identity
         
         GridCombineIterator it = new GridCombineIterator(extent, crs3D, MathTransforms.linear(mat));
         
@@ -136,11 +141,13 @@ public strictfp class GridCombineIteratorTest {
         //-- second slice in 1 temporal
         assertTrue(listEnvelope.size() == 2);
         Envelope result = listEnvelope.get(0);
+        assertSame(result.getCoordinateReferenceSystem(), crs3D);
         
         //-- slice in temporal value 0 (gridLow[2])
         checkEnvelope(result, gridLow[0], gridLow[1], gridLow[2], gridHigh[0], gridHigh[1], gridLow[2]);
         
         result = listEnvelope.get(1);
+        assertSame(result.getCoordinateReferenceSystem(), crs3D);
         
         //-- slice in temporal value 1 (gridHigh[2])
         checkEnvelope(result, gridLow[0], gridLow[1], gridHigh[2], gridHigh[0], gridHigh[1], gridHigh[2]);
@@ -158,6 +165,7 @@ public strictfp class GridCombineIteratorTest {
         
         //-- only one point at temporal dim 0
         result = listEnvelope.get(0);
+        assertSame(result.getCoordinateReferenceSystem(), crs3D);
         checkEnvelope(result, gridLow[0], gridLow[1], gridLow[2], gridLow[0], gridLow[1], gridLow[2]);
         
         //-- temporal multi slice
@@ -201,7 +209,7 @@ public strictfp class GridCombineIteratorTest {
                                      0,  0,  0, 3,    5, //-- elevation ordinate
                                      0,  0,  0, 0,    1 });
         
-        GridCombineIterator it = new GridCombineIterator(extent, ccrs, MathTransforms.linear(mat));
+        final GridCombineIterator it = new GridCombineIterator(extent, ccrs, MathTransforms.linear(mat));
         
         final List<Envelope> listEnvelope = new ArrayList<Envelope>();
         while (it.hasNext()) {
@@ -209,6 +217,7 @@ public strictfp class GridCombineIteratorTest {
         }
         //-- for t = {-2, -1} "*" h = {1, 2, 3} 
         assertTrue("expected 6 results. found : "+listEnvelope.size(), listEnvelope.size() == 6);
+        assertSame(listEnvelope.get(0).getCoordinateReferenceSystem(), ccrs);
         
         //-- expected t = -2, h = 1
         checkEnvelope(listEnvelope.get(0), -7, -180, -90, 8,  -7, 180, 90, 8);

@@ -202,7 +202,10 @@ public strictfp class GridCombineIterator implements Iterator<Envelope> {
             //-- if 2D
             if (dim < 3) {
                 finish = true;
-                return Envelopes.transform(gridToCrs, currentGrid);
+                final GeneralEnvelope outEnv = Envelopes.transform(gridToCrs, currentGrid);
+                //-- set crs into out envelope
+                outEnv.setCoordinateReferenceSystem(currentGrid.getCoordinateReferenceSystem());
+                return outEnv;
             }
             
             //-- build new envelope from new grid
@@ -216,8 +219,9 @@ public strictfp class GridCombineIterator implements Iterator<Envelope> {
                 currentGrid.setRange(affectedOrdinate[i], affectedOrdinateIndex[i], affectedOrdinateIndex[i]);
             }
         
-            final Envelope returnedEnvelope = Envelopes.transform(gridToCrs, currentGrid);
+            final GeneralEnvelope returnedEnvelope = Envelopes.transform(gridToCrs, currentGrid);
             nextCursorPos(dim - 3);
+            returnedEnvelope.setCoordinateReferenceSystem(currentGrid.getCoordinateReferenceSystem());
             return returnedEnvelope;
             
         } catch (TransformException ex) {
