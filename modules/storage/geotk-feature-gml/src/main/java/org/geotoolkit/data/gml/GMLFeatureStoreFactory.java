@@ -95,7 +95,7 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     @Override
     public String[] getFileExtensions() {
-        return new String[] {".gml",".xml"};
+        return new String[] {".gml"};
     }
  
     @Override

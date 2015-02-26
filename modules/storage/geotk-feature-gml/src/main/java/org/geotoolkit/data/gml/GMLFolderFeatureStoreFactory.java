@@ -115,7 +115,7 @@ public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
             pathFile = new File(path.toExternalForm());
         }
         if (pathFile.exists() && pathFile.isDirectory()){
-            final File[] files = pathFile.listFiles(new ExtentionFileNameFilter(".gml",".xml"));
+            final File[] files = pathFile.listFiles(new ExtentionFileNameFilter(".gml"));
             return (files.length>0);
         }
         return false;
