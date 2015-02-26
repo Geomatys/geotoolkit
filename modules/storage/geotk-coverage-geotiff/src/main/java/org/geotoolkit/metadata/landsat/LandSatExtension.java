@@ -34,8 +34,8 @@ public class LandSatExtension extends GeoTiffExtension{
     }
 
     @Override
-    public void fillSpatialMetaData(TiffImageReader reader, SpatialMetadata metadata) throws IOException {
-
+    public SpatialMetadata fillSpatialMetaData(TiffImageReader reader, SpatialMetadata metadata) throws IOException {
+        return metadata;
     }
 
 }

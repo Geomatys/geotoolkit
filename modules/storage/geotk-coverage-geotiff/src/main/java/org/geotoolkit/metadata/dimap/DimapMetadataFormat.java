@@ -17,9 +17,9 @@
 
 package org.geotoolkit.metadata.dimap;
 
-import java.util.Locale;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadataFormat;
+import java.util.Locale;
 
 /**
  * TODO

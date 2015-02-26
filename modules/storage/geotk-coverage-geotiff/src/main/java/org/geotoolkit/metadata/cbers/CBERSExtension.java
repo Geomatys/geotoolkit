@@ -59,17 +59,17 @@ public class CBERSExtension extends GeoTiffExtension{
     }
 
     @Override
-    public void fillSpatialMetaData(TiffImageReader reader, SpatialMetadata metadata) throws IOException {
+    public SpatialMetadata fillSpatialMetaData(TiffImageReader reader, SpatialMetadata metadata) throws IOException {
 
         //NOTE : we don't extract anything from this metadata format yet
-        if(true) return;
+        if(true) return metadata;
         
         if(hasMetadata == null){
             //get the metadata file
             Object input = IOUtilities.tryToFile(reader.getInput());
             if(!(input instanceof File)){
                 hasMetadata = false;
-                return;
+                return metadata;
             }
 
             final File file = (File) input;
@@ -78,7 +78,7 @@ public class CBERSExtension extends GeoTiffExtension{
             final int index = name.lastIndexOf('.');
             if(index<=0){
                 hasMetadata = false;
-                return;
+                return metadata;
             }
 
             metaFile = new File(file.getParent(), name.substring(0, index)+".xml");
@@ -95,7 +95,7 @@ public class CBERSExtension extends GeoTiffExtension{
                 throw new IOException(ex.getMessage(), ex);
             }
         }
-
+        return metadata;
 
     }
 

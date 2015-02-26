@@ -47,8 +47,6 @@ import org.apache.sis.metadata.iso.quality.DefaultDataQuality;
 import org.apache.sis.metadata.iso.spatial.AbstractSpatialRepresentation;
 import org.apache.sis.metadata.iso.spatial.DefaultDimension;
 import org.apache.sis.metadata.iso.spatial.DefaultGridSpatialRepresentation;
-import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import org.apache.sis.util.iso.DefaultNameFactory;
 import org.apache.sis.util.iso.SimpleInternationalString;
@@ -62,7 +60,6 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeome
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.metadata.dimap.DimapConstants.*;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.opengis.coverage.SampleDimensionType;
@@ -87,7 +84,6 @@ import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -106,13 +102,22 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.geotoolkit.metadata.dimap.DimapConstants.*;
-import static org.geotoolkit.util.DomUtilities.*;
+import static org.geotoolkit.util.DomUtilities.firstElement;
+import static org.geotoolkit.util.DomUtilities.getListElements;
+import static org.geotoolkit.util.DomUtilities.textAttributeValueSafe;
+import static org.geotoolkit.util.DomUtilities.textValueSafe;
 
 /**
  * Utility class to access usable objects from a dimap file.
@@ -135,8 +140,8 @@ public final class DimapAccessor extends Static {
      *
      * @param doc
      * @return CoordinateReferenceSystem
-     * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException
+     * @throws org.opengis.util.FactoryException
      */
     public static CoordinateReferenceSystem readCRS(final Element doc) throws NoSuchAuthorityCodeException, FactoryException {
         final Element ele = firstElement(doc, TAG_CRS);
@@ -171,8 +176,8 @@ public final class DimapAccessor extends Static {
      *
      * @param doc
      * @return AffineTransform
-     * @throws FactoryException
-     * @throws TransformException
+     * @throws org.opengis.util.FactoryException
+     * @throws org.opengis.referencing.operation.TransformException
      */
     public static AffineTransform readGridToCRS2D(final Element doc) throws FactoryException, TransformException {
         final Element ele = firstElement(doc, TAG_GEOPOSITION);

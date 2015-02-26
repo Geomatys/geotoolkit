@@ -19,7 +19,11 @@ package org.geotoolkit.metadata.dimap;
 import org.apache.sis.metadata.iso.DefaultMetadata;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.DomUtilities;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.metadata.acquisition.Instrument;
 import org.opengis.metadata.acquisition.Operation;
@@ -52,7 +56,10 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test extracting informations from dimap document in properly done.
@@ -66,9 +73,9 @@ public class DimapAccessorTest {
     private final Element docMapping;
 
     public DimapAccessorTest() throws ParserConfigurationException, SAXException, IOException {
-        Document doc = DomUtilities.read(DimapAccessorTest.class.getResourceAsStream("/org/geotoolkit/image/dimap/spotscene.xml"));
+        Document doc = DomUtilities.read(DimapAccessorTest.class.getResourceAsStream("/org/geotoolkit/metadata/dimap/spotscene.xml"));
         docSample = doc.getDocumentElement();
-        doc = DomUtilities.read(DimapAccessorTest.class.getResourceAsStream("/org/geotoolkit/image/dimap/propertymapping.xml"));
+        doc = DomUtilities.read(DimapAccessorTest.class.getResourceAsStream("/org/geotoolkit/metadata/dimap/propertymapping.xml"));
         docMapping = doc.getDocumentElement();
     }
 

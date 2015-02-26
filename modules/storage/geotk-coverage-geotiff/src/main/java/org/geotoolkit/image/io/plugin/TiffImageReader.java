@@ -388,7 +388,7 @@ public class TiffImageReader extends SpatialImageReader {
         fillRootMetadataNode(layerIndex);
         final IIOMetadata metadata = new IIOTiffMetadata(roots[layerIndex]);
         final GeoTiffMetaDataReader metareader = new GeoTiffMetaDataReader(metadata);
-        final SpatialMetadata spatialMetadata;
+        SpatialMetadata spatialMetadata;
         try {
             spatialMetadata = metareader.readSpatialMetaData();
         } catch (NoSuchAuthorityCodeException ex) {
@@ -409,7 +409,7 @@ public class TiffImageReader extends SpatialImageReader {
 
         //fill extensions informations
         for(GeoTiffExtension ext : extensions){
-            ext.fillSpatialMetaData(this,spatialMetadata);
+            spatialMetadata = ext.fillSpatialMetaData(this, spatialMetadata);
         }
 
         return spatialMetadata;

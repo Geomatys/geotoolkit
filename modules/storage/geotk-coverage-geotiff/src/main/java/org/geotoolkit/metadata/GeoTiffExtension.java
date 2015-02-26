@@ -86,11 +86,10 @@ public abstract class GeoTiffExtension {
 
     /**
      * Modify the spatial metadata of the geotiff coverage.
-     * 
      * @param reader
      * @param metadata to be modified
      */
-    public abstract void fillSpatialMetaData(TiffImageReader reader, SpatialMetadata metadata) throws IOException;
+    public abstract SpatialMetadata fillSpatialMetaData(TiffImageReader reader, SpatialMetadata metadata) throws IOException;
 
     /**
      * Modify the given spatial metadata, adding a new crs axis dimension.

@@ -1,3 +1,4 @@
 org.geotoolkit.metadata.cbers.CBERSExtension
 org.geotoolkit.metadata.landsat.LandSatExtension
 org.geotoolkit.metadata.rapideye.RapidEyeExtension
+org.geotoolkit.metadata.dimap.DimapExtension

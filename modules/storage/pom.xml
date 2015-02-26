@@ -111,7 +111,6 @@
     <module>geotk-feature-nmea</module>
     <module>geotk-feature-oracle</module>
     <module>geotk-coverage-bil</module>
-    <module>geotk-coverage-dimap</module>
     <module>geotk-coverage-geotiff</module>
     <module>geotk-coverage-imagery</module>
     <module>geotk-coverage-netcdf</module>
