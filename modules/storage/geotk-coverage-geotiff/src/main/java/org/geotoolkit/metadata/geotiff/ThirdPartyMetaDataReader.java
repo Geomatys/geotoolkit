@@ -131,6 +131,8 @@ public strictfp class ThirdPartyMetaDataReader {
             if (scaleFound && samplePerPixels != -1) break;
         }
 
+        assert samplePerPixels != -1 : "SamplePerPixels is not define.";
+        
         String datetime = null;
         String datetimeDigitized = null;
         String datetimeOriginal = null;

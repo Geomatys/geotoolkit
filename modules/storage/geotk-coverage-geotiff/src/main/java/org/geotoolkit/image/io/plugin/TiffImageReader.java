@@ -63,8 +63,10 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.internal.referencing.ReferencingUtilities;
 
 import org.apache.sis.internal.storage.ChannelImageInputStream;
+import org.apache.sis.util.ArgumentChecks;
 
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
@@ -957,7 +959,7 @@ public class TiffImageReader extends SpatialImageReader {
                     imageHeight     = (int) ((ihObj   == null) ? -1 : ((long[]) ihObj.get(ATT_VALUE))[0]);
                     samplesPerPixel = (int) ((isppObj == null) ? -1 : ((long[]) isppObj.get(ATT_VALUE))[0]);
                     bitsPerSample   = ((long[]) ibpsObj.get(ATT_VALUE));
-
+                   
                     final Map<String, Object> twObj   =  headProperties.get(TileWidth);
                     final Map<String, Object> thObj   =  headProperties.get(TileLength);
                     final Map<String, Object> toObj   =  headProperties.get(TileOffsets);
@@ -976,6 +978,36 @@ public class TiffImageReader extends SpatialImageReader {
                         ensureDefined(rowsPerStrip,    "rowsPerStrip");
                         ensureDefined(stripOffsets,    "stripOffsets");
                         ensureDefined(stripByteCounts, "stripByteCounts");
+                        
+                        //-- check validity of mandatory parameters and try to 
+                        //-- build missing parameters from other present parameters
+                        //-- check samplePerPixel
+                        if (samplesPerPixel == -1) { //--samplePerPixel not define
+                            ArgumentChecks.ensureStrictlyPositive("imageWidth from tiff imageReader is missing", imageWidth);
+                            ArgumentChecks.ensureNonNull("bitsPerSample from tiff image reader is missing",      bitsPerSample);
+                            //-- check it's possible to find a correct value 
+                            //-- planar configuration --//
+                            final Map<String, Object> planarConfig = headProperties.get(PlanarConfiguration);
+                            /*
+                             * If samples per pixel = 1, planar configuration has no impact.
+                             */
+                            final short pC = (planarConfig != null) ? ((short[]) planarConfig.get(ATT_VALUE)) [0] : 1;
+                            final int denom = rowsPerStrip * imageWidth * ((int) bitsPerSample[0] / Byte.SIZE);
+                            //-- it is impossible to find missing samplePerPixel 
+                            //-- value if planarConfiguration is not planar and if exist any compression
+                            if (pC != 1 || compression != 1
+                             || stripByteCounts[0] % denom != 0) {
+                                throw new IllegalArgumentException("impossible to read image because Tiff tag SamplePerPixel (277) is missing");
+                            }
+                            samplesPerPixel = (int) (stripByteCounts[0] / denom);
+                            final Map<String, Object> tagAttributs = new HashMap<String, Object>();
+                            tagAttributs.put(ATT_NAME, getName(SamplesPerPixel));
+                            tagAttributs.put(ATT_TYPE, TYPE_USHORT);
+                            tagAttributs.put(ATT_COUNT, (long) 1);
+                            tagAttributs.put(ATT_VALUE, new long[]{ samplesPerPixel});
+                            headProperties.put(SamplesPerPixel, tagAttributs);
+                        }
+                        //-- TODO find bitsPersample from other parameters.
                     } else {
                         tileWidth   = (int) ((twObj == null) ? -1 : ((long[]) twObj.get(ATT_VALUE))[0]);
                         tileHeight  = (int) ((thObj == null) ? -1 : ((long[]) thObj.get(ATT_VALUE))[0]);
@@ -984,6 +1016,38 @@ public class TiffImageReader extends SpatialImageReader {
                         ensureDefined(tileWidth,   "tileWidth");
                         ensureDefined(tileHeight,  "tileHeight");
                         ensureDefined(tileOffsets, "tileOffsets");
+                        
+                        //-- check validity of mandatory parameters and try to 
+                        //-- build missing parameters from other present parameters
+                        //-- check samplePerPixel
+                        if (samplesPerPixel == -1) { //--samplePerPixel not define
+                            ArgumentChecks.ensureNonNull("bitsPerSample from tiff image reader is missing",      bitsPerSample);
+                            //-- check it's possible to find a correct value 
+                            //-- planar configuration --//
+                            
+                            final Map<String, Object> tbcObj   =  headProperties.get(TileByteCounts);
+                            final int tileByteCounts = (int) ((tbcObj == null) ? -1 : ((long[]) isppObj.get(ATT_VALUE))[0]);
+                            
+                            final Map<String, Object> planarConfig = headProperties.get(PlanarConfiguration);
+                            /*
+                             * If samples per pixel = 1, planar configuration has no impact.
+                             */
+                            final short pC = (planarConfig != null) ? ((short[]) planarConfig.get(ATT_VALUE)) [0] : 1;
+                            final int denom = tileHeight * tileWidth * ((int) bitsPerSample[0] / Byte.SIZE);
+                            //-- it is impossible to find missing samplePerPixel 
+                            //-- value if planarConfiguration is not planar and if exist any compression
+                            if (pC != 1 || compression != 1 || tileByteCounts == -1
+                             || tileByteCounts % denom != 0) {
+                                throw new IllegalArgumentException("impossible to read image because Tiff tag SamplePerPixel (277) is missing");
+                            }
+                            samplesPerPixel = (int) (tileByteCounts / denom);
+                            final Map<String, Object> tagAttributs = new HashMap<String, Object>();
+                            tagAttributs.put(ATT_NAME, getName(SamplesPerPixel));
+                            tagAttributs.put(ATT_TYPE, TYPE_USHORT);
+                            tagAttributs.put(ATT_COUNT, (long) 1);
+                            tagAttributs.put(ATT_VALUE, new long[]{ samplesPerPixel});
+                            headProperties.put(SamplesPerPixel, tagAttributs);
+                        }
                     }
                     currentImage = layerIndex;
                     return;
