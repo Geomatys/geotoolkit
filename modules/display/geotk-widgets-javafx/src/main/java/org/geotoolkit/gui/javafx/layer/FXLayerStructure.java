@@ -63,7 +63,7 @@ public class FXLayerStructure extends FXPropertyPane {
     private static final String CSS;
     static {
         CSS = "<style type=\"text/css\">"
-        + "body {padding:10px; width:250px; background-color:#ffffff; font-family:Monospaced;}\n"
+        + "body {padding:10px; width:250px; background-color:#ffffff; font-family:monospace;}\n"
         + "h1 {font-size:14px; font-weight:bold; text-align:left;}\n"
         + "table{margin-left: 15px;}\n"
         + "td {border-width: 1px; border-style:solid; border-color:black;text-align: center; padding:5px;}\n"
@@ -76,6 +76,8 @@ public class FXLayerStructure extends FXPropertyPane {
     private MapLayer layer;
 
     public FXLayerStructure() {
+        webPane.setPrefSize(600, 400);
+        webPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
     }
 
     @Override
@@ -97,17 +99,20 @@ public class FXLayerStructure extends FXPropertyPane {
         webEngine.loadContent("<html></html>");
 
         final StringBuilder sb = new StringBuilder();
-        sb.append("<html><head>");
+        sb.append("<html><head><meta charset=\"UTF-16\">");
         sb.append(CSS);
         sb.append("</head><body>");
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
             final FeatureType type = fml.getCollection().getFeatureType();
 
-            String str = type.toString().replace("\n", "<br>");
-            str = str.replaceAll(" ", "&nbsp;");
+            String str = type.toString().replace("&", "&amp;");
+            str = str.replace("<", "&lt;");
+            str = str.replace(">", "&gt;");
 
+            sb.append("<pre>");
             sb.append(str);
+            sb.append("</pre>");
             setCenter(webPane);
 
 
@@ -273,7 +278,6 @@ public class FXLayerStructure extends FXPropertyPane {
 
         sb.append("</body></html>");
         webEngine.loadContent(sb.toString());
-        
         return true;
     }
 

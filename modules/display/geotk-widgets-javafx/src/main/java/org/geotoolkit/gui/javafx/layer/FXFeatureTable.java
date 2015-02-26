@@ -80,6 +80,8 @@ public class FXFeatureTable extends FXPropertyPane{
         scroll.setFitToHeight(true);
         scroll.setFitToWidth(true);
         table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+        scroll.setPrefSize(600, 400);
+        scroll.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         setCenter(scroll);
         
         //listen to table selection
