@@ -120,7 +120,6 @@ public class ProjectedGeometryTest {
                     {SEG_LINETO, 180, 80},
                     {SEG_LINETO, 200, 80},
                     {SEG_LINETO, 200, 90},
-                    {SEG_LINETO, 180, 90},
                     {SEG_CLOSE}
                 }));
     }
@@ -222,7 +221,7 @@ public class ProjectedGeometryTest {
                 final int candidateType = candidate.currentSegment(candidateValues);
                 final int expectedType = expected.currentSegment(expectedValues);
                 
-                assertEquals(candidateType, expectedType);
+                assertEquals(expectedType, candidateType);
                 assertArrayEquals(expectedValues, candidateValues, DELTA);
             }else{
                 fail("Path iterator do not have the same number of iteration.");

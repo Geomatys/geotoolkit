@@ -82,6 +82,8 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.StyleUtilities;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
@@ -424,8 +426,28 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         final GeometryDescriptor geomDesc                        = schema.getGeometryDescriptor();
         final BoundingBox bbox                                   = optimizeBBox(renderingContext, layer, symbolsMargin);
         final CoordinateReferenceSystem layerCRS                 = schema.getCoordinateReferenceSystem();
-        final String geomAttName                                 = (geomDesc!=null)? geomDesc.getLocalName() : null;
         final RenderingHints hints                               = renderingContext.getRenderingHints();
+
+        //search used geometries
+        boolean allDefined = true;
+        final Set<String> geomProperties = new HashSet<>();
+        if(rules!=null){
+            for(Rule r : rules){
+                for(Symbolizer s : r.symbolizers()){
+                    final Expression expGeom = s.getGeometry();
+                    if(expGeom instanceof PropertyName){
+                        geomProperties.add( ((PropertyName)expGeom).getPropertyName() );
+                    }else{
+                        allDefined = false;
+                    }
+                }
+            }
+        }else{
+            allDefined = false;
+        }
+        if(geomDesc!=null && !allDefined){
+            geomProperties.add(geomDesc.getLocalName());
+        }
 
         Filter filter;
 
@@ -438,12 +460,23 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         //   filter = Filter.INCLUDE;
         //}else{
         //make a bbox filter
-        if(geomAttName != null){
-            if (layerCRS != null) {
-                filter = new UnreprojectedLooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<BoundingBox>(bbox));
-            } else {
-                filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<BoundingBox>(bbox));
+        if(!geomProperties.isEmpty()){
+            if(geomProperties.size()==1){
+                final String geomAttName = geomProperties.iterator().next();
+                if (layerCRS != null) {
+                    filter = new UnreprojectedLooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox));
+                } else {
+                    filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox));
+                }
+            }else{
+                //make an OR filter with all geometries
+                final List<Filter> geomFilters = new ArrayList<>();
+                for(String geomAttName : geomProperties){
+                    geomFilters.add(new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox)));
+                }
+                filter = FILTER_FACTORY.or(geomFilters);
             }
+           
         }else{
             filter = Filter.EXCLUDE;
         }
@@ -454,7 +487,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             filter = FILTER_FACTORY.and(filter,layer.getQuery().getFilter());
         }
 
-        final Set<String> copy = new HashSet<String>();
+        final Set<String> copy = new HashSet<>();
 
         //concatenate with temporal range if needed ----------------------------
         for (final FeatureMapLayer.DimensionDef def : layer.getExtraDimensions()) {
@@ -497,9 +530,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }else{
             final Set<String> attributs = styleRequieredAtts;
             copy.addAll(attributs);
-            if(geomAttName != null){
-                copy.add(geomAttName);
-            }
+            copy.addAll(geomProperties);
             atts = copy.toArray(new String[copy.size()]);
 
             //check that properties names does not hold sub properties values, if one is found
@@ -546,7 +577,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
         //combine the filter with rule filters----------------------------------
         if(rules != null){
-            List<Filter> rulefilters = new ArrayList<Filter>();
+            List<Filter> rulefilters = new ArrayList<>();
             for(Rule rule : rules){
                 if(rule.isElseFilter()){
                     //we can't append styling filters, an else rule match all features

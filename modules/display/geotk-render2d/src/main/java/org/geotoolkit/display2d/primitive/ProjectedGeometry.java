@@ -17,6 +17,7 @@
 package org.geotoolkit.display2d.primitive;
 
 import com.bric.geom.Clipper;
+import com.vividsolutions.jts.geom.Envelope;
 import java.awt.Shape;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -306,8 +307,13 @@ public class ProjectedGeometry  {
             for(int i=0;i<displayShape.length;i++){
                 displayShape[i] = new JTSGeometryJ2D(displayGeometryJTS[i]);
                 if(params.displayClipRect!=null){
-                    //clip to display bounds
-                    displayShape[i] = Clipper.clipToRect(displayShape[i], params.displayClipRect);
+                    //check envelopes
+                    final Envelope env = displayGeometryJTS[i].getEnvelopeInternal();
+                    if(!env.isNull() && !params.displayClip.getEnvelopeInternal().contains(env)){
+                        //clip to display bounds
+                        displayShape[i] = Clipper.clipToRect(displayShape[i], params.displayClipRect);
+                    }
+                    
                 }
                 //TODO find a way to reactive curves is there is no transformation
                 //displayShape = ProjectedShape.wrap(shape, dataToDisplay);
