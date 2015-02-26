@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.geotoolkit</groupId>
         <artifactId>display</artifactId>
-        <version>4.x-SNAPSHOT</version>
+        <version>4.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.geotoolkit</groupId>
