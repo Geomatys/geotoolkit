@@ -66,6 +66,15 @@ public class ServiceParametersType {
     @XmlElement(name = "Extension")
     private ExtensionType extension;
 
+    public ServiceParametersType() {
+        
+    }
+    
+    public ServiceParametersType(final QName coverageSubtype, final String nativeFormat) {
+        this.coverageSubtype = coverageSubtype;
+        this.nativeFormat    = nativeFormat;
+    }
+    
     /**
      * Gets the value of the coverageSubtype property.
      * 

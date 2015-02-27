@@ -22,7 +22,9 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wcs.xml.DescribeCoverageResponse;
 
 
 /**
@@ -48,18 +50,27 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "CoverageDescriptionsType", propOrder = {
     "coverageDescription"
 })
-public class CoverageDescriptionsType {
+@XmlRootElement(name = "CoverageDescriptions")
+public class CoverageDescriptionsType implements DescribeCoverageResponse {
 
     @XmlElement(name = "CoverageDescription")
     private List<CoverageDescriptionType> coverageDescription;
 
+    public CoverageDescriptionsType() {
+        
+    }
+    
+    public CoverageDescriptionsType(List<CoverageDescriptionType> coverageDescription) {
+        this.coverageDescription = coverageDescription;
+    }
+    
     /**
      * Gets the value of the coverageDescription property.
      * 
      */
     public List<CoverageDescriptionType> getCoverageDescription() {
         if (coverageDescription == null) {
-            coverageDescription = new ArrayList<CoverageDescriptionType>();
+            coverageDescription = new ArrayList<>();
         }
         return this.coverageDescription;
     }

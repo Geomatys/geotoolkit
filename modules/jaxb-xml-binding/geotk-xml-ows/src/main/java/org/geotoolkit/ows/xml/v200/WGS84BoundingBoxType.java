@@ -20,6 +20,7 @@ package org.geotoolkit.ows.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 
 /**
@@ -51,6 +52,25 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WGS84BoundingBoxType")
 public class WGS84BoundingBoxType extends BoundingBoxType {
-
+    
+    WGS84BoundingBoxType(){
+        
+    }
+    
+    public WGS84BoundingBoxType(final double minx, final double miny, final double maxx, final double maxy){
+        super(null, minx, miny, maxx, maxy);
+    }
+    
+    public WGS84BoundingBoxType(final String crsName, final double minx, final double miny, final double maxx, final double maxy){
+        super(crsName, minx, miny, maxx, maxy);
+    }
+    
+    public WGS84BoundingBoxType(final GeographicBoundingBox inputGeoBox){
+        super(null, 
+             inputGeoBox.getWestBoundLongitude(),
+             inputGeoBox.getSouthBoundLatitude(),
+             inputGeoBox.getEastBoundLongitude(),
+             inputGeoBox.getNorthBoundLatitude());
+    }
 
 }

@@ -70,6 +70,14 @@ public class DataRecordPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ActuateType actuate;
 
+    public DataRecordPropertyType() {
+        
+    }
+    
+    public DataRecordPropertyType(final DataRecordType dataRecord) {
+        this.dataRecord = dataRecord;
+    }
+    
     /**
      * Gets the value of the dataRecord property.
      * 

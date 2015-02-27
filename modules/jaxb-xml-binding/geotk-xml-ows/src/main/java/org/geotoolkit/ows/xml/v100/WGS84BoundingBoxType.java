@@ -74,6 +74,14 @@ public class WGS84BoundingBoxType extends BoundingBoxType implements GeographicB
         super(crs, minx, miny, maxx, maxy);
     }
 
+    public WGS84BoundingBoxType(final GeographicBoundingBox inputGeoBox){
+        super(null, 
+             inputGeoBox.getWestBoundLongitude(),
+             inputGeoBox.getSouthBoundLatitude(),
+             inputGeoBox.getEastBoundLongitude(),
+             inputGeoBox.getNorthBoundLatitude());
+    }
+    
     /**
      * {@inheritDoc}
      */

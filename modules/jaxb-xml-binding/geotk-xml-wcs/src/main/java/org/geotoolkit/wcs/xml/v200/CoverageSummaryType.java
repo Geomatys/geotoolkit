@@ -91,13 +91,15 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
         
     }
     
-    public CoverageSummaryType(final String identifier, final String title, final String _abstract, final WGS84BoundingBoxType bbox) {
+    public CoverageSummaryType(final String identifier, final String title, final String _abstract, final WGS84BoundingBoxType bbox, 
+            final QName coverageSubtype) {
         super(title, _abstract, null);
         if (bbox != null) {
-            this.wgs84BoundingBox = new ArrayList<WGS84BoundingBoxType>();
+            this.wgs84BoundingBox = new ArrayList<>();
             this.wgs84BoundingBox.add(bbox);
         }
         this.coverageId = identifier;
+        this.coverageSubtype = coverageSubtype;
                 
     }
     /**
@@ -105,7 +107,7 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
      */
     public List<WGS84BoundingBoxType> getWGS84BoundingBox() {
         if (wgs84BoundingBox == null) {
-            wgs84BoundingBox = new ArrayList<WGS84BoundingBoxType>();
+            wgs84BoundingBox = new ArrayList<>();
         }
         return this.wgs84BoundingBox;
     }
@@ -193,7 +195,7 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
      */
     public List<JAXBElement<? extends BoundingBoxType>> getBoundingBox() {
         if (boundingBox == null) {
-            boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
+            boundingBox = new ArrayList<>();
         }
         return this.boundingBox;
     }
@@ -209,7 +211,7 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
      */
     public List<JAXBElement<? extends MetadataType>> getMetadata() {
         if (metadata == null) {
-            metadata = new ArrayList<JAXBElement<? extends MetadataType>>();
+            metadata = new ArrayList<>();
         }
         return this.metadata;
     }
@@ -217,7 +219,7 @@ public class CoverageSummaryType extends DescriptionType  implements CoverageInf
     @Override
     public void setMetadata(final String href) {
         if (href != null) {
-            this.metadata = new ArrayList<JAXBElement<? extends MetadataType>>();
+            this.metadata = new ArrayList<>();
             final org.geotoolkit.ows.xml.v200.ObjectFactory factory = new org.geotoolkit.ows.xml.v200.ObjectFactory();
             
             this.metadata.add(factory.createMetadata(new MetadataType(href)));

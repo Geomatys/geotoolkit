@@ -20,6 +20,7 @@ package org.geotoolkit.wcs.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.Sections;
 import org.geotoolkit.ows.xml.v200.CapabilitiesBaseType;
@@ -28,6 +29,7 @@ import org.geotoolkit.ows.xml.v200.SectionsType;
 import org.geotoolkit.ows.xml.v200.ServiceIdentification;
 import org.geotoolkit.ows.xml.v200.ServiceProvider;
 import org.geotoolkit.wcs.xml.GetCapabilitiesResponse;
+import org.geotoolkit.wcs.xml.WCSResponse;
 
 
 /**
@@ -55,7 +57,8 @@ import org.geotoolkit.wcs.xml.GetCapabilitiesResponse;
     "serviceMetadata",
     "contents"
 })
-public class CapabilitiesType extends CapabilitiesBaseType implements GetCapabilitiesResponse {
+@XmlRootElement(name = "Capabilities")
+public class CapabilitiesType extends CapabilitiesBaseType implements GetCapabilitiesResponse, WCSResponse {
 
     @XmlElement(name = "ServiceMetadata")
     private ServiceMetadataType serviceMetadata;

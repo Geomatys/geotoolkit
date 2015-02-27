@@ -30,6 +30,7 @@ public interface CoverageInfo {
 
     Envelope getLonLatEnvelope();
 
+    @Deprecated
     List<?> getRest();
     
     void setTitle(final String title);

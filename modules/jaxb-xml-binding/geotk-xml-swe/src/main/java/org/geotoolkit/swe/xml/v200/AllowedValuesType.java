@@ -73,7 +73,7 @@ public class AllowedValuesType extends AbstractSWEType implements AbstractAllowe
      */
     public List<Double> getValue() {
         if (value == null) {
-            value = new ArrayList<Double>();
+            value = new ArrayList<>();
         }
         return this.value;
     }
@@ -99,7 +99,7 @@ public class AllowedValuesType extends AbstractSWEType implements AbstractAllowe
      */
     public List<JAXBElement<List<Double>>> getJbInterval() {
         if (interval == null) {
-            interval = new ArrayList<JAXBElement<List<Double>>>();
+            interval = new ArrayList<>();
         }
         return this.interval;
     }
@@ -130,22 +130,60 @@ public class AllowedValuesType extends AbstractSWEType implements AbstractAllowe
 
     @Override
     public Double getMin() {
+        final List<Double> i = getInterval();
+        if (i != null && !i.isEmpty()) {
+            return i.get(0);
+        }
         return null;
     }
 
     @Override
     public void setMin(Double value) {
-        // do nothing
+        List<Double> i = getInterval();
+        if (i == null) {
+            i = new ArrayList<>(2);
+            i.add(value);
+            i.add(Double.NaN);
+            final ObjectFactory factory = new ObjectFactory();
+            interval = new ArrayList<>();
+            interval.add(factory.createAllowedValuesTypeInterval(i));
+            
+        } else if (!i.isEmpty()) {
+            i.set(0, value);
+        } else {
+            i.add(value);
+            i.add(Double.NaN);
+        }
     }
 
     @Override
     public Double getMax() {
+        final List<Double> i = getInterval();
+        if (i != null && i.size() > 1) {
+            return i.get(1);
+        }
         return null;
     }
 
     @Override
     public void setMax(Double value) {
-        //do nothing
+        List<Double> i = getInterval();
+        if (i == null) {
+            i = new ArrayList<>(2);
+            i.add(Double.NaN);
+            i.add(value);
+            final ObjectFactory factory = new ObjectFactory();
+            interval = new ArrayList<>();
+            interval.add(factory.createAllowedValuesTypeInterval(i));
+            
+        } else if (!i.isEmpty() && i.size() > 1) {
+            i.set(1, value);
+        } else if (!i.isEmpty() && i.size() == 1) {
+            i.add(value);
+        } else {
+            i.add(value);
+            i.add(Double.NaN);
+        }
     }
 
     @Override

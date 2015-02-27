@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.coverage.grid.GridEnvelope;
 
 
 /**
@@ -61,6 +62,21 @@ public class GridEnvelopeType {
     @XmlElement(required = true)
     private List<Integer> high;
 
+    public GridEnvelopeType() {
+        
+    }
+    
+    public GridEnvelopeType(final GridEnvelope gridEnv) {
+        if (gridEnv != null) {
+            final int dimension = gridEnv.getDimension();
+            this.high           = new ArrayList<>();
+            this.low            = new ArrayList<>();
+            for (int i = 0; i < dimension; i++) {
+                this.high.add(gridEnv.getHigh(i));
+                this.low.add(gridEnv.getLow(i));
+            }
+        }
+    }
     /**
      * Gets the value of the low property.
      * 

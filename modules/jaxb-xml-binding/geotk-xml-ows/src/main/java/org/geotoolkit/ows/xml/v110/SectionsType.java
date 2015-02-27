@@ -54,10 +54,21 @@ import org.geotoolkit.ows.xml.Sections;
 public class SectionsType implements Sections {
 
     @XmlElement(name = "Section")
-    private List<String> section = new ArrayList<String>();
+    private List<String> section = new ArrayList<>();
     
     @XmlTransient
-    private static final List<String> existingSections111 = new ArrayList<String>(6);
+    private static final List<String> existingSections200 = new ArrayList<>(6);
+    static {
+        existingSections200.add("ServiceIdentification");
+        existingSections200.add("ServiceProvider");
+        existingSections200.add("OperationsMetadata");
+        existingSections200.add("Contents");
+        existingSections200.add("Filter_Capabilities");
+        existingSections200.add("All");
+    }
+    
+    @XmlTransient
+    private static final List<String> existingSections111 = new ArrayList<>(6);
     static {
         existingSections111.add("ServiceIdentification");
         existingSections111.add("ServiceProvider");
@@ -68,7 +79,7 @@ public class SectionsType implements Sections {
     }
     
     @XmlTransient
-    private static final List<String> existingSections100 = new ArrayList<String>(4);
+    private static final List<String> existingSections100 = new ArrayList<>(4);
     static {
         existingSections100.add("/");
         existingSections100.add("/WCS_Capabilities/Service");
@@ -101,7 +112,7 @@ public class SectionsType implements Sections {
     @Override
     public List<String> getSection() {
         if (section == null){
-            section = new ArrayList<String>();
+            section = new ArrayList<>();
         }
        return Collections.unmodifiableList(section);
     }
@@ -142,6 +153,8 @@ public class SectionsType implements Sections {
             return Collections.unmodifiableList(existingSections100);
         } else if (v.equals("1.1.1")) {
             return Collections.unmodifiableList(existingSections111);
+        } else if (v.equals("2.0.0")) {
+            return Collections.unmodifiableList(existingSections200);
         } else {
             return null;
         }

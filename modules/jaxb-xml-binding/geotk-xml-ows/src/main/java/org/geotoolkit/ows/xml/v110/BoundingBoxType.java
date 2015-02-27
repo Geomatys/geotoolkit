@@ -77,10 +77,10 @@ public class BoundingBoxType implements BoundingBox {
 
     @XmlList
     @XmlElement(name = "LowerCorner", type = Double.class)
-    private List<Double> lowerCorner  = new ArrayList<Double>();
+    private List<Double> lowerCorner  = new ArrayList<>();
     @XmlList
     @XmlElement(name = "UpperCorner", type = Double.class)
-    private List<Double> upperCorner = new ArrayList<Double>();
+    private List<Double> upperCorner = new ArrayList<>();
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String crs;

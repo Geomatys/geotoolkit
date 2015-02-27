@@ -18,9 +18,13 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.coverage.grid.RectifiedGrid;
 
 
 /**
@@ -44,10 +48,57 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "RectifiedGridType")
-public class RectifiedGridType
-    extends GridType
-{
+@XmlType(name = "RectifiedGridType", propOrder = {
+    "origin",
+    "offsetVector"
+})
+public class RectifiedGridType extends GridType {
 
+    @XmlElement(required = true)
+    private PointType origin;
+    @XmlElement(required = true)
+    private List<VectorType> offsetVector;
+
+    public RectifiedGridType() {
+
+    }
+
+    public RectifiedGridType(final RectifiedGrid grid) {
+       super(grid);
+       if (grid != null) {
+           origin       = new PointType(grid.getOrigin(), false);
+           offsetVector = new ArrayList<>();
+           
+           final List<double[]> vectors = grid.getOffsetVectors();
+           for (double[] vector : vectors) {
+                offsetVector.add(new VectorType(vector));
+           }
+       }
+    }
+
+    /**
+     * Gets the value of the origin property.
+     */
+    public PointType getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(final PointType origin) {
+        this.origin = origin;
+    }
+
+    /**
+     * Gets the value of the offsetVector property.
+     */
+    public List<VectorType> getOffsetVector() {
+        return offsetVector;
+    }
+
+    /**
+     * Sets the value of the offsetVector property
+     */
+    public void setOffsetVector(final List<VectorType> offsetVector) {
+        this.offsetVector = offsetVector;
+    }
 
 }

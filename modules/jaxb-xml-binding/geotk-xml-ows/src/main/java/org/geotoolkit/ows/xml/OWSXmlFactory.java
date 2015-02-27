@@ -19,6 +19,7 @@ package org.geotoolkit.ows.xml;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.inspire.xml.MultiLingualCapabilities;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 /**
  *
@@ -380,7 +381,7 @@ public class OWSXmlFactory {
             final List<org.geotoolkit.ows.xml.v200.DomainType> param200 = new ArrayList<>();
             if (parameters != null) {
                 for (AbstractDomain dom : parameters) {
-                    if (dom != null && !(dom instanceof org.geotoolkit.ows.xml.v110.DomainType)) {
+                    if (dom != null && !(dom instanceof org.geotoolkit.ows.xml.v200.DomainType)) {
                         throw new IllegalArgumentException("unexpected object version for domains");
                     } else if (dom != null) {
                         param200.add((org.geotoolkit.ows.xml.v200.DomainType)dom);
@@ -390,7 +391,7 @@ public class OWSXmlFactory {
             final List<org.geotoolkit.ows.xml.v200.DomainType> const200 = new ArrayList<>();
             if (constraints != null) {
                 for (AbstractDomain dom : constraints) {
-                    if (dom != null && !(dom instanceof org.geotoolkit.ows.xml.v110.DomainType)) {
+                    if (dom != null && !(dom instanceof org.geotoolkit.ows.xml.v200.DomainType)) {
                         throw new IllegalArgumentException("unexpected object version for domains");
                     } else if (dom != null) {
                         const200.add((org.geotoolkit.ows.xml.v200.DomainType)dom);
@@ -595,6 +596,50 @@ public class OWSXmlFactory {
                 throw new IllegalArgumentException("unexpected object type for extendedCapabilities");
             }
             return new org.geotoolkit.ows.xml.v100.OperationsMetadata(ops, params, consts, (MultiLingualCapabilities) extendedCapabilities);
+        } else if ("2.0.0".equals(currentVersion)) {
+            final List<org.geotoolkit.ows.xml.v200.Operation> ops = new ArrayList<>();
+            if (operations != null) {
+                for (AbstractOperation op : operations) {
+                    if (op != null && !(op instanceof org.geotoolkit.ows.xml.v200.Operation)) {
+                        throw new IllegalArgumentException("unexpected object version for operation");
+                    } else if (op != null) {
+                        ops.add((org.geotoolkit.ows.xml.v200.Operation)op);
+                    }
+                }
+            }
+            final List<org.geotoolkit.ows.xml.v200.DomainType> params = new ArrayList<>();
+            if (parameters != null) {
+                for (AbstractDomain param : parameters) {
+                    if (param != null && !(param instanceof org.geotoolkit.ows.xml.v200.DomainType)) {
+                        throw new IllegalArgumentException("unexpected object version for parameter");
+                    } else if (param != null) {
+                        params.add((org.geotoolkit.ows.xml.v200.DomainType)param);
+                    }
+                }
+            }
+            final List<org.geotoolkit.ows.xml.v200.DomainType> consts = new ArrayList<>();
+            if (constraints != null) {
+                for (AbstractDomain constr : constraints) {
+                    if (constr != null && !(constr instanceof org.geotoolkit.ows.xml.v200.DomainType)) {
+                        throw new IllegalArgumentException("unexpected object version for constraint");
+                    } else if (constr != null) {
+                        consts.add((org.geotoolkit.ows.xml.v200.DomainType)constr);
+                    }
+                }
+            }
+            return new org.geotoolkit.ows.xml.v200.OperationsMetadata(ops, params, consts, extendedCapabilities);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+
+    public static BoundingBox buildWGS84BoundingBox(String currentVersion, GeographicBoundingBox inputGeoBox) {
+        if ("1.1.0".equals(currentVersion)) {
+            return new org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType(inputGeoBox);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType(inputGeoBox);
+        } else if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.ows.xml.v200.WGS84BoundingBoxType(inputGeoBox);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }

@@ -43,9 +43,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "VectorType")
-public class VectorType
-    extends DirectPositionType
-{
+public class VectorType extends DirectPositionType {
 
+    public VectorType() {
+        
+    }
+    
+    public VectorType(final double... values) {
+        super(values);
+    }
 
 }

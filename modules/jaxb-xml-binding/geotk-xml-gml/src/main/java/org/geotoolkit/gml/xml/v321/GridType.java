@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.coverage.grid.Grid;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -75,6 +76,20 @@ public class GridType extends AbstractGeometryType {
     @XmlSchemaType(name = "positiveInteger")
     private Integer dimension;
 
+    public GridType() {
+        
+    }
+    
+    public GridType(final Grid grid) {
+        final ObjectFactory factory = new ObjectFactory();
+        if (grid != null) {
+            this.dimension = grid.getDimension();
+            final GridEnvelopeType limits = new GridEnvelopeType(grid.getExtent());
+            this.rest = new ArrayList<>();
+            this.rest.add(factory.createGridTypeLimits(new GridLimitsType(limits)));
+        }
+    }
+    
     /**
      * Gets the rest of the content model. 
      * 

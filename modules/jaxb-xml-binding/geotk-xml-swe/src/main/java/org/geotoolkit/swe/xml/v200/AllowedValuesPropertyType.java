@@ -72,6 +72,14 @@ public class AllowedValuesPropertyType implements AbstractAllowedValuesProperty 
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private ActuateType actuate;
 
+    public AllowedValuesPropertyType() {
+        
+    }
+    
+    public AllowedValuesPropertyType(AllowedValuesType allowedValues) {
+        this.allowedValues = allowedValues;
+    }
+    
     /**
      * Gets the value of the allowedValues property.
      *

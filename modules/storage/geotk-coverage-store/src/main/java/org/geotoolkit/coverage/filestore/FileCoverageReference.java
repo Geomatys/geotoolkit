@@ -123,6 +123,10 @@ public class FileCoverageReference extends RecyclingCoverageReference{
     public File getInput() {
         return file;
     }
+    
+    public ImageReaderSpi getSpi() {
+        return spi;
+    }
 
     public Image getLegend() throws DataStoreException {
         return null;

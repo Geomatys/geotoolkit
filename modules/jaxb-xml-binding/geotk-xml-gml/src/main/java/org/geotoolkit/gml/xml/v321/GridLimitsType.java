@@ -51,6 +51,14 @@ public class GridLimitsType {
 
     @XmlElement(name = "GridEnvelope", required = true)
     private GridEnvelopeType gridEnvelope;
+    
+    public GridLimitsType() {
+        
+    }
+    
+    public GridLimitsType(GridEnvelopeType gridEnvelope) {
+        this.gridEnvelope = gridEnvelope;
+    }
 
     /**
      * Gets the value of the gridEnvelope property.

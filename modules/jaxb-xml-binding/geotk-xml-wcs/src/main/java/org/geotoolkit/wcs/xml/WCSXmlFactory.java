@@ -20,6 +20,7 @@ package org.geotoolkit.wcs.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.namespace.QName;
 import org.geotoolkit.ows.xml.AbstractContact;
 import org.geotoolkit.ows.xml.AbstractDCP;
 import org.geotoolkit.ows.xml.AbstractDomain;
@@ -42,7 +43,7 @@ import org.geotoolkit.ows.xml.Sections;
 public class WCSXmlFactory {
 
     public static CoverageInfo createCoverageInfo(final String version, final String identifier, final String title, 
-            final String _abstract, final Object bbox) {
+            final String _abstract, final Object bbox, final String coverageSubType) {
         if ("1.1.1".equals(version)) {
             if (bbox != null && !(bbox instanceof org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType)) {
                 throw new IllegalArgumentException("unexpected object version for bbox element");
@@ -59,8 +60,14 @@ public class WCSXmlFactory {
             if (bbox != null && !(bbox instanceof org.geotoolkit.ows.xml.v200.WGS84BoundingBoxType)) {
                 throw new IllegalArgumentException("unexpected object version for bbox element");
             }
+            QName coverageSB = null;
+            if (coverageSubType != null) {
+                coverageSB = new QName(coverageSubType);
+            }
+            
             return new org.geotoolkit.wcs.xml.v200.CoverageSummaryType(identifier, title, _abstract, 
-                                                                      (org.geotoolkit.ows.xml.v200.WGS84BoundingBoxType)bbox);
+                                                                      (org.geotoolkit.ows.xml.v200.WGS84BoundingBoxType)bbox,
+                                                                       coverageSB);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }
@@ -130,6 +137,15 @@ public class WCSXmlFactory {
                 cov100.add((org.geotoolkit.wcs.xml.v100.CoverageOfferingType)c);
             }
             return new org.geotoolkit.wcs.xml.v100.CoverageDescription(cov100, "1.0.0");
+        } else if ("2.0.0".equals(version)) {
+            final List<org.geotoolkit.wcs.xml.v200.CoverageDescriptionType> cov200 = new ArrayList<>();
+            for (CoverageInfo c : coverageinfos) {
+                if (!(c instanceof org.geotoolkit.wcs.xml.v200.CoverageDescriptionType)) {
+                    throw new IllegalArgumentException("unexpected object version for coverageInfo element");
+                }
+                cov200.add((org.geotoolkit.wcs.xml.v200.CoverageDescriptionType)c);
+            }
+            return new org.geotoolkit.wcs.xml.v200.CoverageDescriptionsType(cov200);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }

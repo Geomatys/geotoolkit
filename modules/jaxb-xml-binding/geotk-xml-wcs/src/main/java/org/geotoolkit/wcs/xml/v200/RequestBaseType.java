@@ -63,9 +63,9 @@ public abstract class RequestBaseType implements RequestBase {
     @XmlElement(name = "Extension")
     private ExtensionType extension;
     @XmlAttribute(required = true)
-    private String service;
+    protected String service;
     @XmlAttribute(required = true)
-    private String version;
+    protected String version;
 
     /**
      * Gets the value of the extension property.

@@ -29,11 +29,14 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v321.AbstractFeatureType;
+import org.geotoolkit.gml.xml.v321.BoundingShapeType;
+import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.gml.xml.v321.CoverageFunctionType;
 import org.geotoolkit.gml.xml.v321.DomainSetType;
 import org.geotoolkit.gmlcov.xml.v100.Metadata;
 import org.geotoolkit.swe.xml.v200.DataRecordPropertyType;
-import org.geotoolkit.wcs.xml.DescribeCoverageResponse;
+import org.geotoolkit.wcs.xml.CoverageInfo;
+import org.opengis.geometry.Envelope;
 
 /**
  * <p>Java class for CoverageDescriptionType complex type.
@@ -68,7 +71,7 @@ import org.geotoolkit.wcs.xml.DescribeCoverageResponse;
     "rangeType",
     "serviceParameters"
 })
-public class CoverageDescriptionType extends AbstractFeatureType implements DescribeCoverageResponse {
+public class CoverageDescriptionType extends AbstractFeatureType implements CoverageInfo {
 
     @XmlElement(name = "CoverageId", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -85,6 +88,24 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Desc
     @XmlElement(name = "ServiceParameters", required = true)
     private ServiceParametersType serviceParameters;
 
+    public CoverageDescriptionType() {
+        
+    }
+    
+    public CoverageDescriptionType(final String coverageId, final EnvelopeType env, final DomainSetType domainSet, 
+            final DataRecordPropertyType rangeType, final ServiceParametersType serviceParameters) {
+        this.coverageId = coverageId;
+        if (env != null) {
+            setBoundedBy(new BoundingShapeType(env));
+        }
+        final org.geotoolkit.gml.xml.v321.ObjectFactory factory = new org.geotoolkit.gml.xml.v321.ObjectFactory();
+        if (domainSet != null) {
+            this.domainSet = factory.createGridDomain(domainSet);
+        }
+        this.rangeType = rangeType;
+        this.serviceParameters = serviceParameters;
+    }
+    
     /**
      * Gets the value of the coverageId property.
      * 
@@ -143,11 +164,19 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Desc
      */
     public List<Metadata> getMetadata() {
         if (metadata == null) {
-            metadata = new ArrayList<Metadata>();
+            metadata = new ArrayList<>();
         }
         return this.metadata;
     }
 
+    @Override
+    public void setMetadata(final String href) {
+        if (href != null) {
+            this.metadata = new ArrayList<>();
+            this.metadata.add(new Metadata(href));
+        }
+    }
+    
     /**
      * Gets the value of the domainSet property.
      * 
@@ -230,6 +259,31 @@ public class CoverageDescriptionType extends AbstractFeatureType implements Desc
      */
     public void setServiceParameters(ServiceParametersType value) {
         this.serviceParameters = value;
+    }
+
+    @Override
+    public Envelope getLonLatEnvelope() {
+        return null;
+    }
+
+    @Override
+    public List<?> getRest() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void setTitle(String title) {
+        //do nothing
+    }
+
+    @Override
+    public void setAbstract(String abs) {
+        //do nothing
+    }
+
+    @Override
+    public void setKeywordValues(List<String> values) {
+        //do nothing
     }
 
 }

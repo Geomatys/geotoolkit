@@ -19,6 +19,8 @@ package org.geotoolkit.ows.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,6 +30,10 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.BoundingBox;
+import org.geotoolkit.referencing.IdentifiedObjects;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -66,12 +72,14 @@ import org.geotoolkit.ows.xml.BoundingBox;
 })
 public class BoundingBoxType implements BoundingBox {
 
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.ows.xml.v200");
+    
     @XmlList
     @XmlElement(name = "LowerCorner", type = Double.class)
-    private List<Double> lowerCorner;
+    private List<Double> lowerCorner = new ArrayList<>();
     @XmlList
     @XmlElement(name = "UpperCorner", type = Double.class)
-    private List<Double> upperCorner;
+    private List<Double> upperCorner = new ArrayList<>();
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String crs;
@@ -79,6 +87,48 @@ public class BoundingBoxType implements BoundingBox {
     @XmlSchemaType(name = "positiveInteger")
     private Integer dimensions;
 
+    BoundingBoxType(){
+    }
+
+    /**
+     * Build a 2 dimension boundingBox.
+     *
+     * @param crs
+     * @param maxx
+     * @param maxy
+     * @param minx
+     * @param miny
+     */
+    public BoundingBoxType(final String crs, final double minx, final double miny, final double maxx, final double maxy){
+        this.dimensions = 2;
+        this.lowerCorner.add(minx);
+        this.lowerCorner.add(miny);
+        this.upperCorner.add(maxx);
+        this.upperCorner.add(maxy);
+        this.crs = crs;
+    }
+
+    public BoundingBoxType(final Envelope envelope) {
+        if (envelope != null) {
+            for (Double d : envelope.getLowerCorner().getCoordinate()) {
+                this.lowerCorner.add(d);
+            }
+            for (Double d : envelope.getUpperCorner().getCoordinate()) {
+                this.upperCorner.add(d);
+            }
+            final CoordinateReferenceSystem crss = envelope.getCoordinateReferenceSystem();
+            if (crss != null) {
+                try {
+                    crs = "EPSG:" + IdentifiedObjects.lookupEpsgCode(crss, true);
+                } catch (FactoryException ex) {
+                    LOGGER.log(Level.SEVERE, "Factory exception while creating OWS BoundingBox from opengis one", ex);
+                }
+            }
+            this.dimensions = envelope.getDimension();
+        }
+    }
+
+    
     /**
      * Gets the value of the lowerCorner property.
      * 
@@ -86,7 +136,7 @@ public class BoundingBoxType implements BoundingBox {
     @Override
     public List<Double> getLowerCorner() {
         if (lowerCorner == null) {
-            lowerCorner = new ArrayList<Double>();
+            lowerCorner = new ArrayList<>();
         }
         return this.lowerCorner;
     }
@@ -98,7 +148,7 @@ public class BoundingBoxType implements BoundingBox {
     @Override
     public List<Double> getUpperCorner() {
         if (upperCorner == null) {
-            upperCorner = new ArrayList<Double>();
+            upperCorner = new ArrayList<>();
         }
         return this.upperCorner;
     }

@@ -78,13 +78,12 @@ public class DescribeCoverageType implements DescribeCoverage {
     /**
      * Build a new DescribeCoverage request.
      * 
-     * @param version The version of the service.
      * @param listOfCoverage a string containing many coverage name separated by a colon.
      */
     public DescribeCoverageType(final String listOfCoverage){
         this.service = "WCS";
         this.version = "1.0.0";
-        coverage = new ArrayList<String>();
+        coverage = new ArrayList<>();
         final StringTokenizer tokens = new StringTokenizer(listOfCoverage, ",;");
         while (tokens.hasMoreTokens()) {
             final String token = tokens.nextToken().trim();
@@ -95,7 +94,6 @@ public class DescribeCoverageType implements DescribeCoverage {
     /**
      * Build a new DescribeCoverage request.
      * 
-     * @param version The version of the service.
      * @param coverages A list  of coverage name.
      */
     public DescribeCoverageType(final List<String> coverages){
@@ -110,7 +108,7 @@ public class DescribeCoverageType implements DescribeCoverage {
      */
     public List<String> getCoverage() {
         if (coverage == null) {
-            coverage = new ArrayList<String>();
+            coverage = new ArrayList<>();
         }
         return Collections.unmodifiableList(coverage);
     }

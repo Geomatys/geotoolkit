@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.apache.sis.util.Version;
 import org.geotoolkit.wcs.xml.DescribeCoverage;
 
 
@@ -65,6 +64,8 @@ public class DescribeCoverageType extends RequestBaseType implements DescribeCov
     }
     
     public DescribeCoverageType(final List<String> coverageId){
+        this.service = "WCS";
+        this.version = "2.0.0";
         this.coverageId = coverageId;
     }
     
@@ -78,14 +79,22 @@ public class DescribeCoverageType extends RequestBaseType implements DescribeCov
      */
     public List<String> getCoverageId() {
         if (coverageId == null) {
-            coverageId = new ArrayList<String>();
+            coverageId = new ArrayList<>();
         }
         return this.coverageId;
     }
 
     @Override
     public String toKvp() {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        final StringBuilder sb = new StringBuilder("request=DescribeCoverage&service=");
+        sb.append(service).append("&version=").append(version).append("&coverageid=");
+        for (int i=0; i<coverageId.size(); i++) {
+            sb.append(coverageId.get(i));
+            if (i < coverageId.size() - 1) {
+                sb.append(',');
+            }
+        }
+        return sb.toString();
     }
 
     @Override

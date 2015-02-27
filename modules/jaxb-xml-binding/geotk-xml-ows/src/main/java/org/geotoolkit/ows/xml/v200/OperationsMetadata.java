@@ -102,6 +102,24 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     }
     
     /**
+     * Build a new operation metadata.
+     *
+     * @param operation
+     * @param parameter
+     * @param constraint
+     * @param extendedCapabilities
+     */
+    public OperationsMetadata(final List<Operation> operation, final List<DomainType> parameter, final List<DomainType> constraint,
+            final Object extendedCapabilities){
+        
+        this.constraint           = constraint;
+        this.extendedCapabilities = extendedCapabilities;
+        this.operation            = operation;
+        this.parameter            = parameter;
+    }
+    
+    
+    /**
      * Metadata for unordered list of all the (requests for) operations that this server interface implements. 
      * The list of required and optional operations implemented shall be specified in
      * the Implementation Specification for this service.Gets the value of the operation property.

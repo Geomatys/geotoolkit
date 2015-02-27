@@ -73,7 +73,6 @@ public class DescribeCoverageType implements DescribeCoverage {
     /**
      * Build a new DescribeCoverage request.
      * 
-     * @param version The version of the service.
      * @param listOfCoverage a string containing many coverage name separated by a colon.
      */
     public DescribeCoverageType(final String listOfCoverage){
@@ -90,21 +89,21 @@ public class DescribeCoverageType implements DescribeCoverage {
     /**
      * Build a new DescribeCoverage request.
      * 
-     * @param version The version of the service.
      * @param coverages A list  of coverage name.
      */
-    public DescribeCoverageType(final List<String> identifier){
+    public DescribeCoverageType(final List<String> coverages){
         this.service = "WCS";
         this.version = "1.1.1";
-        this.identifier = identifier;
+        this.identifier = coverages;
     }
     
     /**
      * Unordered list of identifiers of desired coverages. A client can obtain identifiers by a prior GetCapabilities request, or from a third-party source. Gets the value of the identifier property.
      */
+    @Override
     public List<String> getIdentifier() {
         if (identifier == null) {
-            identifier = new ArrayList<String>();
+            identifier = new ArrayList<>();
         }
         return Collections.unmodifiableList(identifier);
     }

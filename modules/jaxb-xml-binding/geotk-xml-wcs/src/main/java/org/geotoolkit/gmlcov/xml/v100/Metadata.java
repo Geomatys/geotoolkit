@@ -81,6 +81,14 @@ public class Metadata extends AbstractMetadataPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public Metadata() {
+        
+    }
+    
+    public Metadata(String href) {
+        this.href = href;
+    }
+    
     /**
      * Gets the value of the extension property.
      * 
