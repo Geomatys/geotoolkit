@@ -22,6 +22,9 @@ import java.util.Objects;
 import javax.xml.namespace.QName;
 import org.apache.sis.util.iso.DefaultTypeName;
 import org.apache.sis.internal.system.DefaultFactories;
+import org.apache.sis.util.iso.Names;
+import org.opengis.util.GenericName;
+import org.opengis.util.NameSpace;
 
 
 /**
@@ -217,21 +220,12 @@ public class DefaultName extends DefaultTypeName implements Name {
         return new DefaultName(uri, name);
     }
 
-    public static String toJCRExtendedForm(final Name name){
-        final String uri = name.getNamespaceURI();
-        if(uri == null){
-            return name.getLocalPart();
+    public static String toExtendedForm(final GenericName name){
+        final NameSpace uri = name.scope();
+        if(uri==null || uri.isGlobal()){
+            return name.toString();
         }else{
-            return new StringBuilder("{").append(uri).append('}').append(name.getLocalPart()).toString();
-        }
-    }
-
-    public static String toExtendedForm(final Name name){
-        final String uri = name.getNamespaceURI();
-        if(uri == null){
-            return name.getLocalPart();
-        }else{
-            return new StringBuilder(uri).append(':').append(name.getLocalPart()).toString();
+            return new StringBuilder(uri.name().toString()).append(':').append(name.toString()).toString();
         }
     }
 
@@ -244,30 +238,30 @@ public class DefaultName extends DefaultTypeName implements Name {
      * @param candidate
      * @return true if the string match the name
      */
-    public static boolean match(final Name name, final String candidate){
+    public static boolean match(final GenericName name, final String candidate){
         if(candidate.startsWith("{")){
             //candidate is in extended form
-            return candidate.equals(DefaultName.toJCRExtendedForm(name));
+            return candidate.equals(Names.toExpandedString(name));
         }
 
         final int index = candidate.lastIndexOf(':');
 
         if(index <= 0){
-            return candidate.equals(name.getLocalPart());
+            return candidate.equals(name.toString());
         }else{
             final String uri = candidate.substring(0,index);
             final String local = candidate.substring(index+1,candidate.length());
-            return uri.equals(name.getNamespaceURI()) && local.equals(name.getLocalPart());
+            return uri.equals(name.scope().name().toString()) && local.equals(name.toString());
         }
     }
 
-    public static boolean match(final Name name, final Name candidate){
-        if(name.getNamespaceURI() == null || candidate.getNamespaceURI()==null){
+    public static boolean match(final GenericName name, final GenericName candidate){
+        if(name.scope().isGlobal() || candidate.scope().isGlobal()){
             //compare only localpart
-            return name.getLocalPart().equals(candidate.getLocalPart());
+            return name.toString().equals(candidate.toString());
         }else{
-            return name.getNamespaceURI().equals(candidate.getNamespaceURI())
-                && name.getLocalPart().equals(candidate.getLocalPart());
+            return name.scope().equals(candidate.scope())
+                && name.toString().equals(candidate.toString());
         }
     }
 

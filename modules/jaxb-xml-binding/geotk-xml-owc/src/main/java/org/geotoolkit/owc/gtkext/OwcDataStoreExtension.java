@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
@@ -138,7 +139,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         final List<Object> fieldList = offering.getOperationOrContentOrStyleSet();
         final Name typeName = getTypeName(mapLayer);
         if(typeName!=null){
-            fieldList.add(new ParameterType(KEY_DATANAME,String.class.getName(),DefaultName.toJCRExtendedForm(typeName)));
+            fieldList.add(new ParameterType(KEY_DATANAME,String.class.getName(),Names.toExpandedString(typeName)));
         }
                        
         //write store creation parameters

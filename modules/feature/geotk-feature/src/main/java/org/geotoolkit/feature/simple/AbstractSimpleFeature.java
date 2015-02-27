@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Map;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.iso.Names;
 
 import org.geotoolkit.feature.AbstractFeature;
-import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 
@@ -326,7 +326,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
         tablewriter.append("@id\t"+getID()+"\n");
 
         for(Property prop : getProperties()){
-            tablewriter.append(DefaultName.toJCRExtendedForm(prop.getName()));
+            tablewriter.append(Names.toExpandedString(prop.getName()));
             tablewriter.append("\t");
             Object value = prop.getValue();
             if(value != null && value.getClass().isArray()){

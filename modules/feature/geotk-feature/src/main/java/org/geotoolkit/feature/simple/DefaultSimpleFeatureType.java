@@ -21,12 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.iso.Names;
 
-import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.DefaultFeatureType;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -208,7 +209,7 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
             index.put(new DefaultName(name.getLocalPart()), i);
             //must add possible string combinaison
             index.put(name.getLocalPart(), i);
-            index.put(DefaultName.toJCRExtendedForm(name), i);
+            index.put(Names.toExpandedString(name), i);
             index.put(DefaultName.toExtendedForm(name), i);
         }
 

@@ -26,6 +26,7 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.io.TableAppender;
+import org.apache.sis.util.iso.Names;
 
 import org.geotoolkit.feature.Property;
 import org.opengis.filter.Filter;
@@ -86,7 +87,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
                 this.propertyMap.put(pn, pd);
                 this.propertyMap.put(pn.getLocalPart(), pd);
                 this.propertyMap.put(DefaultName.toExtendedForm(pn), pd);
-                this.propertyMap.put(DefaultName.toJCRExtendedForm(pn), pd);
+                this.propertyMap.put(Names.toExpandedString(pn), pd);
             }
 
         }
@@ -105,7 +106,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             this.propertyMap.put(pn, pd);
             this.propertyMap.put(pn.getLocalPart(), pd);
             this.propertyMap.put(DefaultName.toExtendedForm(pn), pd);
-            this.propertyMap.put(DefaultName.toJCRExtendedForm(pn), pd);
+            this.propertyMap.put(Names.toExpandedString(pn), pd);
         }
     }
 
@@ -256,7 +257,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         final PropertyType type = property.getType();
         final boolean inCycle = visited.contains(type.getName());
 
-        builder.append(DefaultName.toJCRExtendedForm(property.getName()));
+        builder.append(Names.toExpandedString(property.getName()));
         if(inCycle){
             builder.append(" <...CYCLIC...>");
         }

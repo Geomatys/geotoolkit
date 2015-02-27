@@ -39,6 +39,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureCollection;
@@ -48,7 +49,6 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.Name;
@@ -268,7 +268,7 @@ public class FXLayerChooser extends BorderPane{
             if(value instanceof Name){
                 final Name name = (Name) value;
                 setText(name.getLocalPart());
-                setTooltip(new Tooltip(DefaultName.toJCRExtendedForm(name)));
+                setTooltip(new Tooltip(Names.toExpandedString(name)));
             }
 
         }

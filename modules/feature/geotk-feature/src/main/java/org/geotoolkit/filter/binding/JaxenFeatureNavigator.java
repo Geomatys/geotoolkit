@@ -19,8 +19,7 @@ package org.geotoolkit.filter.binding;
 
 import java.util.Collections;
 import java.util.Iterator;
-
-import org.geotoolkit.feature.type.DefaultName;
+import org.apache.sis.util.iso.Names;
 
 import org.jaxen.FunctionCallException;
 import org.jaxen.JaxenConstants;
@@ -45,6 +44,8 @@ import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
+import org.opengis.util.GenericName;
+import org.opengis.util.NameSpace;
 
 /**
  * xpath navigator for features.
@@ -63,22 +64,31 @@ final class JaxenFeatureNavigator implements Navigator{
     public String getElementNamespaceUri(final Object o) {
         if(o instanceof Property){
             final Property candidate = (Property) o;
-            return candidate.getName().getNamespaceURI();
+            return getNamespace(candidate.getName());
         }else if(o instanceof PropertyDescriptor){
             final PropertyDescriptor candidate = (PropertyDescriptor) o;
-            return candidate.getName().getNamespaceURI();
+            return getNamespace(candidate.getName());
         }else if(o instanceof PropertyType){
             final PropertyType candidate = (PropertyType) o;
-            return candidate.getName().getNamespaceURI();
+            return getNamespace(candidate.getName());
         }
         return null;
+    }
+
+    private String getNamespace(GenericName candidate){
+        final NameSpace scope = candidate.scope();
+        if(scope.isGlobal()){
+            return null;
+        }else{
+            return scope.name().toString();
+        }
     }
 
     @Override
     public String getElementName(final Object o) {
         if(o instanceof Property){
             final Property candidate = (Property) o;
-            return candidate.getName().getLocalPart();
+            return candidate.getName().toString();
         }else if(o instanceof PropertyDescriptor){
             final PropertyDescriptor candidate = (PropertyDescriptor) o;
             return candidate.getName().getLocalPart();
@@ -93,13 +103,13 @@ final class JaxenFeatureNavigator implements Navigator{
     public String getElementQName(final Object o) {
         if(o instanceof Property){
             final Property candidate = (Property) o;
-            return DefaultName.toJCRExtendedForm(candidate.getName());
+            return Names.toExpandedString(candidate.getName());
         }else if(o instanceof PropertyDescriptor){
             final PropertyDescriptor candidate = (PropertyDescriptor) o;
-            return DefaultName.toJCRExtendedForm(candidate.getName());
+            return Names.toExpandedString(candidate.getName());
         }else if(o instanceof PropertyType){
             final PropertyType candidate = (PropertyType) o;
-            return DefaultName.toJCRExtendedForm(candidate.getName());
+            return Names.toExpandedString(candidate.getName());
         }
         return null;
     }
@@ -170,10 +180,10 @@ final class JaxenFeatureNavigator implements Navigator{
             return (value==null)? EMPTY : value.toString();
         }else if(o instanceof PropertyDescriptor){
             final PropertyDescriptor candidate = (PropertyDescriptor) o;
-            return DefaultName.toJCRExtendedForm(candidate.getName());
+            return Names.toExpandedString(candidate.getName());
         }else if(o instanceof PropertyType){
             final PropertyType candidate = (PropertyType) o;
-            return DefaultName.toJCRExtendedForm(candidate.getName());
+            return Names.toExpandedString(candidate.getName());
         }
         return null;
     }

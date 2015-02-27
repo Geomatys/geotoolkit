@@ -51,6 +51,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.iso.Names;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -299,7 +300,7 @@ public class JLayerChooser extends javax.swing.JPanel {
             if(value instanceof Name){
                 final Name name = (Name) value;
                 lbl.setText(name.getLocalPart());
-                lbl.setToolTipText(DefaultName.toJCRExtendedForm(name));
+                lbl.setToolTipText(Names.toExpandedString(name));
             }
 
             return lbl;

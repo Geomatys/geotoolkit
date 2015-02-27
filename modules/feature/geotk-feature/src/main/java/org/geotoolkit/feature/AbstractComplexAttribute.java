@@ -32,6 +32,7 @@ import org.apache.sis.io.TableAppender;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Utilities;
+import org.apache.sis.util.iso.Names;
 
 import org.geotoolkit.feature.type.AssociationType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -42,6 +43,7 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
+import org.opengis.util.GenericName;
 
 /**
  * Default implementation of a complexeAttribut.
@@ -258,14 +260,14 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         }
 
         //write property name
-        Name name = property.getName();
+        GenericName name = property.getName();
         if(name == null){
             //use the type name
             name = property.getType().getName();
         }
 
         if(name != null){
-            tablewriter.append(DefaultName.toJCRExtendedForm(name));
+            tablewriter.append(Names.toExpandedString(name));
         }
 
         //write the index if one
