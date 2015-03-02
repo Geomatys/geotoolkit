@@ -17,6 +17,7 @@
 
 package org.geotoolkit.wcs.xml.v200;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -28,6 +29,13 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.wcs.xml.DomainSubset;
+import org.geotoolkit.wcs.xml.GetCoverage;
+import org.geotoolkit.wcs.xml.InterpolationMethod;
+import org.geotoolkit.wcs.xml.RangeSubset;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -59,7 +67,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "format",
     "mediaType"
 })
-public class GetCoverageType extends RequestBaseType {
+public class GetCoverageType extends RequestBaseType implements GetCoverage {
 
     @XmlElement(name = "CoverageId", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -72,6 +80,18 @@ public class GetCoverageType extends RequestBaseType {
     @XmlSchemaType(name = "anyURI")
     private String mediaType;
 
+    public GetCoverageType() {
+        this.service = "WCS";
+        this.version = "2.0.0";
+    }
+    
+    public GetCoverageType(final String coverageId, final String format) {
+        this.coverageId = coverageId;
+        this.format     = format;
+        this.service    = "WCS";
+        this.version    = "2.0.0";
+    }
+    
     /**
      * Identifier of the coverage that this GetCoverage operation request shall draw from. 
      * 
@@ -108,7 +128,7 @@ public class GetCoverageType extends RequestBaseType {
      */
     public List<JAXBElement<? extends DimensionSubsetType>> getDimensionSubset() {
         if (dimensionSubset == null) {
-            dimensionSubset = new ArrayList<JAXBElement<? extends DimensionSubsetType>>();
+            dimensionSubset = new ArrayList<>();
         }
         return this.dimensionSubset;
     }
@@ -121,7 +141,11 @@ public class GetCoverageType extends RequestBaseType {
      *     {@link String }
      *     
      */
+    @Override
     public String getFormat() {
+        if (format == null) {
+            return "application/gml+xml";
+        }
         return format;
     }
 
@@ -159,6 +183,61 @@ public class GetCoverageType extends RequestBaseType {
      */
     public void setMediaType(String value) {
         this.mediaType = value;
+    }
+
+    @Override
+    public CoordinateReferenceSystem getCRS() throws FactoryException {
+        return null;
+    }
+
+    @Override
+    public String getCoverage() {
+        return coverageId;
+    }
+
+    @Override
+    public Envelope getEnvelope() throws FactoryException {
+        return null;
+    }
+
+    @Override
+    public CoordinateReferenceSystem getResponseCRS() throws FactoryException {
+        return null;
+    }
+
+    @Override
+    public Dimension getSize() {
+        return null;
+    }
+
+    @Override
+    public List<Double> getResolutions() {
+        return null;
+    }
+
+    @Override
+    public String getTime() {
+        return null;
+    }
+
+    @Override
+    public RangeSubset getRangeSubset() {
+        return null;
+    }
+
+    @Override
+    public DomainSubset getDomainSubset() {
+        return null;
+    }
+
+    @Override
+    public String toKvp() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public InterpolationMethod getInterpolationMethod() {
+        return null;
     }
 
 }

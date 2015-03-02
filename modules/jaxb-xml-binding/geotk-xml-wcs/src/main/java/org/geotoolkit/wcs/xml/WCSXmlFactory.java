@@ -186,6 +186,10 @@ public class WCSXmlFactory {
                                                                    (org.geotoolkit.wcs.xml.v100.RangeSubsetType)rs,
                                                                    interpolationMethod,
                                                                    (org.geotoolkit.wcs.xml.v100.OutputType)out);
+        } else if ("2.0.0".equals(version)) {
+            
+            
+            return new org.geotoolkit.wcs.xml.v200.GetCoverageType(coverage, null);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }
