@@ -34,8 +34,8 @@ package org.geotoolkit.feature;
 import java.util.Collection;
 
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.expression.Expression;
+import org.opengis.util.GenericName;
 
 /**
  * An instance of {@link ComplexType} which is composed of other properties.
@@ -158,7 +158,7 @@ public interface ComplexAttribute extends Attribute {
      * @return The collection of properties which match the specified name, or
      *         an empty collection if no such properties match.
      */
-    Collection<Property> getProperties(Name name);
+    Collection<Property> getProperties(GenericName name);
 
     /**
      * Returns single property of the complex attribute which matches the
@@ -183,7 +183,7 @@ public interface ComplexAttribute extends Attribute {
      *
      * @return The property matching the specified name, or <code>null</code>.
      */
-    Property getProperty(Name name);
+    Property getProperty(GenericName name);
 
     /**
      * Returns a subset of the properties of the complex attribute which match

@@ -35,6 +35,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 
 import static org.geotoolkit.util.StringUtilities.*;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -130,9 +131,9 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
      * {@inheritDoc }
      */
     @Override
-    public PropertyDescriptor getDescriptor(final Name name) {
-        if(name.getNamespaceURI() == null){
-            return getDescriptor(name.getLocalPart());
+    public PropertyDescriptor getDescriptor(final GenericName name) {
+        if(name.scope().isGlobal()){
+            return getDescriptor(name.toString());
         }else{
             return propertyMap.get(name);
         }

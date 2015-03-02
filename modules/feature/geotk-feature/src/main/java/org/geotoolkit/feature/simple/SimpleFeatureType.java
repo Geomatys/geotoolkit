@@ -37,6 +37,7 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * The type of a SimpleFeature.
@@ -172,7 +173,7 @@ public interface SimpleFeatureType extends FeatureType {
      * @return The attribute descriptor matching the specified name, or
      *         <code>null</code> if no such attribute exists.
      */
-    AttributeDescriptor getDescriptor(Name name);
+    AttributeDescriptor getDescriptor(GenericName name);
 
     /**
      * Returns the attribute descriptor at the specified index.
@@ -268,7 +269,7 @@ public interface SimpleFeatureType extends FeatureType {
      * @return The attribute type matching the specified name, or
      *         <code>null</code>.
      */
-    AttributeType getType(Name name);
+    AttributeType getType(GenericName name);
 
     /**
      * Returns the type of the attribute at the specified index.
@@ -317,5 +318,5 @@ public interface SimpleFeatureType extends FeatureType {
      *
      * @return index of named attribute, or -1 if not found.
      */
-    int indexOf(Name name);
+    int indexOf(GenericName name);
 }

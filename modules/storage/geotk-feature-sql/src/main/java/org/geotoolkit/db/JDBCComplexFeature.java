@@ -58,6 +58,7 @@ import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.util.GenericName;
 
 /**
  * JDBC feature, handle both simple and complexe types.
@@ -141,7 +142,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
     }
 
     @Override
-    public Collection<Property> getProperties(Name name) {
+    public Collection<Property> getProperties(GenericName name) {
         final Object obj = progressiveMap.get(name);
         if(obj == null){
             return Collections.emptyList();
@@ -160,9 +161,9 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
     }
 
     @Override
-    public Property getProperty(final Name name) {
+    public Property getProperty(final GenericName name) {
         Object obj;
-        if(name.getNamespaceURI() == null){
+        if(name.scope().isGlobal()){
             obj = null;
             for(Entry<Name,Object> entry : progressiveMap.entrySet()){
                 if(DefaultName.match(name, entry.getKey())){

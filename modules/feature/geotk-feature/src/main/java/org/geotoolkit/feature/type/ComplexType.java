@@ -35,6 +35,7 @@ import java.util.Collection;
 
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
+import org.opengis.util.GenericName;
 
 /**
  * The type of a complex attribute.
@@ -139,7 +140,7 @@ public interface ComplexType extends AttributeType {
      *
      * @return The property matching the specified name, or <code>null</code>.
      */
-    PropertyDescriptor getDescriptor( Name name );
+    PropertyDescriptor getDescriptor( GenericName name );
 
     /**
      * Describe a single property by unqualified name.

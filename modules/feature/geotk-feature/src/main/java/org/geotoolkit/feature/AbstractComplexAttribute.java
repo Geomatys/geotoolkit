@@ -82,9 +82,9 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * {@inheritDoc }
      */
     @Override
-    public Collection<Property> getProperties(final Name name) {
-        if(name.getNamespaceURI() == null){
-            return getProperties(name.getLocalPart());
+    public Collection<Property> getProperties(final GenericName name) {
+        if(name.scope().isGlobal()){
+            return getProperties(name.toString());
         }
 
         //we size it to 1, in most of the cases there is always a single property for a name.
@@ -116,9 +116,9 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * {@inheritDoc }
      */
     @Override
-    public Property getProperty(final Name name) {
-        if(name.getNamespaceURI() == null){
-            return getProperty(name.getLocalPart());
+    public Property getProperty(final GenericName name) {
+        if(name.scope().isGlobal()){
+            return getProperty(name.toString());
         }
         //TODO find a faster way, hashmap ?
         for(Property prop : getProperties()){

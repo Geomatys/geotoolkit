@@ -30,7 +30,6 @@ import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.FeatureId;
@@ -38,6 +37,7 @@ import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.opengis.util.GenericName;
 
 /**
  * Decorate a given property with a descriptor.
@@ -219,12 +219,12 @@ abstract class WrapProperty<P extends org.geotoolkit.feature.Property> extends A
         }
 
         @Override
-        public Collection<org.geotoolkit.feature.Property> getProperties(final Name name) {
+        public Collection<org.geotoolkit.feature.Property> getProperties(final GenericName name) {
             return prop.getProperties(name);
         }
 
         @Override
-        public org.geotoolkit.feature.Property getProperty(final Name name) {
+        public org.geotoolkit.feature.Property getProperty(final GenericName name) {
             return prop.getProperty(name);
         }
 
@@ -341,12 +341,12 @@ abstract class WrapProperty<P extends org.geotoolkit.feature.Property> extends A
         }
 
         @Override
-        public Object getAttribute(Name name) {
+        public Object getAttribute(GenericName name) {
             return prop.getAttribute(name);
         }
 
         @Override
-        public void setAttribute(Name name, Object value) {
+        public void setAttribute(GenericName name, Object value) {
             prop.setAttribute(name, value);
         }
 

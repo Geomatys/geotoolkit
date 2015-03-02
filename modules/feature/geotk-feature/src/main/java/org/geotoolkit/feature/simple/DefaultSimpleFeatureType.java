@@ -32,6 +32,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
 /**
@@ -94,7 +95,7 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
      * {@inheritDoc }
      */
     @Override
-    public AttributeType getType(final Name name) {
+    public AttributeType getType(final GenericName name) {
         final AttributeDescriptor attribute = getDescriptor(name);
         if (attribute != null) {
             return attribute.getType();
@@ -126,7 +127,7 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
      * {@inheritDoc }
      */
     @Override
-    public AttributeDescriptor getDescriptor(final Name name) {
+    public AttributeDescriptor getDescriptor(final GenericName name) {
         return (AttributeDescriptor) super.getDescriptor(name);
     }
 
@@ -150,9 +151,9 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
      * {@inheritDoc }
      */
     @Override
-    public int indexOf(final Name name) {
-        if (name.getNamespaceURI() == null) {
-            return indexOf(name.getLocalPart());
+    public int indexOf(final GenericName name) {
+        if (name.scope().isGlobal()) {
+            return indexOf(name.toString());
         }
         // otherwise do a full scan
         for (int i=0; i<descriptors.length; i++){

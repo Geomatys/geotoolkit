@@ -36,6 +36,7 @@ import java.util.List;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * An instance of {@link SimpleFeature} composed of fixed list values in a known order.
@@ -219,7 +220,7 @@ public interface SimpleFeature extends Feature {
      * @return The attribute value, or <code>null</code> if no such attribute
      * exists with the specified name.
      */
-    Object getAttribute( Name name );
+    Object getAttribute( GenericName name );
 
     /**
      * Sets an attribute value by name.
@@ -237,7 +238,7 @@ public interface SimpleFeature extends Feature {
      * @param name The name of the attribute whose value to set.
      * @param value The new value of the attribute.
      */
-    void setAttribute( Name name, Object value );
+    void setAttribute( GenericName name, Object value );
 
     /**
      * Gets an attribute value by index.

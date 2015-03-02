@@ -40,6 +40,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.util.GenericName;
 
 /**
  * Abstract simple feature class, will delegate most Feature methods
@@ -115,7 +116,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public void setAttribute(final Name name, final Object value) {
+    public void setAttribute(final GenericName name, final Object value) {
         final Integer idx = getIndex().get(name);
         if (idx == null) {
             throw new SimpleIllegalAttributeException("Unknown attribute " + name);
@@ -151,7 +152,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public Object getAttribute(final Name name) {
+    public Object getAttribute(final GenericName name) {
         final Integer idx = getIndex().get(name);
         if (idx != null) {
             return getAttribute(idx);
@@ -237,7 +238,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public Collection<Property> getProperties(final Name name) {
+    public Collection<Property> getProperties(final GenericName name) {
         final Integer idx = getIndex().get(name);
         if (idx != null) {
             final Property prop = getProperties().get(idx);
@@ -250,7 +251,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public Property getProperty(final Name name) {
+    public Property getProperty(final GenericName name) {
         final Integer idx = getIndex().get(name);
         if (idx == null) {
             return null;
