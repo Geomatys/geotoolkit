@@ -18,7 +18,6 @@ package org.geotoolkit.image.interpolation;
 
 import java.awt.image.BandedSampleModel;
 import java.awt.image.DataBuffer;
-import java.awt.image.PixelInterleavedSampleModel;
 import javax.media.jai.TiledImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
