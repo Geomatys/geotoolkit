@@ -33,6 +33,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Test pyramid generation with PyramidCoverageBuilder.
@@ -249,6 +250,46 @@ public class PyramidCoverageBuilderTest {
         testImage(tileImg, expectedImage, 3);
     }
 
+    @Test
+    public void testAppendImageWithDifferentSamples () throws DataStoreException, TransformException, IOException, FactoryException {
+        int tileSize = 100;
+
+        GeneralEnvelope env1 = new GeneralEnvelope(EPSG4326);
+        env1.setRange(0, 0, +20);
+        env1.setRange(1, 0, +20);
+        AffineTransform af1 = new AffineTransform(0.1, 0, 0, -0.1, 0, 20);
+        CoverageReference ref1 = createCoverage("cov1", env1, af1, createImage(200, 200, Color.RED));
+
+        GeneralEnvelope env2 = new GeneralEnvelope(EPSG4326);
+        env2.setRange(0, +10, +30);
+        env2.setRange(1, +10, +30);
+        AffineTransform af2 = new AffineTransform(0.1, 0, 0, -0.1, +10, +30);
+        CoverageReference ref2 = createCoverage("cov2", env2, af2, createImage1Band(200, 200));
+
+        final MPCoverageStore mpCovStore = new MPCoverageStore();
+        final PyramidCoverageBuilder pcb = new PyramidCoverageBuilder(new Dimension(tileSize, tileSize), InterpolationCase.NEIGHBOR, 2, true);
+
+        final GeneralEnvelope env = new GeneralEnvelope(EPSG4326);
+        env.setRange(0, 0, +30);
+        env.setRange(1, 0, +30);
+        final double[] fillValue = new double[4];
+        final double[] scales = new double[]{0.15};
+        final Map<Envelope, double[]> map = new HashMap<>();
+        map.put(env, scales);
+
+        final Name name = new DefaultName("memory_store_test");
+        //pyramid 1st coverage
+        pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
+
+        //append 2nd coverage should fail
+        try {
+            pcb.create(ref2, mpCovStore, name, map, fillValue, null, null);
+            fail("Append of coverage with different sample dimension should have failed.");
+        } catch (DataStoreException e) {
+           //test success
+        }
+
+    }
     private CoverageReference createCoverage(String name, GeneralEnvelope env, AffineTransform gridToCRS, RenderedImage image) throws DataStoreException {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName(name);
@@ -290,6 +331,14 @@ public class PyramidCoverageBuilderTest {
                 assertArrayEquals(expectedBuf, candidateBuf);
             }
         }
+    }
+
+    private static BufferedImage createImage1Band(int width, int height){
+        final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+        final Graphics2D g = image.createGraphics();
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, width, height);
+        return image;
     }
 
     private static BufferedImage createImage(int width, int height, Color color){

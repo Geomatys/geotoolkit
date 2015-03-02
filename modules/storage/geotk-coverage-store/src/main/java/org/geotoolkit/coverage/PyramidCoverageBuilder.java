@@ -19,9 +19,8 @@ package org.geotoolkit.coverage;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageReader;
 import javax.swing.ProgressMonitor;
@@ -35,7 +34,6 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.image.coverage.CombineIterator;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.LanczosInterpolation;
 import org.geotoolkit.image.interpolation.Resample;
@@ -302,11 +300,16 @@ public class PyramidCoverageBuilder {
             throw ex;
         }
         final PyramidalCoverageReference pm = (PyramidalCoverageReference) cv;
-        
+
         //----------------------- sample dimensions-----------------------------
         final GridCoverageReader gridReader = gridCoverageRef.acquireReader();
         final int imageIndex                = gridCoverageRef.getImageIndex();
-        pm.setSampleDimensions(gridReader.getSampleDimensions(imageIndex));
+        List<GridSampleDimension> coverageSampleDims = gridReader.getSampleDimensions(imageIndex);
+        if (!isDimensionsCompatible(pm, coverageSampleDims))
+            throw new DataStoreException("Incompatible GridSampleDimensions. " +
+                    "Input coverage should have compatible GridSampleDimension with output Pyramid.");
+
+        pm.setSampleDimensions(coverageSampleDims);
         //----------------------------------------------------------------------
         
         final GridGeometry currentgridGeometry = gridReader.getGridGeometry(imageIndex);
@@ -352,7 +355,7 @@ public class PyramidCoverageBuilder {
         gridCoverageRef.recycle(gridReader);
         if (processListener != null)  processListener.completed(new ProcessEvent(fakeProcess, "Pyramid coverage builder successfully submitted.", 100));
     }
-    
+
     /**
      * Create and insert pyramid from {@code GridCoverage2D} source,
      * in specified {@code PyramidalModel} at specified pyramidID.
@@ -559,6 +562,10 @@ public class PyramidCoverageBuilder {
                 throw new IllegalStateException("The only supported SampleDimension type is GridSampleDimension. Found : "+s.getClass());
             }
         }
+        if (!isDimensionsCompatible(pm, sampleList))
+            throw new DataStoreException("Incompatible GridSampleDimensions. " +
+                    "Input coverage should have compatible GridSampleDimension with output Pyramid.");
+
         pm.setSampleDimensions(sampleList);
         //----------------------------------------------------------------------
         
@@ -654,7 +661,11 @@ public class PyramidCoverageBuilder {
         final PyramidalCoverageReference pm = (PyramidalCoverageReference) cv;
         
         //----------------------- sample dimensions-----------------------------
-        pm.setSampleDimensions(reader.getSampleDimensions(0)); //-- default image index 
+        List<GridSampleDimension> coverageSampleDims = reader.getSampleDimensions(0);
+        if (!isDimensionsCompatible(pm, coverageSampleDims))
+            throw new DataStoreException("Incompatible GridSampleDimensions. " +
+                    "Input coverage should have compatible GridSampleDimension with output Pyramid.");
+        pm.setSampleDimensions(coverageSampleDims); //-- default image index
         //----------------------------------------------------------------------
 
         for (Envelope outEnv : resolution_Per_Envelope.keySet()) {
@@ -956,4 +967,72 @@ public class PyramidCoverageBuilder {
         return pm.createMosaic(pyramidID, gridsize, tileSize, upperLeft, pixelScal);
     }
 
+
+    /**
+     * Check if two GridSampleDimension list are compatible.
+     * GridSampleDimension list are compatible if they have same number of GridSampleDimension
+     * and GridSampleDimension are in same order and also compatible.
+     *
+     * Test is also considered valid if the pyramid GridSampleDimension list is null or empty
+     * in case of the pyramid have just been created.
+     *
+     * @param pyramidRef pyramid reference
+     * @param coverageSampleDims input coverage SampleDimension list
+     * @return true if compatible, false otherwise
+     * @throws DataStoreException if an error occurs during pyramid SampleDimension reading.
+     */
+    private boolean isDimensionsCompatible(PyramidalCoverageReference pyramidRef, List<GridSampleDimension> coverageSampleDims)
+            throws DataStoreException {
+
+        assert coverageSampleDims != null && !coverageSampleDims.isEmpty() : "coverageSampleDims should not be null or empty";
+
+        final List<GridSampleDimension> pyramidSampleDims = pyramidRef.getSampleDimensions();
+        // pyramidSampleDims list is considered as valid in case of the pyramid have just been created.
+        if (pyramidSampleDims == null || pyramidSampleDims.isEmpty()) {
+            return true;
+        }
+
+        //compare size
+        if (pyramidSampleDims.size() != coverageSampleDims.size()) return false;
+
+        final int nbDims = pyramidSampleDims.size();
+        for (int i = 0; i < nbDims; i++) {
+            final GridSampleDimension pyramidDim = pyramidSampleDims.get(i);
+            final GridSampleDimension coverageDim = coverageSampleDims.get(i);
+            if (!isDimensionCompatible(pyramidDim, coverageDim)) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Compare two GridSampleDimension.
+     * Check noData list, ColorModel pixelSize and ColorSpace type.
+     *
+     * TODO compare categories.
+     *
+     * @param gsd1 first GridSampleDimension
+     * @param gsd2 second GridSampleDimension
+     * @return true if compatible, false otherwise
+     */
+    private boolean isDimensionCompatible(GridSampleDimension gsd1, GridSampleDimension gsd2) {
+
+        //sample type
+        if (!gsd1.getSampleDimensionType().equals(gsd2.getSampleDimensionType())) return false;
+
+        //compare noData
+        double[] pNoData = gsd1.getNoDataValues();
+        double[] cNoData = gsd2.getNoDataValues();
+        if (!Arrays.equals(pNoData, cNoData)) return false;
+
+        //compare pixelSize and ColorSpace type
+        if (gsd1.getColorModel() != null && gsd2.getColorModel() != null) {
+            if (gsd1.getColorModel().getPixelSize() != gsd2.getColorModel().getPixelSize() ||
+                    gsd1.getColorModel().getColorSpace().getType() != gsd2.getColorModel().getColorSpace().getType()) {
+                return false;
+            }
+        }
+
+        //TODO compare categories
+        return true;
+    }
 }
