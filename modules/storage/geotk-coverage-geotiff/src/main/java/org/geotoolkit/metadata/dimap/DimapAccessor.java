@@ -401,12 +401,12 @@ public final class DimapAccessor extends Static {
             double min = range.getMinDouble();
             double max = range.getMaxDouble();
             for (Map.Entry<String, Integer> entry : specialValues.entrySet()) {
+                cats.add(new Category(entry.getKey(), new Color(0,0,0,0), entry.getValue()));
+
                 if (entry.getValue().doubleValue() == min) {
                     min++;
-                    cats.add(new Category(entry.getKey(), new Color(0,0,0,0), entry.getValue()));
                 } else if (entry.getValue().doubleValue() == max) {
                     max--;
-                    cats.add(new Category(entry.getKey(), new Color(0,0,0,0), entry.getValue()));
                 }
             }
             range = new NumberRange(Double.class, min, true, max, true);
