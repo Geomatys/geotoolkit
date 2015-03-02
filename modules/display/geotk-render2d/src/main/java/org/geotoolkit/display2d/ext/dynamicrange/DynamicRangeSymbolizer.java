@@ -180,7 +180,6 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         
         public DRBound() {
             setMode(MODE_EXPRESSION);
-            setValue(new DefaultLiteral(10));
         }
 
         /**
@@ -198,6 +197,9 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         public Expression getValue() {
             if(valueExp==null && value!=null){
                 valueExp = new StyleXmlIO().getTransformer110().visitExpression(value);
+            }
+            if(valueExp==null){
+                valueExp = new DefaultLiteral<>(10);
             }
             return valueExp;
         }
