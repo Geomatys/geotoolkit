@@ -28,9 +28,11 @@ import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
+import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import static org.junit.Assert.*;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -191,6 +193,7 @@ public strictfp class GridCombineIteratorTest {
      * Test with 4 D crs and also, the horizontal part of the {@link CompoundCRS} is between two another crs like follow.
      * MyCompoundCrs = [Temporal][2D part][elevation];
      */
+    @Test 
     public void testmultidim() {
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", "compoundcrstest");
@@ -198,7 +201,7 @@ public strictfp class GridCombineIteratorTest {
         final CompoundCRS ccrs = new DefaultCompoundCRS(map, CommonCRS.Temporal.JAVA.crs(), CommonCRS.WGS84.geographic(), CommonCRS.Vertical.DEPTH.crs());
         
         final int[] gridLow        = new int[]{-2,  0,  0, 1};
-        final int[] gridHigh       = new int[]{ 0, 10, 10, 4};
+        final int[] gridHigh       = new int[]{ 0, 11, 11, 4}; //-- 11 because exclusive high border
         GeneralGridEnvelope extent = new GeneralGridEnvelope(gridLow, gridHigh, false);//-- exclusive high border
         
         MatrixSIS mat = Matrices.createDiagonal(5, 5);//-- identity
@@ -208,7 +211,7 @@ public strictfp class GridCombineIteratorTest {
                                      0,  0,  0, 3,    5, //-- elevation ordinate
                                      0,  0,  0, 0,    1 });
         
-        final GridCombineIterator it = new GridCombineIterator(extent, ccrs, MathTransforms.linear(mat));
+        GridCombineIterator it = new GridCombineIterator(extent, ccrs, MathTransforms.linear(mat));
         
         final List<Envelope> listEnvelope = new ArrayList<Envelope>();
         while (it.hasNext()) {
@@ -221,16 +224,70 @@ public strictfp class GridCombineIteratorTest {
         //-- expected t = -2, h = 1
         checkEnvelope(listEnvelope.get(0), -7, -180, -90, 8,  -7, 180, 90, 8);
         //-- expected t = -2, h = 2
-        checkEnvelope(listEnvelope.get(0), -7, -180, -90, 11, -7, 180, 90, 11);
+        checkEnvelope(listEnvelope.get(1), -7, -180, -90, 11, -7, 180, 90, 11);
         //-- expected t = -2, h = 3
-        checkEnvelope(listEnvelope.get(0), -7, -180, -90, 14, -7, 180, 90, 14);
+        checkEnvelope(listEnvelope.get(2), -7, -180, -90, 14, -7, 180, 90, 14);
         //-- expected t = -1, h = 1
-        checkEnvelope(listEnvelope.get(0), -5, -180, -90, 8,  -5, 180, 90, 8);
+        checkEnvelope(listEnvelope.get(3), -5, -180, -90, 8,  -5, 180, 90, 8);
         //-- expected t = -2, h = 2
-        checkEnvelope(listEnvelope.get(0), -5, -180, -90, 11, -5, 180, 90, 11);
+        checkEnvelope(listEnvelope.get(4), -5, -180, -90, 11, -5, 180, 90, 11);
         //-- expected t = -2, h = 3
-        checkEnvelope(listEnvelope.get(0), -5, -180, -90, 14, -5, 180, 90, 14);
+        checkEnvelope(listEnvelope.get(5), -5, -180, -90, 14, -5, 180, 90, 14);
         
+        
+        //---------------------------------------------------//
+        //-- test iteration on only one expected dimension --//
+        //---------------------------------------------------//
+        
+        //-- first on ordinate 0
+        it = new GridCombineIterator(extent, null, MathTransforms.linear(mat), 0);
+        
+        listEnvelope.clear();
+        while (it.hasNext()) {
+            listEnvelope.add(it.next());
+        }
+        //-- for t = {-2, -1}
+        assertTrue("expected 2 results when iteration on 0 ordinate. found : "+listEnvelope.size(), listEnvelope.size() == 2);
+        assertTrue("expected null crs", listEnvelope.get(0).getCoordinateReferenceSystem() == null);
+        
+        //-- expected t = -2, h = {1; 4}
+        checkEnvelope(listEnvelope.get(0), -7, -180, -90, 8, -7, 180, 90, 14);
+        //-- expected t = -2, h = {1; 4}
+        checkEnvelope(listEnvelope.get(1), -5, -180, -90, 8, -5, 180, 90, 14);
+        
+        //-- first on ordinate 3
+        it = new GridCombineIterator(extent, null, MathTransforms.linear(mat), 3);
+        
+        listEnvelope.clear();
+        while (it.hasNext()) {
+            listEnvelope.add(it.next());
+        }
+        //-- for h = {1, 2, 3}
+        assertTrue("expected 3 results when iteration on 3 ordinate. found : "+listEnvelope.size(), listEnvelope.size() == 3);
+        assertTrue("expected null crs", listEnvelope.get(0).getCoordinateReferenceSystem() == null);
+        
+        //-- expected t = {-2; -1}, h = 1
+        checkEnvelope(listEnvelope.get(0), -7, -180, -90, 8,  -5, 180, 90, 8);
+        //-- expected t = {-2; -1}, h = 2
+        checkEnvelope(listEnvelope.get(1), -7, -180, -90, 11, -5, 180, 90, 11);
+        //-- expected t = {-2; -1}, h = 3
+        checkEnvelope(listEnvelope.get(2), -7, -180, -90, 14, -5, 180, 90, 14);
+        
+        
+        //-- test extract axis values
+        double[] scales = GridCombineIterator.extractAxisValues(extent, MathTransforms.linear(mat), 0);
+        assertArrayEquals("extract axis values at dimension 0", scales, new double[]{-7, -5}, TOLERANCE);
+        
+        scales = GridCombineIterator.extractAxisValues(extent, MathTransforms.linear(mat), 3);
+        assertArrayEquals("extract axis values at dimension 3", scales, new double[]{8, 11, 14}, TOLERANCE);
+        
+        //-- test fail
+        try {
+            it = new GridCombineIterator(extent, ccrs, MathTransforms.linear(mat), 1);
+            Assert.fail("test should had failed");
+        } catch (MismatchedDimensionException ex) {
+            //-- expected comportement
+        }
     }
     
     /**
