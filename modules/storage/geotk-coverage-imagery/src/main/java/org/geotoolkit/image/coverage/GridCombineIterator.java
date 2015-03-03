@@ -505,7 +505,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
         
         while (gcint.hasNext()) {
             final Envelope env = gcint.next();
-            resultArray[i++]   = new NumberRange(Double.class, env.getMinimum(i), true, env.getMaximum(i), true);
+            resultArray[i++]   = new NumberRange(Double.class, env.getMinimum(interestedOrdinateIndex), true, env.getMaximum(interestedOrdinateIndex), true);
         }
         return resultArray;
     }
