@@ -319,7 +319,7 @@ public class PyramidCoverageBuilder {
         
         for (Envelope outEnv : resolution_Per_Envelope.keySet()) {
             final CoordinateReferenceSystem crs = outEnv.getCoordinateReferenceSystem();
-            final int minOrdi0 = CoverageUtilities.getMinOrdinate(crs);
+            final int minOrdi0 = CRSUtilities.firstHorizontalAxis(crs);
             final int minOrdi1 = minOrdi0 + 1;
             final int outDim   = crs.getCoordinateSystem().getDimension();
             final DirectPosition upperLeft = new GeneralDirectPosition(crs);
