@@ -77,6 +77,8 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.image.coverage.GridCombineIterator;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
@@ -199,85 +201,23 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
                 return;
             }
 
-            Double min = null;
-            Double max = null;
-
-            final GeneralGridEnvelope gridExtent = new GeneralGridEnvelope(gridGeometry.getExtent());
-            final MathTransform gridToCRS = gridGeometry.getGridToCRS();
-            final int nbDim = gridExtent.getDimension();
+            Double min = Double.MAX_VALUE;
+            Double max = Double.MIN_NORMAL;
 
             final CoordinateReferenceSystem dataCRS = env.getCoordinateReferenceSystem();
-            final Map<Integer, CoordinateReferenceSystem> sourceParts = ReferencingUtilities.indexedDecompose(dataCRS);
-
-            for (Map.Entry<Integer, CoordinateReferenceSystem> entry : sourceParts.entrySet()) {
-                int dimIdx = entry.getKey();
-                CoordinateReferenceSystem sourceCRS = entry.getValue();
-                try {
-                    final MathTransform dataCRSToDispCRS = CRS.findMathTransform(sourceCRS, axis, true);
-                    final CoordinateSystemAxis sourceAxi = sourceCRS.getCoordinateSystem().getAxis(0);
-
-                    //This case should be soon deprecated because Discrete Axis and CRS will no longer exist
-                    if (sourceAxi instanceof DiscreteCoordinateSystemAxis) {
-                        final double[] incoord = new double[1];
-                        final double[] outcoord = new double[1];
-                        final DiscreteCoordinateSystemAxis dcsa = (DiscreteCoordinateSystemAxis) sourceAxi;
-                        for (int k = 0; k < dcsa.length(); k++) {
-                            final Comparable c = dcsa.getOrdinateAt(k);
-                            final double d;
-                            if (c instanceof Number) {
-                                incoord[0] = ((Number) c).doubleValue();
-                                dataCRSToDispCRS.transform(incoord, 0, outcoord, 0, 1);
-                                d = outcoord[0];
-                            } else if (c instanceof Date) {
-                                d = ((Date) c).getTime();
-                            } else {
-                                //not supported
-                                continue;
-                            }
-                            ponctuals.add(d);
-                            if (min == null || min > d) {
-                                min = d;
-                            }
-                            if (max == null || max < d) {
-                                max = d;
-                            }
-                        }
-                    } else {
-                        // Default case
-                        // Search point from grid extent and gridToCRS transform
-                        int gridSpan = gridExtent.getSpan(dimIdx);
-
-                        final MathTransform axisTransform = PassThroughTransform.create(dimIdx, dataCRSToDispCRS, nbDim - dimIdx - 1);
-                        final MathTransform gridToDisp = MathTransforms.concatenate(gridToCRS, axisTransform);
-
-                        double[] pointGrid = new double[nbDim];
-                        double[] pointCRS = new double[nbDim];
-                        for (int i = 0; i < gridSpan; i++) {
-                            pointGrid[dimIdx] = i;
-                            gridToDisp.transform(pointGrid, 0, pointCRS, 0, 1);
-                            double value = pointCRS[dimIdx];
-
-                            ponctuals.add(value);
-                            if (min == null || min > value) {
-                                min = value;
-                            }
-                            if (max == null || max < value) {
-                                max = value;
-                            }
-                        }
-                    }
-                } catch (FactoryException ex) {
-                    //no match, next one
-                } catch (TransformException ex) {
-                    //no match, next one
+            final int axisIdx = CRSUtilities.getDimensionOf(dataCRS, axis.getClass());
+            if (axisIdx != -1) {
+                final NumberRange[] axisValues = GridCombineIterator.extractAxisRanges(gridGeometry, axisIdx);
+                
+                for (NumberRange axisRange : axisValues) {
+                    ponctuals.add(axisRange.getMinDouble());
+                    min = StrictMath.min(min, axisRange.getMinDouble());//-- getMin because begin of the slice is comform.
+                    max = StrictMath.max(max, axisRange.getMinDouble());
                 }
             }
 
-            if(min != null && max != null){
-                ranges.add(NumberRange.create(min, true, max, true));
-            }
-
-        }else if(layer instanceof FeatureMapLayer){
+            ranges.add(NumberRange.create(min, true, max, true));
+        } else if(layer instanceof FeatureMapLayer) {
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
 
             Expression[] er = null;
@@ -293,11 +233,11 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
                 }
             }
             //iterate on collection and find values
-            if(er != null && (er[0] != null || er[1] != null) ){
-                if(er[0] == null){
+            if (er != null && (er[0] != null || er[1] != null)) {
+                if (er[0] == null) {
                     er[0] = er[1];
                 }
-                if(er[1] == null){
+                if (er[1] == null) {
                     er[1] = er[0];
                 }
 
