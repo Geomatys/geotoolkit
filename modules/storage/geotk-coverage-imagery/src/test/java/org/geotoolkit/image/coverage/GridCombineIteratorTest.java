@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
@@ -275,11 +276,21 @@ public strictfp class GridCombineIteratorTest {
         
         
         //-- test extract axis values
-        double[] scales = GridCombineIterator.extractAxisValues(extent, MathTransforms.linear(mat), 0);
-        assertArrayEquals("extract axis values at dimension 0", scales, new double[]{-7, -5}, TOLERANCE);
+        NumberRange<Double>[] scales = GridCombineIterator.extractAxisRanges(extent, MathTransforms.linear(mat), 0);
+        assertEquals("extract axis values at dimension 0", scales[0].getMinDouble(), -7, TOLERANCE);
+        assertEquals("extract axis values at dimension 0", scales[0].getMaxDouble(), -7, TOLERANCE);
+        assertEquals("extract axis values at dimension 0", scales[1].getMinDouble(), -5, TOLERANCE);
+        assertEquals("extract axis values at dimension 0", scales[1].getMaxDouble(), -5, TOLERANCE);
+//        assertArrayEquals("extract axis values at dimension 0", scales, new double[]{-7, -5}, TOLERANCE);
         
-        scales = GridCombineIterator.extractAxisValues(extent, MathTransforms.linear(mat), 3);
-        assertArrayEquals("extract axis values at dimension 3", scales, new double[]{8, 11, 14}, TOLERANCE);
+        scales = GridCombineIterator.extractAxisRanges(extent, MathTransforms.linear(mat), 3);
+        assertEquals("extract axis values at dimension 0", scales[0].getMinDouble(), 8, TOLERANCE);
+        assertEquals("extract axis values at dimension 0", scales[0].getMaxDouble(), 8, TOLERANCE);
+        assertEquals("extract axis values at dimension 0", scales[1].getMinDouble(), 11, TOLERANCE);
+        assertEquals("extract axis values at dimension 0", scales[1].getMaxDouble(), 11, TOLERANCE);
+        assertEquals("extract axis values at dimension 0", scales[2].getMinDouble(), 14, TOLERANCE);
+        assertEquals("extract axis values at dimension 0", scales[2].getMaxDouble(), 14, TOLERANCE);
+//        assertArrayEquals("extract axis values at dimension 3", scales, new double[]{8, 11, 14}, TOLERANCE);
         
         //-- test fail
         try {

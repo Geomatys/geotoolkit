@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.crs.DefaultEngineeringCRS;
 import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
 import org.apache.sis.util.ArgumentChecks;
@@ -54,7 +55,7 @@ import org.opengis.referencing.operation.TransformException;
  * @since   4.0
  */
 public final strictfp class GridCombineIterator implements Iterator<Envelope> {
-
+    
     /**
      * Associate {@link MathTransform} with the grid.
      */
@@ -370,7 +371,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
     }
     
     /**
-     * Returns all ordinate values from grid transformation of {@linkplain GridEnvelope extent} 
+     * Returns all ordinates ranges from grid transformation of {@linkplain GridEnvelope extent} 
      * by {@linkplain MathTransform gridtocrs} on axis specified by expected one dimensional {@link CoordinateReferenceSystem}.<br><br>
      * <strong>
      * Moreover : the specified {@link MathTransform} must be from CORNER of source grid point to CORNER of destination envelope point.<br>
@@ -379,14 +380,14 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * @param gridGeometry {@link GeneralGridGeometry} which contain {@linkplain GeneralGridGeometry#getExtent() extent}
      *                     and {@linkplain GeneralGridGeometry#getGridToCRS() gridToCrs} necessary to find all expected ordinate values.
      * @param crs 1 Dimensional {@link CoordinateReferenceSystem} which represent expected interested ordinate index.
-     * @return an array which contain all destination ordinate values from interested dimension. 
+     * @return an array which contain all MINIMUM destination ordinates values from interested dimension (axis). 
      * 
      * @throws NullArgumentException if any of egridGeometry or crs is {@code null}.
      * @throws IllegalArgumentException if crs in parameter is not include in the internal gridGeometry CoordinateReferenceSystem.
      * @throws MismatchedDimensionException if the parameter crs have a dimension upper than 1.
-     * @see #extractAxisValues(org.geotoolkit.coverage.grid.GeneralGridGeometry, int) 
+     * @see #extractAxisRanges(org.geotoolkit.coverage.grid.GeneralGridGeometry, int) 
      */
-    public static double[] extractAxisValues(final GeneralGridGeometry gridGeometry, final CoordinateReferenceSystem crs) {
+    public static NumberRange<Double>[] extractAxisRanges(final GeneralGridGeometry gridGeometry, final CoordinateReferenceSystem crs) {
         ArgumentChecks.ensureNonNull("gridGeometry", gridGeometry);
         ArgumentChecks.ensureNonNull("crs", crs);
         
@@ -408,12 +409,13 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
         if (interestedOrdinateIndex == gridGeometry.getDimension()) 
             throw new IllegalArgumentException("The crs in parameter is not include in the internal "
                     + "gridGeometry CoordinateReferenceSystem.");
-        return extractAxisValues(gridGeometry, interestedOrdinateIndex);
+        return GridCombineIterator.extractAxisRanges(gridGeometry, interestedOrdinateIndex);
     }
     
     /**
-     * Returns all ordinate values from grid transformation of {@linkplain GridEnvelope extent} 
-     * by {@linkplain MathTransform gridtocrs} from {@link GeneralGridGeometry} on axis specified by expected dimension parameter.<br><br>
+     * Returns all ordinates ranges from grid transformation of {@linkplain GridEnvelope extent} 
+     * by {@linkplain MathTransform gridtocrs} from {@link GeneralGridGeometry} on axis specified by expected dimension parameter.<br>
+     * One range for each grid values on interested ordinate.<br><br>
      * <strong>
      * Moreover : the specified {@link MathTransform} must be from CORNER of source grid point to CORNER of destination envelope point.<br>
      * The used MathTransform is consider with {@link PixelInCell#CELL_CORNER} configuration.</strong>
@@ -429,13 +431,14 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * {@linkplain MathTransform#getSourceDimensions() gridToCrs.getSourceDimensions()} mismatch.
      * @throws IndexOutOfBoundsException if interestedOrdinateIndex is upper than extent or gridtocrs dimension.
      */
-    public static double[] extractAxisValues(final GeneralGridGeometry gridGeometry, final int interestedOrdinateIndex) {
-        return extractAxisValues(gridGeometry.getExtent(), gridGeometry.getGridToCRS(PixelInCell.CELL_CORNER), gridGeometry.getCoordinateReferenceSystem(), interestedOrdinateIndex);
+    public static NumberRange<Double>[] extractAxisRanges(final GeneralGridGeometry gridGeometry, final int interestedOrdinateIndex) {
+        return GridCombineIterator.extractAxisRanges(gridGeometry.getExtent(), gridGeometry.getGridToCRS(PixelInCell.CELL_CORNER), gridGeometry.getCoordinateReferenceSystem(), interestedOrdinateIndex);
     }
     
     /**
-     * Returns all ordinate values from grid transformation of {@linkplain GridEnvelope extent} 
-     * by {@linkplain MathTransform gridtocrs} on axis specified by expected dimension parameter.<br><br>
+     * Returns all ordinate ranges from grid transformation of {@linkplain GridEnvelope extent} 
+     * by {@linkplain MathTransform gridtocrs} on axis specified by expected dimension parameter.<br>
+     * One range for each grid values on interested ordinate.<br><br>
      * <strong>
      * Moreover : the specified {@link MathTransform} must be from CORNER of source grid point to CORNER of destination envelope point.<br>
      * The used MathTransform is consider with {@link PixelInCell#CELL_CORNER} configuration.</strong>
@@ -451,13 +454,14 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * {@linkplain MathTransform#getSourceDimensions() gridToCrs.getSourceDimensions()} mismatch.
      * @throws IndexOutOfBoundsException if interestedOrdinateIndex is upper than extent or gridtocrs dimension.
      */
-    public static double[] extractAxisValues(final GridEnvelope extent, final MathTransform gridToCrs, final int interestedOrdinateIndex) {
-        return extractAxisValues(extent, gridToCrs, null, interestedOrdinateIndex);
+    public static NumberRange<Double>[] extractAxisRanges(final GridEnvelope extent, final MathTransform gridToCrs, final int interestedOrdinateIndex) {
+        return GridCombineIterator.extractAxisRanges(extent, gridToCrs, null, interestedOrdinateIndex);
     }
     
     /**
-     * Returns all ordinate values from grid transformation of {@linkplain GridEnvelope extent} 
-     * by {@linkplain MathTransform gridtocrs} on axis specified by expected dimension parameter.<br><br>
+     * Returns all ordinate ranges from grid transformation of {@linkplain GridEnvelope extent} 
+     * by {@linkplain MathTransform gridtocrs} on axis specified by expected dimension parameter.<br>
+     * One range for each grid values on interested ordinate.<br><br>
      * <strong>
      * Moreover : the specified {@link MathTransform} must be from CORNER of source grid point to CORNER of destination envelope point.<br>
      * The used MathTransform is consider with {@link PixelInCell#CELL_CORNER} configuration.</strong>
@@ -466,7 +470,7 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * @param gridToCrs used gridtocrs to define destination ordinate values.
      * @param crs destination {@link CoordinateReferenceSystem} of grid transformation by gridtocrs, may be {@code null}.
      * @param interestedOrdinateIndex expected interested ordinate index.
-     * @return an array which contain all destination ordinate values from interested dimension. 
+     * @return an array which contain all destination ordinate ranges from interested dimension. 
      * 
      * @throws NullArgumentException if any of extent or gridtocrs is {@code null}.
      * @throws IllegalArgumentException if interestedOrdinateIndex is negative.
@@ -474,8 +478,8 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
      * or if dimension between extent and {@linkplain MathTransform#getSourceDimensions() gridToCrs.getSourceDimensions()} mismatch.
      * @throws IndexOutOfBoundsException if interestedOrdinateIndex is upper than extent or gridtocrs dimension.
      */
-    private static double[] extractAxisValues(final GridEnvelope extent,           final MathTransform gridToCrs, 
-                                              final CoordinateReferenceSystem crs, final int interestedOrdinateIndex) {
+    private static NumberRange<Double>[] extractAxisRanges(final GridEnvelope extent, final MathTransform gridToCrs, 
+                                              final CoordinateReferenceSystem crs,    final int interestedOrdinateIndex) {
         ArgumentChecks.ensureNonNull("extent", extent);
         ArgumentChecks.ensureNonNull("gridToCrs", gridToCrs);
         ArgumentChecks.ensurePositive("interstedOrdinateIndex", interestedOrdinateIndex);
@@ -493,15 +497,15 @@ public final strictfp class GridCombineIterator implements Iterator<Envelope> {
             throw new IndexOutOfBoundsException("GridCombineIterator : The selected ordinate index exceed dimension number, it must be lesser.");
         //---------------------------------
         
+        //-- define out array from asked axis value type.
+        final NumberRange[] resultArray = new NumberRange[extent.getHigh(interestedOrdinateIndex) - extent.getLow(interestedOrdinateIndex) + 1];//-- +1 because getHigh() always return inclusive values.
         
-        final double[] resultArray      = new double[extent.getHigh(interestedOrdinateIndex) - extent.getLow(interestedOrdinateIndex) + 1];//-- +1 because getHigh() always return inclusive values.
         int i = 0;
-        
         final GridCombineIterator gcint = new GridCombineIterator(extent, crs, gridToCrs, interestedOrdinateIndex);
         
         while (gcint.hasNext()) {
             final Envelope env = gcint.next();
-            resultArray[i++]   = env.getMinimum(interestedOrdinateIndex);
+            resultArray[i++]   = new NumberRange(Double.class, env.getMinimum(i), true, env.getMaximum(i), true);
         }
         return resultArray;
     }
