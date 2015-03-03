@@ -21,7 +21,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -30,9 +29,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
-import javax.media.jai.PlanarImage;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.measure.NumberRange;
@@ -40,23 +37,19 @@ import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
-import org.geotoolkit.coverage.finder.StrictlyCoverageFinder;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.math.XMath;
-import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.util.BufferedImageUtilities;
 import org.geotoolkit.util.Cancellable;
 import org.geotoolkit.util.ImageIOUtilities;
 
-import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
@@ -64,7 +57,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -152,89 +144,67 @@ public class PyramidalModelReader extends GridCoverageReader{
 
                 //we expect no rotation
                 MathTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS2D(mosaic, new Point(0, 0));
-                gridToCRS = PixelTranslation.translate(gridToCRS, PixelInCell.CELL_CORNER,PixelInCell.CELL_CENTER);
-
-                /* Check for additional axis. If we've got a discrete CRS, we will be able to get the axis envelope by
-                 * just analysing the axis from one mosaic. Otherwise, we'll have to get upper-left points of each mosaic
-                 * to get all possible values.
-                 */
-                final List<double[]> axisValues = new ArrayList<>();
-                final ArrayList<Integer> nonDiscreteIndices = new ArrayList<>();
-                for (int i = 2; i < nbdim; i++) {
-                    final CoordinateSystemAxis axis = cs.getAxis(i);
-                    if (axis instanceof DiscreteCoordinateSystemAxis) {
-                        final DiscreteCoordinateSystemAxis dca = (DiscreteCoordinateSystemAxis) axis;
-                        final double[] values = new double[dca.length()];
-                        for (int k = 0; k < values.length; k++) {
-                            final Comparable c = dca.getOrdinateAt(k);
-                            if (c instanceof Number) {
-                                values[k] = ((Number) c).doubleValue();
-                            } else if (c instanceof Date) {
-                                values[k] = ((Date) c).getTime();
-                            }
+//                gridToCRS = PixelTranslation.translate(gridToCRS, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
+                
+                //-- recuperer toutes les mosaics au meme scales
+                final double scal = mosaic.getScale();
+                for (int m = mosaics.size() - 1; m >= 0; m--) {
+                    if (mosaics.get(m).getScale() != scal) mosaics.remove(m);
+                }  
+                
+                final int minordi = CRSUtilities.firstHorizontalAxis(crs);
+                
+                //-- temporary first crs not 2D not supported
+                if (minordi != 0) 
+                    throw new IllegalStateException("first CRS not 2D part not supported.");
+                
+                final List<SortedSet<Double>> multiAxisValues = new ArrayList<SortedSet<Double>>();
+                
+                //final double[][] axisValues = new double[cs.getDimension()-2][];
+                
+                for (int i = 0; i < cs.getDimension(); i++) {
+                    if (i != minordi && i!= minordi+1) {
+                        // axisvalues[i-2]
+                        final SortedSet axisValues = new TreeSet();
+                        for (final GridMosaic gridMos : mosaics) {
+                           axisValues.add(gridMos.getUpperLeftCorner().getOrdinate(i));
                         }
-                        axisValues.add(values);
-                        if (values.length < 1) {
-                            nonDiscreteIndices.add(i);
-                        }
-                    } else {
-                        axisValues.add(new double[0]);
-                        nonDiscreteIndices.add(i);
+                        multiAxisValues.add(axisValues);
                     }
                 }
+                
 
-                /* Not all additional axis are discrete, so we will browse mosaic upper-left corners to define the
-                 * "slices" of the pyramid.
-                 */
-                if (!nonDiscreteIndices.isEmpty()) {
-                    HashMap<Integer, TreeSet<Double> > remainingAxis = new HashMap<>(nonDiscreteIndices.size());
-                    // initialize with current mosaic information
-                    for (Integer indice : nonDiscreteIndices) {
-                        // use a tree set to get naturally sorted data without any doublon.
-                        final TreeSet<Double> sortedSet = new TreeSet<>();
-                        sortedSet.add(mosaic.getUpperLeftCorner().getOrdinate(indice));
-                        remainingAxis.put(indice, sortedSet);
+                final int listSize = multiAxisValues.size();
+                assert cs.getDimension() - 2 == listSize;
+                final double[][] discretValues  = new double[listSize][];
+                for (int i = 0; i < listSize; i++) {
+                    final SortedSet<Double> currentAxisValues = multiAxisValues.get(i);
+                    discretValues[i] = new double[currentAxisValues.size()];
+                    int itcompt = 0;
+                    final Iterator<Double> it = currentAxisValues.iterator();
+                    while (it.hasNext()) {
+                        discretValues[i][itcompt++] = it.next();
                     }
-                    // browse other mosaics to get all the slices.
-                    TreeSet<Double> sortedSet;
-                    DirectPosition upperLeft;
-                    for (int mCount = 1 ; mCount < mosaics.size() ; mCount++) {
-                        upperLeft = mosaics.get(mCount).getUpperLeftCorner();
-                        for (Integer indice : nonDiscreteIndices) {
-                            sortedSet = remainingAxis.get(indice);
-                            sortedSet.add(upperLeft.getOrdinate(indice));
-                        }
-                    }
-
-                    for (Map.Entry<Integer, TreeSet<Double> > entry : remainingAxis.entrySet()) {
-                        sortedSet = entry.getValue();
-                        final double[] values = new double[sortedSet.size()];
-                        int i = 0;
-                        for (Double d : sortedSet) {
-                            values[i++] = d;
-                        }
-                        // minus 2 because axis value list does not contain values of the two first axis (which are grid axis).
-                        axisValues.set(entry.getKey()-2, values);
-                    }
+                    
                 }
-
-                final double[][] discretValues = axisValues.toArray(new double[0][0]);
                 final MathTransform gridToCRSds = ReferencingUtilities.toTransform(gridToCRS, discretValues);
 
-                final int[] low = new int[nbdim];
-                final int[] high = new int[nbdim];
-                low[0] = 0;
-                low[1] = 0;
-                high[0] = gridSize.width*tileSize.width;
-                high[1] = gridSize.height*tileSize.height;
+                final int[] low   = new int[nbdim];
+                final int[] high  = new int[nbdim];
+                low[minordi]      = 0;//-- ordinates 2D
+                low[minordi + 1]  = 0;
+                high[minordi]     = gridSize.width  * tileSize.width;
+                high[minordi + 1] = gridSize.height * tileSize.height;
 
-                for(int i=2;i<nbdim;i++){
-                    low[i] = 0;
-                    high[i] = discretValues[i-2].length;
+                for (int i = 0; i < cs.getDimension(); i++) {
+                    if (i != minordi && i!= minordi+1) {
+                        low[i]  = 0;
+                        high[i] = discretValues[i-2].length;
+                    }
                 }
-                final GeneralGridEnvelope ge = new GeneralGridEnvelope(low,high,false);
-
-                gridGeom = new GeneralGridGeometry(ge, PixelInCell.CELL_CENTER, gridToCRSds, crs);
+                
+                final GeneralGridEnvelope ge = new GeneralGridEnvelope(low, high, true);
+                gridGeom = new GeneralGridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRSds, crs);
             }
 
         }else{
