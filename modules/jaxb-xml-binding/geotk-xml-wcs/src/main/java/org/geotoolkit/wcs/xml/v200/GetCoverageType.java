@@ -226,8 +226,14 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
     }
 
     @Override
-    public DomainSubset getDomainSubset() {
-        return null;
+    public List<DomainSubset> getDomainSubset() {
+        final List<DomainSubset> result = new ArrayList<>();
+        if (dimensionSubset != null) {
+            for (JAXBElement<? extends DimensionSubsetType> jb : dimensionSubset) {
+                result.add(jb.getValue());
+            }
+        }
+        return result;
     }
 
     @Override

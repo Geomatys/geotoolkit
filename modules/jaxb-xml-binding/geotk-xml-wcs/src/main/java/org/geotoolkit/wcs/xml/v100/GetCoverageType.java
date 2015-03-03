@@ -18,6 +18,7 @@ package org.geotoolkit.wcs.xml.v100;
 
 import java.util.Collections;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -49,6 +50,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.wcs.xml.DomainSubset;
 
 
 /**
@@ -137,8 +139,12 @@ public class GetCoverageType implements GetCoverage {
      * Gets the value of the domainSubset property.
      */
     @Override
-    public DomainSubsetType getDomainSubset() {
-        return domainSubset;
+    public List<DomainSubset> getDomainSubset() {
+        final List<DomainSubset> result = new ArrayList<>();
+        if (domainSubset != null) {
+            result.add(domainSubset);
+        }
+        return result;
     }
 
     /**

@@ -83,7 +83,7 @@ public interface GetCoverage extends RequestBase {
 
     RangeSubset getRangeSubset();
 
-    DomainSubset getDomainSubset();
+    List<DomainSubset> getDomainSubset();
 
     String toKvp();
     

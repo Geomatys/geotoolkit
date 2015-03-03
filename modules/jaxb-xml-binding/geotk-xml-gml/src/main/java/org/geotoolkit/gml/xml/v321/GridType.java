@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.coverage.grid.Grid;
 import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -81,12 +82,30 @@ public class GridType extends AbstractGeometryType {
     }
     
     public GridType(final Grid grid) {
+        this(grid, null);
+    }
+    
+    /**
+     * 
+     * @param grid 
+     * @param crs 
+     */
+    public GridType(final Grid grid, final CoordinateReferenceSystem crs) {
         final ObjectFactory factory = new ObjectFactory();
         if (grid != null) {
             this.dimension = grid.getDimension();
             final GridEnvelopeType limits = new GridEnvelopeType(grid.getExtent());
             this.rest = new ArrayList<>();
             this.rest.add(factory.createGridTypeLimits(new GridLimitsType(limits)));
+            if (grid.getAxisNames() != null) {
+                this.rest.add(factory.createGridTypeAxisLabels(grid.getAxisNames()));
+            } else if (crs != null){
+                final List<String> axisNames = new ArrayList<>();
+                for (int i = 0; i < crs.getCoordinateSystem().getDimension(); i++) {
+                    axisNames.add(crs.getCoordinateSystem().getAxis(i).getAbbreviation());
+                }
+                this.rest.add(factory.createGridTypeAxisLabels(axisNames));
+            }
         }
     }
     

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.wcs.xml.DomainSubset;
 
 
 /**
@@ -54,7 +55,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     DimensionSliceType.class,
     DimensionTrimType.class
 })
-public abstract class DimensionSubsetType {
+public abstract class DimensionSubsetType implements DomainSubset {
 
     @XmlElement(name = "Dimension", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -64,7 +65,11 @@ public class RectifiedGridType extends GridType {
     }
 
     public RectifiedGridType(final RectifiedGrid grid) {
-       super(grid);
+        this(grid, null);
+    }
+    
+    public RectifiedGridType(final RectifiedGrid grid, final CoordinateReferenceSystem crs) {
+       super(grid, crs);
        if (grid != null) {
            origin       = new PointType(grid.getOrigin(), false);
            offsetVector = new ArrayList<>();

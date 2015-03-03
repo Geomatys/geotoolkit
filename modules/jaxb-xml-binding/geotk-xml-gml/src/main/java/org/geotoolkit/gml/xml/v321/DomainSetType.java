@@ -95,7 +95,9 @@ public class DomainSetType {
     
     public DomainSetType(final GridType grid) {
         final ObjectFactory factory = new ObjectFactory();
-        if (grid != null) {
+        if (grid instanceof RectifiedGridType) {
+            this.abstractGeometry = factory.createRectifiedGrid((RectifiedGridType) grid);
+        } else if (grid != null) {
             this.abstractGeometry = factory.createGrid(grid);
         }
     }
