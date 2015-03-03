@@ -31,6 +31,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
+
+import org.geotoolkit.coverage.CoverageUtilities;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
@@ -40,10 +42,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * On the fly calculated image.
+ * Implementation of {@link RenderedImage} that is computed on the fly using portrayal rendering.
+ * This implementation is mostly used to tile a portrayal context in a @{org.geotoolkit.coverage.GridMosaic}.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
+ * @see org.geotoolkit.process.coverage.pyramid.MapcontextPyramidProcess
  */
 public class PortrayalRenderedImage implements RenderedImage{
 
@@ -54,14 +57,49 @@ public class PortrayalRenderedImage implements RenderedImage{
     private final Dimension gridSize;
     private final Dimension tileSize;
     private final double scale;
+
+    /**
+     * UpperLeft 2D from ViewDef Envelope.
+     */
     private final Point2D upperleft;
 //    private final J2DCanvasBuffered canvas;
     private final int nbtileonwidth;
     private final int nbtileonheight;
 
+    /**
+     * Index of first geographical axis
+     */
+    private final int minOrdi0;
+
+    /**
+     * Index of first geographical axis
+     */
+    private final int minOrdi1;
+
+    /**
+     * ViewDef envelope.
+     * Used to fill non geographic range in CanvasDef request Envelope.
+     */
+    private final Envelope viewEnvelope;
+
+    /**
+     * ViewDef envelope CRS.
+     */
     private final CoordinateReferenceSystem crs;
+
+    /**
+     * Portrayal CanvasDef.
+     */
     private final CanvasDef canvasDef;
+
+    /**
+     * Portrayal SceneDef that contain Layers.
+     */
     private final SceneDef sceneDef;
+
+    /**
+     * Portrayal ViewDef with requested envelope.
+     */
     private final ViewDef viewDef;
 
     /** listener support */
@@ -71,7 +109,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
     /**
      *
-     * @param canvasDef : canvas size will be ignored
+     * @param canvasDef : canvas size will be ignored.
      * @param sceneDef
      * @param viewDef
      * @param gridSize
@@ -89,35 +127,21 @@ public class PortrayalRenderedImage implements RenderedImage{
         this.viewDef = viewDef;
 
 
-        final Envelope envelope = viewDef.getEnvelope();
-        crs = envelope.getCoordinateReferenceSystem();
+        this.viewEnvelope = viewDef.getEnvelope();
+        crs = viewEnvelope.getCoordinateReferenceSystem();
         this.upperleft = new Point2D.Double(
-                envelope.getMinimum(0),
-                envelope.getMaximum(1));
+                viewEnvelope.getMinimum(0),
+                viewEnvelope.getMaximum(1));
 
-        //prepare a J2DCanvas to render several tiles in the same tile
-        //we consider a 2000*2000 size to be the maximum, which is 16Mb in memory
-        //we expect the user to access tile lines by lines.
-//        final int maxNbTile = (2000*2000) / (tileSize.width*tileSize.height);
+        this.minOrdi0 = CoverageUtilities.getMinOrdinate(crs);
+        this.minOrdi1 = minOrdi0 + 1;
 
-//        if(maxNbTile < gridSize.width){
-//            //we can not generate a full line
-//            nbtileonwidth = maxNbTile;
-//            nbtileonheight = 1;
-//        }else{
-//            //we can generate more than one line
-//            nbtileonwidth = gridSize.width;
-//            nbtileonheight = maxNbTile / gridSize.width;
-//        }
-//
         nbtileonheight = 1;
         nbtileonwidth = 1;
-
-
     }
 
     /**
-     * Tiles are generated on the fly, so we have informations on their generation
+     * Tiles are generated on the fly, so we have information on their generation
      * process but we don't have the tiles themselves.
      *
      * @return empty vector
@@ -299,14 +323,23 @@ public class PortrayalRenderedImage implements RenderedImage{
         final double tilespanY = scale*tileSize.height;
 
         final GeneralEnvelope canvasEnv = new GeneralEnvelope(crs);
-        canvasEnv.setRange(0,
-                upperleft.getX() + (col)*tilespanX,
-                upperleft.getX() + (col+nbtileonwidth)*tilespanX
-                );
-        canvasEnv.setRange(1,
-                upperleft.getY() - (row+nbtileonheight)*tilespanY,
-                upperleft.getY() - (row)*tilespanY
-                );
+        int nbDim = canvasEnv.getDimension();
+
+        for (int d = 0; d < nbDim; d++) {
+
+            if (d == minOrdi0) {
+                double minX = upperleft.getX() + (col) * tilespanX;
+                double maxX = upperleft.getX() + (col+nbtileonwidth) * tilespanX;
+                canvasEnv.setRange(d, minX, maxX);
+            } else if (d == minOrdi1) {
+                double minY = upperleft.getY() - (row+nbtileonheight) * tilespanY;
+                double maxY = upperleft.getY() - (row) * tilespanY;
+                canvasEnv.setRange(d, minY, maxY);
+            } else {
+                //other dimensions
+                canvasEnv.setRange(d, viewEnvelope.getMinimum(d), viewEnvelope.getMaximum(d));
+            }
+        }
 
         J2DCanvasBuffered cvs = canvas.poll();
 

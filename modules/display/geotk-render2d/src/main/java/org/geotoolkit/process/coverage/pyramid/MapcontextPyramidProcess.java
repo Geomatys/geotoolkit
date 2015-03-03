@@ -17,49 +17,48 @@
 
 package org.geotoolkit.process.coverage.pyramid;
 
-import java.awt.*;
-import java.io.IOException;
-import java.util.concurrent.CancellationException;
-import javax.swing.JLabel;
-import javax.swing.ProgressMonitor;
-
+import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
+import org.geotoolkit.display2d.service.PortrayalRenderedImage;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.CRS;
-import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.display2d.service.PortrayalRenderedImage;
 import org.geotoolkit.referencing.ReferencingUtilities;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import static org.geotoolkit.parameter.Parameters.*;
-import static org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescriptor.*;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
+import java.util.concurrent.CancellationException;
+
+import static org.geotoolkit.parameter.Parameters.getOrCreate;
+import static org.geotoolkit.parameter.Parameters.value;
+import static org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescriptor.*;
 
 /**
  * Create a pyramid in the given PyramidalModel.
@@ -164,6 +163,14 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                 DirectPosition upperleft = new GeneralDirectPosition(destCRS);
                 upperleft.setOrdinate(widthAxis, envelope.getMinimum(widthAxis));
                 upperleft.setOrdinate(heightAxis, envelope.getMaximum(heightAxis));
+                int outDim = envelope.getDimension();
+                for (int d = 0; d < outDim; d++) {
+                    if (d != widthAxis && d != heightAxis) {
+                        //set upperLeft extra dimension ordinate from requested envelope
+                        upperleft.setOrdinate(d, envelope.getMinimum(d));
+                    }
+                }
+
                 Dimension tileDim = tileSize;
                 Dimension gridSize = new Dimension( (int)(Math.ceil(gridWidth)), (int)(Math.ceil(gridHeight)));
 
