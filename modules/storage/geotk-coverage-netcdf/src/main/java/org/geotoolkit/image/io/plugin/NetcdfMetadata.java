@@ -74,6 +74,7 @@ import org.apache.sis.util.collection.BackingStoreException;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import static org.geotoolkit.image.io.plugin.NetcdfImageReader.Spi.NATIVE_FORMAT_NAME;
+import org.opengis.referencing.datum.PixelInCell;
 import static ucar.nc2.constants.CF.GRID_MAPPING;
 
 
@@ -380,7 +381,7 @@ final class NetcdfMetadata extends SpatialMetadata {
             }
             if (gridGeometry != null) {
                 final GridDomainAccessor accessor = new GridDomainAccessor(this);
-                accessor.setGridGeometry(gridGeometry, null, null);
+                accessor.setGridGeometry(gridGeometry, PixelInCell.CELL_CENTER, null);
                 gridToCRS = null;
             }
             if (crs == null) {

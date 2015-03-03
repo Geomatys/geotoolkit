@@ -65,6 +65,8 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Encode a CoordinateReferenceSystem as GeoTiff tags.
@@ -80,9 +82,18 @@ public final class GeoTiffCRSWriter {
      * Fill the Geotiff CRS metadatas with the given CRS.
      */
     public void fillCRSMetaDatas(final GeoTiffMetaDataStack stack,
-            final CoordinateReferenceSystem crs) throws IOException, FactoryException {
+            CoordinateReferenceSystem crs) throws IOException, FactoryException {
         ensureNonNull("crs", crs);
 
+        // extract 2D part from multidimensional CRS
+        if (crs.getCoordinateSystem().getDimension() > 2) {
+            try {
+                crs = CRSUtilities.getCRS2D(crs);
+            } catch (TransformException ex) {
+                throw new IllegalStateException("Impossible to extract 2D part of coordinate referenceSystem", ex);
+            }
+        }
+        
         final int crsType;
         if (crs instanceof ProjectedCRS) {
             crsType = ModelTypeProjected;
