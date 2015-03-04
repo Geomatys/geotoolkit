@@ -17,11 +17,14 @@
 package org.geotoolkit.wcs.xml;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Arrays;
 import org.geotoolkit.wcs.xml.v100.GetCoverageType;
 import java.io.StringWriter;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 
 //Junit dependencies
@@ -32,6 +35,12 @@ import org.junit.*;
 import org.xml.sax.SAXException;
 
 import static org.apache.sis.test.Assert.*;
+import org.geotoolkit.gmlcov.geotiff.xml.v100.CompressionType;
+import org.geotoolkit.gmlcov.geotiff.xml.v100.InterleaveType;
+import org.geotoolkit.gmlcov.geotiff.xml.v100.ObjectFactory;
+import org.geotoolkit.gmlcov.geotiff.xml.v100.ParametersType;
+import org.geotoolkit.gmlcov.geotiff.xml.v100.PredictorType;
+import org.geotoolkit.wcs.xml.v200.ExtensionType;
 
 
 /**
@@ -43,6 +52,7 @@ public class WcsXMLBindingTest {
 
     private static final MarshallerPool pool = WCSMarshallerPool.getInstance();
     private Marshaller   marshaller;
+    private Unmarshaller unmarshaller;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -55,12 +65,16 @@ public class WcsXMLBindingTest {
     @Before
     public void setUp() throws JAXBException {
         marshaller = pool.acquireMarshaller();
+        unmarshaller = pool.acquireUnmarshaller();
     }
 
     @After
     public void tearDown() {
         if (marshaller != null) {
             pool.recycle(marshaller);
+        }
+        if (unmarshaller != null) {
+            pool.recycle(unmarshaller);
         }
     }
 
@@ -123,5 +137,49 @@ public class WcsXMLBindingTest {
                            "    </wcs:output>" + '\n' +
                            "</wcs:GetCoverage>" + '\n' ;
         assertXmlEquals(expResult, result, "xmlns:*");
+    }
+    
+    @Test
+    public void marshallingTest200() throws JAXBException, IOException, ParserConfigurationException, SAXException {
+
+        org.geotoolkit.wcs.xml.v200.GetCoverageType getCoverage = new org.geotoolkit.wcs.xml.v200.GetCoverageType("test", "image/geotiff");
+
+        ParametersType param = new ParametersType();
+        param.setCompression(CompressionType.NONE);
+        param.setInterleave(InterleaveType.PIXEL);
+        param.setJpegQuality(10);
+        param.setPredictor(PredictorType.NONE);
+        param.setTileheight(12);
+        param.setTilewidth(15);
+        param.setTiling(true);
+        ObjectFactory facto = new ObjectFactory();
+        getCoverage.setExtension(new ExtensionType(facto.createParameters(param)));
+        
+        StringWriter sw = new StringWriter();
+        marshaller.marshal(getCoverage, sw);
+
+        String result = sw.toString();
+        System.out.println(result);
+
+        String expResult = "<wcs:GetCoverage version=\"2.0.0\" service=\"WCS\" " +
+                           "xmlns:wcs=\"http://www.opengis.net/wcs/2.0\" xmlns:geotiff=\"http://www.opengis.net/gmlcov/geotiff/1.0\">" + '\n' +
+                           "    <wcs:Extension>\n" +
+                           "        <geotiff:parameters>\n" +
+                           "            <geotiff:compression>None</geotiff:compression>\n" +
+                           "            <geotiff:jpeg_quality>10</geotiff:jpeg_quality>\n" +
+                           "            <geotiff:predictor>None</geotiff:predictor>\n" +
+                           "            <geotiff:interleave>Pixel</geotiff:interleave>\n" +
+                           "            <geotiff:tiling>true</geotiff:tiling>\n" +
+                           "            <geotiff:tileheight>12</geotiff:tileheight>\n" +
+                           "            <geotiff:tilewidth>15</geotiff:tilewidth>\n" +
+                           "        </geotiff:parameters>\n" +
+                           "    </wcs:Extension>\n" +         
+                           "    <wcs:CoverageId>test</wcs:CoverageId>" + '\n' +
+                           "    <wcs:format>image/geotiff</wcs:format>" + '\n' +
+                           "</wcs:GetCoverage>" + '\n' ;
+        assertXmlEquals(expResult, result, "xmlns:*");
+        
+        final org.geotoolkit.wcs.xml.v200.GetCoverageType unmarshalled = (org.geotoolkit.wcs.xml.v200.GetCoverageType)((JAXBElement) unmarshaller.unmarshal(new StringReader(expResult))).getValue();
+        assertEquals(getCoverage, unmarshalled);
     }
 }

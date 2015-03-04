@@ -19,6 +19,8 @@ package org.geotoolkit.wcs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
@@ -54,6 +56,19 @@ public class ExtensionType {
     @XmlAnyElement(lax = true)
     private List<Object> any;
 
+    public ExtensionType() {
+        
+    }
+    
+    public ExtensionType(Object any) {
+        this.any = new ArrayList<>();
+        this.any.add(any);
+    }
+    
+    public ExtensionType(List<Object> any) {
+        this.any = any;
+    }
+    
     /**
      * Gets the value of the any property.
      *
@@ -67,6 +82,45 @@ public class ExtensionType {
             any = new ArrayList<>();
         }
         return this.any;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o instanceof ExtensionType) {
+            final ExtensionType that = (ExtensionType) o;
+            if (this.any != null && that.any != null) {
+                if (this.any.size() == that.any.size()) {
+                    for (int i = 0; i < this.any.size(); i++) {
+                        Object thisD = this.any.get(i);
+                        Object thatD = that.any.get(i);
+                        if (thisD instanceof JAXBElement) {
+                            thisD = ((JAXBElement)thisD).getValue();
+                        }
+                        if (thatD instanceof JAXBElement) {
+                            thatD = ((JAXBElement)thatD).getValue();
+                        }
+                        if (!Objects.equals(thisD, thatD)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            } else if (this.any == null && that.any == null) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 19 * hash + Objects.hashCode(this.any);
+        return hash;
     }
 
 }

@@ -20,11 +20,13 @@ package org.geotoolkit.wcs.xml.v200;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -67,6 +69,7 @@ import org.opengis.util.FactoryException;
     "format",
     "mediaType"
 })
+@XmlRootElement(name = "GetCoverage")
 public class GetCoverageType extends RequestBaseType implements GetCoverage {
 
     @XmlElement(name = "CoverageId", required = true)
@@ -246,4 +249,43 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
         return null;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o instanceof GetCoverageType && super.equals(o)) {
+            final GetCoverageType that = (GetCoverageType) o;
+            boolean dimEquals = false;
+            if (this.dimensionSubset != null && that.dimensionSubset != null) {
+                if (this.dimensionSubset.size() == that.dimensionSubset.size()) {
+                    dimEquals = true;
+                    for (int i = 0; i < this.dimensionSubset.size(); i++) {
+                        DomainSubset thisD = this.dimensionSubset.get(i).getValue();
+                        DomainSubset thatD = that.dimensionSubset.get(i).getValue();
+                        if (!Objects.equals(thisD, thatD)) {
+                            return false;
+                        }
+                    }
+                }
+            } else if (this.dimensionSubset == null && that.dimensionSubset == null) {
+                dimEquals = true;
+            }
+            return Objects.equals(this.coverageId, that.coverageId) &&
+                   Objects.equals(this.format,     that.format) &&
+                   Objects.equals(this.mediaType,  that.mediaType) &&
+                   dimEquals;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 41 * hash + java.util.Objects.hashCode(this.coverageId);
+        hash = 41 * hash + java.util.Objects.hashCode(this.dimensionSubset);
+        hash = 41 * hash + java.util.Objects.hashCode(this.format);
+        hash = 41 * hash + java.util.Objects.hashCode(this.mediaType);
+        return hash;
+    }
 }

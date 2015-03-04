@@ -17,6 +17,7 @@
 
 package org.geotoolkit.wcs.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -142,4 +143,27 @@ public abstract class RequestBaseType implements RequestBase {
         this.version = value;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o instanceof RequestBaseType) {
+            final RequestBaseType that = (RequestBaseType) o;
+           
+            return Objects.equals(this.extension, that.extension) &&
+                   Objects.equals(this.service,   that.service) &&
+                   Objects.equals(this.version,   that.version);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 47 * hash + Objects.hashCode(this.extension);
+        hash = 47 * hash + Objects.hashCode(this.service);
+        hash = 47 * hash + Objects.hashCode(this.version);
+        return hash;
+    }
 }
