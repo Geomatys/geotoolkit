@@ -30,7 +30,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
 
 /**
- * More Mathematic exhaustive CoverageFinder.
+ * More Mathematical exhaustive CoverageFinder.
  *
  * @author Remi Marechal (Geomatys).
  */
@@ -41,28 +41,30 @@ public class StrictlyCoverageFinder extends CoverageFinder {
      * <p>Note : Can return null if no mosaic within {@link Envelope} parameter area exist.</p>
      */
     @Override
-    public GridMosaic findMosaic(Pyramid pyramid, double resolution, double tolerance, Envelope env, int maxTileNumber) throws FactoryException {
+    public GridMosaic findMosaic(Pyramid pyramid, double resolution, double tolerance, Envelope env, Integer maxTileNumber)
+            throws FactoryException {
+
         final MathTransform mt = CRS.findMathTransform(pyramid.getCoordinateReferenceSystem(), env.getCoordinateReferenceSystem());
         if (!mt.isIdentity()) throw new IllegalArgumentException("findMosaic : not same CoordinateReferenceSystem");
-        final List<GridMosaic> mosaics = new ArrayList<GridMosaic>(pyramid.getMosaics());
+        final List<GridMosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
         final List<GridMosaic> goodMosaics;
         
         final GeneralEnvelope findEnvelope = new GeneralEnvelope(env);
         // if crs is compound
         if (env.getDimension() > 2) {
             double bestRatio = Double.NEGATIVE_INFINITY;
-            goodMosaics = new ArrayList<GridMosaic>();
+            goodMosaics = new ArrayList<>();
             // find nearest gridMosaic
             for (GridMosaic gridMosaic : mosaics) {
                 final Envelope gridEnvelope = gridMosaic.getEnvelope();
                 // if intersection solution exist
                 if (findEnvelope.intersects(gridEnvelope, true)) {
                     final double ratioTemp = CoverageUtilities.getRatioND(findEnvelope, gridEnvelope);
-                    if (ratioTemp > (bestRatio + EPSILON)) { // >
+                    if (ratioTemp > (bestRatio + DEFAULT_EPSILON)) { // >
                         goodMosaics.clear();
                         goodMosaics.add(gridMosaic);
                         bestRatio = ratioTemp;
-                    } else if ((Math.abs(ratioTemp - bestRatio)) <= EPSILON) { // =
+                    } else if ((Math.abs(ratioTemp - bestRatio)) <= DEFAULT_EPSILON) { // =
                         goodMosaics.add(gridMosaic);
                     }
                 } 
@@ -81,7 +83,7 @@ public class StrictlyCoverageFinder extends CoverageFinder {
                 
         GridMosaic result = null;   
         
-        for (GridMosaic candidate : goodMosaics) {// recup meilleur scale 
+        for (GridMosaic candidate : goodMosaics) {// find best scale
             final double scale = candidate.getScale();
             
             if(result == null){
@@ -100,7 +102,7 @@ public class StrictlyCoverageFinder extends CoverageFinder {
                 nbtileY = nbtileX;
             }
             
-            if(maxTileNumber > 0 && nbtileX*nbtileY > maxTileNumber){
+            if(maxTileNumber != null && maxTileNumber > 0 && nbtileX*nbtileY > maxTileNumber){
                 //we haven't reach the best resolution, it would requiere
                 //too much tiles, we use the previous scale level
                 break;

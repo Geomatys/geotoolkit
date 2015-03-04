@@ -28,11 +28,12 @@ import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 
 /**
- * <p>Define a default CoverageFinder adapted for projects.<br/>
- * In attempt to replace this class by {@link strictlyCoverageFinder}.</p>
+ * Define a default CoverageFinder adapted for projects.<br/>
+ * In attempt to replace this class by {@link StrictlyCoverageFinder}.
  *
  * @author Remi Marechal (Geomatys).
  * @author Johann Sorel (Geomatys).
+ * @see {@link StrictlyCoverageFinder}
  */
 @Deprecated
 public class DefaultCoverageFinder extends CoverageFinder {
@@ -41,7 +42,7 @@ public class DefaultCoverageFinder extends CoverageFinder {
      * {@inheritDoc }.
      */
     @Override
-    public GridMosaic findMosaic(Pyramid pyramid, double resolution, double tolerance, Envelope env, int maxTileNumber) throws FactoryException {
+    public GridMosaic findMosaic(Pyramid pyramid, double resolution, double tolerance, Envelope env, Integer maxTileNumber) throws FactoryException {
         final List<GridMosaic> mosaics = new ArrayList<GridMosaic>(pyramid.getMosaics());
         Collections.sort(mosaics, SCALE_COMPARATOR);
         Collections.reverse(mosaics);
@@ -92,7 +93,7 @@ public class DefaultCoverageFinder extends CoverageFinder {
                 nbtileY = nbtileX;
             }
 
-            if (maxTileNumber > 0 && nbtileX * nbtileY > maxTileNumber) {
+            if (maxTileNumber != null && maxTileNumber > 0 && nbtileX * nbtileY > maxTileNumber) {
                 //we haven't reach the best resolution, it would require
                 //too much tiles, we use the previous scale level
                 break;
