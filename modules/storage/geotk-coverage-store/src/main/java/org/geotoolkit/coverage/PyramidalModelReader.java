@@ -173,7 +173,6 @@ public class PyramidalModelReader extends GridCoverageReader{
                     }
                 }
                 
-
                 final int listSize = multiAxisValues.size();
                 assert cs.getDimension() - 2 == listSize;
                 final double[][] discretValues  = new double[listSize][];
@@ -211,7 +210,6 @@ public class PyramidalModelReader extends GridCoverageReader{
             //empty pyramid set
             gridGeom = new GeneralGridGeometry(null, null, set.getEnvelope());
         }
-
         return gridGeom;
     }
 
@@ -226,29 +224,27 @@ public class PyramidalModelReader extends GridCoverageReader{
 
     @Override
     public GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
-        if(index != 0){
+        if (index != 0) 
             throw new CoverageStoreException("Invalid Image index.");
-        }
 
-        if(param == null){
+        if(param == null) 
             param = new GridCoverageReadParam();
-        }
-
+        
         final int[] desBands = param.getDestinationBands();
         final int[] sourceBands = param.getSourceBands();
-        if(desBands != null || sourceBands != null){
+        
+        if (desBands != null || sourceBands != null)
             throw new CoverageStoreException("Source or destination bands can not be used on pyramidal coverages.");
-        }
+        
 
         CoordinateReferenceSystem crs = param.getCoordinateReferenceSystem();
         Envelope paramEnv = param.getEnvelope();
         double[] resolution = param.getResolution();
 
         // Build proper envelope and CRS from parameters. If null, they're set from the queried coverage information.
-        if (paramEnv == null) {
+        if (paramEnv == null) 
             paramEnv = getGridGeometry(index).getEnvelope();
-        }
-
+        
         if (crs == null) {
             crs = paramEnv.getCoordinateReferenceSystem();
         } else {
@@ -259,15 +255,14 @@ public class PyramidalModelReader extends GridCoverageReader{
             }
         }
 
-        if (crs == null) {
+        if (crs == null) 
             throw new CoverageStoreException("CRS not defined in parameters or input envelope.");
-        }
-
-        //estimate resolution if not given
-        if(resolution == null){
-            //set resolution to infinite, will select the last mosaic level
+        
+        //-- estimate resolution if not given
+        if(resolution == null)
+            //-- set resolution to infinite, will select the last mosaic level
             resolution = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
-        }
+        
 
         final PyramidalCoverageReference covref = getPyramidalModel();
         
@@ -280,22 +275,19 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         Pyramid pyramid;
         try {
-//            pyramid = CoverageUtilities.findPyramid(pyramidSet, crs);
              pyramid = coverageFinder.findPyramid(pyramidSet, crs);
         } catch (FactoryException ex) {
             throw new CoverageStoreException(ex);
         }
 
-        if(pyramid == null){
-            //no reliable pyramid
+        //-- no reliable pyramid
+        if(pyramid == null)
             throw new CoverageStoreException("No pyramid defined.");
-        }
-
+        
         /*
          * We will transform the input envelope to found pyramid CRS.
          */
         final CoordinateReferenceSystem pyramidCRS = pyramid.getCoordinateReferenceSystem();
-        final Envelope maxExt = CRS.getEnvelope(pyramidCRS);
         GeneralEnvelope wantedEnv;
         try {
             wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(paramEnv, pyramidCRS));
@@ -347,10 +339,10 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         //read the data
         final boolean deferred = param.isDeferred();
-        if(mosaics.size()==1){
+        if (mosaics.size() == 1) {
             //read a single slice
             return readSlice(mosaics.get(0), wantedEnv, deferred);
-        }else{
+        } else {
             //read a data cube of multiple slices
             return readCube(mosaics, wantedEnv, deferred);
         }
