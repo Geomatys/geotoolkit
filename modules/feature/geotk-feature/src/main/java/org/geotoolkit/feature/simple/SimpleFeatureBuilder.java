@@ -30,10 +30,10 @@ import org.apache.sis.util.ObjectConverters;
 
 import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.util.GenericName;
 
 /**
  * A builder for features.
@@ -219,7 +219,7 @@ public class SimpleFeatureBuilder {
      * @throws IllegalArgumentException
      *             If no such attribute with teh specified name exists.
      */
-    public void set(final Name name, final Object value) {
+    public void set(final GenericName name, final Object value) {
         set(DefaultName.toExtendedForm(name), value);
     }
 

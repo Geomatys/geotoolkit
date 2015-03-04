@@ -24,9 +24,6 @@ import java.util.Objects;
 
 import org.apache.sis.util.Classes;
 
-import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.geotoolkit.feature.type.PropertyType;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 

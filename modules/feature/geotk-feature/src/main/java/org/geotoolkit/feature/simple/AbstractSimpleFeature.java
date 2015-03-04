@@ -38,7 +38,6 @@ import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.util.GenericName;
 

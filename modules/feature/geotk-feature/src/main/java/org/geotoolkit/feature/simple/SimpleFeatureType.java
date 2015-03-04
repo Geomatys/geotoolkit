@@ -36,7 +36,6 @@ import java.util.List;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
 import org.opengis.util.GenericName;
 
 /**

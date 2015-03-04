@@ -21,7 +21,6 @@ import org.geotoolkit.feature.type.DefaultName;
 
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
@@ -74,6 +73,7 @@ import org.opengis.filter.temporal.OverlappedBy;
 import org.opengis.filter.temporal.TContains;
 import org.opengis.filter.temporal.TEquals;
 import org.opengis.filter.temporal.TOverlaps;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -172,7 +172,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
         return true;
     }
 
-    private Name getNameFromString(final String fullName) {
+    private GenericName getNameFromString(final String fullName) {
         return DefaultName.valueOf(fullName);
     }
 
@@ -183,7 +183,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
             //for the bbox filter the propertyName can be empty
             if (pt.getPropertyName().equals("")) return true;
             
-            Name name = getNameFromString(pt.getPropertyName());
+            GenericName name = getNameFromString(pt.getPropertyName());
             PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
@@ -194,7 +194,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     public Object visit(final Beyond beyond, final Object o) {
         if (beyond.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) beyond.getExpression1();
-            Name name = getNameFromString(pt.getPropertyName());
+            GenericName name = getNameFromString(pt.getPropertyName());
             PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
@@ -205,7 +205,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     public Object visit(final Contains cntns, final Object o) {
         if (cntns.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) cntns.getExpression1();
-            Name name = getNameFromString(pt.getPropertyName());
+            GenericName name = getNameFromString(pt.getPropertyName());
             PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
@@ -216,7 +216,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     public Object visit(final Crosses crs, final Object o) {
         if (crs.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) crs.getExpression1();
-            Name name = getNameFromString(pt.getPropertyName());
+            GenericName name = getNameFromString(pt.getPropertyName());
             PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
@@ -227,7 +227,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     public Object visit(final Disjoint dsjnt, final Object o) {
         if (dsjnt.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) dsjnt.getExpression1();
-            Name name = getNameFromString(pt.getPropertyName());
+            GenericName name = getNameFromString(pt.getPropertyName());
             PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
@@ -238,7 +238,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     public Object visit(final DWithin dw, final Object o) {
         if (dw.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) dw.getExpression1();
-            Name name = getNameFromString(pt.getPropertyName());
+            GenericName name = getNameFromString(pt.getPropertyName());
             PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
@@ -249,7 +249,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     public Object visit(final Equals equals, final Object o) {
         if (equals.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) equals.getExpression1();
-            Name name = getNameFromString(pt.getPropertyName());
+            GenericName name = getNameFromString(pt.getPropertyName());
             PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
@@ -260,7 +260,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     public Object visit(final Intersects i, final Object o) {
         if (i.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) i.getExpression1();
-            Name name = getNameFromString(pt.getPropertyName());
+            GenericName name = getNameFromString(pt.getPropertyName());
             PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
@@ -271,7 +271,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     public Object visit(final Overlaps ovrlps, final Object o) {
         if (ovrlps.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) ovrlps.getExpression1();
-            Name name = getNameFromString(pt.getPropertyName());
+            GenericName name = getNameFromString(pt.getPropertyName());
             PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
@@ -282,7 +282,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     public Object visit(final Touches tchs, final Object o) {
         if (tchs.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) tchs.getExpression1();
-            Name name = getNameFromString(pt.getPropertyName());
+            GenericName name = getNameFromString(pt.getPropertyName());
             PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }
@@ -293,7 +293,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     public Object visit(final Within within, final Object o) {
         if (within.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) within.getExpression1();
-            Name name = getNameFromString(pt.getPropertyName());
+            GenericName name = getNameFromString(pt.getPropertyName());
             PropertyDescriptor desc = ft.getDescriptor(name);
             return desc instanceof GeometryDescriptor;
         }

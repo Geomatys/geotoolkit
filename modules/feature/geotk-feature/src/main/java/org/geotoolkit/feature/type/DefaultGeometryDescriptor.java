@@ -17,9 +17,6 @@
  */
 package org.geotoolkit.feature.type;
 
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

@@ -25,7 +25,6 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.filter.function.other.OtherFunctionFactory;
 
 import org.geotoolkit.feature.type.AssociationType;
 import org.geotoolkit.feature.type.AttributeType;

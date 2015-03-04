@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.feature.type;
 
-import org.geotoolkit.feature.type.AssociationDescriptor;
-import org.geotoolkit.feature.type.AssociationType;
-import org.geotoolkit.feature.type.Name;
 
 /**
  * Default implementation of a asociation descriptor

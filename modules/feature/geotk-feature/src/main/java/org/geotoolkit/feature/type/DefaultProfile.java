@@ -25,10 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.feature.type.Schema;
-
 
 /**
  * A "sub" Schema used to select types for a specific use.

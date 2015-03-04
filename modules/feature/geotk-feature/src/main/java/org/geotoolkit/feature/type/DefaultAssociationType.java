@@ -21,10 +21,6 @@ import java.util.Objects;
 
 import org.opengis.feature.FeatureAssociation;
 import org.opengis.feature.FeatureType;
-import org.geotoolkit.feature.type.AssociationDescriptor;
-import org.geotoolkit.feature.type.AssociationType;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
