@@ -28,7 +28,6 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
-import org.geotoolkit.io.wkt.GeometryParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
@@ -41,6 +40,7 @@ import org.opengis.geometry.Geometry;
 import org.opengis.geometry.PositionFactory;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.geometry.isoonjts.GeometryParser;
 
 
 /**
