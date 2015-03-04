@@ -33,7 +33,6 @@ import java.nio.charset.CoderResult;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.io.Closeable;
 import org.apache.sis.util.logging.Logging;
 
 /**

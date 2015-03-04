@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 
 import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
-import org.geotoolkit.io.Closeable;
+import org.geotoolkit.data.dbf.Closeable;
 
 /**
  * ShxReader parser for .shx files.<br>

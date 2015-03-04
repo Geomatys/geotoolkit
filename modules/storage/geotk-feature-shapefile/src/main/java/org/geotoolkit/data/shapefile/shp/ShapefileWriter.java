@@ -28,7 +28,7 @@ import org.apache.sis.storage.DataStoreException;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
-import org.geotoolkit.io.Closeable;
+import org.geotoolkit.data.dbf.Closeable;
 
 /**
  * ShapefileWriter allows for the storage of geometries in esris shp format.

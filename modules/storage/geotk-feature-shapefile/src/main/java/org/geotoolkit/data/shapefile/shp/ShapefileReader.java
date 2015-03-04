@@ -26,7 +26,7 @@ import java.nio.channels.ReadableByteChannel;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
-import org.geotoolkit.io.Closeable;
+import org.geotoolkit.data.dbf.Closeable;
 
 /**
  * The general use of this class is: <CODE><PRE>

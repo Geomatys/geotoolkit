@@ -39,7 +39,7 @@ import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
 import org.geotoolkit.data.shapefile.indexed.RecordNumberTracker;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
-import org.geotoolkit.io.Closeable;
+import org.geotoolkit.data.dbf.Closeable;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 

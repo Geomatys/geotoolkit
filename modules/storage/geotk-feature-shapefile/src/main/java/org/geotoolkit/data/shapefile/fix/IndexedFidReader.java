@@ -32,7 +32,7 @@ import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.indexed.RecordNumberTracker;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.apache.sis.internal.storage.IOUtilities;
-import org.geotoolkit.io.Closeable;
+import org.geotoolkit.data.dbf.Closeable;
 
 import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
 

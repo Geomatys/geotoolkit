@@ -30,7 +30,7 @@ import org.geotoolkit.data.shapefile.shx.ShxReader;
 
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
-import org.geotoolkit.io.Closeable;
+import org.geotoolkit.data.dbf.Closeable;
 
 /**
  * The Writer writes out the fid and record number of features to the fid index file.
