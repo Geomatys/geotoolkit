@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util;
+package org.geotoolkit.image;
 
 import java.awt.Point;
 import java.awt.Transparency;
@@ -37,7 +37,7 @@ import org.geotoolkit.internal.image.ScaledColorSpace;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class BufferedImageUtilities extends Static {
+public class BufferedImages extends Static {
 
     /**
      * Create a new image of the same type with a different size.

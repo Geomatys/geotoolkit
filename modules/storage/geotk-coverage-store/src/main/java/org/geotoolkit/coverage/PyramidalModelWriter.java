@@ -48,7 +48,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -469,7 +469,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                     }else if(nbBand==4){
                         currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_ARGB);
                     }else{
-                        currentlyTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, dims.size(),
+                        currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, dims.size(),
                                 CoverageUtilities.getDataType(dims.get(0).getSampleDimensionType()));
                     }
                 } catch (DataStoreException ex) {

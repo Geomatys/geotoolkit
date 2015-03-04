@@ -46,7 +46,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.util.Cancellable;
 import org.geotoolkit.util.ImageIOUtilities;
 
@@ -478,7 +478,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                     }
                     
                     if(image == null){
-                        image = BufferedImageUtilities.createImage(
+                        image = BufferedImages.createImage(
                                 (int)(tileMaxCol-tileMinCol)*tileSize.width, 
                                 (int)(tileMaxRow-tileMinRow)*tileSize.height, tileImage);
                     }

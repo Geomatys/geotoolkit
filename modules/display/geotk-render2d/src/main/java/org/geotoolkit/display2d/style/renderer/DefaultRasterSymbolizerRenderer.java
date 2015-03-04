@@ -97,7 +97,7 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Jenks;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -698,7 +698,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final RenderedImage demImage = dem.getRenderedImage();
 
         // output mnt creation
-        final BufferedImage destMNT = BufferedImageUtilities.createImage(covExtend.width, covExtend.height, demImage);
+        final BufferedImage destMNT = BufferedImages.createImage(covExtend.width, covExtend.height, demImage);
         intersec = Envelopes.transform(covGridGeom.getGridToCRS(PixelInCell.CELL_CORNER).inverse(), intersec);
 
         final Rectangle areaIterate = new Rectangle((int) intersec.getMinimum(0), (int) intersec.getMinimum(1), (int) Math.ceil(intersec.getSpan(0)), (int) Math.ceil(intersec.getSpan(1)));
@@ -1085,7 +1085,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             if (source instanceof WritableRenderedImage) {
                 destination = (WritableRenderedImage) source;
             } else {
-                destination = BufferedImageUtilities.createImage(source.getWidth(), source.getHeight(), source);
+                destination = BufferedImages.createImage(source.getWidth(), source.getHeight(), source);
             }
 
             final PixelIterator pxIt = PixelIteratorFactory.createRowMajorWriteableIterator(source, destination);

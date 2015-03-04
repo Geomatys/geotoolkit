@@ -37,7 +37,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -174,7 +174,7 @@ public abstract class AbstractPyramidalModelStoreTest {
     }
 
     private static BufferedImage createFloat(final float val){
-        final BufferedImage buffer = BufferedImageUtilities.createImage(10, 10, 1, DataBuffer.TYPE_FLOAT);
+        final BufferedImage buffer = BufferedImages.createImage(10, 10, 1, DataBuffer.TYPE_FLOAT);
         final WritableRaster raster = buffer.getRaster();
         for(int y=0;y<10;y++){
             for(int x=0;x<10;x++){

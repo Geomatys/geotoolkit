@@ -97,7 +97,7 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverage</artifactId>
+      <artifactId>geotk-referencing</artifactId>
       <version>${project.version}</version>
     </dependency>
     <!-- for AnchoredMarshallerPool remove ? -->

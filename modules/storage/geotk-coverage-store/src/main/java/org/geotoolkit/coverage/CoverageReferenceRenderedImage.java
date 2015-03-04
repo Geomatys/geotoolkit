@@ -43,7 +43,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -299,7 +299,7 @@ public class CoverageReferenceRenderedImage implements RenderedImage{
             Arrays.fill(fillValue,Double.NaN);
             final double res = mosaic.getScale();
             if(sampleDimensions.length>0){
-                workTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, sampleDimensions.length,
+                workTile = BufferedImages.createImage(tileWidth, tileHeight, sampleDimensions.length,
                         CoverageUtilities.getDataType(sampleDimensions[0].getSampleDimensionType()));
                 for(int i=0;i<nbBand;i++){
                     final double[] nodata = sampleDimensions[i].geophysics(true).getNoDataValues();

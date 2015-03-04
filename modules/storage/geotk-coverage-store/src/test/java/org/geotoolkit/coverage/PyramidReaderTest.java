@@ -16,7 +16,7 @@ import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.coverage.grid.GridCoordinates;
@@ -185,7 +185,7 @@ public class PyramidReaderTest {
     }
 
     private static BufferedImage createRenderedImage(int width, int height, float fillValue1, float fillValue2){
-        final BufferedImage baseImage = BufferedImageUtilities.createImage(width, height, 1 , DataBuffer.TYPE_FLOAT);
+        final BufferedImage baseImage = BufferedImages.createImage(width, height, 1 , DataBuffer.TYPE_FLOAT);
         final WritableRaster baseRaster1 = baseImage.getRaster();
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){

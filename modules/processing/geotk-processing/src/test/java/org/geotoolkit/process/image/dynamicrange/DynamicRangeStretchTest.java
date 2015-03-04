@@ -24,7 +24,7 @@ import java.awt.image.WritableRaster;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.parameter.ParameterValueGroup;
@@ -40,7 +40,7 @@ public class DynamicRangeStretchTest {
     @Test
     public void stretchTest() throws Exception{
         
-        final BufferedImage inputImage = BufferedImageUtilities.createImage(1, 6, 2, DataBuffer.TYPE_DOUBLE);
+        final BufferedImage inputImage = BufferedImages.createImage(1, 6, 2, DataBuffer.TYPE_DOUBLE);
         final WritableRaster inputRaster = inputImage.getRaster();
         inputRaster.setPixel(0, 0, new double[]{-9,-5});
         inputRaster.setPixel(0, 1, new double[]{10, 0});

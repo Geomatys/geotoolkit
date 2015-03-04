@@ -34,7 +34,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.coverage.bandcombine.BandCombineDescriptor.*;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridGeometry;
@@ -88,7 +88,7 @@ public class BandCombineProcess extends AbstractProcess {
             final GridCoverage2D firstCoverage = CoverageUtilities.firstSlice((GridCoverage) inputCoverage[0]);
             final SampleDimension gridSample = firstCoverage.getSampleDimension(0);
             final GridGeometry gridGeometry = firstCoverage.getGridGeometry();
-            final ColorModel graycm = BufferedImageUtilities.createGrayScaleColorModel(
+            final ColorModel graycm = BufferedImages.createGrayScaleColorModel(
                     resultImage.getSampleModel().getDataType(),
                     resultImage.getSampleModel().getNumBands(),0,
                     gridSample.getMinimumValue(), gridSample.getMaximumValue());

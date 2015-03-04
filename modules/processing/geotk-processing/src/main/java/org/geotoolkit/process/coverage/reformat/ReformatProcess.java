@@ -32,7 +32,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.coverage.reformat.ReformatDescriptor.*;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 
 /**
  *
@@ -73,7 +73,7 @@ public class ReformatProcess extends AbstractProcess {
         //TODO try to reuse java colormodel if possible
         //extract grayscale min/max from sample dimension
         final GridSampleDimension gridSample = inputCoverage.getSampleDimension(0);
-        final ColorModel graycm = BufferedImageUtilities.createGrayScaleColorModel(
+        final ColorModel graycm = BufferedImages.createGrayScaleColorModel(
                 resultImage.getSampleModel().getDataType(),
                 resultImage.getSampleModel().getNumBands(),0,
                 gridSample.getMinimumValue(), gridSample.getMaximumValue());

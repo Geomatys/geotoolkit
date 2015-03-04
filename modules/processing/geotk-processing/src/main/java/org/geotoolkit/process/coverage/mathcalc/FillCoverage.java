@@ -42,7 +42,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.HyperCubeIterator;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -136,7 +136,7 @@ public class FillCoverage {
             }
 
             //create the slice coverage
-            final BufferedImage zoneImage = BufferedImageUtilities.createImage(
+            final BufferedImage zoneImage = BufferedImages.createImage(
                     hcubeUpper[0]-hcubeLower[0],
                     hcubeUpper[1]-hcubeLower[1],
                     1, DataBuffer.TYPE_DOUBLE);

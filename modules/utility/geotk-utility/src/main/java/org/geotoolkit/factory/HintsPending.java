@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.factory;
 
+import org.geotoolkit.factory.Hints;
+
 /**
  * Additional hints that are using in geotoolkit-pending.
  *

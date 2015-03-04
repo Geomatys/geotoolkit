@@ -22,7 +22,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.internal.image.ImageUtilities;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -56,7 +56,7 @@ public class FlatElevationLoader extends AbstractElevationLoader {
 
     @Override
     public BufferedImage getBufferedImageOf(Envelope outputEnv, Dimension outputDimension) throws PortrayalException {
-        final BufferedImage img = BufferedImageUtilities.createImage(outputDimension.width, outputDimension.height, 1, DataBuffer.TYPE_DOUBLE);
+        final BufferedImage img = BufferedImages.createImage(outputDimension.width, outputDimension.height, 1, DataBuffer.TYPE_DOUBLE);
         ImageUtilities.fill(img, elevation);
         return img;
     }

@@ -50,7 +50,7 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.image.coverage.GridCombineIterator;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
@@ -474,7 +474,7 @@ public class PyramidCoverageBuilder {
                         destImg = getImageFromTile(tile);
                         noFill = true;
                     } else {
-                        destImg = BufferedImageUtilities.createImage(tileWidth, tileHeight, baseImg);
+                        destImg = BufferedImages.createImage(tileWidth, tileHeight, baseImg);
                         //-- ensure fill value is set.
                         ImageUtilities.fill(destImg, fill[0]);
                     }
@@ -802,7 +802,7 @@ public class PyramidCoverageBuilder {
                         destImg = getImageFromTile(tile);
                         noFill = true;
                     } else {
-                        destImg = BufferedImageUtilities.createImage(tileWidth, tileHeight, baseImg);
+                        destImg = BufferedImages.createImage(tileWidth, tileHeight, baseImg);
                         //ensure fill value is set.
                         ImageUtilities.fill(destImg, fill[0]);
                     }

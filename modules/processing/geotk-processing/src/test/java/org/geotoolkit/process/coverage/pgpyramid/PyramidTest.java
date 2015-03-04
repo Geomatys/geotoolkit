@@ -45,7 +45,7 @@ import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.junit.Test;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.geometry.Envelope;
@@ -128,7 +128,7 @@ public class PyramidTest {
 
         final int scanlinestride = width;
         final WritableRaster raster = RasterFactory.createBandedRaster(dataBuffer, width, height, scanlinestride, bankIndices, bandOffsets, new Point(0,0));
-        final ColorModel cm = BufferedImageUtilities.createGrayScaleColorModel(DataBuffer.TYPE_FLOAT, nbband,0, -10, +10);
+        final ColorModel cm = BufferedImages.createGrayScaleColorModel(DataBuffer.TYPE_FLOAT, nbband,0, -10, +10);
 
         final RenderedImage image = new BufferedImage(cm, raster, false, null);
 

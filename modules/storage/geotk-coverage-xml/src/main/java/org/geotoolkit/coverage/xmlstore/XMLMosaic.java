@@ -58,7 +58,7 @@ import org.geotoolkit.coverage.*;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -191,7 +191,7 @@ public class XMLMosaic implements GridMosaic {
             final List<XMLSampleDimension> dims = ref.getXMLSampleDimensions();
             final BufferedImage emptyTile;
             if (dims != null && !dims.isEmpty()){
-                emptyTile = BufferedImageUtilities.createImage(tileWidth, tileHeight, dims.size(), dims.get(0).getDataType());
+                emptyTile = BufferedImages.createImage(tileWidth, tileHeight, dims.size(), dims.get(0).getDataType());
             } else {
                 ColorModel colorModel = ref.getColorModel();
                 SampleModel sampleModel = ref.getSampleModel();

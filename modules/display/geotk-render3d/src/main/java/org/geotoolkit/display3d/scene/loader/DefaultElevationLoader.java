@@ -46,7 +46,7 @@ import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -155,7 +155,7 @@ public class DefaultElevationLoader extends AbstractElevationLoader {
             }catch(DisjointCoverageDomainException de){
                 //tile outside of the coverage, it's possible
                 //create a fake tile at minimum elevation
-                final BufferedImage img = BufferedImageUtilities.createImage(
+                final BufferedImage img = BufferedImages.createImage(
                         outputDimension.width, outputDimension.height, 1, DataBuffer.TYPE_DOUBLE);
                 ImageUtilities.fill(img, minElevation);
                 return img;

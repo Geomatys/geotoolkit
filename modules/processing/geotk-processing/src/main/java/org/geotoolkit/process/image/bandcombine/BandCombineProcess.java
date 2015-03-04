@@ -33,7 +33,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.image.bandcombine.BandCombineDescriptor.*;
 import static org.geotoolkit.process.image.reformat.ReformatProcess.createRaster;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 
 /**
  *
@@ -111,7 +111,7 @@ public class BandCombineProcess extends AbstractProcess {
 
         if(cm == null){
             //create a fallback grayscale colormodel which will always work
-            cm = BufferedImageUtilities.createGrayScaleColorModel(sampleType,nbtotalbands,0,0,10);
+            cm = BufferedImages.createGrayScaleColorModel(sampleType,nbtotalbands,0,0,10);
         }
 
         final BufferedImage resultImage = new BufferedImage(cm, raster, false, new Hashtable<Object, Object>());

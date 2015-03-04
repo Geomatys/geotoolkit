@@ -67,7 +67,7 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.BufferedImageUtilities;
+import org.geotoolkit.image.BufferedImages;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
@@ -446,7 +446,7 @@ public class ResampleProcess extends AbstractProcess {
 
         final Rectangle sourceBB = sourceGG.getExtent2D();
         final Rectangle targetBB = targetGG.getExtent2D();
-        final BufferedImage targetImage = BufferedImageUtilities.createImage(targetBB.width,targetBB.height, sourceImage);
+        final BufferedImage targetImage = BufferedImages.createImage(targetBB.width,targetBB.height, sourceImage);
         final WritableRaster targetRaster = targetImage.getRaster();
 
         ////////////////////////////////////////////////////////////////////////////////////////
