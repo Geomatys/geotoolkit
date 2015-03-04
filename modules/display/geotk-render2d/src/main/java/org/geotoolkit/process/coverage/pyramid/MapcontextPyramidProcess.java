@@ -17,6 +17,7 @@
 
 package org.geotoolkit.process.coverage.pyramid;
 
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -33,7 +34,6 @@ import org.geotoolkit.display2d.service.PortrayalRenderedImage;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -54,6 +54,7 @@ import org.opengis.util.FactoryException;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.CancellationException;
 
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
@@ -150,49 +151,21 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                 pyramid = container.createPyramid(destCRS);
             }
 
+            final String pyramidId = pyramid.getId();
+
             //generate each mosaic
             for (final double scale : scales) {
                 if (isCanceled()) {
                     throw new CancellationException();
                 }
 
+                //compute mosaic gridSize
                 final double gridWidth  = destEnvWidth / (scale*tileSize.width);
                 final double gridHeight = destEnvHeight / (scale*tileSize.height);
+                final Dimension gridSize = new Dimension( (int)(Math.ceil(gridWidth)), (int)(Math.ceil(gridHeight)));
 
-                //those parameters can change if another mosaic already exist
-                DirectPosition upperleft = new GeneralDirectPosition(destCRS);
-                upperleft.setOrdinate(widthAxis, envelope.getMinimum(widthAxis));
-                upperleft.setOrdinate(heightAxis, envelope.getMaximum(heightAxis));
-                int outDim = envelope.getDimension();
-                for (int d = 0; d < outDim; d++) {
-                    if (d != widthAxis && d != heightAxis) {
-                        //set upperLeft extra dimension ordinate from requested envelope
-                        upperleft.setOrdinate(d, envelope.getMinimum(d));
-                    }
-                }
-
-                Dimension tileDim = tileSize;
-                Dimension gridSize = new Dimension( (int)(Math.ceil(gridWidth)), (int)(Math.ceil(gridHeight)));
-
-                //check if we already have a mosaic at this scale
-                GridMosaic mosaic = null;
-                int index = 0;
-                for (GridMosaic m : pyramid.getMosaics()) {
-                    if (m.getScale() == scale) {
-                        mosaic = m;
-                        //this mosaic definition replaces the given one
-                        upperleft = m.getUpperLeftCorner();
-                        tileDim = m.getTileSize();
-                        gridSize = m.getGridSize();
-                        break;
-                    }
-                    index++;
-                }
-
-                if (mosaic == null) {
-                    //create a new mosaic
-                    mosaic = container.createMosaic(pyramid.getId(),gridSize, tileDim, upperleft, scale);
-                }
+                //find mosaic
+                final GridMosaic mosaic = getOrCreateMosaic(container, pyramidId, scale, envelope, tileSize, gridSize);
 
                 if (isCanceled()) {
                     throw new CancellationException();
@@ -233,6 +206,51 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
         } catch (DataStoreException | FactoryException | TransformException | PortrayalException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
+    }
+
+    /**
+     * Get or create a new mosaic in container for a specific scale and destination envelope.
+     *
+     * @param container
+     * @param pyramidId
+     * @param scale
+     * @param destEnvelope
+     * @param tileSize
+     * @param gridSize
+     * @return GridMosaic
+     * @throws FactoryException
+     * @throws DataStoreException
+     */
+    private GridMosaic getOrCreateMosaic(PyramidalCoverageReference container, String pyramidId, double scale,
+                                         final Envelope destEnvelope, final Dimension tileSize, final Dimension gridSize)
+            throws FactoryException, DataStoreException {
+
+        final Pyramid pyramid = container.getPyramidSet().getPyramid(pyramidId);
+        final CoordinateReferenceSystem destCRS = pyramid.getCoordinateReferenceSystem();
+
+        final int widthAxis = CoverageUtilities.getMinOrdinate(destCRS);
+        final int heightAxis = widthAxis + 1;
+
+        final DirectPosition upperLeft = new GeneralDirectPosition(destCRS);
+        upperLeft.setOrdinate(widthAxis, destEnvelope.getMinimum(widthAxis));
+        upperLeft.setOrdinate(heightAxis, destEnvelope.getMaximum(heightAxis));
+        int outDim = destEnvelope.getDimension();
+        for (int d = 0; d < outDim; d++) {
+            if (d != widthAxis && d != heightAxis) {
+                //set upperLeft extra dimension ordinate from requested envelope
+                upperLeft.setOrdinate(d, destEnvelope.getMinimum(d));
+            }
+        }
+
+        //search with scale and upperLeft
+        for(GridMosaic gm : pyramid.getMosaics()){
+            if(gm.getScale() == scale && Arrays.equals(upperLeft.getCoordinate(), gm.getUpperLeftCorner().getCoordinate())){
+                return gm;
+            }
+        }
+
+        //create a new mosaic
+        return container.createMosaic(pyramid.getId(),gridSize, tileSize, upperLeft, scale);
     }
 
     private void progress(){
