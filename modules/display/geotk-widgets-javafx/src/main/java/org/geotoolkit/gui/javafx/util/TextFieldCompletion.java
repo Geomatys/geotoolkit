@@ -26,6 +26,8 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Popup;
 
 /**
@@ -45,6 +47,7 @@ public class TextFieldCompletion {
         this.textField = textField;
         this.textField.setOnKeyPressed((KeyEvent t)->popup.hide());
         this.textField.setOnKeyReleased(this::onKeyPress);
+        this.textField.setOnMousePressed((MouseEvent e)->onKeyPress(null));
         
         final ScrollPane scroll = new ScrollPane(list);
         scroll.setFitToWidth(true);
@@ -53,9 +56,20 @@ public class TextFieldCompletion {
         popup.setAutoHide(true);
         popup.getContent().add(scroll);
         
+        // If user click or press enter on a popup item, we put selected value as text field value.
         list.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         list.setOnKeyPressed((KeyEvent event) -> {
             if(event.getCode()==KeyCode.ENTER){
+                final String val = list.getSelectionModel().getSelectedItem();
+                if(val!=null){
+                    textField.setText(val);
+                }
+                popup.hide();
+            }
+        });
+        
+        list.setOnMouseClicked((MouseEvent event)-> {
+            if (MouseButton.PRIMARY.equals(event.getButton())) {
                 final String val = list.getSelectionModel().getSelectedItem();
                 if(val!=null){
                     textField.setText(val);
@@ -71,7 +85,12 @@ public class TextFieldCompletion {
     }
     
     private void onKeyPress(KeyEvent event) {
-        final KeyCode code = event.getCode();
+        final KeyCode code;
+        if (event != null) {
+            code = event.getCode();
+        } else {
+            code = null;
+        }
         final String text = textField.getText();
         final ObservableList baseData = getChoices(text);
         
@@ -96,14 +115,18 @@ public class TextFieldCompletion {
             moveCaretToPos = true;
             caretPos = textField.getCaretPosition();
         }
-        if (code == KeyCode.RIGHT || code == KeyCode.LEFT || event.isControlDown() || code == KeyCode.HOME || code == KeyCode.END || code == KeyCode.TAB) {
+        if (code == KeyCode.RIGHT || code == KeyCode.LEFT || (event != null && event.isControlDown()) || code == KeyCode.HOME || code == KeyCode.END || code == KeyCode.TAB) {
             return;
         }
         
         final String searchText = textField.getText().toLowerCase();
-        final ObservableList dataList = FXCollections.observableArrayList(
-                baseData.filtered((Object t) -> String.valueOf(t).toLowerCase().startsWith(searchText))
-        );
+        final ObservableList dataList;
+        if (searchText == null || searchText.isEmpty()) {
+            dataList = FXCollections.observableArrayList(baseData);
+        } else {
+            dataList = FXCollections.observableArrayList(
+                baseData.filtered((Object t) -> String.valueOf(t).toLowerCase().startsWith(searchText)));
+        }
         
         list.setItems(dataList);
         list.getSelectionModel().clearSelection();
