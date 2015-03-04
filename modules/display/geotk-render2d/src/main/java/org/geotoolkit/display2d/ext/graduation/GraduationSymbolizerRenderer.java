@@ -133,7 +133,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
             
             //avoid 0 and very small values
             if(info.stepGeo>=0.0000001){
-                if(Boolean.TRUE.equals(grad.getReverse().evaluate(candidate, Boolean.class))){
+                if(Boolean.FALSE.equals(grad.getReverse().evaluate(candidate, Boolean.class))){
                     forwardCandidates.add(info);
                 }else{
                     backwardCandidates.add(info);
@@ -155,7 +155,7 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
                 portray(walker,gradInfos);
             }
             if(!backwardCandidates.isEmpty()){
-                final Shape dispShape = new JTSGeometryJ2D(reverse(displayGeom));
+                final Shape dispShape = new JTSGeometryJ2D(displayGeom.reverse());
                 final GradInfo[] gradInfos = backwardCandidates.toArray(new GradInfo[backwardCandidates.size()]);
                 final GeodeticPathWalker walker = new GeodeticPathWalker(dispShape.getPathIterator(null), displayCrs);
                 portray(walker,gradInfos);
@@ -298,46 +298,5 @@ public class GraduationSymbolizerRenderer extends AbstractSymbolizerRenderer<Cac
      */
     @Override
     public void portray(ProjectedCoverage graphic) throws PortrayalException {
-    }
-
-    /**
-     * Reverse the geometry points order.
-     * 
-     * @param <T>
-     * @param geom
-     * @return
-     * @throws PortrayalException 
-     */
-    private static <T extends Geometry> T reverse(T geom) throws PortrayalException{
-        if(geom==null || geom.isEmpty() || geom instanceof Point || geom instanceof MultiPoint) return geom;
-        
-        if(geom instanceof LineString){
-            final LineString string = (LineString) geom;
-            final Coordinate[] coords = string.getCoordinates();
-            ArraysExt.reverse(coords);
-            if(geom instanceof LinearRing){
-                return (T)GO2Utilities.JTS_FACTORY.createLinearRing(coords);
-            }else{
-                return (T)GO2Utilities.JTS_FACTORY.createLineString(coords);
-            }
-        }else if(geom instanceof Polygon){
-            final Polygon polygon = (Polygon) geom;
-            final LinearRing exterior = (LinearRing)reverse(polygon.getExteriorRing());
-            final LinearRing[] holes = new LinearRing[polygon.getNumInteriorRing()];
-            for(int i=0;i<holes.length;i++){
-                holes[i] = (LinearRing) reverse(polygon.getInteriorRingN(i));
-            }
-            return (T)GO2Utilities.JTS_FACTORY.createPolygon(exterior, holes);
-        }else if(geom instanceof GeometryCollection){
-            final GeometryCollection col = (GeometryCollection) geom;
-            final Geometry[] geoms = new Geometry[col.getNumGeometries()];
-            for(int i=0;i<geoms.length;i++){
-                geoms[i] = reverse(col.getGeometryN(i));
-            }
-            return (T)GO2Utilities.JTS_FACTORY.createGeometryCollection(geoms);
-        }else{
-            throw new PortrayalException("Unexpected geometry :"+geom);
-        }
-    }
-    
+    }    
 }
