@@ -32,7 +32,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import org.geotoolkit.image.io.PaletteFactory;
-import org.geotoolkit.internal.image.ColorRamp;
+import org.geotoolkit.internal.swing.ColorRamp;
 import org.geotoolkit.internal.coverage.ColorPalette;
 
 

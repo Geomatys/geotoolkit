@@ -66,7 +66,7 @@ public class ColorRamp extends JComponent {
      * The object to use for painting the color ramp.
      */
     @SuppressWarnings("serial")
-    private final class Painter extends org.geotoolkit.internal.image.ColorRamp {
+    private final class Painter extends org.geotoolkit.internal.swing.ColorRamp {
         /** Tells the painter that we want to be informed about color changes. */
         @Override protected boolean reportColorChanges() {
             return true;

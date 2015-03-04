@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.internal.image;
+package org.geotoolkit.internal.swing;
 
 import javax.swing.SwingConstants;
 
