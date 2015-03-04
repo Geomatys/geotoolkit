@@ -100,11 +100,6 @@
       <artifactId>geotk-coverage</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-referencing</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <!-- for AnchoredMarshallerPool remove ? -->
     <dependency>
       <groupId>org.apache.sis.core</groupId>
