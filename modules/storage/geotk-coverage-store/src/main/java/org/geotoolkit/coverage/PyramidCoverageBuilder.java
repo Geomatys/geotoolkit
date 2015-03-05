@@ -984,13 +984,13 @@ public class PyramidCoverageBuilder {
     private boolean isDimensionsCompatible(PyramidalCoverageReference pyramidRef, List<GridSampleDimension> coverageSampleDims)
             throws DataStoreException {
 
-        assert coverageSampleDims != null && !coverageSampleDims.isEmpty() : "coverageSampleDims should not be null or empty";
-
         final List<GridSampleDimension> pyramidSampleDims = pyramidRef.getSampleDimensions();
         // pyramidSampleDims list is considered as valid in case of the pyramid have just been created.
         if (pyramidSampleDims == null || pyramidSampleDims.isEmpty()) {
             return true;
         }
+
+        assert coverageSampleDims != null && !coverageSampleDims.isEmpty() : "coverageSampleDims should not be null or empty";
 
         //compare size
         if (pyramidSampleDims.size() != coverageSampleDims.size()) return false;
