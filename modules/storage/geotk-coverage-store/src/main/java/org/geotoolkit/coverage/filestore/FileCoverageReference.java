@@ -19,11 +19,15 @@ package org.geotoolkit.coverage.filestore;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.RecyclingCoverageReference;
+import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
@@ -38,6 +42,8 @@ import org.geotoolkit.feature.type.Name;
  * @module pending
  */
 public class FileCoverageReference extends RecyclingCoverageReference{
+
+    private static final Logger LOGGER = Logging.getLogger(FileCoverageReference.class);
 
     private final File file;
     private final int imageIndex;
@@ -57,6 +63,8 @@ public class FileCoverageReference extends RecyclingCoverageReference{
             writer.dispose();
             return true;
         } catch (IOException ex) {
+            //no writer found
+            LOGGER.log(Level.FINER, "No writer found for file : "+file.getAbsolutePath());
         }
         return false;
     }
@@ -75,6 +83,20 @@ public class FileCoverageReference extends RecyclingCoverageReference{
             throw new CoverageStoreException(ex.getMessage(),ex);
         }
         return reader;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkReader(CoverageReader reader) throws CoverageStoreException {
+        final ImageCoverageReader coverageReader = (ImageCoverageReader) reader;
+        final ImageReader imageReader = (ImageReader) coverageReader.getInput();
+
+        if (imageReader == null || imageReader.getInput() == null) {
+            throw new CoverageStoreException("CoverageReader or ImageReader input is null.");
+        }
+        super.checkReader(reader);
     }
 
     @Override

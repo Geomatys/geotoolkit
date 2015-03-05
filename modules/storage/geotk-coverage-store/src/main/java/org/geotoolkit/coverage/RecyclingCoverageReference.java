@@ -19,6 +19,10 @@ package org.geotoolkit.coverage;
 
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -30,6 +34,8 @@ import org.geotoolkit.feature.type.Name;
  * @author Johann Sorel (Geomatys)
  */
 public abstract class RecyclingCoverageReference extends AbstractCoverageReference{
+
+    private static final Logger LOGGER = Logging.getLogger(RecyclingCoverageReference.class);
 
     /**
      * Maximum number of readers to keep.
@@ -53,6 +59,10 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
         super(store, name);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return new GridCoverageReader or an a recycled one.
+     */
     @Override
     public final GridCoverageReader acquireReader() throws CoverageStoreException {
         GridCoverageReader reader = (GridCoverageReader) readers.poll();
@@ -62,11 +72,23 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
         return reader;
     }
 
+    /**
+     * Check if reader to recycle is reusable and then cache it for other users.
+     * If input reader can't be reused, for example he was closed or lost his input, it will
+     * be disposed and not make available for other users.
+     *
+     * @param reader that can be reused
+     */
     @Override
     public final void recycle(CoverageReader reader) {
-        resetReader(reader);
-        readers.push(reader);
-        removeExpired(readers);
+        try {
+            checkReader(reader);
+            readers.push(reader);
+            removeExpired(readers);
+        } catch (CoverageStoreException e) {
+            LOGGER.log(Level.WARNING, "Reader not recycled will be disposed. Not recycled cause : "+e.getMessage(), e);
+            dispose(reader);
+        }
     }
 
     /**
@@ -75,11 +97,15 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
     protected abstract GridCoverageReader createReader() throws CoverageStoreException;
 
     /**
-     * Reset given reader.
-     * Does not by default, override to do specific operations.
+     * Verify if reader is still operational and usable.
+     * For example if reader is not valid if it was disposed or closed by CoverageReader user.
+     * This method must ensure that input CoverageReader can be reused safely by another user.
+     *
+     * @param reader CoverageReader to test
+     * @throws CoverageStoreException if reader is not reusable or something
+     * goes wrong during reader test.
      */
-    protected void resetReader(CoverageReader reader) {
-
+    protected void checkReader(CoverageReader reader) throws CoverageStoreException {
     }
 
     /**
