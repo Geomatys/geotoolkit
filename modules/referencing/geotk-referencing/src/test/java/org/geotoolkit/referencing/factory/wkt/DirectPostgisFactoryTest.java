@@ -85,6 +85,7 @@ public final strictfp class DirectPostgisFactoryTest {
      * @throws SQLException If an error occurred while reading the PostGIS tables.
      */
     @Test
+    @Ignore
     public void testUsingCoverageSQL() throws FactoryException, IOException, SQLException {
         final Connection connection = getCoverageDataSource().getConnection();
         final DirectPostgisFactory factory = new DirectPostgisFactory(null, connection);
@@ -144,6 +145,7 @@ public final strictfp class DirectPostgisFactoryTest {
      * @throws IOException If an error occurred while reading the properties file.
      */
     @Test
+    @Ignore
     public void testCaching() throws FactoryException, IOException {
         final CachingPostgisFactory factory = new CachingPostgisFactory(null, getCoverageDataSource());
         try {
