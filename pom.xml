@@ -799,23 +799,23 @@
           <outputEncoding>${website.encoding}</outputEncoding>
         </configuration>
       </plugin>
-      
+
       <!-- =======================================================
                JgitFlow configuration
            ======================================================= -->
       <plugin>
-          <groupId>external.atlassian.jgitflow</groupId>
-          <artifactId>jgitflow-maven-plugin</artifactId>
-          <version>1.0-m4.3</version>
-          <configuration>
-              <flowInitContext>
-                  <masterBranchName>master</masterBranchName>
-                  <developBranchName>develop</developBranchName>
-                  <featureBranchPrefix>feature-</featureBranchPrefix>
-                  <releaseBranchPrefix>release-</releaseBranchPrefix>
-                  <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
-              </flowInitContext>
-          </configuration>
+        <groupId>external.atlassian.jgitflow</groupId>
+        <artifactId>jgitflow-maven-plugin</artifactId>
+        <version>1.0-m4.3</version>
+        <configuration>
+          <flowInitContext>
+            <masterBranchName>master</masterBranchName>
+            <developBranchName>develop</developBranchName>
+            <featureBranchPrefix>feature-</featureBranchPrefix>
+            <releaseBranchPrefix>release-</releaseBranchPrefix>
+            <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
+          </flowInitContext>
+        </configuration>
       </plugin>
 
     </plugins>
