@@ -84,6 +84,20 @@ public class ExtensionType {
         return this.any;
     }
     
+    public <T> T getForClass(Class<T> c) {
+        if (any != null) {
+            for (Object o : any) {
+                if (o instanceof JAXBElement) {
+                    o = ((JAXBElement)o).getValue();
+                }
+                if (c.isInstance(o)) {
+                    return (T) o;
+                }
+            }
+        }
+        return null;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) {

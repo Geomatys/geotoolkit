@@ -88,4 +88,6 @@ public interface GetCoverage extends RequestBase {
     String toKvp();
     
     InterpolationMethod getInterpolationMethod();
+    
+    Object getExtension();
 }

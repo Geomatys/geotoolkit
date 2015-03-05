@@ -352,4 +352,9 @@ public class GetCoverageType implements GetCoverage {
     private static Map<String,String> name(final String name) {
         return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
     }
+
+    @Override
+    public Object getExtension() {
+        return null;
+    }
 }
