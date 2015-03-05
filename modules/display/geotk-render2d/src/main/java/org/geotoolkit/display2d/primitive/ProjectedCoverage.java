@@ -96,12 +96,15 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
                 if (value == null) {
                     final CoverageReference ref = layer.getCoverageReference();
                     final GridCoverageReader reader = ref.acquireReader();
-                    try{
+                    try {
                         value = (GridCoverage2D) reader.read(layer.getCoverageReference().getImageIndex(),param);
-                    }catch(DisjointCoverageDomainException ex){
+                        ref.recycle(reader);
+                    } catch(DisjointCoverageDomainException ex){
+                        ref.recycle(reader);
                         throw ex;
-                    } finally {
-                        ref.recycle(reader);                        
+                    } catch (Throwable e) {
+                        reader.dispose();
+                        throw e;
                     }
                 }
             } finally {
