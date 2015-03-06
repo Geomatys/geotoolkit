@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <xsd:schema elementFormDefault="qualified"
     targetNamespace="http://www.opengis.net/gml/3.2"
-    xmlns:gml="http://www.opengis.net/gml/3.2"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <xsd:import schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd" namespace="http://www.opengis.net/gml/3.2"/>
-    <xsd:element xmlns:gml="http://www.opengis.net/gml/3.2" name="TestSimple" type="gml:TestSimpleType" substitutionGroup="gml:_Feature"/>
+    <xsd:element xmlns:gml="http://www.opengis.net/gml/3.2" name="TestSimple" type="gml:TestSimpleType" substitutionGroup="gml:AbstractFeature"/>
     <xsd:complexType name="TestSimpleType">
         <xsd:complexContent>
             <xsd:extension xmlns:gml="http://www.opengis.net/gml/3.2" base="gml:AbstractFeatureType" >

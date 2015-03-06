@@ -52,6 +52,7 @@ import org.geotoolkit.feature.type.ComplexType;
 
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.OperationDescriptor;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.w3c.dom.Document;
@@ -259,6 +260,11 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
     }
 
     private void writeProperty(final PropertyDescriptor pdesc, final ExplicitGroup sequence, final Schema schema, final Set<String> alreadyWritten) {
+        if(pdesc instanceof OperationDescriptor){
+            //operation types are not written in the xsd.
+            return;
+        }
+
         final PropertyType pType = pdesc.getType();
         final String name        = pdesc.getName().getLocalPart();
         final QName type         = Utils.getQNameFromType(pType, gmlVersion);

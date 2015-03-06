@@ -268,6 +268,25 @@ public class XmlFeatureTypeTest {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"), temp);
     }
 
+    @Test
+    public void testWriteTypeWithSubstitutions() throws JAXBException, IOException, ParserConfigurationException, SAXException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/TypeWithSubstitution.xsd"));
+        removeGMLBaseTypes(types);
+        assertEquals(1, types.size());
+        final FeatureType type = types.get(0);
+
+        final File temp = File.createTempFile("gml", ".xml");
+        temp.deleteOnExit();
+        final XmlFeatureTypeWriter writer = new JAXBFeatureTypeWriter("3.2.1");
+        writer.write(type, new FileOutputStream(temp));
+
+        //NOTE : there are some variations since element references are lost in the way.
+        DomCompare.compare(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/TypeWithSubstitution2.xsd"), temp);
+
+    }
     
     protected static String getStringResponse(URLConnection conec) throws UnsupportedEncodingException, IOException {
         final StringWriter sw     = new StringWriter();

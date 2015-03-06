@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opengis.net/gml/3.2" elementFormDefault="qualified">
+  <xsd:import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <xsd:element xmlns:gml="http://www.opengis.net/gml/3.2" type="gml:TestSimpleType" substitutionGroup="gml:AbstractFeature" name="TestSimple"/>
+  <xsd:complexType name="TestSimpleType">
+    <xsd:complexContent>
+      <xsd:extension xmlns:gml="http://www.opengis.net/gml/3.2" base="gml:AbstractFeatureType">
+        <xsd:sequence>
+          <xsd:element type="gml:AbstractGeometryType" nillable="false" minOccurs="0" maxOccurs="1" name="geom"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="AbstractGeometryType">
+    <xsd:sequence>
+      <xsd:element type="xsd:anyURI" nillable="false" minOccurs="0" maxOccurs="1" name="@srsName"/>
+      <xsd:element type="xsd:integer" nillable="false" minOccurs="0" maxOccurs="1" name="@srsDimension"/>
+      <xsd:element type="xsd:string" nillable="false" minOccurs="0" maxOccurs="1" name="@axisLabels"/>
+      <xsd:element type="xsd:string" nillable="false" minOccurs="0" maxOccurs="1" name="@uomLabels"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
