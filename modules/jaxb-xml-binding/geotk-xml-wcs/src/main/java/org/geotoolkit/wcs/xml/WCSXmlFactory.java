@@ -189,7 +189,7 @@ public class WCSXmlFactory {
         } else if ("2.0.0".equals(version)) {
             
             
-            return new org.geotoolkit.wcs.xml.v200.GetCoverageType(coverage, null);
+            return new org.geotoolkit.wcs.xml.v200.GetCoverageType(coverage, null, null);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }

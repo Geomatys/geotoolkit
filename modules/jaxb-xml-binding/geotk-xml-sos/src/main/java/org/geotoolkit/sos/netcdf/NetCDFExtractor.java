@@ -1206,12 +1206,16 @@ public class NetCDFExtractor {
             results.add(compo);
 
             if (analyze.mainField == null) {
-                LOGGER.warning("No main field found");
+                LOGGER.warning("No main field identified");
                 return results;
             }
             LOGGER.info("parsing netCDF GRID");
 
             try {
+                if (analyze.latField == null || analyze.lonField == null) {
+                    LOGGER.warning("No lat/lon field identified");
+                    return results;
+                }
 
                 final Variable latVar = analyze.vars.get(analyze.latField.label);
                 final Variable lonVar = analyze.vars.get(analyze.lonField.label);

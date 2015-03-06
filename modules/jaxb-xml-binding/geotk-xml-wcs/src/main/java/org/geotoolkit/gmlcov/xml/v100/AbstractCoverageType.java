@@ -25,7 +25,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v321.CoverageFunctionType;
+import org.geotoolkit.gml.xml.v321.RangeSetType;
 import org.geotoolkit.swe.xml.v200.DataRecordPropertyType;
+import org.geotoolkit.wcs.xml.v200.CoverageDescriptionType;
 
 
 /**
@@ -69,6 +71,17 @@ public class AbstractCoverageType extends org.geotoolkit.gml.xml.v321.AbstractCo
     private DataRecordPropertyType rangeType;
     private List<Metadata> metadata;
 
+    public AbstractCoverageType() {
+        
+    }
+    
+    public AbstractCoverageType(CoverageDescriptionType covDesc, RangeSetType rangeSet) {
+        super(covDesc, rangeSet, covDesc.getDomainSet());
+        this.coverageFunction = covDesc.getCoverageFunction();
+        this.rangeType        = covDesc.getRangeType();
+        this.metadata         = covDesc.getMetadata();
+    }
+    
     /**
      * Gets the value of the coverageFunction property.
      * 

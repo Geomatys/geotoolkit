@@ -82,6 +82,16 @@ public class AssociationRoleType {
     @XmlAttribute
     private java.lang.Boolean owns;
 
+    public AssociationRoleType() {
+        
+    }
+    
+    public AssociationRoleType(String href, String role, String arcrole) {
+        this.href = href;
+        this.role = role;
+        this.arcrole = arcrole;
+    }
+    
     /**
      * Gets the value of the any property.
      * 
@@ -109,20 +119,6 @@ public class AssociationRoleType {
     /**
      * Gets the value of the nilReason property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNilReason().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
@@ -130,7 +126,7 @@ public class AssociationRoleType {
      */
     public List<String> getNilReason() {
         if (nilReason == null) {
-            nilReason = new ArrayList<String>();
+            nilReason = new ArrayList<>();
         }
         return this.nilReason;
     }

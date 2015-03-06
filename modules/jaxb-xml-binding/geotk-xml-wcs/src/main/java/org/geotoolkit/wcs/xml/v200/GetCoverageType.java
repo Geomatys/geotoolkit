@@ -88,9 +88,10 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
         this.version = "2.0.0";
     }
     
-    public GetCoverageType(final String coverageId, final String format) {
+    public GetCoverageType(final String coverageId, final String format, final String mediaType) {
         this.coverageId = coverageId;
         this.format     = format;
+        this.mediaType  = mediaType;
         this.service    = "WCS";
         this.version    = "2.0.0";
     }
@@ -172,6 +173,7 @@ public class GetCoverageType extends RequestBaseType implements GetCoverage {
      *     {@link String }
      *     
      */
+    @Override
     public String getMediaType() {
         return mediaType;
     }

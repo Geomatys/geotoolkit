@@ -69,7 +69,7 @@ public class ServiceMetadataType {
      */
     public List<String> getFormatSupported() {
         if (formatSupported == null) {
-            formatSupported = new ArrayList<String>();
+            formatSupported = new ArrayList<>();
         }
         return this.formatSupported;
     }

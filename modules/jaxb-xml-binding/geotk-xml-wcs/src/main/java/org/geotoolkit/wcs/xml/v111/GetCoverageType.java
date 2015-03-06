@@ -242,6 +242,11 @@ public class GetCoverageType implements GetCoverage {
         return output.getFormat();
     }
 
+    @Override
+    public String getMediaType() {
+        return null;
+    }
+    
     /**
      * {@inheritDoc}
      */

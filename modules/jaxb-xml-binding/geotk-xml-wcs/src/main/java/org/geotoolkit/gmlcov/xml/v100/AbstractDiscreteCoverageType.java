@@ -20,6 +20,8 @@ package org.geotoolkit.gmlcov.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v321.RangeSetType;
+import org.geotoolkit.wcs.xml.v200.CoverageDescriptionType;
 
 
 /**
@@ -45,6 +47,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractDiscreteCoverageType")
 public class AbstractDiscreteCoverageType extends AbstractCoverageType {
+
+    public AbstractDiscreteCoverageType() {
+        
+    }
+    
+    public AbstractDiscreteCoverageType(CoverageDescriptionType covDesc, RangeSetType rangeSet) {
+        super(covDesc, rangeSet);
+    }
 
 
 }

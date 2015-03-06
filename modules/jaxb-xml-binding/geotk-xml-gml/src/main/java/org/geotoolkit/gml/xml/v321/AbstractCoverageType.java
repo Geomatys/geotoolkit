@@ -58,15 +58,23 @@ import javax.xml.bind.annotation.XmlType;
     DiscreteCoverageType.class,
     AbstractContinuousCoverageType.class
 })
-public abstract class AbstractCoverageType
-    extends AbstractFeatureType
-{
+public abstract class AbstractCoverageType extends AbstractFeatureType {
 
     @XmlElementRef(name = "domainSet", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<DomainSetType> domainSet;
     @XmlElement(required = true)
     private RangeSetType rangeSet;
 
+    public AbstractCoverageType() {
+        
+    }
+    
+    public AbstractCoverageType(AbstractFeatureType feature, RangeSetType rangeSet, JAXBElement<DomainSetType> domainSet) {
+        super(feature);
+        this.rangeSet = rangeSet;
+        this.domainSet = domainSet;
+    }
+    
     /**
      * Gets the value of the domainSet property.
      * 

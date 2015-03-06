@@ -90,4 +90,6 @@ public interface GetCoverage extends RequestBase {
     InterpolationMethod getInterpolationMethod();
     
     Object getExtension();
+    
+    String getMediaType();
 }

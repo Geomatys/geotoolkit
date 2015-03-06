@@ -389,4 +389,9 @@ public class GetCoverageType implements GetCoverage {
     public Object getExtension() {
         return null;
     }
+
+    @Override
+    public String getMediaType() {
+        return null;
+    }
 }
