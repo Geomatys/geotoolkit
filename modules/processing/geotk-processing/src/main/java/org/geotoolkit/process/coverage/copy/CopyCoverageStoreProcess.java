@@ -16,27 +16,10 @@
  */
 package org.geotoolkit.process.coverage.copy;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
-import java.awt.image.RenderedImage;
-import java.io.IOException;
-import java.util.AbstractCollection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageReader;
+import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.GridMosaic;
@@ -50,32 +33,48 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.image.coverage.CombineIterator;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.image.coverage.GridCombineIterator;
 import org.geotoolkit.parameter.Parameters;
-import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
-import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.*;
 import org.geotoolkit.process.coverage.reducetodomain.ReduceToDomainDescriptor;
-import org.geotoolkit.process.coverage.statistics.StatisticOp;
 import org.geotoolkit.process.coverage.straighten.StraightenDescriptor;
-import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.ImageIOUtilities;
-import org.geotoolkit.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ImageCRS;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
+
+import javax.imageio.ImageReader;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
+import java.awt.image.RenderedImage;
+import java.io.IOException;
+import java.util.AbstractCollection;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static org.geotoolkit.parameter.Parameters.value;
+import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.ERASE;
+import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.INSTANCE;
+import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.REDUCE_TO_DOMAIN;
+import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.STORE_IN;
+import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.STORE_OUT;
 
 /**
  * Copy a {@linkplain CoverageStore coverage store} into another one, that supports
@@ -309,7 +308,6 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final int imageIndex = inRef.getImageIndex();
         final GeneralGridGeometry globalGeom = reader.getGridGeometry(imageIndex);
         final CoordinateReferenceSystem crs = globalGeom.getCoordinateReferenceSystem();
-        final CoordinateSystem cs = crs.getCoordinateSystem();
 
         final Name name = inRef.getName();
         if(crs instanceof ImageCRS){
@@ -320,47 +318,19 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         }
 
         //create sampleDimensions bands
-        //TODO remove analyse when CoverageImageReader getSampleDimensions will be fix with min/max values.
-        final Map<String, Object> analyse = StatisticOp.analyze(reader, imageIndex);
         final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(imageIndex);
         outPM.setSampleDimensions(sampleDimensions);
 
         final Pyramid pyramid = outPM.createPyramid(crs);
 
-        // Stores additional coordinate system axes, to know how many pyramids should be created
-        final List<List<Comparable>> possibilities = new ArrayList<>();
-
-        final int nbdim = cs.getDimension();
-        for (int i = 2; i < nbdim; i++) {
-            final CoordinateSystemAxis axis = cs.getAxis(i);
-            if (axis instanceof DiscreteCoordinateSystemAxis) {
-                final DiscreteCoordinateSystemAxis daxis = (DiscreteCoordinateSystemAxis) axis;
-                final List<Comparable> values = new ArrayList<>();
-                possibilities.add(values);
-                final int nbval = daxis.length();
-                for (int k = 0; k < nbval; k++) {
-                    final Comparable c = daxis.getOrdinateAt(k);
-                    values.add(c);
-                }
-            }
+        // save all possible envelope slice combinations in a separate mosaic.
+        final GridCombineIterator gridCIte = new GridCombineIterator(globalGeom);
+        while (gridCIte.hasNext()) {
+            GeneralEnvelope env = GeneralEnvelope.castOrCopy(gridCIte.next());
+            saveMosaic(outPM, pyramid, reader, imageIndex, env, reduce);
         }
 
-        if (possibilities.isEmpty()) {
-            //only a single image to insert
-            saveMosaic(outPM, pyramid, reader, imageIndex, null,reduce);
-
-        } else {
-            //multiple dimensions to insert
-            final GeneralEnvelope env = new GeneralEnvelope(globalGeom.getEnvelope());
-            final CombineIterator ite = new CombineIterator(possibilities, env);
-            Envelope ce = ite.next();
-            do {
-                saveMosaic(outPM, pyramid, reader, imageIndex, ce,reduce);
-                ce = ite.next();
-            } while (ce != null);
-        }
         inRef.recycle(reader);
-
     }
 
     /**
