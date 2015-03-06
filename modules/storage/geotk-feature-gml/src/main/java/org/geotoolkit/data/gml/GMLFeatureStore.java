@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -64,6 +66,9 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     private final File file;
     private String name;
     private FeatureType featureType;
+
+    //all types
+    private final Map<Name, Object> cache = new HashMap<>();
 
     public GMLFeatureStore(final File f) throws MalformedURLException, DataStoreException{
         this(toParameters(f));
@@ -124,6 +129,11 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     public FeatureType getFeatureType(Name typeName) throws DataStoreException {
         typeCheck(typeName);
         return featureType;
+    }
+
+    @Override
+    public List<ComplexType> getFeatureTypeHierarchy(Name typeName) throws DataStoreException {
+        return super.getFeatureTypeHierarchy(typeName);
     }
 
     @Override

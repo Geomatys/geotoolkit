@@ -124,11 +124,29 @@ public class Utils {
             new DefaultName(GML_311_NAMESPACE, "metaDataProperty"),
             new DefaultName(GML_311_NAMESPACE, "description"),
             new DefaultName(GML_311_NAMESPACE, "name"),
+            new DefaultName(GML_311_NAMESPACE, "csName"), //substitution group of name
+            new DefaultName(GML_311_NAMESPACE, "srsName"), //substitution group of name
+            new DefaultName(GML_311_NAMESPACE, "datumName"), //substitution group of name
+            new DefaultName(GML_311_NAMESPACE, "meridianName"), //substitution group of name
+            new DefaultName(GML_311_NAMESPACE, "ellipsoidName"), //substitution group of name
+            new DefaultName(GML_311_NAMESPACE, "coordinateOperationName"), //substitution group of name
+            new DefaultName(GML_311_NAMESPACE, "methodName"), //substitution group of name
+            new DefaultName(GML_311_NAMESPACE, "parameterName"), //substitution group of name
+            new DefaultName(GML_311_NAMESPACE, "groupName"), //substitution group of name
             //3.2.1
             new DefaultName(GML_321_NAMESPACE, "metaDataProperty"),
             new DefaultName(GML_321_NAMESPACE, "description"),
             new DefaultName(GML_321_NAMESPACE, "descriptionReference"),
             new DefaultName(GML_321_NAMESPACE, "name"),
+            new DefaultName(GML_321_NAMESPACE, "csName"), //substitution group of name
+            new DefaultName(GML_321_NAMESPACE, "srsName"), //substitution group of name
+            new DefaultName(GML_321_NAMESPACE, "datumName"), //substitution group of name
+            new DefaultName(GML_321_NAMESPACE, "meridianName"), //substitution group of name
+            new DefaultName(GML_321_NAMESPACE, "ellipsoidName"), //substitution group of name
+            new DefaultName(GML_321_NAMESPACE, "coordinateOperationName"), //substitution group of name
+            new DefaultName(GML_321_NAMESPACE, "methodName"), //substitution group of name
+            new DefaultName(GML_321_NAMESPACE, "parameterName"), //substitution group of name
+            new DefaultName(GML_321_NAMESPACE, "groupName"), //substitution group of name
             new DefaultName(GML_321_NAMESPACE, "identifier")
         })));
 
@@ -137,10 +155,12 @@ public class Utils {
             new DefaultName(GML_311_NAMESPACE, "@id"),
             new DefaultName(GML_311_NAMESPACE, "boundedBy"),
             new DefaultName(GML_311_NAMESPACE, "location"),
+            new DefaultName(GML_311_NAMESPACE, "priorityLocation"), //substitution group of location
             //3.2.1
             new DefaultName(GML_321_NAMESPACE, "@id"),
             new DefaultName(GML_321_NAMESPACE, "boundedBy"),
-            new DefaultName(GML_321_NAMESPACE, "location")
+            new DefaultName(GML_321_NAMESPACE, "location"),
+            new DefaultName(GML_321_NAMESPACE, "priorityLocation") //substitution group of location
         })));
 
     }
@@ -196,6 +216,8 @@ public class Utils {
         CLASS_BINDING.put("double",   Double.class);
         CLASS_BINDING.put("float",    Float.class);
         CLASS_BINDING.put("base64Binary",byte[].class);
+        CLASS_BINDING.put("language", String.class);
+        CLASS_BINDING.put("IDREF",    String.class);
 
         CLASS_BINDING.put("nonNegativeInteger", Integer.class);
         CLASS_BINDING.put("positiveInteger",    Integer.class);
@@ -232,6 +254,8 @@ public class Utils {
         CLASS_BINDING.put("MultiSurfacePropertyType",      MultiPolygon.class);
         CLASS_BINDING.put("MultiPolygonPropertyType",      MultiPolygon.class);
         CLASS_BINDING.put("MultiPolygon",                  MultiPolygon.class);
+        CLASS_BINDING.put("SurfacePropertyType",           Polygon.class);
+        CLASS_BINDING.put("SurfaceType",                   Polygon.class);
         CLASS_BINDING.put("Polygon",                       Polygon.class);
         CLASS_BINDING.put("PolygonPropertyType",           Polygon.class);
         CLASS_BINDING.put("Ring",                          LinearRing.class);

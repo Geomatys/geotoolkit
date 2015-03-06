@@ -53,6 +53,10 @@ import org.geotoolkit.gml.xml.v311.GeodesicStringType;
 import org.geotoolkit.gml.xml.v311.OffsetCurveType;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.gml.xml.v321.AbstractSurfacePatchType;
+import org.geotoolkit.gml.xml.v321.PolygonPatchType;
+import org.geotoolkit.gml.xml.v321.SurfacePatchArrayPropertyType;
+import org.geotoolkit.gml.xml.v321.SurfaceType;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -163,6 +167,9 @@ public class GeometrytoJTS {
         } else if(gml instanceof org.geotoolkit.gml.xml.LinearRing){
             return toJTS((org.geotoolkit.gml.xml.LinearRing)gml);
 
+        } else if(gml instanceof org.geotoolkit.gml.xml.AbstractSurface){
+            return toJTS((org.geotoolkit.gml.xml.AbstractSurface)gml);
+
         } else {
             throw new IllegalArgumentException("Unssupported geometry type : " + gml);
         }
@@ -233,6 +240,45 @@ public class GeometrytoJTS {
 
         final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
         JTS.setCRS(polygon, crs);
+        return polygon;
+    }
+
+    public static MultiPolygon toJTS(final org.geotoolkit.gml.xml.AbstractSurface gml) throws FactoryException{
+        if(gml instanceof org.geotoolkit.gml.xml.Polygon){
+            final Polygon poly = toJTS((org.geotoolkit.gml.xml.Polygon)gml);
+            return GF.createMultiPolygon(new Polygon[]{poly});
+        }else if(gml instanceof SurfaceType){
+            final SurfaceType st = (SurfaceType) gml;
+            final SurfacePatchArrayPropertyType patches = st.getPatches();
+            
+            final List<Polygon> polys = new ArrayList<>();
+            for(AbstractSurfacePatchType p : patches.getAbstractSurfacePatch()){
+                final PolygonPatchType ppt = (PolygonPatchType) p;
+                polys.add(toJTS(ppt));
+            }
+
+            final MultiPolygon polygon = GF.createMultiPolygon(polys.toArray(new Polygon[polys.size()]));
+
+            final CoordinateReferenceSystem crs = st.getCoordinateReferenceSystem();
+            JTS.setCRS(polygon, crs);
+            return polygon;
+
+        } else {
+            throw new IllegalArgumentException("Unssupported geometry type : " + gml);
+        }
+    }
+
+    public static Polygon toJTS(PolygonPatchType gml) throws FactoryException{
+        final AbstractRingProperty ext = gml.getExterior();
+        final List<? extends AbstractRingProperty> ints = gml.getInterior();
+
+        final LinearRing exterior = toJTS(ext.getAbstractRing());
+        final LinearRing[] holes = new LinearRing[ints.size()];
+        for(int i=0;i<holes.length;i++){
+            holes[i] = toJTS(ints.get(i).getAbstractRing());
+        }
+
+        final Polygon polygon = GF.createPolygon(exterior, holes);
         return polygon;
     }
 
@@ -435,13 +481,16 @@ public class GeometrytoJTS {
 
     public static MultiPolygon toJTS(final MultiSurface gml) throws FactoryException{
         final List<? extends SurfaceProperty> pos = gml.getSurfaceMember();
-        final Polygon[] members = new Polygon[pos.size()];
+        final List<Polygon> members = new ArrayList<>();
 
         for (int i=0,n=pos.size(); i<n; i++) {
-            members[i] = toJTS((org.geotoolkit.gml.xml.Polygon)pos.get(i).getAbstractSurface());
+            final MultiPolygon mp = toJTS(pos.get(i).getAbstractSurface());
+            for(int p=0,pn=mp.getNumGeometries();p<pn;p++){
+                members.add((Polygon)mp.getGeometryN(p));
+            }
         }
 
-        final MultiPolygon geom             = GF.createMultiPolygon(members);
+        final MultiPolygon geom             = GF.createMultiPolygon(members.toArray(new Polygon[members.size()]));
         final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
         JTS.setCRS(geom, crs);
         return geom;

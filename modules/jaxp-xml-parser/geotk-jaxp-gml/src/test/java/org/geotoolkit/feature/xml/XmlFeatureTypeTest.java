@@ -224,6 +224,18 @@ public class XmlFeatureTypeTest {
     }
 
     @Test
+    public void testReadTypeWithSubstitutions() throws JAXBException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/TypeWithSubstitution.xsd"));
+        removeGMLBaseTypes(types);
+        assertEquals(1, types.size());
+        final FeatureType type = types.get(0);
+        assertEquals(29, type.getDescriptors().size());
+        //28 substitutiongroups
+    }
+
+    @Test
     public void testWriteSimpleFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
         final File temp = File.createTempFile("gml", ".xml");
         temp.deleteOnExit();

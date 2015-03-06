@@ -50,8 +50,11 @@ import org.geotoolkit.xml.AbstractConfigurable;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.feature.op.AliasOperation;
 import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
+import org.geotoolkit.feature.type.DefaultOperationDescriptor;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
 import org.geotoolkit.xsd.xml.v2001.ComplexType;
 import org.geotoolkit.xsd.xml.v2001.Element;
@@ -65,12 +68,13 @@ import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.SimpleType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
-
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.ModifiableFeatureTypeFactory;
 import org.geotoolkit.feature.type.ModifiableFeaturetype;
 import org.geotoolkit.feature.type.ModifiableType;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.OperationDescriptor;
+import org.geotoolkit.feature.type.OperationType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.xsd.xml.v2001.Annotated;
 import org.geotoolkit.xsd.xml.v2001.Attribute;
@@ -98,10 +102,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
     private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
     private static final Cache<String,Schema> SCHEMA_CACHE = new Cache<>(60,60,true);
-
-    private static final List<String> EXCLUDED_SCHEMA = new ArrayList<>();
-    static {
-    }
 
     /**
      * default relocations
@@ -212,6 +212,10 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     private final Map<String,String> locationMap = new HashMap<>();
 
     private final Map<QName,org.geotoolkit.feature.type.ComplexType> typeCache = new HashMap<>();
+    
+    //Substitution group hierarchy
+    // example : AbstractGeometry -> [AbstractGeometricAggregate,AbstractGeometricPrimitive,GeometricComplex,AbstractImplicitGeometry]
+    private final Map<QName,List<QName>> substitutionGroups = new HashMap<>();
 
     public JAXBFeatureTypeReader() {
         this(null);
@@ -245,7 +249,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public List<FeatureType> read(final String xml) throws JAXBException {
-        return read(new StringReader(xml));
+        return read((Object)xml);
     }
 
     /**
@@ -253,16 +257,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public List<FeatureType> read(final InputStream in) throws JAXBException {
-        try {
-            final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
-            final Schema schema   = (Schema) unmarshaller.unmarshal(in);
-            POOL.recycle(unmarshaller);
-            knownSchemas.put("unknow location", schema);
-            final String location = null;
-            return getAllFeatureTypeFromSchema(schema, location);
-        } catch (SchemaException ex) {
-            throw new JAXBException(ex.getMessage(),ex);
-        }
+        return read((Object)in);
     }
 
     /**
@@ -270,30 +265,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public List<FeatureType> read(final URL url) throws JAXBException {
-        try {
-            final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
-            final Schema schema   = (Schema) unmarshaller.unmarshal(url.openStream());
-            POOL.recycle(unmarshaller);
-
-            // we build the base url to retrieve imported xsd;
-            final String location = url.toString();
-            knownSchemas.put(location, schema);
-            if (!EXCLUDED_SCHEMA.contains(location)) {
-                final String baseLocation;
-                if (location.lastIndexOf('/') != -1) {
-                    baseLocation = location.substring(0, location.lastIndexOf('/') + 1);
-                } else {
-                    baseLocation = location;
-                }
-                return getAllFeatureTypeFromSchema(schema, baseLocation);
-            } else {
-                return new ArrayList<FeatureType>();
-            }
-        } catch (SchemaException ex) {
-            throw new JAXBException(ex.getMessage(),ex);
-        } catch (IOException ex) {
-            throw new JAXBException(ex.getMessage(),ex);
-        }
+        return read((Object)url);
     }
 
     /**
@@ -301,16 +273,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public List<FeatureType> read(final Reader reader) throws JAXBException {
-        try {
-            final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
-            final Schema schema  = (Schema) unmarshaller.unmarshal(reader);
-            POOL.recycle(unmarshaller);
-            knownSchemas.put("unknow location", schema);
-            final String location = null;
-            return getAllFeatureTypeFromSchema(schema, location);
-        } catch (SchemaException ex) {
-            throw new JAXBException(ex.getMessage(),ex);
-        }
+        return read((Object)reader);
     }
 
     /**
@@ -318,16 +281,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public List<FeatureType> read(final Node element) throws JAXBException {
-        try {
-            final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
-            final Schema schema  = (Schema) unmarshaller.unmarshal(element);
-            POOL.recycle(unmarshaller);
-            knownSchemas.put("unknow location", schema);
-            final String location = null;
-            return getAllFeatureTypeFromSchema(schema, location);
-        } catch (SchemaException ex) {
-            throw new JAXBException(ex.getMessage(),ex);
-        }
+        return read((Object)element);
     }
 
     /**
@@ -335,15 +289,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public FeatureType read(final String xml, final String name) throws JAXBException {
-        try {
-            final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
-            final Schema schema = (Schema) unmarshaller.unmarshal(new StringReader(xml));
-            POOL.recycle(unmarshaller);
-            knownSchemas.put("unknow location", schema);
-            return getFeatureTypeFromSchema(schema, name);
-        } catch (SchemaException ex) {
-            throw new JAXBException(ex.getMessage(),ex);
-        }
+        return read((Object)xml,name);
     }
 
     /**
@@ -351,15 +297,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public FeatureType read(final InputStream in, final String name) throws JAXBException {
-        try {
-            final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
-            final Schema schema = (Schema) unmarshaller.unmarshal(in);
-            POOL.recycle(unmarshaller);
-            knownSchemas.put("unknow location", schema);
-            return getFeatureTypeFromSchema(schema, name);
-        } catch (SchemaException ex) {
-            throw new JAXBException(ex.getMessage(),ex);
-        }
+        return read((Object)in,name);
     }
 
     /**
@@ -367,15 +305,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public FeatureType read(final Reader reader, final String name) throws JAXBException {
-        try {
-            final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
-            final Schema schema = (Schema) unmarshaller.unmarshal(reader);
-            POOL.recycle(unmarshaller);
-            knownSchemas.put("unknow location", schema);
-            return getFeatureTypeFromSchema(schema, name);
-        } catch (SchemaException ex) {
-            throw new JAXBException(ex.getMessage(),ex);
-        }
+        return read((Object)reader,name);
     }
 
     /**
@@ -383,13 +313,64 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public FeatureType read(final Node node, final String name) throws JAXBException {
+        return read((Object)node,name);
+    }
+
+    public FeatureType read(final Object candidate, final String name) throws JAXBException {
         try {
             final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
-            final Schema schema = (Schema) unmarshaller.unmarshal(node);
+            final Schema schema;
+            String baseLocation = null;
+            if(candidate instanceof Node) schema = (Schema) unmarshaller.unmarshal((Node)candidate);
+            else if(candidate instanceof Reader) schema = (Schema) unmarshaller.unmarshal((Reader)candidate);
+            else if(candidate instanceof InputStream) schema = (Schema) unmarshaller.unmarshal((InputStream)candidate);
+            else if(candidate instanceof String) schema = (Schema) unmarshaller.unmarshal(new StringReader((String)candidate));
+            else if(candidate instanceof URL){
+                schema = (Schema) unmarshaller.unmarshal(((URL)candidate).openStream());
+                // we build the base url to retrieve imported xsd;
+                final String location = ((URL)candidate).toString();
+                knownSchemas.put(location, schema);
+                if (location.lastIndexOf('/') != -1) {
+                    baseLocation = location.substring(0, location.lastIndexOf('/') + 1);
+                } else {
+                    baseLocation = location;
+                }
+            }
+            else throw new JAXBException("Unsupported input type : "+candidate);
             POOL.recycle(unmarshaller);
             knownSchemas.put("unknow location", schema);
             return getFeatureTypeFromSchema(schema, name);
-        } catch (SchemaException ex) {
+        } catch (IOException ex) {
+            throw new JAXBException(ex.getMessage(),ex);
+        }
+    }
+
+    public List<FeatureType> read(final Object candidate) throws JAXBException {
+        try {
+            final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
+            final Schema schema;
+            String baseLocation = null;
+
+            if(candidate instanceof Node) schema = (Schema) unmarshaller.unmarshal((Node)candidate);
+            else if(candidate instanceof Reader) schema = (Schema) unmarshaller.unmarshal((Reader)candidate);
+            else if(candidate instanceof InputStream) schema = (Schema) unmarshaller.unmarshal((InputStream)candidate);
+            else if(candidate instanceof String) schema = (Schema) unmarshaller.unmarshal(new StringReader((String)candidate));
+            else if(candidate instanceof URL){
+                schema = (Schema) unmarshaller.unmarshal(((URL)candidate).openStream());
+                // we build the base url to retrieve imported xsd;
+                final String location = ((URL)candidate).toString();
+                knownSchemas.put(location, schema);
+                if (location.lastIndexOf('/') != -1) {
+                    baseLocation = location.substring(0, location.lastIndexOf('/') + 1);
+                } else {
+                    baseLocation = location;
+                }
+            }
+            else throw new JAXBException("Unsupported input type : "+candidate);
+            POOL.recycle(unmarshaller);
+            knownSchemas.put("unknow location", schema);
+            return getAllFeatureTypeFromSchema(schema, baseLocation);
+        } catch (IOException ex) {
             throw new JAXBException(ex.getMessage(),ex);
         }
     }
@@ -411,10 +392,12 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     }
 
     private void listAllSchemas(final Schema schema, final String baseLocation, List<Entry<Schema,String>> refs) throws SchemaException{
+        fillAllSubstitution(schema);
+        
         for (OpenAttrs attr: schema.getIncludeOrImportOrRedefine()) {
             if (attr instanceof Import || attr instanceof Include) {
                 final String schemalocation = Utils.getIncludedLocation(baseLocation, attr);
-                if (schemalocation != null && !knownSchemas.containsKey(schemalocation) && !EXCLUDED_SCHEMA.contains(schemalocation)) {
+                if (schemalocation != null && !knownSchemas.containsKey(schemalocation)) {
                     //check for a relocation
                     final String relocation = locationMap.get(schemalocation);
                     final String finalLocation = (relocation==null) ? schemalocation : relocation;
@@ -445,6 +428,29 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
     }
 
+    /**
+     * list all elements and complexe types and put them in the allCache map.
+     * Do not parse them yet.
+     *
+     * @param schema
+     */
+    private void fillAllSubstitution(Schema schema){
+        for(OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()){
+            if(att instanceof TopLevelElement){
+                final TopLevelElement ele = (TopLevelElement) att;
+                final QName parent = ele.getSubstitutionGroup();
+                if(parent!=null){
+                    List<QName> subList = substitutionGroups.get(parent);
+                    if(subList==null){
+                        subList = new ArrayList<>();
+                        substitutionGroups.put(parent, subList);
+                    }
+                    subList.add(new QName(schema.getTargetNamespace(), ele.getName()));
+                }
+            }
+        }
+    }
+
     private void listFeatureTypes(Schema schema, List<FeatureType> result) throws SchemaException{
         // then we look for feature type and groups
         for (OpenAttrs opAtts : schema.getSimpleTypeOrComplexTypeOrGroup()) {
@@ -469,6 +475,11 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 }
             }
         }
+    }
+
+    private List<QName> getSubstitutions(QName name){
+        final List<QName> lst = substitutionGroups.get(name);
+        return lst==null ? Collections.EMPTY_LIST : lst;
     }
 
     public FeatureType getFeatureTypeFromSchema(final Schema schema, final String name) throws SchemaException {
@@ -507,9 +518,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return getType(new QName(name.getNamespaceURI(), name.getLocalPart()));
     }
 
-    public AttributeDescriptor getElementType(Name name) throws SchemaException{
+    public PropertyDescriptor getElementType(Name name) throws SchemaException{
         final Element parentElement = findGlobalElement(new QName(name.getNamespaceURI(), name.getLocalPart()));
-        return elementToAttribute(parentElement, name.getNamespaceURI());
+        return elementToAttribute(parentElement, name.getNamespaceURI()).get(0);
     }
 
     private org.geotoolkit.feature.type.ComplexType getType(QName qname) throws SchemaException{
@@ -616,11 +627,20 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 QName base = sext.getBase();
                 final SimpleType st = findSimpleType(base);
                 if(st!=null) base = resolveSimpleTypeValueName(st);
-                final Class valueType = Utils.getTypeFromQName(base);
 
-                final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                finalType.getDescriptors().add(adb.create(new DefaultName(qname.getNamespaceURI(), Utils.VALUE_PROPERTY_NAME), valueType, 0, 1, false, null));
-
+                if(Utils.existPrimitiveType(base.getLocalPart())){
+                    final Class valueType = Utils.getTypeFromQName(base);
+                    final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                    finalType.getDescriptors().add(adb.create(new DefaultName(qname.getNamespaceURI(), Utils.VALUE_PROPERTY_NAME), valueType, 0, 1, false, null));
+                }else{
+                    //could be a complex type ... for a simple content, that's not an error. xsd/xml makes no sense at all sometimes
+                    final org.geotoolkit.feature.type.ComplexType sct = getType(base);
+                    if(sct==null){
+                        throw new SchemaException("Could not find type : "+base);
+                    }
+                    addOrReplace(finalType.getDescriptors(), sct.getDescriptors());
+                }
+                
                 //read attributes
                 final List<Annotated> attexts = sext.getAttributeOrAttributeGroup();
                 if(attexts!=null){
@@ -701,8 +721,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
             if(particle instanceof Element){
                 final Element ele = (Element) particle;
-                final AttributeDescriptor att = elementToAttribute(ele, namespace);
-                if(att!=null)atts.add(att);
+                final List<PropertyDescriptor> att = elementToAttribute(ele, namespace);
+                if(att!=null)atts.addAll(att);
                 
             }else if(particle instanceof GroupRef){
                 final GroupRef ref = (GroupRef) particle;
@@ -791,7 +811,19 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return descs;
     }
 
-    private AttributeDescriptor elementToAttribute(final Element attributeElement, final String namespace) throws SchemaException {
+    /**
+     * Convert an Element to a AttributeDescriptor
+     * Returns a list of AttributeDescriptors, other descriptors are substitution groups.
+     *
+     *
+     * @param attributeElement
+     * @param namespace
+     * @return
+     * @throws SchemaException
+     */
+    private List<PropertyDescriptor> elementToAttribute(final Element attributeElement, final String namespace) throws SchemaException {
+        final List<PropertyDescriptor> results = new ArrayList<>();
+
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
 
@@ -800,26 +832,18 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             if (parentElement == null) {
                 throw new SchemaException("unable to find referenced element : "+ attributeElement.getRef());
             }
-            final AttributeDescriptor parentDesc = elementToAttribute(parentElement, namespace);
+            final List<PropertyDescriptor> parentAtt = elementToAttribute(parentElement, namespace);
+            for(int i=1,n=parentAtt.size();i<n;i++){
+                //substitution groups
+                results.add(parentAtt.get(i));
+            }
+            final AttributeDescriptor parentDesc = (AttributeDescriptor) parentAtt.get(0);
             adb.copy(parentDesc);
             adb.setType(parentDesc.getType());
             atb.copy(parentDesc.getType());
         }
 
-        //override properties which are defined
-        final Integer minAtt = attributeElement.getMinOccurs();
-        if(minAtt!=null){
-            adb.setMinOccurs(minAtt);
-        }
-
-        final String maxxAtt = attributeElement.getMaxOccurs();
-        if("unbounded".equalsIgnoreCase(maxxAtt)) {
-            adb.setMaxOccurs(Integer.MAX_VALUE);
-        } else if(maxxAtt!=null){
-            adb.setMaxOccurs(Integer.parseInt(maxxAtt));
-        }
-
-        adb.setNillable(attributeElement.isNillable());
+        copyMinMaxNill(attributeElement, adb);
 
         final String elementName = attributeElement.getName();
         if(elementName!=null){
@@ -837,60 +861,110 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             adb.setType(type);
         }
 
+
+        final AttributeDescriptor baseDesc;
         if(adb.getType() instanceof org.geotoolkit.feature.type.ComplexType){
-            return adb.buildDescriptor();
-        }
-
-        QName elementType = attributeElement.getType();
-        // Try to extract base from a SimpleType
-        if (elementType == null && attributeElement.getSimpleType() != null) {
-            final LocalSimpleType simpleType = attributeElement.getSimpleType();
-            if (simpleType.getRestriction() != null) {
-                elementType = simpleType.getRestriction().getBase();
-            }
-        }
-        
-        if (elementType != null) {
-
-            if(Utils.isGeometricType(elementType)){
-                final Class c = Utils.getTypeFromQName(elementType);
-                if (c == null) {
-                    throw new SchemaException("The attribute : " + attributeElement + " does no have a declared type.");
+            baseDesc = adb.buildDescriptor();
+        }else{
+            //Simple type
+            QName elementType = attributeElement.getType();
+            // Try to extract base from a SimpleType
+            if (elementType == null && attributeElement.getSimpleType() != null) {
+                final LocalSimpleType simpleType = attributeElement.getSimpleType();
+                if (simpleType.getRestriction() != null) {
+                    elementType = simpleType.getRestriction().getBase();
                 }
-                atb.setBinding(c);
-            }else{
+            }
 
-                //search simple types
-                final SimpleType simpleType = findSimpleType(elementType);
-                if(simpleType != null){
-                    elementType = resolveSimpleTypeValueName(simpleType);
+            atb.setBinding(Object.class);
+            if (elementType != null) {
+                if(Utils.isGeometricType(elementType)){
+                    final Class c = Utils.getTypeFromQName(elementType);
+                    if (c == null) {
+                        throw new SchemaException("The attribute : " + attributeElement + " does no have a declared type.");
+                    }
+                    atb.setBinding(c);
                 }else{
+                    //search simple types
+                    final SimpleType simpleType = findSimpleType(elementType);
+                    if(simpleType != null){
+                        elementType = resolveSimpleTypeValueName(simpleType);
+                    }
+
                     //search in complex types
-                    final org.geotoolkit.feature.type.ComplexType cType = getType(elementType);
-                    if (cType != null) {
-                        adb.setType(cType);
-                        return adb.buildDescriptor();
+                    if(simpleType==null){
+                        final org.geotoolkit.feature.type.ComplexType cType = getType(elementType);
+                        if (cType != null) {
+                            adb.setType(cType);
+                        }
+                    }
+
+                    //search in knowned types
+                    if(adb.getType()==null && atb.getBinding()==Object.class){
+                        final Class c = Utils.getTypeFromQName(elementType);
+                        if (c == null) {
+                            throw new SchemaException("The attribute : " + attributeElement + " does no have a declared type.");
+                        }
+                        atb.setBinding(c);
                     }
                 }
-
-                //search in knowned types
-                final Class c = Utils.getTypeFromQName(elementType);
-                if (c == null) {
-                    throw new SchemaException("The attribute : " + attributeElement + " does no have a declared type.");
-                }
-                atb.setBinding(c);
             }
+
+            if(adb.getType()==null){
+                adb.setType(atb.buildType());
+            }
+
+            baseDesc = adb.buildDescriptor();
         }
 
-        if(atb.getBinding()==null){
-            atb.setBinding(Object.class);
+        results.add(baseDesc);
+
+        //check for substitutions
+        if(elementName!=null){
+            final List<QName> substitutions = getSubstitutions(new QName(namespace, elementName));
+            for(QName sub : substitutions){
+                final Element subEle = findGlobalElement(sub);
+                final List<PropertyDescriptor> subs = elementToAttribute(subEle,sub.getNamespaceURI());
+                //create an alias operator for each of them
+                for(PropertyDescriptor ad : subs){
+                    if(ad instanceof OperationDescriptor){
+                        final OperationDescriptor opDesc = (OperationDescriptor) ad;
+
+                        final OperationType optype = new AliasOperation(ad.getName(), baseDesc.getName(), (AttributeType)opDesc.getType().getResult());
+                        final OperationDescriptor desc = new DefaultOperationDescriptor(optype,
+                                ad.getName(), baseDesc.getMinOccurs(), baseDesc.getMaxOccurs(), baseDesc.isNillable());
+                        results.add(desc);
+                    }else{
+                        final OperationType optype = new AliasOperation(ad.getName(), baseDesc.getName(), (AttributeType) ad.getType());
+                        final OperationDescriptor desc = new DefaultOperationDescriptor(optype,
+                                ad.getName(), baseDesc.getMinOccurs(), baseDesc.getMaxOccurs(), baseDesc.isNillable());
+                        results.add(desc);
+                    }
+                }
+            }
+
         }
 
-        adb.setType(atb.buildType());
 
+        return results;
+        
+    }
 
+    private static void copyMinMaxNill(Element attributeElement, AttributeDescriptorBuilder adb){
+        //override properties which are defined
+        final Integer minAtt = attributeElement.getMinOccurs();
+        if(minAtt!=null){
+            adb.setMinOccurs(minAtt);
+        }
 
-        return adb.buildDescriptor();
+        final String maxxAtt = attributeElement.getMaxOccurs();
+        if("unbounded".equalsIgnoreCase(maxxAtt)) {
+            adb.setMaxOccurs(Integer.MAX_VALUE);
+        } else if(maxxAtt!=null){
+            adb.setMaxOccurs(Integer.parseInt(maxxAtt));
+        }
+
+        adb.setNillable(attributeElement.isNillable());
     }
 
     private String getNewBaseLocation(final String schemalocation, final String oldBaseLocation) {
@@ -1035,7 +1109,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return null;
     }
 
-    private QName resolveSimpleTypeValueName(SimpleType simpleType){
+    private QName resolveSimpleTypeValueName(SimpleType simpleType) throws SchemaException{
         final Restriction restriction = simpleType.getRestriction();
         if(restriction!=null){
             QName base = restriction.getBase();
@@ -1057,6 +1131,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             if(union.getMemberTypes()!=null && !union.getMemberTypes().isEmpty()){
                 final QName name = union.getMemberTypes().get(0);
                 final SimpleType refType = findSimpleType(name);
+                if(refType==null){
+                    throw new SchemaException("Could not find type : "+name);
+                }
                 return resolveSimpleTypeValueName(refType);
             }else if(union.getSimpleType()!=null && !union.getSimpleType().isEmpty()){
                 final LocalSimpleType st = union.getSimpleType().get(0);
@@ -1089,16 +1166,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     }
 
     private static void addOrReplace(List<PropertyDescriptor> descs, PropertyDescriptor pd){
-        loop:
-        for(int i=0;i<descs.size();i++){
-            if(descs.get(i).getName().equals(pd.getName())){
-                //replace existing property
-                descs.set(i, pd);
-                return;
-            }
-        }
-        //add new property
-        descs.add(pd);
+        addOrReplace(descs, Collections.singleton(pd));
     }
 
     private static void addOrReplace(List<PropertyDescriptor> descs, Collection<? extends PropertyDescriptor> toAdd){
