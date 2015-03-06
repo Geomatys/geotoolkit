@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2012, Geomatys
+ *    (C) 2008 - 2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -29,9 +29,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 import javax.media.jai.Histogram;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
@@ -42,9 +41,7 @@ import javax.media.jai.RenderedOp;
 
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -77,11 +74,8 @@ import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-//import org.geotoolkit.metadata.ImageStatistics;
-//import org.geotoolkit.process.coverage.statistics.StatisticOp;
 import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor;
-//import org.geotoolkit.process.coverage.statistics.Statistics;
 import org.geotoolkit.process.image.bandselect.BandSelectDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
@@ -107,7 +101,6 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -128,6 +121,8 @@ import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.coverage.statistics.StatisticOp;
 import org.geotoolkit.process.coverage.statistics.Statistics;
+import org.opengis.coverage.Coverage;
+import org.opengis.coverage.SampleDimension;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -277,15 +272,15 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     if (channel != null) {
                         //single band selection
                         final int[] indices = new int[]{
-                                Integer.valueOf(channel.getChannelName())
+                                getBandIndice(channel.getChannelName(),dataCoverage)
                         };
                         dataCoverage = selectBand(dataCoverage, indices);
                     } else {
                         final SelectedChannelType[] channels = selections.getRGBChannels();
                         final int[] selected = new int[]{
-                                Integer.valueOf(channels[0].getChannelName()),
-                                Integer.valueOf(channels[1].getChannelName()),
-                                Integer.valueOf(channels[2].getChannelName())
+                                getBandIndice(channels[0].getChannelName(),dataCoverage),
+                                getBandIndice(channels[1].getChannelName(),dataCoverage),
+                                getBandIndice(channels[2].getChannelName(),dataCoverage)
                         };
                         //@Workaround(library="JAI",version="1.0.x")
                         //TODO when JAI has been rewritten, this test might not be necessary anymore
@@ -440,6 +435,22 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         } catch (Exception e) {
             LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);
         }
+    }
+
+    private static int getBandIndice(String name, Coverage coverage) throws PortrayalException{
+        try{
+            return Integer.parseInt(name);
+        }catch(NumberFormatException ex){
+            //can be a name
+            for(int i=0,n=coverage.getNumSampleDimensions();i<n;i++){
+                final SampleDimension sampleDim = coverage.getSampleDimension(i);
+                if(Objects.equals(String.valueOf(sampleDim.getDescription()),n)){
+                    return i;
+                }
+            }
+        }
+
+        throw new PortrayalException("Band for name/indice "+name+" not found");
     }
 
     private static double[] nextDataType(int type) {
