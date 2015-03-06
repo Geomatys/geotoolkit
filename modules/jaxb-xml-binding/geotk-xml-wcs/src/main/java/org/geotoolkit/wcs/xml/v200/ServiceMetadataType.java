@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wcs.xml.ServiceMetadata;
 
 
 /**
@@ -51,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "formatSupported",
     "extension"
 })
-public class ServiceMetadataType {
+public class ServiceMetadataType implements ServiceMetadata {
 
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
@@ -59,6 +60,14 @@ public class ServiceMetadataType {
     @XmlElement(name = "Extension")
     private ExtensionType extension;
 
+    public ServiceMetadataType() {
+        
+    }
+    
+    public ServiceMetadataType(final List<String> formatSupported) {
+        this.formatSupported = formatSupported;
+    }
+    
     /**
      * Gets the value of the formatSupported property.
      * 

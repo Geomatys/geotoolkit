@@ -81,9 +81,11 @@ public class CapabilitiesType extends CapabilitiesBaseType implements GetCapabil
      * Build a new Capabilities document.
      */
     public CapabilitiesType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
-            final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final ContentsType contents) {
+            final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final ContentsType contents,
+            final ServiceMetadataType serviceMetadata) {
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
         this.contents = contents;
+        this.serviceMetadata = serviceMetadata;
     }
     
     /**
@@ -158,6 +160,6 @@ public class CapabilitiesType extends CapabilitiesBaseType implements GetCapabil
         if (sections.containsSection("Contents") || sections.containsSection("All")) {
             ct = contents;
         }
-        return new CapabilitiesType(si, sp, om, "2.0.0", getUpdateSequence(), ct);
+        return new CapabilitiesType(si, sp, om, "2.0.0", getUpdateSequence(), ct, getServiceMetadata());
     }
 }

@@ -348,7 +348,8 @@ public class WCSXmlFactory {
     }
 
     public static GetCapabilitiesResponse createCapabilitiesResponse(final String version, final AbstractServiceIdentification si,
-            final AbstractServiceProvider sp, final AbstractOperationsMetadata om, final Content cont, final String updateSequence) {
+            final AbstractServiceProvider sp, final AbstractOperationsMetadata om, final Content cont, final String updateSequence,
+            final ServiceMetadata sm) {
         
         if ("1.1.1".equals(version)) {
             if (si != null && !(si instanceof org.geotoolkit.ows.xml.v110.ServiceIdentification)) {
@@ -395,11 +396,15 @@ public class WCSXmlFactory {
             if (cont != null && !(cont instanceof org.geotoolkit.wcs.xml.v200.ContentsType)) {
                 throw new IllegalArgumentException("unexpected object version for Contents element");
             }
+            if (sm != null && !(sm instanceof org.geotoolkit.wcs.xml.v200.ServiceMetadataType)) {
+                throw new IllegalArgumentException("unexpected object version for ServiecMetadata element");
+            }
             return new org.geotoolkit.wcs.xml.v200.CapabilitiesType((org.geotoolkit.ows.xml.v200.ServiceIdentification)si,
                                                                     (org.geotoolkit.ows.xml.v200.ServiceProvider)sp,
                                                                     (org.geotoolkit.ows.xml.v200.OperationsMetadata)om,
                                                                     version, updateSequence,
-                                                                    (org.geotoolkit.wcs.xml.v200.ContentsType)cont);
+                                                                    (org.geotoolkit.wcs.xml.v200.ContentsType)cont,
+                                                                    (org.geotoolkit.wcs.xml.v200.ServiceMetadataType)sm);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }
