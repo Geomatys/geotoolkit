@@ -437,6 +437,8 @@ public final class FeatureUtilities {
         }else if(type instanceof AssociationType){
             //can not create a default value for this
             return null;
+        }else if(type instanceof OperationType){
+            return new Operation((OperationDescriptor)desc);
         }
 
         throw new IllegalArgumentException("Unhandled type : " + type);

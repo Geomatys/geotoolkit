@@ -31,26 +31,19 @@
  */
 package org.geotoolkit.feature.type;
 
-import org.geotoolkit.feature.ComplexAttribute;
-import org.opengis.feature.Attribute;
-import org.opengis.parameter.ParameterValueGroup;
-
 /**
- * The type of operations to be invoked on an attribute.
- * <p>
- * Invoking an operation on an attribute is used to calculate a derived quantity
- * or update attribute state. OperationType is used to define the required
- * parameters and expected result for an Operation.
+ * An implementation of an operation that may be invoked on an Attribute.
  *
- * @author Jody Garnett, Refractions Research, Inc.
+ * @author Jody Garnett, Refractions Research
  *
- * @deprecated Redesigned as {@link org.opengis.feature.Operation} in the {@code org.opengis.feature} package.
+ * @deprecated Merged with {@link org.opengis.feature.Operation}.
  */
 @Deprecated
-public interface OperationType extends org.opengis.feature.Operation, PropertyType {
+public interface OperationDescriptor extends PropertyDescriptor {
 
-    Attribute invokeGet(ComplexAttribute feature, ParameterValueGroup parameters);
-
-    void invokeSet(ComplexAttribute feature, Object value);
+    /** 
+     * Indicates the OpperationType of this attribute
+     */
+    OperationType getType();
 
 }

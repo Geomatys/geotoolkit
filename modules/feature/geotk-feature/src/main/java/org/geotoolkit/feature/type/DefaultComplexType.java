@@ -273,6 +273,8 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         final PropertyType pt = property.getType();
         if(pt instanceof ComplexType){
             builder.append("CX:").append( ((ComplexType)pt).getName().getLocalPart() );
+        }if(pt instanceof OperationType){
+            builder.append("OP:").append( ((OperationType)pt).getClass().getSimpleName().replaceAll("Operation", "") );
         }else if(pt instanceof AssociationType){
             builder.append("AS:").append( ((AssociationType)pt).getRelatedType().getName().getLocalPart() );
         }else{
