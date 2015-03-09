@@ -65,7 +65,7 @@ public class DescribeCoverageType extends RequestBaseType implements DescribeCov
     
     public DescribeCoverageType(final List<String> coverageId){
         this.service = "WCS";
-        this.version = "2.0.0";
+        this.version = "2.0.1";
         this.coverageId = coverageId;
     }
     

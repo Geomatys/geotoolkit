@@ -160,6 +160,6 @@ public class CapabilitiesType extends CapabilitiesBaseType implements GetCapabil
         if (sections.containsSection("Contents") || sections.containsSection("All")) {
             ct = contents;
         }
-        return new CapabilitiesType(si, sp, om, "2.0.0", getUpdateSequence(), ct, getServiceMetadata());
+        return new CapabilitiesType(si, sp, om, "2.0.1", getUpdateSequence(), ct, getServiceMetadata());
     }
 }

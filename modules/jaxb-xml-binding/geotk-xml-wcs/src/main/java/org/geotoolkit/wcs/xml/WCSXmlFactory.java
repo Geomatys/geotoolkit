@@ -32,8 +32,10 @@ import org.geotoolkit.ows.xml.AbstractServiceIdentification;
 import org.geotoolkit.ows.xml.AbstractServiceProvider;
 import org.geotoolkit.ows.xml.AcceptFormats;
 import org.geotoolkit.ows.xml.AcceptVersions;
+import org.geotoolkit.ows.xml.BoundingBox;
 import org.geotoolkit.ows.xml.OWSXmlFactory;
 import org.geotoolkit.ows.xml.Sections;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 
 /**
@@ -56,7 +58,7 @@ public class WCSXmlFactory {
             }
             return new org.geotoolkit.wcs.xml.v100.CoverageOfferingBriefType(identifier, title, _abstract, 
                                                                       (org.geotoolkit.wcs.xml.v100.LonLatEnvelopeType)bbox);
-        } else if ("2.0.0".equals(version)) {
+        } else if ("2.0.0".equals(version) || "2.0.1".equals(version)) {
             if (bbox != null && !(bbox instanceof org.geotoolkit.ows.xml.v200.WGS84BoundingBoxType)) {
                 throw new IllegalArgumentException("unexpected object version for bbox element");
             }
@@ -92,7 +94,7 @@ public class WCSXmlFactory {
                 cov100.add((org.geotoolkit.wcs.xml.v100.CoverageOfferingBriefType)c);
             }
             return new org.geotoolkit.wcs.xml.v100.ContentMetadata(cov100);
-        } else if ("2.0.0".equals(version)) {
+        } else if ("2.0.0".equals(version) || "2.0.1".equals(version)) {
             final List<org.geotoolkit.wcs.xml.v200.CoverageSummaryType> cov200 = new ArrayList<>();
             for (CoverageInfo c : coverageinfos) {
                 if (!(c instanceof org.geotoolkit.wcs.xml.v200.CoverageSummaryType)) {
@@ -111,7 +113,7 @@ public class WCSXmlFactory {
             return new org.geotoolkit.wcs.xml.v111.DescribeCoverageType(coverage);
         } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wcs.xml.v100.DescribeCoverageType(coverage);
-        } else if ("2.0.0".equals(version)) {
+        } else if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             return new org.geotoolkit.wcs.xml.v200.DescribeCoverageType(coverage);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
@@ -137,7 +139,7 @@ public class WCSXmlFactory {
                 cov100.add((org.geotoolkit.wcs.xml.v100.CoverageOfferingType)c);
             }
             return new org.geotoolkit.wcs.xml.v100.CoverageDescription(cov100, "1.0.0");
-        } else if ("2.0.0".equals(version)) {
+        } else if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             final List<org.geotoolkit.wcs.xml.v200.CoverageDescriptionType> cov200 = new ArrayList<>();
             for (CoverageInfo c : coverageinfos) {
                 if (!(c instanceof org.geotoolkit.wcs.xml.v200.CoverageDescriptionType)) {
@@ -186,7 +188,7 @@ public class WCSXmlFactory {
                                                                    (org.geotoolkit.wcs.xml.v100.RangeSubsetType)rs,
                                                                    interpolationMethod,
                                                                    (org.geotoolkit.wcs.xml.v100.OutputType)out);
-        } else if ("2.0.0".equals(version)) {
+        } else if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             
             
             return new org.geotoolkit.wcs.xml.v200.GetCoverageType(coverage, null, null);
@@ -214,7 +216,7 @@ public class WCSXmlFactory {
             }
             return new org.geotoolkit.wcs.xml.v100.DomainSubsetType((org.geotoolkit.wcs.xml.v100.TimeSequenceType)time, 
                                                                     (org.geotoolkit.wcs.xml.v100.SpatialSubsetType)spatial);
-        } else if ("2.0.0".equals(version)) {
+        } else if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             throw new IllegalArgumentException("There is no timeSequence in v200");
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
@@ -226,7 +228,7 @@ public class WCSXmlFactory {
             return new org.geotoolkit.wcs.xml.v111.TimeSequenceType(timePosition);
         } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wcs.xml.v100.TimeSequenceType(timePosition);
-        } else if ("2.0.0".equals(version)) {
+        } else if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             throw new IllegalArgumentException("There is no timeSequence in v200");
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
@@ -238,7 +240,7 @@ public class WCSXmlFactory {
             return new org.geotoolkit.wcs.xml.v111.Capabilities(version, updateSequence);
         } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wcs.xml.v100.WCSCapabilitiesType(updateSequence);
-        } else if ("2.0.0".equals(version)) {
+        } else if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             return new org.geotoolkit.wcs.xml.v200.CapabilitiesType(version, updateSequence);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
@@ -254,96 +256,96 @@ public class WCSXmlFactory {
             final org.geotoolkit.gml.xml.v311.CodeListType f = new org.geotoolkit.gml.xml.v311.CodeListType(fees);
             final org.geotoolkit.gml.xml.v311.CodeListType ac = new org.geotoolkit.gml.xml.v311.CodeListType(accessConstraint);
             return new org.geotoolkit.wcs.xml.v100.ServiceType(null, title, title, _abstract, kw, null, f, ac, fees);
-        } else if ("2.0.0".equals(version)) {
+        } else if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             return OWSXmlFactory.buildServiceIdentification("2.0.0", title, _abstract, keywords, serviceType, serviceVersion, fees, accessConstraint);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
         }
     }
 
-    public static AbstractOnlineResourceType buildOnlineResource(final String currentVersion, final String url) {
-        if ("2.0.0".equals(currentVersion)) {
+    public static AbstractOnlineResourceType buildOnlineResource(final String version, final String url) {
+        if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             return OWSXmlFactory.buildOnlineResource("2.0.0", url);
-        } else if ("1.0.0".equals(currentVersion)) {
+        } else if ("1.0.0".equals(version)) {
             return null;
-        } else if ("1.1.1".equals(currentVersion)) {
+        } else if ("1.1.1".equals(version)) {
             return OWSXmlFactory.buildOnlineResource("1.1.0", url);
         } else {
-            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+            throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
 
-    public static AbstractServiceProvider buildServiceProvider(final String currentVersion, final String providerName,
+    public static AbstractServiceProvider buildServiceProvider(final String version, final String providerName,
             final AbstractOnlineResourceType providerSite, final AbstractResponsiblePartySubset serviceContact) {
-        if ("2.0.0".equals(currentVersion)) {
+        if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             return OWSXmlFactory.buildServiceProvider("2.0.0", providerName, providerSite, serviceContact);
-        } else if ("1.0.0".equals(currentVersion)) {
+        } else if ("1.0.0".equals(version)) {
             return null;
-        } else if ("1.1.1".equals(currentVersion)) {
+        } else if ("1.1.1".equals(version)) {
             return OWSXmlFactory.buildServiceProvider("1.1.0", providerName, providerSite, serviceContact);
         } else {
-            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+            throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
 
-    public static AbstractContact buildContact(final String currentVersion, final String phone, final String fax, final String email,
+    public static AbstractContact buildContact(final String version, final String phone, final String fax, final String email,
             final String address, final String city, final String state, final String zipCode, final String country,
             final String hoursOfService, final String contactInstructions) {
-        if ("2.0.0".equals(currentVersion)) {
+        if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             return OWSXmlFactory.buildContact("2.0.0", phone, fax, email, address, city, state, zipCode, country, hoursOfService, contactInstructions);
-        } else if ("1.1.1".equals(currentVersion)) {
+        } else if ("1.1.1".equals(version)) {
             return OWSXmlFactory.buildContact("1.1.0", phone, fax, email, address, city, state, zipCode, country, hoursOfService, contactInstructions);
-        } else if ("1.0.0".equals(currentVersion)) {
+        } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wcs.xml.v100.ContactType(phone, fax, email, address, city, state, zipCode, country);
         } else {
-            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+            throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
 
-    public static AbstractResponsiblePartySubset buildResponsiblePartySubset(final String currentVersion, final String individualName, final String positionName,
+    public static AbstractResponsiblePartySubset buildResponsiblePartySubset(final String version, final String individualName, final String positionName,
             final AbstractContact contact, final String role) {
-        if ("2.0.0".equals(currentVersion)) {
+        if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             return OWSXmlFactory.buildResponsiblePartySubset("2.0.0", individualName, positionName, contact, role);
-        } else if ("1.1.1".equals(currentVersion)) {
+        } else if ("1.1.1".equals(version)) {
             return OWSXmlFactory.buildResponsiblePartySubset("1.1.0", individualName, positionName, contact, role);
-        } else if ("1.0.0".equals(currentVersion)) {
+        } else if ("1.0.0".equals(version)) {
             if (contact != null && !(contact instanceof org.geotoolkit.wcs.xml.v100.ContactType)) {
                 throw new IllegalArgumentException("unexpected object version for contact element");
             }
             return new org.geotoolkit.wcs.xml.v100.ResponsiblePartyType(individualName, positionName, null, (org.geotoolkit.wcs.xml.v100.ContactType)contact);
         } else {
-            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+            throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
 
-    public static AbstractDomain buildDomain(final String currentVersion, final String name, final List<String> allowedValues) {
-        if ("2.0.0".equals(currentVersion)) {
+    public static AbstractDomain buildDomain(final String version, final String name, final List<String> allowedValues) {
+        if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             return OWSXmlFactory.buildDomain("2.0.0", name, allowedValues);
-        } else if ("1.1.1".equals(currentVersion)) {
+        } else if ("1.1.1".equals(version)) {
             return OWSXmlFactory.buildDomain("1.1.0", name, allowedValues);
         } else {
-            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+            throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
 
-    public static AbstractOperation buildOperation(final String currentVersion, final List<AbstractDCP> dcps,
+    public static AbstractOperation buildOperation(final String version, final List<AbstractDCP> dcps,
             final List<AbstractDomain> parameters, final List<AbstractDomain> constraints, final String name) {
-        if ("2.0.0".equals(currentVersion)) {
+        if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             return OWSXmlFactory.buildOperation("2.0.0", dcps, parameters, constraints, name);
-        } else if ("1.1.1".equals(currentVersion)) {
+        } else if ("1.1.1".equals(version)) {
             return OWSXmlFactory.buildOperation("1.1.0", dcps, parameters, constraints, name);
         } else {
-            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+            throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
 
-    public static AbstractDCP buildDCP(final String currentVersion, final String getURL, final String postURL) {
-        if ("2.0.0".equals(currentVersion)) {
+    public static AbstractDCP buildDCP(final String version, final String getURL, final String postURL) {
+        if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             return OWSXmlFactory.buildDCP("2.0.0", getURL, postURL);
-        } else if ("1.1.1".equals(currentVersion)) {
+        } else if ("1.1.1".equals(version)) {
             return OWSXmlFactory.buildDCP("1.1.0", getURL, postURL);
         } else {
-            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+            throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
 
@@ -383,7 +385,7 @@ public class WCSXmlFactory {
                                                                        (org.geotoolkit.wcs.xml.v100.WCSCapabilityType)om,
                                                                        (org.geotoolkit.wcs.xml.v100.ContentMetadata)cont,
                                                                        updateSequence);
-        } else if ("2.0.0".equals(version)) {
+        } else if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             if (si != null && !(si instanceof org.geotoolkit.ows.xml.v200.ServiceIdentification)) {
             throw new IllegalArgumentException("unexpected object version for ServiceIdentification element");
             }
@@ -433,7 +435,7 @@ public class WCSXmlFactory {
                 section = sections.getSection().get(0);
             }
             return new org.geotoolkit.wcs.xml.v100.GetCapabilitiesType(version, service, section, updateSequence);
-        } else if ("2.0.0".equals(version)) {
+        } else if ("2.0.0".equals(version)|| "2.0.1".equals(version)) {
             if (versions != null && !(versions instanceof org.geotoolkit.ows.xml.v200.AcceptVersionsType)) {
                 throw new IllegalArgumentException("unexpected object version for AcceptVersion element");
             }
@@ -450,6 +452,54 @@ public class WCSXmlFactory {
                                                                        service);
         } else {
             throw new IllegalArgumentException("unsupported version:" + version);
+        }
+    }
+    
+    public static AcceptFormats buildAcceptFormat(final String version, final List<String> acceptformats) {
+        if ("1.1.1".equals(version)) {
+            return new org.geotoolkit.ows.xml.v110.AcceptFormatsType(acceptformats);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.ows.xml.v100.AcceptFormatsType(acceptformats);
+        } else if ("2.0.0".equals(version) || "2.0.1".equals(version)) {
+            return new org.geotoolkit.ows.xml.v200.AcceptFormatsType(acceptformats);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static Sections buildSections(final String version, final List<String> sections) {
+        if ("1.1.1".equals(version)) {
+            return new org.geotoolkit.ows.xml.v110.SectionsType(sections);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.ows.xml.v100.SectionsType(sections);
+        } else if ("2.0.0".equals(version) || "2.0.1".equals(version)) {
+            return new org.geotoolkit.ows.xml.v200.SectionsType(sections);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static AcceptVersions buildAcceptVersion(final String version, final List<String> acceptVersion) {
+        if ("1.1.1".equals(version)) {
+                return new org.geotoolkit.ows.xml.v110.AcceptVersionsType(acceptVersion);
+        } else if ("1.0.0".equals(version)) {
+                return new org.geotoolkit.ows.xml.v100.AcceptVersionsType(acceptVersion);
+        } else if ("2.0.0".equals(version) || "2.0.1".equals(version)) {
+                return new org.geotoolkit.ows.xml.v200.AcceptVersionsType(acceptVersion);
+        } else {
+                throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static BoundingBox buildWGS84BoundingBox(String version, GeographicBoundingBox inputGeoBox) {
+        if ("1.1.1".equals(version)) {
+            return new org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType(inputGeoBox);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType(inputGeoBox);
+        } else if ("2.0.0".equals(version) || "2.0.1".equals(version)) {
+            return new org.geotoolkit.ows.xml.v200.WGS84BoundingBoxType(inputGeoBox);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
 }

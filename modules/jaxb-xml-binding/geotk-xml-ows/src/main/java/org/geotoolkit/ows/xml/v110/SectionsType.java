@@ -153,7 +153,7 @@ public class SectionsType implements Sections {
             return Collections.unmodifiableList(existingSections100);
         } else if (v.equals("1.1.1")) {
             return Collections.unmodifiableList(existingSections111);
-        } else if (v.equals("2.0.0")) {
+        } else if (v.equals("2.0.0") || v.equals("2.0.1")) {
             return Collections.unmodifiableList(existingSections200);
         } else {
             return null;

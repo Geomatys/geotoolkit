@@ -164,7 +164,7 @@ public class WcsXMLBindingTest {
 
         String result = sw.toString();
 
-        String expResult = "<wcs:GetCoverage version=\"2.0.0\" service=\"WCS\" " +
+        String expResult = "<wcs:GetCoverage version=\"2.0.1\" service=\"WCS\" " +
                            "xmlns:wcs=\"http://www.opengis.net/wcs/2.0\" xmlns:geotiff=\"http://www.opengis.net/gmlcov/geotiff/1.0\">" + '\n' +
                            "    <wcs:Extension>\n" +
                            "        <geotiff:parameters>\n" +
