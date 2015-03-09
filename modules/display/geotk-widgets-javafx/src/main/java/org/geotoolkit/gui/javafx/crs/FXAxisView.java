@@ -82,7 +82,7 @@ public class FXAxisView extends Control {
     }
  
     @Override
-    protected String getUserAgentStylesheet() {
+    public String getUserAgentStylesheet() {
         return FXAxisView.class.getResource("fxaxisview.css").toExternalForm();
     }
     
