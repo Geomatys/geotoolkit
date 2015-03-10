@@ -29,7 +29,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.ResourceInternationalString;
+import org.controlsfx.dialog.ExceptionDialog;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
@@ -201,7 +203,18 @@ public final class GeotkFX {
         candidate.getStylesheets().add(GeotkFX.CSS_PATH);
     }
     
-    
+    public static ExceptionDialog newExceptionDialog(final String headerText, final Throwable t) {
+        ArgumentChecks.ensureNonNull("Exception to display", t);
+        ExceptionDialog d = new ExceptionDialog(t);
+        d.setResizable(true);
+        if (headerText != null) {
+            d.setHeaderText(headerText);
+        }
+        d.setWidth(400);
+        d.setHeight(500);
+        return d;
+    }
+        
     private GeotkFX(){}
     
 }
