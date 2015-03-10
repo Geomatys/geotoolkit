@@ -246,7 +246,7 @@ public class ProgressMonitor extends HBox {
             if (t != null) {
                 title.textProperty().bind(t.titleProperty());
                 description.textProperty().bind(t.messageProperty());
-                progress.progressProperty().bind(t.workDoneProperty());
+                progress.progressProperty().bind(t.progressProperty());
                 cancelButton.setOnAction((ActionEvent e) -> t.cancel());
                 setVisible(true);
             } else {
