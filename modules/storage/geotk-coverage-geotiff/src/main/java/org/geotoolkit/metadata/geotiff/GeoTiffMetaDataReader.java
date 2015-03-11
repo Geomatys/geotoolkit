@@ -24,10 +24,14 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 import javax.imageio.metadata.IIOMetadata;
 
+import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
+import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.builder.LocalizationGrid;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
@@ -35,6 +39,7 @@ import org.apache.sis.util.logging.Logging;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.util.FactoryException;
 
 import org.w3c.dom.Node;
@@ -190,7 +195,7 @@ public final class GeoTiffMetaDataReader {
 
         //get the raster type
         final Object value = entries.get(GTRasterTypeGeoKey);
-        final PixelOrientation orientation;
+        PixelOrientation orientation;
         if (value != null) {
             int type = (Integer)value;
             if(type < 1 || type > 2){
@@ -208,39 +213,45 @@ public final class GeoTiffMetaDataReader {
         final Rectangle bounds = readBounds();
 
         //check if a transformation is present /////////////////////////////////
-        final AffineTransform transform = readTransformation();
-        if(transform != null){
-            //we have the transformation directly, just copy values in the
-            //spatial metadatas
-            accesor.setAll(transform, bounds, cellGeometry, orientation);
-            return;
+        AffineTransform gridToCRS = readTransformation();
+        if (gridToCRS == null) {
+            //check for pixel scale and tie points /////////////////////////////////
+            final double[] pixelScale = readPixelScale();
+            final double[] tiePoint = readTiePoint();
+
+            if (pixelScale == null && tiePoint != null) {
+
+                final LocalizationGrid grid = new LocalizationGrid(2, 2);
+                grid.setLocalizationPoint(0, 0, tiePoint[3], tiePoint[4]);
+                grid.setLocalizationPoint(1, 0, tiePoint[9], tiePoint[10]);
+                grid.setLocalizationPoint(1, 1, tiePoint[15], tiePoint[16]);
+                grid.setLocalizationPoint(0, 1, tiePoint[21], tiePoint[22]);
+                gridToCRS = grid.getAffineTransform();
+                gridToCRS.scale(1f / bounds.width, 1f / bounds.height);
+
+            } else if (pixelScale != null && tiePoint != null) {
+                //TODO the is a third value in the tie point
+                final double scaleX = pixelScale[0];
+                final double scaleY = -pixelScale[1];
+                final double tiePointColumn = tiePoint[0];
+                final double tiePointRow = tiePoint[1];
+                final double translateX = tiePoint[3] - (scaleX * tiePointColumn);
+                final double translateY = tiePoint[4] - (scaleY * tiePointRow);
+                gridToCRS = new AffineTransform(scaleX, 0, 0, scaleY, translateX, translateY);
+            }
         }
 
-        //check for pixel scale and tie points /////////////////////////////////
-        final double[] pixelScale = readPixelScale();
-        final double[] tiePoint = readTiePoint();
+        if (gridToCRS != null) {
 
-        if(pixelScale == null && tiePoint != null){
+            // force orientation to PixelOrientation.UPPER_LEFT to keep consistent transformation
+            // when we add additional dimensions.
+            if (PixelOrientation.CENTER.equals(orientation)) {
+                LinearTransform linear = MathTransforms.linear(gridToCRS);
+                LinearTransform translate = (LinearTransform)PixelTranslation.translate(linear, PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
+                gridToCRS = AffineTransforms2D.castOrCopy(translate.getMatrix());
+                orientation = PixelOrientation.UPPER_LEFT;
+            }
 
-            final LocalizationGrid grid = new LocalizationGrid(2, 2);
-            grid.setLocalizationPoint(0, 0, tiePoint[3], tiePoint[4]);
-            grid.setLocalizationPoint(1, 0, tiePoint[9], tiePoint[10]);
-            grid.setLocalizationPoint(1, 1, tiePoint[15], tiePoint[16]);
-            grid.setLocalizationPoint(0, 1, tiePoint[21], tiePoint[22]);
-            final AffineTransform gridToCRS = grid.getAffineTransform();
-            gridToCRS.scale(1f/bounds.width, 1f/bounds.height);
-            accesor.setAll(gridToCRS, bounds, cellGeometry, orientation);
-            return;
-
-        }else if(pixelScale != null && tiePoint != null){
-            //TODO the is a third value in the tie point
-            final double scaleX         = pixelScale[0];
-            final double scaleY         = -pixelScale[1];
-            final double tiePointColumn = tiePoint[0];
-            final double tiePointRow    = tiePoint[1];
-            final double translateX     = tiePoint[3] - (scaleX * tiePointColumn);
-            final double translateY     = tiePoint[4] - (scaleY * tiePointRow);
-            final AffineTransform gridToCRS = new AffineTransform(scaleX, 0, 0, scaleY, translateX, translateY);
             accesor.setAll(gridToCRS, bounds, cellGeometry, orientation);
             return;
         }
