@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.metadata.geotiff;
 
+import com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet;
 import java.util.logging.Level;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -53,14 +54,14 @@ import static org.geotoolkit.util.DomUtilities.*;
  * Utility class to read geotiff metadata tags.
  * http://www.remotesensing.org/geotiff/faq.html
  *
- * @author Johann Sorel (Geomatys)
- * @module pending
+ * @author Johann Sorel  (Geomatys)
+ * @author Remi Marechal (Geomatys)
  */
 public final class GeoTiffMetaDataReader {
 
     private static final Logger LOGGER = Logging.getLogger(GeoTiffMetaDataReader.class);
 
-    public static class ValueMap extends HashMap<Integer, Object>{
+    public static class ValueMap extends HashMap<Integer, Object> {
 
         /**
 	 * @param key
@@ -68,40 +69,35 @@ public final class GeoTiffMetaDataReader {
 	 *         found or failed to parse.
 	 */
 	public String getAsString(final int key) {
+            
             final Object value = get(key);
 
-            if(value instanceof String){
-                return (String) value;
-            }else if(value instanceof Number){
-                return ((Number)value).toString();
-            }else{
-                return null;
-            }
+            if (value instanceof String) return (String) value;
+            
+            if (value instanceof Number) return ((Number)value).toString();
+            
+            return null;
         }
 
-        public double getAsDouble(final int key){
+        public double getAsDouble(final int key) {
             final Object value = get(key);
 
-            if(value instanceof Number){
-                return ((Number)value).doubleValue();
-            }else if(value != null){
-                try {
-                    final String geoKey = value.toString();
-                    return Double.parseDouble(geoKey);
-                } catch (NumberFormatException ne) {
-                    if (LOGGER.isLoggable(Level.WARNING)) {
-                        LOGGER.log(Level.WARNING, ne.getLocalizedMessage(), ne);
-                    }
-                    return Double.NaN;
-                } catch (Exception e) {
-                    LOGGER.log(Level.WARNING, e.getLocalizedMessage(), e);
-                    return Double.NaN;
+            if (value == null)           return Double.NaN;
+            if (value instanceof Number) return ((Number)value).doubleValue();
+            
+            try {
+                final String geoKey = value.toString();
+                return Double.parseDouble(geoKey);
+            } catch (NumberFormatException ne) {
+                if (LOGGER.isLoggable(Level.WARNING)) {
+                    LOGGER.log(Level.WARNING, ne.getLocalizedMessage(), ne);
                 }
-            }else{
+                return Double.NaN;
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, e.getLocalizedMessage(), e);
                 return Double.NaN;
             }
         }
-
     }
 
     private final IIOMetadata imageMetadata;
@@ -112,10 +108,10 @@ public final class GeoTiffMetaDataReader {
     public GeoTiffMetaDataReader(final IIOMetadata imageMetadata) throws IOException{
         this.imageMetadata = imageMetadata;
         root = imageMetadata.getAsTree(imageMetadata.getNativeMetadataFormatName());
-        if(root == null) throw new IOException("No image metadatas");
+        if (root == null) throw new IOException("No image metadatas");
 
         imgFileDir = getNodeByLocalName(root,TAG_GEOTIFF_IFD);
-        if(imgFileDir == null) throw new IOException("No GeoTiff metadatatas");
+        if (imgFileDir == null) throw new IOException("No GeoTiff metadatatas");
 
         geoKeyDir = getNodeByNumber(imgFileDir,TAG_GEO_KEY_DIRECTORY);
     }
@@ -123,51 +119,51 @@ public final class GeoTiffMetaDataReader {
     /**
      * Read the Spatial Metadatas.
      *
-     * @param imageMetadata
      * @return SpatialMetadata
      * @throws NoSuchAuthorityCodeException
      * @throws FactoryException
+     * @throws java.io.IOException
      */
-    public SpatialMetadata readSpatialMetaData() throws NoSuchAuthorityCodeException, FactoryException,IOException{
-        if(geoKeyDir==null){
-            throw new IOException("No GeoTiff metadatatas informations");
-        }
-
-        final int[] structure = readTiffShorts(getNodeByLocalName(geoKeyDir, TAG_GEOTIFF_SHORTS));
-
-        //first line (4 int) contain the version and number of keys
-        //Header={KeyDirectoryVersion, KeyRevision, MinorRevision, NumberOfKeys}
-        final int directoryVersion  = structure[0];
-        final int keyVersion        = structure[1];
-        final int minorVersion      = structure[2];
-        final int nbKeys            = structure[3];
-
-        //read all entries
-        final ValueMap entries = new ValueMap();
-        for(int i=0,l=4; i<nbKeys; i++,l+=4){
-            final Object value;
-            final int valueKey      = structure[l+0];
-            final int valuelocation = structure[l+1];
-            final int valueNb       = structure[l+2];
-            final int valueOffset   = structure[l+3];
-            if (valuelocation == 0) {
-                //value is located in the offset field
-                value = valueOffset;
-            } else {
-                //value is in another tag
-                value = readValue(valuelocation, valueOffset, valueNb);
-            }
-            entries.put(valueKey, value);
-        }
-
-        //create the spatial metadatas.
-        final SpatialMetadata spatialMetadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
-        fillGridMetaDatas(spatialMetadata, entries);
-
-        final GeoTiffCRSReader crsReader = new GeoTiffCRSReader(null);
-        crsReader.fillCRSMetaDatas(spatialMetadata, entries);
+    public SpatialMetadata readSpatialMetaData() throws NoSuchAuthorityCodeException, FactoryException, IOException {
         
-        //looks for additional informations
+        final SpatialMetadata spatialMetadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME));
+
+        if (geoKeyDir != null) {
+            final int[] structure = readTiffShorts(getNodeByLocalName(geoKeyDir, TAG_GEOTIFF_SHORTS));
+
+            //first line (4 int) contain the version and number of keys
+            //Header={KeyDirectoryVersion, KeyRevision, MinorRevision, NumberOfKeys}
+            final int directoryVersion  = structure[0];
+            final int keyVersion        = structure[1];
+            final int minorVersion      = structure[2];
+            final int nbKeys            = structure[3];
+
+            //read all entries
+            final ValueMap entries = new ValueMap();
+            for(int i=0,l=4; i<nbKeys; i++,l+=4){
+                final Object value;
+                final int valueKey      = structure[l+0];
+                final int valuelocation = structure[l+1];
+                final int valueNb       = structure[l+2];
+                final int valueOffset   = structure[l+3];
+                if (valuelocation == 0) {
+                    //value is located in the offset field
+                    value = valueOffset;
+                } else {
+                    //value is in another tag
+                    value = readValue(valuelocation, valueOffset, valueNb);
+                }
+                entries.put(valueKey, value);
+            }
+
+            //create the spatial metadatas.
+            fillGridMetaDatas(spatialMetadata, entries);
+
+            final GeoTiffCRSReader crsReader = new GeoTiffCRSReader(null);
+            crsReader.fillCRSMetaDatas(spatialMetadata, entries);
+        }
+        
+        //-- looks for additional informations
         final ThirdPartyMetaDataReader thirdReader = new ThirdPartyMetaDataReader(imageMetadata);
         thirdReader.fillSpatialMetaData(spatialMetadata);
         
@@ -198,16 +194,15 @@ public final class GeoTiffMetaDataReader {
         PixelOrientation orientation;
         if (value != null) {
             int type = (Integer)value;
-            if(type < 1 || type > 2){
-                throw new IOException("Unexpected raster type : "+ type);
-            }else{
-                orientation = (type==RasterPixelIsArea)?PixelOrientation.UPPER_LEFT:PixelOrientation.CENTER;
-            }
-        }else{
+            
+            if(type < 1 || type > 2) throw new IOException("Unexpected raster type : "+ type);
+            
+            orientation = (type == RasterPixelIsArea) ? PixelOrientation.UPPER_LEFT : PixelOrientation.CENTER;
+        } else {
             orientation = PixelOrientation.UPPER_LEFT;
         }
         final CellGeometry cellGeometry = (orientation == PixelOrientation.UPPER_LEFT)
-                                          ? CellGeometry.AREA:CellGeometry.POINT;
+                                          ? CellGeometry.AREA : CellGeometry.POINT;
 
         //read the image bounds
         final Rectangle bounds = readBounds();
@@ -251,7 +246,6 @@ public final class GeoTiffMetaDataReader {
                 gridToCRS = AffineTransforms2D.castOrCopy(translate.getMatrix());
                 orientation = PixelOrientation.UPPER_LEFT;
             }
-
             accesor.setAll(gridToCRS, bounds, cellGeometry, orientation);
             return;
         }
@@ -261,47 +255,75 @@ public final class GeoTiffMetaDataReader {
     }
 
     /**
-     * Read the image size from the tags : ImageWidth and ImageLenght.
+     * Returns the image size from the tags : {@link GeoTiffConstants#ImageWidth} and {@link GeoTiffConstants#ImageLength}.<br>
+     * May return {@code null}.
+     * 
+     * @return a {@link Rectangle} if expected geotiff tags are filled, else return {@code null}.
      */
-    private Rectangle readBounds() throws IOException {
-        final Rectangle rect = new Rectangle();
-
-        final Node width = getNodeByNumber(imgFileDir, ImageWidth);
-        //value can be stored in a short field
-        Node widthNode = getNodeByLocalName(width, TAG_GEOTIFF_SHORTS);
-        if(widthNode != null) rect.width = readTiffShorts(widthNode)[0];
-        //can be in a long field
-        if(widthNode == null) widthNode = getNodeByLocalName(width, TAG_GEOTIFF_LONGS);
-        if(widthNode != null) rect.width = (int) readTiffLongs(widthNode)[0];
-        if(widthNode == null) throw new IOException("Could not find tiff image width value");
-
+    private Rectangle readBounds() {
+        
+        //--  get metadata node about image boundary
+        final Node width  = getNodeByNumber(imgFileDir, ImageWidth);
         final Node height = getNodeByNumber(imgFileDir, ImageLength);
-        //value can be stored in a short field
+        if (width == null || height == null) return null;
+        
+        //-- study width
+        int rectWidth = -1;
+        
+        //-- value can be stored in a short field
+        Node widthNode = getNodeByLocalName(width, TAG_GEOTIFF_SHORTS);
+        if(widthNode != null) rectWidth = readTiffShorts(widthNode)[0];
+        
+        //-- can be in a long field
+        if (rectWidth == -1) {
+            if(widthNode == null) widthNode = getNodeByLocalName(width, TAG_GEOTIFF_LONGS);
+            if(widthNode != null) rectWidth = (int) readTiffLongs(widthNode)[0];
+        }
+        
+        if (rectWidth == -1) {
+            LOGGER.info("Unable to find geographic image boundary. Image width.");
+            return null;
+        }
+        
+        //-- study height
+        int rectHeight = -1;
+        //-- value can be stored in a short field
         Node heightNode = getNodeByLocalName(height, TAG_GEOTIFF_SHORTS);
-        if(heightNode != null) rect.height = readTiffShorts(heightNode)[0];
-        //can be in a long field
-        if(heightNode == null) heightNode = getNodeByLocalName(height, TAG_GEOTIFF_LONGS);
-        if(heightNode != null) rect.height = (int) readTiffLongs(heightNode)[0];
-        if(heightNode == null) throw new IOException("Could not find tiff image height value");
-
-        return rect;
+        if(heightNode != null) rectHeight = readTiffShorts(heightNode)[0];
+        
+        //-- can be in a long field
+        if (rectHeight == -1) {
+            if(heightNode == null) heightNode = getNodeByLocalName(height, TAG_GEOTIFF_LONGS);
+            if(heightNode != null) rectHeight = (int) readTiffLongs(heightNode)[0];
+        }
+            
+        if (rectHeight == -1) {
+            LOGGER.info("Unable to find geographic image boundary. Image height.");
+            return null;
+        }
+        
+        assert rectWidth  >= 0 : "SpatialMetadata : Geographic image boudary.width should be positive.";
+        assert rectHeight >= 0 : "SpatialMetadata : Geographic image boudary.height should be positive.";
+        
+        return new Rectangle(rectWidth, rectHeight);
     }
 
     /**
-     * Read the transformation from the TAG_MODEL_TRANSFORMATION if it exist.
+     * Returns the transformation from the {@link GeoTIFFTagSet#TAG_MODEL_TRANSFORMATION} if it exist.<br>
+     * May return {@code null}.
+     * 
+     * @return an {@link AffineTransform} if expected geotiff tags are filled, else return {@code null}.
+     * @throws IOException if defined transformation is unknow. 
      */
     private AffineTransform readTransformation() throws IOException {
 
         final Node node = getNodeByNumber(imgFileDir, TAG_MODEL_TRANSFORMATION);
-        if (node == null) {
-            return null;
-        }
-
+        if (node == null) return null;
+        
         final Node valueNode = getNodeByLocalName(node, TAG_GEOTIFF_DOUBLES);
-        if(valueNode == null){
-            return null;
-        }
-
+        if(valueNode == null) return null;
+        
+        //-- TODO find a multidimensional way
         final double[] matrix = readTiffDoubles(valueNode);
         if (matrix.length == 9) {
             //2D matrix
@@ -311,10 +333,9 @@ public final class GeoTiffMetaDataReader {
             //3D matrix, only keep the 2d part
             return new AffineTransform(matrix[0],matrix[4],matrix[1],
                                        matrix[5],matrix[3],matrix[7]);
-        } else{
+        } else {
             throw new IOException("Unvalid transformation definition. expected 9 or 16 parameters but was "+matrix.length);
         }
-
     }
 
     /**
@@ -323,15 +344,11 @@ public final class GeoTiffMetaDataReader {
     private double[] readTiePoint() {
 
         final Node node = getNodeByNumber(imgFileDir, TAG_MODEL_TIE_POINT);
-        if (node == null) {
-            return null;
-        }
-
+        if (node == null) return null;
+        
         final Node valueNode = getNodeByLocalName(node, TAG_GEOTIFF_DOUBLES);
-        if(valueNode == null){
-            return null;
-        }
-
+        if (valueNode == null) return null;
+        
         return readTiffDoubles(valueNode);
     }
 
@@ -341,15 +358,11 @@ public final class GeoTiffMetaDataReader {
     private double[] readPixelScale() {
 
         final Node node = getNodeByNumber(imgFileDir, TAG_MODEL_PIXEL_SCALE);
-        if (node == null) {
-            return null;
-        }
-
+        if (node == null) return null;
+        
         final Node valueNode = getNodeByLocalName(node, TAG_GEOTIFF_DOUBLES);
-        if(valueNode == null){
-            return null;
-        }
-
+        if(valueNode == null) return null;
+        
         return readTiffDoubles(valueNode);
     }
 
@@ -457,5 +470,4 @@ public final class GeoTiffMetaDataReader {
     public String toString() {
         return Classes.getShortName(this.getClass()) +"\n"+Trees.toString(Trees.xmlToSwing(root));
     }
-
 }
