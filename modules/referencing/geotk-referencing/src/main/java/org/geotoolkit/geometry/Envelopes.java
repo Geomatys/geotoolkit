@@ -43,6 +43,7 @@ import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.apache.sis.internal.referencing.DirectPositionView;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -668,5 +669,21 @@ public final class Envelopes extends Static {
      */
     private static void recoverableException(final TransformException exception) {
         Logging.recoverableException(Envelopes.class, "transform", exception);
+    }
+    
+    /**
+     * Returns {@code true} if {@link Envelope} contain at least one 
+     * {@link Double#NaN} value, else {@code false}.
+     * 
+     * @param envelope the envelope which will be verify.
+     * @return {@code true} if {@link Envelope} contain at least one {@link Double#NaN} value, else {@code false}.
+     */
+    public static boolean containNAN(final Envelope envelope) {
+        ArgumentChecks.ensureNonNull("Envelopes.containNAN()", envelope);
+        for (int d = 0, dim = envelope.getDimension(); d < dim; d++) {
+            if (Double.isNaN(envelope.getMinimum(d))
+             || Double.isNaN(envelope.getMaximum(d))) return true;
+        }
+        return false;
     }
 }
