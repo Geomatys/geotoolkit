@@ -44,6 +44,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.image.io.SpatialImageReader;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
@@ -220,16 +221,21 @@ public class WorldFileImageReader extends ImageReaderAdapter {
              * If we have found information in TFW or PRJ files, complete metadata.
              */
             if (gridToCRS != null || crs != null) {
-// TODO:        unconditionally overwrite the metadata for now, otherwise we are at risk of adding offset vectors twice.
-//              if (metadata == null) {
+                
+                //-- if exist some metadata from sub reader complete them, else create new spatial metadata
+                if (main instanceof SpatialImageReader) {
+                    metadata = ((SpatialImageReader) main).getImageMetadata(imageIndex);
+                } else {
                     metadata = new SpatialMetadata(false, this, null);
-//              }
+                }
+                
                 if (gridToCRS != null) {
                     final int width  = getWidth (imageIndex);
                     final int height = getHeight(imageIndex);
                     new GridDomainAccessor(metadata).setAll(gridToCRS, new Rectangle(width, height),
                             null, PixelOrientation.UPPER_LEFT);
                 }
+                
                 if (crs != null) {
                     new ReferencingBuilder(metadata).setCoordinateReferenceSystem(crs);
                 }
