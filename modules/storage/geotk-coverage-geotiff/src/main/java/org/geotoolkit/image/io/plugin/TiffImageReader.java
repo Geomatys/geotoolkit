@@ -63,7 +63,6 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.stream.ImageInputStream;
-import org.apache.sis.internal.referencing.ReferencingUtilities;
 
 import org.apache.sis.internal.storage.ChannelImageInputStream;
 import org.apache.sis.util.ArgumentChecks;
@@ -72,7 +71,6 @@ import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.image.io.InputStreamAdapter;
-import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -269,10 +267,15 @@ public class TiffImageReader extends SpatialImageReader {
     private int compression;
 
     /**
-     * Map table which contain all tiff properties from all images.
+     * Map array which contain all tiff properties from all images.
      */
     private Map<Integer, Map>[] metaHeads;
 
+    /**
+     * Map array which contain all tiff {@link IIOMetadata} from all images.
+     */     
+    private SpatialMetadata[] metaDatas;
+    
     /**
      * Map which contain all tiff properties of the current selected image.
      */
@@ -321,6 +324,7 @@ public class TiffImageReader extends SpatialImageReader {
         buffer       = ByteBuffer.allocate(8196);
         positionIFD  = new long[4];
         metaHeads    = new Map[4];
+        metaDatas    = new SpatialMetadata[4];
         roots        = new IIOMetadataNode[4];
         currentImage = -1;
     }
@@ -359,11 +363,10 @@ public class TiffImageReader extends SpatialImageReader {
 
     /**
      * {@inheritDoc }.
-     * May return {@code null} if there are no metadatas.
      */
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
-        if(imageIndex < 0){
+        if (imageIndex < 0) {
             //stream metadata
             return super.createMetadata(imageIndex);
         }
@@ -383,8 +386,6 @@ public class TiffImageReader extends SpatialImageReader {
             }
         }
 
-        if (!isGeotiff) return null;
-
         fillRootMetadataNode(layerIndex);
         final IIOMetadata metadata = new IIOTiffMetadata(roots[layerIndex]);
         final GeoTiffMetaDataReader metareader = new GeoTiffMetaDataReader(metadata);
@@ -397,24 +398,42 @@ public class TiffImageReader extends SpatialImageReader {
             throw new IOException(ex);
         }
 
-        //find geotiff extensions
-        if(extensions==null){
+        //-- find geotiff extensions
+        if (extensions == null) {
             extensions = new ArrayList<>();
-            for(GeoTiffExtension ext : GeoTiffExtension.getExtensions()){
-                if(ext.isPresent(input)){
+            for (GeoTiffExtension ext : GeoTiffExtension.getExtensions()) {
+                if (ext.isPresent(input)) {
                     extensions.add(ext.newInstance());
                 }
             }
         }
 
-        //fill extensions informations
-        for(GeoTiffExtension ext : extensions){
+        //-- fill extensions informations
+        for (GeoTiffExtension ext : extensions) {
             spatialMetadata = ext.fillSpatialMetaData(this, spatialMetadata);
         }
 
         return spatialMetadata;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public SpatialMetadata getImageMetadata(int imageIndex) throws IOException {
+        if (imageIndex < 0) {
+            //stream metadata
+            return super.createMetadata(imageIndex);
+        }
+
+        checkLayers();
+        final int layerIndex = getLayerIndex(imageIndex);
+        if (metaDatas[layerIndex] == null) {
+            metaDatas[layerIndex] = createMetadata(imageIndex);
+        }
+        return metaDatas[layerIndex];
+    }
+    
     /**
      * Returns the number of images available from the current input file. This method
      * will scan the file the first time it is invoked with a {@code true} argument value.
@@ -1625,6 +1644,7 @@ public class TiffImageReader extends SpatialImageReader {
                 final int countIFD2 = countIFD << 1;
                 positionIFD = Arrays.copyOf(positionIFD, Math.max(4, countIFD2));//-- head table
                 metaHeads   = Arrays.copyOf(metaHeads,   Math.max(4, countIFD2));
+                metaDatas   = Arrays.copyOf(metaDatas,   Math.max(4, countIFD2));
                 roots       = Arrays.copyOf(roots,       Math.max(4, countIFD2));
             }
             positionIFD[countIFD++] = position;
