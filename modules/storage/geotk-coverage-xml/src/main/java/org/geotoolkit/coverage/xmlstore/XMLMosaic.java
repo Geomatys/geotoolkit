@@ -48,6 +48,7 @@ import javax.xml.bind.annotation.XmlElement;
 import net.iharder.Base64;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
@@ -59,6 +60,7 @@ import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -290,7 +292,7 @@ public class XMLMosaic implements GridMosaic {
     @Override
     public Envelope getEnvelope(final int col, final int row) {
         final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
-        final int xAxis = Math.max(CoverageUtilities.getMinOrdinate(ul.getCoordinateReferenceSystem()), 0);
+        final int xAxis = CRSUtilities.firstHorizontalAxis(ul.getCoordinateReferenceSystem());
         final int yAxis = xAxis + 1;
         final double minX = ul.getOrdinate(xAxis);
         final double maxY = ul.getOrdinate(yAxis);
@@ -307,7 +309,8 @@ public class XMLMosaic implements GridMosaic {
     @Override
     public Envelope getEnvelope() {
         final GeneralDirectPosition ul = new GeneralDirectPosition(getUpperLeftCorner());
-        final int xAxis = Math.max(CoverageUtilities.getMinOrdinate(ul.getCoordinateReferenceSystem()), 0);
+        final int xAxis = CRSUtilities.firstHorizontalAxis(ul.getCoordinateReferenceSystem());
+        assert xAxis >= 0;
         final int yAxis = xAxis + 1;
         final double minX = ul.getOrdinate(xAxis);
         final double maxY = ul.getOrdinate(yAxis);
