@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.GridCoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -34,6 +35,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.referencing.CRS;
+import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -82,6 +84,8 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
     /**
      * Get a coverage reference.
      *
+     * TODO return a GridCoverage instead of GridCoverage2D ?
+     *
      * @param param : expected coverage parameters
      * @return GridCoverage2D or null if the requested parameters are out of the coverage area.
      *
@@ -97,7 +101,11 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
                     final CoverageReference ref = layer.getCoverageReference();
                     final GridCoverageReader reader = ref.acquireReader();
                     try {
-                        value = (GridCoverage2D) reader.read(layer.getCoverageReference().getImageIndex(),param);
+                        final GridCoverage result = reader.read(layer.getCoverageReference().getImageIndex(), param);
+                        if (result instanceof GridCoverageStack) {
+                            throw new CoverageStoreException("Coverage reader return more than one slice.");
+                        }
+                        value = (GridCoverage2D) result;
                         ref.recycle(reader);
                     } catch(DisjointCoverageDomainException ex){
                         ref.recycle(reader);
