@@ -1460,7 +1460,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         final short rowperstrip = 1;
         addProperty(RowsPerStrip, TYPE_USHORT, 1, new short[]{rowperstrip}, properties);
 
-        final short arrayType = (isBigTIFF) ? TYPE_LONG : TYPE_INT;
+        final short arrayType = (isBigTIFF) ? TYPE_ULONG : TYPE_UINT;
         addProperty(StripByteCounts, arrayType, height, null, properties);
         addProperty(StripOffsets, arrayType, height, null, properties);
     }
@@ -2679,7 +2679,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             }
 
             //-- add current offset array in current headProperties --//
-            addProperty(StripOffsets, (isBigTIFF) ? TYPE_LONG : TYPE_INT, Array.getLength(offsetArray), offsetArray, headProperties);
+            addProperty(StripOffsets, (isBigTIFF) ? TYPE_ULONG : TYPE_UINT, Array.getLength(offsetArray), offsetArray, headProperties);
 
             writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
 
@@ -2888,7 +2888,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         //-- after destination image writing, write stripOffset and stripByteCount tables --//
         writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
         //-- add current offset array in current headProperties --//
-        addProperty(StripOffsets, (isBigTIFF) ? TYPE_LONG : TYPE_INT, Array.getLength(offsetArray), offsetArray, headProperties);
+        addProperty(StripOffsets, (isBigTIFF) ? TYPE_ULONG : TYPE_UINT, Array.getLength(offsetArray), offsetArray, headProperties);
     }
 
     /**
