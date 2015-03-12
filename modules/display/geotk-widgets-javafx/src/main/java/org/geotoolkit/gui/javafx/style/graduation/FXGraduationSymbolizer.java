@@ -75,6 +75,8 @@ public class FXGraduationSymbolizer extends FXStyleElementController<GraduationS
         super.initialize();
         
         uiGraduation = new FXGraduation();
+        uiGraduation.visibleProperty().bind(uiTable.getSelectionModel().selectedItemProperty().isNotNull());
+        uiGraduation.managedProperty().bind(uiGraduation.visibleProperty());
         
         final ScrollPane scrollPane = new ScrollPane(uiGraduation);
         scrollPane.setFitToHeight(true);
@@ -109,7 +111,6 @@ public class FXGraduationSymbolizer extends FXStyleElementController<GraduationS
                 }
             }
         });
-        
         
         final TableColumn<Graduation,String> nameCol = new TableColumn<>();
         nameCol.setEditable(false);
