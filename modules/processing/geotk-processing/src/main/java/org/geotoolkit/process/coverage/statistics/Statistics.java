@@ -299,7 +299,7 @@ public class Statistics extends AbstractProcess{
                         tile = mosaicImage.getTile(x, y);
                         pix = PixelIteratorFactory.createDefaultIterator(tile);
 
-                        analyseRange(pix, stats);
+                        analyseRange(pix, stats, bands, excludeNoData);
                         pix.rewind();
 
                         mergeHistograms(histo, analyseHistogram(pix, bands, stats, excludeNoData));
@@ -316,7 +316,7 @@ public class Statistics extends AbstractProcess{
             final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
 
             //get min/max
-            analyseRange(pix, stats);
+            analyseRange(pix, stats, bands, excludeNoData);
             fireProgressing("Start histogram computing", 55f, true);
 
             //reset iterator
@@ -385,18 +385,33 @@ public class Statistics extends AbstractProcess{
         return resultHisto;
     }
 
-    private void analyseRange(final PixelIterator pix, final org.apache.sis.math.Statistics[] bands) {
+    private void analyseRange(final PixelIterator pix, final org.apache.sis.math.Statistics[] stats,
+                              final ImageStatistics.Band[] bands, final boolean excludeNoData) {
         //first pass to compute min/max values
+        double [][] noDatas = null;
+        if (excludeNoData) {
+            noDatas = new double[bands.length][];
+            for (int i = 0; i < bands.length; i++) {
+                noDatas[i] = bands[i].getNoData();
+            }
+        }
+
         int b = 0;
         while (pix.next()) {
             final double d = pix.getSampleDouble();
             if (Double.isNaN(d) || Double.isInfinite(d)) {
                 continue;
             }
-            bands[b].accept(d);
+
+            //remove noData from stats
+            if (noDatas != null && noDatas[b] != null && Arrays.binarySearch(noDatas[b], d) >= 0) {
+                continue;
+            }
+
+            stats[b].accept(d);
 
             //reset b to loop on first band
-            if (++b == bands.length) b = 0;
+            if (++b == stats.length) b = 0;
         }
     }
 
