@@ -119,6 +119,7 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
             final ProcessDescriptor processDesc = ProcessFinder.getProcessDescriptor("coverage", "statistic");
             final ParameterValueGroup processParam = processDesc.getInputDescriptor().createValue();
             ParametersExt.getOrCreateValue(processParam, "inCoverage").setValue(coverage);
+            ParametersExt.getOrCreateValue(processParam, "inExcludeNoData").setValue(true);
             final Process process = processDesc.createProcess(processParam);
             final ParameterValueGroup result = process.call();
             final ImageStatistics stats = (ImageStatistics) ParametersExt.getOrCreateValue(result, "outStatistic").getValue();
