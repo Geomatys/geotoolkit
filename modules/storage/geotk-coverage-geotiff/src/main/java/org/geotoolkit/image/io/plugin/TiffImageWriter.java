@@ -806,7 +806,7 @@ public class TiffImageWriter extends SpatialImageWriter {
             assert endOfFile == tileOffsetBeg + numTiles * currentByteCount;
             writeByteCountAndOffsets(byteCountTagPosition, arrayType, byteCountArray, offsetTagPosition, arrayType, offsetArray);
             //-- add current offset array in current headProperties --//
-            addProperty(TileOffsets, (isBigTIFF) ? TYPE_LONG : TYPE_INT, Array.getLength(offsetArray), offsetArray, headProperties);
+            addProperty(TileOffsets, (isBigTIFF) ? TYPE_ULONG : TYPE_UINT, Array.getLength(offsetArray), offsetArray, headProperties);
             assert tileOffsetBeg == channel.getStreamPosition() : "expected : "+tileOffsetBeg+". found : "+channel.getStreamPosition();
             if (metaIndex == metaHeads.length) {
                 metaHeads = Arrays.copyOf(metaHeads, metaHeads.length << 1);
@@ -2638,17 +2638,17 @@ public class TiffImageWriter extends SpatialImageWriter {
         final int byteCountArraySize;
         final Object offsetArray;
         final int offsetArraySize;
-        final short arrayType = (isBigTIFF) ? TYPE_LONG : TYPE_INT;
+        final short arrayType = (isBigTIFF) ? TYPE_ULONG : TYPE_UINT;
 
         final int tableLength = (planarConf == 2) ? destRegion.height * numband : destRegion.height;
         if (isBigTIFF) {
             byteCountArray = new long[tableLength];
             offsetArray    = new long[tableLength];
-            byteCountArraySize = offsetArraySize = tableLength * TYPE_SIZE[TYPE_LONG];
+            byteCountArraySize = offsetArraySize = tableLength * TYPE_SIZE[TYPE_ULONG];
         } else {
             byteCountArray = new int[tableLength];
             offsetArray    = new int[tableLength];
-            byteCountArraySize = offsetArraySize = tableLength * TYPE_SIZE[TYPE_INT];
+            byteCountArraySize = offsetArraySize = tableLength * TYPE_SIZE[TYPE_UINT];
         }
 
         final long buffPos = channel.getStreamPosition();
