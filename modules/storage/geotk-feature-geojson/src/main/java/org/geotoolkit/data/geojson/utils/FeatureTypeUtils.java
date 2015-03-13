@@ -35,6 +35,7 @@ import org.geotoolkit.lang.Static;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Level;
@@ -115,6 +116,62 @@ public final class FeatureTypeUtils extends Static {
         writer.writeEndObject();
         writer.flush();
         writer.close();
+    }
+    
+    public static void writeFeatureTypes(List<FeatureType> fts, OutputStream output) throws IOException, DataStoreException {
+        ArgumentChecks.ensureNonNull("FeatureType", fts);
+        ArgumentChecks.ensureNonNull("outputStream", output);
+        
+        if (fts.isEmpty()) return;
+        
+        if (fts.size() > 1) {
+            JsonGenerator writer = GeoJSONParser.FACTORY.createGenerator(output, JsonEncoding.UTF8).useDefaultPrettyPrinter();
+            writer.writeStartArray();
+            for (FeatureType ft : fts) {
+                writeFeatureType(ft, output, writer);
+            }
+            writer.writeEndArray();
+            writer.flush();
+            writer.close();
+        } else {
+            writeFeatureType(fts.get(0), output);
+        }
+    }
+    /**
+     * Write a FeatureType in output File.
+     * @param ft
+     * @param output
+     * @throws IOException
+     */
+    public static void writeFeatureType(FeatureType ft, OutputStream output) throws IOException, DataStoreException {
+        JsonGenerator writer = GeoJSONParser.FACTORY.createGenerator(output,JsonEncoding.UTF8).useDefaultPrettyPrinter();
+        writeFeatureType(ft, output, writer);
+        writer.flush();
+        writer.close();
+    }
+        
+        
+    private static void writeFeatureType(FeatureType ft, OutputStream output, JsonGenerator writer) throws IOException, DataStoreException {
+        ArgumentChecks.ensureNonNull("FeatureType", ft);
+        ArgumentChecks.ensureNonNull("outputStream", output);
+
+        if (ft.getGeometryDescriptor() == null) {
+            throw new DataStoreException("No default Geometry in given FeatureType : "+ft);
+        }
+
+        //start write feature collection.
+        writer.writeStartObject();
+        writer.writeStringField(TITLE, ft.getName().getLocalPart());
+        writer.writeStringField(TYPE, OBJECT);
+        writer.writeStringField(JAVA_TYPE, "FeatureType");
+        if (ft.getDescription() != null) {
+            writer.writeStringField(DESCRIPTION, ft.getDescription().toString());
+        }
+
+        writeGeometryType(ft.getGeometryDescriptor(), writer);
+        writeProperties(ft, writer);
+
+        writer.writeEndObject();
     }
 
     private static void writeProperties(ComplexType ft, JsonGenerator writer) throws IOException {
