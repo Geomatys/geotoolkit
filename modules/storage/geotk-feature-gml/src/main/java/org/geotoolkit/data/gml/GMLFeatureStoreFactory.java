@@ -85,10 +85,15 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
                     new ResourceInternationalString("org/geotoolkit/gml/bundle","paramXSDTypeNameAlias"),
                     new ResourceInternationalString("org/geotoolkit/gml/bundle","paramXSDTypeNameRemarks"),
                     String.class,null,null,null,null,null,false);
-
+    
+    public static final ParameterDescriptor<Boolean> LONGITUDE_FIRST = createDescriptor("longitudeFirst",
+                    new ResourceInternationalString("org/geotoolkit/gml/bundle","longitudeFirstAlias"),
+                    new ResourceInternationalString("org/geotoolkit/gml/bundle","longitudeFirstRemarks"),
+                    Boolean.class,null,true,null,null,null,false);
+    
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("GMLParameters",
-                IDENTIFIER,URLP,SPARSE,XSD,XSD_TYPE_NAME,NAMESPACE);
+                IDENTIFIER,URLP,SPARSE,XSD,XSD_TYPE_NAME,LONGITUDE_FIRST,NAMESPACE);
 
     @Override
     public Identification getIdentification() {

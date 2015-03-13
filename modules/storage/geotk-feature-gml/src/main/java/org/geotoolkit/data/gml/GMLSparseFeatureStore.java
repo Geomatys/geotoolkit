@@ -69,6 +69,10 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     private final Map<String,String> schemaLocations = new HashMap<>();
     private String gmlVersion = "3.2.1";
 
+    //all types
+    private final Map<Name, Object> cache = new HashMap<>();
+    private Boolean longitudeFirst;
+
     public GMLSparseFeatureStore(final File f) throws MalformedURLException, DataStoreException{
         this(f,null,null);
     }
@@ -93,7 +97,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
         if (dot < 0) {
             dot = path.length();
         }
-
+        this.longitudeFirst = (Boolean) params.parameter(GMLFeatureStoreFactory.LONGITUDE_FIRST.getName().toString()).getValue();
     }
 
     private static ParameterValueGroup toParameters(final File f,String xsd, String typeName) throws MalformedURLException{
@@ -136,6 +140,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
             }else{
                 //read type in the first gml file
                 final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
+                reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
                 reader.setReadEmbeddedFeatureType(true);
                 try {
                     FeatureReader ite = reader.readAsStream(file.listFiles(new GMLFolderFeatureStoreFactory.ExtentionFileNameFilter(".gml"))[0]);
@@ -242,6 +247,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
         public ReadIterator(FeatureType type, File folder) {
             this.type = type;
             this.xmlReader = new JAXPStreamFeatureReader(type);
+            this.xmlReader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
             this.files = folder.listFiles(new GMLFolderFeatureStoreFactory.ExtentionFileNameFilter(".gml"));
         }
 

@@ -80,7 +80,6 @@ import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.OperationDescriptor;
 import org.geotoolkit.feature.type.OperationType;
-import org.w3c.dom.Node;
 
 
 /**
@@ -98,6 +97,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
     private static final FeatureFactory FF = FeatureFactory.LENIENT;
     private Unmarshaller unmarshaller;
+    public static final String LONGITUDE_FIRST = "longitudeFirst";
 
     /**
      * GML namespace for this class.
@@ -541,6 +541,13 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 event = reader.next();
             }
             try {
+                final boolean longitudeFirst;
+                if (getProperty(LONGITUDE_FIRST) != null) {
+                    longitudeFirst = (boolean) getProperty(LONGITUDE_FIRST);
+                } else {
+                    longitudeFirst = true;
+                }
+            
                 final Geometry jtsGeom;
                 final Object geometry = ((JAXBElement) unmarshaller.unmarshal(reader)).getValue();
                 if (geometry instanceof JTSGeometry) {
@@ -563,7 +570,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     }
                 } else if (geometry instanceof AbstractGeometry) {
                     try {
-                        jtsGeom = GeometrytoJTS.toJTS((AbstractGeometry) geometry);
+                        jtsGeom = GeometrytoJTS.toJTS((AbstractGeometry) geometry, longitudeFirst);
                     } catch (FactoryException ex) {
                         throw new XMLStreamException("Factory Exception while transforming GML object to JTS", ex);
                     }

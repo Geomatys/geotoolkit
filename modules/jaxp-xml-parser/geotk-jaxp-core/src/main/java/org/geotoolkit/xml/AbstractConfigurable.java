@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class AbstractConfigurable {
     
-    protected final Map<String, Object> properties = new HashMap<String, Object>();
+    protected final Map<String, Object> properties = new HashMap<>();
 
     public Object getProperty(final String key) {
         return properties.get(key);

@@ -66,6 +66,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     private final File file;
     private String name;
     private FeatureType featureType;
+    private Boolean longitudeFirst;
 
     //all types
     private final Map<Name, Object> cache = new HashMap<>();
@@ -91,6 +92,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
             dot = path.length();
         }
         this.name = path.substring(slash, dot);
+        this.longitudeFirst = (Boolean) params.parameter(GMLFeatureStoreFactory.LONGITUDE_FIRST.getName().toString()).getValue();
     }
 
     private static ParameterValueGroup toParameters(final File f) throws MalformedURLException{
@@ -108,6 +110,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     public synchronized Set<Name> getNames() throws DataStoreException {
         if(featureType==null){
             final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
+            reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
             reader.setReadEmbeddedFeatureType(true);
             try {
                 FeatureReader ite = reader.readAsStream(file);
@@ -151,6 +154,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
         typeCheck(query.getTypeName());
 
         final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(featureType);
+        reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
         final CloseableIterator ite;
         try {
             ite = reader.readAsStream(file);
