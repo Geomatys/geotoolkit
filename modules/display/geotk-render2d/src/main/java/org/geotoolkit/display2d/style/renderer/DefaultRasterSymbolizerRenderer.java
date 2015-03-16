@@ -121,6 +121,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.coverage.statistics.StatisticOp;
 import org.geotoolkit.process.coverage.statistics.Statistics;
+import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 
@@ -151,17 +152,23 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             ////////////////////////////////////////////////////////////////////
             // 1 - Get data and elevation coverage                            //
             ////////////////////////////////////////////////////////////////////
-              double[] resolution = renderingContext.getResolution();
+            
+            //-- resolution of horizontal Part of CRS
+            double[] resolution = renderingContext.getResolution();
+            assert resolution.length == 2 : "DefaultRasterSymboliser : resolution from renderingContext should only exprimate in 2D.";
+            
             Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
-            resolution = checkResolution(resolution,bounds);
+            
+            resolution = checkResolution(resolution, bounds);
+            
             final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
-            final CoverageReference ref = coverageLayer.getCoverageReference();
-            final Envelope layerBounds = coverageLayer.getBounds();
+            final CoverageReference ref          = coverageLayer.getCoverageReference();
+            final Envelope layerBounds           = coverageLayer.getBounds();
             final CoordinateReferenceSystem coverageMapLayerCRS = layerBounds.getCoordinateReferenceSystem();
 
-            final Map<String,Double> queryValues = extractQuery(projectedCoverage.getLayer());
+            final Map<String, Double> queryValues = extractQuery(projectedCoverage.getLayer());
             if (queryValues != null && !queryValues.isEmpty()) {
-                bounds = fixEnvelopeWithQuery(queryValues, bounds, coverageMapLayerCRS);
+                bounds     = fixEnvelopeWithQuery(queryValues, bounds, coverageMapLayerCRS);
                 resolution = fixResolutionWithCRS(resolution, coverageMapLayerCRS);
             }
             
@@ -182,32 +189,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 return;
             }
             assert paramEnvelope.getCoordinateReferenceSystem() != null : "DefaultRasterSymbolizerRenderer : CRS from param envelope cannot be null.";
-            final double[] paramRes = new double[paramEnvelope.getDimension()];
-            Arrays.fill(paramRes, 1);
             
-            //-- todo : resolution in static method in referencingUtilities
-            //-- Define new resolution value adapted for paramEnvelope crs
-//            assert bounds.getDimension() == 2 : "DefaultRasterSymbolizerRenderer : displays bounds will be able to have dimension = 2.";
-//            final int displayWidth = (int) ((bounds.getSpan(0) + resolution[0] - 1) / resolution[0]);
-            final int minBOrdi = CRSUtilities.firstHorizontalAxis(paramEnvelope.getCoordinateReferenceSystem());
-            final CoordinateReferenceSystem bound2DCrs = CRSUtilities.getCRS2D(bounds.getCoordinateReferenceSystem());
-            final GeneralEnvelope bound2D = new GeneralEnvelope(bound2DCrs);
-            bound2D.setRange(0, bounds.getMinimum(minBOrdi), bounds.getMaximum(minBOrdi));
-            bound2D.setRange(1, bounds.getMinimum(minBOrdi + 1), bounds.getMaximum(minBOrdi + 1));
-            
-            final int displayWidth = (int) StrictMath.ceil(bound2D.getSpan(0) / resolution[0]);
-            final Envelope targetBounds = CRS.transform(bound2D, CRSUtilities.getCRS2D(paramEnvelope.getCoordinateReferenceSystem()));
-            final double newResolution = targetBounds.getSpan(0) / displayWidth;
-            assert newResolution > 0 : "DefaultRasterSymbolizerRenderer : new resolution must be positive.";
-            //----------------- end new resolution computing ---------------------
-            
-            final int minPOrdi = CRSUtilities.firstHorizontalAxis(paramEnvelope.getCoordinateReferenceSystem());
-            paramRes[minPOrdi] = paramRes[minPOrdi + 1] = newResolution; 
-            //-- Attention ici on affecte la meme valeur de resolution car pour 
-            // le moment on a une seule et unique valeur pour l'ensemble du plan horizontal. 
-            // A changer le jour ou nous ferons des resolutions multi-dimentionnelles. 
-            //--------------------------------------------------------------------
-            
+            //-- convert resolution adapted to coverage CRS (resolution from rendering context --> coverage resolution)
+            final double[] paramRes = ReferencingUtilities.convertResolution(bounds, resolution, paramEnvelope.getCoordinateReferenceSystem());
+
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setEnvelope(paramEnvelope);
             param.setResolution(paramRes);
@@ -310,46 +295,63 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 isReprojected = !coverageToObjective.isIdentity();
 
                 if (isReprojected) {
-                    //calculate best intersection area
-                    final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());
-//                    final int xAxis = Math.max(0, CoverageUtilities.getMinOrdinate(coverageCRS));
                     
-//                    tmp.intersect(CRS.transform(coverageToObjective, new GeneralEnvelope(
-//                            dataCoverage.getEnvelope()).subEnvelope(xAxis, xAxis + 2)));
+                    final int minBOrdi = CRSUtilities.firstHorizontalAxis(bounds.getCoordinateReferenceSystem());
+                    final CoordinateReferenceSystem bound2DCrs = CRSUtilities.getCRS2D(bounds.getCoordinateReferenceSystem());
+                    
+                    final GeneralEnvelope bound2D = new GeneralEnvelope(bound2DCrs);
+                    bound2D.setRange(0, bounds.getMinimum(minBOrdi), bounds.getMaximum(minBOrdi));
+                    bound2D.setRange(1, bounds.getMinimum(minBOrdi + 1), bounds.getMaximum(minBOrdi + 1));
+                    
+                    //-- before try to read coverage in relation with rendering view boundary
+                    assert !bound2D.isEmpty() : "2D rendering boundary should not be empty.";
                     final GeneralEnvelope coverageEnv2D = new GeneralEnvelope(dataCoverage.getEnvelope2D());
-                    final Envelope transformed = CRS.transform(coverageEnv2D, renderingContext.getObjectiveCRS2D());
-                    tmp.intersect(transformed);
+                    assert !coverageEnv2D.isEmpty() : "2D coverage boundary should not be empty.";
+                    
+                    //-- compute gridgeometry
+                    //-- get destination image size
+                    final AffineTransform2D trs   = renderingContext.getObjectiveToDisplay();
+                    final GeneralEnvelope dispEnv = CRS.transform(trs, bound2D);
+                    final int width               = (int) Math.ceil(dispEnv.getSpan(0));
+                    final int height              = (int) Math.ceil(dispEnv.getSpan(1));
 
-                    if (tmp.isEmpty()) {
+                    if (width <= 0 || height <= 0) {
                         dataCoverage = null;
-
                     } else {
-                        //calculate gridgeometry
-                        //-- on recupere la taille destination de l'image
-                        final AffineTransform2D trs   = renderingContext.getObjectiveToDisplay();
-                        final GeneralEnvelope dispEnv = CRS.transform(trs, tmp);
-                        final int width               = (int) Math.ceil(dispEnv.getSpan(0));
-                        final int height              = (int) Math.ceil(dispEnv.getSpan(1));
+                        //force alpha if image do not get any "invalid data" rule (Ex : No-data in image or color map).
+                        dataCoverage = getReadyToResampleCoverage(dataCoverage, sourceSymbol);
 
-                        if (width <= 0 || height <= 0) {
-                            dataCoverage = null;
-                        } else {
-                            //force alpha if image do not get any "invalid data" rule (Ex : No-data in image or color map).
-                            dataCoverage = getReadyToResampleCoverage(dataCoverage, sourceSymbol);
-                            
+                        /*
+                         * NODATA 
+                         * 
+                         * 1 : Normaly all NODATA for all gridSampleDimension for a same coverage are equals.
+                         * 2 : Normaly all NODATA for each coverage internaly samples are equals.  
+                         */
+                        final double[] nodata = dataCoverage.getSampleDimension(0).getNoDataValues();
 
-                            final GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, width, height), tmp);
-
-                            final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
-                            final ParameterValueGroup params = desc.getInputDescriptor().createValue();
-                            ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COVERAGE.getName().getCode()).setValue(dataCoverage);
-                            ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(targetCRS);
-                            ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_GRID_GEOMETRY.getName().getCode()).setValue(gg);
-
-                            final org.geotoolkit.process.Process process = desc.createProcess(params);
-                            final ParameterValueGroup result = process.call();
-                            dataCoverage = (GridCoverage2D) result.parameter("result").getValue();
+                        /*
+                         * If nodata is not know.
+                         * 1 : find a nodata value out of internal gridSampleDimension categories.
+                         * 2 : if category already contain all sample Datatype possible values, 
+                         * transform image into a sample type with more bitspersample to define 
+                         * an appropriate NODATA values out of categories borders.
+                         */
+                        if (nodata == null) {
+                            //-- TODO
                         }
+
+                        final GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, width, height), bound2D);
+
+                        final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
+                        final ParameterValueGroup params = desc.getInputDescriptor().createValue();
+                        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COVERAGE.getName().getCode()).setValue(dataCoverage);
+                        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_BACKGROUND.getName().getCode()).setValue(nodata);
+                        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(targetCRS);
+                        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_GRID_GEOMETRY.getName().getCode()).setValue(gg);
+
+                        final org.geotoolkit.process.Process process = desc.createProcess(params);
+                        final ParameterValueGroup result = process.call();
+                        dataCoverage = (GridCoverage2D) result.parameter("result").getValue();
                     }
                 }
             } catch (CoverageProcessingException ex) {
@@ -370,19 +372,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 //LOGGER.log(Level.WARNING, "RasterSymbolizer : Reprojected coverage is null.");
                 return;
             }
-
-//            if (isReprojected) {
-//                /*
-//                 * If we have a reprojection we assume all mathtransforms concatenation from dataCrs to displayCrs 
-//                 */
-//                renderingContext.switchToDisplayCRS(); 
-//            } else {
-                /*
-                 * If we haven't got any reprojection we delegate affine transformation to java2D
-                 * we must switch to objectiveCRS for grid coverage
-                 */
-                renderingContext.switchToObjectiveCRS();
-//            }
+            
+            /*
+             * If we haven't got any reprojection we delegate affine transformation to java2D
+             * we must switch to objectiveCRS for grid coverage
+             */
+            renderingContext.switchToObjectiveCRS();
             
             ////////////////////////////////////////////////////////////////////
             // 4 - Apply style                                                //
@@ -420,8 +415,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                 renderCoverage(projectedCoverage, dataImage, trs2D);
 
-                //repetition of increasing and decreasing sides.
-                for(int i=0;i<nbDecRep;i++){
+                //-- repetition of increasing and decreasing sides.
+                for(int i = 0; i < nbDecRep; i++) {
                     g2d.setTransform(renderingContext.wraps.wrapDecObjToDisp[i]);
                     renderCoverage(projectedCoverage, dataImage, trs2D);
                 }
@@ -444,26 +439,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //can be a name
             for(int i=0,n=coverage.getNumSampleDimensions();i<n;i++){
                 final SampleDimension sampleDim = coverage.getSampleDimension(i);
-                if(Objects.equals(String.valueOf(sampleDim.getDescription()),n)){
+                if (Objects.equals(String.valueOf(sampleDim.getDescription()), n)) {
                     return i;
                 }
             }
         }
 
         throw new PortrayalException("Band for name/indice "+name+" not found");
-    }
-
-    private static double[] nextDataType(int type) {
-        switch(type) {
-            case DataBuffer.TYPE_BYTE   : return new double[]{DataBuffer.TYPE_SHORT,Short.MIN_VALUE};
-            case DataBuffer.TYPE_USHORT : return new double[]{DataBuffer.TYPE_INT,Integer.MIN_VALUE};
-            case DataBuffer.TYPE_SHORT  : return new double[]{DataBuffer.TYPE_INT,Integer.MIN_VALUE};
-            case DataBuffer.TYPE_INT    : return new double[]{DataBuffer.TYPE_INT,Integer.MIN_VALUE};
-            case DataBuffer.TYPE_FLOAT  : return new double[]{DataBuffer.TYPE_FLOAT,Float.NaN};
-            case DataBuffer.TYPE_DOUBLE : return new double[]{DataBuffer.TYPE_DOUBLE,Double.NaN};
-            default : throw new IllegalArgumentException("");
-
-        }
     }
 
     private void renderCoverage(final ProjectedCoverage projectedCoverage, RenderedImage img, MathTransform2D trs2D) throws PortrayalException{
@@ -531,29 +513,24 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         if(outline != null){
             GO2Utilities.portray(projectedCoverage, outline, renderingContext);
         }
-
     }
 
     /**
-     * Fix portrayal resolutions from CoverageMapLayer bounds CRS dimensions.
+     * Fix portrayal resolutions on CoverageMapLayer bounds CRS horizontal part dimensions.
      *
      * @param resolution default resolution
      * @param coverageCRS CoverageMapLayer CRS
      * @return fixed resolutions or input resolution if coverageCRS is null.
      */
-    public static  double[] fixResolutionWithCRS(double[] resolution, CoordinateReferenceSystem coverageCRS) {
-        if (coverageCRS != null) {
-            final double[] tempRes = new double[coverageCRS.getCoordinateSystem().getDimension()];
-            for (int i=0; i < tempRes.length; i++) {
-                if (i < resolution.length) {
-                    tempRes[i] = resolution[i];
-                } else {
-                    tempRes[i] = Math.nextUp(0);
-                }
-            }
-            return tempRes;
-        }
-        return resolution;
+    public static  double[] fixResolutionWithCRS(final double[] resolution, final CoordinateReferenceSystem coverageCRS) {
+        assert resolution.length == 2; //-- resolution from rendering context (2D space)
+        if (coverageCRS == null) return resolution; 
+        final int minOrdi      = CRSUtilities.firstHorizontalAxis(coverageCRS);
+        final double[] tempRes = new double[coverageCRS.getCoordinateSystem().getDimension()];
+        Arrays.fill(tempRes, 1);
+        tempRes[minOrdi]     = resolution[0];
+        tempRes[minOrdi + 1] = resolution[1];
+        return tempRes;
     }
 
     /**
@@ -576,7 +553,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
 
             // Set ranges from the filter
-            for (int i=0; i < coverageCRS.getCoordinateSystem().getDimension(); i++) {
+            for (int i = 0; i < coverageCRS.getCoordinateSystem().getDimension(); i++) {
                 final CoordinateSystemAxis axis = coverageCRS.getCoordinateSystem().getAxis(i);
                 final String axisName = axis.getName().getCode();
                 if (values.containsKey(axisName)) {
@@ -587,7 +564,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
             return env;
         }
-
         return bounds;
     }
 
