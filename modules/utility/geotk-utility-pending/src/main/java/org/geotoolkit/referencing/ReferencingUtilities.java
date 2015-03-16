@@ -28,6 +28,7 @@ import javax.measure.unit.Unit;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.geometry.DirectPosition2D;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
@@ -63,6 +64,7 @@ import org.opengis.util.FactoryException;
 import static org.apache.sis.referencing.CRS.getHorizontalComponent;
 import static org.apache.sis.referencing.CRS.getVerticalComponent;
 import static org.apache.sis.referencing.CRS.getTemporalComponent;
+import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.FileUtilities;
 
 
@@ -137,16 +139,91 @@ public final class ReferencingUtilities {
         }
         return true;
     }
+    
+    /**
+     * Convert resolution from old resolution and {@linkplain Envelope#getCoordinateReferenceSystem() source CRS} 
+     * within srcEnvelope, and store result into destination array newResolution.<br><br>
+     * 
+     * <strong>
+     * Note 1 : newResolution array may be {@code null}, in this case a new array result will be created.
+     * Where its length will be equals to targetCRS dimension number.<br>
+     * Note 2 : the resolution convertion will be compute from 
+     * {@linkplain CRSUtilities#getCRS2D(org.opengis.referencing.crs.CoordinateReferenceSystem) 2D CRS horizontal part}
+     * of source CRS from {@link Envelope} and 2D targetCRS horizontal part.<br>
+     * Note 3 : if destination resolution array is not {@code null} the resolution values about 
+     * other dimension than 2D horizontal CRS part are unchanged, else (if new resolution array is {@code null}) 
+     * the resolution values on other dimensions are setted to {@code 1}.
+     * </strong>
+     * 
+     * @param srcEnvelope source envelope in relation with the source resolution.
+     * @param oldResolution the old resolution which will be convert.
+     * @param targetCrs destination {@link CoordinateReferenceSystem} where the new resolution will be exprimate.
+     * @param newResolution the result array of the transformed resolution. 
+     * You may pass the same array than oldResolution if you want to store result in the same array.
+     * 
+     * @return a new resolution array compute from oldResolution exprimate into targetCRS. 
+     * @throws org.opengis.referencing.operation.TransformException if problem during Envelope transformation into targetCrs.
+     * @throws NullArgumentException if one of these parameter is {@code null} : srcEnvelope, oldResolution or targetCRS.
+     * @throws IllegalArgumentException if oldResolution and newResolution array haven't got same length.
+     * @throws IllegalArgumentException if Resolution array length and source CRS dimension are different.
+     */
+    public static double[] convertResolution(final Envelope srcEnvelope, final double[] oldResolution, 
+                                             final CoordinateReferenceSystem targetCrs, double... newResolution) throws TransformException {
+        ArgumentChecks.ensureNonNull("srcEnvelope",   srcEnvelope);
+        ArgumentChecks.ensureNonNull("oldResolution", oldResolution);
+        ArgumentChecks.ensureNonNull("targetCRS",     targetCrs);
+        
+        //-- initialize destination array if it is null.
+        if (newResolution == null || newResolution.length == 0) {
+            newResolution = new double[targetCrs.getCoordinateSystem().getDimension()];
+            Arrays.fill(newResolution, 1);
+        } else {
+            if (targetCrs.getCoordinateSystem().getDimension() != newResolution.length) 
+            throw new IllegalArgumentException("Destination resolution array lenght should be equals than target CRS dimension number."
+                    + "Destination resolution array length = "+newResolution.length+", CRS dimension number = "+targetCrs.getCoordinateSystem().getDimension());
+        }
+        
+        final CoordinateReferenceSystem srcCRS = srcEnvelope.getCoordinateReferenceSystem();
+        
+        if (srcCRS.getCoordinateSystem().getDimension() != oldResolution.length) 
+            throw new IllegalArgumentException("Resolution array lenght should be equals than source CRS dimension number."
+                    + "Resolution array length = "+oldResolution.length+", CRS dimension number = "+srcCRS.getCoordinateSystem().getDimension());
+        
+        if (CRS.equalsIgnoreMetadata(srcCRS, targetCrs)) {
+            System.arraycopy(oldResolution, 0, newResolution, 0, newResolution.length);
+        } else {
+            final int srcMinOrdi = CRSUtilities.firstHorizontalAxis(srcCRS);
+            
+            //-- grid envelope
+            final int displayWidth  = (int) StrictMath.ceil(srcEnvelope.getSpan(srcMinOrdi)     / oldResolution[srcMinOrdi]);
+            final int displayHeight = (int) StrictMath.ceil(srcEnvelope.getSpan(srcMinOrdi + 1) / oldResolution[srcMinOrdi + 1]);
+            
+            //-- resolution working is only available on 2D horizontal CRS part
+            //-- also avoid mismatch dimension problem
+            final CoordinateReferenceSystem srcCRS2D    = CRSUtilities.getCRS2D(srcCRS);
+            final CoordinateReferenceSystem targetCRS2D = CRSUtilities.getCRS2D(targetCrs);
+            
+            final GeneralEnvelope srcEnvelope2D = new GeneralEnvelope(srcCRS2D);
+            srcEnvelope2D.setRange(0, srcEnvelope.getMinimum(srcMinOrdi),     srcEnvelope.getMaximum(srcMinOrdi));
+            srcEnvelope2D.setRange(1, srcEnvelope.getMinimum(srcMinOrdi + 1), srcEnvelope.getMaximum(srcMinOrdi + 1));
+            
+            //-- target image into target CRS 2D
+            final Envelope targetEnvelope2D = Envelopes.transform(srcEnvelope2D, targetCRS2D);
+            
+            final int targetMinOrdi = CRSUtilities.firstHorizontalAxis(targetCrs);
+            
+            newResolution[targetMinOrdi]     = targetEnvelope2D.getSpan(0) / displayWidth;
+            newResolution[targetMinOrdi + 1] = targetEnvelope2D.getSpan(1) / displayHeight;
+        }
+        return newResolution;
+    }
 
     public static Envelope wrapNormalize(Envelope env, DirectPosition[] warp) {
-        if(warp==null){
-            return env;
-        }
-
+        if (warp == null) return env;
         //TODO we assume the warp is on a along an axis of the coordinate system.
         final DirectPosition p0 = warp[0];
         final DirectPosition p1 = warp[1];
-        for(int i=0,n=p0.getDimension();i<n;i++){
+        for (int i = 0, n = p0.getDimension(); i < n; i++) {
             final double minimum = p0.getOrdinate(i);
             final double maximum = p1.getOrdinate(i);
             if(minimum == maximum){
