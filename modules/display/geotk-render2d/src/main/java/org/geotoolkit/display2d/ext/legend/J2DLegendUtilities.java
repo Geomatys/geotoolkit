@@ -46,6 +46,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -178,7 +179,7 @@ public class J2DLegendUtilities {
             final MapItem currentItem = layers.get(l);
 
             //check if the given layer is visible, and if we should display invisible layers.
-            if (template.displayOnlyVisibleLayers() && !currentItem.isVisible()) {
+            if (template.displayOnlyVisibleLayers() && !isVisible(currentItem)) {
                 continue;
             }
 
@@ -475,8 +476,13 @@ public class J2DLegendUtilities {
         final List<MapItem> childItems = source.items();
         for (int l = 0, n = childItems.size(); l < n; l++) {
 
+            /* If legend template asks for visible items only, we have to proceed
+             * in two steps, because we cannot just check item visibility.
+             * If we are on a container (not a layer), it must be considered as
+             * invisible if none of its children is visible.
+             */
             final MapItem currentItem = childItems.get(l);
-            if (template.displayOnlyVisibleLayers() && !currentItem.isVisible()) {
+            if (template.displayOnlyVisibleLayers() && !isVisible(currentItem)) {
                 continue;
             }
 
@@ -621,6 +627,29 @@ public class J2DLegendUtilities {
         }
     }
 
+    /**
+     * Ensure that the current map item is visible. For {@link MapLayer}, it means
+     * that it is visible itself. For MapItems, we check recursively all of its 
+     * children until we find a visible {@link MapLayer}. An item is considered 
+     * invisible if itself or all of its children are marked as not visible.
+     * @param toCheck The map item to analyse. Cannot be null.
+     * @return True if input item or at least one of its {@link MapLayer} child 
+     * is visible. False otherwise.
+     */
+    public static boolean isVisible(final MapItem toCheck) {
+        ArgumentChecks.ensureNonNull("Map item to check visibility on", toCheck);
+        // If it's a visible container, we must check its children.
+        if (toCheck.isVisible() && !(toCheck instanceof MapLayer)) {
+            for (final MapItem child : toCheck.items()) {
+                if (isVisible(child)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return toCheck.isVisible();
+        }               
+    }
 
     private static void checkMinimumSize(final Dimension dim) {
         if (dim.width == 0) {
