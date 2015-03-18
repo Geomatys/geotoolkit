@@ -2,6 +2,7 @@ package org.geotoolkit.gui.javafx.util;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -59,7 +60,7 @@ public class TaskManager implements Closeable {
         return submit(new MockTask<T>(title, newTask));
     }
     
-    public <T> Task<T> submit(final Task<T> newTask) {
+    public synchronized <T> Task<T> submit(final Task<T> newTask) {
         ArgumentChecks.ensureNonNull("input task", newTask);
         if (!newTask.isDone()) {
             /* Automatically move the task from submitted to "In error" when its state change.
@@ -82,33 +83,35 @@ public class TaskManager implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         closeTask();
     }
 
-    public void reset() {
+    public synchronized void reset() {
         Task closeTask = closeTask();
         try {
             closeTask.get();
-            threadPool = Executors.newCachedThreadPool();
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             LOGGER.log(Level.FINE, "Interruption requested !");
-        } catch (ExecutionException ex) {
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "A thread executor cannot be closed. It's likely to create memory leaks !", ex);
+        } finally {
+            threadPool = Executors.newCachedThreadPool();
         }
-        threadPool = Executors.newCachedThreadPool();
     }
 
-    private Task closeTask() {
+    private synchronized Task closeTask() {
         final Task shutdownTask = new MockTask("Shutdown remaining tasks.", () -> {
             try {
+                threadPool.shutdown();
                 threadPool.awaitTermination(TIMEOUT, TIMEOUT_UNIT);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 LOGGER.log(Level.WARNING, "Application thread pool interrupted !", ex);
             } finally {
-                Platform.runLater(()->submittedTasks.removeAll(threadPool.shutdownNow()));
+                final List<Runnable> waitingTasks = threadPool.shutdownNow();
+                Platform.runLater(()->submittedTasks.removeAll(waitingTasks));
             }
         });
         Platform.runLater(()->submittedTasks.add(shutdownTask));
