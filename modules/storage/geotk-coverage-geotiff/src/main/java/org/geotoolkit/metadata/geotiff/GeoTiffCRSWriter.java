@@ -69,10 +69,12 @@ import static org.apache.sis.util.ArgumentChecks.*;
 /**
  * Encode a CoordinateReferenceSystem as GeoTiff tags.
  *
+ * note : with java 9 class will become only accessible by its module (no public signature on class header). 
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-final class GeoTiffCRSWriter {
+public final class GeoTiffCRSWriter {
 
     /**
      * Fill the Geotiff CRS metadatas with the given CRS.

@@ -37,8 +37,10 @@ import static org.apache.sis.util.ArgumentChecks.*;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * 
+ * note : with java 9 class will become only accessible by its module (no public signature on class header). 
  */
-final class GeoTiffMetaDataStack {
+public final class GeoTiffMetaDataStack {
 
     private final Element ifd;
 
@@ -50,7 +52,7 @@ final class GeoTiffMetaDataStack {
     private Node nPixelScale = null;
     private Node nTransform = null;
 
-    GeoTiffMetaDataStack(final Node tiffTree) {
+    public GeoTiffMetaDataStack(final Node tiffTree) {
         ensureNonNull("tiffTree", tiffTree);
 
         Element tmpIfd = (Element) getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD);
@@ -163,7 +165,7 @@ final class GeoTiffMetaDataStack {
     /**
      * Write all stored informations in the tiff metadata tree.
      */
-    void flush(){
+    public void flush(){
 
         //write GeoKeyDirectory
         //first line (4 int) contain the version and number of keys

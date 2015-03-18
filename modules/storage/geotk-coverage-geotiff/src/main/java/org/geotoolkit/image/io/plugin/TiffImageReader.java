@@ -76,15 +76,21 @@ import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.internal.image.io.SupportFiles;
+import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.lang.SystemOverride;
 import org.geotoolkit.metadata.GeoTiffExtension;
+import org.geotoolkit.metadata.geotiff.GeoTiffCRSWriter;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
 import org.geotoolkit.resources.Errors;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
+import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataStack;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.image.replace.ReplaceProcess;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -377,17 +383,41 @@ public class TiffImageReader extends SpatialImageReader {
             selectLayer(layerIndex);
         }
         headProperties = metaHeads[layerIndex];
+        
+        
+        fillRootMetadataNode(layerIndex);
+        
+        //-- define if geotiff information are present
+        
         //-- if there are not geotiff tag return null
-        boolean isGeotiff = false;
-        for(int key : headProperties.keySet()) {
-            if (key == 34735) { //-- if geotiff tag exist
-                isGeotiff = true;
-                break;
+        final boolean hasCRS = hasCRS(headProperties);
+               
+        //-- if no setted CRS try to found a prj file if exist.
+        if (!hasCRS ) {
+            CoordinateReferenceSystem crs = null;
+            final Object in = getVerifiedInput("prj");
+            if (in != null) crs = PrjFiles.read(IOUtilities.open(in), true);
+            
+            //-- if a CRS is found by prj file we add it into native tiff metadata.
+            if (crs != null) {
+                
+                //-- add crs into metadata node
+                //container for informations which will be written
+                final GeoTiffMetaDataStack stack = new GeoTiffMetaDataStack(roots[layerIndex]);
+
+                //-- fill geotiff crs information
+                final GeoTiffCRSWriter crsWriter = new GeoTiffCRSWriter();
+                try {
+                    crsWriter.fillCRSMetaDatas(stack, crs);
+                } catch (FactoryException ex) {
+                    throw new IIOException("impossible to insert CRS ("+crs.toString()+") into native tiff metadatas.", ex);
+                }
+                //-- fill root metadata node by stack stored values
+                stack.flush();
             }
         }
-
-        fillRootMetadataNode(layerIndex);
-        final IIOMetadata metadata = new IIOTiffMetadata(roots[layerIndex]);
+        
+        final IIOTiffMetadata metadata = new IIOTiffMetadata(roots[layerIndex]);
         final GeoTiffMetaDataReader metareader = new GeoTiffMetaDataReader(metadata);
         SpatialMetadata spatialMetadata;
         try {
@@ -416,6 +446,91 @@ public class TiffImageReader extends SpatialImageReader {
         return spatialMetadata;
     }
 
+    /**
+     * Returns {@code true} if image contain geographic tiff tags needed to build 
+     * related {@link CoordinateReferenceSystem}, else return {@code false}.
+     * 
+     * @param headProperties map which contain all red tiff tags.
+     * @return {@code true} if image contain geographic tiff tags needed to build 
+     * related {@link CoordinateReferenceSystem}, else return {@code false}.
+     */
+    private boolean hasCRS(final Map<Integer, Map> headProperties) {
+        int result = 0;
+        for (int key : headProperties.keySet()) {
+            if (key == 34735 
+             || key == 34736
+             || key == 34737) result++;
+            if (result == 3) return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Invokes {@link #createInput(String)} and verifies if the returned file exists.
+     * If it does not exist, then returns {@code null}.
+     *
+     * @todo Current implementation checks only {@link File} object.
+     *       We should check URL as well.
+     */
+    private Object getVerifiedInput(final String part) throws IOException {
+        /*
+         * Replaces the input by a File object if possible,
+         * for allowing us to check if the file exists.
+         */
+        Object newCRSInput = IOUtilities.tryToFile(input);
+        
+        Object in = createInput(newCRSInput, part);
+        if (in instanceof File) {
+            if (!((File) in).isFile()) {
+                in = null;
+            }
+        }
+        return in;
+    }
+    
+    /**
+     * Creates the input to be given to the reader identified by the given argument. If the
+     * {@code readerID} argument is {@code "main"} (ignoring case), then this method delegates
+     * to the {@linkplain ImageReaderAdapter#createInput(String) super-class method}. Otherwise
+     * this method returns an input which is typically a {@link File} or {@link java.net.URL}
+     * having the same name than the {@linkplain #input input} of this reader, but a different
+     * extension. The new extension is determined from the {@code readerID} argument, which can
+     * be:
+     *
+     * <ul>
+     *   <li><p>{@code "tfw"} for the <cite>World File</cite>. The extension of the returned
+     *       input may be {@code "tfw"} (most common), {@code "jgw"}, {@code "pgw"} or other
+     *       suffix depending on the extension of this reader {@linkplain #input input}, and
+     *       depending which file has been determined to exist. See the
+     *       <a href="#skip-navbar_top">class javadoc</a> for more details.</p></li>
+     *
+     *   <li><p>{@code "prj"} for <cite>Map Projection</cite> file. The extension
+     *       of the returned input is {@code "prj"}.</p></li>
+     * </ul>
+     *
+     * Subclasses can override this method for specifying a different main ({@code "main"}),
+     * <cite>World File</cite> ({@code "tfw"}) or <cite>Map Projection</cite> ({@code "prj"})
+     * input. They can also invoke this method with other identifiers than the three above-cited
+     * ones, in which case this method uses the given identifier as the extension of the returned
+     * input. However the default {@code WorldFileImageReader} implementation uses only
+     * {@code "main"}, {@code "tfw"} and {@code "prj"}.
+     *
+     * @param  readerID {@code "main"} for the {@linkplain #main main} input,
+     *         {@code "tfw"} for the <cite>World File</cite> input, or
+     *         {@code "prj"} for the <cite>Map Projection</cite> input. Other
+     *         identifiers are allowed but subclass-specific.
+     * @return The given kind of input typically as a {@link File} or {@link java.net.URL}
+     *         object, or {@code null} if there is no input for the given identifier.
+     * @throws IOException If an error occurred while creating the input.
+     *
+     * @see WorldFileImageWriter#createOutput(String)
+     */
+    private Object createInput(Object currentInput, final String readerID) throws IOException {
+        if ("main".equalsIgnoreCase(readerID)) return null;
+        
+        return SupportFiles.changeExtension(currentInput, readerID);
+    }
+    
     /**
      * {@inheritDoc }
      */
