@@ -184,7 +184,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final GeneralEnvelope paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, bounds);
             
             //-- Check if projected coverage intersect view area.
-            if (paramEnvelope.isEmpty()) {
+            if (Envelopes.containNAN(paramEnvelope)) {
                 LOGGER.log(Level.FINE, "Current Coverage "+projectedCoverage.getLayer().getName()+" doesn't intersect renderer requested area.");
                 return;
             }
