@@ -21,7 +21,6 @@ import java.io.StringReader;
 //Junit dependencies
 import java.io.StringWriter;
 import java.util.Arrays;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -64,7 +63,7 @@ public class PropertyTypeTest {
     /**
      * Test simple Record Marshalling.
      *
-     * @throws java.lang.Exception
+     * @throws javax.xml.bind.JAXBException
      */
     @Test
     public void getValueStringTest() throws JAXBException {
@@ -121,7 +120,7 @@ public class PropertyTypeTest {
     /**
      * Test simple Record Marshalling.
      *
-     * @throws java.lang.Exception
+     * @throws javax.xml.bind.JAXBException
      */
     @Test
     public void getValueGeometryNewTest() throws JAXBException {
@@ -160,7 +159,7 @@ public class PropertyTypeTest {
     /**
      * Test simple Record Marshalling.
      *
-     * @throws java.lang.Exception
+     * @throws javax.xml.bind.JAXBException
      */
     @Test
     public void setValueGeometryNewTest() throws JAXBException {
@@ -168,7 +167,7 @@ public class PropertyTypeTest {
         PointType pt = new PointType(null, new DirectPositionType(2.1, 12.6));
         pt.setSrsName("urn:ogc:def:crs:epsg:7.4:4326");
         PropertyType prop = new PropertyType(new QName("something"), new ValueType(pt));
-        transac.getInsertOrUpdateOrDelete().add(new UpdateElementType(Arrays.asList(prop), null, null, null));
+        transac.getInsertOrUpdateOrDelete().add(new UpdateElementType(null, Arrays.asList(prop), null, null, null));
         StringWriter sw = new StringWriter();
         //marshaller.marshal(transac, System.out);
         marshaller.marshal(transac, sw);
@@ -179,7 +178,7 @@ public class PropertyTypeTest {
 
         transac = new TransactionType();
         prop = new PropertyType(new QName("something"), new ValueType("jane"));
-        transac.getInsertOrUpdateOrDelete().add(new UpdateElementType(Arrays.asList(prop), null, null, null));
+        transac.getInsertOrUpdateOrDelete().add(new UpdateElementType(null, Arrays.asList(prop), null, null, null));
         sw = new StringWriter();
         //marshaller.marshal(transac, System.out);
         marshaller.marshal(transac, sw);

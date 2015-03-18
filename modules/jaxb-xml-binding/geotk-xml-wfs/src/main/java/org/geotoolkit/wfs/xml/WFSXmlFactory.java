@@ -26,6 +26,8 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.SortBy;
 import org.geotoolkit.ogc.xml.XMLFilter;
 import org.geotoolkit.ows.xml.*;
+import org.geotoolkit.wfs.xml.v110.ValueType;
+import org.geotoolkit.wfs.xml.v200.ValueReference;
 import org.opengis.filter.capability.FilterCapabilities;
 import org.opengis.filter.sort.SortOrder;
 
@@ -283,7 +285,95 @@ public class WFSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
-
+    
+    public static ReplaceElement buildReplaceElement(final String version, final String inputFormat, final String srsName, final XMLFilter filter, final Object any) {
+        if ("2.0.0".equals(version)) {
+            if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v200.FilterType)) {
+                throw new IllegalArgumentException("unexpected object version for filter element");
+            }
+            return new org.geotoolkit.wfs.xml.v200.ReplaceType(inputFormat, (org.geotoolkit.ogc.xml.v200.FilterType)filter, any, inputFormat, srsName);
+        } else if ("1.1.0".equals(version)) {
+            
+           throw new UnsupportedOperationException("not supported for version 1.1.0");
+        } else if ("1.0.0".equals(version)) {
+           
+            throw new UnsupportedOperationException("not supported for version 1.0.0");
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static Property buildProperty(final String version, final String propName, final Object value) {
+        if ("2.0.0".equals(version)) {
+            
+            return new org.geotoolkit.wfs.xml.v200.PropertyType(new ValueReference(propName, null), value);
+        } else if ("1.1.0".equals(version)) {
+            
+           return new org.geotoolkit.wfs.xml.v110.PropertyType(new QName(propName), new ValueType(value));
+        } else if ("1.0.0".equals(version)) {
+           
+           return new org.geotoolkit.wfs.xml.v100.PropertyType(propName, value);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static UpdateElement buildUpdateElement(final String version, final String inputFormat, final String srsName, final XMLFilter filter, final QName typeName, final List<Property> properties) {
+        if ("2.0.0".equals(version)) {
+            if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v200.FilterType)) {
+                throw new IllegalArgumentException("unexpected object version for filter element");
+            }
+            final List<org.geotoolkit.wfs.xml.v200.PropertyType> ift = new ArrayList<>();
+            if (properties != null) {
+                for (Property p : properties) {
+                    ift.add((org.geotoolkit.wfs.xml.v200.PropertyType)p);
+                }
+            }
+            return new org.geotoolkit.wfs.xml.v200.UpdateType(inputFormat, ift, 
+                                                              (org.geotoolkit.ogc.xml.v200.FilterType)filter, typeName, srsName);
+        } else if ("1.1.0".equals(version)) {
+            if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v110.FilterType)) {
+                throw new IllegalArgumentException("unexpected object version for filter element");
+            }
+            final List<org.geotoolkit.wfs.xml.v110.PropertyType> ift = new ArrayList<>();
+            if (properties != null) {
+                for (Property p : properties) {
+                    ift.add((org.geotoolkit.wfs.xml.v110.PropertyType)p);
+                }
+            }
+            return new org.geotoolkit.wfs.xml.v110.UpdateElementType(inputFormat, ift,
+                                                                    (org.geotoolkit.ogc.xml.v110.FilterType)filter, typeName, srsName);
+        } else if ("1.0.0".equals(version)) {
+            if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v100.FilterType)) {
+                throw new IllegalArgumentException("unexpected object version for filter element");
+            }
+            final List<org.geotoolkit.wfs.xml.v100.PropertyType> ift = new ArrayList<>();
+            if (properties != null) {
+                for (Property p : properties) {
+                    ift.add((org.geotoolkit.wfs.xml.v100.PropertyType)p);
+                }
+            }
+            return new org.geotoolkit.wfs.xml.v100.UpdateElementType(ift, (org.geotoolkit.ogc.xml.v100.FilterType)filter, typeName);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static InsertElement buildInsertElement(final String version, final String inputFormat, final String srsName, final Object any) {
+        if ("2.0.0".equals(version)) {
+            
+            return new org.geotoolkit.wfs.xml.v200.InsertType(inputFormat, srsName, any);
+        } else if ("1.1.0".equals(version)) {
+            
+            return new org.geotoolkit.wfs.xml.v110.InsertElementType(inputFormat, srsName, any);
+        } else if ("1.0.0".equals(version)) {
+            // TODO
+            return new org.geotoolkit.wfs.xml.v100.InsertElementType();
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
     public static Transaction buildTransaction(final String version,  final String service, final String handle, final AllSomeType releaseAction, final DeleteElement deleteElement) {
         if ("2.0.0".equals(version)) {
             if (deleteElement != null && !(deleteElement instanceof org.geotoolkit.wfs.xml.v200.DeleteType)) {
@@ -300,6 +390,65 @@ public class WFSXmlFactory {
                 throw new IllegalArgumentException("unexpected object version for delete element");
             }
             return new org.geotoolkit.wfs.xml.v100.TransactionType(service, version, handle, releaseAction,  (org.geotoolkit.wfs.xml.v100.DeleteElementType)deleteElement);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static Transaction buildTransaction(final String version,  final String service, final String handle, final AllSomeType releaseAction, final UpdateElement updateElement) {
+        if ("2.0.0".equals(version)) {
+            if (updateElement != null && !(updateElement instanceof org.geotoolkit.wfs.xml.v200.UpdateType)) {
+                throw new IllegalArgumentException("unexpected object version for update element");
+            }
+            return new org.geotoolkit.wfs.xml.v200.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v200.UpdateType)updateElement);
+        } else if ("1.1.0".equals(version)) {
+            if (updateElement != null && !(updateElement instanceof org.geotoolkit.wfs.xml.v110.DeleteElementType)) {
+                throw new IllegalArgumentException("unexpected object version for update element");
+            }
+            return new org.geotoolkit.wfs.xml.v110.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v110.UpdateElementType)updateElement);
+        } else if ("1.0.0".equals(version)) {
+            if (updateElement != null && !(updateElement instanceof org.geotoolkit.wfs.xml.v100.DeleteElementType)) {
+                throw new IllegalArgumentException("unexpected object version for update element");
+            }
+            return new org.geotoolkit.wfs.xml.v100.TransactionType(service, version, handle, releaseAction,  (org.geotoolkit.wfs.xml.v100.UpdateElementType)updateElement);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static Transaction buildTransaction(final String version,  final String service, final String handle, final AllSomeType releaseAction, final InsertElement insertElement) {
+        if ("2.0.0".equals(version)) {
+            if (insertElement != null && !(insertElement instanceof org.geotoolkit.wfs.xml.v200.InsertType)) {
+                throw new IllegalArgumentException("unexpected object version for delete element");
+            }
+            return new org.geotoolkit.wfs.xml.v200.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v200.InsertType)insertElement);
+        } else if ("1.1.0".equals(version)) {
+            if (insertElement != null && !(insertElement instanceof org.geotoolkit.wfs.xml.v110.InsertElementType)) {
+                throw new IllegalArgumentException("unexpected object version for delete element");
+            }
+            return new org.geotoolkit.wfs.xml.v110.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v110.InsertElementType)insertElement);
+        } else if ("1.0.0".equals(version)) {
+            if (insertElement != null && !(insertElement instanceof org.geotoolkit.wfs.xml.v100.InsertElementType)) {
+                throw new IllegalArgumentException("unexpected object version for delete element");
+            }
+            return new org.geotoolkit.wfs.xml.v100.TransactionType(service, version, handle, releaseAction,  (org.geotoolkit.wfs.xml.v100.InsertElementType)insertElement);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+     public static Transaction buildTransaction(final String version,  final String service, final String handle, final AllSomeType releaseAction, final ReplaceElement replaceElement) {
+        if ("2.0.0".equals(version)) {
+            if (replaceElement != null && !(replaceElement instanceof org.geotoolkit.wfs.xml.v200.ReplaceType)) {
+                throw new IllegalArgumentException("unexpected object version for replace element");
+            }
+            return new org.geotoolkit.wfs.xml.v200.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v200.ReplaceType)replaceElement);
+        } else if ("1.1.0".equals(version)) {
+            
+            throw new IllegalArgumentException("ReplaceElement is not available in version 1.1.0");
+        } else if ("1.0.0".equals(version)) {
+            
+            throw new IllegalArgumentException("ReplaceElement is not available in version 1.0.0");
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
@@ -511,13 +660,13 @@ public class WFSXmlFactory {
         }
     }
     
-    public static GetFeature buildGetFeature(final String currentVersion, final String service, final String handle, final Integer maxFeature,
+    public static GetFeature buildGetFeature(final String currentVersion, final String service, final String handle, final Integer startIndex, final Integer maxFeature,
         final Query query, final ResultTypeType resultType, String outputFormat) {
         if ("2.0.0".equals(currentVersion)) {
             if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.QueryType)) {
                 throw new IllegalArgumentException("unexpected object version for query element");
             }
-            return new org.geotoolkit.wfs.xml.v200.GetFeatureType(service, currentVersion, handle, maxFeature,
+            return new org.geotoolkit.wfs.xml.v200.GetFeatureType(service, currentVersion, handle, startIndex, maxFeature,
                                                                   Arrays.asList((org.geotoolkit.wfs.xml.v200.QueryType)query),
                                                                   resultType, outputFormat);
         } else if ("1.1.0".equals(currentVersion)) {
@@ -539,7 +688,7 @@ public class WFSXmlFactory {
         }
     }
     
-    public static GetFeature buildGetFeature(final String currentVersion, final String service, final String handle, final Integer maxFeature,
+    public static GetFeature buildGetFeature(final String currentVersion, final String service, final String handle, final Integer startIndex, final Integer maxFeature,
         final StoredQuery query, final ResultTypeType resultType, String outputFormat) {
         if ("2.0.0".equals(currentVersion)) {
             if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.StoredQueryType)) {
@@ -547,6 +696,7 @@ public class WFSXmlFactory {
             }
             return new org.geotoolkit.wfs.xml.v200.GetFeatureType(service, currentVersion, handle, 
                                                                   Arrays.asList((org.geotoolkit.wfs.xml.v200.StoredQueryType)query),
+                                                                  startIndex,
                                                                   maxFeature,
                                                                   resultType, outputFormat);
         } else {
@@ -584,13 +734,13 @@ public class WFSXmlFactory {
         }
     }
 
-    public static GetPropertyValue buildGetPropertyValue(final String currentVersion, final String service, final String handle, final Integer maxFeature, final String featureId,
+    public static GetPropertyValue buildGetPropertyValue(final String currentVersion, final String service, final String handle, final Integer startIndex, final Integer maxFeature, 
         final Query query, final ResultTypeType resultType, final String outputFormat, final String valueReference) {
         if ("2.0.0".equals(currentVersion)) {
             if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.QueryType)) {
                 throw new IllegalArgumentException("unexpected object version for query element");
             }
-            return new org.geotoolkit.wfs.xml.v200.GetPropertyValueType(service, currentVersion, handle, maxFeature, featureId,
+            return new org.geotoolkit.wfs.xml.v200.GetPropertyValueType(service, currentVersion, handle, startIndex, maxFeature,
                     (org.geotoolkit.wfs.xml.v200.QueryType)query, resultType, outputFormat, valueReference);
 
         } else if ("1.1.0".equals(currentVersion)) {

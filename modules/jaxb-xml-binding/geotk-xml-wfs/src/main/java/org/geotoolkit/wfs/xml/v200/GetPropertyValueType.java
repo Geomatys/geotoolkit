@@ -93,37 +93,22 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
 
     }
 
-    public GetPropertyValueType(final String service, final String version, final String handle, final Integer maxFeatures,
+    public GetPropertyValueType(final String service, final String version, final String handle, final Integer startIndex, final Integer maxFeatures,
             final QueryType query, final ResultTypeType resultType, final String outputformat, final String valueReference) {
         super(service, version, handle);
         this.valueReference = valueReference;
         if (maxFeatures !=  null) {
             this.count        = maxFeatures;
         }
+        if (startIndex !=  null) {
+            this.startIndex = startIndex;
+        }
         if (query != null) {
             final ObjectFactory factory = new ObjectFactory();
             this.abstractQueryExpression = factory.createQuery(query);
         }
         this.resultType   = resultType;
         this.outputFormat = outputformat;
-    }
-
-    public GetPropertyValueType(final String service, final String version, final String handle, final Integer maxFeatures,
-            final String featureId, final QueryType query, final ResultTypeType resultType, final String outputformat, final String valueReference) {
-        super(service, version, handle);
-        this.valueReference = valueReference;
-        if (maxFeatures !=  null) {
-            this.count  = maxFeatures;
-        }
-        if (featureId != null) {
-            // TODO featureId?
-        }
-        this.resultType   = resultType;
-        this.outputFormat = outputformat;
-        if (query != null) {
-            final ObjectFactory factory = new ObjectFactory();
-            this.abstractQueryExpression = factory.createQuery(query);
-        }
     }
 
     /**
@@ -161,7 +146,7 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
      */
     @Override
     public List<Query> getQuery() {
-        final List<Query> queries = new ArrayList<Query>();
+        final List<Query> queries = new ArrayList<>();
         if (abstractQueryExpression != null) {
             final Object obj = abstractQueryExpression.getValue();
             if (obj instanceof Query) {
@@ -180,7 +165,7 @@ public class GetPropertyValueType extends BaseRequestType implements GetProperty
      */
     @Override
     public List<StoredQuery> getStoredQuery() {
-        final List<StoredQuery> queries = new ArrayList<StoredQuery>();
+        final List<StoredQuery> queries = new ArrayList<>();
         if (abstractQueryExpression != null) {
             final Object obj = abstractQueryExpression.getValue();
             if (obj instanceof Query) {

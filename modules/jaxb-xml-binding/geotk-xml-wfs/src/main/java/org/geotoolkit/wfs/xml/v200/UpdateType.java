@@ -76,7 +76,8 @@ public class UpdateType extends AbstractTransactionActionType implements UpdateE
 
     }
 
-    public UpdateType(final List<PropertyType> property, final FilterType filter, final QName typeName, final String srsName) {
+    public UpdateType(final String inputFormat, final List<PropertyType> property, final FilterType filter, final QName typeName, final String srsName) {
+        this.inputFormat = inputFormat;
         this.property = property;
         this.filter   = filter;
         this.typeName = typeName;
@@ -89,7 +90,7 @@ public class UpdateType extends AbstractTransactionActionType implements UpdateE
      */
     public List<PropertyType> getProperty() {
         if (property == null) {
-            property = new ArrayList<PropertyType>();
+            property = new ArrayList<>();
         }
         return this.property;
     }

@@ -89,14 +89,17 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     }
 
-    public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
+    public GetFeatureType(final String service, final String version, final String handle, final Integer startIndex, final Integer maxFeatures,
             final List<QueryType> query, final ResultTypeType resultType, final String outputformat) {
         super(service, version, handle);
         if (maxFeatures !=  null) {
-            this.count        = maxFeatures;
+            this.count = maxFeatures;
+        }
+        if (startIndex != null) {
+            this.startIndex = startIndex;
         }
         if (query != null) {
-            this.abstractQueryExpression = new ArrayList<JAXBElement<? extends AbstractQueryExpressionType>>();
+            this.abstractQueryExpression = new ArrayList<>();
             final ObjectFactory factory = new ObjectFactory();
             for (QueryType q : query) {
                 this.abstractQueryExpression.add(factory.createQuery(q));
@@ -107,15 +110,18 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
     }
 
     public GetFeatureType(final String service, final String version, final String handle, final List<StoredQueryType> query, 
-            final Integer maxFeatures, final ResultTypeType resultType, final String outputformat) {
+            final Integer startIndex, final Integer maxFeatures, final ResultTypeType resultType, final String outputformat) {
         super(service, version, handle);
         if (maxFeatures !=  null) {
             this.count  = maxFeatures;
         }
+        if (startIndex != null) {
+            this.startIndex = startIndex;
+        }
         this.resultType   = resultType;
         this.outputFormat = outputformat;
         if (query != null) {
-            this.abstractQueryExpression = new ArrayList<JAXBElement<? extends AbstractQueryExpressionType>>();
+            this.abstractQueryExpression = new ArrayList<>();
             final ObjectFactory factory = new ObjectFactory();
             for (StoredQueryType q : query) {
                 this.abstractQueryExpression.add(factory.createStoredQuery(q));
@@ -137,7 +143,7 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
      */
     public List<JAXBElement<? extends AbstractQueryExpressionType>> getAbstractQueryExpression() {
         if (abstractQueryExpression == null) {
-            abstractQueryExpression = new ArrayList<JAXBElement<? extends AbstractQueryExpressionType>>();
+            abstractQueryExpression = new ArrayList<>();
         }
         return this.abstractQueryExpression;
     }
@@ -147,7 +153,7 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
      */
     @Override
     public List<Query> getQuery() {
-        final List<Query> queries = new ArrayList<Query>();
+        final List<Query> queries = new ArrayList<>();
         if (abstractQueryExpression != null) {
             for (JAXBElement jb : abstractQueryExpression) {
                 final Object obj = jb.getValue();
@@ -168,7 +174,7 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
      */
     @Override
     public List<StoredQuery> getStoredQuery() {
-        final List<StoredQuery> queries = new ArrayList<StoredQuery>();
+        final List<StoredQuery> queries = new ArrayList<>();
         if (abstractQueryExpression != null) {
             for (JAXBElement jb : abstractQueryExpression) {
                 final Object obj = jb.getValue();

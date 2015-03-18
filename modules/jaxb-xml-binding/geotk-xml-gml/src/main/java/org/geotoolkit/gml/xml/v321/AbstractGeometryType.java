@@ -197,9 +197,14 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        return getCoordinateReferenceSystem(true);
+    }
+    
+    @Override
+    public CoordinateReferenceSystem getCoordinateReferenceSystem(boolean longitudeFirst) {
         if(srsName != null){
             try {
-                return CRS.decode(srsName);
+                return CRS.decode(srsName, longitudeFirst);
             } catch (FactoryException ex) {
                 Logger.getLogger(org.geotoolkit.gml.xml.v311.AbstractGeometryType.class.getName()).log(Level.WARNING, "Could not decode CRS which name is : " + srsName, ex);
             }

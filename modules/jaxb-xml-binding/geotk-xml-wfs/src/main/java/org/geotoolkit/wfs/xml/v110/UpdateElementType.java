@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v110.FilterType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.UpdateElement;
 
 
@@ -81,7 +80,8 @@ public class UpdateElementType implements UpdateElement {
 
     }
 
-    public UpdateElementType(final List<PropertyType> property, final FilterType filter, final QName typeName, final String srsName) {
+    public UpdateElementType(final String inputFormat, final List<PropertyType> property, final FilterType filter, final QName typeName, final String srsName) {
+        this.inputFormat = inputFormat;
         this.property = property;
         this.filter   = filter;
         this.typeName = typeName;
@@ -98,7 +98,7 @@ public class UpdateElementType implements UpdateElement {
      */
     public List<PropertyType> getProperty() {
         if (property == null) {
-            property = new ArrayList<PropertyType>();
+            property = new ArrayList<>();
         }
         return this.property;
     }

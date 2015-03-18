@@ -19,6 +19,7 @@
 package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -65,13 +66,24 @@ public class InsertType extends AbstractTransactionActionType implements InsertE
     @XmlSchemaType(name = "anyURI")
     private String srsName;
 
+    public InsertType() {
+        
+    }
+    
+    public InsertType(String inputFormat, String srsName, Object any) {
+        this.inputFormat = inputFormat;
+        this.srsName = srsName;
+        if (any != null) {
+            this.any = Arrays.asList(any);
+        }
+    }
     /**
      * Gets the value of the any property.
      * 
      */
     public List<Object> getAny() {
         if (any == null) {
-            any = new ArrayList<Object>();
+            any = new ArrayList<>();
         }
         return this.any;
     }

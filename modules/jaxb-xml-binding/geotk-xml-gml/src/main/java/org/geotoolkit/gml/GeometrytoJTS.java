@@ -243,18 +243,22 @@ public class GeometrytoJTS {
     }
 
     public static Polygon toJTS(final org.geotoolkit.gml.xml.Polygon gml) throws FactoryException{
+        return toJTS(gml, true);
+    }
+    
+    public static Polygon toJTS(final org.geotoolkit.gml.xml.Polygon gml, boolean longitudeFirst) throws FactoryException{
         final AbstractRingProperty ext = gml.getExterior();
         final List<? extends AbstractRingProperty> ints = gml.getInterior();
 
-        final LinearRing exterior = toJTS(ext.getAbstractRing());
+        final LinearRing exterior = toJTS(ext.getAbstractRing(), longitudeFirst);
         final LinearRing[] holes = new LinearRing[ints.size()];
         for(int i=0;i<holes.length;i++){
-            holes[i] = toJTS(ints.get(i).getAbstractRing());
+            holes[i] = toJTS(ints.get(i).getAbstractRing(), longitudeFirst);
         }
 
         final Polygon polygon = GF.createPolygon(exterior, holes);
 
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
         JTS.setCRS(polygon, crs);
         return polygon;
     }
@@ -348,7 +352,7 @@ public class GeometrytoJTS {
         }
         final CoordinateReferenceSystem crs = toCRS(crsName, longitudeFirst);
 
-        final List<com.vividsolutions.jts.geom.LineString> lineList = new ArrayList<com.vividsolutions.jts.geom.LineString>();
+        final List<com.vividsolutions.jts.geom.LineString> lineList = new ArrayList<>();
         final CurveSegmentArrayProperty arrayProperty = gmlLine.getSegments();
         List<? extends AbstractCurveSegment> segments = arrayProperty.getAbstractCurveSegment();
         for (AbstractCurveSegment segment : segments) {
@@ -403,7 +407,7 @@ public class GeometrytoJTS {
     }
 
     public static List<Coordinate> toJTSCoords(List<? extends DirectPosition> pos){
-        final List<Coordinate> coords = new ArrayList<Coordinate>();
+        final List<Coordinate> coords = new ArrayList<>();
 
         for(DirectPosition dp : pos){
             coords.add( new Coordinate(dp.getOrdinate(0), dp.getOrdinate(1)));
@@ -413,7 +417,7 @@ public class GeometrytoJTS {
 
     public static List<Coordinate> toJTSCoords(final DirectPositionList lst, final int dim){
         final List<Double> values = lst.getValue();
-        final List<Coordinate> coords = new ArrayList<Coordinate>();
+        final List<Coordinate> coords = new ArrayList<>();
 
         for(int i=0,n=values.size();i<n;i+=dim){
             coords.add( new Coordinate(values.get(i), values.get(i+1)) );
@@ -422,10 +426,14 @@ public class GeometrytoJTS {
     }
 
     public static MultiPoint toJTS(final org.geotoolkit.gml.xml.MultiPoint gml) throws NoSuchAuthorityCodeException, FactoryException{
+        return toJTS(gml, true);
+    }
+    
+    public static MultiPoint toJTS(final org.geotoolkit.gml.xml.MultiPoint gml, boolean longitudeFirst) throws NoSuchAuthorityCodeException, FactoryException{
         final List<? extends PointProperty> pos = gml.getPointMember();
         final Point[] members = new Point[pos.size()];
 
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
 
         for(int i=0,n=pos.size(); i<n; i++){
             members[i] = toJTS(pos.get(i).getPoint(), crs);
@@ -437,10 +445,14 @@ public class GeometrytoJTS {
     }
     
     public static GeometryCollection toJTS(final org.geotoolkit.gml.xml.MultiGeometry gml) throws NoSuchAuthorityCodeException, FactoryException{
+        return toJTS(gml, true);
+    }
+    
+    public static GeometryCollection toJTS(final org.geotoolkit.gml.xml.MultiGeometry gml, boolean longitudeFirst) throws NoSuchAuthorityCodeException, FactoryException{
         final List<? extends GeometryProperty> geoms = gml.getGeometryMember();
         final Geometry[] members = new Geometry[geoms.size()];
 
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
 
         for(int i=0,n=geoms.size(); i<n; i++){
             members[i] = toJTS(geoms.get(i).getAbstractGeometry());
@@ -452,6 +464,10 @@ public class GeometrytoJTS {
     }
 
     public static MultiLineString toJTS(final org.geotoolkit.gml.xml.MultiLineString gml) throws FactoryException{
+        return toJTS(gml, true);
+    }
+    
+    public static MultiLineString toJTS(final org.geotoolkit.gml.xml.MultiLineString gml, boolean longitudeFirst) throws FactoryException{
         final List<? extends LineStringProperty> pos = gml.getLineStringMember();
         final LineString[] members = new LineString[pos.size()];
 
@@ -461,14 +477,18 @@ public class GeometrytoJTS {
 
         final MultiLineString geom = GF.createMultiLineString(members);
 
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
         JTS.setCRS(geom, crs);
         return geom;
     }
 
     public static MultiLineString toJTS(final org.geotoolkit.gml.xml.MultiCurve gml) throws FactoryException{
+        return toJTS(gml, true);
+    }
+    
+    public static MultiLineString toJTS(final org.geotoolkit.gml.xml.MultiCurve gml, boolean longitudeFirst) throws FactoryException{
         final List<? extends CurveProperty> pos = gml.getCurveMember();
-        final List<LineString> members = new ArrayList<LineString>();
+        final List<LineString> members = new ArrayList<>();
 
         for (int i=0,n=pos.size(); i<n; i++) {
             AbstractCurve curve = pos.get(i).getAbstractCurve();
@@ -483,12 +503,16 @@ public class GeometrytoJTS {
 
         final MultiLineString geom = GF.createMultiLineString(members.toArray(new LineString[members.size()]));
 
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
         JTS.setCRS(geom, crs);
         return geom;
     }
 
     public static MultiPolygon toJTS(final org.geotoolkit.gml.xml.MultiPolygon gml) throws FactoryException{
+        return toJTS(gml, true);
+    }
+    
+    public static MultiPolygon toJTS(final org.geotoolkit.gml.xml.MultiPolygon gml, boolean longitudeFirst) throws FactoryException{
         final List<? extends PolygonProperty> pos = gml.getPolygonMember();
         final Polygon[] members = new Polygon[pos.size()];
 
@@ -498,12 +522,16 @@ public class GeometrytoJTS {
 
         final MultiPolygon geom = GF.createMultiPolygon(members);
 
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
         JTS.setCRS(geom, crs);
         return geom;
     }
 
     public static MultiPolygon toJTS(final MultiSurface gml) throws FactoryException{
+        return toJTS(gml, true);
+    }
+    
+    public static MultiPolygon toJTS(final MultiSurface gml, boolean longitudeFirst) throws FactoryException{
         final List<? extends SurfaceProperty> pos = gml.getSurfaceMember();
         final List<Polygon> members = new ArrayList<>();
 
@@ -515,16 +543,20 @@ public class GeometrytoJTS {
         }
 
         final MultiPolygon geom             = GF.createMultiPolygon(members.toArray(new Polygon[members.size()]));
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
         JTS.setCRS(geom, crs);
         return geom;
     }
 
     public static LinearRing toJTS(final AbstractRing gml) throws FactoryException{
+        return toJTS(gml, true);
+    }
+    
+    public static LinearRing toJTS(final AbstractRing gml, boolean longitudeFirst) throws FactoryException{
         if(gml instanceof org.geotoolkit.gml.xml.LinearRing){
-            return toJTS((org.geotoolkit.gml.xml.LinearRing)gml);
+            return toJTS((org.geotoolkit.gml.xml.LinearRing)gml, longitudeFirst);
         }else if(gml instanceof Ring){
-            return toJTS((Ring)gml);
+            return toJTS((Ring)gml, longitudeFirst);
         }else{
             LOGGER.log(Level.WARNING, "Unssupported geometry type : {0}", gml);
             return GF.createLinearRing(new Coordinate[]{new Coordinate(0, 0),new Coordinate(0, 0),
@@ -534,6 +566,10 @@ public class GeometrytoJTS {
     }
 
     public static LinearRing toJTS(final org.geotoolkit.gml.xml.LinearRing gml){
+        return toJTS(gml, true);
+    }
+    
+    public static LinearRing toJTS(final org.geotoolkit.gml.xml.LinearRing gml, boolean longitudeFirst){
         final List<Double> values;
         final DirectPositionList lst = gml.getPosList();
         final Coordinates cds        = gml.getCoordinates();
@@ -542,27 +578,31 @@ public class GeometrytoJTS {
         } else if (cds != null) {
             values = cds.getValues();
         } else {
-            values = new ArrayList<Double>();
+            values = new ArrayList<>();
             LOGGER.warning("no coordinates available for linear ring");
         }
 
 
         final int dim = gml.getCoordinateDimension();
-        final List<Coordinate> coords = new ArrayList<Coordinate>(dim);
+        final List<Coordinate> coords = new ArrayList<>(dim);
         for (int i=0,n=values.size(); i<n; i+=dim) {
             coords.add( new Coordinate(values.get(i), values.get(i+1)) );
         }
 
         final LinearRing ring = GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
 
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
         JTS.setCRS(ring, crs);
         return ring;
     }
 
     public static LinearRing toJTS(final Ring gml) throws FactoryException {
+        return toJTS(gml, true);
+    }
+    
+    public static LinearRing toJTS(final Ring gml, boolean longitudeFirst) throws FactoryException {
 
-        final LinkedList<Coordinate> coords = new LinkedList<Coordinate>();
+        final LinkedList<Coordinate> coords = new LinkedList<>();
 
         for (CurveProperty cpt :gml.getCurveMember()){
             AbstractCurve act = cpt.getAbstractCurve();
@@ -637,7 +677,7 @@ public class GeometrytoJTS {
                     }
                 }
             } else if(act instanceof org.geotoolkit.gml.xml.LineString) {
-                final LineString ls = toJTS((org.geotoolkit.gml.xml.LineString)act);
+                final LineString ls = toJTS((org.geotoolkit.gml.xml.LineString)act, longitudeFirst);
                 final Coordinate[] plots = ls.getCoordinates();
 
                 if(coords.isEmpty()) {
@@ -662,7 +702,7 @@ public class GeometrytoJTS {
 
         final LinearRing ring = GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
 
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
         JTS.setCRS(ring, crs);
         return ring;
     }

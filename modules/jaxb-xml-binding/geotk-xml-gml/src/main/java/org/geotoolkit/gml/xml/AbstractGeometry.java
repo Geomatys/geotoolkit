@@ -32,5 +32,5 @@ public interface AbstractGeometry extends AbstractGML {
     
     int getCoordinateDimension();
     
-    CoordinateReferenceSystem getCoordinateReferenceSystem();
+    CoordinateReferenceSystem getCoordinateReferenceSystem(final boolean longitudeFirst);
 }

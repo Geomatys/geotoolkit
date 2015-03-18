@@ -81,8 +81,17 @@ public class InsertElementType implements InsertElement {
     }
 
     public InsertElementType(final Object feature) {
-         this.feature = new ArrayList<Object>();
+         this.feature = new ArrayList<>();
          this.feature.add(feature);
+    }
+    
+    public InsertElementType(final String inputFormat, final String srsName, final Object feature) {
+        this.inputFormat = inputFormat;
+        this.srsName = srsName;
+        if (feature != null) {
+            this.feature = new ArrayList<>();
+            this.feature.add(feature);
+        }
     }
 
     public InsertElementType(final List<Object> feature) {
@@ -94,7 +103,7 @@ public class InsertElementType implements InsertElement {
      */
     public List<Object> getFeature() {
         if (feature == null) {
-            feature = new ArrayList<Object>();
+            feature = new ArrayList<>();
         }
         return this.feature;
     }

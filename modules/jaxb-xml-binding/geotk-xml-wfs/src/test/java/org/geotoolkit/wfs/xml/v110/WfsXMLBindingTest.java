@@ -80,7 +80,7 @@ public class WfsXMLBindingTest {
         assertTrue(result.getFeatureTypeList() != null);
 
         WFSCapabilitiesType expResult = new WFSCapabilitiesType();
-        List<FeatureTypeType> featList = new ArrayList<FeatureTypeType>();
+        List<FeatureTypeType> featList = new ArrayList<>();
         List<String> otherSRS = Arrays.asList("urn:ogc:def:crs","crs:EPSG::32615","crs:EPSG::5773");
         WGS84BoundingBoxType bbox = new WGS84BoundingBoxType(29.8, -90.1, 30, -89.9);
         FeatureTypeType ft1 = new FeatureTypeType(new QName("http://www.opengis.net/ows-6/utds/0.3", "Building", "utds"), "", "urn:ogc:def:crs:EPSG::4979", otherSRS, Arrays.asList(bbox));
@@ -153,7 +153,7 @@ public class WfsXMLBindingTest {
     public void marshallingTest() throws JAXBException {
 
         WFSCapabilitiesType capa = new WFSCapabilitiesType();
-        List<FeatureTypeType> featList = new ArrayList<FeatureTypeType>();
+        List<FeatureTypeType> featList = new ArrayList<>();
         List<String> otherSRS = Arrays.asList("urn:ogc:def:crs","crs:EPSG::32615","crs:EPSG::5773");
         WGS84BoundingBoxType bbox = new WGS84BoundingBoxType(29.8, -90.1, 30, -89.9);
         FeatureTypeType ft1 = new FeatureTypeType(new QName("http://www.opengis.net/ows-6/utds/0.3", "Building", "utds"), "", "urn:ogc:def:crs:EPSG::4979", otherSRS, Arrays.asList(bbox));
@@ -173,7 +173,7 @@ public class WfsXMLBindingTest {
         PointType pt = new PointType(null, dp);
         pt.setSrsName("urn:ogc:def:crs:epsg:7.4:27582");
         PropertyType property = new PropertyType(new QName("the_geom"), new ValueType(pt));
-        UpdateElementType update = new UpdateElementType(Arrays.asList(property), filter, new QName("http://www.opengis.net/gml", "NamedPlaces"), null);
+        UpdateElementType update = new UpdateElementType(null, Arrays.asList(property), filter, new QName("http://www.opengis.net/gml", "NamedPlaces"), null);
         transac.getInsertOrUpdateOrDelete().add(update);
 
         //marshaller.marshal(transac, System.out);

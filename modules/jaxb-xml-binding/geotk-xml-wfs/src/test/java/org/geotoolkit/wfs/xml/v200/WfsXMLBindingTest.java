@@ -181,7 +181,7 @@ public class WfsXMLBindingTest {
         PointType pt = new PointType(null, dp);
         pt.setSrsName("urn:ogc:def:crs:epsg:7.4:27582");
         PropertyType property = new PropertyType(new ValueReference(), pt);
-        UpdateType update = new UpdateType(Arrays.asList(property), filter, new QName("http://www.opengis.net/gml", "NamedPlaces"), null);
+        UpdateType update = new UpdateType(null, Arrays.asList(property), filter, new QName("http://www.opengis.net/gml", "NamedPlaces"), null);
         final ObjectFactory factory = new ObjectFactory();
         transac.getAbstractTransactionAction().add(factory.createUpdate(update));
 

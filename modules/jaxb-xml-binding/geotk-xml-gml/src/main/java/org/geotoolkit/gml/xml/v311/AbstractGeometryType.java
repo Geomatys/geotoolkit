@@ -241,9 +241,14 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        return getCoordinateReferenceSystem(true);
+    }
+    
+    @Override
+    public CoordinateReferenceSystem getCoordinateReferenceSystem(final boolean longitudeFirst) {
         if(srsName != null){
             try {
-                return CRS.decode(srsName);
+                return CRS.decode(srsName, longitudeFirst);
             } catch (FactoryException ex) {
                 Logger.getLogger(AbstractGeometryType.class.getName()).log(Level.WARNING, "Could not decode CRS which name is : " + srsName, ex);
             }

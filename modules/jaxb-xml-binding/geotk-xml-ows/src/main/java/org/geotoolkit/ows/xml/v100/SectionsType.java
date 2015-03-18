@@ -56,15 +56,16 @@ import org.geotoolkit.ows.xml.Sections;
 public class SectionsType implements Sections {
 
     @XmlElement(name = "Section")
-    private List<String> section = new ArrayList<String>();
+    private List<String> section = new ArrayList<>();
     
     @XmlTransient
-    private static final List<String> existingSections = new ArrayList<String>(4);
+    private static final List<String> existingSections = new ArrayList<>(4);
     static {
         existingSections.add("ServiceIdentification");
         existingSections.add("ServiceProvider");
         existingSections.add("OperationsMetadata");
         existingSections.add("Filter_Capabilities");
+        existingSections.add("FeatureTypeList");
         existingSections.add("All");
     }
     
@@ -89,7 +90,7 @@ public class SectionsType implements Sections {
      * @param section one or more of "ServiceIdentification", "ServiceProvider", "OperationsMetadata", "Filter_Capabilities", "All".
      */
     public SectionsType(final String... section){
-        this.section = new ArrayList<String>();
+        this.section = new ArrayList<>();
         for (String s: section) {
             this.section.add(s);
         }
@@ -102,7 +103,7 @@ public class SectionsType implements Sections {
     @Override
     public List<String> getSection() {
         if (section == null){
-            section = new ArrayList<String>();
+            section = new ArrayList<>();
         }
        return section;
     }
