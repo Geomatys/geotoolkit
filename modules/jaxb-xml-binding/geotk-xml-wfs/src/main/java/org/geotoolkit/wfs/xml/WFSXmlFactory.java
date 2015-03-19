@@ -402,12 +402,12 @@ public class WFSXmlFactory {
             }
             return new org.geotoolkit.wfs.xml.v200.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v200.UpdateType)updateElement);
         } else if ("1.1.0".equals(version)) {
-            if (updateElement != null && !(updateElement instanceof org.geotoolkit.wfs.xml.v110.DeleteElementType)) {
+            if (updateElement != null && !(updateElement instanceof org.geotoolkit.wfs.xml.v110.UpdateElementType)) {
                 throw new IllegalArgumentException("unexpected object version for update element");
             }
             return new org.geotoolkit.wfs.xml.v110.TransactionType(service, version, handle, releaseAction, (org.geotoolkit.wfs.xml.v110.UpdateElementType)updateElement);
         } else if ("1.0.0".equals(version)) {
-            if (updateElement != null && !(updateElement instanceof org.geotoolkit.wfs.xml.v100.DeleteElementType)) {
+            if (updateElement != null && !(updateElement instanceof org.geotoolkit.wfs.xml.v100.UpdateElementType)) {
                 throw new IllegalArgumentException("unexpected object version for update element");
             }
             return new org.geotoolkit.wfs.xml.v100.TransactionType(service, version, handle, releaseAction,  (org.geotoolkit.wfs.xml.v100.UpdateElementType)updateElement);
