@@ -47,4 +47,11 @@ public class PropertyIsNotEqualToType  extends BinaryComparisonOpType implements
     public PropertyIsNotEqualToType(final PropertyIsNotEqualToType that) {
         super(that);
     }
+
+    @Override
+    public ComparisonOpsType getClone() {
+        return new PropertyIsNotEqualToType(this);
+    }
+    
+    
 }

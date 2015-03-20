@@ -90,32 +90,32 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
     public StoredQueryDescriptionType(final StoredQueryDescription that) {
         if (that != null) {
             if (that.getAbstract() != null) {
-                this._abstract = new ArrayList<Abstract>();
+                this._abstract = new ArrayList<>();
                 for (org.geotoolkit.wfs.xml.Abstract a : that.getAbstract()) {
                     this._abstract.add(new Abstract(a));
                 }
             }
             this.id = that.getId();
             if (that.getMetadata() != null) {
-                this.metadata = new ArrayList<MetadataType>();
+                this.metadata = new ArrayList<>();
                 for (AbstractMetadata m : that.getMetadata()) {
                     this.metadata.add(new MetadataType(m));
                 }
             }
             if (that.getParameter() != null) {
-                this.parameter = new ArrayList<ParameterExpressionType>();
+                this.parameter = new ArrayList<>();
                 for (ParameterExpression m : that.getParameter()) {
                     this.parameter.add(new ParameterExpressionType(m));
                 }
             }
             if (that.getQueryExpressionText() != null) {
-                this.queryExpressionText = new ArrayList<QueryExpressionTextType>();
+                this.queryExpressionText = new ArrayList<>();
                 for (QueryExpressionText m : that.getQueryExpressionText()) {
                     this.queryExpressionText.add(new QueryExpressionTextType(m));
                 }
             }
             if (that.getTitle() != null) {
-                this.title = new ArrayList<Title>();
+                this.title = new ArrayList<>();
                 for (org.geotoolkit.wfs.xml.Title t : that.getTitle()) {
                     this.title.add(new Title(t));
                 }
@@ -127,19 +127,37 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
             final QueryExpressionTextType queryExpressionText) {
         this.id = id;
         if (title != null) {
-            this.title = new ArrayList<Title>();
+            this.title = new ArrayList<>();
             this.title.add(new Title(title));
         }
         if (_abstract != null) {
-            this._abstract = new ArrayList<Abstract>();
+            this._abstract = new ArrayList<>();
             this._abstract.add(new Abstract(_abstract));
         }
         if (parameter != null) {
-            this.parameter = new ArrayList<ParameterExpressionType>();
+            this.parameter = new ArrayList<>();
             this.parameter.add(parameter);
         }
         if (queryExpressionText != null) {
-            this.queryExpressionText = new ArrayList<QueryExpressionTextType>();
+            this.queryExpressionText = new ArrayList<>();
+            this.queryExpressionText.add(queryExpressionText);
+        }
+    }
+    
+    public StoredQueryDescriptionType(final String id, final String title, final String _abstract, final List<ParameterExpressionType> parameters,
+            final QueryExpressionTextType queryExpressionText) {
+        this.id = id;
+        if (title != null) {
+            this.title = new ArrayList<>();
+            this.title.add(new Title(title));
+        }
+        if (_abstract != null) {
+            this._abstract = new ArrayList<>();
+            this._abstract.add(new Abstract(_abstract));
+        }
+        this.parameter = parameters;
+        if (queryExpressionText != null) {
+            this.queryExpressionText = new ArrayList<>();
             this.queryExpressionText.add(queryExpressionText);
         }
     }

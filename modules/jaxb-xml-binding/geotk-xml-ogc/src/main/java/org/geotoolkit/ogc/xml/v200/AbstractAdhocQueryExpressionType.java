@@ -87,10 +87,10 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         super(that);
         if (that != null) {
             if (that.aliases != null) {
-                this.aliases = new ArrayList<String>(that.aliases);
+                this.aliases = new ArrayList<>(that.aliases);
             }
             if (that.typeNames != null) {
-                this.typeNames = new ArrayList<QName>(that.typeNames);
+                this.typeNames = new ArrayList<>(that.typeNames);
             }
             if (that.abstractProjectionClause != null) {
                 this.abstractProjectionClause = cloneProjectionClause(that.abstractProjectionClause);

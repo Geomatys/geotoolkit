@@ -564,12 +564,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ExecutionStatusType }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link DropStoredQueryResponseType }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs/2.0", name = "DropStoredQueryResponse")
-    public JAXBElement<ExecutionStatusType> createDropStoredQueryResponse(ExecutionStatusType value) {
-        return new JAXBElement<ExecutionStatusType>(_DropStoredQueryResponse_QNAME, ExecutionStatusType.class, null, value);
+    public JAXBElement<DropStoredQueryResponseType> createDropStoredQueryResponse(DropStoredQueryResponseType value) {
+        return new JAXBElement<DropStoredQueryResponseType>(_DropStoredQueryResponse_QNAME, DropStoredQueryResponseType.class, null, value);
     }
 
     /**

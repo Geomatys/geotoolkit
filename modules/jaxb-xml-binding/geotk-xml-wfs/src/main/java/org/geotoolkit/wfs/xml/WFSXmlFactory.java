@@ -570,11 +570,13 @@ public class WFSXmlFactory {
     public static StoredQuery buildStoredQuery(final String currentVersion, final String id, final String handle, final List<Parameter> parameters) {
         if ("2.0.0".equals(currentVersion)) {
             final List<org.geotoolkit.wfs.xml.v200.ParameterType> params = new ArrayList<>();
-            for (Parameter p : parameters) {
-                if (!(p instanceof org.geotoolkit.wfs.xml.v200.ParameterType)) {
-                    throw new IllegalArgumentException("bad object version for parameter");
+            if (parameters != null) {
+                for (Parameter p : parameters) {
+                    if (!(p instanceof org.geotoolkit.wfs.xml.v200.ParameterType)) {
+                        throw new IllegalArgumentException("bad object version for parameter");
+                    }
+                    params.add((org.geotoolkit.wfs.xml.v200.ParameterType)p);
                 }
-                params.add((org.geotoolkit.wfs.xml.v200.ParameterType)p);
             }
             return new org.geotoolkit.wfs.xml.v200.StoredQueryType(id, handle, params);
         } else {
@@ -660,6 +662,14 @@ public class WFSXmlFactory {
         }
     }
     
+    public static ParameterExpression buildParameterDescription(final String currentVersion, final String name, final QName type) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.wfs.xml.v200.ParameterExpressionType(name, name, null, type);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
     public static GetFeature buildGetFeature(final String currentVersion, final String service, final String handle, final Integer startIndex, final Integer maxFeature,
         final Query query, final ResultTypeType resultType, String outputFormat) {
         if ("2.0.0".equals(currentVersion)) {
@@ -707,6 +717,56 @@ public class WFSXmlFactory {
     public static ListStoredQueries buildListStoredQueries(final String version, final String service, final String handle) {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.wfs.xml.v200.ListStoredQueriesType(service, version, handle);
+
+        } else if ("1.1.0".equals(version)) {
+            throw new IllegalArgumentException("ListStoredQueries is not available in version 1.1.0");
+
+        } else if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("ListStoredQueries is not available in version 1.0.0");
+
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public static StoredQueryDescription buildStoredQueryDescription(final String version, final String id, final Query query, final List<ParameterExpression> parameters) {
+        if ("2.0.0".equals(version)) {
+            org.geotoolkit.wfs.xml.v200.QueryExpressionTextType queryEx = null;
+            if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.QueryType)) {
+                throw new IllegalArgumentException("unexpected object version for query element");
+            } else if (query != null) {
+                final org.geotoolkit.wfs.xml.v200.QueryType query200 = (org.geotoolkit.wfs.xml.v200.QueryType) query;
+                queryEx = new org.geotoolkit.wfs.xml.v200.QueryExpressionTextType("urn:ogc:def:queryLanguage:OGC-WFS::WFS_QueryExpression", query200, query200.getTypeNames());
+            }
+            final List<org.geotoolkit.wfs.xml.v200.ParameterExpressionType> parameters200 = new ArrayList<>();
+            for (ParameterExpression param : parameters) {
+                if (!(param instanceof org.geotoolkit.wfs.xml.v200.ParameterExpressionType)) {
+                    throw new IllegalArgumentException("unexpected object version for parameter element");
+                }
+                parameters200.add((org.geotoolkit.wfs.xml.v200.ParameterExpressionType)param);
+            }
+            return new org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType(id, null, null, parameters200, queryEx);
+           
+        } else if ("1.1.0".equals(version)) {
+            throw new IllegalArgumentException("ListStoredQueries is not available in version 1.1.0");
+
+        } else if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("ListStoredQueries is not available in version 1.0.0");
+
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    public static CreateStoredQuery buildCreateStoredQuery(final String version, final String service, final String handle, final List<StoredQueryDescription> queryDescriptions) {
+        if ("2.0.0".equals(version)) {
+            final List<org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType> storedQuery = new ArrayList<>();
+            for (StoredQueryDescription description : queryDescriptions) {
+                if (!(description instanceof org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType)) {
+                    throw new IllegalArgumentException("unexpected object version for queryDescription element");
+                }
+                storedQuery.add((org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType)description);
+            }
+            return new org.geotoolkit.wfs.xml.v200.CreateStoredQueryType(service, version, handle, storedQuery);
 
         } else if ("1.1.0".equals(version)) {
             throw new IllegalArgumentException("ListStoredQueries is not available in version 1.1.0");

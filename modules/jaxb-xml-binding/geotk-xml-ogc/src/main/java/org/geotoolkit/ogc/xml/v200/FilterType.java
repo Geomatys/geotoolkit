@@ -112,7 +112,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
         // id operator
         } else if (obj instanceof AbstractIdType) {
-            this.id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
+            this.id = new ArrayList<>();
             this.id.add(createIdOps((AbstractIdType) obj));
 
         // clone    
@@ -129,7 +129,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
                 this.function = new FunctionType(that.function);
             }
             if (that.id != null) {
-                this.id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
+                this.id = new ArrayList<>();
                 for (JAXBElement<? extends AbstractIdType> jb : that.id) {
                     AbstractIdType aid = jb.getValue();
                     if (aid instanceof ResourceIdType) {
@@ -145,7 +145,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
                 this.logicOps = createLogicOps(log);
             }
             if (that.prefixMapping != null) {
-                this.prefixMapping = new HashMap<String, String>(that.prefixMapping);
+                this.prefixMapping = new HashMap<>(that.prefixMapping);
             }
             if (that.spatialOps != null) {
                 final SpatialOpsType spa = that.spatialOps.getValue().getClone();
