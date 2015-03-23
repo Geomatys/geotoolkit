@@ -92,10 +92,6 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
         if(desc!=null) return desc;
 
         //calculate image statistics
-        desc = new DefaultCoverageDescription();
-        final DefaultAttributeGroup attg = new DefaultAttributeGroup();
-        desc.getAttributeGroups().add(attg);
-
         try {
             final GridCoverageReader reader = acquireReader();
             final GeneralGridGeometry gridGeom = reader.getGridGeometry(getImageIndex());
@@ -110,7 +106,6 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
             }
             Arrays.fill(res, max);
 
-
             final GridCoverageReadParam param = new GridCoverageReadParam();
             param.setEnvelope(env);
             param.setResolution(res);
@@ -123,28 +118,16 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
             final Process process = processDesc.createProcess(processParam);
             final ParameterValueGroup result = process.call();
             final ImageStatistics stats = (ImageStatistics) ParametersExt.getOrCreateValue(result, "outStatistic").getValue();
-
-            final Band[] bands = stats.getBands();
-            for(int i=0;i<bands.length;i++){
-                final Band band = bands[i];
-                final DefaultSampleDimensionExt dim = new DefaultSampleDimensionExt();
-                dim.setMinValue(band.getMin());
-                dim.setMaxValue(band.getMax());
-                dim.setMeanValue(band.getMean());
-                dim.setStandardDeviation(band.getStd());
-                dim.setHistogram(band.getHistogram());
-                dim.setHistogramMin(band.getMin());
-                dim.setHistogramMax(band.getMax());
-
-                dim.setSequenceIdentifier(Names.createMemberName(null, "/", ""+i, Integer.class));
-                dim.getIdentifiers().add(new ImmutableIdentifier(null, null, band.getName()));
-                dim.getNames().add(new ImmutableIdentifier(null, null, band.getName()));
-
-                attg.getAttributes().add(dim);
-            }
+            desc = new CoverageDescriptionAdapter(stats);
 
         } catch (CoverageStoreException | NoSuchIdentifierException | ProcessException ex) {
             Logger.getLogger(AbstractCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+        }
+
+        if (desc == null) {
+            desc = new DefaultCoverageDescription();
+            final DefaultAttributeGroup attg = new DefaultAttributeGroup();
+            desc.getAttributeGroups().add(attg);
         }
 
         return desc;
