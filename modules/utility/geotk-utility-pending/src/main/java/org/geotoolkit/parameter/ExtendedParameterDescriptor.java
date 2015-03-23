@@ -20,22 +20,24 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import javax.measure.unit.Unit;
+
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.measure.Range;
 import org.opengis.metadata.citation.Citation;
 
 /**
- * ExtendedParameterDescriptor extent the {@link DefaultParameterDescriptor} class to add
- * a {@code userObject} Map that will contain others additionals parameters.
+ * ExtendedParameterDescriptor extent the {@link org.apache.sis.parameter.DefaultParameterDescriptor} class to add
+ * a {@code userObject} Map that will contain others additional parameters.
  * Add also a new constructor that take parameter name and remarks and others parameters like
  * validValues, minimum, maximum and units.
  * 
  * @author Quentin Boileau (Geomatys).
  * 
- * @see Parameter
- * @see DefaultParameterDescriptor
+ * @see org.apache.sis.parameter.DefaultParameterDescriptor
  * 
  * @module pending
  */
-public class ExtendedParameterDescriptor<T> extends DefaultParameterDescriptor<T> {
+public class ExtendedParameterDescriptor<T> extends org.apache.sis.parameter.DefaultParameterDescriptor<T> {
 
     private Map<String, Object> userObject;
     
@@ -51,22 +53,22 @@ public class ExtendedParameterDescriptor<T> extends DefaultParameterDescriptor<T
     /**
      * {@inheritDoc}
      * 
-     * @param userObject map that contain additionnal value for the parameter.
+     * @param userObject map that contain additional value for the parameter.
      */
     public ExtendedParameterDescriptor(final String name, 
                                        final Class<T> valueClass, 
                                        final T[] validValues, 
                                        final T defaultValue, 
                                        final Map<String, Object> userObject) {
-        
-        super(name, valueClass, validValues, defaultValue);
+
+        super(properties(name, null), 1, 1, valueClass, null, validValues, defaultValue);
         this.userObject = userObject;
     }
 
     /**
      * {@inheritDoc}
      * 
-     * @param userObject map that contain additionnal value for the parameter.
+     * @param userObject map that contain additional value for the parameter.
      */
     public ExtendedParameterDescriptor(final String name, 
                                        final CharSequence remarks, 
@@ -74,15 +76,37 @@ public class ExtendedParameterDescriptor<T> extends DefaultParameterDescriptor<T
                                        final T defaultValue, 
                                        final boolean required, 
                                        final Map<String, Object> userObject) {
-        
-        super(name, remarks, valueClass, defaultValue, required);
+        super(properties(name, remarks), (required ? 1 : 0), 1, valueClass, null, null, defaultValue);
         this.userObject = userObject;
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @param userObject map that contain additionnal value for the parameter.
+     *
+     * @param name
+     * @param remarks
+     * @param minOccurs
+     * @param maxOccurs
+     * @param valueClass
+     * @param defaultValue
+     * @param userObject
+     */
+    public ExtendedParameterDescriptor(final String name,
+                                       final CharSequence remarks,
+                                       final int minOccurs,
+                                       final int maxOccurs,
+                                       final Class<T> valueClass,
+                                       final T defaultValue,
+                                       final Map<String, Object> userObject) {
+        super(properties(name, remarks),minOccurs, maxOccurs, valueClass, null, null, defaultValue);
+        this.userObject = userObject;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param unit not used since ExtendedParameter extend SIS DefaultParameterDescriptor.
+     * @param userObject map that contain additional value for the parameter.
      */
     public ExtendedParameterDescriptor(final Map<String, ?> properties, 
                                        final Class<T> valueClass, 
@@ -93,15 +117,16 @@ public class ExtendedParameterDescriptor<T> extends DefaultParameterDescriptor<T
                                        final Unit<?> unit, 
                                        final boolean required, 
                                        final Map<String, Object> userObject) {
-        
-        super(properties, valueClass, validValues, defaultValue, minimum, maximum, unit, required);
+
+        super(properties, (required ? 1 : 0), 1, valueClass, toRange(valueClass, minimum, maximum, unit), validValues, defaultValue);
         this.userObject = userObject;
     }
-    
+
     /**
      * {@inheritDoc}
-     * 
-     * @param userObject map that contain additionnal value for the parameter.
+     *
+     * @param unit not used since ExtendedParameter extend SIS DefaultParameterDescriptor.
+     * @param userObject map that contain additional value for the parameter.
      */
     public ExtendedParameterDescriptor(final String name, 
                                        final CharSequence remarks,  
@@ -113,15 +138,16 @@ public class ExtendedParameterDescriptor<T> extends DefaultParameterDescriptor<T
                                        final Unit<?> unit, 
                                        final boolean required, 
                                        final Map<String, Object> userObject) {
-        
-        super(properties(name, remarks), valueClass, validValues, defaultValue, minimum, maximum, unit, required);
+
+        super(properties(name, remarks), (required ? 1 : 0), 1, valueClass, toRange(valueClass, minimum, maximum, unit), validValues, defaultValue);
         this.userObject = userObject;
     }
 
     /**
      * {@inheritDoc}
-     * 
-     * @param userObject map that contain additionnal value for the parameter.
+     *
+     * @param authority not used since ExtendedParameter extend SIS DefaultParameterDescriptor.
+     * @param userObject map that contain additional value for the parameter.
      */
     public ExtendedParameterDescriptor(final Citation authority, 
                                        final String name, 
@@ -133,8 +159,8 @@ public class ExtendedParameterDescriptor<T> extends DefaultParameterDescriptor<T
                                        final Unit<?> unit, 
                                        final boolean required, 
                                        final Map<String, Object> userObject) {
-        
-        super(authority, name, valueClass, validValues, defaultValue, minimum, maximum, unit, required);
+
+        super(properties(name, null), (required ? 1 : 0), 1, valueClass, toRange(valueClass, minimum, maximum, unit), validValues, defaultValue);
         this.userObject = userObject;
     }
 
@@ -156,11 +182,28 @@ public class ExtendedParameterDescriptor<T> extends DefaultParameterDescriptor<T
         if (remarks == null ){
             properties = Collections.singletonMap(NAME_KEY, (CharSequence) name);
         } else {
-            properties = new HashMap<String,CharSequence>(4);
+            properties = new HashMap<>(4);
             properties.put(NAME_KEY,    name);
             properties.put(REMARKS_KEY, remarks);
         }
         return properties;
+    }
+
+    /**
+     * Create a range from min/max values.
+     *
+     * @param valueClass
+     * @param minimum value inclusive
+     * @param maximum value inclusive
+     * @param unit
+     * @return a Range
+     */
+    private static <T> Range<?> toRange(Class<T> valueClass, Comparable<T> minimum, Comparable<T> maximum, Unit<?> unit) {
+        if (unit != null && Number.class.isAssignableFrom(valueClass)) {
+            return new MeasurementRange(valueClass, (Number)minimum, true, (Number)maximum, true, unit);
+        } else {
+            return new Range(valueClass, minimum, true, maximum, true);
+        }
     }
     
 }
