@@ -18,6 +18,7 @@ import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.image.BufferedImages;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.coverage.grid.GridCoverage;
@@ -40,6 +41,7 @@ public class PyramidReaderTest {
      * @throws Exception
      */
     @Test
+    @Ignore
     public void coverage4DTest() throws Exception{
 
         //create a small pyramid

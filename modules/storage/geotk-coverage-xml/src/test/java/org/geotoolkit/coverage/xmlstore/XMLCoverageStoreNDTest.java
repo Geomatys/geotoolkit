@@ -23,10 +23,12 @@ import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.PyramidalModelStoreNDTest;
 import org.geotoolkit.util.FileUtilities;
 import org.junit.After;
+import org.junit.Ignore;
 
 /**
  * @author Johann Sorel (Geomatys)
  */
+@Ignore
 public class XMLCoverageStoreNDTest extends PyramidalModelStoreNDTest {
 
     private final List<File> folders = new ArrayList<File>();

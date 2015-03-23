@@ -205,7 +205,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @throws IOException if problem during reading/writing action.
      */
     @Test
-//    @Ignore
+    @Ignore
     public void default1BandTest() throws IOException {
         File fileTest = File.createTempFile("default1BandTest", "tiff", tempDir);
         

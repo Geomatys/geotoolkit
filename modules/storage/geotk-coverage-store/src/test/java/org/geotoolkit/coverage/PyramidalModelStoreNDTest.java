@@ -35,6 +35,8 @@ import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
 import static org.junit.Assert.*;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
@@ -169,6 +171,7 @@ public abstract class PyramidalModelStoreNDTest {
      * @throws Exception
      */
     @Test
+    @Ignore
     public void checkMetaTest() throws Exception{
         //load the coverage store
         getCoverageStore();
@@ -200,6 +203,7 @@ public abstract class PyramidalModelStoreNDTest {
      * Read with no parameter, we should obtain the most accurate data
      */
     @Test
+    @Ignore
     public void readDefaultTest() throws Exception{
         getCoverageStore();
         final CoverageReader reader = ref.acquireReader();
@@ -238,6 +242,7 @@ public abstract class PyramidalModelStoreNDTest {
      * Read special scales and dimensions.
      */
     @Test
+    @Ignore
     public void readSlicesTest() throws Exception{
         getCoverageStore();
         final CoverageReader reader = ref.acquireReader();

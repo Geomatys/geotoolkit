@@ -65,6 +65,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.opengis.coverage.Coverage;
@@ -369,6 +370,7 @@ public class PortrayalServiceTest {
     }
 
     @Test
+    @Ignore
     public void testCoverageRendering() throws Exception{
         for(GridCoverage2D col : coverages){
             final MapLayer layer = MapBuilder.createCoverageLayer(col, SF.style(SF.rasterSymbolizer()), "cov");
