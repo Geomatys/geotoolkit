@@ -32,7 +32,9 @@ import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.image.bandselect.BandSelectDescriptor.*;
 import static org.geotoolkit.process.image.reformat.ReformatProcess.createRaster;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.image.internal.ImageUtils;
+import org.geotoolkit.image.internal.PhotometricInterpretation;
+import org.geotoolkit.image.internal.SampleType;
 
 /**
  *
@@ -75,15 +77,16 @@ public class BandSelectProcess extends AbstractProcess {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
 
-        //TODO try to reuse java colormodel if possible
-        //create a temporary fallback colormodel which will always work
-        //extract grayscale min/max from sample dimension
-        final ColorModel graycm = BufferedImages.createGrayScaleColorModel(inputType,nbBand,0,0,10);
+        //-- study Color Model
+        final SampleType st                = SampleType.valueOf(inputImage.getSampleModel().getDataType());
+        //-- if we choose only one band grayScale else RGB 
+        final PhotometricInterpretation pI = (bands.length == 1) ? PhotometricInterpretation.GrayScale : PhotometricInterpretation.RGB;
+        final ColorModel outCm             = ImageUtils.createColorModel(st, bands.length, pI, null);
 
-        final BufferedImage resultImage = new BufferedImage(graycm, raster, false, new Hashtable<>());
+        final BufferedImage resultImage    = new BufferedImage(outCm, raster, false, new Hashtable<>());
 
         //copy datas
-        final PixelIterator readIte = PixelIteratorFactory.createDefaultIterator(inputImage);
+        final PixelIterator readIte  = PixelIteratorFactory.createDefaultIterator(inputImage);
         final PixelIterator writeIte = PixelIteratorFactory.createDefaultWriteableIterator(raster, raster);
         final double[] pixel = new double[inputNbBand];
 
