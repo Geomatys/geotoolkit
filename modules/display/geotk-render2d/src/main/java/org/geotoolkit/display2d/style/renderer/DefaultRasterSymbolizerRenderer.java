@@ -18,6 +18,7 @@ package org.geotoolkit.display2d.style.renderer;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
@@ -118,12 +119,18 @@ import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.image.WritableMemoryRenderedImage;
+import org.geotoolkit.image.internal.ImageUtils;
+import org.geotoolkit.image.internal.PhotometricInterpretation;
+import org.geotoolkit.image.internal.PlanarConfiguration;
+import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.coverage.statistics.StatisticOp;
 import org.geotoolkit.process.coverage.statistics.Statistics;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
+import sun.awt.image.WritableRasterNative;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -239,43 +246,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 //LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
                 return;
             }
-
-
-            ////////////////////////////////////////////////////////////////////
-            // 2 - Select bands to style / display                            //
-            ////////////////////////////////////////////////////////////////////
-
-            //band select ----------------------------------------------------------
-            //works as a JAI operation
-            final int nbDim = dataCoverage.getNumSampleDimensions();
+            
             final RasterSymbolizer sourceSymbol = symbol.getSource();
-            if (nbDim > 1) {
-                //we can change sample dimension only if we have more then one available.
-                final ChannelSelection selections = sourceSymbol.getChannelSelection();
-                if (selections != null) {
-                    final SelectedChannelType channel = selections.getGrayChannel();
-                    if (channel != null) {
-                        //single band selection
-                        final int[] indices = new int[]{
-                                getBandIndice(channel.getChannelName(),dataCoverage)
-                        };
-                        dataCoverage = selectBand(dataCoverage, indices);
-                    } else {
-                        final SelectedChannelType[] channels = selections.getRGBChannels();
-                        final int[] selected = new int[]{
-                                getBandIndice(channels[0].getChannelName(),dataCoverage),
-                                getBandIndice(channels[1].getChannelName(),dataCoverage),
-                                getBandIndice(channels[2].getChannelName(),dataCoverage)
-                        };
-                        //@Workaround(library="JAI",version="1.0.x")
-                        //TODO when JAI has been rewritten, this test might not be necessary anymore
-                        //check if selection actually does something
-                        if (!(selected[0] == 0 && selected[1] == 1 && selected[2] == 2) || nbDim != 3) {
-                            dataCoverage = selectBand(dataCoverage, selected);
-                        }
-                    }
-                }
-            }
 
             ////////////////////////////////////////////////////////////////////
             // 3 - Reproject data                                             //
@@ -368,6 +340,41 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 return;
             }
 
+            ////////////////////////////////////////////////////////////////////
+            // 2 - Select bands to style / display                            //
+            ////////////////////////////////////////////////////////////////////
+
+            //band select ----------------------------------------------------------
+            //works as a JAI operation
+            final int nbDim = dataCoverage.getNumSampleDimensions();
+            if (nbDim > 1) {
+                //we can change sample dimension only if we have more then one available.
+                final ChannelSelection selections = sourceSymbol.getChannelSelection();
+                if (selections != null) {
+                    final SelectedChannelType channel = selections.getGrayChannel();
+                    if (channel != null) {
+                        //single band selection
+                        final int[] indices = new int[]{
+                                getBandIndice(channel.getChannelName(),dataCoverage)
+                        };
+                        dataCoverage = selectBand(dataCoverage, indices);
+                    } else {
+                        final SelectedChannelType[] channels = selections.getRGBChannels();
+                        final int[] selected = new int[]{
+                                getBandIndice(channels[0].getChannelName(),dataCoverage),
+                                getBandIndice(channels[1].getChannelName(),dataCoverage),
+                                getBandIndice(channels[2].getChannelName(),dataCoverage)
+                        };
+                        //@Workaround(library="JAI",version="1.0.x")
+                        //TODO when JAI has been rewritten, this test might not be necessary anymore
+                        //check if selection actually does something
+                        if (!(selected[0] == 0 && selected[1] == 1 && selected[2] == 2) || nbDim != 3) {
+                            dataCoverage = selectBand(dataCoverage, selected);
+                        }
+                    }
+                }
+            }
+            
             if (dataCoverage == null) {
                 //LOGGER.log(Level.WARNING, "RasterSymbolizer : Reprojected coverage is null.");
                 return;
@@ -975,11 +982,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     }
 
     private static GridCoverage2D selectBand(GridCoverage2D coverage, final int[] indices) throws ProcessException {
-        if(coverage.getNumSampleDimensions() < indices.length){
+        if (coverage.getNumSampleDimensions() < indices.length) {
             //not enough bands in the image
             LOGGER.log(Level.WARNING, "Raster Style define more bands than the data");
             return coverage;
-        }else{
+        } else {
             RenderedImage image = coverage.getRenderedImage();
 
             final ProcessDescriptor bandSelectDesc = BandSelectDescriptor.INSTANCE;
