@@ -424,12 +424,13 @@ public class PyramidCoverageBuilder {
         Arrays.fill(res, 1.0);
         //----------------------------------------------------------------------
         
-        
         //-- one mosaic for each level scale
         for (double pixelScal : scaleLevel) {
             res[widthAxis] = res[heightAxis] = pixelScal;
             //-- output image size
             readParam.setResolution(res);
+            assert CRS.equalsIgnoreMetadata(readParam.getCoordinateReferenceSystem(), ggg.getCoordinateReferenceSystem()) 
+                    : "PyramidCoverageBuilder : requested CRS into GridCoverageReadParam must be same than Coverage";
             
             final GridCoverage2D gridCoverage2D = (GridCoverage2D) coverageReader.read(imageIndex, readParam);//-- normaly with a gridGeometry2D --> gridCoverage2D
             final RenderedImage baseImg = gridCoverage2D.getRenderedImage();
@@ -438,16 +439,16 @@ public class PyramidCoverageBuilder {
 
             final double[] fill    = getFillValue(gridCoverage2D, fillValue);
             
-            final double imgWidth  = envWidth  / pixelScal;
-            final double imgHeight = envHeight / pixelScal;
+                final double imgWidth  = envWidth  / pixelScal;
+                final double imgHeight = envHeight / pixelScal;
             final double sx        = envWidth  / imgWidth;
             final double sy        = envHeight / imgHeight;
             final MathTransform2D globalGridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0, max1);
-
-            //-- mosaic size
-            final int nbrTileX  = (int) Math.ceil(imgWidth  / tileWidth);
-            final int nbrTileY  = (int) Math.ceil(imgHeight / tileHeight);
-
+                
+                //-- mosaic size
+                final int nbrTileX  = (int) Math.ceil(imgWidth  / tileWidth);
+                final int nbrTileY  = (int) Math.ceil(imgHeight / tileHeight);
+                
             //-- coverage extent on mosaic space
             final GeneralEnvelope coverageExtent = Envelopes.transform(globalGridDest_to_crs.inverse(), clipEnv);
 
@@ -456,7 +457,7 @@ public class PyramidCoverageBuilder {
             final int startTileY = (int) coverageExtent.getMinimum(heightAxis)  / tileHeight;
             final int endTileX   = (int) (coverageExtent.getMaximum(widthAxis)  + tileWidth - 1)  / tileWidth;
             final int endTileY   = (int) (coverageExtent.getMaximum(heightAxis) + tileHeight - 1) / tileHeight;
-
+            
             final GridMosaic mosaic = getOrCreateMosaic(pm, pyramidID, new Dimension(nbrTileX, nbrTileY), tileSize, upperLeft, pixelScal);
             final String mosaicId   = mosaic.getId();
 
@@ -751,23 +752,23 @@ public class PyramidCoverageBuilder {
         final double min0           = envDest.getMinimum(widthAxis);
         final double max1           = envDest.getMaximum(heightAxis);
         
-        //MathTransform2D
+        //-- MathTransform2D
         CoordinateReferenceSystem envDestCRS2D = CRSUtilities.getCRS2D(envDest.getCoordinateReferenceSystem());
         GeneralEnvelope envDest2D = GeneralEnvelope.castOrCopy(CRS.transform(envDest, envDestCRS2D));
         final MathTransform destCrs_to_coverageCRS = CRS.findMathTransform(envDestCRS2D, gridCoverage2D.getCoordinateReferenceSystem2D(), true);
-        
+
         final MathTransform destCrs_to_covGrid     = MathTransforms.concatenate(destCrs_to_coverageCRS, coverageCRS_to_grid).inverse();
         final Dimension tileSize                   = new Dimension(tileWidth, tileHeight);
-        
+
         final GeneralEnvelope covEnvInDestCRS = CRS.transform(destCrs_to_coverageCRS.inverse(), covEnv);
         final GeneralEnvelope clipEnv   = ReferencingUtilities.intersectEnvelopes(covEnvInDestCRS, envDest2D);
         
         //one mosaic for each level scale
         for (double pixelScal : scaleLevel) {
             //output image size
-
-            final double imgWidth  = envWidth / pixelScal;
-            final double imgHeight = envHeight / pixelScal;
+            
+                final double imgWidth  = envWidth / pixelScal;
+                final double imgHeight = envHeight / pixelScal;
             final double sx     = envWidth  / imgWidth;
             final double sy     = envHeight / imgHeight;
             final MathTransform2D globalGridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0, max1);
@@ -778,7 +779,7 @@ public class PyramidCoverageBuilder {
 
             //coverage extent on mosaic space
             final GeneralEnvelope coverageExtent = Envelopes.transform(globalGridDest_to_crs.inverse(), clipEnv);
-
+                
             //coverage intersection tile index
             final int startTileX = (int)coverageExtent.getMinimum(widthAxis) / tileWidth;
             final int startTileY = (int)coverageExtent.getMinimum(heightAxis) / tileHeight;
@@ -967,6 +968,34 @@ public class PyramidCoverageBuilder {
         return pm.createMosaic(pyramidID, gridsize, tileSize, upperLeft, pixelScal);
     }
 
+    /**
+     * Returns a {@link GridMosaic} which already exist.<br><br>
+     * <strong>
+     * Note : an exception is thrown if tile does not exist.
+     * </strong>
+     * 
+     * @param pm {@link PyramidalCoverageReference} where the requested {@link GridMosaic} is looking for.
+     * @param pyramidID {@link Pyramid} identifier of the requested {@link GridMosaic}.
+     * @param envDest requested {@link Envelope} in relation with needed {@link GridMosaic}.
+     * @param pixelScal requested scale in relation with needed {@link GridMosaic}.
+     * @return a {@link GridMosaic} which already exist.
+     * @throws DataStoreException if pyramid does not match with the pyramid_ID or 
+     * also if requested {@link GridMosaic} was not found. 
+     */
+    public static synchronized GridMosaic getMosaic(final PyramidalCoverageReference pm,
+            String pyramidID, Envelope envDest, double pixelScal) throws DataStoreException {
+        final Pyramid pyramid = pm.getPyramidSet().getPyramid(pyramidID);
+        for (GridMosaic gm : pyramid.getMosaics()) {
+            if (gm.getScale() == pixelScal) {
+                final GeneralEnvelope mosGenEnv = new GeneralEnvelope(gm.getEnvelope());
+                if (mosGenEnv.intersects(envDest, true)) { //-- return a mosaic only if they have more than just touch intersection
+                    return gm;
+                }
+            }
+        }
+        throw new DataStoreException("getOrCreateMosaic : with reuse tile. No already built mosaic can contains new data.");
+    }
+    
 
     /**
      * Check if two GridSampleDimension list are compatible.

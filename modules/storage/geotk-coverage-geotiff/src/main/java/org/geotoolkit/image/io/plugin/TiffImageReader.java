@@ -389,7 +389,7 @@ public class TiffImageReader extends SpatialImageReader {
         
         //-- define if geotiff information are present
         
-        //-- if there are not geotiff tag return null
+        //-- check if tiff header contain CRS informations
         final boolean hasCRS = hasCRS(headProperties);
                
         //-- if no setted CRS try to found a prj file if exist.
