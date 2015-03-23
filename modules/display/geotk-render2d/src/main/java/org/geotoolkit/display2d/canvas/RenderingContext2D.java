@@ -561,9 +561,6 @@ public class RenderingContext2D implements RenderingContext{
      * Optimization for a pretty common case.
      */
     public void switchToDisplayCRS() {
-        if(Double.isNaN(graphics.getTransform().getTranslateY())){
-            System.out.println("laaaaaa");
-        }
         if(current != DISPLAY_TRS){
             graphics.setTransform(displayToDevice);
             current = DISPLAY_TRS;
