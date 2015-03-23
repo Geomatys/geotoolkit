@@ -18,7 +18,6 @@ package org.geotoolkit.display2d.style.renderer;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
@@ -119,18 +118,12 @@ import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.image.WritableMemoryRenderedImage;
-import org.geotoolkit.image.internal.ImageUtils;
-import org.geotoolkit.image.internal.PhotometricInterpretation;
-import org.geotoolkit.image.internal.PlanarConfiguration;
-import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.coverage.statistics.StatisticOp;
 import org.geotoolkit.process.coverage.statistics.Statistics;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
-import sun.awt.image.WritableRasterNative;
 
 /**
  * @author Johann Sorel (Geomatys)
