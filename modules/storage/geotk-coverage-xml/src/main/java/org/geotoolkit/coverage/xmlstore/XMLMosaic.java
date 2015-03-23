@@ -48,7 +48,6 @@ import javax.xml.bind.annotation.XmlElement;
 import net.iharder.Base64;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
@@ -60,6 +59,8 @@ import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.coverage.PointOutsideCoverageException;
 import org.opengis.geometry.DirectPosition;
@@ -192,8 +193,22 @@ public class XMLMosaic implements GridMosaic {
             //create an empty tile
             final List<XMLSampleDimension> dims = ref.getXMLSampleDimensions();
             final BufferedImage emptyTile;
-            if (dims != null && !dims.isEmpty()){
-                emptyTile = BufferedImages.createImage(tileWidth, tileHeight, dims.size(), dims.get(0).getDataType());
+            if (dims != null && !dims.isEmpty()) {
+                final int dimsSize = dims.size();
+                emptyTile = BufferedImages.createImage(tileWidth, tileHeight, dimsSize, dims.get(0).getDataType());
+                //-- fill image by noData if it is possible
+                if (dims.get(0).buildSampleDimension().getNoDataValues() != null) {
+                    final double[] nodatas = new double[dimsSize];
+                    for (int i = 0; i < dimsSize; i++) {
+                        nodatas[i] = dims.get(i).buildSampleDimension().getNoDataValues()[0];//-- get the value at index 0 because the aim is to get one noData values between n.
+                    }
+                    final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(emptyTile);
+                    int d = 0;
+                    while (pix.next()) {
+                        pix.setSampleDouble(nodatas[d++]);
+                        if (d == dimsSize) d = 0;
+                    }
+                }
             } else {
                 ColorModel colorModel = ref.getColorModel();
                 SampleModel sampleModel = ref.getSampleModel();
@@ -513,7 +528,7 @@ public class XMLMosaic implements GridMosaic {
         }
     }
 
-    void writeTiles(final RenderedImage image, final Rectangle area, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException{
+     void writeTiles(final RenderedImage image, final Rectangle area, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException{
 
         final int startX = (int)area.getMinX();
         final int startY = (int)area.getMinY();
