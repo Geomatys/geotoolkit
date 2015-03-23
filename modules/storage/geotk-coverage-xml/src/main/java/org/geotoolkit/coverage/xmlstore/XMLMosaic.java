@@ -198,15 +198,22 @@ public class XMLMosaic implements GridMosaic {
                 emptyTile = BufferedImages.createImage(tileWidth, tileHeight, dimsSize, dims.get(0).getDataType());
                 //-- fill image by noData if it is possible
                 if (dims.get(0).buildSampleDimension().getNoDataValues() != null) {
+                    final boolean[] nodataExists = new boolean[dimsSize];
+                    Arrays.fill(nodataExists, false);
                     final double[] nodatas = new double[dimsSize];
                     for (int i = 0; i < dimsSize; i++) {
-                        nodatas[i] = dims.get(i).buildSampleDimension().getNoDataValues()[0];//-- get the value at index 0 because the aim is to get one noData values between n.
+                        final double[] nodat = dims.get(i).buildSampleDimension().getNoDataValues();
+                        if (nodat != null) {
+                            nodataExists[i] = true;
+                            nodatas[i] = nodat[0];//-- only one value by band is supported
+                        }
                     }
+                    
                     final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(emptyTile);
                     int d = 0;
                     while (pix.next()) {
-                        pix.setSampleDouble(nodatas[d++]);
-                        if (d == dimsSize) d = 0;
+                        if (nodataExists[d]) pix.setSampleDouble(nodatas[d++]);
+                        if (d == dimsSize)   d = 0;
                     }
                 }
             } else {
