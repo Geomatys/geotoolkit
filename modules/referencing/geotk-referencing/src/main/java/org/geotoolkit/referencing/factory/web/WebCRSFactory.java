@@ -19,17 +19,14 @@ package org.geotoolkit.referencing.factory.web;
 
 import java.util.Set;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.LinkedHashSet;
 import net.jcip.annotations.ThreadSafe;
 
+import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
-import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.referencing.datum.Ellipsoid;
-import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -38,8 +35,6 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.metadata.Citations;
-import org.apache.sis.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.apache.sis.referencing.CommonCRS;
 
@@ -105,9 +100,9 @@ public class WebCRSFactory extends DirectAuthorityFactory implements CRSAuthorit
      */
     private synchronized void ensureInitialized() throws FactoryException {
         if (crsMap.isEmpty()) {
-            add(84, "WGS84", CommonCRS.WGS84.ellipsoid());
-            add(83, "NAD83", CommonCRS.NAD83.ellipsoid());
-            add(27, "NAD27", CommonCRS.NAD27.ellipsoid());
+            add(84, CommonCRS.WGS84.normalizedGeographic()); // WGS84
+            add(83, CommonCRS.NAD83.normalizedGeographic()); // NAD83
+            add(27, CommonCRS.NAD27.normalizedGeographic()); // NAD27
         }
     }
 
@@ -115,28 +110,12 @@ public class WebCRSFactory extends DirectAuthorityFactory implements CRSAuthorit
      * Adds a geographic CRS from the specified parameters.
      *
      * @param code      The CRS code.
-     * @param name      The CRS and datum name.
-     * @param ellipsoid The ellipsoid.
-     *
      * @throws FactoryException if factories failed to creates the CRS.
      */
-    private void add(final int code, final String name, final Ellipsoid ellipsoid) throws FactoryException {
+    private void add(final int code, final GeographicCRS crs) throws FactoryException {
         assert Thread.holdsLock(this);
-        final Map<String,Object> properties = new HashMap<>();
-        final Citation authority = getAuthority();
-        final String text = String.valueOf(code);
-        properties.put(IdentifiedObject.NAME_KEY, name);
-        properties.put(Identifier.AUTHORITY_KEY, authority);
-        final GeodeticDatum datum = factories.getDatumFactory().createGeodeticDatum(
-                properties, ellipsoid, CommonCRS.WGS84.primeMeridian());
-        properties.put(IdentifiedObject.IDENTIFIERS_KEY, new NamedIdentifier[] {
-                new NamedIdentifier(authority, text),
-                new NamedIdentifier(authority, PREFIX + text)
-        });
-        final CoordinateReferenceSystem crs = factories.getCRSFactory().createGeographicCRS(
-                properties, datum, PredefinedCS.GEODETIC_2D);
         if (crsMap.put(code, crs) != null) {
-            throw new IllegalArgumentException(text);
+            throw new IllegalArgumentException();
         }
     }
 
