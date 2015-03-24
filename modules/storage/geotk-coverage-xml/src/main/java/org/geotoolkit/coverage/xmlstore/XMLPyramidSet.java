@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.xml.bind.annotation.*;
@@ -129,11 +130,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
      */
     Pyramid createPyramid(final String layerName, final CoordinateReferenceSystem crs) throws DataStoreException {
         final XMLPyramid pyramid = new XMLPyramid(crs);
-        try {
-            pyramid.id = URLEncoder.encode(layerName+"_"+IdentifiedObjects.getIdentifierOrName(crs),"UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            throw new DataStoreException("No valid identifier can be created from given CRS.", ex);
-        }
+        pyramid.id = UUID.randomUUID().toString();
         pyramid.initialize(this);
         pyramids().add(pyramid);
         return pyramid;
