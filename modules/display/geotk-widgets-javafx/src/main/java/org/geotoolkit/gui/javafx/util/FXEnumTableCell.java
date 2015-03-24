@@ -16,11 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.util;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -28,6 +24,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
+import javafx.util.StringConverter;
 
 /**
  *
@@ -39,8 +36,13 @@ public class FXEnumTableCell<S, T extends Enum> extends TableCell<S, T> {
     
     private final Class<T> enumClass;
     private final ComboBox<T> field = new ComboBox<>();
+    private final StringConverter<T> converter;
 
     public FXEnumTableCell(final Class<T> enumClass) {
+        this(enumClass, null);
+    }
+
+    public FXEnumTableCell(final Class<T> enumClass, final StringConverter<T> converter) {
         this.enumClass = enumClass;
         field.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -49,6 +51,10 @@ public class FXEnumTableCell<S, T extends Enum> extends TableCell<S, T> {
                 commitEdit(field.getValue());
             }
         });
+        
+        this.converter=converter;
+        if(converter!=null) field.setConverter(converter);
+        
         setGraphic(field);
         setAlignment(Pos.CENTER);
         setContentDisplay(ContentDisplay.CENTER);
@@ -86,7 +92,11 @@ public class FXEnumTableCell<S, T extends Enum> extends TableCell<S, T> {
         setText(null);
         setGraphic(null);
         if (item != null) {
-            setText(item.toString());
+            if(converter!=null){
+                setText(converter.toString(item));
+            }else{
+                setText(item.toString());
+            }
         }
     }
 }

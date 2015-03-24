@@ -160,8 +160,11 @@ public final class JasperReportService extends Static {
 
     /**
      * Write the jasper print in the defined output.
+     * @param print
+     * @param output : output definition
+     * @throws net.sf.jasperreports.engine.JRException
      */
-    private static void generate(final JasperPrint print, final OutputDef output) throws JRException{
+    public static void generate(final JasperPrint print, final OutputDef output) throws JRException{
         final String mime = output.getMime();
         Object target = output.getOutput();
 
