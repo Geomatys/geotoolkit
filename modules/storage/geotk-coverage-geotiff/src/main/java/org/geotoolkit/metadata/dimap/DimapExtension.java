@@ -21,8 +21,12 @@ import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -141,37 +145,27 @@ public class DimapExtension extends GeoTiffExtension {
      * @return File to metadata or null if not found.
      * @throws MalformedURLException
      */
-    private File searchMetadataFile(final Object input) throws MalformedURLException {
-        if(input instanceof File){
+    private File searchMetadataFile(final Object input) throws IOException {
+        if (input instanceof File) {
             final File file = (File) input;
             final File parent = file.getAbsoluteFile().getParentFile();
 
-            //search for metadata.dim
-            File candidate = new File(parent, "metadata.dim");
-            if(candidate.exists() && candidate.isFile()) return candidate;
+            // filename.dim
+            final String pattern1 = ((File)IOUtilities.changeExtension(file, "dim")).getName();
+            final String pattern2 = "metadata.dim";
 
-            //search for filename.dim
-            Object obj = IOUtilities.changeExtension(file, "dim");
-            if(obj instanceof File){
-                candidate = (File)obj;
-                if(candidate.isFile()) return candidate;
-            }else if(obj instanceof String){
-                candidate = new File((String)obj);
-                if(candidate.isFile()) return candidate;
-            }
-
-            //search for filename.DIM
-            obj = IOUtilities.changeExtension(file, "DIM");
-            if(obj instanceof File){
-                candidate = (File)obj;
-                if(candidate.isFile()) return candidate;
-            }else if(obj instanceof String){
-                candidate = new File((String)obj);
-                if(candidate.isFile()) return candidate;
+            //scan file siblings and test siblings name matching patterns
+            final DirectoryStream<Path> dirStream = Files.newDirectoryStream(parent.toPath());
+            for (Path candidate : dirStream) {
+                if (pattern1.equalsIgnoreCase(candidate.getFileName().toString())) {
+                    return candidate.toFile();
+                } else if (pattern2.equalsIgnoreCase(candidate.getFileName().toString())) {
+                    return candidate.toFile();
+                }
             }
 
             return null;
-        }else{
+        } else {
             return null;
         }
     }
