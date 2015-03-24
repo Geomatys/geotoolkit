@@ -81,9 +81,10 @@ public class CBERSExtension extends GeoTiffExtension{
                 return metadata;
             }
 
-            metaFile = new File(file.getParent(), name.substring(0, index)+".xml");
+            String parent = file.getAbsoluteFile().getParent();
+            metaFile = new File(parent, name.substring(0, index)+".xml");
             if(!metaFile.exists()){
-                metaFile = new File(file.getParent(), name.substring(0, index)+".XML");
+                metaFile = new File(parent, name.substring(0, index)+".XML");
             }
             hasMetadata = metaFile.exists();
         }

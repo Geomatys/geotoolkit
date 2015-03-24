@@ -144,17 +144,11 @@ public class DimapExtension extends GeoTiffExtension {
     private File searchMetadataFile(final Object input) throws MalformedURLException {
         if(input instanceof File){
             final File file = (File) input;
-            final File parent = file.getParentFile();
+            final File parent = file.getAbsoluteFile().getParentFile();
 
             //search for metadata.dim
-            File candidate = null;
-            for(final File f : parent.listFiles()){
-                if("metadata.dim".equalsIgnoreCase(f.getName())){
-                    candidate = f;
-                }
-            }
-
-            if(candidate != null && candidate.isFile()) return candidate;
+            File candidate = new File(parent, "metadata.dim");
+            if(candidate.exists() && candidate.isFile()) return candidate;
 
             //search for filename.dim
             Object obj = IOUtilities.changeExtension(file, "dim");
