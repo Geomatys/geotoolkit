@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.javafx.contexttree;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
@@ -58,6 +59,29 @@ public class TreeMenuItem {
             return type.isInstance(selectedItem.getValue());
         }
         return false;
+    }
+    
+    /**
+     * Get all values of queried types from input items.
+     * 
+     * Note : Input items are not browsed recursively, we don't check their children.
+     * @param <T> Type of object to return.
+     * @param selection The list of tree items we want to extract value from.
+     * @param type Class of output values.
+     * @return All values of wanted types we have found in input selection parameter.
+     */
+    protected static <T> List<T>  getSelection(final List<? extends TreeItem> selection, final Class<T> type) {
+        final ArrayList<T> result = new ArrayList<>();
+        if (selection != null && !selection.isEmpty()) {
+            Object tmpValue;
+            for (final TreeItem item : selection) {
+                tmpValue = item.getValue();
+                if (tmpValue != null && type.isAssignableFrom(tmpValue.getClass())) {
+                    result.add((T)tmpValue);
+                }
+            }
+        }
+        return result;
     }
             
 }

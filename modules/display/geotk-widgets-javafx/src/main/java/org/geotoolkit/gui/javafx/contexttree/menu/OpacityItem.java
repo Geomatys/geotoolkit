@@ -16,9 +16,8 @@
  */
 package org.geotoolkit.gui.javafx.contexttree.menu;
 
-import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
 import javafx.scene.control.CustomMenuItem;
@@ -34,14 +33,14 @@ import org.geotoolkit.map.MapLayer;
  * Change layer opacity for ContextTree
  *
  * @author Johann Sorel (Geomatys)
+ * @author Alexis Manin (Geomatys)
  */
-public class OpacityItem extends TreeMenuItem{
+public class OpacityItem extends TreeMenuItem {
     
-    private WeakReference<TreeItem> itemRef;
     private final Slider slider = new Slider(0.0, 1.0, 1);
+    private List<MapLayer> selectedLayers = new ArrayList<>();
 
-    public OpacityItem(){
-        
+    public OpacityItem() {        
         slider.setOrientation(Orientation.HORIZONTAL);
         slider.setTooltip(new Tooltip(GeotkFX.getString(this,"opacity")));
         slider.setMin(0.0);
@@ -53,31 +52,31 @@ public class OpacityItem extends TreeMenuItem{
         
         menuItem = new CustomMenuItem(slider, false);
         
-        slider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if(itemRef!=null){
-                    final TreeItem ti = itemRef.get();
-                    if(ti!=null){
-                        final MapLayer layer = (MapLayer) ti.getValue();
-                        layer.setOpacity(slider.getValue());
-                    }
-                }
-            }
-        });
-        
+        slider.valueProperty().addListener(this::updateOpacity);
     }
 
     @Override
     public MenuItem init(List<? extends TreeItem> selection) {
-        boolean valid = uniqueAndType(selection,MapLayer.class);
-        if(valid && selection.get(0).getParent()!=null){
-            final MapLayer layer = (MapLayer) (selection.get(0)).getValue();
-            slider.setValue(layer.getOpacity());
-            itemRef = new WeakReference<>(selection.get(0));
+        selectedLayers = getSelection(selection, MapLayer.class);
+        // We do not allow opacity update if there is something which is not a layer in the selection.
+        if (selectedLayers.isEmpty() || selectedLayers.size() < selection.size()) {
+            return null;
+        } else {
+            slider.setValue(selectedLayers.get(0).getOpacity());
             return menuItem;
         }
-        return null;
     }
-
+    
+    /**
+     * Update opacity of currently selected layers using {@link #slider}. 
+     * @param sliderProperty
+     * @param oldOpacity The previous slider opacity.
+     * @param newOpacity The new opacity value
+     */
+    private void updateOpacity(ObservableValue<? extends Number> sliderProperty, Number oldOpacity, Number newOpacity) {
+        final double opacity = newOpacity.doubleValue();
+        for (final MapLayer layer : selectedLayers) {
+            layer.setOpacity(opacity);
+        }
+    }
 }
