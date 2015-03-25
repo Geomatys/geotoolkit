@@ -83,7 +83,9 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 
 /**
- *
+ * TODO : For features, compute statistics only if input symbolizer needs
+ *  it, and compute them only on required fields.
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedCellSymbolizer>{
