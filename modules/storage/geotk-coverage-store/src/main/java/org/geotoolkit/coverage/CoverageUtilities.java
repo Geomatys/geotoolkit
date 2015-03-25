@@ -356,4 +356,24 @@ public final class CoverageUtilities {
         throw new CoverageStoreException("Unknown GridCoverage");
     }
 
+
+    /**
+     * Compute Pyramid envelope.
+     *
+     * @param pyramid shouldn't be null
+     * @return pyramid Envelope or null if no mosaic found.
+     */
+    public static GeneralEnvelope getPyramidEnvelope(Pyramid pyramid) {
+        ArgumentChecks.ensureNonNull("pyramid", pyramid);
+        GeneralEnvelope pyramidEnv = null;
+        for (GridMosaic mosaic : pyramid.getMosaics()) {
+            if (pyramidEnv == null) {
+                pyramidEnv = new GeneralEnvelope(mosaic.getEnvelope());
+            } else {
+                pyramidEnv.add(mosaic.getEnvelope());
+            }
+        }
+        return pyramidEnv;
+    }
+
 }
