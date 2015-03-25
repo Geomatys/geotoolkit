@@ -206,7 +206,24 @@
             <artifactId>geotk-feature-mapinfo</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+    
+        <!-- JAI -->
+    <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jai_core</artifactId>
+      <!--version>${jai.version}</version-->
+    </dependency>
+    <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jai_codec</artifactId>
+      <!--version>${jai.version}</version-->
+    </dependency>
+    <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jai_imageio</artifactId>
+      <!--version>${jai-io.version}</version-->
+    </dependency>
+    
     </dependencies>
 
 </project>
