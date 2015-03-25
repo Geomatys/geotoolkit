@@ -14,16 +14,16 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.gui.javafx.util;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -33,124 +33,128 @@ import javafx.stage.Popup;
 /**
  * Auto-completion for textfield.
  * 
+ * Note : To update completion list over input text change, you must override 
+ * {@link #getChoices(java.lang.String) } method.
+ * 
  * @author Johann Sorel (Geomatys)
+ * @author Alexis Manin (Geomatys)
  */
 public class TextFieldCompletion {
     
-    private final TextField textField;
+    private final TextInputControl textField;
     private final Popup popup = new Popup();
     private final ListView<String> list = new ListView<>();
-    private boolean moveCaretToPos = false;
     private int caretPos;
 
-    public TextFieldCompletion(final TextField textField) {
+    public TextFieldCompletion(final TextInputControl textField) {
         this.textField = textField;
-        this.textField.setOnKeyPressed((KeyEvent t)->popup.hide());
-        this.textField.setOnKeyReleased(this::onKeyPress);
-        this.textField.setOnMousePressed((MouseEvent e)->onKeyPress(null));
         
-        final ScrollPane scroll = new ScrollPane(list);
-        scroll.setFitToWidth(true);
-        scroll.setFitToHeight(true);
+        list.setMinSize(0, 0);
         
         popup.setAutoHide(true);
-        popup.getContent().add(scroll);
+        popup.getContent().add(list);
+        
+        // Event management
+        this.textField.setOnKeyPressed(this::onKeyPress);
+        this.textField.setOnMousePressed((MouseEvent e)->onKeyPress(null));
+        this.textField.setOnMouseClicked((MouseEvent e)->updateChoices(textField.textProperty(), null, textField.textProperty().get()));
+        this.textField.textProperty().addListener(this::updateChoices);
         
         // If user click or press enter on a popup item, we put selected value as text field value.
-        list.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        final MultipleSelectionModel<String> sModel = list.getSelectionModel();
+        sModel.setSelectionMode(SelectionMode.SINGLE);
         list.setOnKeyPressed((KeyEvent event) -> {
             if(event.getCode()==KeyCode.ENTER){
-                final String val = list.getSelectionModel().getSelectedItem();
+                final String val = sModel.getSelectedItem();
                 if(val!=null){
                     textField.setText(val);
                 }
+                caretPos = -1;
+                moveCaret(textField.getLength());
                 popup.hide();
+            } else if (KeyCode.TAB.equals(event.getCode())) {
+                int selectedIndex = sModel.getSelectedIndex();
+                if (selectedIndex < 0 || selectedIndex >= list.getItems().size()-1) {
+                    sModel.selectFirst();
+                } else {
+                    sModel.selectNext();
+                }
             }
         });
         
         list.setOnMouseClicked((MouseEvent event)-> {
             if (MouseButton.PRIMARY.equals(event.getButton())) {
-                final String val = list.getSelectionModel().getSelectedItem();
+                final String val = sModel.getSelectedItem();
                 if(val!=null){
                     textField.setText(val);
                 }
+                caretPos = -1;
+                moveCaret(textField.getLength());
                 popup.hide();
             }
         });
     }
     
+    /**
+     * Return list of possible choices to complete input text.
+     * @param text The text to find completion for. Can be null or empty.
+     * @return A list of possible texts to replace the input one. Can be empty, 
+     * but not null.
+     */
     protected ObservableList<String> getChoices(String text){
         final ObservableList lst = FXCollections.observableArrayList();
         return lst;
     }
     
     private void onKeyPress(KeyEvent event) {
-        final KeyCode code;
-        if (event != null) {
-            code = event.getCode();
-        } else {
-            code = null;
+        if (event == null || event.getCode() == null) {
+            return;
         }
-        final String text = textField.getText();
-        final ObservableList baseData = getChoices(text);
         
-        final Point2D popupPos = textField.localToScreen(0, textField.getHeight());
+        final KeyCode code = event.getCode();
         
         if (code == KeyCode.UP) {
             caretPos = -1;
-            moveCaret(text.length());
-            return;
+            moveCaret(textField.getLength());
+            
         } else if (code == KeyCode.DOWN) {
             if (!popup.isShowing()) {
-                popup.setWidth(list.getPrefWidth()+10);
-                popup.show(textField,popupPos.getX(),popupPos.getY());
+                final Point2D popupPos = textField.localToScreen(0, textField.getHeight());
+                if (popupPos != null) {
+                    popup.setWidth(list.getPrefWidth()+10);
+                    popup.show(textField,popupPos.getX(),popupPos.getY());
+                }
             }
             caretPos = -1;
-            moveCaret(text.length());
-            return;
+            moveCaret(textField.getLength());
+            
         } else if (code == KeyCode.BACK_SPACE) {
-            moveCaretToPos = true;
             caretPos = textField.getCaretPosition();
         } else if (code == KeyCode.DELETE) {
-            moveCaretToPos = true;
             caretPos = textField.getCaretPosition();
-        }
-        if (code == KeyCode.RIGHT || code == KeyCode.LEFT || (event != null && event.isControlDown()) || code == KeyCode.HOME || code == KeyCode.END || code == KeyCode.TAB) {
-            return;
-        }
-        
-        final String searchText = textField.getText().toLowerCase();
-        final ObservableList dataList;
-        if (searchText == null || searchText.isEmpty()) {
-            dataList = FXCollections.observableArrayList(baseData);
-        } else {
-            dataList = FXCollections.observableArrayList(
-                baseData.filtered((Object t) -> String.valueOf(t).toLowerCase().startsWith(searchText)));
-        }
-        
-        list.setItems(dataList);
-        list.getSelectionModel().clearSelection();
-        textField.setText(text);
-        if (!moveCaretToPos) {
-            caretPos = -1;
-        }
-        
-        moveCaret(text.length());
-        if (!dataList.isEmpty()) {
-            popup.setWidth(list.getPrefWidth()+10);
-            popup.show(textField,popupPos.getX(),popupPos.getY());
-        }else{
-            popup.hide();
         }
     }
 
+    private void updateChoices(final ObservableValue<? extends String> obs, String oldText, String newText) {
+        ObservableList<String> choices = getChoices(newText);
+        list.setItems(choices);
+        if (choices.isEmpty()) {
+            popup.hide();
+        } else {
+            final Point2D popupPos = textField.localToScreen(0, textField.getHeight());
+            if (popupPos != null) {
+                popup.setWidth(list.getPrefWidth() + 10);
+                popup.show(textField, popupPos.getX(), popupPos.getY());
+            }
+        }
+    }
+    
     private void moveCaret(int textLength) {
         if (caretPos == -1) {
             textField.positionCaret(textLength);
         } else {
             textField.positionCaret(caretPos);
         }
-        moveCaretToPos = false;
     }
     
 }
