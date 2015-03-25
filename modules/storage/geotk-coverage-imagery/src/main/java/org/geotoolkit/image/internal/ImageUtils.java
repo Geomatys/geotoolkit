@@ -424,7 +424,8 @@ public class ImageUtils extends Static{
                 sampleFormat  = SAMPLEFORMAT_UINT;
                 break;
             }
-            case Short : {
+            case  Short : 
+            case UShort : {
                 sampleBitSize = java.lang.Short.SIZE;
                 sampleFormat  = SAMPLEFORMAT_UINT;
                 break;
@@ -493,7 +494,8 @@ public class ImageUtils extends Static{
                 sampleFormat  = SAMPLEFORMAT_UINT;
                 break;
             }
-            case Short : {
+            case Short  :
+            case UShort : {
                 sampleBitSize = java.lang.Short.SIZE;
                 sampleFormat  = SAMPLEFORMAT_UINT;
                 break;
