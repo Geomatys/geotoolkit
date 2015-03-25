@@ -85,6 +85,13 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
         this.dimension = dimension;
     }
 
+    public LayerType(final String identifier, final String title, final String remarks, final List<BoundingBoxType> bboxs,
+                     final List<Style> style, final List<Dimension> dimension) {
+        super(identifier, title, remarks, bboxs);
+        this.style     = style;
+        this.dimension = dimension;
+    }
+
     /**
      * Metadata about the styles of this layer Gets the value of the style property.
      */
