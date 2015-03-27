@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
@@ -68,34 +69,70 @@ public class LinearReferencing extends Static{
         
     }
     
-    public static final class ProjectedReference{
+    /**
+     * Information about a point after its reprojection on a linear object.
+     */
+    public static final class ProjectedPoint {
+        /** Source point, before projection. */
         public Point reference;
+        
+        /** 
+         * Index of the segment in source segment array used for projection. Be 
+         * careful, this information remains valid only while you keep source 
+         * segment array unchanged.
+         */
+        public int segmentIndex = -1;
+        
+        /** Segment on which the point has been projected. */
         public SegmentInfo segment;
-        public Coordinate[] nearests;
-        public double distancePerpendicularAbs;
-        public double distancePerpendicular;
+        
+        /** Coordinate of the point after projection. */
+        public Coordinate projected;
+        
+        /**
+         * Distance from the start of the origin linear object (not just current segment)
+         * and the point after projection on this linear.
+         */
         public double distanceAlongLinear;
-        public boolean perpendicularProjection;
     }
     
     /**
-     * Calcul de coordonée en fonction d'une position relative
+     * Compute geographic / projected position from linear information.
      * 
-     * @param geom linear geometry
-     * @param reference position 
-     * @param distanceAlongLinear distance along the linear
-     * @param distancePerpendicular distance from the linear
-     * @return position 
+     * @param geom Reference linear. If it's not a {@link LineString}, it will be 
+     * converted as specified by {@link #asLineString(com.vividsolutions.jts.geom.Geometry) } method.
+     * @param reference A point on reference linear.
+     * @param distanceAlongLinear A distance (can be negative to rewind on linear)
+     * from reference point along input linear.
+     * @param distancePerpendicular distance from the linear (perpendicularly to it) 
+     * for output point.
+     * @return position Found point, whose projection is thee same as input linear.
      */
-    public static Point calculateCoordinate(Geometry geom, Point reference, 
+    public static Point computeCoordinate(Geometry geom, Point reference, 
             double distanceAlongLinear, double distancePerpendicular){
         ArgumentChecks.ensureNonNull("linear", geom);
         ArgumentChecks.ensureNonNull("reference", reference);
-                
-        //project reference 
-        final LineString linear = asLineString(geom);
-        final SegmentInfo[] segments = buildSegments(linear);
-        final ProjectedReference projection = projectReference(segments, reference);
+        return computeCoordinate(buildSegments(asLineString(geom)), reference, distanceAlongLinear, distancePerpendicular);
+    }
+    
+    /**
+     * Compute geographic / projected position from linear information.
+     * 
+     * @param segments Reference linear, cut as a succession of segments.
+     * @param reference A point on reference linear.
+     * @param distanceAlongLinear A distance (can be negative to rewind on linear)
+     * from reference point along input linear.
+     * @param distancePerpendicular distance from the linear (perpendicularly to it) 
+     * for output point.
+     * @return A geographic or projected (depends on input linear CRS) point defined 
+     * by input parameters.
+     */
+    public static Point computeCoordinate(final SegmentInfo[] segments, Point reference, 
+            double distanceAlongLinear, double distancePerpendicular) {
+        ArgumentChecks.ensureNonNull("linear", segments);
+        ArgumentChecks.ensureNonNull("reference", reference);
+        //project reference
+        final ProjectedPoint projection = projectReference(segments, reference);
                 
         //find segment at given distance
         final double distanceFinal = projection.distanceAlongLinear + distanceAlongLinear;
@@ -103,8 +140,8 @@ public class LinearReferencing extends Static{
         
         final Point pt = GO2Utilities.JTS_FACTORY.createPoint(segment.getPoint(
                 distanceFinal-segment.startDistance, distancePerpendicular));
-        pt.setSRID(geom.getSRID());
-        pt.setUserData(geom.getUserData());
+        pt.setSRID(segment.geometry.getSRID());
+        pt.setUserData(segment.geometry.getUserData());
         return pt;
     }
     
@@ -113,15 +150,14 @@ public class LinearReferencing extends Static{
      * @param geom linear geometry
      * @param references positions
      * @param position
-     * @return Entry : index of the closest reference point
-     *       double[0] = distance alogn the linear
-     *       double[1] = distance aside from the linear
+     * @return Entry : Key = index of the closest reference point
+     *                 Value = distance along the linear
      */
-    public static Entry<Integer,double[]> calculateRelative(Geometry geom, Point[] references, Point position) {
+    public static Entry<Integer, Double> computeRelative(Geometry geom, Point[] references, Point position) {
         ArgumentChecks.ensureNonNull("linear", geom);
         final LineString linear = asLineString(geom);
         final SegmentInfo[] segments = buildSegments(linear);
-        return calculateRelative(segments, references, position);
+        return computeRelative(segments, references, position);
     }
     
     /**
@@ -130,25 +166,24 @@ public class LinearReferencing extends Static{
      * 
      * @param references positions
      * @param position
-     * @return Entry : index of the closest reference point
-     *       double[0] = distance alogn the linear
-     *       double[1] = distance aside from the linear
+     * @return Entry : Key = index of the closest reference point
+     *                 Value = distance along the linear
      */
-    public static Entry<Integer,double[]> calculateRelative(final SegmentInfo[] segments, Point[] references, Point position){
+    public static Entry<Integer, Double> computeRelative(final SegmentInfo[] segments, Point[] references, Point position){
         ArgumentChecks.ensureNonNull("linear", segments);
         ArgumentChecks.ensureNonNull("position", position);
         ArgumentChecks.ensureNonNull("references", references);
         ArgumentChecks.ensurePositive("references", references.length);
                 
         //project target
-        final ProjectedReference positionProj = projectReference(segments, position);
+        final ProjectedPoint positionProj = projectReference(segments, position);
         
         //project references and find nearest
         double distanceAlongLinear = Double.MAX_VALUE;
         int index = 0;
         
         for(int i=0;i<references.length;i++){
-            final ProjectedReference projection = projectReference(segments, references[i]);
+            final ProjectedPoint projection = projectReference(segments, references[i]);
             final double candidateDistance = positionProj.distanceAlongLinear-projection.distanceAlongLinear;
             if(Math.abs(candidateDistance) < Math.abs(distanceAlongLinear)){
                 index = i;
@@ -156,8 +191,7 @@ public class LinearReferencing extends Static{
             }
         }
         
-        return new AbstractMap.SimpleImmutableEntry<>(index, new double[]{
-            distanceAlongLinear, positionProj.distancePerpendicular});        
+        return new AbstractMap.SimpleImmutableEntry<>(index, distanceAlongLinear);        
     }
     
     /**
@@ -165,32 +199,28 @@ public class LinearReferencing extends Static{
      * 
      * @param segments linear segments
      * @param reference position
-     * @return ProjectedReference
+     * @return ProjectedReference Never null.
      */
-    public static ProjectedReference projectReference(SegmentInfo[] segments, Point reference){
-        final ProjectedReference projection = new ProjectedReference();
+    public static ProjectedPoint projectReference(SegmentInfo[] segments, Point reference){
+        final ProjectedPoint projection = new ProjectedPoint();
         projection.reference = reference;
         
         //find the nearest segment
-        projection.distancePerpendicularAbs = Double.MAX_VALUE;
-        projection.distancePerpendicular = Double.MAX_VALUE;
+        double minDistance = Double.MAX_VALUE;
         
-        for(SegmentInfo segment : segments){
+        SegmentInfo segment;
+        for (int i = 0 ; i < segments.length ; i++) {
+            segment = segments[i];
             final Coordinate[] candidateNearests = DistanceOp.nearestPoints(segment.geometry, reference);
             final double candidateDistance = candidateNearests[0].distance(candidateNearests[1]);
-            if(candidateDistance<projection.distancePerpendicularAbs){
-                final double side = -lineSide(segment, candidateNearests[1]);
-                projection.distancePerpendicularAbs = candidateDistance;
-                projection.distancePerpendicular = candidateDistance * Math.signum(side);
-                projection.nearests = candidateNearests;
+            
+            if(candidateDistance<minDistance){
+                minDistance = candidateDistance;
+                projection.projected = candidateNearests[0];
                 projection.segment = segment;
+                projection.segmentIndex = i;
                 projection.distanceAlongLinear = segment.startDistance + 
-                        segment.segmentCoords[0].distance(candidateNearests[0]);
-                
-                //find if point projects on segment
-                projection.perpendicularProjection = projectsPerpendicular(
-                        segment.segmentCoords[0], segment.segmentCoords[1], reference.getCoordinate());
-                
+                        segment.segmentCoords[0].distance(projection.projected);
             }
         }
         
@@ -207,15 +237,19 @@ public class LinearReferencing extends Static{
         
         final Coordinate[] coords = linear.getCoordinates();
         final SegmentInfo[] segments = new SegmentInfo[coords.length-1];
-                
-        double cumulativeDistance = 0;
         
-        for(int i=0;i<coords.length-1;i++){
+        final int srid = linear.getSRID();
+        final Object userData = linear.getUserData();
+        
+        double cumulativeDistance = 0;        
+        for (int i = 0; i < coords.length - 1; i++) {
             
             final SegmentInfo segment = new SegmentInfo();
             segment.startCoordIndex = i;
             segment.segmentCoords = new Coordinate[]{coords[i],coords[i+1]};
             segment.geometry = GO2Utilities.JTS_FACTORY.createLineString(segment.segmentCoords);
+            segment.geometry.setSRID(srid);
+            segment.geometry.setUserData(userData);
             segment.length = segment.segmentCoords[0].distance(segment.segmentCoords[1]);
             segment.startDistance = cumulativeDistance;
             cumulativeDistance += segment.length;
@@ -255,55 +289,32 @@ public class LinearReferencing extends Static{
     }
     
     /**
-     * Test the side of a point compare to a line.
-     *
-     * @param SegmentInfo segment
-     * @param c to test
-     * @return > 0 if point is on the left side
-     *          = 0 if point is on the line
-     *          < 0 if point is on the right side
+     * Cast or convert a given geometry into a {@link LineString}. If input geometry
+     * is :
+     * - A linear, it's returned as is. 
+     * - A multipoint, a line composed of all points, in their order in the collection, 
+     * is returned. 
+     * - A geometry collections (other than multipoint), we will convert its first geometry.
+     * - A polygon, its exterior ring is used as line string.
+     * - A point, we return a line string which is a segment whose start and end points
+     *  are one and the same. 
+     * 
+     * Otherwise a null value is returned.
+     * 
+     * @param candidate The geometry to convert.
+     * @return The resulting linear, or null.
      */
-    public static double lineSide(SegmentInfo segment, Coordinate c) {
-        return (segment.segmentCoords[1].x-segment.segmentCoords[0].x) * (c.y-segment.segmentCoords[0].y) - 
-               (c.x-segment.segmentCoords[0].x) * (segment.segmentCoords[1].y-segment.segmentCoords[0].y);
-    }
-    
-    public static boolean projectsPerpendicular(final Coordinate segmentStart, final Coordinate segmentEnd, final Coordinate point){
-        final Coordinate ab = subtract(segmentEnd, segmentStart,null);
-        final Coordinate ac = subtract(point,segmentStart,null);
-        final double e = dot(ac, ab);
-        // cases where point is outside segment
-        if (e <= 0.0f) return false;
-        final double f = dot(ab, ab);
-        if (e >= f) return false;
-        // cases where point projects onto segment
-        return true;
-    }
-    
-    private static double dot(final Coordinate vector, final Coordinate other){
-        double dot = 0;
-        for(int i=0;i<2;i++){
-            dot += vector.getOrdinate(i)*other.getOrdinate(i);
-        }
-        return dot;
-    }
-        
-    private static Coordinate subtract(final Coordinate vector, Coordinate other, Coordinate buffer){
-        if( buffer == null ){
-            buffer = new Coordinate();
-        }
-        for(int i=0;i<2;i++){
-            buffer.setOrdinate(i, vector.getOrdinate(i)-other.getOrdinate(i));
-        }
-        return buffer;
-    }
-    
     public static LineString asLineString(Geometry candidate) {
         LineString linear = null;
         if (candidate instanceof LineString) {
             linear = (LineString) candidate;
         } else if (candidate instanceof Polygon) {
             linear = ((Polygon)candidate).getExteriorRing();
+        } else if (candidate instanceof Point) {
+            Coordinate coordinate = candidate.getCoordinate();
+            return GO2Utilities.JTS_FACTORY.createLineString(new Coordinate[]{coordinate, coordinate});
+        } else if (candidate instanceof MultiPoint) {
+            return GO2Utilities.JTS_FACTORY.createLineString(((candidate).getCoordinates()));
         } else if (candidate instanceof GeometryCollection) {
             final GeometryCollection gc = (GeometryCollection) candidate;
             final int nb = gc.getNumGeometries();
