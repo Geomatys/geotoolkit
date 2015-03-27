@@ -152,4 +152,14 @@ public class DimRangeRenderer extends AbstractCoverageSymbolizerRenderer<CachedD
         renderingContext.switchToDisplayCRS();
     }
 
+    /**
+     * {@inheritDoc }
+     * <br>
+     * Note : do nothing only return coverageSource.
+     * In attempt to particulary comportement if exist.
+     */
+    @Override
+    protected GridCoverage2D prepareCoverageToResampling(GridCoverage2D coverageSource, CachedDimRangeSymbolizer symbolizer) {
+        return coverageSource;
+    }
 }

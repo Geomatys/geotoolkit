@@ -175,6 +175,17 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
             throw new PortrayalException(e.getMessage(), e);
         }
     }
+    
+    /**
+     * {@inheritDoc }
+     * <br>
+     * Note : do nothing only return coverageSource.
+     * In attempt to particulary comportement if exist.
+     */
+    @Override
+    protected GridCoverage2D prepareCoverageToResampling(GridCoverage2D coverageSource, CachedIsolineSymbolizer symbolizer) {
+        return coverageSource;
+    }
 
     private boolean isJenksFunction(CachedRasterSymbolizer cachedRasterSymbolizer) {
         if (cachedRasterSymbolizer != null) {
@@ -186,5 +197,4 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
         }
         return false;
     }
-
 }

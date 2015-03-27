@@ -150,4 +150,14 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         renderingContext.switchToDisplayCRS();
     }
 
+    /**
+     * {@inheritDoc }
+     * <br>
+     * Note : do nothing only return coverageSource.
+     * In attempt to particulary comportement if exist.
+     */
+    @Override
+    protected GridCoverage2D prepareCoverageToResampling(GridCoverage2D coverageSource, CachedPatternSymbolizer symbolizer) {
+        return coverageSource;
+    }
 }

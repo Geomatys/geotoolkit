@@ -28,19 +28,10 @@ import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
-import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.math.Statistics;
-import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.processing.CoverageProcessingException;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.DefaultCachedRule;
@@ -51,16 +42,11 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
-import org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer;
-import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.extractQuery;
-import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -73,7 +59,6 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -272,7 +257,12 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
             return;
         }
 
-        final GridCoverage2D coverage = toObjective(projectedCoverage);
+        final GridCoverage2D coverage;
+        try {
+            coverage = getObjectiveCoverage(projectedCoverage);
+        } catch (Exception ex) {
+            throw new PortrayalException(ex);
+        }
         if(coverage == null){
             LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
             return;
@@ -280,7 +270,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
         final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
 
-        Envelope env = renderingContext.getCanvasObjectiveBounds();
+        Envelope env = renderingContext.getCanvasObjectiveBounds2D();
         final AffineTransform tr;
         try {
             // TODO: handle the case where gridToCRS is not affine.
@@ -313,7 +303,8 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         delta = tr.deltaTransform(delta, delta);
         final int decimateY = length(delta);
 
-        final Rectangle2D shp = new Rectangle2D.Double(env.getMinimum(0)/decimateX, env.getMinimum(1)/decimateY, env.getSpan(0)/decimateX, env.getSpan(1)/decimateY);
+        final Rectangle2D shp = new Rectangle2D.Double(env.getMinimum(0) / decimateX, env.getMinimum(1) / decimateY, 
+                                                       env.getSpan(0)    / decimateX, env.getSpan(1)    / decimateY);
         final RenderedImage image = coverage.getRenderedImage();
         final int nbBand = image.getSampleModel().getNumBands();
 
@@ -406,93 +397,6 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         }
     }
 
-    private GridCoverage2D toObjective(final ProjectedCoverage projectedCoverage) throws PortrayalException{
-        double[] resolution = renderingContext.getResolution();
-        Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
-        resolution = checkResolution(resolution,bounds);
-        final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
-        final CoordinateReferenceSystem coverageMapLayerCRS = coverageLayer.getBounds().getCoordinateReferenceSystem();
-
-        final Map<String,Double> queryValues = extractQuery(projectedCoverage.getLayer());
-        if (queryValues != null && !queryValues.isEmpty()) {
-            bounds = fixEnvelopeWithQuery(queryValues, bounds, coverageMapLayerCRS);
-            resolution = DefaultRasterSymbolizerRenderer.fixResolutionWithCRS(resolution, coverageMapLayerCRS);
-        }
-
-        final GridCoverageReadParam param = new GridCoverageReadParam();
-        param.setEnvelope(bounds);
-        param.setResolution(resolution);
-
-        GridCoverage2D dataCoverage;
-        try {
-            dataCoverage = projectedCoverage.getCoverage(param);
-        } catch (DisjointCoverageDomainException ex) {
-            LOGGER.log(Level.INFO, ex.getMessage());
-            return null;
-        } catch (CoverageStoreException ex) {
-            throw new PortrayalException(ex);
-        }
-
-        if(dataCoverage == null){
-            LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
-            return null;
-        }
-
-        final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
-        try{
-            final CoordinateReferenceSystem targetCRS = renderingContext.getObjectiveCRS2D();
-            final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
-            if(!CRS.equalsIgnoreMetadata(candidate2D,targetCRS) ){
-
-                //calculate best intersection area
-                final Envelope2D covEnv = dataCoverage.getEnvelope2D();
-                final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());
-                tmp.intersect(CRS.transform(covEnv, targetCRS));
-
-                if(tmp.isEmpty()){
-                    dataCoverage = null;
-                }else{
-                    //calculate gridgeometry
-                    final AffineTransform2D trs = renderingContext.getObjectiveToDisplay();
-                    final GeneralEnvelope dispEnv = CRS.transform(trs, tmp);
-                    final int width = (int)Math.round(dispEnv.getSpan(0));
-                    final int height = (int)Math.round(dispEnv.getSpan(1));
-
-                    if(width<=0 || height<=0){
-                        dataCoverage = null;
-                    }else{
-                        final GeneralGridEnvelope ge = new GeneralGridEnvelope(
-                                new int[]{0,0},
-                                new int[]{width,height},
-                                false);
-                        final AffineTransform gridToCrs = new AffineTransform(renderingContext.getDisplayToObjective());
-                        gridToCrs.translate((int)dispEnv.getMinimum(0), (int)dispEnv.getMinimum(1));
-                        final GridGeometry2D gridgeom = new GridGeometry2D(
-                                ge, PixelOrientation.UPPER_LEFT,
-                                new AffineTransform2D(gridToCrs), targetCRS, null);
-                        //TODO we should provide the gridgeometry, but there is a 1/2 pixel displacement
-                        //dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, targetCRS, gridgeom, null);
-                        dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, targetCRS, null, null);
-                    }
-                }
-            }
-        } catch (CoverageProcessingException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return null;
-        } catch(Exception ex){
-            //several kind of errors can happen here, we catch anything to avoid blocking the map component.
-            monitor.exceptionOccured(
-                new IllegalStateException("Coverage is not in the requested CRS, found : \n" +
-                coverageCRS +
-                "\n Was expecting : \n" +
-                renderingContext.getObjectiveCRS() +
-                "\nOriginal Cause:"+ ex.getMessage(), ex), Level.WARNING);
-            return null;
-        }
-
-        return dataCoverage;
-    }
-
     private AffineTransform calculateAverageAffine(final RenderingContext2D context,
             final GridCoverage2D coverage) throws FactoryException, TransformException{
 
@@ -523,4 +427,14 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         return Math.max(1, (int) Math.ceil(Math.hypot(delta.getX(), delta.getY())));
     }
 
+    /**
+     * {@inheritDoc }
+     * <br>
+     * Note : do nothing only return coverageSource.
+     * In attempt to particulary comportement if exist.
+     */
+    @Override
+    protected GridCoverage2D prepareCoverageToResampling(GridCoverage2D coverageSource, CachedCellSymbolizer symbolizer) {
+        return coverageSource;
+    }
 }

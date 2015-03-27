@@ -23,49 +23,25 @@ import java.awt.image.RenderedImage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
-import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.extractQuery;
-import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.fixEnvelopeWithQuery;
-import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer.fixResolutionWithCRS;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.math.Histogram;
 import org.geotoolkit.metadata.DefaultSampleDimensionExt;
-import org.geotoolkit.parameter.ParametersExt;
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.geotoolkit.process.image.dynamicrange.DynamicRangeStretchProcess;
-import org.geotoolkit.referencing.CRS;
 import org.opengis.filter.expression.Expression;
-import org.opengis.geometry.Envelope;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.SampleDimension;
 import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -81,7 +57,7 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
     public void portray(ProjectedCoverage projectedCoverage) throws PortrayalException {
         
         try{
-            GridCoverage2D dataCoverage = getCoverage(projectedCoverage);
+            GridCoverage2D dataCoverage = getObjectiveCoverage(projectedCoverage);
             if(dataCoverage == null){
                 return;
             }
@@ -159,6 +135,17 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
         
     }
     
+    /**
+     * {@inheritDoc }
+     * <br>
+     * Note : do nothing only return coverageSource.
+     * In attempt to particulary comportement if exist.
+     */
+    @Override
+    protected GridCoverage2D prepareCoverageToResampling(GridCoverage2D coverageSource, CachedDynamicRangeSymbolizer symbolizer) {
+        return coverageSource;
+    }
+    
     private static double evaluate(DynamicRangeSymbolizer.DRBound bound, Map<String,Object> stats) throws PortrayalException{
         final String mode = bound.getMode();
         if(DynamicRangeSymbolizer.DRBound.MODE_EXPRESSION.equalsIgnoreCase(mode)){
@@ -208,117 +195,4 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
         }
 
     }
-    
-    private GridCoverage2D getCoverage(ProjectedCoverage projectedCoverage) throws PortrayalException, TransformException, CoverageStoreException{
-        double[] resolution = renderingContext.getResolution();
-        Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
-        resolution = checkResolution(resolution,bounds);
-        final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
-        final Envelope layerBounds = coverageLayer.getBounds();
-        final CoordinateReferenceSystem coverageMapLayerCRS = layerBounds.getCoordinateReferenceSystem();
-
-        final Map<String,Double> queryValues = extractQuery(projectedCoverage.getLayer());
-        if (queryValues != null && !queryValues.isEmpty()) {
-            bounds = fixEnvelopeWithQuery(queryValues, bounds, coverageMapLayerCRS);
-            resolution = fixResolutionWithCRS(resolution, coverageMapLayerCRS);
-        }
-
-        final GridCoverageReadParam param = new GridCoverageReadParam();
-        param.setEnvelope(bounds);
-        param.setResolution(resolution);
-
-        GridCoverage2D dataCoverage;
-        try {
-            dataCoverage = projectedCoverage.getCoverage(param);
-        } catch (DisjointCoverageDomainException ex) {
-            //since the visible envelope can be much larger, we may obtain NaN when transforming the envelope
-            //which causes the disjoint domain exception
-            final GeneralEnvelope objCovEnv = new GeneralEnvelope(CRS.transform(layerBounds, bounds.getCoordinateReferenceSystem()));
-            objCovEnv.intersect(bounds);
-            if(objCovEnv.isEmpty()){
-                return null; //the coverage envelope does not intersect the canvas envelope.
-            }
-            param.setEnvelope(objCovEnv);
-            try {
-                dataCoverage = projectedCoverage.getCoverage(param);
-            } catch (DisjointCoverageDomainException exd) {
-                //we tried
-                return null;
-            }
-        } catch (CoverageStoreException ex) {
-            throw new PortrayalException(ex);
-        }
-        
-        ////////////////////////////////////////////////////////////////////
-        // 2 - Reproject data                                             //
-        ////////////////////////////////////////////////////////////////////
-
-        boolean isReprojected;
-        final MathTransform coverageToObjective;
-        final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
-        try{
-            final CoordinateReferenceSystem targetCRS = renderingContext.getObjectiveCRS2D();
-            final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
-            /* It appears EqualsIgnoreMetadata can return false sometimes, even if the two CRS are equivalent.
-             * But mathematics don't lie, so if they really describe the same transformation, conversion from
-             * one to another will give us an identity matrix.
-             */
-            coverageToObjective = CRS.findMathTransform(candidate2D, targetCRS);
-            isReprojected = !coverageToObjective.isIdentity();
-
-            if (isReprojected) {
-                //calculate best intersection area
-                final GeneralEnvelope tmp = new GeneralEnvelope(renderingContext.getPaintingObjectiveBounds2D());
-                final int xAxis = Math.max(0, CoverageUtilities.getMinOrdinate(coverageCRS));
-
-//                    tmp.intersect(CRS.transform(coverageToObjective, new GeneralEnvelope(
-//                            dataCoverage.getEnvelope()).subEnvelope(xAxis, xAxis + 2)));
-                final GeneralEnvelope coverageEnv2D =new GeneralEnvelope(dataCoverage.getEnvelope2D());
-                final Envelope transformed = CRS.transform(coverageEnv2D, renderingContext.getObjectiveCRS2D());
-                tmp.intersect(transformed);
-
-                if (tmp.isEmpty()) {
-                    dataCoverage = null;
-
-                } else {
-                    //calculate gridgeometry
-                    final AffineTransform2D trs = renderingContext.getObjectiveToDisplay();
-                    final GeneralEnvelope dispEnv = CRS.transform(trs, tmp);
-                    final int width = (int)Math.ceil(dispEnv.getSpan(0));
-                    final int height = (int)Math.ceil(dispEnv.getSpan(1));
-
-                    if (width <= 0 || height <= 0) {
-                        dataCoverage = null;
-                    } else {
-                        final GridGeometry2D gg = new GridGeometry2D(new GridEnvelope2D(0, 0, width, height), tmp);
-
-                        final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
-                        final ParameterValueGroup params = desc.getInputDescriptor().createValue();
-                        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COVERAGE.getName().getCode()).setValue(dataCoverage);
-                        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(targetCRS);
-                        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_GRID_GEOMETRY.getName().getCode()).setValue(gg);
-
-                        final org.geotoolkit.process.Process process = desc.createProcess(params);
-                        final ParameterValueGroup result = process.call();
-                        dataCoverage = (GridCoverage2D) result.parameter("result").getValue();
-                    }
-                }
-            }
-        } catch (CoverageProcessingException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return null;
-        } catch(Exception ex) {
-            //several kind of errors can happen here, we catch anything to avoid blocking the map component.
-            monitor.exceptionOccured(
-                new IllegalStateException("Coverage is not in the requested CRS, found : \n" +
-                coverageCRS +
-                "\n Was expecting : \n" +
-                renderingContext.getObjectiveCRS() +
-                "\nOriginal Cause:"+ ex.getMessage(), ex), Level.WARNING);
-            return null;
-        }
-
-        return dataCoverage;
-    }
-    
 }
