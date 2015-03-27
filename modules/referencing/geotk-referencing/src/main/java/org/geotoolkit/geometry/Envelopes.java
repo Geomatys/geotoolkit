@@ -47,6 +47,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 
 
 /**
@@ -677,10 +678,46 @@ public final class Envelopes extends Static {
      * 
      * @param envelope the envelope which will be verify.
      * @return {@code true} if {@link Envelope} contain at least one {@link Double#NaN} value, else {@code false}.
+     * @see #containNAN(org.opengis.geometry.Envelope, int, int) 
      */
     public static boolean containNAN(final Envelope envelope) {
+        return containNAN(envelope, 0, envelope.getDimension() - 1);
+    }
+    
+    /**
+     * Returns {@code true} if {@link Envelope} contain at least one 
+     * {@link Double#NaN} value into its horizontal geographic part, else {@code false}.
+     * 
+     * @param envelope the envelope which will be verify.
+     * @return {@code true} if {@link Envelope} contain at least one {@link Double#NaN} value, else {@code false}.
+     * @see CRSUtilities#firstHorizontalAxis(org.opengis.referencing.crs.CoordinateReferenceSystem) 
+     * @see #containNAN(org.opengis.geometry.Envelope, int, int) 
+     */
+    public static boolean containNANInto2DGeographicPart(final Envelope envelope) {
+        ArgumentChecks.ensureNonNull("Envelopes.containNANInto2DGeographicPart()", envelope);
+        final int minOrdiGeo = CRSUtilities.firstHorizontalAxis(envelope.getCoordinateReferenceSystem());
+        return containNAN(envelope, minOrdiGeo, minOrdiGeo + 1);
+    }
+    
+    /**
+     * Returns {@code true} if {@link Envelope} contain at least one 
+     * {@link Double#NaN} value on each inclusive dimension stipulate by 
+     * firstIndex and lastIndex, else {@code false}.
+     * 
+     * @param envelope the envelope which will be verify.
+     * @param firstIndex first inclusive dimension index.
+     * @param lastIndex last <strong>INCLUSIVE</strong> dimension.
+     * @return {@code true} if {@link Envelope} contain at least one {@link Double#NaN} value, else {@code false}.
+     */
+    public static boolean containNAN(final Envelope envelope, final int firstIndex, final int lastIndex) {
         ArgumentChecks.ensureNonNull("Envelopes.containNAN()", envelope);
-        for (int d = 0, dim = envelope.getDimension(); d < dim; d++) {
+        ArgumentChecks.ensurePositive("firstIndex", firstIndex);
+        ArgumentChecks.ensurePositive("lastIndex", lastIndex);
+        if (lastIndex >= envelope.getDimension()) 
+            throw new IllegalArgumentException("LastIndex must be strictly lower than "
+                    + "envelope dimension number. Expected maximum valid index = "+(envelope.getDimension() - 1)+". Found : "+lastIndex);
+        ArgumentChecks.ensureValidIndex(lastIndex + 1, firstIndex);
+        for (int d = firstIndex; d <= lastIndex; d++) {
             if (Double.isNaN(envelope.getMinimum(d))
              || Double.isNaN(envelope.getMaximum(d))) return true;
         }
