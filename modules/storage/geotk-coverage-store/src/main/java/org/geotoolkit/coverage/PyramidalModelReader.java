@@ -30,16 +30,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
+import org.apache.sis.geometry.Envelopes;
 
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
 
 import org.geotoolkit.coverage.finder.CoverageFinder;
 import org.geotoolkit.coverage.finder.DefaultCoverageFinder;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
@@ -75,6 +77,8 @@ public class PyramidalModelReader extends GridCoverageReader{
 
     private CoverageReference ref;
     private final CoverageFinder coverageFinder;
+    
+    protected static final Logger LOGGER = Logging.getLogger(PyramidalModelReader.class);
 
     @Deprecated
     public PyramidalModelReader() {
@@ -313,29 +317,12 @@ public class PyramidalModelReader extends GridCoverageReader{
         } catch (FactoryException ex) {
             throw new CoverageStoreException(ex.getMessage(),ex);
         }
-
-        if(mosaics == null ||mosaics.isEmpty()){
-            try {
-                //no reliable mosaic
-                mosaics = coverageFinder.findMosaics(pyramid, wantedResolution, tolerance, wantedEnv, 100);
-            } catch (FactoryException ex) {
-                Logger.getLogger(PyramidalModelReader.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            throw new CoverageStoreException("No mosaic can be found with given parameters.");
-        }
-
+        
         //we definitely do not want some NaN values
         for (int i = 0 ; i < wantedEnv.getDimension(); i++) {
             if(Double.isNaN(wantedEnv.getMinimum(i))){ wantedEnv.setRange(i, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(i));  }
             if(Double.isNaN(wantedEnv.getMaximum(i))){ wantedEnv.setRange(i, wantedEnv.getMinimum(i), Double.POSITIVE_INFINITY);  }
         }
-
-        int xAxis = CoverageUtilities.getMinOrdinate(pyramidCRS);
-        // Well... If the pyramid is not defined on an horizontal CRS, all we can do for now is supposing that the first two axis are the grid axis.
-        if (xAxis < 0) {
-            xAxis = 0;
-        }
-        int yAxis = xAxis +1;
 
         //read the data
         final boolean deferred = param.isDeferred();
@@ -367,63 +354,104 @@ public class PyramidalModelReader extends GridCoverageReader{
         if (!(CRS.equalsIgnoreMetadata(wantedCRS, mosEnvelope.getCoordinateReferenceSystem())))
             throw new IllegalArgumentException("the wantedEnvelope is not define in same CRS than mosaic. Expected : "
                                                 +mosEnvelope.getCoordinateReferenceSystem()+". Found : "+wantedCRS);
+              
+        final DirectPosition upperLeft = mosaic.getUpperLeftCorner();
+        assert CRS.equalsIgnoreMetadata(upperLeft.getCoordinateReferenceSystem(), wantedCRS);
         
-        int xAxis = CoverageUtilities.getMinOrdinate(wantedCRS);
-        // Well... If the pyramid is not defined on an horizontal CRS, all we can do for now is supposing that the first two axis are the grid axis.
-        if (xAxis < 0) {
-            xAxis = 0;
+        final int xAxis = CRSUtilities.firstHorizontalAxis(wantedCRS);
+        final int yAxis = xAxis +1;
+        
+        //-- convert working into 2D space
+        final CoordinateReferenceSystem mosCRS2D;
+        final GeneralEnvelope wantedEnv2D, mosEnv2D;
+        try {
+            mosCRS2D = CRSUtilities.getCRS2D(wantedCRS);
+            wantedEnv2D = GeneralEnvelope.castOrCopy(Envelopes.transform(wantedEnv,   mosCRS2D));
+            mosEnv2D    = GeneralEnvelope.castOrCopy(Envelopes.transform(mosEnvelope, mosCRS2D));
+        } catch(Exception ex) {
+            throw new CoverageStoreException(ex);
         }
-        int yAxis = xAxis +1;
         
-        
-        final DirectPosition ul = mosaic.getUpperLeftCorner();
-        final double tileMatrixMinX = ul.getOrdinate(xAxis);
-        final double tileMatrixMaxY = ul.getOrdinate(yAxis);
+        //-- define appropriate gridToCRS
         final Dimension gridSize = mosaic.getGridSize();
         final Dimension tileSize = mosaic.getTileSize();
+        final double sx          = mosEnv2D.getSpan(0) / (gridSize.width  * tileSize.width);
+        final double sy          = mosEnv2D.getSpan(1) / (gridSize.height * tileSize.height);
+        final double offsetX     = upperLeft.getOrdinate(xAxis);
+        final double offsetY     = upperLeft.getOrdinate(yAxis);
         
-        final GeneralEnvelope envelopOfInterest = new GeneralEnvelope(wantedEnv);
-        envelopOfInterest.intersect(mosaic.getEnvelope());
+        final AffineTransform2D gridToCrs2D = new AffineTransform2D(sx, 0, 0, -sy, offsetX, offsetY);
         
-        final double scale     = mosaic.getScale();
-        final double tileSpanX = scale * tileSize.width;
-        final double tileSpanY = scale * tileSize.height;
+        final GeneralEnvelope envelopOfInterest2D = new GeneralEnvelope(wantedEnv2D);
+        envelopOfInterest2D.intersect(mosEnv2D);
+        
+        final Envelope gridOfInterest;
+        try {
+            gridOfInterest = Envelopes.transform(gridToCrs2D.inverse(), envelopOfInterest2D);
+        } catch (Exception ex) {
+            throw new CoverageStoreException(ex);
+        }
+        
+        final long bBoxMinX = StrictMath.round(gridOfInterest.getMinimum(0));
+        final long bBoxMaxX = StrictMath.round(gridOfInterest.getMaximum(0));
+        final long bBoxMinY = StrictMath.round(gridOfInterest.getMinimum(1));
+        final long bBoxMaxY = StrictMath.round(gridOfInterest.getMaximum(1));
+        
+        final int tileMinCol = (int) (bBoxMinX / tileSize.width);
+        final int tileMaxCol = (int) StrictMath.ceil(bBoxMaxX / (double) tileSize.width);
+        assert tileMaxCol == ((int)((bBoxMaxX + tileSize.width - 1) / (double) tileSize.width)) : "readSlice() : unexpected comportement maximum column index.";
+        
+        final int tileMinRow = (int) (bBoxMinY / tileSize.height);
+        final int tileMaxRow = (int) StrictMath.ceil(bBoxMaxY / (double) tileSize.height);
+        assert tileMaxRow == ((int)((bBoxMaxY + tileSize.height - 1) / (double) tileSize.height)) : "readSlice() : unexpected comportement maximum row index.";
 
-        //find all the tiles we need --------------------------------------
-        final double epsilon = 1e-6;
-        final double bBoxMinX = envelopOfInterest.getMinimum(xAxis);
-        final double bBoxMaxX = envelopOfInterest.getMaximum(xAxis);
-        final double bBoxMinY = envelopOfInterest.getMinimum(yAxis);
-        final double bBoxMaxY = envelopOfInterest.getMaximum(yAxis);
+        //-- debug helper
+        {
+//        System.out.println("index X mosaic : 0 -> "+gridSize.width);
+//        System.out.println("index Y mosaic : 0 -> "+gridSize.height);
+//        System.out.println("mosaic grid = (0, 0) --> ("+(gridSize.width*tileSize.width)+", "+(gridSize.height * tileSize.height)+")");
+//        
+//        System.out.println("requested index X : "+tileMinCol+" -> "+tileMaxCol);
+//        System.out.println("requested index Y : "+tileMinRow+" -> "+tileMaxRow);
+//        System.out.println("gridOfInterest = "+gridOfInterest.toString());
+        }
         
-        int tileMinCol = (int) ((bBoxMinX - tileMatrixMinX) / tileSpanX);
-        int tileMaxCol = (int) StrictMath.ceil((bBoxMaxX - tileMatrixMinX) / tileSpanX);
-        int tileMinRow = (int) ((tileMatrixMaxY - bBoxMaxY) / tileSpanY);
-        int tileMaxRow = (int) StrictMath.ceil((tileMatrixMaxY - bBoxMinY) / tileSpanY);
-
         RenderedImage image = null;
-        if(deferred){
+        if (deferred) {
             //delay reading tiles
             image = new GridMosaicRenderedImage(mosaic, new Rectangle(
                     (int)tileMinCol, (int)tileMinRow, (int)(tileMaxCol-tileMinCol), (int)(tileMaxRow-tileMinRow)));
-        }else{
+        } else {
             //tiles to render, coordinate in grid -> image offset
             final Collection<Point> candidates = new ArrayList<>();
 
-            for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
-                for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
-                    if(mosaic.isMissing(tileCol, tileRow)){
-                        //tile not available
-                        continue;
-                    }candidates.add(new Point(tileCol, tileRow));
+            for (int tileCol = (int) tileMinCol; tileCol < tileMaxCol; tileCol++) {
+                
+                for(int tileRow = (int) tileMinRow; tileRow < tileMaxRow; tileRow++) {
+                    
+                    if (mosaic.isMissing(tileCol, tileRow)) continue;//--tile not available
+                        
+                    candidates.add(new Point(tileCol, tileRow));
                 }
             }
 
-            if(candidates.isEmpty()){
+            if (candidates.isEmpty()) {
                 //no tiles intersect
-                throw new DisjointCoverageDomainException("Requested envelope do not intersect tiles.");
+                LOGGER.log(Level.FINE, "Following Requested envelope : "
+                        +wantedEnv
+                        + "\n do not intersect data define by following data Envelope."
+                        +mosaic.getEnvelope());
+                return null;
             }
 
+            //--debug helper
+            {
+//            System.out.println("retained mosaics : ");
+//            for (Point candidate : candidates) {
+//                System.out.println("mosaic : ("+candidate.x+", "+candidate.y+")");
+//            }
+            }
+            
             //aggregation ----------------------------------------------------------
             final Map hints = Collections.EMPTY_MAP;
 
