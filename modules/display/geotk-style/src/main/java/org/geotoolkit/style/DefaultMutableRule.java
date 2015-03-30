@@ -397,11 +397,21 @@ public class DefaultMutableRule implements MutableRule{
         addListener((PropertyChangeListener)listener);
     }
 
+    @Override
+    public void addListener(PropertyChangeListener listener) {
+        addPropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removeListener(PropertyChangeListener listener) {
+        removePropertyChangeListener(listener);
+    }
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public void addListener(final PropertyChangeListener listener){
+    public void addPropertyChangeListener(final PropertyChangeListener listener){
         listeners.add(PropertyChangeListener.class, listener);
         if(listener instanceof RuleListener){
             listeners.add(RuleListener.class, (RuleListener)listener);
@@ -412,7 +422,7 @@ public class DefaultMutableRule implements MutableRule{
      * {@inheritDoc }
      */
     @Override
-    public void removeListener(final PropertyChangeListener listener){
+    public void removePropertyChangeListener(final PropertyChangeListener listener){
         listeners.remove(PropertyChangeListener.class, listener);
         if(listener instanceof RuleListener){
             listeners.remove(RuleListener.class, (RuleListener)listener);

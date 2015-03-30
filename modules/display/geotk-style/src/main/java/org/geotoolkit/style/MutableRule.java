@@ -110,5 +110,9 @@ public interface MutableRule extends Rule{
     void addListener(PropertyChangeListener listener);
 
     void removeListener(PropertyChangeListener listener);
-    
+
+    void addPropertyChangeListener(PropertyChangeListener listener);
+
+    void removePropertyChangeListener(PropertyChangeListener listener);
+
 }

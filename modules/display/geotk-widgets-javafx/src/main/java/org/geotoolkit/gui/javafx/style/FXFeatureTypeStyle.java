@@ -20,6 +20,7 @@ package org.geotoolkit.gui.javafx.style;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -53,16 +54,16 @@ public class FXFeatureTypeStyle extends FXStyleElementController<MutableFeatureT
     public void initialize() {
         super.initialize();
         
-        uiName.setOnAction((ActionEvent event) -> {
+        uiName.setOnKeyReleased((KeyEvent event) -> {
             value.get().setName(uiName.getText());
         });
-        uiTitle.setOnAction((ActionEvent event) -> {
+        uiTitle.setOnKeyReleased((KeyEvent event) -> {
             final Description oldDesc = value.get().getDescription();
             InternationalString title = new SimpleInternationalString(uiTitle.getText());
             InternationalString abs = (oldDesc!=null) ? oldDesc.getAbstract() : null;
             value.get().setDescription(getStyleFactory().description(title, abs));
         });
-        uiAbstract.setOnAction((ActionEvent event) -> {
+        uiAbstract.setOnKeyReleased((KeyEvent event) -> {
             final Description oldDesc = value.get().getDescription();
             InternationalString title = (oldDesc!=null) ? oldDesc.getTitle() : null;
             InternationalString abs = new SimpleInternationalString(uiAbstract.getText());

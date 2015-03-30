@@ -440,11 +440,21 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         addListener((PropertyChangeListener)listener);
     }
 
+    @Override
+    public void addListener(PropertyChangeListener listener) {
+        addPropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removeListener(PropertyChangeListener listener) {
+        removePropertyChangeListener(listener);
+    }
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public void addListener(final PropertyChangeListener listener){
+    public void addPropertyChangeListener(final PropertyChangeListener listener){
         listeners.add(PropertyChangeListener.class, listener);
         if(listener instanceof FeatureTypeStyleListener){
             listeners.add(FeatureTypeStyleListener.class, (FeatureTypeStyleListener)listener);
@@ -455,7 +465,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
      * {@inheritDoc }
      */
     @Override
-    public void removeListener(final PropertyChangeListener listener){
+    public void removePropertyChangeListener(final PropertyChangeListener listener){
         listeners.remove(PropertyChangeListener.class, listener);
         if(listener instanceof FeatureTypeStyleListener){
             listeners.remove(FeatureTypeStyleListener.class, (FeatureTypeStyleListener)listener);

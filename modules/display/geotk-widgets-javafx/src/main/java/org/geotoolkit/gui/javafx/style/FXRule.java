@@ -25,11 +25,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.gui.javafx.filter.FXCQLEditor;
 import org.geotoolkit.gui.javafx.filter.FXCQLPane;
+import org.geotoolkit.gui.javafx.util.FXUtilities;
+import org.geotoolkit.style.DefaultMutableRule;
 import org.geotoolkit.style.MutableRule;
 import org.opengis.filter.Filter;
 import org.opengis.style.Description;
@@ -79,22 +82,22 @@ public class FXRule extends FXStyleElementController<MutableRule> {
     public void initialize() {
         super.initialize();
         
-        uiName.setOnAction((ActionEvent event) -> {
+        uiName.setOnKeyReleased((KeyEvent event) -> {
             value.get().setName(uiName.getText());
         });
-        uiTitle.setOnAction((ActionEvent event) -> {
+        uiTitle.setOnKeyReleased((KeyEvent event) -> {
             final Description oldDesc = value.get().getDescription();
             InternationalString title = new SimpleInternationalString(uiTitle.getText());
             InternationalString abs = (oldDesc!=null) ? oldDesc.getAbstract() : null;
             value.get().setDescription(getStyleFactory().description(title, abs));
         });
-        uiAbstract.setOnAction((ActionEvent event) -> {
+        uiAbstract.setOnKeyReleased((KeyEvent event) -> {
             final Description oldDesc = value.get().getDescription();
             InternationalString title = (oldDesc!=null) ? oldDesc.getTitle() : null;
             InternationalString abs = new SimpleInternationalString(uiAbstract.getText());
             value.get().setDescription(getStyleFactory().description(title, abs));
         });
-        uiMaxScale.setOnAction((ActionEvent event) -> {
+        uiMaxScale.setOnKeyReleased((KeyEvent event) -> {
             String text = uiMaxScale.getText();
             if(text.isEmpty()){
                 text = ""+Double.MAX_VALUE;
@@ -106,7 +109,7 @@ public class FXRule extends FXStyleElementController<MutableRule> {
             
             value.get().setMaxScaleDenominator(val);
         });
-        uiMinScale.setOnAction((ActionEvent event) -> {
+        uiMinScale.setOnKeyReleased((KeyEvent event) -> {
             String text = uiMinScale.getText();
             if(text.isEmpty()){
                 text = "0.0";

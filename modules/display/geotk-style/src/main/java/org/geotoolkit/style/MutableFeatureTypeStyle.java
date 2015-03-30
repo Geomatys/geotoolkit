@@ -76,5 +76,9 @@ public interface MutableFeatureTypeStyle extends FeatureTypeStyle{
     void addListener(PropertyChangeListener listener);
     
     void removeListener(PropertyChangeListener listener);
+
+    void addPropertyChangeListener(PropertyChangeListener listener);
+
+    void removePropertyChangeListener(PropertyChangeListener listener);
     
 }
