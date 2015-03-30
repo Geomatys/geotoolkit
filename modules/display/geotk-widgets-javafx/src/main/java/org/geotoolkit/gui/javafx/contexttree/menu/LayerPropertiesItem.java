@@ -32,6 +32,7 @@ import org.geotoolkit.gui.javafx.layer.FXFeatureTable;
 import org.geotoolkit.gui.javafx.layer.FXLayerStructure;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylesPane;
 import org.geotoolkit.gui.javafx.layer.FXPropertiesPane;
+import org.geotoolkit.gui.javafx.layer.FXPropertyPane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleAdvancedPane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane;
@@ -53,36 +54,40 @@ public class LayerPropertiesItem extends TreeMenuItem{
     private WeakReference<TreeItem> itemRef;
     
     /**
-     * delete item for contexttree
+     * show layer properties in contextTree.
      */
     public LayerPropertiesItem(FXMap map){
+        this(map,
+            new FXLayerStructure(),
+            new FXFeatureTable(),
+            new FXLayerStylesPane(
+                    new FXStyleSimplePane(),
+                    new FXStyleColorMapPane(),
+                    new FXStyleClassifSinglePane(),
+                    new FXStyleClassifRangePane(),
+                    new FXStyleAdvancedPane(),
+                    new FXStyleXMLPane()
+            ));
+    }
+
+    /**
+     * show layer properties in contextTree.
+     */
+    public LayerPropertiesItem(FXMap map, FXPropertyPane ... panels){
         this.map = map;
-        
+
         menuItem = new MenuItem(GeotkFX.getString(this,"properties"));
         menuItem.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
 
             @Override
             public void handle(javafx.event.ActionEvent event) {
                 if(itemRef == null) return;
-                
+
                 final TreeItem path = itemRef.get();
                 if(path == null) return;
-                
+
                 final MapLayer candidate = (MapLayer) path.getValue();
-                                
-                final FXPropertiesPane panel = new FXPropertiesPane(
-                        candidate,
-                        new FXLayerStructure(),
-                        new FXFeatureTable(),
-                        new FXLayerStylesPane(
-                                new FXStyleSimplePane(),
-                                new FXStyleColorMapPane(),
-                                new FXStyleClassifSinglePane(),
-                                new FXStyleClassifRangePane(),
-                                new FXStyleAdvancedPane(),
-                                new FXStyleXMLPane()
-                        )
-                );
+                final FXPropertiesPane panel = new FXPropertiesPane(candidate,panels);
 
                 final DialogPane pane = new DialogPane();
                 pane.setContent(panel);

@@ -49,7 +49,7 @@ public class FXCoverageBand extends BorderPane {
     @FXML private BarChart<String, Long> uiHisto;
 
     public FXCoverageBand() {
-        GeotkFX.loadJRXML(this);
+        GeotkFX.loadJRXML(this,FXCoverageBand.class);
         uiHisto.setCache(false);
         uiHisto.setBarGap(0);
         uiHisto.setCategoryGap(0);

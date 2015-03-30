@@ -126,7 +126,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     
     
     public FXStyleClassifSinglePane() {
-        GeotkFX.loadJRXML(this);
+        GeotkFX.loadJRXML(this,FXStyleClassifSinglePane.class);
     }
 
     @FXML
@@ -174,12 +174,12 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
 
     @Override
     public String getTitle() {
-        return GeotkFX.getString(this,"title");
+        return GeotkFX.getString(FXStyleClassifSinglePane.class,"title");
     }
     
     @Override
     public String getCategory() {
-        return GeotkFX.getString(this,"category");
+        return GeotkFX.getString(FXStyleClassifSinglePane.class,"category");
     }
     
     private Class<? extends Symbolizer> getExpectedType(){
@@ -425,14 +425,14 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         return rules;
     }
     
-    private Symbolizer createSymbolizer(){
+    protected Symbolizer createSymbolizer(){
         return derivateSymbolizer(template, palette.next());
     }
     
     /**
      * Derivate a symbolizer with a new color.
      */
-    private Symbolizer derivateSymbolizer(final Symbolizer symbol, final Color color){
+    protected Symbolizer derivateSymbolizer(final Symbolizer symbol, final Color color){
         final MutableStyleFactory sf = GeotkFX.getStyleFactory();
 
         if(symbol instanceof PolygonSymbolizer){
@@ -464,7 +464,14 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
 
     }
 
-    private MutableRule createRule(final PropertyName property, final Object obj){
+    /**
+     * Creae a rule for given property name and object value.
+     * 
+     * @param property
+     * @param obj
+     * @return
+     */
+    protected MutableRule createRule(final PropertyName property, final Object obj){
         final MutableStyleFactory sf = GeotkFX.getStyleFactory();
         final FilterFactory ff = GeotkFX.getFilterFactory();
         

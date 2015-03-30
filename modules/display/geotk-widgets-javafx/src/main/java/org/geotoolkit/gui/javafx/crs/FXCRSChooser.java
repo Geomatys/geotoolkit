@@ -49,7 +49,7 @@ public class FXCRSChooser extends BorderPane {
     private boolean updateText = false;
     
     public FXCRSChooser() {
-        GeotkFX.loadJRXML(this);
+        GeotkFX.loadJRXML(this,FXCRSChooser.class);
         
         uiSearch.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 

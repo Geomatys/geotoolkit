@@ -115,7 +115,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
     private FeatureMapLayer layer;
     
     public FXStyleClassifRangePane() {
-        GeotkFX.loadJRXML(this);
+        GeotkFX.loadJRXML(this,FXStyleClassifRangePane.class);
     }
 
     @FXML

@@ -62,7 +62,7 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
     private int parentIndex = 0;
     
     public FXStyleColorMapPane() {
-        GeotkFX.loadJRXML(this);
+        GeotkFX.loadJRXML(this,FXStyleColorMapPane.class);
     }
 
     @Override

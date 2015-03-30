@@ -57,7 +57,7 @@ public class FXSymbolizerInfo extends GridPane{
 
 
     public FXSymbolizerInfo() {
-        GeotkFX.loadJRXML(this);
+        GeotkFX.loadJRXML(this,FXSymbolizerInfo.class);
     }
 
     /**

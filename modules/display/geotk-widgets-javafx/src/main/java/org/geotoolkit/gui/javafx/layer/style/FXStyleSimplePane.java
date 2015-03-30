@@ -93,17 +93,17 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
     private boolean editing = false;
 
     public FXStyleSimplePane() {
-        GeotkFX.loadJRXML(this);
+        GeotkFX.loadJRXML(this,FXStyleSimplePane.class);
     }
 
     @Override
     public String getTitle() {
-        return GeotkFX.getString(this, "title");
+        return GeotkFX.getString(FXStyleSimplePane.class, "title");
     }
     
     @Override
     public String getCategory() {
-        return GeotkFX.getString(this, "category");
+        return GeotkFX.getString(FXStyleSimplePane.class, "category");
     }
     
     @FXML

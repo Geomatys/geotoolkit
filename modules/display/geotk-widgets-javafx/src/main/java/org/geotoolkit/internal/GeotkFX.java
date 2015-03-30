@@ -185,8 +185,7 @@ public final class GeotkFX {
      * 
      * @param candidate 
      */
-    public static void loadJRXML(Parent candidate){
-        final Class cdtClass = candidate.getClass();
+    public static void loadJRXML(Parent candidate, Class cdtClass){
         final String fxmlpath = "/"+cdtClass.getName().replace('.', '/')+".fxml";
         final FXMLLoader loader = new FXMLLoader(cdtClass.getResource(fxmlpath));
         loader.setResources(GeotkFX.BUNDLE);

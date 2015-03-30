@@ -52,7 +52,7 @@ public abstract class FXStyleElementController<T> extends BorderPane {
     public FXStyleElementController(boolean loadFxml) {
         if(loadFxml){
             try{
-                GeotkFX.loadJRXML(this);
+                GeotkFX.loadJRXML(this,this.getClass());
             }catch(Throwable ex){
                 ex.printStackTrace();
             }

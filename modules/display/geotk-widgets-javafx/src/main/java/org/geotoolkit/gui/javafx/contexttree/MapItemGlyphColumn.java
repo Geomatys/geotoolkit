@@ -57,7 +57,7 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
 
     public MapItemGlyphColumn() {
-        
+
         setCellValueFactory(new Callback<CellDataFeatures<MapItem, MapItem>, ObservableValue<MapItem>>() {
 
             @Override
@@ -65,7 +65,7 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
                 return ((CellDataFeatures) cellData).getValue().valueProperty();
             }
         });
-        
+
         setCellFactory(new Callback<TreeTableColumn<MapItem, MapItem>, TreeTableCell<MapItem, MapItem>>() {
 
             @Override
@@ -73,14 +73,50 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
                 return new MapItemGlyphTableCell();
             }
         });
-        
+
         setEditable(true);
         setPrefWidth(34);
         setMinWidth(34);
         setMaxWidth(34);
     }
-    
-    private static class MapItemGlyphTableCell extends ButtonTreeTableCell<MapItem, MapItem> {
+
+    protected FXPropertiesPane createEditor(MapItem candidate){
+        return new FXPropertiesPane(
+                    candidate,
+                    new FXLayerStylesPane(
+                            new FXStyleSimplePane(),
+                            new FXStyleColorMapPane(),
+                            new FXStyleClassifSinglePane(),
+                            new FXStyleClassifRangePane(),
+                            new FXStyleAdvancedPane(),
+                            new FXStyleXMLPane()
+                    )
+            );
+    }
+
+    private void openEditor(MapItem candidate){
+        final FXPropertiesPane panel = createEditor(candidate);
+        panel.setPrefSize(900, 700);
+
+        final DialogPane pane = new DialogPane();
+        pane.setContent(panel);
+        pane.getButtonTypes().add(ButtonType.CLOSE);
+
+        final Dialog dialog = new Dialog();
+        dialog.initModality(Modality.NONE);
+        dialog.setResizable(true);
+        dialog.setDialogPane(pane);
+        dialog.resultProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                //TODO add apply revert buttons
+                dialog.close();
+            }
+        });
+        dialog.show();
+    }
+
+    private class MapItemGlyphTableCell extends ButtonTreeTableCell<MapItem, MapItem> {
 
         private StyleListener currentStyleListener;
         
@@ -140,36 +176,5 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
             button.setGraphic(new ImageView(SwingFXUtils.toFXImage(img, null)));
         }
         
-        private static void openEditor(MapItem candidate){
-            final FXPropertiesPane panel = new FXPropertiesPane(
-                    candidate,
-                    new FXLayerStylesPane(
-                            new FXStyleSimplePane(),
-                            new FXStyleColorMapPane(),
-                            new FXStyleClassifSinglePane(),
-                            new FXStyleClassifRangePane(),
-                            new FXStyleAdvancedPane(),
-                            new FXStyleXMLPane()
-                    )
-            );
-            panel.setPrefSize(900, 700);
-
-            final DialogPane pane = new DialogPane();
-            pane.setContent(panel);
-            pane.getButtonTypes().add(ButtonType.CLOSE);
-
-            final Dialog dialog = new Dialog();
-            dialog.initModality(Modality.NONE);
-            dialog.setResizable(true);
-            dialog.setDialogPane(pane);
-            dialog.resultProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                    //TODO add apply revert buttons
-                    dialog.close();
-                }
-            });
-            dialog.show();
-        }
     }
 }

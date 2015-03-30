@@ -52,7 +52,7 @@ public class FXStyleXMLPane extends FXLayerStylePane {
     private MapLayer layer = null;
     
     public FXStyleXMLPane() {
-        GeotkFX.loadJRXML(this);
+        GeotkFX.loadJRXML(this,FXStyleXMLPane.class);
     }
     
     @FXML

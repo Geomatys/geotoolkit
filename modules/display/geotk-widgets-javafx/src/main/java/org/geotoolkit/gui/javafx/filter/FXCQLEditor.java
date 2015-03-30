@@ -86,7 +86,7 @@ public class FXCQLEditor extends BorderPane {
     private final CodeArea codeArea = new CodeArea();
     
     public FXCQLEditor(){
-        GeotkFX.loadJRXML(this);
+        GeotkFX.loadJRXML(this,FXCQLEditor.class);
         setCenter(codeArea);
         
         codeArea.textProperty().addListener((obs, oldText, newText) -> {
