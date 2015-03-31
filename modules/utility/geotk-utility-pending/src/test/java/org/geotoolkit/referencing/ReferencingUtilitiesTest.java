@@ -18,6 +18,7 @@ package org.geotoolkit.referencing;
 
 import java.util.Collections;
 import java.awt.geom.AffineTransform;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.opengis.referencing.IdentifiedObject;
@@ -29,11 +30,13 @@ import static org.geotoolkit.test.Assert.*;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.referencing.CommonCRS;
+import org.opengis.geometry.MismatchedDimensionException;
 
 /**
  * Referencing utilities tests.
  *
- * @author Johann Sorel (Geomatys)
+ * @author Johann Sorel  (Geomatys)
+ * @author Marechal Remi (Geomatys)
  */
 public class ReferencingUtilitiesTest {
 
@@ -59,28 +62,77 @@ public class ReferencingUtilitiesTest {
         assertEquals(CommonCRS.Temporal.JULIAN.crs(), parts.get(2));
     }
 
+    /**
+     * Test {@link ReferencingUtilities#toTransform(int, org.opengis.referencing.operation.MathTransform, java.util.Map, int) }.
+     * @throws TransformException 
+     */
     @Test
-    public void testToTransform() throws TransformException{
+    public void toTransformTest() throws TransformException{
 
-        final AffineTransform2D base = new AffineTransform2D(new AffineTransform());
+        //-- test expected results
+        
+        final AffineTransform2D base = new AffineTransform2D(new AffineTransform(2, 0, 0, 3, 5, 7));
 
-        final MathTransform trs = ReferencingUtilities.toTransform(base,
-                new double[]{1,2,3},
-                new double[]{-10,-5,0},
-                new double[]{9,10,11});
+        final Map<Integer, double[]> axisValues = new HashMap<Integer, double[]>();
+        axisValues.put(0, new double[0]);
+        axisValues.put(3, new double[]{-14});
+        axisValues.put(4, new double[]{9,10,11});
+        
+        MathTransform trs = ReferencingUtilities.toTransform(1, base, axisValues, 5);
 
         assertEquals(5, trs.getSourceDimensions());
         assertEquals(5, trs.getTargetDimensions());
 
-        final double[] coords = new double[]{35,40, 1, 0, 2};
+        final double[] coords = new double[]{1.5, 1.5, 1.5, 1.5, 1.5};
         trs.transform(coords, 0, coords, 0, 1);
 
-        assertEquals(35d, coords[0], DELTA);
-        assertEquals(40d, coords[1], DELTA);
-        assertEquals(2d, coords[2], DELTA);
-        assertEquals(-10d, coords[3], DELTA);
-        assertEquals(11d, coords[4], DELTA);
-
+        assertEquals(1.5, coords[0],   DELTA);
+        assertEquals(8, coords[1],     DELTA);
+        assertEquals(11.5, coords[2],  DELTA);
+        assertEquals(-12.5, coords[3], DELTA);
+        assertEquals(10.5, coords[4],  DELTA);
+        
+        
+        //-- test fails
+        //-- null pointer
+        try {
+            trs = ReferencingUtilities.toTransform(1, null, axisValues, 5);
+            fail("An expection should be thrown.");
+        } catch(NullPointerException ex) {
+            //-- expected comportement
+        }
+        
+        //-- null pointer
+        try {
+            trs = ReferencingUtilities.toTransform(1, base, null, 5);
+            fail("An expection should be thrown.");
+        } catch(NullPointerException ex) {
+            //-- expected comportement
+        }
+        
+        //-- bad firstBaseOrdinate
+        try {
+            trs = ReferencingUtilities.toTransform(1, base, axisValues, 2);
+            fail("An expection should be thrown.");
+        } catch(IllegalArgumentException ex) {
+            //-- expected comportement
+        }
+        
+        //-- bad targetDimension
+        try {
+            trs = ReferencingUtilities.toTransform(0, base, axisValues, 1);
+            fail("An expection should be thrown.");
+        } catch(MismatchedDimensionException ex) {
+            //-- expected comportement
+        }
+        
+        //-- missing dimension information
+        axisValues.remove(3);
+        try {
+            trs = ReferencingUtilities.toTransform(1, base, axisValues, 5);
+            fail("An expection should be thrown.");
+        } catch(IllegalArgumentException ex) {
+            //-- expected comportement
+        }
     }
-
 }

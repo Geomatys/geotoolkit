@@ -66,6 +66,7 @@ import static org.apache.sis.referencing.CRS.getVerticalComponent;
 import static org.apache.sis.referencing.CRS.getTemporalComponent;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.util.FileUtilities;
+import org.opengis.geometry.MismatchedDimensionException;
 
 
 /**
@@ -673,6 +674,14 @@ public final class ReferencingUtilities {
         return new AffineTransform(scaleX, 0, 0, scaleY, minx, maxy);
     }
 
+    /**
+     * 
+     * @param base
+     * @param values
+     * @return
+     * @deprecated replaced by {@link #toTransform(int, org.opengis.referencing.operation.MathTransform, java.util.Map, int) 
+     */
+    @Deprecated
     public static MathTransform toTransform(final MathTransform base, double[] ... values){
 
         MathTransform result = PassThroughTransform.create(0, base, values.length);
@@ -693,7 +702,81 @@ public final class ReferencingUtilities {
 
         return result;
     }
+    
+    /**
+     * Returns a {@link PassThroughTransform} with <strong>expectedTargetDimension</strong> number, 
+     * from <strong>subtransform</strong> at dimension index <strong>firstBaseOrdinate</strong>
+     * and with <strong>axisValues</strong> infomation on each other dimensions.
+     * 
+     * @param firstBaseOrdinate the first minimum ordinate of subtransform into the expected target dimension.
+     * @param subTransform the sub transformation which will be wrapped by other mathematical functions.
+     * @param axisValues the list of mathmatical function for each other dimensions than already present subtransform dimensions.
+     * @param expectedTargetDimension the expected target {@link PassThroughTransform} dimension.
+     * @return expected {@link PassThroughTransform}, created from given parameters.
+     * @see #checkMTToTransform(int, org.opengis.referencing.operation.MathTransform, java.util.Map, int) 
+     */
+    public static MathTransform toTransform(final int firstBaseOrdinate, final MathTransform subTransform, 
+                                            final Map<Integer, double[]> axisValues, final int expectedTargetDimension) {
+        checkMTToTransform(firstBaseOrdinate, subTransform, axisValues, expectedTargetDimension);
+        
+        MathTransform result = PassThroughTransform.create(firstBaseOrdinate, subTransform, expectedTargetDimension - subTransform.getTargetDimensions() - firstBaseOrdinate);
+        for (Integer dim : axisValues.keySet()) {
+            final double[] currentAxisValues = axisValues.get(dim);
+            final MathTransform1D axistrs;
+            if(currentAxisValues.length <= 1) {
+                axistrs = (MathTransform1D) MathTransforms.linear(1, (currentAxisValues.length == 0) 
+                                                                     ? 0 : currentAxisValues[0]);
+            } else {
+                axistrs = LinearInterpolator1D.create(currentAxisValues);
+            }
+            final MathTransform mask = PassThroughTransform.create(dim, axistrs, expectedTargetDimension - dim - 1);
+            result                   = MathTransforms.concatenate(result, mask);
+        }
+        return result;
+    }
 
+    /**
+     * Check than all needed parameters to build appropriate {@link PassThroughTransform} are conform. 
+     * 
+     * @param firstBaseOrdinate the first minimum ordinate of subtransform into the expected target dimension.
+     * @param subTransform the sub transformation which will be wrapped by other mathematical functions.
+     * @param axisValues the list of mathmatical function for each other dimensions than already present subtransform dimensions.
+     * @param expectedTargetDimension the expected target {@link PassThroughTransform} dimension.
+     * @return {@code true} if all needed dimension are informed else {@code false}.
+     * @throws NullArgumentException if subtransform or axisValues are {@code null}.
+     * @throws MismatchedDimensionException if expected targetDimension is lesser than subtransform dimension.
+     * @throws IllegalArgumentException if firstBaseOrdinate is out of target dimension boundary [0 ---> targetDim - subtransform target dim] 
+     */
+    private static void checkMTToTransform(final int firstBaseOrdinate,             final MathTransform subTransform, 
+                                           final Map<Integer, double[]> axisValues, final int expectedTargetDimension) {
+        ArgumentChecks.ensureNonNull("subTransform", subTransform);
+        ArgumentChecks.ensureNonNull("axisValues", axisValues);
+        final int subTransformDimensionNumber = subTransform.getTargetDimensions();
+        if (expectedTargetDimension < subTransformDimensionNumber)
+            throw new MismatchedDimensionException("expectedTargetDimension should be "
+                    + "upper than subtransform target dimension. Expected upper than : "
+                    +subTransformDimensionNumber+" found : "+expectedTargetDimension);
+        ArgumentChecks.ensureBetween("firstBaseOrdinate", 0, expectedTargetDimension - subTransformDimensionNumber, firstBaseOrdinate);
+        if (expectedTargetDimension > 64) 
+            throw new IllegalArgumentException("targetDimension > 64 not supported");
+        //-- create a long where the bits ordinate are at 1 in relation with subtransform ordinate. 
+        long isOrdinateChecked = ((1 << (subTransformDimensionNumber)) -1) << (expectedTargetDimension - firstBaseOrdinate - subTransformDimensionNumber);
+        for (final Integer dim : axisValues.keySet()) {
+            isOrdinateChecked = isOrdinateChecked | (1 << (expectedTargetDimension - dim - 1));
+        }
+        if (isOrdinateChecked != ((1 << expectedTargetDimension) - 1)) {
+            final StringBuilder strB = new StringBuilder("The following dimension must be informed : ");
+            for (int d = 0; d < expectedTargetDimension; d++) {
+                long currentDim = 1 << d;
+                if ((isOrdinateChecked & currentDim) != currentDim){
+                    strB.append(d);
+                    if (d != (expectedTargetDimension - 1)) strB.append(",");
+                }
+            }
+            throw new IllegalArgumentException(strB.toString());
+        }
+    }
+    
     /**
      * Recursively explor given crs, and return a list of distinct unary CRS.
      * @param crs
