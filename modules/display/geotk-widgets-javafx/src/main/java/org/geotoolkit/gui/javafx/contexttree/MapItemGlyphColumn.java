@@ -21,17 +21,20 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.util.function.Function;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
+import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylesPane;
@@ -95,25 +98,32 @@ public class MapItemGlyphColumn extends TreeTableColumn{
     }
 
     private void openEditor(Object candidate){
-        if(candidate instanceof MapLayer){
-            final FXPropertiesPane panel = createEditor((MapLayer)candidate);
+        if (candidate instanceof MapLayer) {
+            final FXPropertiesPane panel = createEditor((MapLayer) candidate);
             panel.setPrefSize(900, 700);
 
-            final DialogPane pane = new DialogPane();
-            pane.setContent(panel);
-            pane.getButtonTypes().add(ButtonType.CLOSE);
-
-            final Dialog dialog = new Dialog();
-            dialog.initModality(Modality.NONE);
+            final Stage dialog = new Stage();
+            dialog.setTitle(GeotkFX.getString("org.geotoolkit.gui.javafx.contexttree.MapItemGlyphColumn.dialogTitle")+((MapLayer)candidate).getName());
             dialog.setResizable(true);
-            dialog.setDialogPane(pane);
-            dialog.resultProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                    //TODO add apply revert buttons
-                    dialog.close();
-                }
+            dialog.initModality(Modality.NONE);
+            dialog.initOwner(null);
+
+            final Button cancelBtn = new Button(GeotkFX.getString("org.geotoolkit.gui.javafx.contexttree.menu.LayerPropertiesItem.close"));
+            cancelBtn.setCancelButton(true);
+
+            final ButtonBar bbar = new ButtonBar();
+            bbar.setPadding(new Insets(5, 5, 5, 5));
+            bbar.getButtons().addAll(cancelBtn);
+
+            final BorderPane dialogContent = new BorderPane();
+            dialogContent.setCenter(panel);
+            dialogContent.setBottom(bbar);
+            dialog.setScene(new Scene(dialogContent));
+            
+            cancelBtn.setOnAction((ActionEvent e) -> {
+                dialog.close();
             });
+
             dialog.show();
         }
     }
@@ -145,7 +155,7 @@ public class MapItemGlyphColumn extends TreeTableColumn{
         @Override
         protected void updateItem(Object mapItem, boolean empty) {
             super.updateItem(mapItem, empty);
-            if(mapItem instanceof MapLayer){
+            if(!empty && mapItem instanceof MapLayer) {
                 final MapLayer mapLayer = (MapLayer) mapItem;
                 
                 // Remove old listener.
@@ -168,13 +178,17 @@ public class MapItemGlyphColumn extends TreeTableColumn{
                 mapLayer.getStyle().addListener(currentStyleListener);
                 
                 updateGlyph(mapLayer);
+            } else {
+                updateGlyph(null);
             }
         }
         
         private void updateGlyph(final MapLayer mapLayer){
             final BufferedImage img = new BufferedImage(24, 22, BufferedImage.TYPE_INT_ARGB);
-            DefaultGlyphService.render(mapLayer.getStyle(), 
+            if (mapLayer != null) {
+                DefaultGlyphService.render(mapLayer.getStyle(), 
                     new Rectangle(24, 22), img.createGraphics(), mapLayer);
+            }
             button.setGraphic(new ImageView(SwingFXUtils.toFXImage(img, null)));
         }
         
