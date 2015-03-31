@@ -157,8 +157,8 @@ public class XMLCategory {
         }
         name = category.getName().toString();
         final NumberRange range = category.getRange();
-        lower = range.getMinDouble();
-        upper = range.getMaxDouble();
+        lower = range.getMinDouble(true);
+        upper = range.getMaxDouble(true);
 
         final MathTransform1D trs = category.getSampleToGeophysics();
         if (trs != null) { //-- if category != NODATA. trs == null for nodata is expected comportement
