@@ -301,7 +301,7 @@ public class LinearReferencing extends Static{
      * 
      * Otherwise a null value is returned.
      * 
-     * @param candidate The geometry to convert.
+     * @param candidate The geometry to convert. If null, a null value is returned.
      * @return The resulting linear, or null.
      */
     public static LineString asLineString(Geometry candidate) {
