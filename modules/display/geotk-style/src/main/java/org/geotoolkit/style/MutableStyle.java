@@ -63,15 +63,6 @@ public interface MutableStyle extends MutableLayerStyle,Style{
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-    
-    @Override
-    void addListener(StyleListener listener);
-
-    @Override
-    void addListener(PropertyChangeListener listener);
-
-    @Override
-    void removeListener(PropertyChangeListener listener);
 
     void addPropertyChangeListener(PropertyChangeListener listener);
 

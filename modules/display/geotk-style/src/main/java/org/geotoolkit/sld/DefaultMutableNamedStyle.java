@@ -18,6 +18,7 @@ package org.geotoolkit.sld;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.EventListener;
 import java.util.Objects;
 import javax.swing.event.EventListenerList;
 
@@ -200,4 +201,21 @@ class DefaultMutableNamedStyle implements MutableNamedStyle{
         return builder.toString();
     }
 
+    /**
+     * Return an array of all the listeners of the given type.
+     * @return all {@link EventListener} of input type. Can be empty, but not null.
+     */
+    @Override
+    public <T extends EventListener> T[] getListeners(Class<T> listenerClass) {
+        return listeners.getListeners(listenerClass);
+    }
+
+    /**
+     * Return all listeners registered.
+     * @return all listeners registered. Can be empty.
+     */
+    @Override
+    public Object[] getListeners() {
+        return listeners.getListenerList();
+    }
 }

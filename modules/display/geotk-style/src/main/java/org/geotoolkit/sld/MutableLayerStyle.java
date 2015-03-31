@@ -17,6 +17,7 @@
 package org.geotoolkit.sld;
 
 import java.beans.PropertyChangeListener;
+import java.util.EventListener;
 import org.geotoolkit.style.StyleListener;
 import org.opengis.sld.LayerStyle;
 
@@ -38,4 +39,7 @@ public interface MutableLayerStyle extends LayerStyle{
     
     void removeListener(PropertyChangeListener listener);
     
+    <T extends EventListener> T[] getListeners(final Class<T> listenerClass);
+    
+    Object[] getListeners();
 }

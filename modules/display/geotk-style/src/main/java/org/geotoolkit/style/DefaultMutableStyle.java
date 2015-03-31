@@ -19,6 +19,7 @@ package org.geotoolkit.style;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
+import java.util.EventListener;
 import java.util.EventObject;
 import java.util.List;
 import java.util.Objects;
@@ -374,6 +375,13 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
         }
     }
 
+    @Override
+    public <T extends EventListener> T[] getListeners(Class<T> listenerClass) {
+        return listeners.getListeners(listenerClass);
+    }
 
-
+    @Override
+    public Object[] getListeners() {
+        return listeners.getListenerList();
+    }
 }
