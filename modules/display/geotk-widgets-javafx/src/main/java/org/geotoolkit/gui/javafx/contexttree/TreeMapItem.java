@@ -18,12 +18,10 @@
 package org.geotoolkit.gui.javafx.contexttree;
 
 import java.beans.PropertyChangeEvent;
-import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
-import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
@@ -33,13 +31,18 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class TreeMapItem extends TreeItem<MapItem> implements ItemListener {
+public class TreeMapItem extends TreeItem implements ItemListener {
 
     public TreeMapItem(MapItem item) {
         super(item);
-        for(int i=item.items().size()-1;i>=0;i--){
-            final MapItem child = item.items().get(i);
-            getChildren().add(new TreeMapItem(child));
+
+        if(item instanceof MapLayer){
+            getChildren().add(new StyleMapItem((MapLayer) item));
+        }else{
+            for(int i=item.items().size()-1;i>=0;i--){
+                final MapItem child = item.items().get(i);
+                getChildren().add(new TreeMapItem(child));
+            }
         }
         /** listen to children changes */
         item.addItemListener(new ItemListener.Weak(item, this));
@@ -47,7 +50,7 @@ public class TreeMapItem extends TreeItem<MapItem> implements ItemListener {
 
     @Override
     public boolean isLeaf() {
-        return getValue() instanceof MapLayer;
+        return false;
     }
 
     @Override
@@ -58,12 +61,13 @@ public class TreeMapItem extends TreeItem<MapItem> implements ItemListener {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                final MapItem item = getValue();
+                final MapItem item = (MapItem) getValue();
 
                 //rebuild structure
                 final Map<MapItem,TreeMapItem> cache = new IdentityHashMap<>();
-                for(TreeItem ti : getChildren()){
-                    cache.put((MapItem)ti.getValue(), (TreeMapItem)ti);
+                for(Object ti : getChildren()){
+                    final TreeMapItem mi = (TreeMapItem) ti;
+                    cache.put((MapItem)mi.getValue(), (TreeMapItem)ti);
                 }
 
                 getChildren().clear();
@@ -76,26 +80,6 @@ public class TreeMapItem extends TreeItem<MapItem> implements ItemListener {
                 }
             }
         });
-        
-        
-        
-        
-        
-//        final MapItem parent = getValue();
-//        
-//        final NumberRange range = event.getRange();
-//        final Collection<MapItem> elements = event.getItems();
-//        if (type == CollectionChangeEvent.ITEM_ADDED) {
-//            int idx = (int) range.getMinDouble();
-//            for (MapItem mi : elements) {
-//                getChildren().add(idx, new TreeMapItem(mi));
-//                idx++;
-//            }
-//        } else if (type == CollectionChangeEvent.ITEM_REMOVED) {
-//            for (double i = range.getMaxDouble(); i >= range.getMinDouble(); i--) {
-//                getChildren().remove((int) i);
-//            }
-//        }
     }
 
     @Override

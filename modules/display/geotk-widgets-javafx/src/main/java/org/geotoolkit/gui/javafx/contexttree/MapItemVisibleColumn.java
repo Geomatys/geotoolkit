@@ -44,7 +44,13 @@ public class MapItemVisibleColumn extends TreeTableColumn{
         setMinWidth(26);
         setMaxWidth(26);
                     
-        setCellValueFactory(param -> FXUtilities.beanProperty(((CellDataFeatures)param).getValue().getValue(), "visible", Boolean.class));    
+        setCellValueFactory(param -> {
+            try {
+                return FXUtilities.beanProperty(((CellDataFeatures)param).getValue().getValue(), "visible", Boolean.class);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        });
         setCellFactory((Object param) -> new VisibleCell());
     }
     
@@ -67,8 +73,8 @@ public class MapItemVisibleColumn extends TreeTableColumn{
         }
 
         private void mouseClick(MouseEvent event){
-            if(isEditing()){
-                final Boolean val = getText().equals(FontAwesomeIcons.ICON_EYE_SLASH);
+            if(isEditing() && getText()!=null){
+                final Boolean val = FontAwesomeIcons.ICON_EYE_SLASH.equals(getText());
                 commitEdit(val);
             }
         }
@@ -78,7 +84,13 @@ public class MapItemVisibleColumn extends TreeTableColumn{
             super.updateItem(item, empty);
             
             if(!empty){
-                setText(Boolean.TRUE.equals(item) ? FontAwesomeIcons.ICON_EYE : FontAwesomeIcons.ICON_EYE_SLASH);
+                if(Boolean.TRUE.equals(item)){
+                    setText(FontAwesomeIcons.ICON_EYE);
+                }else if(Boolean.FALSE.equals(item)){
+                    setText(FontAwesomeIcons.ICON_EYE_SLASH);
+                }else{
+                    setText(null);
+                }
             }else{
                 setText(null);
             }

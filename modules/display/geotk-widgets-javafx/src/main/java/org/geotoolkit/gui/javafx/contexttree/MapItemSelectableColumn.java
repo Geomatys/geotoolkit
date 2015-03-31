@@ -31,7 +31,7 @@ import org.geotoolkit.internal.GeotkFX;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class MapItemSelectableColumn extends TreeTableColumn<Object,Boolean>{
+public class MapItemSelectableColumn extends TreeTableColumn{
 
     private static final Tooltip LOCK_TOOLTIP = new Tooltip(
             GeotkFX.getString(MapItemSelectableColumn.class, "lockTooltip"));
@@ -44,14 +44,14 @@ public class MapItemSelectableColumn extends TreeTableColumn<Object,Boolean>{
         setMinWidth(26);
         setMaxWidth(26);
 
-        setCellValueFactory((CellDataFeatures<Object, Boolean> param) -> {
+        setCellValueFactory((Object param) -> {
             try {
                 return FXUtilities.beanProperty(((CellDataFeatures)param).getValue().getValue(), "selectable", Boolean.class);                
             } catch (IllegalArgumentException e) {
                 return null;
             }
         });
-        setCellFactory((TreeTableColumn<Object, Boolean> param) -> new SelectableCell());
+        setCellFactory((Object param) -> new SelectableCell());
     }
 
     private static final class SelectableCell extends TreeTableCell{
@@ -73,8 +73,8 @@ public class MapItemSelectableColumn extends TreeTableColumn<Object,Boolean>{
         }
 
         private void mouseClick(MouseEvent event){
-            if(isEditing()){
-                final Boolean val = getText().equals(FontAwesomeIcons.ICON_LOCK);
+            if(isEditing() && getText()!=null){
+                final Boolean val = FontAwesomeIcons.ICON_LOCK.equals(getText());
                 commitEdit(val);
             }
         }

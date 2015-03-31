@@ -29,29 +29,28 @@ import org.geotoolkit.gui.javafx.util.ButtonTreeTableCell;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.map.MapItem;
 import org.opengis.filter.Filter;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class MapItemFilterColumn extends TreeTableColumn<MapItem, MapItem>{
+public class MapItemFilterColumn extends TreeTableColumn{
 
     public MapItemFilterColumn() {                
         setCellValueFactory(param -> ((CellDataFeatures)param).getValue().valueProperty());     
-        setCellFactory((TreeTableColumn<MapItem, MapItem> p) -> new FilterButton());
+        setCellFactory((Object param) -> new FilterButton());
         setEditable(true);
         setPrefWidth(26);
         setMinWidth(26);
         setMaxWidth(26);
     }
     
-    private static class FilterButton extends ButtonTreeTableCell<MapItem, MapItem>{
+    private static class FilterButton extends ButtonTreeTableCell{
 
         public FilterButton() {
-            super(false, new ImageView(GeotkFX.ICON_FILTER), new Function<MapItem, Boolean>() {
-                public Boolean apply(MapItem t) {
+            super(false, new ImageView(GeotkFX.ICON_FILTER), new Function() {
+                public Boolean apply(Object t) {
                     return t instanceof FeatureMapLayer;
                 }
             },null);
@@ -59,7 +58,7 @@ public class MapItemFilterColumn extends TreeTableColumn<MapItem, MapItem>{
         }
 
         @Override
-        public MapItem actionPerformed(MapItem candidate) {
+        public Object actionPerformed(Object candidate) {
             if(candidate instanceof FeatureMapLayer){
                 try{
                     final FeatureMapLayer layer = (FeatureMapLayer) candidate;

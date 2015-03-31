@@ -54,22 +54,22 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
+public class MapItemGlyphColumn extends TreeTableColumn{
 
     public MapItemGlyphColumn() {
 
-        setCellValueFactory(new Callback<CellDataFeatures<MapItem, MapItem>, ObservableValue<MapItem>>() {
+        setCellValueFactory(new Callback<CellDataFeatures, ObservableValue>() {
 
             @Override
-            public ObservableValue<MapItem> call(CellDataFeatures<MapItem, MapItem> cellData) {
+            public ObservableValue call(CellDataFeatures cellData) {
                 return ((CellDataFeatures) cellData).getValue().valueProperty();
             }
         });
 
-        setCellFactory(new Callback<TreeTableColumn<MapItem, MapItem>, TreeTableCell<MapItem, MapItem>>() {
+        setCellFactory(new Callback<TreeTableColumn<Object, Object>, TreeTableCell<Object, Object>>() {
 
             @Override
-            public TreeTableCell<MapItem, MapItem> call(TreeTableColumn<MapItem, MapItem> column) {
+            public TreeTableCell<Object, Object> call(TreeTableColumn<Object, Object> column) {
                 return new MapItemGlyphTableCell();
             }
         });
@@ -94,44 +94,46 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
             );
     }
 
-    private void openEditor(MapItem candidate){
-        final FXPropertiesPane panel = createEditor(candidate);
-        panel.setPrefSize(900, 700);
+    private void openEditor(Object candidate){
+        if(candidate instanceof MapLayer){
+            final FXPropertiesPane panel = createEditor((MapLayer)candidate);
+            panel.setPrefSize(900, 700);
 
-        final DialogPane pane = new DialogPane();
-        pane.setContent(panel);
-        pane.getButtonTypes().add(ButtonType.CLOSE);
+            final DialogPane pane = new DialogPane();
+            pane.setContent(panel);
+            pane.getButtonTypes().add(ButtonType.CLOSE);
 
-        final Dialog dialog = new Dialog();
-        dialog.initModality(Modality.NONE);
-        dialog.setResizable(true);
-        dialog.setDialogPane(pane);
-        dialog.resultProperty().addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                //TODO add apply revert buttons
-                dialog.close();
-            }
-        });
-        dialog.show();
+            final Dialog dialog = new Dialog();
+            dialog.initModality(Modality.NONE);
+            dialog.setResizable(true);
+            dialog.setDialogPane(pane);
+            dialog.resultProperty().addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                    //TODO add apply revert buttons
+                    dialog.close();
+                }
+            });
+            dialog.show();
+        }
     }
 
-    private class MapItemGlyphTableCell extends ButtonTreeTableCell<MapItem, MapItem> {
+    private class MapItemGlyphTableCell extends ButtonTreeTableCell<Object, Object> {
 
         private StyleListener currentStyleListener;
         
         public MapItemGlyphTableCell() {
-            super(false, null, new Function<MapItem, Boolean>() {
+            super(false, null, new Function<Object, Boolean>() {
 
                 @Override
-                public Boolean apply(MapItem mapItem) {
+                public Boolean apply(Object mapItem) {
                     return mapItem instanceof MapLayer;
                 }
             },
-                    new Function<MapItem, MapItem>() {
+                    new Function<Object, Object>() {
 
                         @Override
-                        public MapItem apply(MapItem candidate) {
+                        public Object apply(Object candidate) {
                             openEditor(candidate);
                             return candidate;
                         }
@@ -141,7 +143,7 @@ public class MapItemGlyphColumn extends TreeTableColumn<MapItem, MapItem>{
         }
         
         @Override
-        protected void updateItem(MapItem mapItem, boolean empty) {
+        protected void updateItem(Object mapItem, boolean empty) {
             super.updateItem(mapItem, empty);
             if(mapItem instanceof MapLayer){
                 final MapLayer mapLayer = (MapLayer) mapItem;

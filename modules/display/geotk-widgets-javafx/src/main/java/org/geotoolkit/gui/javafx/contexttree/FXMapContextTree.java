@@ -86,10 +86,10 @@ public class FXMapContextTree extends BorderPane{
                 return row;
             }
         });
-        
+
         //this will cause the column width to fit the view area
         treetable.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
-                
+
         final ContextMenu menu = new ContextMenu();
         treetable.setContextMenu(menu);
         
@@ -198,27 +198,29 @@ public class FXMapContextTree extends BorderPane{
                 if (db.hasContent(MAPITEM_FORMAT)) {
                     final int index = (Integer) db.getContent(MAPITEM_FORMAT);
                     if(index>=0){
-                        final TreeMapItem targetRow = (TreeMapItem)row.getTreeItem();                        
-                        final MapItem targetItem = targetRow.getValue();
-                        final MapItem targetParent = targetRow.getParent().getValue();
-                        
-                        final TreeMapItem movedRow = (TreeMapItem) treetable.getSelectionModel().getSelectedItem();
-                        final MapItem movedItem = movedRow.getValue();
-                        final MapItem movedParent = movedRow.getParent().getValue();
-                                                
-                        if(movedParent!=null && targetItem!=null && movedItem!=targetItem 
-                                && !FXUtilities.isParent(movedRow, targetRow)){
-                            
-                            movedParent.items().remove(movedItem);
-                            if(targetItem instanceof MapLayer){
-                                //insert as sibling
-                                final int insertIndex = targetParent.items().indexOf(targetItem);
-                                targetParent.items().add(insertIndex,movedItem);
-                            }else{
-                                //insert as children
-                                targetItem.items().add(movedItem);
+                        if(row.getTreeItem() instanceof TreeMapItem){
+                            final TreeMapItem targetRow = (TreeMapItem)row.getTreeItem();
+                            final MapItem targetItem = (MapItem) targetRow.getValue();
+                            final MapItem targetParent = (MapItem) targetRow.getParent().getValue();
+
+                            final TreeMapItem movedRow = (TreeMapItem) treetable.getSelectionModel().getSelectedItem();
+                            final MapItem movedItem = (MapItem) movedRow.getValue();
+                            final MapItem movedParent = (MapItem) movedRow.getParent().getValue();
+
+                            if(movedParent!=null && targetItem!=null && movedItem!=targetItem
+                                    && !FXUtilities.isParent(movedRow, targetRow)){
+
+                                movedParent.items().remove(movedItem);
+                                if(targetItem instanceof MapLayer){
+                                    //insert as sibling
+                                    final int insertIndex = targetParent.items().indexOf(targetItem);
+                                    targetParent.items().add(insertIndex,movedItem);
+                                }else{
+                                    //insert as children
+                                    targetItem.items().add(movedItem);
+                                }
                             }
-                        }                        
+                        }
                     }                    
                     success = true;
                 }
