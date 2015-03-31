@@ -18,7 +18,6 @@ import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.image.BufferedImages;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.coverage.grid.GridCoverage;
@@ -41,7 +40,6 @@ public class PyramidReaderTest {
      * @throws Exception
      */
     @Test
-    @Ignore
     public void coverage4DTest() throws Exception{
 
         //create a small pyramid
@@ -68,59 +66,58 @@ public class PyramidReaderTest {
         final GeneralGridGeometry gridGeomReader = ref1.acquireReader().getGridGeometry(0);
         final GridEnvelope gridEnvReader = gridGeomReader.getExtent();
         final MathTransform gridToCrsReader = gridGeomReader.getGridToCRS();
-
+        
         final GridCoverage result = ref1.acquireReader().read(0, null);
         Assert.assertEquals(crs,result.getCoordinateReferenceSystem());
 
-        final GridGeometry gridGeom = result.getGridGeometry();
-        final GridEnvelope gridEnv = gridGeom.getExtent();
+        final GridGeometry gridGeom   = result.getGridGeometry();
+        final GridEnvelope gridEnv    = gridGeom.getExtent();
         final MathTransform gridToCrs = gridGeom.getGridToCRS();
 
-        //we must have the same grid grometry definition between the reader and the coverage
-        // CAUTION : in cae of erreur this doe not tell use which one is right
+        //-- we must have the same grid grometry definition between the reader and the coverage
         Assert.assertEquals(gridEnvReader, gridEnv);
 
-
         final GridCoordinates lowerCorner = gridEnv.getLow();
-        final GridCoordinates highCorner = gridEnv.getHigh();
+        final GridCoordinates highCorner  = gridEnv.getHigh();
 
         //check grid envelope
         Assert.assertEquals(0,  lowerCorner.getCoordinateValue(0));
         Assert.assertEquals(0,  lowerCorner.getCoordinateValue(1));
         Assert.assertEquals(0,  lowerCorner.getCoordinateValue(2));
         Assert.assertEquals(0,  lowerCorner.getCoordinateValue(3));
-        Assert.assertEquals(111,highCorner.getCoordinateValue(0)); //28 * 4 -1
+        Assert.assertEquals(111,highCorner.getCoordinateValue(0)); //28 * 4 -1 
         Assert.assertEquals(38, highCorner.getCoordinateValue(1)); //13 * 3 -1
         Assert.assertEquals(1,  highCorner.getCoordinateValue(2)); // 2 slices
         Assert.assertEquals(2,  highCorner.getCoordinateValue(3)); // 3 slices
 
         //check transform
         final double[] buffer = new double[4];
-        gridToCrs.transform(new double[]{0,0,0,0} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5,59.5,-5,-9},buffer, DELTA);
-        gridToCrs.transform(new double[]{0,0,0,1} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5,59.5,-5,0},buffer, DELTA);
-        gridToCrs.transform(new double[]{0,0,0,2} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5,59.5,-5,21},buffer, DELTA);
-        gridToCrs.transform(new double[]{0,0,1,0} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5,59.5,62,-9},buffer, DELTA);
-        gridToCrs.transform(new double[]{0,0,1,1} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5,59.5,62,0},buffer, DELTA);
-        gridToCrs.transform(new double[]{0,0,1,2} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5,59.5,62,21},buffer, DELTA);
+        gridToCrs.transform(new double[]{0, 0, 0, 0} , 0, buffer, 0, 1);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.5, -4.5}, buffer, DELTA);
+        gridToCrs.transform(new double[]{0, 0, 0, 1} , 0, buffer, 0, 1);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.5, 10.5}, buffer, DELTA);
+        gridToCrs.transform(new double[]{0, 0, 0, 2} , 0, buffer, 0, 1);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.5, 21}, buffer, DELTA);
+        gridToCrs.transform(new double[]{0, 0, 1, 0} , 0, buffer, 0, 1);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, -4.5}, buffer, DELTA);
+        gridToCrs.transform(new double[]{0, 0, 1, 1} , 0, buffer, 0, 1);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, 10.5}, buffer, DELTA);
+        gridToCrs.transform(new double[]{0, 0, 1, 2} , 0, buffer, 0, 1);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, 21}, buffer, DELTA);
+        
         //we must obtain the same results with the gridToCrs from the reader
-        gridToCrsReader.transform(new double[]{0,0,0,0} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5,59.5,-5,-9},buffer, DELTA);
-        gridToCrsReader.transform(new double[]{0,0,0,1} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5,59.5,-5,0},buffer, DELTA);
-        gridToCrsReader.transform(new double[]{0,0,0,2} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5,59.5,-5,21},buffer, DELTA);
-        gridToCrsReader.transform(new double[]{0,0,1,0} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5,59.5,62,-9},buffer, DELTA);
-        gridToCrsReader.transform(new double[]{0,0,1,1} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5,59.5,62,0},buffer, DELTA);
-        gridToCrsReader.transform(new double[]{0,0,1,2} , 0, buffer, 0, 1);
-        Assert.assertArrayEquals(new double[]{-49.5,59.5,62,21},buffer, DELTA);
+        gridToCrsReader.transform(new double[]{0, 0, 0, 0} , 0, buffer, 0, 1);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.5, -4.5},buffer, DELTA);
+        gridToCrsReader.transform(new double[]{0, 0, 0, 1} , 0, buffer, 0, 1);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.5, 10.5}, buffer, DELTA);
+        gridToCrsReader.transform(new double[]{0, 0, 0, 2} , 0, buffer, 0, 1);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 28.5, 21}, buffer, DELTA);
+        gridToCrsReader.transform(new double[]{0, 0, 1, 0} , 0, buffer, 0, 1);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, -4.5},buffer, DELTA);
+        gridToCrsReader.transform(new double[]{0, 0, 1, 1} , 0, buffer, 0, 1);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, 10.5}, buffer, DELTA);
+        gridToCrsReader.transform(new double[]{0, 0, 1, 2} , 0, buffer, 0, 1);
+        Assert.assertArrayEquals(new double[]{-49.5, 59.5, 62, 21},   buffer, DELTA);
 
 
 

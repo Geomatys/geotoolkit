@@ -26,6 +26,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
+import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 import org.opengis.coverage.grid.GridCoverage;
@@ -81,9 +82,9 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
         final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
         final int nbDim = crs.getCoordinateSystem().getDimension();
 
-        if(elements.length==0){
+        if (elements.length == 0) 
             throw new IOException("Coverages list is empty");
-        }
+        
 
         //build the grid geometry
         final int[] gridLower = new int[nbDim];
@@ -91,37 +92,43 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
         final double[] zAxisSteps = new double[elements.length];
         MathTransform baseGridToCRS = null;
         int k=0;
-        for(Element element : elements){
+        for (Element element : elements) {
             final GridCoverage coverage = (GridCoverage) element.getCoverage(null);
 
-            final GridGeometry gg = coverage.getGridGeometry();
+            final GridGeometry gg  = coverage.getGridGeometry();
             final GridEnvelope ext = gg.getExtent();
-            final MathTransform trs = gg.getGridToCRS();
-
+            
+            //-- check extent pertinency
             //we expect the axisIndex dimension to be a slice, low == high
-            if(ext.getLow(zDimension) != ext.getHigh(zDimension)){
+            if (ext.getLow(zDimension) != ext.getHigh(zDimension)) 
                 throw new IOException("Last dimension of the coverage is not a slice.");
-            }
-
-            if(baseGridToCRS == null){
-                for(int i=0; i<nbDim; i++){
+            
+            if (baseGridToCRS == null) {
+                for (int i = 0; i < nbDim; i++) {
                     gridLower[i] = ext.getLow(i);
                     gridUpper[i] = ext.getHigh(i);
                 }
-                baseGridToCRS = gg.getGridToCRS();
             }
+            
+            //-- check baseGridToCRS pertinency
+            baseGridToCRS = gg.getGridToCRS();
+            assert baseGridToCRS != null;
+            
+            //-- pass gridToCRS into Corner
+            //-- GeoApi define that gridToCRS in Center
+            baseGridToCRS = PixelTranslation.translate(baseGridToCRS, PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
+                
 
             //find the real value
             final double[] coord = new double[gridUpper.length];
-            for(int i=0;i<gridUpper.length;i++) {
+            for (int i = 0; i < gridUpper.length; i++) {
                 coord[i] = ext.getLow(i);
             }
-            trs.transform(coord,0,coord,0,1);
+            baseGridToCRS.transform(coord, 0, coord, 0, 1);
             zAxisSteps[k] = coord[zDimension];
 
             //increment number of slices
             gridUpper[zDimension]++;
-
             k++;
         }
 
@@ -138,7 +145,7 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
          * TODO replace this hack by a GridCoverageStackBuilder that rebuild global gridGeometry and propagate it to every level
          * and GridCoverage2D.
          */
-
+        
         //extract MT [0, zDim[
         DimensionFilter df = new DimensionFilter();
         df.addSourceDimensionRange(0, zDimension);
@@ -172,9 +179,8 @@ public class GridCoverageStack extends CoverageStack implements GridCoverage {
         }
 
         //build gridGeometry
-        final PixelInCell pixelInCell = PixelInCell.CELL_CENTER;
         final GeneralGridEnvelope gridEnv = new GeneralGridEnvelope(gridLower, gridUpper, true);
-        gridGeometry = new GeneralGridGeometry(gridEnv, pixelInCell, gridToCRS, crs);
+        gridGeometry = new GeneralGridGeometry(gridEnv, PixelInCell.CELL_CORNER, gridToCRS, crs);
     }
 
     @Override

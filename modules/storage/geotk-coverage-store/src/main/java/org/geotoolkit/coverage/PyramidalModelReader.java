@@ -31,6 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.geometry.GeneralDirectPosition;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -127,7 +128,8 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         final GeneralGridGeometry gridGeom;
         if (!set.getPyramids().isEmpty()) {
-            //we use the first pyramid as default
+            
+            //-- we use the first pyramid as default
             final Pyramid pyramid = set.getPyramids().iterator().next();
 
             final List<GridMosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
@@ -137,20 +139,20 @@ public class PyramidalModelReader extends GridCoverageReader{
                 //no mosaics
                 gridGeom = new GeneralGridGeometry(null, null, set.getEnvelope());
             } else {
+                
                 final CoordinateReferenceSystem crs = pyramid.getCoordinateReferenceSystem();
-                final CoordinateSystem cs = crs.getCoordinateSystem();
-                final int nbdim = cs.getDimension();
+                final CoordinateSystem cs           = crs.getCoordinateSystem();
+                final int nbdim                     = cs.getDimension();
 
-                //use the first mosaic informations, most accurate
-                final GridMosaic mosaic = mosaics.get(0);
+                //-- use the first mosaic informations, most accurate
+                final GridMosaic mosaic  = mosaics.get(0);
                 final Dimension gridSize = mosaic.getGridSize();
                 final Dimension tileSize = mosaic.getTileSize();
 
-                //we expect no rotation
-                MathTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS2D(mosaic, new Point(0, 0));
-//                gridToCRS = PixelTranslation.translate(gridToCRS, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
+                //-- we expect no rotation
+                final MathTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS2D(mosaic, new Point(0, 0));
                 
-                //-- recuperer toutes les mosaics au meme scales
+                //-- get all mosaics with same scale
                 final double scal = mosaic.getScale();
                 for (int m = mosaics.size() - 1; m >= 0; m--) {
                     if (mosaics.get(m).getScale() != scal) mosaics.remove(m);
@@ -158,60 +160,47 @@ public class PyramidalModelReader extends GridCoverageReader{
                 
                 final int minordi = CRSUtilities.firstHorizontalAxis(crs);
                 
-                //-- temporary first crs not 2D not supported
-                if (minordi != 0) 
-                    throw new IllegalStateException("first CRS not 2D part not supported.");
-                
-                final List<SortedSet<Double>> multiAxisValues = new ArrayList<SortedSet<Double>>();
-                
-                //final double[][] axisValues = new double[cs.getDimension()-2][];
-                
+                final Map<Integer , double[]> multiAxisValues = new HashMap<>();
                 for (int i = 0; i < cs.getDimension(); i++) {
-                    if (i != minordi && i!= minordi+1) {
-                        // axisvalues[i-2]
-                        final SortedSet axisValues = new TreeSet();
+                    if (i != minordi && i!= minordi + 1) {
+                        //-- pass by TreeSet to avoid duplicate
+                        final SortedSet<Double> axisValues = new TreeSet(); 
                         for (final GridMosaic gridMos : mosaics) {
                            axisValues.add(gridMos.getUpperLeftCorner().getOrdinate(i));
                         }
-                        multiAxisValues.add(axisValues);
+                        //-- convert Double[] -> double[]
+                        final double[] axVals = new double[axisValues.size()];
+                        int a = 0;
+                        for (Double d : axisValues) axVals[a++] = d;
+                        Arrays.sort(axVals, 0, axVals.length);
+                        multiAxisValues.put(i, axVals);
                     }
                 }
                 
-                final int listSize = multiAxisValues.size();
-                assert cs.getDimension() - 2 == listSize;
-                final double[][] discretValues  = new double[listSize][];
-                for (int i = 0; i < listSize; i++) {
-                    final SortedSet<Double> currentAxisValues = multiAxisValues.get(i);
-                    discretValues[i] = new double[currentAxisValues.size()];
-                    int itcompt = 0;
-                    final Iterator<Double> it = currentAxisValues.iterator();
-                    while (it.hasNext()) {
-                        discretValues[i][itcompt++] = it.next();
-                    }
-                    
-                }
-                final MathTransform gridToCRSds = ReferencingUtilities.toTransform(gridToCRS, discretValues);
-
+                final MathTransform gridToCRSds = ReferencingUtilities.toTransform(minordi, gridToCRS, multiAxisValues, cs.getDimension());
+                
                 final int[] low   = new int[nbdim];
                 final int[] high  = new int[nbdim];
-                low[minordi]      = 0;//-- ordinates 2D
-                low[minordi + 1]  = 0;
-                high[minordi]     = gridSize.width  * tileSize.width;
-                high[minordi + 1] = gridSize.height * tileSize.height;
 
                 for (int i = 0; i < cs.getDimension(); i++) {
-                    if (i != minordi && i!= minordi+1) {
-                        low[i]  = 0;
-                        high[i] = discretValues[i-2].length;
+                    low[i] = 0; //-- on each dimension low begin at 0
+                    if (i == minordi) {
+                        high[i] = gridSize.width  * tileSize.width; //-- X horizontal 2D part
+                    } else if (i == minordi + 1) {
+                        high[i] = gridSize.height * tileSize.height; //-- Y horizontal 2D part
+                    } else if (i != minordi && i != minordi + 1) {
+                        high[i] = multiAxisValues.get(i).length; //-- other dimension grid high value = discret axis values number. 
+                    } else {
+                        //-- should never append
+                        throw new IllegalStateException("PyramidalModelReader.getGridGeometry() : problem during grid creation.");
                     }
                 }
                 
-                final GeneralGridEnvelope ge = new GeneralGridEnvelope(low, high, true);
+                final GeneralGridEnvelope ge = new GeneralGridEnvelope(low, high, false);
                 gridGeom = new GeneralGridGeometry(ge, PixelInCell.CELL_CORNER, gridToCRSds, crs);
             }
-
-        }else{
-            //empty pyramid set
+        } else {
+            //-- empty pyramid set
             gridGeom = new GeneralGridGeometry(null, null, set.getEnvelope());
         }
         return gridGeom;
@@ -231,16 +220,15 @@ public class PyramidalModelReader extends GridCoverageReader{
         if (index != 0) 
             throw new CoverageStoreException("Invalid Image index.");
 
-        if(param == null) 
+        if (param == null) 
             param = new GridCoverageReadParam();
         
-        final int[] desBands = param.getDestinationBands();
+        final int[] desBands    = param.getDestinationBands();
         final int[] sourceBands = param.getSourceBands();
         
         if (desBands != null || sourceBands != null)
             throw new CoverageStoreException("Source or destination bands can not be used on pyramidal coverages.");
         
-
         CoordinateReferenceSystem crs = param.getCoordinateReferenceSystem();
         Envelope paramEnv = param.getEnvelope();
         double[] resolution = param.getResolution();
@@ -263,7 +251,7 @@ public class PyramidalModelReader extends GridCoverageReader{
             throw new CoverageStoreException("CRS not defined in parameters or input envelope.");
         
         //-- estimate resolution if not given
-        if(resolution == null)
+        if (resolution == null)
             //-- set resolution to infinite, will select the last mosaic level
             resolution = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
         
@@ -285,7 +273,7 @@ public class PyramidalModelReader extends GridCoverageReader{
         }
 
         //-- no reliable pyramid
-        if(pyramid == null)
+        if (pyramid == null)
             throw new CoverageStoreException("No pyramid defined.");
         
         /*
@@ -295,14 +283,13 @@ public class PyramidalModelReader extends GridCoverageReader{
         GeneralEnvelope wantedEnv;
         try {
             wantedEnv = new GeneralEnvelope(ReferencingUtilities.transform(paramEnv, pyramidCRS));
-            
         } catch (TransformException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         }
 
         //the wanted image resolution
         double wantedResolution = resolution[0];
-        final double tolerance = 0.1d;
+        final double tolerance  = 0.1d;
         
         //-- transform resolution into pyramid crs
         if (!(crs.equals(pyramidCRS))) {
