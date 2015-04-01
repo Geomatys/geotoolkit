@@ -156,18 +156,21 @@ public class MapItemGlyphColumn extends TreeTableColumn {
             super.updateItem(mapItem, empty);
             if (!empty && mapItem instanceof MapLayer) {
                 final MapLayer mapLayer = (MapLayer) mapItem;
-
-                final ImageView view = new ImageView();
-                button.setGraphic(view);
+                UpdateOnStyleChange[] existingListeners = mapLayer.getStyle().getListeners(UpdateOnStyleChange.class);
+                
+                final ImageView view;
+                if (existingListeners.length <= 0) {
+                    view = new ImageView();
+                    listeners.add(new UpdateOnStyleChange(mapLayer, view));
+                } else {
+                    view = existingListeners[0].cellContent;
+                }
                 
                 final Image glyph = createGlyph(mapLayer);
                 if (glyph != null) {
                     view.setImage(glyph);
                 }
-
-                if (mapLayer.getStyle().getListeners(UpdateOnStyleChange.class).length <= 0) {
-                    listeners.add(new UpdateOnStyleChange(mapLayer, view));
-                }
+                button.setGraphic(view);
 
             } else {
                 button.setGraphic(null);
