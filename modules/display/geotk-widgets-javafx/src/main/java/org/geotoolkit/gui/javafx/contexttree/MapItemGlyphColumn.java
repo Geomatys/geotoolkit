@@ -128,10 +128,13 @@ public class MapItemGlyphColumn extends TreeTableColumn {
         dialog.show();
     }
 
-    private class MapItemGlyphTableCell extends ButtonTreeTableCell<Object, Object> {
-        
-        final ArrayList<UpdateOnStyleChange> listeners = new ArrayList<>();
-        
+    private class MapItemGlyphTableCell extends ButtonTreeTableCell<Object, Object> implements StyleListener{
+
+        private final StyleListener.Weak listener = new StyleListener.Weak(this);
+        private MapLayer mapLayer;
+        /** Image view contained in the cell. */
+        private final ImageView cellContent = new ImageView();
+
         public MapItemGlyphTableCell() {
             super(false, null,
                     new Function<Object, Boolean>() {
@@ -154,65 +157,35 @@ public class MapItemGlyphColumn extends TreeTableColumn {
         @Override
         protected void updateItem(Object mapItem, boolean empty) {
             super.updateItem(mapItem, empty);
-            if (!empty && mapItem instanceof MapLayer) {
-                final MapLayer mapLayer = (MapLayer) mapItem;
-                UpdateOnStyleChange[] existingListeners = mapLayer.getStyle().getListeners(UpdateOnStyleChange.class);
-                
-                final ImageView view;
-                if (existingListeners.length <= 0) {
-                    view = new ImageView();
-                    listeners.add(new UpdateOnStyleChange(mapLayer, view));
-                } else {
-                    view = existingListeners[0].cellContent;
-                }
-                
-                final Image glyph = createGlyph(mapLayer);
-                if (glyph != null) {
-                    view.setImage(glyph);
-                }
-                button.setGraphic(view);
+            mapLayer = null;
+            button.setGraphic(null);
+            listener.dispose();
 
-            } else {
-                button.setGraphic(null);
+            if (!empty && mapItem instanceof MapLayer) {
+                mapLayer = (MapLayer) mapItem;
+                listener.registerSource(mapLayer.getStyle());
+                cellContent.setImage(createGlyph(mapLayer));
+                button.setGraphic(cellContent);
             }
         }      
 
-        private Image createGlyph(final MapLayer mapLayer) {
-            if (mapLayer != null) {
-                final BufferedImage glyph = new BufferedImage(24, 22, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render(mapLayer.getStyle(),
-                        new Rectangle(24, 22), glyph.createGraphics(), mapLayer);
-                return SwingFXUtils.toFXImage(glyph, null);
-            }
-            return null;
+        @Override
+        public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
+            cellContent.setImage(createGlyph(mapLayer));
         }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {}
         
-        /**
-         * A simple listener which will be notified when its input layer style changes,
-         * and update associated tree cell accordingly.
-         */
-        private class UpdateOnStyleChange implements StyleListener {
+    }
 
-            /** Map layer to listen style on. */
-            public final WeakReference<MapLayer> layer;
-            
-            /** Image view contained in the cell. */
-            final ImageView cellContent;
-
-            public UpdateOnStyleChange(MapLayer layer, ImageView cellContent) {
-                layer.getStyle().addListener(this);
-                this.layer = new WeakReference<>(layer);
-                this.cellContent = cellContent;
-            }
-
-            @Override
-            public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
-                cellContent.setImage(createGlyph(layer.get()));
-            }
-
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-            }
+    private static Image createGlyph(final MapLayer mapLayer) {
+        if (mapLayer != null) {
+            final BufferedImage glyph = new BufferedImage(24, 22, BufferedImage.TYPE_INT_ARGB);
+            DefaultGlyphService.render(mapLayer.getStyle(),
+                    new Rectangle(24, 22), glyph.createGraphics(), mapLayer);
+            return SwingFXUtils.toFXImage(glyph, null);
         }
+        return null;
     }
 }
