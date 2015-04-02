@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.finder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -30,8 +31,10 @@ import org.geotoolkit.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -75,9 +78,11 @@ public abstract class CoverageFinder {
      * @param tolerance
      * @param env
      * @return List of GridMosaic
+     * @throws IllegalArgumentException if no mosaic found when requested with bad resolution.
+     * @throws DisjointCoverageDomainException if no mosaic intersect requested envelope
      */
     public List<GridMosaic> findMosaics(final Pyramid pyramid, final double resolution, 
-            final double tolerance, final Envelope env, int maxTileNumber) throws FactoryException{
+            final double tolerance, final Envelope env) throws DisjointCoverageDomainException {
         final List<GridMosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
         Collections.sort(mosaics, SCALE_COMPARATOR);
         Collections.reverse(mosaics);
@@ -85,33 +90,41 @@ public abstract class CoverageFinder {
         
         //find the most accurate resolution
         final double[] scales = pyramid.getScales();
-        if(scales.length==0) return result;
+        if (scales.length == 0) return result;
         double bestScale = scales[0];
-        for(double d : pyramid.getScales()){
-            if(d>resolution){
+        for (double d : pyramid.getScales()) {
+            if (d > resolution) {
                 //scale is greater but closer to wanted resolution
-                bestScale = d<bestScale ? d : bestScale;
+                bestScale = d < bestScale ? d : bestScale;
             } else if ( d > bestScale ) {
                 //found a better resolution
                 bestScale = d;
             }
         }
         
-        //search mosaics
-        mosaicLoop:
+        int notIntersected = 0;
+        //-- search mosaics
         for (GridMosaic candidate : mosaics) {
-            //check the mosaic intersect the searched envelope
+            //-- check the mosaic intersect the searched envelope
             final GeneralEnvelope clip = new GeneralEnvelope(candidate.getEnvelope());
-            if (!clip.intersects(env)) continue;
-            //calculate the intersection, will be used to determinate the number of tiles used.
-            clip.intersect(env);
-
+            if (!clip.intersects(env)) {
+                notIntersected++;
+                continue;
+            }
             final double scale = candidate.getScale();
-            if(scale!=bestScale) continue;
-
+            if (scale != bestScale) continue;
             result.add(candidate);
         }
         
+        if (result.isEmpty()) {
+            //-- determine distinction between no intersection with mosaic boundaries
+            if (notIntersected != 0) 
+                throw new DisjointCoverageDomainException("No mosaics intersects following requested envelope : "+env.toString());
+            
+            //-- and scale not found.
+            throw new IllegalArgumentException("Impossible to find appropriate mosaic at following requested resolution : "+resolution
+                                               +"\n The available(s) mosaic(s) resolution(s) is(are) : "+Arrays.toString(scales));
+        }
         return result;
     }
         

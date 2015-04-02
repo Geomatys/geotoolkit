@@ -261,12 +261,15 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
          && !org.geotoolkit.geometry.Envelopes.containNAN(coverageIntoRender2DCRS)
          && !coverageIntoRender2DCRS.intersects(renderingBound2D, true)) {
             //-- in future jdk8 version return an Optional<Coverage> 
-            final String mess = (isElevation ? "getObjectiveElevationCoverage()" : "getObjectiveCoverage()")
-                    +" : the 2D geographic part of rendering context does not intersect the 2D geographic part of coverage : "
-                    + "\n rendering context 2D CRS :  "+renderingContextObjectiveCRS2D
-                    + "\n rendering context boundary : "+renderingBound2D
-                    + "\n 2D coverage geographic part into rendering context CRS : "+coverageIntoRender2DCRS;
-            LOGGER.log(Level.FINE, mess);
+            final StringBuilder strB = new StringBuilder(isElevation ? "getObjectiveElevationCoverage()" : "getObjectiveCoverage()");
+            strB.append(" : the 2D geographic part of rendering context does not intersect the 2D geographic part of coverage : ");
+            strB.append("\n rendering context 2D CRS :  ");
+            strB.append(renderingContextObjectiveCRS2D);
+            strB.append("\n rendering context boundary : ");
+            strB.append(renderingBound2D);
+            strB.append("\n 2D coverage geographic part into rendering context CRS : ");
+            strB.append(coverageIntoRender2DCRS);
+            LOGGER.log(Level.FINE, strB.toString());
             return null;
         }
         //-- else  
@@ -304,11 +307,13 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         if (dataCoverage == null) {
             //-- in future jdk8 version return an Optional<Coverage> 
-            final String mess = (isElevation ? "getObjectiveElevationCoverage()" : "getObjectiveCoverage()")
-                    +" : impossible to read coverage "
-                    + "with internaly projected coverage boundary : "+dataBBox
-                    + "with the following renderer requested Envelope."+paramEnvelope;
-            LOGGER.log(Level.FINE, mess);
+            final StringBuilder strB = new StringBuilder(isElevation ? "getObjectiveElevationCoverage()" : "getObjectiveCoverage()");
+            strB.append(" : \n impossible to read coverage ");
+            strB.append("with internaly projected coverage boundary : ");
+            strB.append(dataBBox);
+            strB.append("\nwith the following renderer requested Envelope.");
+            strB.append(paramEnvelope);
+            LOGGER.log(Level.FINE, strB.toString());
             return null;
         }
 

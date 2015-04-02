@@ -38,6 +38,7 @@ import org.geotoolkit.referencing.CRS;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -107,9 +108,10 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
                         }
                         value = (GridCoverage2D) result;
                         ref.recycle(reader);
-                    } catch(DisjointCoverageDomainException ex){
+                    } catch(DisjointCoverageDomainException ex) {
+                        //-- mismatchDimensionException is return when we request area out of source boundary.
+                        //-- its an expected comportement
                         ref.recycle(reader);
-                        throw ex;
                     } catch (Throwable e) {
                         reader.dispose();
                         throw e;

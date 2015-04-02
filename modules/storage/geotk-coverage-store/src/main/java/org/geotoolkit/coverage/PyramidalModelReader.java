@@ -57,6 +57,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -300,27 +301,33 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         List<GridMosaic> mosaics;
         try {
-            mosaics = coverageFinder.findMosaics(pyramid, wantedResolution, tolerance, wantedEnv, 100);
-        } catch (FactoryException ex) {
+            mosaics = coverageFinder.findMosaics(pyramid, wantedResolution, tolerance, wantedEnv);
+        } catch(MismatchedDimensionException ex) {
             throw new CoverageStoreException(ex.getMessage(),ex);
         }
         
-        //we definitely do not want some NaN values
+        if (mosaics.isEmpty()) 
+            throw new IllegalStateException("Unexpected comportement an error should be precedently occurs.");
+        
+        //-- we definitely do not want some NaN values
         for (int i = 0 ; i < wantedEnv.getDimension(); i++) {
-            if(Double.isNaN(wantedEnv.getMinimum(i))){ wantedEnv.setRange(i, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(i));  }
-            if(Double.isNaN(wantedEnv.getMaximum(i))){ wantedEnv.setRange(i, wantedEnv.getMinimum(i), Double.POSITIVE_INFINITY);  }
+            
+            if (Double.isNaN(wantedEnv.getMinimum(i)))
+                wantedEnv.setRange(i, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(i));
+            
+            if (Double.isNaN(wantedEnv.getMaximum(i)))
+                wantedEnv.setRange(i, wantedEnv.getMinimum(i),  Double.POSITIVE_INFINITY);
         }
 
-        //read the data
+        //-- read the data
         final boolean deferred = param.isDeferred();
         if (mosaics.size() == 1) {
-            //read a single slice
+            //-- read a single slice
             return readSlice(mosaics.get(0), wantedEnv, deferred);
         } else {
-            //read a data cube of multiple slices
+            //-- read a data cube of multiple slices
             return readCube(mosaics, wantedEnv, deferred);
         }
-        
     }
 
     /**

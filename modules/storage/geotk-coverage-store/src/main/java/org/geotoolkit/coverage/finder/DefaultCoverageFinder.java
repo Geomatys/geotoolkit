@@ -108,48 +108,4 @@ public class DefaultCoverageFinder extends CoverageFinder {
         }
         return result;
     }
-    
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public List<GridMosaic> findMosaics(Pyramid pyramid, double resolution, double tolerance, Envelope env, int maxTileNumber) throws FactoryException {
-        final List<GridMosaic> mosaics = new ArrayList<GridMosaic>(pyramid.getMosaics());
-        Collections.sort(mosaics, SCALE_COMPARATOR);
-        Collections.reverse(mosaics);
-        final List<GridMosaic> result = new ArrayList<>();
-        
-        //find the most accurate resolution
-        final double[] scales = pyramid.getScales();
-        if(scales.length==0) return result;
-        double bestScale = scales[0];
-        for(double d : pyramid.getScales()){
-            if(d>resolution){
-                //scale is greater but closer to wanted resolution
-                bestScale = d<bestScale ? d : bestScale;
-            } else if ( d > bestScale ) {
-                //found a better resolution
-                bestScale = d;
-            }
-        }
-        
-        //search mosaics
-        mosaicLoop:
-        for (GridMosaic candidate : mosaics) {
-            //check the mosaic intersect the searched envelope
-            final GeneralEnvelope clip = new GeneralEnvelope(candidate.getEnvelope());
-            if (!clip.intersects(env)) continue;
-            //calculate the intersection, will be used to determinate the number of tiles used.
-            clip.intersect(env);
-
-            final DirectPosition ul = candidate.getUpperLeftCorner();
-            final double scale = candidate.getScale();
-            if (scale != bestScale) continue;
-
-            result.add(candidate);
-        }
-        
-        return result;
-    }
-    
 }
