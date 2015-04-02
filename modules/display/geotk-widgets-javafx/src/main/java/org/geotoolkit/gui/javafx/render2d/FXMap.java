@@ -49,6 +49,7 @@ import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.javafx.util.NextPreviousList;
 import org.geotoolkit.internal.Loggers;
+import org.geotoolkit.map.MapContext;
 
 /**
  *
@@ -161,13 +162,19 @@ public class FXMap extends BorderPane {
     @Override
     protected void updateBounds() {
         super.updateBounds();
-        if(first){
-            //zoom on map area
-            first = false;
-            try {
-                getCanvas().setVisibleArea(getContainer().getContext().getAreaOfInterest());
-            } catch (Exception ex) {
-                Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
+        if (first) {
+            final ContextContainer2D container = getContainer();
+            if (container != null) {
+                final MapContext context = container.getContext();
+                if (context != null) {
+                    //zoom on map area
+                    first = false;
+                    try {
+                        getCanvas().setVisibleArea(context.getAreaOfInterest());
+                    } catch (Exception ex) {
+                        Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
+                    }
+                }
             }
         }
     }
