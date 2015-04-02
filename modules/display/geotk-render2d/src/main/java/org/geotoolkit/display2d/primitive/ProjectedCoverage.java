@@ -38,7 +38,6 @@ import org.geotoolkit.referencing.CRS;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -83,14 +82,15 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
     }
 
     /**
-     * Get a coverage reference.
+     * Return internal coverage.
      *
      * TODO return a GridCoverage instead of GridCoverage2D ?
      *
      * @param param : expected coverage parameters
-     * @return GridCoverage2D or null if the requested parameters are out of the coverage area.
+     * @return GridCoverage2D or {@code null} if the requested parameters are out of the coverage area.
      *
-     * @throws CoverageStoreException
+     * @throws CoverageStoreException if problem during {@link CoverageReference#acquireReader() } 
+     * or {@link GridCoverageReader#dispose() } call.
      */
     public GridCoverage2D getCoverage(final GridCoverageReadParam param) throws CoverageStoreException{
         GridCoverage2D value = cache.peek(param);
@@ -108,9 +108,10 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
                         }
                         value = (GridCoverage2D) result;
                         ref.recycle(reader);
-                    } catch(DisjointCoverageDomainException ex) {
-                        //-- mismatchDimensionException is return when we request area out of source boundary.
-                        //-- its an expected comportement
+                    } catch (DisjointCoverageDomainException ex) {
+                        //-- DisjointCoverageDomainException is return when we request area out of source boundary.
+                        //-- it's an expected comportement
+                        //-- this method will return null in accordance with its contract.
                         ref.recycle(reader);
                     } catch (Throwable e) {
                         reader.dispose();
@@ -120,7 +121,6 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
             } finally {
                  handler.putAndUnlock(value);
             }
-
         }
         return value;
     }
