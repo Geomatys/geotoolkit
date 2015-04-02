@@ -33,6 +33,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -43,6 +44,7 @@ import javafx.scene.layout.HBox;
 import static javafx.scene.layout.Region.USE_PREF_SIZE;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 
 /**
@@ -90,6 +92,14 @@ public abstract class AbstractPathTextField extends HBox {
         openPathButton.setBackground(new Background(new BackgroundFill(null, CornerRadii.EMPTY, Insets.EMPTY)));
         openPathButton.setBorder(Border.EMPTY);
         openPathButton.setMaxSize(USE_PREF_SIZE, USE_PREF_SIZE);
+        
+        choosePathButton.setTooltip(new Tooltip(
+                GeotkFX.getString("org.geotoolkit.gui.javafx.util.AbstractPathTextField.choosePath.tooltip")
+        ));
+        
+        openPathButton.setTooltip(new Tooltip(
+                GeotkFX.getString("org.geotoolkit.gui.javafx.util.AbstractPathTextField.openPath.tooltip")
+        ));
         
         final SimpleBooleanProperty notValidPath = new SimpleBooleanProperty(true);
         textProperty.addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
@@ -153,7 +163,7 @@ public abstract class AbstractPathTextField extends HBox {
         OpenOnSystem(final String inputText) {
             super();
             this.inputText = inputText;
-            updateTitle("Ouverture d'un fichier...");
+            updateTitle(GeotkFX.getString("org.geotoolkit.gui.javafx.util.AbstractPathTextField.taskTitle"));
         }
         
         @Override
