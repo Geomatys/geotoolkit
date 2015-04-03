@@ -228,7 +228,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         double[] resolution = renderingContext.getResolution();
         assert resolution.length == 2 : "DefaultRasterSymboliser : resolution from renderingContext should only exprimate in 2D.";
 
-        Envelope renderingBound = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
+        Envelope renderingBound = renderingContext.getCanvasObjectiveBounds();
         
         resolution = checkResolution(resolution, renderingBound);
 

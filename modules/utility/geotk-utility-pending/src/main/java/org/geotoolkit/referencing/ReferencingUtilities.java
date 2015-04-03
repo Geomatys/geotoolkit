@@ -146,14 +146,16 @@ public final class ReferencingUtilities {
      * within srcEnvelope, and store result into destination array newResolution.<br><br>
      * 
      * <strong>
-     * Note 1 : newResolution array may be {@code null}, in this case a new array result will be created.
-     * Where its length will be equals to targetCRS dimension number.<br>
+     * Note 1 : newResolution array may be {@code null}, in this case a new array result will be created,
+     * where its length will be equals to targetCRS dimensions number.<br>
      * Note 2 : the resolution convertion will be compute from 
      * {@linkplain CRSUtilities#getCRS2D(org.opengis.referencing.crs.CoordinateReferenceSystem) 2D CRS horizontal part}
      * of source CRS from {@link Envelope} and 2D targetCRS horizontal part.<br>
      * Note 3 : if destination resolution array is not {@code null} the resolution values about 
-     * other dimension than 2D horizontal CRS part are unchanged, else (if new resolution array is {@code null}) 
-     * the resolution values on other dimensions are setted to {@code 1}.
+     * other dimensions than 2D horizontal targetCRS part are unchanged, else (if new resolution array is {@code null}) 
+     * the resolution values on other dimensions are setted to {@code 1}.<br>
+     * Note 4 : oldResolution array length may not be mandatory equal to {@linkplain Envelope#getDimension() source Envelope dimension number}.
+     * The resolution convertion will be computed on horizontal CRS 2D part.
      * </strong>
      * 
      * @param srcEnvelope source envelope in relation with the source resolution.
@@ -165,8 +167,8 @@ public final class ReferencingUtilities {
      * @return a new resolution array compute from oldResolution exprimate into targetCRS. 
      * @throws org.opengis.referencing.operation.TransformException if problem during Envelope transformation into targetCrs.
      * @throws NullArgumentException if one of these parameter is {@code null} : srcEnvelope, oldResolution or targetCRS.
-     * @throws IllegalArgumentException if oldResolution and newResolution array haven't got same length.
-     * @throws IllegalArgumentException if Resolution array length and source CRS dimension are different.
+     * @throws MismatchedDimensionException if oldResolution array have length different than 2.
+     * @throws MismatchedDimensionException if newResolution array length and target CRS dimension are differents.
      */
     public static double[] convertResolution(final Envelope srcEnvelope, final double[] oldResolution, 
                                              final CoordinateReferenceSystem targetCrs, double... newResolution) throws TransformException {
@@ -180,15 +182,13 @@ public final class ReferencingUtilities {
             Arrays.fill(newResolution, 1);
         } else {
             if (targetCrs.getCoordinateSystem().getDimension() != newResolution.length) 
-            throw new IllegalArgumentException("Destination resolution array lenght should be equals than target CRS dimension number."
+            throw new MismatchedDimensionException("Destination resolution array lenght should be equals than target CRS dimension number."
                     + "Destination resolution array length = "+newResolution.length+", CRS dimension number = "+targetCrs.getCoordinateSystem().getDimension());
         }
         
         final CoordinateReferenceSystem srcCRS = srcEnvelope.getCoordinateReferenceSystem();
-        
-        if (srcCRS.getCoordinateSystem().getDimension() != oldResolution.length) 
-            throw new IllegalArgumentException("Resolution array lenght should be equals than source CRS dimension number."
-                    + "Resolution array length = "+oldResolution.length+", CRS dimension number = "+srcCRS.getCoordinateSystem().getDimension());
+        if (oldResolution.length != 2)
+            throw new IllegalArgumentException("Resolution array lenght should be equals to 2. Founded array length : "+oldResolution.length);
         
         if (CRS.equalsIgnoreMetadata(srcCRS, targetCrs)) {
             System.arraycopy(oldResolution, 0, newResolution, 0, newResolution.length);
@@ -196,8 +196,8 @@ public final class ReferencingUtilities {
             final int srcMinOrdi = CRSUtilities.firstHorizontalAxis(srcCRS);
             
             //-- grid envelope
-            final int displayWidth  = (int) StrictMath.ceil(srcEnvelope.getSpan(srcMinOrdi)     / oldResolution[srcMinOrdi]);
-            final int displayHeight = (int) StrictMath.ceil(srcEnvelope.getSpan(srcMinOrdi + 1) / oldResolution[srcMinOrdi + 1]);
+            final int displayWidth  = (int) StrictMath.ceil(srcEnvelope.getSpan(srcMinOrdi)     / oldResolution[0]);
+            final int displayHeight = (int) StrictMath.ceil(srcEnvelope.getSpan(srcMinOrdi + 1) / oldResolution[1]);
             
             //-- resolution working is only available on 2D horizontal CRS part
             //-- also avoid mismatch dimension problem

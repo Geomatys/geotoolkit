@@ -65,7 +65,6 @@ import org.geotoolkit.style.MutableStyleFactory;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.opengis.coverage.Coverage;
@@ -370,7 +369,6 @@ public class PortrayalServiceTest {
     }
 
     @Test
-    @Ignore
     public void testCoverageRendering() throws Exception{
         for(GridCoverage2D col : coverages){
             final MapLayer layer = MapBuilder.createCoverageLayer(col, SF.style(SF.rasterSymbolizer()), "cov");
@@ -378,10 +376,10 @@ public class PortrayalServiceTest {
         }
     }
 
-    @Test
-    public void testCoverageNDRendering() throws Exception{
-        //todo
-    }
+//    @Test
+//    public void testCoverageNDRendering() throws Exception{
+//        //todo
+//    }
 
     @Test
     public void testLongitudeFirst() throws Exception{
@@ -498,7 +496,6 @@ public class PortrayalServiceTest {
         final GridCoverage2D result = (GridCoverage2D) reader.read(0, null);
         final RenderedImage image = result.getRenderedImage();
         assertEquals(1000, image.getWidth());
-
     }
 
     /**
@@ -569,5 +566,4 @@ public class PortrayalServiceTest {
             }
         }
     }
-
 }

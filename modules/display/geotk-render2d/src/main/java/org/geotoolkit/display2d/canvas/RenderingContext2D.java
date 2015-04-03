@@ -255,14 +255,9 @@ public class RenderingContext2D implements RenderingContext{
 
         //calculate the resolution -----------------------------------------------
         this.dpi = dpi;
-        this.resolution = new double[canvasObjectiveBBox.getDimension()];
+        this.resolution = new double[2]; //-- explicitely exprime resolution only into multidimensional CRS horizontal 2D part 
         this.resolution[0] = canvasObjectiveBounds.getWidth()/canvasDisplayBounds.getWidth();
         this.resolution[1] = canvasObjectiveBounds.getHeight()/canvasDisplayBounds.getHeight();
-        for(int i=2; i<resolution.length; i++){
-            //other dimension are likely to be the temporal and elevation one.
-            //we set a hug resolution to ensure that only one slice of data will be retrived.
-            resolution[i] = Double.MAX_VALUE;
-        }
         adjustResolutionWithDPI(resolution);
 
         //calculate painting shape/bounds values -------------------------------
@@ -734,37 +729,22 @@ public class RenderingContext2D implements RenderingContext{
      * @return double[] of 2 dimensions
      */
     public double[] getResolution(final CoordinateReferenceSystem crs) {
-        if(CRS.equalsIgnoreMetadata(objectiveCRS, crs)){
+        if (CRS.equalsIgnoreMetadata(objectiveCRS, crs)) {
             return getResolution();
-        }else{
-            final double[] res = new double[crs.getCoordinateSystem().getDimension()];
+        } else {
+            final double[] newRes = new double[2];
+            
+            assert resolution.length == 2 : "RenderingContext2D : Resolution array should have length equals to 2. Founded length : "+resolution.length;
+            assert CRS.equalsIgnoreMetadata(canvasObjectiveBBox2D.getCoordinateReferenceSystem(), objectiveCRS2D) : "RenderingContext2D : canvasObjectiveBBox2D should own same CRS than objectiveCRS2D"; 
+            
             try {
-                final double[] origRes = getResolution();
-                res[0] = origRes[0];
-                res[1] = origRes[1];
+                final CoordinateReferenceSystem target2DCRS = CRSUtilities.getCRS2D(crs);
+                ReferencingUtilities.convertResolution(canvasObjectiveBBox2D, resolution, target2DCRS, newRes);
 
-                final MathTransform trs = CRS.findMathTransform(canvasObjectiveBBox2D.getCoordinateReferenceSystem(), crs);
-                final GeneralDirectPosition pos = new GeneralDirectPosition(
-                        canvasObjectiveBBox2D.getMedian(0),
-                        canvasObjectiveBBox2D.getMedian(1));
-                final Matrix matrix = trs.derivative(pos);
-
-                res[0] *= Math.hypot(matrix.getElement(0, 0),matrix.getElement(1, 0)) ;
-                res[1] *= Math.hypot(matrix.getElement(0, 1),matrix.getElement(1, 1)) ;
-                for(int i=2; i<res.length; i++){
-                    //other dimension are likely to be the temporal and elevation one.
-                    //we set a hug resolution to ensure that only one slice of data will be retrived.
-                    res[i] = Double.MAX_VALUE;
-                }
             } catch (TransformException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
-            } catch (IllegalArgumentException ex) {
-                LOGGER.log(Level.WARNING, null, ex);
-            } catch (Exception ex) {
-                LOGGER.log(Level.WARNING, null, ex);
             }
-
-            return adjustResolutionWithDPI(res);
+            return adjustResolutionWithDPI(newRes);
         }
     }
 

@@ -28,6 +28,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.style.Symbolizer;
@@ -94,8 +95,9 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
      * @return resolution changed if necessary
      */
     protected static double[] checkResolution(final double[] resolution, final Envelope bounds) {
-        double span0 = bounds.getSpan(0);
-        double span1 = bounds.getSpan(1);
+        final int minOrdi = CRSUtilities.firstHorizontalAxis(bounds.getCoordinateReferenceSystem());
+        double span0 = bounds.getSpan(minOrdi);
+        double span1 = bounds.getSpan(minOrdi + 1);
 
         if(resolution[0] > span0) resolution[0] = span0;
         if(resolution[1] > span1) resolution[1] = span1;
