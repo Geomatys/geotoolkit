@@ -36,7 +36,6 @@ import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
 import static org.junit.Assert.*;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
@@ -171,7 +170,6 @@ public abstract class PyramidalModelStoreNDTest {
      * @throws Exception
      */
     @Test
-    @Ignore
     public void checkMetaTest() throws Exception{
         //load the coverage store
         getCoverageStore();
@@ -203,7 +201,6 @@ public abstract class PyramidalModelStoreNDTest {
      * Read with no parameter, we should obtain the most accurate data
      */
     @Test
-    @Ignore
     public void readDefaultTest() throws Exception{
         getCoverageStore();
         final CoverageReader reader = ref.acquireReader();
@@ -212,12 +209,12 @@ public abstract class PyramidalModelStoreNDTest {
         final GridCoverage coverage = (GridCoverage) reader.read(ref.getImageIndex(), null);
         final Envelope env = coverage.getEnvelope();
         assertTrue(CRS.equalsIgnoreMetadata(crs, env.getCoordinateReferenceSystem()));
-        assertEquals(-180,   env.getMinimum(0), DELTA);
-        assertEquals(  75,   env.getMinimum(1), DELTA);
-        assertEquals( -15.5, env.getMinimum(2), DELTA);
-        assertEquals(-160,   env.getMaximum(0), DELTA);
-        assertEquals(  90,   env.getMaximum(1), DELTA);
-        assertEquals( 47.08, env.getMaximum(2), DELTA);
+        assertEquals(corner_long,  env.getMinimum(0), DELTA);//-- -180
+        assertEquals(  75,         env.getMinimum(1), DELTA);
+        assertEquals( corner_v[0], env.getMinimum(2), DELTA);//-- 15
+        assertEquals(-160,         env.getMaximum(0), DELTA);
+        assertEquals(  corner_lat, env.getMaximum(1), DELTA);//-- -90
+        assertEquals( 47.58, env.getMaximum(2), DELTA);
 
 
         assertTrue(coverage instanceof GridCoverageStack);
@@ -230,52 +227,68 @@ public abstract class PyramidalModelStoreNDTest {
         assertEquals(1, upperCovs.size());
 
         //expecting image from mosaic with min resolution and vertical -15
-        checkCoverage((GridCoverage2D)lowerCovs.get(0), 40, 30, colors[0][1], -180,-160,75,90,-15.5,-14.5);
+        checkCoverage((GridCoverage2D)lowerCovs.get(0), 40, 30, colors[0][1], corner_long, -160, 75, corner_lat, corner_v[0], -14);
         //expecting image from mosaic with min resolution and vertical 46.58
-        checkCoverage((GridCoverage2D)upperCovs.get(0), 40, 30, colors[1][1], -180,-160,75,90,46.08,47.08);
+        checkCoverage((GridCoverage2D)upperCovs.get(0), 40, 30, colors[1][1], corner_long, -160, 75, corner_lat, corner_v[1], 47.58);
 
         ref.recycle(reader);
-
     }
 
     /**
      * Read special scales and dimensions.
      */
     @Test
-    @Ignore
     public void readSlicesTest() throws Exception{
         getCoverageStore();
         final CoverageReader reader = ref.acquireReader();
         final GridCoverageReadParam param = new GridCoverageReadParam();
 
         //expecting image from mosaic with min resolution and vertical -15
-        param.setEnvelope(createEnvelope(-180,+180,-90,+90,-15,-15));
-        param.setResolution(0.5,0.5,1);
+        param.setEnvelope(createEnvelope(corner_long, +180,          //-- dim 0 (long)
+                                                 -90, corner_lat,    //-- dim 1 (lat)
+                                         corner_v[0], corner_v[0])); //-- dim 2 (vertical)
+        param.setResolution(0.5, 
+                            0.5,
+                            1);
+        
         GridCoverage2D coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), param);
-        checkCoverage(coverage, 40, 30, colors[0][1], -180,-160,75,90,-15.5,-14.5);
+        checkCoverage(coverage, 40, 30, colors[0][1], corner_long, -160,
+                                                               75, corner_lat,
+                                                      corner_v[0], -14); //-- -14 = corner_v[0] - 1 unity. 
         ref.recycle(reader);
 
         //expecting image from mosaic with max resolution and vertical -15
-        param.setEnvelope(createEnvelope(-180,+180,-90,+90,-15,-15));
+        param.setEnvelope(createEnvelope(corner_long, +180,
+                                                 -90, corner_lat,
+                                         corner_v[0], corner_v[0]));
         param.setResolution(1,1,1);
         coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), param);
-        checkCoverage(coverage, 20, 20, colors[0][0], -180,-160,70,90,-15.5,-14.5);
+        checkCoverage(coverage, 20, 20, colors[0][0], corner_long, -160,
+                                                               70, corner_lat,
+                                                      corner_v[0], -14);
         ref.recycle(reader);
 
         //expecting image from mosaic with min resolution and vertical 46.58
-        param.setEnvelope(createEnvelope(-180,+180,-90,+90,46.58,46.58));
+        param.setEnvelope(createEnvelope(corner_long, +180,
+                                                 -90, corner_lat,
+                                         corner_v[1], corner_v[1]));
         param.setResolution(0.5,0.5,1);
         coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), param);
-        checkCoverage(coverage, 40, 30, colors[1][1], -180,-160,75,90,46.08,47.08);
+        checkCoverage(coverage, 40, 30, colors[1][1], corner_long, -160,
+                                                               75, corner_lat,
+                                                      corner_v[1], 47.58);
         ref.recycle(reader);
 
         //expecting image from mosaic with max resolution and vertical 46.58
-        param.setEnvelope(createEnvelope(-180,+180,-90,+90,46.58,46.58));
+        param.setEnvelope(createEnvelope(corner_long, +180,
+                                                 -90, corner_lat,
+                                         corner_v[1], corner_v[1]));
         param.setResolution(1,1,1);
         coverage = (GridCoverage2D) reader.read(ref.getImageIndex(), param);
-        checkCoverage(coverage, 20, 20, colors[1][0], -180,-160,70,90,46.08,47.08);
+        checkCoverage(coverage, 20, 20, colors[1][0], corner_long, -160,
+                                                               70, corner_lat,
+                                                      corner_v[1], 47.58);
         ref.recycle(reader);
-
     }
 
     /**
@@ -310,5 +323,4 @@ public abstract class PyramidalModelStoreNDTest {
             }
         }
     }
-
 }
