@@ -1046,10 +1046,6 @@ compare:    for (final SingleCRS component : actualComponents) {
     {
         ensureNonNull("sourceCRS", sourceCRS);
         ensureNonNull("targetCRS", targetCRS);
-        if (equalsIgnoreMetadata(sourceCRS, targetCRS)) {
-            // Slight optimization in order to avoid the overhead of loading the full referencing engine.
-            return MathTransforms.identity(sourceCRS.getCoordinateSystem().getDimension());
-        }
         return getCoordinateOperationFactory(lenient).createOperation(sourceCRS, targetCRS).getMathTransform();
     }
 
