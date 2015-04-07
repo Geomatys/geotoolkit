@@ -34,6 +34,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -62,6 +63,7 @@ import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Stroke;
+import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -102,7 +104,6 @@ public class IntervalStyleBuilder extends AbstractTableModel{
     private double mean = 0;
     private double median = 0;
     private Symbolizer template = null;
-    private Class<? extends Symbolizer> expectedType = null;
 
     public IntervalStyleBuilder() {
         this(null,null);
@@ -336,7 +337,8 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         for(PropertyDescriptor desc : schema.getDescriptors()){
             Class<?> type = desc.getType().getBinding();
 
-            if(Number.class.isAssignableFrom(type)){
+            if(Number.class.isAssignableFrom(type) || type == byte.class || type==short.class ||
+               type==int.class || type==long.class || type==float.class || type == double.class){
                 properties.add(ff.property(desc.getName().getLocalPart()));
             }
         }
@@ -350,23 +352,14 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         
         Class<?> geoClass = geo.getType().getBinding();
 
-        if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){
-            Stroke stroke = sf.stroke(Color.BLACK, 1);
-            Fill fill = sf.fill(Color.BLUE);
-            template = sf.polygonSymbolizer(stroke,fill,null);
-            expectedType = PolygonSymbolizer.class;
-        }else if(LineString.class.isAssignableFrom(geoClass) || MultiLineString.class.isAssignableFrom(geoClass)){
-            Stroke stroke = sf.stroke(Color.BLUE, 2);
-            template = sf.lineSymbolizer(stroke,null);
-            expectedType = LineSymbolizer.class;
-        }else{
-            Stroke stroke = sf.stroke(Color.BLACK, 1);
-            Fill fill = sf.fill(Color.BLUE);
-            List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-            symbols.add(sf.mark(StyleConstants.MARK_CIRCLE, fill, stroke));
-            Graphic gra = sf.graphic(symbols, ff.literal(1), ff.literal(12), ff.literal(0), sf.anchorPoint(), sf.displacement());
-            template = sf.pointSymbolizer(gra, null);
-            expectedType = PointSymbolizer.class;
+        if(template==null){
+            if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){
+                template = createPolygonTemplate();
+            }else if(LineString.class.isAssignableFrom(geoClass) || MultiLineString.class.isAssignableFrom(geoClass)){
+                template = createLineTemplate();
+            }else{
+                template = createPointTemplate();
+            }
         }
 
 
@@ -575,6 +568,32 @@ public class IntervalStyleBuilder extends AbstractTableModel{
     @Override
     public boolean isCellEditable(final int rowIndex, final int columnIndex) {
         return method == METHOD.MANUAL;
+    }
+
+    public static PointSymbolizer createPointTemplate(){
+        final MutableStyleFactory sf = GO2Utilities.STYLE_FACTORY;
+        final FilterFactory ff = GO2Utilities.FILTER_FACTORY;
+        final Stroke stroke = sf.stroke(Color.BLACK, 1);
+        final Fill fill = sf.fill(Color.BLUE);
+        final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
+        symbols.add(sf.mark(StyleConstants.MARK_CIRCLE, fill, stroke));
+        final Graphic gra = sf.graphic(symbols, ff.literal(1), ff.literal(12), ff.literal(0), sf.anchorPoint(), sf.displacement());
+        return sf.pointSymbolizer(gra, null);
+    }
+
+    public static LineSymbolizer createLineTemplate(){
+        final MutableStyleFactory sf = GO2Utilities.STYLE_FACTORY;
+        final FilterFactory ff = GO2Utilities.FILTER_FACTORY;
+        final Stroke stroke = sf.stroke(Color.BLUE, 2);
+        return sf.lineSymbolizer(stroke,null);
+    }
+
+    public static PolygonSymbolizer createPolygonTemplate(){
+        final MutableStyleFactory sf = GO2Utilities.STYLE_FACTORY;
+        final FilterFactory ff = GO2Utilities.FILTER_FACTORY;
+        final Stroke stroke = sf.stroke(Color.BLACK, 1);
+        final Fill fill = sf.fill(Color.BLUE);
+        return sf.polygonSymbolizer(stroke,fill,null);
     }
 
 }

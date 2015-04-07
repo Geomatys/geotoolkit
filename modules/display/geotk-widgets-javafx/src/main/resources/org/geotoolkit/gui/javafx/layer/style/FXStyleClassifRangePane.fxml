@@ -39,7 +39,6 @@
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.palette" GridPane.rowIndex="2" />
             <ComboBox fx:id="uiPalette" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.template" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <Button fx:id="uiTemplate" mnemonicParsing="false" onAction="#editTemplate" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.edit" GridPane.columnIndex="3" GridPane.rowIndex="2" />
             <Button mnemonicParsing="false" onAction="#generate" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.generate" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowIndex="2" />
             <HBox spacing="10.0" GridPane.columnSpan="2" GridPane.rowIndex="4">
                <children>
@@ -54,6 +53,12 @@
             </ScrollPane>
             <FXNumberSpinner fx:id="uiClasses" maxWidth="1.7976931348623157E308" prefWidth="100.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             <Button mnemonicParsing="false" onAction="#apply" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.apply" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
+            <SplitMenuButton fx:id="uiTemplate" mnemonicParsing="false" onAction="#editTemplate" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane.edit" GridPane.columnIndex="3" GridPane.rowIndex="2">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+                <MenuItem mnemonicParsing="false" text="Action 2" />
+              </items>
+            </SplitMenuButton>
          </children>
       </GridPane>
    </center>

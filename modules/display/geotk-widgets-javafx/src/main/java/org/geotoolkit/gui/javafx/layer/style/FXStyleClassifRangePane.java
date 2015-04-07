@@ -36,10 +36,11 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -103,7 +104,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
     @FXML
     private ComboBox<PropertyName> uiNormalize;
     @FXML
-    private Button uiTemplate;
+    private SplitMenuButton uiTemplate;
     @FXML
     private FXNumberSpinner uiClasses;
     @FXML
@@ -144,6 +145,10 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
 
     @FXML
     private void generate(ActionEvent event) {
+        analyze.setClassification(uiProperty.getValue());
+        analyze.setMethod(uiMethod.getValue());
+        analyze.setNbClasses(uiClasses.valueProperty().get().intValue());
+        analyze.setNormalize(uiNormalize.getValue());
         uiTable.getItems().setAll(analyze.generateRules((IntervalPalette) uiPalette.getSelectionModel().getSelectedItem()));
     }
 
@@ -217,6 +222,10 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
         uiNormalize.setEditable(false);
         
         uiMethod.setEditable(false);
+        uiMethod.getItems().clear();
+        uiMethod.getItems().add(IntervalStyleBuilder.METHOD.EL);
+        uiMethod.getItems().add(IntervalStyleBuilder.METHOD.QANTILE);
+        uiMethod.getItems().add(IntervalStyleBuilder.METHOD.MANUAL);
         uiClasses.getNumberField().setNumberType(NumberField.NumberType.Integer);
         uiClasses.minValueProperty().set(0);
         uiClasses.valueProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
@@ -231,6 +240,26 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
         
         //this will cause the column width to fit the view area
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        final MenuItem miPoint = new MenuItem(GeotkFX.getString(FXStyleClassifRangePane.class, "pointTemplate"));
+        miPoint.setOnAction((ActionEvent event) -> {
+            analyze.setTemplate(IntervalStyleBuilder.createPointTemplate());
+            updateTemplateGlyph();
+        });
+        final MenuItem miLine = new MenuItem(GeotkFX.getString(FXStyleClassifRangePane.class, "lineTemplate"));
+        miLine.setOnAction((ActionEvent event) -> {
+            analyze.setTemplate(IntervalStyleBuilder.createLineTemplate());
+            updateTemplateGlyph();
+        });
+        final MenuItem miPolygon = new MenuItem(GeotkFX.getString(FXStyleClassifRangePane.class, "polygonTemplate"));
+        miPolygon.setOnAction((ActionEvent event) -> {
+            analyze.setTemplate(IntervalStyleBuilder.createPolygonTemplate());
+            updateTemplateGlyph();
+        });
+        uiTemplate.getItems().clear();
+        uiTemplate.getItems().add(miPoint);
+        uiTemplate.getItems().add(miLine);
+        uiTemplate.getItems().add(miPolygon);
         
     }
     
@@ -244,7 +273,6 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
         uiTable.getItems().clear();
 
         if(layer != null){
-            analyze.setLayer(layer);
             if(analyze.isIntervalStyle(layer.getStyle())){
                 uiTable.getItems().addAll(layer.getStyle().featureTypeStyles().get(0).rules());
             }

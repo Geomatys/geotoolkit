@@ -43,11 +43,12 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -82,6 +83,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.interval.DefaultRandomPalette;
+import org.geotoolkit.style.interval.IntervalStyleBuilder;
 import org.geotoolkit.style.interval.RandomPalette;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -118,7 +120,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     @FXML
     private ComboBox<Object> uiPalette;
     @FXML
-    private Button uiTemplate;
+    private SplitMenuButton uiTemplate;
     
     private FeatureMapLayer layer;
     private final RandomPalette palette = new DefaultRandomPalette();
@@ -214,7 +216,26 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         
         //this will cause the column width to fit the view area
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-                
+
+        final MenuItem miPoint = new MenuItem(GeotkFX.getString(FXStyleClassifSinglePane.class, "pointTemplate"));
+        miPoint.setOnAction((ActionEvent event) -> {
+            template = IntervalStyleBuilder.createPointTemplate();
+            updateTemplateGlyph();
+        });
+        final MenuItem miLine = new MenuItem(GeotkFX.getString(FXStyleClassifSinglePane.class, "lineTemplate"));
+        miLine.setOnAction((ActionEvent event) -> {
+            template = IntervalStyleBuilder.createLineTemplate();
+            updateTemplateGlyph();
+        });
+        final MenuItem miPolygon = new MenuItem(GeotkFX.getString(FXStyleClassifSinglePane.class, "polygonTemplate"));
+        miPolygon.setOnAction((ActionEvent event) -> {
+            template = IntervalStyleBuilder.createPolygonTemplate();
+            updateTemplateGlyph();
+        });
+        uiTemplate.getItems().clear();
+        uiTemplate.getItems().add(miPoint);
+        uiTemplate.getItems().add(miLine);
+        uiTemplate.getItems().add(miPolygon);
     }
     
     @Override
