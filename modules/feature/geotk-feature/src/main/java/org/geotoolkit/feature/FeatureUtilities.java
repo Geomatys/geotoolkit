@@ -438,7 +438,8 @@ public final class FeatureUtilities {
             //can not create a default value for this
             return null;
         }else if(type instanceof OperationType){
-            return new Operation((OperationDescriptor)desc);
+            //no property for operations
+            return null;
         }
 
         throw new IllegalArgumentException("Unhandled type : " + type);

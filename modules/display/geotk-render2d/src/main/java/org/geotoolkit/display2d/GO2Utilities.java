@@ -108,6 +108,7 @@ import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
@@ -971,7 +972,8 @@ public final class GO2Utilities {
 
     public static Geometry getGeometry(final Feature feature, final Expression geomExp){
         if(isNullorEmpty(geomExp)){
-            return (Geometry) feature.getDefaultGeometryProperty().getValue();
+            final GeometryAttribute att = feature.getDefaultGeometryProperty();
+            return (Geometry) (att==null ? null : att.getValue());
         }else{
             return geomExp.evaluate(feature, Geometry.class);
         }

@@ -17,6 +17,8 @@
 
 package org.geotoolkit.feature.type;
 
+import java.util.Collections;
+import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.feature.IdentifiedType;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.InternationalString;
@@ -29,6 +31,9 @@ import org.opengis.util.InternationalString;
  */
 @Deprecated
 public abstract class AbstractOperationType extends DefaultPropertyType<OperationType> implements OperationType{
+
+    protected static final ParameterDescriptorGroup EMPTY_PARAMS = 
+            new DefaultParameterDescriptorGroup(Collections.singletonMap("name", "noargs"), 0, 1);
 
     private final IdentifiedType targetType;
     private final ParameterDescriptorGroup parameters;

@@ -60,7 +60,6 @@ import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 
@@ -77,12 +76,9 @@ import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.feature.Attribute;
-import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.Operation;
 import org.geotoolkit.feature.type.OperationDescriptor;
 import org.geotoolkit.feature.type.OperationType;
-import org.opengis.feature.IdentifiedType;
 
 
 /**
@@ -463,14 +459,9 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
         //apply operations (alias/susbstitutionGroups)
         for(Entry<OperationDescriptor,Object> entry : ops){
-            Operation op = (Operation) feature.getProperty(entry.getKey().getName());
-            if(op==null){
-                op = new Operation((OperationDescriptor) entry.getKey());
-                propertyContainer.add(op);
-            }
-            op.setValue(feature, entry.getValue());
+            final OperationType type = entry.getKey().getType();
+            type.invokeSet(feature, entry.getValue());
         }
-
 
         return feature;
     }

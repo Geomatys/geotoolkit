@@ -35,7 +35,7 @@ public class AliasOperation extends AbstractOperationType {
     private final Name refName;
 
     public AliasOperation(Name newName, Name refName, AttributeType type) {
-        super(newName, null, type, null);
+        super(newName, null, type, EMPTY_PARAMS);
         this.refName = refName;
     }
 
