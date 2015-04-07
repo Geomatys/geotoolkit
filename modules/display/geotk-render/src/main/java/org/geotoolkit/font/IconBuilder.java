@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.LinearGradientPaint;
 import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
@@ -27,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.net.URL;
 import javax.swing.ImageIcon;
+import org.apache.sis.util.ArgumentChecks;
 
 /**
  * Utility class to build icones from TTF font.
@@ -68,23 +70,38 @@ public final class IconBuilder {
         return createImage(text, null, iconColor, FONT.deriveFont(size), bgColor);
     }
     
-    public static BufferedImage createImage(String text, ImageIcon icon, Color textColor, Font font, Color bgColor){
-
+    public static BufferedImage createImage(String text, ImageIcon icon, Color textColor, Font font, Color bgColor) {
+        return createImage(text, icon, textColor, font, bgColor, null, 2, true, false);
+    }
+    
+    public static BufferedImage createImage(String text, ImageIcon icon, Color textColor, Font font, Color bgColor, Insets insets, int graphicGap, final boolean squareWanted, final boolean removeLeading) {
+        ArgumentChecks.ensureNonEmpty("Text to draw", text);
+        ArgumentChecks.ensureNonNull("Font to use", text);
+        if (insets == null) {
+            insets = new Insets(0, 0, 0, 0);
+        }
+        
         final int border = 0;
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = img.createGraphics();
-
-        final FontMetrics fm = g.getFontMetrics(font);
+        final FontMetrics fm = g.getFontMetrics(font);        
         final int textSize = fm.stringWidth(text);
-        int width = textSize+border*2;
-        int height = fm.getHeight()+border*2;
+        
+        int width = textSize+border*2+insets.left+insets.right;
+        int height = fm.getHeight()+border*2+insets.top+insets.bottom;
+        if (removeLeading) {
+            height -= fm.getLeading();
+        }
         if(icon != null){
-            width += icon.getIconWidth() + 2;
+            width += icon.getIconWidth() + graphicGap;
             height = Math.max(height, icon.getIconHeight());
         }
+        
         //we want a square
-        width = Math.max(width, height);
-        height = Math.max(width, height);
+        if (squareWanted) {
+            width = Math.max(width, height);
+            height = Math.max(width, height);
+        }
         
         img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         g = img.createGraphics();
@@ -104,17 +121,21 @@ public final class IconBuilder {
             g.fill(rect);
         }
 
-        int x = border;
+        int x = border + insets.left;
         //draw icon
         if(icon != null){
             g.drawImage(icon.getImage(), x, (height-icon.getIconHeight())/2, null);
-            x += icon.getIconWidth()+2;
+            x += icon.getIconWidth()+graphicGap;
         }
 
         //draw text
-        g.setColor(textColor);
+        if (textColor != null) {
+            g.setColor(textColor);
+        }
+        
         g.setFont(font);
-        g.drawString(text, (width-textSize)/2, fm.getMaxAscent()+border);
+        
+        g.drawString(text, x, fm.getAscent()+border+insets.top);
         
         if(bgColor!=null){
             //draw border
@@ -124,6 +145,4 @@ public final class IconBuilder {
 
         return img;
     }
-    
-    
 }

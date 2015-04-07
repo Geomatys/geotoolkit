@@ -1,6 +1,7 @@
 package org.geotoolkit.gui.javafx.util;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -28,7 +30,10 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -47,10 +52,13 @@ import org.geotoolkit.internal.GeotkFX;
  */
 public class ProgressMonitor extends HBox {
 
-    public static final Image ICON_CANCEL = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_BAN, 16, Color.BLACK), null);
-    public static final Image ICON_ERROR = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_EXCLAMATION_CIRCLE, 16, new Color(200, 0, 0)), null);
-    public static final Image ICON_RUNNING_TASKS = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ELLIPSIS_V, 16, new Color(0, 200, 220)), null);
+    public static final Font AWESOME_FONT = IconBuilder.FONT.deriveFont(11f);
+    public static final Image ICON_CANCEL = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_BAN, null, Color.BLACK, AWESOME_FONT, null, null, 2, false, true), null);
+    public static final Image ICON_ERROR = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_EXCLAMATION_CIRCLE, null, new Color(200, 0, 0), AWESOME_FONT, null, null, 2, false, true), null);
+    public static final Image ICON_RUNNING_TASKS = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ELLIPSIS_V, null, new Color(0, 200, 220), AWESOME_FONT, null, null, 2, false, true), null);
 
+    private static final Background EMPTY_BACKGROUND = new Background(new BackgroundFill(null, CornerRadii.EMPTY, Insets.EMPTY));
+    
     private TaskProgress lastTask = new TaskProgress();
 
     private final MenuButton runningTasks = new MenuButton("", new ImageView(ICON_RUNNING_TASKS));
@@ -69,7 +77,7 @@ public class ProgressMonitor extends HBox {
 
         runningTasks.setTooltip(new Tooltip("Tâches en cours"));
         tasksInError.setTooltip(new Tooltip("Tâches échouées"));
-        
+            
         SimpleListProperty runningTasksProp = new SimpleListProperty(taskRegistry.getSubmittedTasks());
         SimpleListProperty failedTasksProp = new SimpleListProperty(taskRegistry.getTasksInError());
 
@@ -93,8 +101,12 @@ public class ProgressMonitor extends HBox {
         runningTasks.setAlignment(Pos.CENTER);
         tasksInError.setAlignment(Pos.CENTER);
 
+        // TODO : put style in CSS          
         runningTasks.setBorder(Border.EMPTY);
         tasksInError.setBorder(Border.EMPTY);
+        
+        runningTasks.setBackground(EMPTY_BACKGROUND);
+        tasksInError.setBackground(EMPTY_BACKGROUND);            
         
         initTasks();
 
@@ -213,7 +225,13 @@ public class ProgressMonitor extends HBox {
             cancelButton.prefWidthProperty().bind(progress.prefHeightProperty());
             cancelButton.maxHeightProperty().bind(progress.prefHeightProperty());
             cancelButton.maxWidthProperty().bind(progress.prefHeightProperty());
-
+            
+            // TODO : put style rule in CSS.
+            cancelButton.setBorder(Border.EMPTY);
+            cancelButton.setBackground(EMPTY_BACKGROUND);
+            title.setBackground(EMPTY_BACKGROUND);
+            progress.setBackground(EMPTY_BACKGROUND);
+            setBackground(EMPTY_BACKGROUND);
             getChildren().addAll(title, progress, cancelButton);
 
             taskProperty.addListener((ObservableValue<? extends Task> observable, Task oldValue, Task newValue) -> {
