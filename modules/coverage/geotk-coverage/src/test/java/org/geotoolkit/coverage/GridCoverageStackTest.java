@@ -39,8 +39,10 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 
 import static org.junit.Assert.*;
+import org.opengis.referencing.datum.PixelInCell;
 
 /**
  * Test GridCoverageStack class.
@@ -84,7 +86,7 @@ public class GridCoverageStackTest {
         assertEquals(2, gridEnv.getHigh(2));
 
         //check grid to crs
-        final MathTransform gridToCRS = gridGeom.getGridToCRS();
+        final MathTransform gridToCRS = PixelTranslation.translate(gridGeom.getGridToCRS(), PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
         assertEquals(3, gridToCRS.getSourceDimensions());
         assertEquals(3, gridToCRS.getTargetDimensions());
         final double[] lower = new double[]{0,0,0};
@@ -135,7 +137,8 @@ public class GridCoverageStackTest {
         assertEquals(3, gridEnv.getHigh(3));
 
         //check grid to crs
-        final MathTransform gridToCRS = gridGeom.getGridToCRS();
+        //-- in convention gridToCrs in PixelInCell.Center
+        final MathTransform gridToCRS = PixelTranslation.translate(gridGeom.getGridToCRS(), PixelInCell.CELL_CENTER, PixelInCell.CELL_CORNER);
         assertEquals(4, gridToCRS.getSourceDimensions());
         assertEquals(4, gridToCRS.getTargetDimensions());
         final double[] lower = new double[]{0,0,0,0};
@@ -194,6 +197,7 @@ public class GridCoverageStackTest {
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("slice");
+        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setCoordinateReferenceSystem(crs);
         gcb.setGridToCRS(gridtoCrs);
         gcb.setRenderedImage(image);
@@ -214,6 +218,7 @@ public class GridCoverageStackTest {
 
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName("slice");
+        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setCoordinateReferenceSystem(crs);
         gcb.setGridToCRS(gridtoCrs);
         gcb.setRenderedImage(image);
