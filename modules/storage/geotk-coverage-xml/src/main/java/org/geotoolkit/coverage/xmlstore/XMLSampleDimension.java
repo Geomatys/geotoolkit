@@ -96,7 +96,7 @@ public class XMLSampleDimension {
      * @see SampleDimensionType
      */
     public void setSampleType(SampleDimensionType sdt) {
-        type = sdt.identifier();
+        type = sdt.name();
     }
 
     /**
@@ -105,10 +105,14 @@ public class XMLSampleDimension {
      * @return the data type of this {@link SampleDimension}.
      * @throws IllegalArgumentException if {@link XMLSampleDimension#type} is not known.
      */
-    public SampleDimensionType getSampleType(){
-        for(SampleDimensionType sdt : SampleDimensionType.values()) {
-            
-            if(sdt.identifier().equals(type)) return sdt;
+    public SampleDimensionType getSampleType() {
+        SampleDimensionType sdtT = SampleDimensionType.valueOf(type);
+
+        if (sdtT != null) return sdtT;
+
+        //keep for retro-compatibility with old pyramids
+        for (SampleDimensionType sdt : SampleDimensionType.values()) {
+            if (sdt.identifier().equals(type)) return sdt;
         }
         throw  new IllegalArgumentException("Unexpected type : "+type);
     }
@@ -143,7 +147,7 @@ public class XMLSampleDimension {
         if (categories != null) {
             cats = new Category[categories.size()];
             for(int i = 0; i < cats.length; i++) { 
-                cats[i] = categories.get(i).buildCategory();
+                cats[i] = categories.get(i).buildCategory(getDataType());
             }
         }
         //-- gridSampleDimension constructor accept cats null.

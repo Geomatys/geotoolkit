@@ -18,6 +18,9 @@
 package org.geotoolkit.coverage.xmlstore;
 
 import java.awt.Color;
+import java.awt.image.DataBuffer;
+
+import org.apache.sis.util.Numbers;
 import org.opengis.metadata.content.TransferFunctionType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -111,8 +114,9 @@ public class XMLCategory {
      * 
      * @return Expected {@link Category} build from its unmarshalled attributs.
      * @throws IllegalArgumentException if internal transfer function is not known.
+     * @param dataType
      */
-    public Category buildCategory() {
+    public Category buildCategory(int dataType) {
         MathTransform1D sampleToGeophysics = null;
         //-- if function != null means categories own a quantitative unit. 
         //-- For example it is not NOData category but exits more other reason.
@@ -129,8 +133,20 @@ public class XMLCategory {
             f.setOffset(c0);
             sampleToGeophysics = f.getTransform();
         }
-        
-        final NumberRange range = NumberRange.create(lower, true, upper, true);
+
+        Class typeClass = null;
+        switch (dataType) {
+            case DataBuffer.TYPE_BYTE :   //fall through
+            case DataBuffer.TYPE_USHORT : //fall through
+            case DataBuffer.TYPE_SHORT :  //fall through
+            case DataBuffer.TYPE_INT : typeClass = Integer.class ; break;
+            case DataBuffer.TYPE_DOUBLE : typeClass= Double.class ; break;
+            case DataBuffer.TYPE_FLOAT : typeClass = Float.class ; break;
+            case DataBuffer.TYPE_UNDEFINED : //fall through
+            default : throw new IllegalArgumentException("Undefined SampleDimension DataType.");
+        }
+
+        final NumberRange range = getTypedRangeNumber(typeClass, lower, true, upper, true);
 
         final Color[] cols = new Color[colors.length];
         for(int i = 0; i < cols.length; i++) {
@@ -208,6 +224,25 @@ public class XMLCategory {
             colorCode = "#" + redCode + greenCode + blueCode;
         }
         return colorCode.toUpperCase();
+    }
+
+    /**
+     * Returns an appropriate {@link NumberRange} from given parameters.
+     *
+     * @param <T> type of internal data.
+     * @param type type of internal data.
+     * @param min minimum range value.
+     * @param isMinIncluded {@code true} if minimum value is considered as include into range interval else false (exclusive).
+     * @param max maximum range value.
+     * @param isMaxIncluded {@code true} if maximum value is considered as include into range interval else false (exclusive).
+     * @return appropriate range value casted in expected type.
+     */
+    private static <T extends Number & Comparable<T>> NumberRange<T> getTypedRangeNumber(final Class<T> type,
+                                                                                         final double min, final boolean isMinIncluded,
+                                                                                         final double max, final boolean isMaxIncluded)
+    {
+        return new NumberRange(type, Numbers.cast(min, type), isMinIncluded,
+                Numbers.cast(max, type), isMaxIncluded);
     }
 
 }
