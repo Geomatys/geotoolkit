@@ -27,6 +27,7 @@ import javax.swing.ProgressMonitor;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -53,6 +54,7 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.coverage.SampleDimension;
+import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.DirectPosition;
@@ -1045,8 +1047,10 @@ public class PyramidCoverageBuilder {
      */
     private boolean isDimensionCompatible(GridSampleDimension gsd1, GridSampleDimension gsd2) {
 
-        //sample type
-        if (!gsd1.getSampleDimensionType().equals(gsd2.getSampleDimensionType())) return false;
+        NumberRange range1 = NumberRange.create(gsd1.getMinimumValue(), true, gsd1.getMaximumValue(), true);
+        NumberRange range2 = NumberRange.create(gsd2.getMinimumValue(), true, gsd2.getMaximumValue(), true);
+
+        if (!range1.containsAny(range2)) return false;
 
         //compare noData
         double[] pNoData = gsd1.getNoDataValues();
