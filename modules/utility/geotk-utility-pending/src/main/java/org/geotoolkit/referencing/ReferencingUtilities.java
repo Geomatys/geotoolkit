@@ -43,6 +43,7 @@ import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.identification.Resolution;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -189,9 +190,13 @@ public final class ReferencingUtilities {
         final CoordinateReferenceSystem srcCRS = srcEnvelope.getCoordinateReferenceSystem();
         if (oldResolution.length != 2)
             throw new IllegalArgumentException("Resolution array lenght should be equals to 2. Founded array length : "+oldResolution.length);
-        
+
+        final int targetMinOrdi = CRSUtilities.firstHorizontalAxis(targetCrs);
+
         if (CRS.equalsIgnoreMetadata(srcCRS, targetCrs)) {
-            System.arraycopy(oldResolution, 0, newResolution, 0, newResolution.length);
+            assert targetMinOrdi + oldResolution.length <= newResolution.length : "First horizontal index from target CRS + old resolution array length " +
+                    "should be lesser than new resolution array length.";
+            System.arraycopy(oldResolution, 0, newResolution, targetMinOrdi, oldResolution.length);
         } else {
             final int srcMinOrdi = CRSUtilities.firstHorizontalAxis(srcCRS);
             
@@ -210,9 +215,7 @@ public final class ReferencingUtilities {
             
             //-- target image into target CRS 2D
             final Envelope targetEnvelope2D = Envelopes.transform(srcEnvelope2D, targetCRS2D);
-            
-            final int targetMinOrdi = CRSUtilities.firstHorizontalAxis(targetCrs);
-            
+
             newResolution[targetMinOrdi]     = targetEnvelope2D.getSpan(0) / displayWidth;
             newResolution[targetMinOrdi + 1] = targetEnvelope2D.getSpan(1) / displayHeight;
         }
