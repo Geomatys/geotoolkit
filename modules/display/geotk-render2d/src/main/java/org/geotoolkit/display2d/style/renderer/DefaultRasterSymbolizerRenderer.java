@@ -44,6 +44,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.query.Query;
@@ -126,7 +127,7 @@ import org.opengis.coverage.SampleDimension;
 public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedRasterSymbolizer>{
 
     /**
-     * A tolerence value for black color. Used in {@linkplain #removeBlackBorder(java.awt.image.WritableRenderedImage)}
+     * A tolerance value for black color. Used in {@linkplain #removeBlackBorder(java.awt.image.WritableRenderedImage)}
      * to define an applet of black colors to replace with alpha data.
      */
     private static final int COLOR_TOLERANCE = 13;
@@ -145,15 +146,15 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             GridCoverage2D dataCoverage = getObjectiveCoverage(projectedCoverage);
             GridCoverage2D elevationCoverage = getObjectiveElevationCoverage(projectedCoverage);
             final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
-            final CoverageReference ref          = coverageLayer.getCoverageReference();
-            
+            final CoverageReference ref = coverageLayer.getCoverageReference();
+
             if (dataCoverage == null) {
                 //LOGGER.log(Level.WARNING, "RasterSymbolizer : Reprojected coverage is null.");
                 return;
             }
-            
+
             final RasterSymbolizer sourceSymbol = symbol.getSource();
-            
+
             ////////////////////////////////////////////////////////////////////
             // 2 - Select bands to style / display                            //
             ////////////////////////////////////////////////////////////////////
@@ -169,15 +170,15 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     if (channel != null) {
                         //single band selection
                         final int[] indices = new int[]{
-                                getBandIndice(channel.getChannelName(),dataCoverage)
+                                getBandIndice(channel.getChannelName(), dataCoverage)
                         };
                         dataCoverage = selectBand(dataCoverage, indices);
                     } else {
                         final SelectedChannelType[] channels = selections.getRGBChannels();
                         final int[] selected = new int[]{
-                                getBandIndice(channels[0].getChannelName(),dataCoverage),
-                                getBandIndice(channels[1].getChannelName(),dataCoverage),
-                                getBandIndice(channels[2].getChannelName(),dataCoverage)
+                                getBandIndice(channels[0].getChannelName(), dataCoverage),
+                                getBandIndice(channels[1].getChannelName(), dataCoverage),
+                                getBandIndice(channels[2].getChannelName(), dataCoverage)
                         };
                         //@Workaround(library="JAI",version="1.0.x")
                         //TODO when JAI has been rewritten, this test might not be necessary anymore
@@ -194,14 +195,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
              * we must switch to objectiveCRS for grid coverage
              */
             renderingContext.switchToObjectiveCRS();
-            
+
             ////////////////////////////////////////////////////////////////////
             // 4 - Apply style                                                //
             ////////////////////////////////////////////////////////////////////
 
             RenderedImage dataImage = applyStyle(ref, dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), sourceSymbol, hints);
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-            
+
             ////////////////////////////////////////////////////////////////////
             // 5 - Correct cross meridian problems / render                   //
             ////////////////////////////////////////////////////////////////////
@@ -218,13 +219,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                 // geometry cross the far east meridian, geometry is like :
                 // POLYGON(-179,10,  181,10,  181,-10,  179,-10)
-                if(objBounds.intersects(renderingContext.wraps.wrapIncLine)){
+                if (objBounds.intersects(renderingContext.wraps.wrapIncLine)) {
                     //duplicate geometry on the other warp line
                     nbDecRep++;
                 }
                 // geometry cross the far west meridian, geometry is like :
                 // POLYGON(-179,10, -181,10, -181,-10,  -179,-10)
-                else if(objBounds.intersects(renderingContext.wraps.wrapDecLine)){
+                else if (objBounds.intersects(renderingContext.wraps.wrapDecLine)) {
                     //duplicate geometry on the other warp line
                     nbIncRep++;
                 }
@@ -232,17 +233,19 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 renderCoverage(projectedCoverage, dataImage, trs2D);
 
                 //-- repetition of increasing and decreasing sides.
-                for(int i = 0; i < nbDecRep; i++) {
+                for (int i = 0; i < nbDecRep; i++) {
                     g2d.setTransform(renderingContext.wraps.wrapDecObjToDisp[i]);
                     renderCoverage(projectedCoverage, dataImage, trs2D);
                 }
-                for(int i=0;i<nbIncRep;i++){
+                for (int i = 0; i < nbIncRep; i++) {
                     g2d.setTransform(renderingContext.wraps.wrapIncObjToDisp[i]);
                     renderCoverage(projectedCoverage, dataImage, trs2D);
                 }
             }
 
             renderingContext.switchToDisplayCRS();
+        } catch (DisjointCoverageDomainException e) {
+            LOGGER.log(Level.FINE,"Disjoint exception: "+e.getMessage(),e);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);
         }

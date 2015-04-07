@@ -30,6 +30,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display.VisitFilter;
@@ -286,9 +287,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         //-- Check if projected coverage has NAN values on other dimension than geographic 2D part 
         if (org.geotoolkit.geometry.Envelopes.containNAN(paramEnvelope)
-        && !org.geotoolkit.geometry.Envelopes.containNANInto2DGeographicPart(paramEnvelope)) 
-            throw new CoverageStoreException("ParamEnvelope build : unexpected comportment."
-                    + "\n has some NAN values on other dimension than geographic part."+paramEnvelope);
+        && !org.geotoolkit.geometry.Envelopes.containNANInto2DGeographicPart(paramEnvelope))
+            throw new DisjointCoverageDomainException("Rendering envelope extra dimensions does not intersect data envelope : " +
+                    "has some NAN values on other dimension than geographic part."+paramEnvelope);
 
         //-- We know we don't have NAN values on other dimension than geographic 
         //-- We clip envelope with coverage boundary
