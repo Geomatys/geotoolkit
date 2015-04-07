@@ -165,52 +165,50 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
         try {
             //don't comment this block, This raise an error if no reader for the file can be found
             //this way we are sure that the file is an image.
-            reader = createReader(candidate,spi);
+            reader = createReader(candidate, spi);
+
             final String nmsp = getDefaultNamespace();
             final String filename = createLayerName(candidate);
 
             final int nbImage = reader.getNumImages(true);
 
-
 //            final Name baseName = new DefaultName(nmsp,filename);
 //            final FileCoverageReference baseNode = new FileCoverageReference(this,baseName,candidate,-1);
 //            rootNode.getChildren().add(baseNode);
 
-            if(reader instanceof NamedImageStore){
+            if (reader instanceof NamedImageStore) {
                 //try to find a proper name for each image
                 final NamedImageStore nis = (NamedImageStore) reader;
 
-
                 final List<String> imageNames = nis.getImageNames();
-                for(int i=0,n=imageNames.size();i<n;i++){
+                for (int i = 0, n = imageNames.size(); i < n; i++) {
                     final String in = imageNames.get(i);
-                    final Name name = new DefaultName(nmsp,filename+"."+in);
-                    final FileCoverageReference fcr = new FileCoverageReference(this,name,candidate,i);
+                    final Name name = new DefaultName(nmsp, filename + "." + in);
+                    final FileCoverageReference fcr = new FileCoverageReference(this, name, candidate, i);
                     rootNode.getChildren().add(fcr);
                 }
 
-            }else{
-                for(int i=0;i<nbImage;i++){
+            } else {
+                for (int i = 0; i < nbImage; i++) {
                     final Name name;
-                    if(nbImage == 1){
+                    if (nbImage == 1) {
                         //don't number it if there is only one
-                        name = new DefaultName(nmsp,filename);
-                    }else{
-                        name = new DefaultName(nmsp,filename+"."+i);
+                        name = new DefaultName(nmsp, filename);
+                    } else {
+                        name = new DefaultName(nmsp, filename + "." + i);
                     }
 
-                    final FileCoverageReference fcr = new FileCoverageReference(this,name,candidate,i);
+                    final FileCoverageReference fcr = new FileCoverageReference(this, name, candidate, i);
                     rootNode.getChildren().add(fcr);
                 }
             }
-
             // Tried to parse a incompatible file, not really an error.
         } catch (UnsupportedImageFormatException ex) {
             LOGGER.log(Level.FINE, "Error for file {0} : {1}", new Object[]{candidate.getName(), ex.getMessage()});
 
         } catch (Exception ex) {
             //Exception type is not specified cause we can get IOException as IllegalArgumentException.
-            LOGGER.log(Level.WARNING, "Error for file {0} : {1}", new Object[]{candidate.getName(), ex.getMessage()});
+            LOGGER.log(Level.WARNING, String.format("Error for file %s : %s", candidate.getName(), ex.getMessage()), ex);
         } finally {
             ImageIOUtilities.releaseReader(reader);
         }
@@ -222,11 +220,13 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
 
     /**
      * Create a reader for the given file.
-     * Detect automaticaly the spi if type is set to 'AUTO'.
+     * Detect automatically the spi if type is set to 'AUTO'.
      *
-     * @param candidate
+     * @param candidate file to read
+     * @param spi used to create ImageReader. If null, detect automatically from candidate file.
      * @return ImageReader, never null
      * @throws IOException if fail to create a reader.
+     * @throws UnsupportedImageFormatException if spi is defined but can't decode candidate file
      */
     ImageReader createReader(final File candidate, ImageReaderSpi spi) throws IOException{
         final ImageReader reader;
@@ -237,9 +237,13 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
                 reader = XImageIO.getReader(candidate,Boolean.FALSE,Boolean.FALSE);
             }
         }else{
-            reader = spi.createReaderInstance();
-            Object in = ImageIOUtilities.toSupportedInput(spi, candidate);
-            reader.setInput(in);
+            if (spi.canDecodeInput(candidate)) {
+                reader = spi.createReaderInstance();
+                Object in = ImageIOUtilities.toSupportedInput(spi, candidate);
+                reader.setInput(in);
+            } else {
+                throw new UnsupportedImageFormatException("Unsupported file input for spi "+spi.getPluginClassName());
+            }
         }
 
         return reader;
@@ -247,7 +251,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
 
     /**
      * Create a writer for the given file.
-     * Detect automaticaly the spi if type is set to 'AUTO'.
+     * Detect automatically the spi if type is set to 'AUTO'.
      *
      * @param candidate
      * @return ImageWriter, never null
