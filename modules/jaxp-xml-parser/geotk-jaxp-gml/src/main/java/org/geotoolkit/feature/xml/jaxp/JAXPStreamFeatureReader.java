@@ -75,6 +75,8 @@ import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.Numbers;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.OperationDescriptor;
@@ -88,11 +90,14 @@ import org.geotoolkit.feature.type.OperationType;
  */
 public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeatureReader {
 
+    private static final JAXBEventHandler JAXBLOGGER = new JAXBEventHandler();
+
     public static final String READ_EMBEDDED_FEATURE_TYPE = "readEmbeddedFeatureType";
     public static final String SKIP_UNEXPECTED_PROPERTY_TAGS = "skipUnexpectedPropertyTags";
     public static final String BINDING_PACKAGE = "bindingPackage";
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
     private static final FeatureFactory FF = FeatureFactory.LENIENT;
+    private Unmarshaller unmarshaller;
 
     /**
      * GML namespace for this class.
@@ -100,6 +105,18 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     private static final String GML = "http://www.opengis.net/gml";
     protected List<FeatureType> featureTypes;
     private URL base = null;
+    //benchmarked 07/04/2015 : reduce by 10% reading time
+    private final Map<QName,Name> nameCache = new HashMap<QName,Name>(){
+        @Override
+        public Name get(Object key) {
+            Name n = super.get(key);
+            if(n==null){
+                n = Utils.getNameFromQname(reader.getName());
+                put((QName)key, n);
+            }
+            return n;
+        }
+    };
 
     public JAXPStreamFeatureReader() {
         this(new ArrayList<FeatureType>());
@@ -125,12 +142,22 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     @Override
     public void dispose() {
         // do nothing
+        if(unmarshaller!=null){
+            getPool().recycle(unmarshaller);
+            unmarshaller = null;
+        }
     }
 
     @Override
     public Object read(final Object xml) throws IOException, XMLStreamException  {
         setInput(xml);
         return read();
+    }
+
+    @Override
+    public FeatureReader readAsStream(final Object xml) throws IOException, XMLStreamException {
+        setInput(xml);
+        return new JAXPStreamIterator();
     }
 
     @Override
@@ -145,6 +172,15 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         }else{
             base = null;
         }
+
+        if(unmarshaller==null){
+            try {
+                unmarshaller = getPool().acquireUnmarshaller();
+                unmarshaller.setEventHandler(JAXBLOGGER);
+            } catch (JAXBException ex) {
+                throw new IOException(ex.getMessage(),ex);
+            }
+        }
     }
 
     /**
@@ -157,38 +193,9 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
             //we are looking for the root mark
             if (event == START_ELEMENT) {
+                readFeatureTypes();
 
-                // we search an embedded featureType description
-                String schemaLocation = reader.getAttributeValue(Namespaces.XSI, "schemaLocation");
-                if (isReadEmbeddedFeatureType() && schemaLocation != null) {
-                    final JAXBFeatureTypeReader featureTypeReader = new JAXBFeatureTypeReader();
-                    schemaLocation = schemaLocation.trim();
-                    final String[] urls = schemaLocation.split(" ");
-                    for (int i = 0; i < urls.length; i++) {
-                        final String namespace = urls[i];
-                        if (!(namespace.equalsIgnoreCase("http://www.opengis.net/gml") || namespace.equalsIgnoreCase("http://www.opengis.net/wfs")) && i + 1 < urls.length) {
-                            final String fturl = urls[i + 1];
-                            try {
-                                final URL url = Utils.resolveURL(base, fturl);
-                                List<FeatureType> fts = (List<FeatureType>) featureTypeReader.read(url.openStream());
-                                for (FeatureType ft : fts) {
-                                    if (!featureTypes.contains(ft)) {
-                                        featureTypes.add(ft);
-                                    }
-                                }
-                            } catch (MalformedURLException | URISyntaxException ex) {
-                                LOGGER.log(Level.WARNING, null, ex);
-                            } catch (IOException | JAXBException ex) {
-                                LOGGER.log(Level.WARNING, null, ex);
-                            }
-                            i = i + 2;
-                        } else if(namespace.equalsIgnoreCase("http://www.opengis.net/gml") || namespace.equalsIgnoreCase("http://www.opengis.net/wfs")) {
-                            i++;
-                        }
-                    }
-                }
-
-                final Name name  = Utils.getNameFromQname(reader.getName());
+                final Name name  = nameCache.get(reader.getName());
                 String id = "no-gml-id";
                 for(int i=0,n=reader.getAttributeCount();i<n;i++){
                     final QName attName = reader.getAttributeName(i);
@@ -231,6 +238,38 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         return null;
     }
 
+    private void readFeatureTypes(){
+        // we search an embedded featureType description
+        String schemaLocation = reader.getAttributeValue(Namespaces.XSI, "schemaLocation");
+        if (isReadEmbeddedFeatureType() && schemaLocation != null) {
+            final JAXBFeatureTypeReader featureTypeReader = new JAXBFeatureTypeReader();
+            schemaLocation = schemaLocation.trim();
+            final String[] urls = schemaLocation.split(" ");
+            for (int i = 0; i < urls.length; i++) {
+                final String namespace = urls[i];
+                if (!(namespace.equalsIgnoreCase("http://www.opengis.net/gml") || namespace.equalsIgnoreCase("http://www.opengis.net/wfs")) && i + 1 < urls.length) {
+                    final String fturl = urls[i + 1];
+                    try {
+                        final URL url = Utils.resolveURL(base, fturl);
+                        List<FeatureType> fts = (List<FeatureType>) featureTypeReader.read(url.openStream());
+                        for (FeatureType ft : fts) {
+                            if (!featureTypes.contains(ft)) {
+                                featureTypes.add(ft);
+                            }
+                        }
+                    } catch (MalformedURLException | URISyntaxException ex) {
+                        LOGGER.log(Level.WARNING, null, ex);
+                    } catch (IOException | JAXBException ex) {
+                        LOGGER.log(Level.WARNING, null, ex);
+                    }
+                    i = i + 2;
+                } else if(namespace.equalsIgnoreCase("http://www.opengis.net/gml") || namespace.equalsIgnoreCase("http://www.opengis.net/wfs")) {
+                    i++;
+                }
+            }
+        }
+    }
+
     private Object readFeatureCollection(final String id) throws XMLStreamException {
         FeatureCollection collection = null;
         while (reader.hasNext()) {
@@ -239,7 +278,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
             //we are looking for the root mark
             if (event == START_ELEMENT) {
-                final Name name = Utils.getNameFromQname(reader.getName());
+                final Name name = nameCache.get(reader.getName());
 
                 String fid = null;
                 if (reader.getAttributeCount() > 0) {
@@ -340,7 +379,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 int event = reader.next();
 
                 if (event == START_ELEMENT) {
-                    final Name propName = Utils.getNameFromQname(reader.getName());
+                    final Name propName = nameCache.get(reader.getName());
 
                     // we skip the boundedby attribute if it's present
                     if ("boundedBy".equals(propName.getLocalPart())) {
@@ -442,7 +481,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
                 } else if (event == END_ELEMENT) {
                     final QName q = reader.getName();
-                    if (q.getLocalPart().equals("featureMember") || Utils.getNameFromQname(q).equals(tagName)) {
+                    if (q.getLocalPart().equals("featureMember") || nameCache.get(q).equals(tagName)) {
                         break;
                     }
                 }
@@ -467,7 +506,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     }
 
     private Object readPropertyValue(PropertyType propertyType) throws XMLStreamException{
-        final Name propName = Utils.getNameFromQname(reader.getName());
+        final Name propName = nameCache.get(reader.getName());
 
         Object value = null;
         if (propertyType instanceof GeometryType) {
@@ -475,14 +514,9 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             while (event != START_ELEMENT) {
                 event = reader.next();
             }
-            final MarshallerPool pool = getPool();
             try {
-                final Unmarshaller unmarshaller;
-                unmarshaller = pool.acquireUnmarshaller();
-                unmarshaller.setEventHandler(new JAXBEventHandler());
                 final Geometry jtsGeom;
                 final Object geometry = ((JAXBElement) unmarshaller.unmarshal(reader)).getValue();
-                pool.recycle(unmarshaller);
                 if (geometry instanceof JTSGeometry) {
                     final JTSGeometry isoGeom = (JTSGeometry) geometry;
                     if (isoGeom instanceof JTSMultiCurve) {
@@ -559,7 +593,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             int event = reader.next();
 
             if (event == END_ELEMENT) {
-                Name name  = Utils.getNameFromQname(reader.getName());
+                Name name  = nameCache.get(reader.getName());
                 if (name.getLocalPart().equals("Insert")) {
                     insert = false;
                 }
@@ -567,7 +601,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
             //we are looking for the root mark
             } else if (event == START_ELEMENT) {
-                Name name  = Utils.getNameFromQname(reader.getName());
+                Name name  = nameCache.get(reader.getName());
 
                 if (name.getLocalPart().equals("Insert")) {
                     insert = true;
@@ -677,4 +711,154 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     public void setReadEmbeddedFeatureType(boolean readEmbeddedFeatureType) {
         this.properties.put(READ_EMBEDDED_FEATURE_TYPE, readEmbeddedFeatureType);
     }
+
+    private final class JAXPStreamIterator implements FeatureReader<FeatureType,Feature>{
+
+        private boolean singleFeature = false;
+        private FeatureType type = null;
+        private Feature next = null;
+
+        public JAXPStreamIterator() throws XMLStreamException {
+            while (reader.hasNext()) {
+                final int event = reader.getEventType();
+
+                //we are looking for the root mark
+                if (event == START_ELEMENT) {
+                    readFeatureTypes();
+
+                    final Name name  = nameCache.get(reader.getName());
+                    String id = "no-gml-id";
+                    for(int i=0,n=reader.getAttributeCount();i<n;i++){
+                        final QName attName = reader.getAttributeName(i);
+                        //search and id property from any namespace
+                        if("id".equals(attName.getLocalPart()) && attName.getNamespaceURI().startsWith(GML)){
+                            id = reader.getAttributeValue(i);
+                        }
+                    }
+                    final StringBuilder expectedFeatureType = new StringBuilder();
+
+                    if (name.getLocalPart().equals("FeatureCollection")) {
+                        singleFeature = false;
+                        return;
+
+                    } else if (name.getLocalPart().equals("Transaction")) {
+                        throw new XMLStreamException("Transaction types are not supported as stream");
+
+                    } else {
+                        for (FeatureType ft : featureTypes) {
+                            if (ft.getName().equals(name)) {
+                                singleFeature = true;
+                                next = (Feature) readFeature(id, ft);
+                                type = next.getType();
+                                return;
+                            }
+                            expectedFeatureType.append(ft.getName()).append('\n');
+                        }
+                    }
+
+                    throw new IllegalArgumentException("The xml does not describe the same type of feature: \n " +
+                                                       "Expected: " + expectedFeatureType.toString() + '\n' +
+                                                       "But was: "  + name);
+                }
+                reader.next();
+            }
+        }
+
+        @Override
+        public FeatureType getFeatureType() {
+            findNext();
+            if(type==null){
+                //collection is empty
+                if(!featureTypes.isEmpty()){
+                    //return the first feature type in the xsd
+                    return featureTypes.get(0);
+                }
+            }
+            return type;
+        }
+
+        @Override
+        public boolean hasNext() throws FeatureStoreRuntimeException {
+            findNext();
+            return next != null;
+        }
+
+        @Override
+        public Feature next() throws FeatureStoreRuntimeException {
+            findNext();
+            Feature t = next;
+            next = null;
+            return t;
+        }
+
+        private void findNext() throws FeatureStoreRuntimeException{
+            if(next!=null || singleFeature) return;
+
+            try{
+                //read a feature in the collection
+                while (reader.hasNext()) {
+                    int event = reader.next();
+
+                    //we are looking for the root mark
+                    if (event == START_ELEMENT) {
+                        final Name name = nameCache.get(reader.getName());
+
+                        String fid = null;
+                        if (reader.getAttributeCount() > 0) {
+                            fid = reader.getAttributeValue(0);
+                        }
+
+                        if (name.getLocalPart().equals("featureMember") || name.getLocalPart().equals("featureMembers")) {
+                            continue;
+
+                        } else if (name.getLocalPart().equals("boundedBy")) {
+                            while (reader.hasNext()) {
+                                event = reader.next();
+                                if (event == START_ELEMENT) {
+                                    break;
+                                }
+                            }
+                            String srsName = null;
+                            if (reader.getAttributeCount() > 0) {
+                                srsName = reader.getAttributeValue(0);
+                            }
+                            final JTSEnvelope2D bounds = readBounds(srsName);
+
+                        } else {
+                            if (fid == null) {
+                                LOGGER.info("Missing feature id : generating a random one");
+                                fid = UUID.randomUUID().toString();
+                            }
+
+                            boolean find = false;
+                            StringBuilder expectedFeatureType = new StringBuilder();
+                            for (FeatureType ft : featureTypes) {
+                                if (ft.getName().equals(name)) {
+                                    next = (Feature) readFeature(fid, ft);
+                                    find = true;
+                                    if(type==null) type = next.getType();
+                                    return;
+                                }
+                                expectedFeatureType.append(ft.getName()).append('\n');
+                            }
+
+                            if (!find) {
+                                throw new IllegalArgumentException("The xml does not describe the same type of feature: \n "
+                                        + "Expected: " + expectedFeatureType.toString() + '\n'
+                                        + "But was: " + name);
+                            }
+                        }
+                    }
+                }
+            }catch(XMLStreamException ex){
+                throw new FeatureStoreRuntimeException(ex);
+            }
+        }
+
+        @Override
+        public void close() {
+            dispose();
+        }
+    }
+
 }

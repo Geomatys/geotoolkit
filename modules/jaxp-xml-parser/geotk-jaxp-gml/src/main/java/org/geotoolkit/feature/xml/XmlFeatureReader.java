@@ -20,6 +20,7 @@ package org.geotoolkit.feature.xml;
 import java.io.IOException;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
+import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.type.FeatureType;
 
 /**
@@ -38,6 +39,16 @@ public interface XmlFeatureReader extends Configurable {
      * @return A SimpleFeature / featureCollection or {@code null}
      */
     public Object read(Object xml) throws IOException, XMLStreamException;
+
+    /**
+     * Read a feature or featureCollection from the specified String XML source.
+     * Reads features one by one if possible.
+     *
+     * @return FeatureReader
+     * @throws IOException
+     * @throws XMLStreamException 
+     */
+    public FeatureReader readAsStream(Object xml) throws IOException, XMLStreamException;
 
     /**
      * Extract the mapping between namespaces and prefix from an xml document;

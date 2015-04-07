@@ -31,6 +31,7 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -64,22 +65,23 @@ public class LooseBBox extends DefaultBBox{
         //if we don't know the crs, we will assume it's the objective crs already
         if(candidateCrs != null){
             //reproject in objective crs if needed
-            if(!CRS.equalsIgnoreMetadata(this.crs,candidateCrs)){
-                try {
-                    candidate = JTS.transform(candidate, CRS.findMathTransform(candidateCrs, this.crs));
-                } catch (MismatchedDimensionException ex) {
-                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
-                    return false;
-                } catch (TransformException ex) {
-                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
-                    return false;
-                } catch (FactoryException ex) {
-                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
-                    return false;
-                } catch (IllegalArgumentException ex) {
-                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
-                    return false;
+            try {
+                final MathTransform trs = CRS.findMathTransform(candidateCrs, this.crs);
+                if(!trs.isIdentity()){
+                    candidate = JTS.transform(candidate, trs);
                 }
+            } catch (MismatchedDimensionException ex) {
+                Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
+                return false;
+            } catch (TransformException ex) {
+                Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
+                return false;
+            } catch (FactoryException ex) {
+                Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
+                return false;
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
+                return false;
             }
         }
 

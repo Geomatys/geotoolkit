@@ -48,6 +48,7 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataFileStore;
+import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
@@ -110,12 +111,8 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
             final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
             reader.setReadEmbeddedFeatureType(true);
             try {
-                Object obj = reader.read(file);
-                if(obj instanceof FeatureCollection){
-                    featureType = ((FeatureCollection)obj).getFeatureType();
-                }else{
-                    throw new DataStoreException("File does not contain a FeatureCollection, found a "+obj);
-                }
+                FeatureReader ite = reader.readAsStream(file);
+                featureType = ite.getFeatureType();
             } catch (IOException | XMLStreamException ex) {
                 throw new DataStoreException(ex.getMessage(),ex);
             } finally{
@@ -155,21 +152,18 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
         typeCheck(query.getTypeName());
 
         final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(featureType);
-        final FeatureCollection col;
+        final CloseableIterator ite;
         try {
-            Object obj = reader.read(file);
-            if(obj instanceof FeatureCollection){
-                col = (FeatureCollection)obj;
-            }else{
-                throw new DataStoreException("File does not contain a FeatureCollection, found a "+obj);
-            }
+            ite = reader.readAsStream(file);
         } catch (IOException | XMLStreamException ex) {
+            reader.dispose();
             throw new DataStoreException(ex.getMessage(),ex);
         } finally{
-            reader.dispose();
+            //do not dispose, the iterator is closeable and will close the reader
+            //reader.dispose();
         }
 
-        final FeatureReader freader = GenericWrapFeatureIterator.wrapToReader(col.iterator(),featureType);
+        final FeatureReader freader = GenericWrapFeatureIterator.wrapToReader(ite,featureType);
         return handleRemaining(freader, query);
     }
 
