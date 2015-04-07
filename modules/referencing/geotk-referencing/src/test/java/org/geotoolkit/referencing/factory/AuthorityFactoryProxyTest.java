@@ -147,7 +147,7 @@ public final strictfp class AuthorityFactoryProxyTest {
         final CRSAuthorityFactory factory = AuthorityFactoryFinder.getCRSAuthorityFactory("CRS", null);
         final IdentifiedObjectFinder proxy = new IdentifiedObjectFinder(factory, GeographicCRS.class);
         CoordinateReferenceSystem expected = factory.createCoordinateReferenceSystem("84");
-        assertNotSame(expected, CommonCRS.WGS84.normalizedGeographic());
+        assertSame(expected, CommonCRS.WGS84.normalizedGeographic());
         assertSame   (expected, proxy.createFromCodes      (expected));
         assertSame   (expected, proxy.createFromIdentifiers(expected));
         assertNull   (          proxy.createFromNames      (expected));
