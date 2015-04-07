@@ -67,7 +67,7 @@ import org.opengis.style.Symbolizer;
 import org.opengis.util.FactoryException;
 
 /**
- * Abstract renderer for symbolizer which only apply on coverages datas.
+ * Abstract renderer for symbolizer which only apply on coverages data.
  * This class will take care to implement the coverage hit method.
  *
  * @author Johann Sorel (Geomatys)
@@ -154,7 +154,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     }
     
     /**
-     * Effectuate some operations on source {@link GridCoverage2D} in relation with its internaly symbolizer type.
+     * Effectuate some operations on source {@link GridCoverage2D} in relation with its internally symbolizer type.
      * 
      * @param coverageSource source coverage which will be adapted to resampling.
      * @param symbolizer 
@@ -165,7 +165,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
      /**
      * Returns expected {@link GridCoverage2D} from given {@link ProjectedCoverage}, 
-     * adapted to asked {@linkplain #renderingContext internaly rendering context} situation.
+     * adapted to asked {@linkplain #renderingContext internally rendering context} situation.
      * 
      * @param projectedCoverage Convenient representation of a {@link Coverage} for rendering.
      * @return an expected slice 2D of given {@link ProjectedCoverage}.
@@ -184,7 +184,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     
     /**
      * Returns expected {@linkplain GridCoverage2D elevation coverage} from given {@link ProjectedCoverage}, 
-     * adapted to asked {@linkplain #renderingContext internaly rendering context} situation.
+     * adapted to asked {@linkplain #renderingContext internally rendering context} situation.
      * 
      * @param projectedCoverage Convenient representation of a {@link Coverage} for rendering.
      * @return an expected slice 2D of given {@link ProjectedCoverage}.
@@ -203,7 +203,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     
     /**
      * Returns expected {@linkplain GridCoverage2D elevation coverage} or {@linkplain GridCoverage2D coverage}
-     * from given {@link ProjectedCoverage}, adapted to asked {@linkplain #renderingContext internaly rendering context} situation.
+     * from given {@link ProjectedCoverage}, adapted to asked {@linkplain #renderingContext internally rendering context} situation.
      * 
      * @param projectedCoverage Convenient representation of a {@link Coverage} for rendering.
      * @param isElevation {@code true} if we want elevation coverage, else ({@code false}) for read coverage.
@@ -226,7 +226,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         //-- resolution of horizontal Part of CRS
         double[] resolution = renderingContext.getResolution();
-        assert resolution.length == 2 : "DefaultRasterSymboliser : resolution from renderingContext should only exprimate in 2D.";
+        assert resolution.length == 2 : "DefaultRasterSymboliser : resolution from renderingContext should only defined in 2D.";
 
         Envelope renderingBound = renderingContext.getCanvasObjectiveBounds();
         
@@ -277,9 +277,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         
         /*
          * Study rendering context envelope and internal coverage envelope.
-         * For exemple if we store data with a third dimension or more, with the 2 dimensional renderer
-         * it is possible to miss some internal stored datas.
-         * To avoid this comportement we can "complete"(fill) render envelope with missing dimensions.
+         * For example if we store data with a third dimension or more, with the 2 dimensional renderer
+         * it is possible to miss some internal stored data.
+         * To avoid this comportment we can "complete"(fill) render envelope with missing dimensions.
          */
         final GeneralEnvelope paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, renderingBound);
         assert paramEnvelope.getCoordinateReferenceSystem() != null : "DefaultRasterSymbolizerRenderer : CRS from param envelope cannot be null.";
@@ -287,7 +287,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         //-- Check if projected coverage has NAN values on other dimension than geographic 2D part 
         if (org.geotoolkit.geometry.Envelopes.containNAN(paramEnvelope)
         && !org.geotoolkit.geometry.Envelopes.containNANInto2DGeographicPart(paramEnvelope)) 
-            throw new CoverageStoreException("ParamEnvelope build : unexpected comportement."
+            throw new CoverageStoreException("ParamEnvelope build : unexpected comportment."
                     + "\n has some NAN values on other dimension than geographic part."+paramEnvelope);
 
         //-- We know we don't have NAN values on other dimension than geographic 
@@ -309,7 +309,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             //-- in future jdk8 version return an Optional<Coverage> 
             final StringBuilder strB = new StringBuilder(isElevation ? "getObjectiveElevationCoverage()" : "getObjectiveCoverage()");
             strB.append(" : \n impossible to read coverage ");
-            strB.append("with internaly projected coverage boundary : ");
+            strB.append("with internally projected coverage boundary : ");
             strB.append(dataBBox);
             strB.append("\nwith the following renderer requested Envelope.");
             strB.append(paramEnvelope);
@@ -373,8 +373,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         /*
          * NODATA 
          * 
-         * 1 : Normaly all NODATA for all gridSampleDimension for a same coverage are equals.
-         * 2 : Normaly all NODATA for each coverage internaly samples are equals.  
+         * 1 : Normally all NODATA for all gridSampleDimension for a same coverage are equals.
+         * 2 : Normally all NODATA for each coverage internally samples are equals.
          */
         final double[] nodata = dataCoverage.getSampleDimension(0).getNoDataValues();
 
@@ -406,19 +406,19 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     }
     
     /**
-     * Clip requested envelope with internaly {@link ProjectedCoverage} boundary.
+     * Clip requested envelope with internally {@link ProjectedCoverage} boundary.
      * 
      * <strong>
      * In some case when the rendering boundary is reprojected into coverage space 
-     * some {@linkplain Double#NaN NAN} values can be computed, which is an expected comportement.
-     * To avoid normaly exception during coverage reading this method replace NAN values by coverage boundary values.
+     * some {@linkplain Double#NaN NAN} values can be computed, which is an expected comportment.
+     * To avoid normally exception during coverage reading this method replace NAN values by coverage boundary values.
      * </strong>
      * 
      * @param requestedEnvelope envelope which will be clipped.
      * @param coverageEnvelope reference coverage envelope.
      * @param result set result of clipping into this {@link GeneralEnvelope}, 
      * a new result envelope is built if it is {@code null}, you should pass the same Envelope as requestedEnvelope.
-     * Moreover the result envelope is exprimate into same CRS than requestedEnvelope.
+     * Moreover the result envelope is defined into same CRS than requestedEnvelope.
      * @return requested clipped envelope result.
      * @throws NullArgumentException if requestedEnvelope or coverageEnvelope are {@code null}.
      * @throws IllegalArgumentException if CRS from requestedEnvelope and coverageEnvelope are different.
