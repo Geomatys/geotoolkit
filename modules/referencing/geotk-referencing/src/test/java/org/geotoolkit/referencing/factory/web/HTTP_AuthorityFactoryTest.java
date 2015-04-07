@@ -173,8 +173,6 @@ public final strictfp class HTTP_AuthorityFactoryTest extends ReferencingTestBas
         crs = factory.createGeographicCRS("http://www.opengis.net/gml/srs/crs.xml#84");
         assertSame(crs, CRS.decode("http://www.opengis.net/gml/srs/crs.xml#84"));
         assertSame(crs, CRS.decode("CRS:84"));
-        assertNotSame(crs, CommonCRS.WGS84.normalizedGeographic());
-        assertEqualsIgnoreMetadata(CommonCRS.WGS84.normalizedGeographic(), crs, true);
 
         // Test CRS:83
         crs = factory.createGeographicCRS("http://www.opengis.net/gml/srs/crs.xml#83");

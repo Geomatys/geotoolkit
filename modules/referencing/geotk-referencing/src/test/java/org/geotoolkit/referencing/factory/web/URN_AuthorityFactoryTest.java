@@ -118,7 +118,6 @@ public final strictfp class URN_AuthorityFactoryTest extends ReferencingTestBase
         assertSame(crs, CRS.decode("urn:ogc:def:crs:OGC:1.3:CRS84"));
         assertSame(crs, CRS.decode("CRS:84"));
         assertSame(crs, CRS.decode("OGC:CRS84"));
-        assertEqualsIgnoreMetadata(CommonCRS.WGS84.normalizedGeographic(), crs, true);
 
         // Test CRS:83
         crs = factory.createGeographicCRS("urn:ogc:def:crs:CRS:1.3:83");

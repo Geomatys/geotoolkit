@@ -99,7 +99,6 @@ public final strictfp class WebCRSFactoryTest {
         assertSame   (crs,  factory.createGeographicCRS("CRS:CRS84"));
         assertSame   (crs,  factory.createGeographicCRS("crs : crs84"));
         assertNotSame(crs,  factory.createGeographicCRS("CRS:83"));
-        assertEqualsIgnoreMetadata(CommonCRS.WGS84.normalizedGeographic(), crs, true);
     }
 
     /**
@@ -171,7 +170,6 @@ public final strictfp class WebCRSFactoryTest {
         assertSame("Allowing scanning should not make any difference for this CRS84 instance.",
                    CRS84, finder.find(CRS84));
 
-        assertEqualsIgnoreMetadata(CRS84, CommonCRS.WGS84.normalizedGeographic(), true); // Required condition for next test.
 
         finder.setFullScanAllowed(true);
         assertSame("A full scan should allow us to find WGS84, since it is equals ignoring metadata to CRS:84.",
