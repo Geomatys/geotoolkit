@@ -231,6 +231,7 @@ public class XmlFeatureTypeTest {
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
         final FeatureType type = types.get(0);
+        assertEquals("TestSimple", type.getName().getLocalPart());
         assertEquals(29, type.getDescriptors().size());
         //28 substitutiongroups
     }

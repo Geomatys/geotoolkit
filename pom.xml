@@ -491,6 +491,13 @@
         <scope>runtime</scope>
       </dependency>
 
+      <!-- latest jaxb version, there are bugs in the jdk7 jaxb version with particule group lists-->
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-impl</artifactId>
+        <version>2.2.7</version>
+      </dependency>
+
       <!-- Lucene -->
       <dependency>
          <groupId>org.apache.lucene</groupId>
