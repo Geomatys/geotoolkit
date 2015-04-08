@@ -859,6 +859,11 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         public void close() {
             dispose();
         }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("not supported");
+        }
     }
 
 }

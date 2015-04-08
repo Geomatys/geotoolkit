@@ -298,6 +298,12 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         return null;
     }
 
+    @Override
+    public void prune() {
+        // do nothing TODO implements for each sub type
+    }
+
+    
     /**
      * @todo fix the id problem.
      */

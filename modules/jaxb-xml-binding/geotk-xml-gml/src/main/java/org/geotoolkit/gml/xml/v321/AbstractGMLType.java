@@ -405,6 +405,12 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     }
 
     @Override
+    public void prune() {
+        // do nothing TODO implements for each subtype
+    }
+
+    
+    @Override
     public int hashCode() {
         int hash = 5;
         hash = 67 * hash + (this.description != null ? this.description.hashCode() : 0);
