@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage.memory;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -161,7 +162,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
 
         @Override
         public List<GridSampleDimension> getSampleDimensions(final int i) throws CoverageStoreException, CancellationException {
-            return Collections.singletonList(ref.coverage.getSampleDimension(i));
+            return Arrays.asList(ref.coverage.getSampleDimensions());
         }
 
         @Override
