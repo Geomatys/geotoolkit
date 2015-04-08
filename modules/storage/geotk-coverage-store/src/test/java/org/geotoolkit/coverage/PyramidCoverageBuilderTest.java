@@ -23,17 +23,20 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+//import java.io.File;//-- debug
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+//import javax.imageio.ImageIO;//-- debug
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.opengis.referencing.datum.PixelInCell;
 
 /**
  * Test pyramid generation with PyramidCoverageBuilder.
@@ -196,9 +199,10 @@ public class PyramidCoverageBuilderTest {
         BufferedImage expectedImage = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = expectedImage.createGraphics();
         g.setColor(Color.RED);
-        g.fillRect(0, 66, tileSize, tileSize);
+        g.fillRect(0, 67, tileSize, tileSize);
         g.setColor(Color.BLUE);
-        g.fillRect(66, 0, tileSize, tileSize);
+        g.fillRect(67, 0, tileSize, tileSize);
+//        ImageIO.write(tileImg, "png", new File("/myPath/0_0.png"));//-- debug
         testImage(tileImg, expectedImage, 0);
 
         //test tile 0x1
@@ -216,7 +220,8 @@ public class PyramidCoverageBuilderTest {
         g.setColor(Color.RED);
         g.fillRect(0, 0, tileSize, tileSize);
         g.setColor(Color.BLUE);
-        g.fillRect(66, 0, tileSize, 33);
+        g.fillRect(67, 0, tileSize, 33);
+//        ImageIO.write(tileImg, "png", new File("/myPath/0_1.png"));//-- debug
         testImage(tileImg, expectedImage, 1);
 
         //test tile 1x0
@@ -229,6 +234,7 @@ public class PyramidCoverageBuilderTest {
          */
         tile = gridMosaic.getTile(1, 0, null);
         tileImg = (RenderedImage) tile.getInput();
+//        ImageIO.write(tileImg, "png", new File("/myPath/1_0.png"));//-- debug
         testImage(tileImg, tileSize, tileSize, Color.BLUE);
 
         //test tile 1x1
@@ -247,6 +253,7 @@ public class PyramidCoverageBuilderTest {
         g.fillRect(0, 0, 33, tileSize);
         g.setColor(Color.BLUE);
         g.fillRect(0, 0, tileSize, 33);
+//        ImageIO.write(tileImg, "png", new File("/myPath/1_1.png"));//-- debug
         testImage(tileImg, expectedImage, 3);
     }
 
@@ -294,6 +301,7 @@ public class PyramidCoverageBuilderTest {
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName(name);
         gcb.setEnvelope(env);
+        gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
         gcb.setGridToCRS(gridToCRS);
         gcb.setRenderedImage(image);
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
@@ -324,8 +332,8 @@ public class PyramidCoverageBuilderTest {
         final int[] candidateBuf = new int[4];
         final Raster expectedData = expectedImage.getData();
         final Raster candidateData = candidateImg.getData();
-        for(int y=0;y<expectedImage.getHeight();y++){
-            for(int x=0;x<expectedImage.getWidth();x++){
+        for(int y = 0; y < expectedImage.getHeight(); y++){
+            for(int x = 0; x < expectedImage.getWidth(); x++){
                 expectedData.getPixel(x, y, expectedBuf);
                 candidateData.getPixel(x, y, candidateBuf);
                 assertArrayEquals(expectedBuf, candidateBuf);
