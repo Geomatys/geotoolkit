@@ -106,12 +106,9 @@ public class XMLSampleDimension {
      * @throws IllegalArgumentException if {@link XMLSampleDimension#type} is not known.
      */
     public SampleDimensionType getSampleType() {
-        SampleDimensionType sdtT = SampleDimensionType.valueOf(type);
-
-        if (sdtT != null) return sdtT;
-
-        //keep for retro-compatibility with old pyramids
         for (SampleDimensionType sdt : SampleDimensionType.values()) {
+            if (sdt.name().equals(type)) return sdt;
+            //keep for retro-compatibility with old pyramids
             if (sdt.identifier().equals(type)) return sdt;
         }
         throw  new IllegalArgumentException("Unexpected type : "+type);
