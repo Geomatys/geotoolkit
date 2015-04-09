@@ -47,8 +47,11 @@ import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferDouble;
 import java.awt.image.IndexColorModel;
 import java.lang.reflect.Array;
+import java.net.URI;
+import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -393,7 +396,12 @@ public class TiffImageReader extends SpatialImageReader {
         final boolean hasCRS = hasCRS(headProperties);
                
         //-- if no setted CRS try to found a prj file if exist.
-        if (!hasCRS ) {
+        //-- moreover check instance of input to find prj.
+        if (!hasCRS && ((input instanceof File) 
+                     || (input instanceof CharSequence)
+                     || (input instanceof URL)
+                     || (input instanceof URI)
+                     || (input instanceof Path))) {
             CoordinateReferenceSystem crs = null;
             final Object in = getVerifiedInput("prj");
             if (in != null) crs = PrjFiles.read(IOUtilities.open(in), true);

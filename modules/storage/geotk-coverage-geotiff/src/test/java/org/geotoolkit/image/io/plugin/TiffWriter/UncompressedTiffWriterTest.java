@@ -26,6 +26,7 @@ import java.io.IOException;
 import javax.imageio.ImageTypeSpecifier;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
+//import org.junit.Ignore;
 import org.junit.Test;
 
 /**
