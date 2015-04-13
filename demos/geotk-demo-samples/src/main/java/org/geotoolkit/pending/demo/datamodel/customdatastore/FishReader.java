@@ -9,10 +9,7 @@ import java.util.Scanner;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 
 public class FishReader implements FeatureReader<FeatureType, Feature> {
@@ -23,10 +20,10 @@ public class FishReader implements FeatureReader<FeatureType, Feature> {
     private final FeatureType type;
     private final Scanner scanner;
 
-    private SimpleFeature current = null;
+    private Feature current = null;
     private int inc = 0;
 
-    public FishReader(File file, SimpleFeatureType type) throws FileNotFoundException {
+    public FishReader(File file, FeatureType type) throws FileNotFoundException {
         this.type = type;
         sfb = new SimpleFeatureBuilder(type);
         scanner = new Scanner(file);
@@ -38,9 +35,9 @@ public class FishReader implements FeatureReader<FeatureType, Feature> {
     }
 
     @Override
-    public SimpleFeature next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         read();
-        final SimpleFeature ob = current;
+        final Feature ob = current;
         current = null;
         if (ob == null) {
             throw new FeatureStoreRuntimeException("No more records.");

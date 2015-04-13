@@ -35,7 +35,6 @@ import org.geotoolkit.referencing.CRS;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.Name;
@@ -111,7 +110,7 @@ public class FeatureFilterSpatialTest {
         sfb.set(featureCode, "BK030");
         sfb.set(id, "f005");
 
-        final SimpleFeature aggregateGeoFeature1 = sfb.buildFeature("f005");
+        final Feature aggregateGeoFeature1 = sfb.buildFeature("f005");
 
         /*********************************************************************************************
          *                                                                                           *
@@ -169,7 +168,7 @@ public class FeatureFilterSpatialTest {
         sfb.set(featureRef, "name-f003");
         sfb.set(id, "f004");
 
-        final SimpleFeature entiteGenerique1 = sfb.buildFeature("f004");
+        final Feature entiteGenerique1 = sfb.buildFeature("f004");
 
         sfb.reset();
 
@@ -208,7 +207,7 @@ public class FeatureFilterSpatialTest {
         sfb.set(str4Property, "def4");
         sfb.set(id, "f007");
 
-        final SimpleFeature entiteGenerique2 = sfb.buildFeature("f007");
+        final Feature entiteGenerique2 = sfb.buildFeature("f007");
 
         sfb.reset();
 
@@ -232,7 +231,7 @@ public class FeatureFilterSpatialTest {
         sfb.set(featureRef, "name-f015");
         sfb.set(id, "f017");
 
-        final SimpleFeature entiteGenerique3 = sfb.buildFeature("f017");
+        final Feature entiteGenerique3 = sfb.buildFeature("f017");
 
         /*
          * Filter equals on aggregateGeoFeature1

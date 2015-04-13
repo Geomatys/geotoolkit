@@ -22,9 +22,9 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
+import org.geotoolkit.feature.FeatureUtilities;
 
 /**
  * Describe a table primary key.
@@ -67,7 +67,7 @@ public class PrimaryKey {
         
         if (size == 0) {
             // generate a random id
-            return SimpleFeatureBuilder.createDefaultFeatureId();
+            return FeatureUtilities.createDefaultFeatureId();
         }else if (size == 1) {
             // single value compose the id, use it directly
             return escapeDot(rs.getString(columns.get(0).getName()));

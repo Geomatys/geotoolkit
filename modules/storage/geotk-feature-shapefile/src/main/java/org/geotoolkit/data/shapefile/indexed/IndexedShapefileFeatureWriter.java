@@ -34,11 +34,9 @@ import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
 import org.apache.sis.internal.storage.IOUtilities;
-import org.geotoolkit.data.FeatureStoreContentEvent;
-
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  * A FeatureWriter for ShapefileDataStore. Uses a write and annotate technique
@@ -57,7 +55,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
 
     public IndexedShapefileFeatureWriter(final String typeName, final ShpFiles shpFiles,
             final IndexedShapefileAttributeReader attsReader,
-             final FeatureReader<SimpleFeatureType, SimpleFeature> featureReader, final IndexedShapefileFeatureStore featurestore,
+             final FeatureReader<FeatureType, Feature> featureReader, final IndexedShapefileFeatureStore featurestore,
              final Charset charset)
             throws DataStoreException,IOException {
         super(featurestore, typeName, shpFiles, attsReader, featureReader, charset);
@@ -97,7 +95,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
     }
 
     @Override
-    public SimpleFeature next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         // closed already, error!
         if (featureReader == null) {
             throw new FeatureStoreRuntimeException("Writer closed");
@@ -114,8 +112,8 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
         } catch (IOException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
-        currentFid = getFeatureType().getTypeName() + "." + next;
-        SimpleFeature feature = super.next();
+        currentFid = getFeatureType().getName().getLocalPart()+ "." + next;
+        Feature feature = super.next();
         return feature;
     }
 

@@ -19,15 +19,15 @@ package org.geotoolkit.feature.calculated;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import static org.junit.Assert.*;
@@ -59,12 +59,12 @@ public class CalculatedExpressionAttributeTest {
         ftb.setName("test");
         ftb.add("att1", Integer.class);
         ftb.add("att2", Integer.class);
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildSimpleFeatureType();
 
         final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
         sfb.set("att1", 45);
         sfb.set("att2", 12);
-        final SimpleFeature sf = sfb.buildFeature("id");
+        final Feature sf = sfb.buildFeature("id");
 
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final AttributeDescriptor desc = adb.create(new DefaultName("calc"), Long.class, 1, 1, false, null);

@@ -39,10 +39,11 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
 
@@ -93,14 +94,14 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         builder.add(new Integer(1));
         builder.add(new Float(2.0));
 
-        SimpleFeature feature = builder.buildFeature("fid");
+        Feature feature = builder.buildFeature("fid");
         assertNotNull(feature);
 
-        assertEquals(3, feature.getAttributeCount());
+        assertEquals(3, feature.getProperties().size());
 
-        assertTrue(gf.createPoint(new Coordinate(0, 0)).equals((Geometry) feature.getAttribute("point")));
-        assertEquals(new Integer(1), feature.getAttribute("integer"));
-        assertEquals(new Float(2.0), feature.getAttribute("float"));
+        assertTrue(gf.createPoint(new Coordinate(0, 0)).equals((Geometry) feature.getPropertyValue("point")));
+        assertEquals(new Integer(1), feature.getPropertyValue("integer"));
+        assertEquals(new Float(2.0), feature.getPropertyValue("float"));
     }
 
     public void testTooFewAttributes() throws Exception {
@@ -108,63 +109,32 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         builder.add(gf.createPoint(new Coordinate(0, 0)));
         builder.add(new Integer(1));
 
-        SimpleFeature feature = builder.buildFeature("fid");
+        Feature feature = builder.buildFeature("fid");
         assertNotNull(feature);
 
-        assertEquals(3, feature.getAttributeCount());
+        assertEquals(3, feature.getProperties().size());
 
-        assertTrue(gf.createPoint(new Coordinate(0, 0)).equals((Geometry) feature.getAttribute("point")));
-        assertEquals(new Integer(1), feature.getAttribute("integer"));
-        assertNull(feature.getAttribute("float"));
-    }
-
-    public void testSetSequential() throws Exception {
-        GeometryFactory gf = new GeometryFactory();
-        builder.set("point", gf.createPoint(new Coordinate(0, 0)));
-        builder.set("integer", new Integer(1));
-        builder.set("float", new Float(2.0));
-
-        SimpleFeature feature = builder.buildFeature("fid");
-        assertNotNull(feature);
-
-        assertEquals(3, feature.getAttributeCount());
-
-        assertTrue(gf.createPoint(new Coordinate(0, 0)).equals((Geometry) feature.getAttribute(0)));
-        assertEquals(new Integer(1), feature.getAttribute(1));
-        assertEquals(new Float(2.0), feature.getAttribute(2));
-    }
-
-    public void testSetNonSequential() throws Exception {
-        GeometryFactory gf = new GeometryFactory();
-        builder.set("float", new Float(2.0));
-        builder.set("point", gf.createPoint(new Coordinate(0, 0)));
-        builder.set("integer", new Integer(1));
-
-        SimpleFeature feature = builder.buildFeature("fid");
-        assertNotNull(feature);
-
-        assertEquals(3, feature.getAttributeCount());
-
-        assertTrue(gf.createPoint(new Coordinate(0, 0)).equals((Geometry) feature.getAttribute(0)));
-        assertEquals(new Integer(1), feature.getAttribute(1));
-        assertEquals(new Float(2.0), feature.getAttribute(2));
+        assertTrue(gf.createPoint(new Coordinate(0, 0)).equals((Geometry) feature.getPropertyValue("point")));
+        assertEquals(new Integer(1), feature.getPropertyValue("integer"));
+        assertNull(feature.getPropertyValue("float"));
     }
 
     public void testSetTooFew() throws Exception {
         builder.set("integer", new Integer(1));
-        SimpleFeature feature = builder.buildFeature("fid");
+        Feature feature = builder.buildFeature("fid");
         assertNotNull(feature);
 
-        assertEquals(3, feature.getAttributeCount());
+        final Property[] props = feature.getProperties().toArray(new Property[0]);
+        assertEquals(3, props.length);
 
-        assertNull(feature.getAttribute(0));
-        assertEquals(new Integer(1), feature.getAttribute(1));
-        assertNull(feature.getAttribute(2));
+        assertNull(props[0].getValue());
+        assertEquals(new Integer(1), props[1].getValue());
+        assertNull(props[2].getValue());
     }
 
     public void testConverting() throws Exception {
         builder.set("integer", "1");
-        SimpleFeature feature = builder.buildFeature("fid");
+        Feature feature = builder.buildFeature("fid");
 
         try {
             builder.set("integer", "foo");
@@ -189,8 +159,8 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         builder.setName("test");
         builder.add(adb.buildDescriptor());
         
-        SimpleFeatureType featureType = builder.buildSimpleFeatureType();
-        SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Val"}, "ID");
+        FeatureType featureType = builder.buildSimpleFeatureType();
+        Feature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Val"}, "ID");
 
         assertNotNull(feature);
 
@@ -222,13 +192,13 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         builder.add(adb.buildDescriptor());
         
 
-        SimpleFeatureType featureType = builder.buildSimpleFeatureType();
-        SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"}, "ID");
+        FeatureType featureType = builder.buildSimpleFeatureType();
+        Feature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"}, "ID");
 
         assertNotNull(feature);
 
         try {
-            SimpleFeature sf = SimpleFeatureBuilder.build(featureType, new Object[]{"NotValue"}, "ID");
+            Feature sf = SimpleFeatureBuilder.build(featureType, new Object[]{"NotValue"}, "ID");
             sf.validate();
             fail("PropertyIsEqualTo filter should have failed");
         } catch (Exception e) {
@@ -266,7 +236,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
     }
 
     public void testCopyFeature() throws Exception {
-        SimpleFeature feature = lakeFeatures[0];
+        Feature feature = lakeFeatures[0];
         assertDuplicate("feature", feature, FeatureUtilities.copy(feature));
     }
 
@@ -308,7 +278,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         assertDuplicate("map", map, FeatureUtilities.duplicate(map));
 
         // complex type
-        SimpleFeature feature = lakeFeatures[0];
+        Feature feature = lakeFeatures[0];
 
         Coordinate coords = new Coordinate(1, 3);
         Coordinate coords2 = new Coordinate(1, 3);
@@ -370,7 +340,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         builder.add(attributeName, String.class);
         SimpleFeatureType featureType = builder.buildSimpleFeatureType();
 
-        SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"},
+        Feature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"},
                 null);
 
         assertNotNull( feature );
@@ -397,9 +367,9 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         builder.setName("test");
         builder.add(adb.buildDescriptor());
 
-        SimpleFeatureType featureType = builder.buildSimpleFeatureType();
+        FeatureType featureType = builder.buildSimpleFeatureType();
 
-        SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"},
+        Feature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"},
                 null);
 
         assertNotNull( feature );

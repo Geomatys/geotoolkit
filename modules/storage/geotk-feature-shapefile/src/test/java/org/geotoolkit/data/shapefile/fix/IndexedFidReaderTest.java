@@ -30,6 +30,7 @@ import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
+import org.geotoolkit.feature.Feature;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -96,11 +97,11 @@ public class IndexedFidReaderTest extends FIDTestCase {
         
         final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp.toURI().toURL(), null,
                 true, true, IndexType.NONE,null);
-        final FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
+        final FeatureIterator<Feature> features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
         while (features.hasNext()) {
-            final SimpleFeature next = features.next();
+            final Feature next = features.next();
             expectedCount++;
-            expectedFids.add(next.getID());
+            expectedFids.add(next.getIdentifier().getID());
         }
         features.close();
 
@@ -119,11 +120,11 @@ public class IndexedFidReaderTest extends FIDTestCase {
         final Set<String> expectedFids = new TreeSet<String>(Collections.reverseOrder());
         final IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(backshp.toURI().toURL(), null,
                 true, true, IndexType.NONE,null);
-        final FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
+        final FeatureIterator<Feature> features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
         while (features.hasNext()) {
-            final SimpleFeature next = features.next();
+            final Feature next = features.next();
             expectedCount++;
-            expectedFids.add(next.getID());
+            expectedFids.add(next.getIdentifier().getID());
         }
         features.close();
 

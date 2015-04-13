@@ -39,7 +39,6 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.type.DefaultName;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.sort.DefaultSortBy;
 import org.geotoolkit.referencing.CRS;
@@ -48,9 +47,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.Feature;
-
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -95,7 +93,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
-        final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
+        final FeatureType type1 = builder.buildSimpleFeatureType();
 
         store.createFeatureType(name,type1);
 
@@ -106,7 +104,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(n.getLocalPart(), "TestSchema1");
         assertEquals(n.getNamespaceURI(), "http://test.com");
 
-        SimpleFeatureType t = (SimpleFeatureType) store.getFeatureType(n);
+        FeatureType t = store.getFeatureType(n);
         assertEquals(t, type1);
 
         try{
@@ -121,7 +119,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.setName("http://test.com", "TestSchema1");
         builder.add("att1", String.class);
         builder.add("att2", Double.class);
-        SimpleFeatureType type2 = builder.buildSimpleFeatureType();
+        FeatureType type2 = builder.buildSimpleFeatureType();
 
         store.updateFeatureType(name, type2);
 
@@ -132,7 +130,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(n.getLocalPart(), "TestSchema1");
         assertEquals(n.getNamespaceURI(), "http://test.com");
 
-        t = (SimpleFeatureType) store.getFeatureType(n);
+        t = store.getFeatureType(n);
         assertEquals(t, type2);
 
 
@@ -172,7 +170,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
-        final SimpleFeatureType type = builder.buildSimpleFeatureType();
+        final FeatureType type = builder.buildFeatureType();
         store.createFeatureType(name,type);
 
 
@@ -204,8 +202,8 @@ public class MemoryDatastoreTest extends TestCase{
         FeatureWriter writer = store.getFeatureWriterAppend(name);
         try{
             for(int i=0;i<10;i++){
-                SimpleFeature f = (SimpleFeature) writer.next();
-                f.setAttribute("att1", "hop"+i);
+                Feature f = writer.next();
+                f.setPropertyValue("att1", "hop"+i);
                 writer.write();
             }
         }finally{
@@ -217,8 +215,8 @@ public class MemoryDatastoreTest extends TestCase{
         count = 0;
         try{
             while(reader.hasNext()){
-                SimpleFeature f = (SimpleFeature) reader.next();
-                assertEquals(f.getAttribute("att1"),"hop"+count);
+                Feature f = reader.next();
+                assertEquals(f.getPropertyValue("att1"),"hop"+count);
                 count++;
             }
         }finally{
@@ -232,8 +230,8 @@ public class MemoryDatastoreTest extends TestCase{
         count = 0;
         try{
             while(writer.hasNext()){
-                SimpleFeature f = (SimpleFeature) writer.next();
-                f.setAttribute("att1", "hop"+count*count);
+                Feature f = writer.next();
+                f.setPropertyValue("att1", "hop"+count*count);
                 writer.write();
                 count++;
             }
@@ -246,8 +244,8 @@ public class MemoryDatastoreTest extends TestCase{
         count = 0;
         try{
             while(reader.hasNext()){
-                SimpleFeature f = (SimpleFeature) reader.next();
-                assertEquals(f.getAttribute("att1"),"hop"+(count*count));
+                Feature f = reader.next();
+                assertEquals(f.getPropertyValue("att1"),"hop"+(count*count));
                 count++;
             }
         }finally{
@@ -260,7 +258,7 @@ public class MemoryDatastoreTest extends TestCase{
         writer = store.getFeatureWriter(name, org.opengis.filter.Filter.INCLUDE);
         try{
             while(writer.hasNext()){
-                SimpleFeature f = (SimpleFeature) writer.next();
+                Feature f = writer.next();
                 writer.remove();
             }
         }finally{
@@ -293,29 +291,29 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("string", String.class);
         builder.add("double", Double.class);
         builder.add("date", Date.class);
-        final SimpleFeatureType type = builder.buildSimpleFeatureType();
+        final FeatureType type = builder.buildFeatureType();
         store.createFeatureType(name,type);
         final QueryBuilder qb = new QueryBuilder(name);
 
         //create a few features
         FeatureWriter writer = store.getFeatureWriterAppend(name);
         try{
-            SimpleFeature f = (SimpleFeature) writer.next();
-            f.setAttribute("string", "hop3");
-            f.setAttribute("double", 3d);
-            f.setAttribute("date", new Date(1000L));
+            Feature f = writer.next();
+            f.setPropertyValue("string", "hop3");
+            f.setPropertyValue("double", 3d);
+            f.setPropertyValue("date", new Date(1000L));
             writer.write();
 
-            f = (SimpleFeature) writer.next();
-            f.setAttribute("string", "hop1");
-            f.setAttribute("double", 1d);
-            f.setAttribute("date", new Date(100000L));
+            f = writer.next();
+            f.setPropertyValue("string", "hop1");
+            f.setPropertyValue("double", 1d);
+            f.setPropertyValue("date", new Date(100000L));
             writer.write();
 
-            f = (SimpleFeature) writer.next();
-            f.setAttribute("string", "hop2");
-            f.setAttribute("double", 2d);
-            f.setAttribute("date", new Date(10000L));
+            f = writer.next();
+            f.setPropertyValue("string", "hop2");
+            f.setPropertyValue("double", 2d);
+            f.setPropertyValue("date", new Date(10000L));
             writer.write();
 
         }finally{
@@ -342,16 +340,16 @@ public class MemoryDatastoreTest extends TestCase{
         //test sort by on string
         reader = store.getFeatureReader(QueryBuilder.sorted(name, new SortBy[]{FF.sort("string", SortOrder.ASCENDING)}));
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop1");
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop1");
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop2");
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop2");
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop3");
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop3");
         }finally{
             reader.close();
         }
@@ -359,16 +357,16 @@ public class MemoryDatastoreTest extends TestCase{
         //test sort by on double
         reader = store.getFeatureReader(QueryBuilder.sorted(name, new SortBy[]{FF.sort("double", SortOrder.ASCENDING)}));
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("double"),1d);
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("double"),1d);
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("double"),2d);
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("double"),2d);
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("double"),3d);
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("double"),3d);
         }finally{
             reader.close();
         }
@@ -376,16 +374,16 @@ public class MemoryDatastoreTest extends TestCase{
         //test sort by on date
         reader = store.getFeatureReader(QueryBuilder.sorted(name, new SortBy[]{FF.sort("date", SortOrder.ASCENDING)}));
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("date"),new Date(1000L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("date"),new Date(1000L));
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("date"),new Date(10000L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("date"),new Date(10000L));
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("date"),new Date(100000L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("date"),new Date(100000L));
         }finally{
             reader.close();
         }
@@ -395,16 +393,16 @@ public class MemoryDatastoreTest extends TestCase{
         //test sort by on string
         reader = store.getFeatureReader(QueryBuilder.sorted(name, new SortBy[]{FF.sort("string", SortOrder.DESCENDING)}));
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop3");
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop3");
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop2");
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop2");
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop1");
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop1");
         }finally{
             reader.close();
         }
@@ -412,16 +410,16 @@ public class MemoryDatastoreTest extends TestCase{
         //test sort by on double
         reader = store.getFeatureReader(QueryBuilder.sorted(name, new SortBy[]{FF.sort("double", SortOrder.DESCENDING)}));
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("double"),3d);
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("double"),3d);
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("double"),2d);
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("double"),2d);
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("double"),1d);
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("double"),1d);
         }finally{
             reader.close();
         }
@@ -429,16 +427,16 @@ public class MemoryDatastoreTest extends TestCase{
         //test sort by on date
         reader = store.getFeatureReader(QueryBuilder.sorted(name, new SortBy[]{FF.sort("date", SortOrder.DESCENDING)}));
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("date"),new Date(100000L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("date"),new Date(100000L));
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("date"),new Date(10000L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("date"),new Date(10000L));
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("date"),new Date(1000L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("date"),new Date(1000L));
 
             assertFalse(reader.hasNext());
         }finally{
@@ -454,10 +452,10 @@ public class MemoryDatastoreTest extends TestCase{
         
         reader = store.getFeatureReader(query);
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("date"),new Date(10000L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("date"),new Date(10000L));
             assertFalse(reader.hasNext());
         }finally{
             reader.close();
@@ -470,10 +468,10 @@ public class MemoryDatastoreTest extends TestCase{
 
         reader = store.getFeatureReader(query);
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("double"),2d);
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("double"),2d);
             assertFalse(reader.hasNext());
         }finally{
             reader.close();
@@ -486,10 +484,10 @@ public class MemoryDatastoreTest extends TestCase{
 
         reader = store.getFeatureReader(query);
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop1");
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop1");
             assertFalse(reader.hasNext());
         }finally{
             reader.close();
@@ -510,10 +508,10 @@ public class MemoryDatastoreTest extends TestCase{
 
         try{
             while(reader.hasNext()){
-                SimpleFeature f = (SimpleFeature) reader.next();
-                assertEquals(f.getAttributeCount(), 2);
-                assertTrue( f.getAttribute(0) instanceof String );
-                assertTrue( f.getAttribute(1) instanceof Date );
+                Feature f = reader.next();
+                assertEquals(f.getProperties().size(), 2);
+                assertTrue( f.getPropertyValue("string") instanceof String );
+                assertTrue( f.getPropertyValue("date") instanceof Date );
             }
         }finally{
             reader.close();
@@ -532,13 +530,13 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(reader.getFeatureType().getDescriptors().size(),3);
 
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("date"),new Date(10000L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("date"),new Date(10000L));
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("date"),new Date(1000L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("date"),new Date(1000L));
 
             assertFalse(reader.hasNext());
         }finally{
@@ -557,10 +555,10 @@ public class MemoryDatastoreTest extends TestCase{
         reader = store.getFeatureReader(query);
 
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("date"),new Date(100000L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("date"),new Date(100000L));
 
             assertFalse(reader.hasNext());
         }finally{
@@ -581,16 +579,16 @@ public class MemoryDatastoreTest extends TestCase{
         builder.setName(name);
         builder.add("geometry", Point.class, CRS.decode("EPSG:27582"));
         builder.add("string", String.class);
-        final SimpleFeatureType type = builder.buildSimpleFeatureType();
+        final FeatureType type = builder.buildFeatureType();
         store.createFeatureType(name,type);
         final QueryBuilder qb = new QueryBuilder(name);
 
         //create a few features
         FeatureWriter writer = store.getFeatureWriterAppend(name);
         try{
-            SimpleFeature f = (SimpleFeature) writer.next();
-            f.setAttribute("geometry", gf.createPoint(new Coordinate(10, 10)));
-            f.setAttribute("string", "hop1");
+            Feature f = writer.next();
+            f.setPropertyValue("geometry", gf.createPoint(new Coordinate(10, 10)));
+            f.setPropertyValue("string", "hop1");
             writer.write();
 
         }finally{
@@ -622,11 +620,11 @@ public class MemoryDatastoreTest extends TestCase{
         reader = store.getFeatureReader(query);
 
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals( ((Point)sf.getAttribute("geometry")).getX(), gf.createPoint(new Coordinate(10, 10)).getX() );
-            assertEquals( ((Point)sf.getAttribute("geometry")).getY(), gf.createPoint(new Coordinate(10, 10)).getY() );
+            sf = reader.next();
+            assertEquals( ((Point)sf.getPropertyValue("geometry")).getX(), gf.createPoint(new Coordinate(10, 10)).getX() );
+            assertEquals( ((Point)sf.getPropertyValue("geometry")).getY(), gf.createPoint(new Coordinate(10, 10)).getY() );
 
             assertFalse(reader.hasNext());
         }finally{
@@ -644,11 +642,11 @@ public class MemoryDatastoreTest extends TestCase{
         reader = store.getFeatureReader(query);
 
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertNotSame( ((Point)sf.getAttribute("geometry")).getX(), gf.createPoint(new Coordinate(10, 10)).getX() );
-            assertNotSame( ((Point)sf.getAttribute("geometry")).getY(), gf.createPoint(new Coordinate(10, 10)).getY() );
+            sf = reader.next();
+            assertNotSame( ((Point)sf.getPropertyValue("geometry")).getX(), gf.createPoint(new Coordinate(10, 10)).getX() );
+            assertNotSame( ((Point)sf.getPropertyValue("geometry")).getY(), gf.createPoint(new Coordinate(10, 10)).getY() );
 
             assertFalse(reader.hasNext());
         }finally{
@@ -671,7 +669,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
-        final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
+        final FeatureType type1 = builder.buildFeatureType();
 
         store.createFeatureType(name,type1);
 
@@ -684,12 +682,13 @@ public class MemoryDatastoreTest extends TestCase{
 
 
         //try to insert features -----------------------------------------------
-        Collection<Feature> features = new ArrayList<Feature>();
-        SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(type1);
-        sfb.set("att1", "hophop1");
-        features.add(sfb.buildFeature("myId1"));
-        sfb.set("att1", "hophop2");
-        features.add(sfb.buildFeature("myId2"));
+        Collection<Feature> features = new ArrayList<>();
+        Feature sfb = FeatureUtilities.defaultFeature(type1, "myId1");
+        sfb.setPropertyValue("att1", "hophop1");
+        features.add(sfb);
+        sfb = FeatureUtilities.defaultFeature(type1, "myId2");
+        sfb.setPropertyValue("att1", "hophop2");
+        features.add(sfb);
 
         store.addFeatures(name, features);
 
@@ -719,7 +718,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("ListAtt", List.class);
         builder.add("MapAtt", Map.class);
         builder.add("SetAtt", Set.class);
-        final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
+        final FeatureType type1 = builder.buildSimpleFeatureType();
 
         store.createFeatureType(name,type1);
 
@@ -731,17 +730,18 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(n.getNamespaceURI(), "http://test.com");
 
         //try to insert features -----------------------------------------------
-        Collection<Feature> features = new ArrayList<Feature>();
-        SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(type1);
-        sfb.set("ListAtt", Collections.singletonList("aListValue"));
-        sfb.set("MapAtt", Collections.singletonMap("aMapKey", "aMapValue"));
-        sfb.set("SetAtt", Collections.singleton("aSetValue"));
-        features.add(sfb.buildFeature("myId1"));
+        Collection<Feature> features = new ArrayList<>();
+        final Feature f1 = FeatureUtilities.defaultFeature(type1, "myId1");
+        f1.setPropertyValue("ListAtt", Collections.singletonList("aListValue"));
+        f1.setPropertyValue("MapAtt", Collections.singletonMap("aMapKey", "aMapValue"));
+        f1.setPropertyValue("SetAtt", Collections.singleton("aSetValue"));
+        features.add(f1);
 
-        sfb.set("ListAtt", Collections.singletonList("aListValue2"));
-        sfb.set("MapAtt", Collections.singletonMap("aMapKey2", "aMapValue2"));
-        sfb.set("SetAtt", Collections.singleton("aSetValue2"));
-        features.add(sfb.buildFeature("myId2"));
+        final Feature f2 = FeatureUtilities.defaultFeature(type1, "myId2");
+        f2.setPropertyValue("ListAtt", Collections.singletonList("aListValue2"));
+        f2.setPropertyValue("MapAtt", Collections.singletonMap("aMapKey2", "aMapValue2"));
+        f2.setPropertyValue("SetAtt", Collections.singleton("aSetValue2"));
+        features.add(f2);
 
         store.addFeatures(name, features);
 
@@ -802,7 +802,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("ListAtt", List.class);
         builder.add("MapAtt", Map.class);
         builder.add("SetAtt", Set.class);
-        final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
+        final FeatureType type1 = builder.buildFeatureType();
 
         store.createFeatureType(name,type1);
 

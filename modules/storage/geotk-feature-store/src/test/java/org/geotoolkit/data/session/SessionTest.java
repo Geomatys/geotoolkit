@@ -35,7 +35,6 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.type.DefaultName;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.referencing.CRS;
@@ -46,9 +45,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
@@ -90,31 +89,31 @@ public class SessionTest{
         builder.add("string", String.class);
         builder.add("double", Double.class);
         builder.add("date", Date.class);
-        final SimpleFeatureType type = builder.buildSimpleFeatureType();
+        final FeatureType type = builder.buildFeatureType();
         store.createFeatureType(name,type);
 
         //create a few features
         FeatureWriter writer = store.getFeatureWriterAppend(name);
         try{
-            SimpleFeature f = (SimpleFeature) writer.next();
-            f.setAttribute("geom", GF.createPoint(new Coordinate(3, 30)));
-            f.setAttribute("string", "hop3");
-            f.setAttribute("double", 3d);
-            f.setAttribute("date", new Date(1000L));
+            Feature f = writer.next();
+            f.setPropertyValue("geom", GF.createPoint(new Coordinate(3, 30)));
+            f.setPropertyValue("string", "hop3");
+            f.setPropertyValue("double", 3d);
+            f.setPropertyValue("date", new Date(1000L));
             writer.write();
 
-            f = (SimpleFeature) writer.next();
-            f.setAttribute("geom", GF.createPoint(new Coordinate(1, 10)));
-            f.setAttribute("string", "hop1");
-            f.setAttribute("double", 1d);
-            f.setAttribute("date", new Date(100000L));
+            f = writer.next();
+            f.setPropertyValue("geom", GF.createPoint(new Coordinate(1, 10)));
+            f.setPropertyValue("string", "hop1");
+            f.setPropertyValue("double", 1d);
+            f.setPropertyValue("date", new Date(100000L));
             writer.write();
 
-            f = (SimpleFeature) writer.next();
-            f.setAttribute("geom", GF.createPoint(new Coordinate(2, 20)));
-            f.setAttribute("string", "hop2");
-            f.setAttribute("double", 2d);
-            f.setAttribute("date", new Date(10000L));
+            f = writer.next();
+            f.setPropertyValue("geom", GF.createPoint(new Coordinate(2, 20)));
+            f.setPropertyValue("string", "hop2");
+            f.setPropertyValue("double", 2d);
+            f.setPropertyValue("date", new Date(10000L));
             writer.write();
 
         }finally{
@@ -161,16 +160,16 @@ public class SessionTest{
         //test an iterator------------------------------------------------------
         FeatureIterator reader = session.getFeatureIterator(QueryBuilder.sorted(name, new SortBy[]{FF.sort("string", SortOrder.ASCENDING)}));
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop1");
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop1");
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop2");
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop2");
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop3");
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop3");
 
             assertFalse(reader.hasNext());
         }finally{
@@ -180,12 +179,12 @@ public class SessionTest{
         //----------------------------------------------------------------------
         //test adding new features----------------------------------------------
         //----------------------------------------------------------------------
-        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder((SimpleFeatureType) store.getFeatureType(name));
-        sfb.set("string", "hop4");
-        sfb.set("double", 2.5d);
-        sfb.set("date", new Date(100L));
+        final Feature sfb = FeatureUtilities.defaultFeature(store.getFeatureType(name),"temporary");
+        sfb.setPropertyValue("string", "hop4");
+        sfb.setPropertyValue("double", 2.5d);
+        sfb.setPropertyValue("date", new Date(100L));
 
-        session.addFeatures(name, Collections.singletonList(sfb.buildFeature("temporary")));
+        session.addFeatures(name, Collections.singletonList(sfb));
 
         //check that he new feature is available in the session but not in the datastore
         qb.reset();
@@ -198,12 +197,12 @@ public class SessionTest{
 
         reader = session.getFeatureIterator(QueryBuilder.filtered(name, FF.equals(FF.literal("hop4"), FF.property("string"))));
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop4");
-            assertEquals(sf.getAttribute("double"),2.5d);
-            assertEquals(sf.getAttribute("date"),new Date(100L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop4");
+            assertEquals(sf.getPropertyValue("double"),2.5d);
+            assertEquals(sf.getPropertyValue("date"),new Date(100L));
 
             assertFalse(reader.hasNext());
         }finally{
@@ -214,22 +213,22 @@ public class SessionTest{
 
         reader = session.getFeatureIterator(QueryBuilder.sorted(name,new SortBy[]{FF.sort("double", SortOrder.ASCENDING)}));
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("double"),1d);
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("double"),1d);
 
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("double"),2d);
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("double"),2d);
 
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("double"),2.5d);
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("double"),2.5d);
 
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("double"),3d);
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("double"),3d);
 
             assertFalse(reader.hasNext());
         }finally{
@@ -247,12 +246,12 @@ public class SessionTest{
         //make a more deep test to find our feature
         reader = session.getFeatureIterator(QueryBuilder.filtered(name, FF.equals(FF.literal("hop4"), FF.property("string"))));
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop4");
-            assertEquals(sf.getAttribute("double"),2.5d);
-            assertEquals(sf.getAttribute("date"),new Date(100L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop4");
+            assertEquals(sf.getPropertyValue("double"),2.5d);
+            assertEquals(sf.getPropertyValue("date"),new Date(100L));
 
             assertFalse(reader.hasNext());
         }finally{
@@ -261,12 +260,12 @@ public class SessionTest{
 
         reader = store.getFeatureReader(QueryBuilder.filtered(name, FF.equals(FF.literal("hop4"), FF.property("string"))));
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop4");
-            assertEquals(sf.getAttribute("double"),2.5d);
-            assertEquals(sf.getAttribute("date"),new Date(100L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop4");
+            assertEquals(sf.getPropertyValue("double"),2.5d);
+            assertEquals(sf.getPropertyValue("date"),new Date(100L));
 
             assertFalse(reader.hasNext());
         }finally{
@@ -291,12 +290,12 @@ public class SessionTest{
         //check that the feature exist
         FeatureIterator reader = session.getFeatureIterator(QueryBuilder.filtered(name, FF.equals(FF.literal("hop3"), FF.property("string"))));
         try{
-            SimpleFeature sf;
+            Feature sf;
             reader.hasNext();
-            sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop3");
-            assertEquals(sf.getAttribute("double"),3d);
-            assertEquals(sf.getAttribute("date"),new Date(1000L));
+            sf = reader.next();
+            assertEquals(sf.getPropertyValue("string"),"hop3");
+            assertEquals(sf.getPropertyValue("double"),3d);
+            assertEquals(sf.getPropertyValue("date"),new Date(1000L));
 
             assertFalse(reader.hasNext());
         }finally{
@@ -356,8 +355,8 @@ public class SessionTest{
         //----------------------------------------------------------------------
         Point newPt = GF.createPoint(new Coordinate(5, 50));
         Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
-        values.put( ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("double"), 15d);
-        values.put( ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("geom"), newPt);
+        values.put((AttributeDescriptor) (store.getFeatureType(name)).getDescriptor("double"), 15d);
+        values.put((AttributeDescriptor) (store.getFeatureType(name)).getDescriptor("geom"), newPt);
 
         session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(2d)), values);
 
@@ -414,8 +413,8 @@ public class SessionTest{
 
         //make a second change on the same feature -----------------------------
         newPt = GF.createPoint(new Coordinate(9, 90));
-        values = new HashMap<AttributeDescriptor, Object>();
-        values.put( ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("geom"), newPt);
+        values = new HashMap<>();
+        values.put((AttributeDescriptor) store.getFeatureType(name).getDescriptor("geom"), newPt);
         session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(15d)), values);
 
         qb.reset();
@@ -453,7 +452,7 @@ public class SessionTest{
         qb.reset();
         qb.setTypeName(name);
         query = qb.buildQuery();
-        AttributeDescriptor desc = ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("double");
+        AttributeDescriptor desc = (AttributeDescriptor) store.getFeatureType(name).getDescriptor("double");
 
         ite = session.getFeatureIterator(query);
         FeatureId id1 = ite.next().getIdentifier();
@@ -534,8 +533,8 @@ public class SessionTest{
         //create an asynchrone session
         final Session session = store.createSession(true);
         final Point newPt = GF.createPoint(new Coordinate(50, 1));
-        final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
-        values.put( ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("geom"), newPt);
+        final Map<AttributeDescriptor,Object> values = new HashMap<>();
+        values.put((AttributeDescriptor) store.getFeatureType(name).getDescriptor("geom"), newPt);
 
         session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(2d)), values);
 

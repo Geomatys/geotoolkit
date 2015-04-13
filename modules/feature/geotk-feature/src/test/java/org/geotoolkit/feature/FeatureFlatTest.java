@@ -38,8 +38,8 @@ import org.geotoolkit.test.Assert;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.IllegalAttributeException;
 import com.vividsolutions.jts.geom.Envelope;
+import org.geotoolkit.feature.type.FeatureType;
 
 public class FeatureFlatTest extends TestCase {
 
@@ -49,7 +49,7 @@ public class FeatureFlatTest extends TestCase {
     private static final Logger LOGGER = org.apache.sis.util.logging.Logging.getLogger("org.geotoolkit.defaultcore");
 
     /** Feature on which to preform tests */
-    private SimpleFeature testFeature = null;
+    private Feature testFeature = null;
 
     TestSuite suite = null;
 
@@ -70,31 +70,31 @@ public class FeatureFlatTest extends TestCase {
         GeometryFactory gf = new GeometryFactory();
         assertTrue(
             "geometry retrieval and match",
-            ((Point) testFeature.getAttribute("testGeometry")).equals(
+            ((Point) testFeature.getPropertyValue("testGeometry")).equals(
                 gf.createPoint(new Coordinate(1, 2))));
         assertTrue(
             "boolean retrieval and match",
-            ((Boolean) testFeature.getAttribute("testBoolean")).equals(new Boolean(true)));
+            ((Boolean) testFeature.getPropertyValue("testBoolean")).equals(new Boolean(true)));
         assertTrue(
             "character retrieval and match",
-            ((Character) testFeature.getAttribute("testCharacter")).equals(new Character('t')));
-        assertTrue("byte retrieval and match", ((Byte) testFeature.getAttribute("testByte")).equals(new Byte("10")));
+            ((Character) testFeature.getPropertyValue("testCharacter")).equals(new Character('t')));
+        assertTrue("byte retrieval and match", ((Byte) testFeature.getPropertyValue("testByte")).equals(new Byte("10")));
         assertTrue(
             "short retrieval and match",
-            ((Short) testFeature.getAttribute("testShort")).equals(new Short("101")));
+            ((Short) testFeature.getPropertyValue("testShort")).equals(new Short("101")));
         assertTrue(
             "integer retrieval and match",
-            ((Integer) testFeature.getAttribute("testInteger")).equals(new Integer(1002)));
-        assertTrue("long retrieval and match", ((Long) testFeature.getAttribute("testLong")).equals(new Long(10003)));
+            ((Integer) testFeature.getPropertyValue("testInteger")).equals(new Integer(1002)));
+        assertTrue("long retrieval and match", ((Long) testFeature.getPropertyValue("testLong")).equals(new Long(10003)));
         assertTrue(
             "float retrieval and match",
-            ((Float) testFeature.getAttribute("testFloat")).equals(new Float(10000.4)));
+            ((Float) testFeature.getPropertyValue("testFloat")).equals(new Float(10000.4)));
         assertTrue(
             "double retrieval and match",
-            ((Double) testFeature.getAttribute("testDouble")).equals(new Double(100000.5)));
+            ((Double) testFeature.getPropertyValue("testDouble")).equals(new Double(100000.5)));
         assertTrue(
             "string retrieval and match",
-            ((String) testFeature.getAttribute("testString")).equals("test string data"));
+            ((String) testFeature.getPropertyValue("testString")).equals("test string data"));
 
         //test serialize
         assertSerializedEquals(testFeature);
@@ -144,14 +144,13 @@ public class FeatureFlatTest extends TestCase {
         GeometryCollection gc = gf.createGeometryCollection(g);
         FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName( "bounds" );
-
         tb.add("p1", Point.class, CommonCRS.WGS84.normalizedGeographic());
         tb.add("p2", Point.class, CommonCRS.WGS84.normalizedGeographic());
         tb.add("p3", Point.class, CommonCRS.WGS84.normalizedGeographic());
         tb.add("p4", Point.class, CommonCRS.WGS84.normalizedGeographic());
         SimpleFeatureType t = tb.buildSimpleFeatureType();
 
-        SimpleFeature f = SimpleFeatureBuilder.build(t, g, null);
+        Feature f = SimpleFeatureBuilder.build(t, g, null);
         Envelope b1 = gc.getEnvelopeInternal();
         DefaultBoundingBox b2 = DefaultBoundingBox.castOrCopy(f.getBounds());
         assertEquals(b1.getMinX(), b2.getMinX());
@@ -161,8 +160,8 @@ public class FeatureFlatTest extends TestCase {
 
         g[1].getCoordinate().y = 20;
         g[2].getCoordinate().x = 20;
-        f.setAttribute(1, g[1]);
-        f.setAttribute(2, g[2]);
+        f.setPropertyValue("p2", g[1]);
+        f.setPropertyValue("p3", g[2]);
         gc = gf.createGeometryCollection(g);
         b1 = gc.getEnvelopeInternal();
         b2 = DefaultBoundingBox.castOrCopy(f.getBounds());
@@ -175,19 +174,11 @@ public class FeatureFlatTest extends TestCase {
         assertSerializedEquals(f);
     }
 
-    public void testClone() {
-        SimpleFeature f = SampleFeatureFixtures.createFeature();
-        SimpleFeature c = FeatureUtilities.copy( f );
-        for (int i = 0, ii = c.getAttributeCount(); i < ii; i++) {
-            assertEquals(c.getAttribute(i), f.getAttribute(i));
-        }
-    }
-
     public void testClone2() throws Exception {
-        SimpleFeatureType type = SampleFeatureFixtures.createTestType();
+        FeatureType type = SampleFeatureFixtures.createTestType();
         Object[] attributes = SampleFeatureFixtures.createAttributes();
-        SimpleFeature feature = SimpleFeatureBuilder.build(type, attributes, "fid");
-        SimpleFeature clone = FeatureUtilities.deepCopy(feature);
+        Feature feature = SimpleFeatureBuilder.build(type, attributes, "fid");
+        Feature clone = FeatureUtilities.deepCopy(feature);
         assertTrue("Clone was not equal", feature.equals(clone));
     }
 
@@ -219,22 +210,19 @@ public class FeatureFlatTest extends TestCase {
 
     public void testModify() throws IllegalAttributeException {
         String newData = "new test string data";
-        testFeature.setAttribute("testString", newData);
-        assertEquals("match modified (string) attribute", testFeature.getAttribute("testString"), newData);
+        testFeature.setPropertyValue("testString", newData);
+        assertEquals("match modified (string) attribute", testFeature.getPropertyValue("testString"), newData);
 
         GeometryFactory gf = new GeometryFactory();
         Point newGeom = gf.createPoint(new Coordinate(3, 4));
-        testFeature.setAttribute("testGeometry", newGeom);
-        assertEquals("match modified (geometry) attribute", testFeature.getAttribute("testGeometry"), newGeom);
-
-        testFeature.setDefaultGeometry(newGeom);
-        assertEquals("match modified (geometry) attribute", testFeature.getAttribute("testGeometry"), newGeom);
+        testFeature.setPropertyValue("testGeometry", newGeom);
+        assertEquals("match modified (geometry) attribute", testFeature.getPropertyValue("testGeometry"), newGeom);
 
     }
 
     public void testEquals() throws Exception {
-        SimpleFeature f1 = SampleFeatureFixtures.createFeature();
-        SimpleFeature f2 = SampleFeatureFixtures.createFeature();
+        Feature f1 = SampleFeatureFixtures.createFeature();
+        Feature f2 = SampleFeatureFixtures.createFeature();
         assertTrue(f1.equals(f1));
         assertTrue(f2.equals(f2));
         assertTrue(!f1.equals(f2));

@@ -25,10 +25,10 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.feature.Feature;
 import org.junit.Test;
 import org.geotoolkit.feature.GeometryAttribute;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 
 import org.opengis.geometry.BoundingBox;
 import org.geotoolkit.geometry.DefaultBoundingBox;
@@ -39,8 +39,8 @@ public class DefaultSimpleFeatureTest {
     private static final GeometryFactory GF = new GeometryFactory();
     private static final double DELTA = 0.0000001;
 
-    private SimpleFeatureType schema;
-    private SimpleFeature feature;
+    private FeatureType schema;
+    private Feature feature;
 
     public DefaultSimpleFeatureTest() throws SchemaException {
         schema = FeatureTypeUtilities.createType("buildings", "the_geom:MultiPolygon,name:String,ADDRESS:String");

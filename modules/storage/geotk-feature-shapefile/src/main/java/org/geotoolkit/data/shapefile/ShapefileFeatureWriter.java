@@ -40,8 +40,6 @@ import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 
 import org.geotoolkit.feature.IllegalAttributeException;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -51,13 +49,14 @@ import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.simple.DefaultSimpleFeature;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.Identifier;
 
@@ -71,14 +70,14 @@ import org.opengis.filter.identity.Identifier;
  * @author Jesse Eichar
  * @module pending
  */
-public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, SimpleFeature> {
+public class ShapefileFeatureWriter implements FeatureWriter<FeatureType, Feature> {
 
     protected final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     
     protected final ShapefileFeatureStore parent;
     
     // the  FeatureReader<SimpleFeatureType, SimpleFeature> to obtain the current Feature from
-    protected FeatureReader<SimpleFeatureType, SimpleFeature> featureReader;
+    protected FeatureReader<FeatureType, Feature> featureReader;
 
     // the AttributeReader
     protected final ShapefileAttributeReader attReader;
@@ -87,7 +86,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
     protected SimpleFeature currentFeature;
     
     /** Initial value for current feature */
-    protected SimpleFeature originalFeature;
+    protected Feature originalFeature;
     
     // the FeatureType we are representing
     protected final SimpleFeatureType featureType;
@@ -130,7 +129,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
     
 
     public ShapefileFeatureWriter(final ShapefileFeatureStore parent, final String typeName, final ShpFiles shpFiles, final ShapefileAttributeReader attsReader,  
-            final FeatureReader<SimpleFeatureType, SimpleFeature> featureReader, final Charset charset) throws IOException,DataStoreException {
+            final FeatureReader<FeatureType, Feature> featureReader, final Charset charset) throws IOException,DataStoreException {
         this.parent = parent;
         this.shpFiles = shpFiles;
         this.dbfCharset = charset;
@@ -142,14 +141,14 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         storageFiles.put(SHX, getLocker().getStorageFile(SHX));
         storageFiles.put(DBF, getLocker().getStorageFile(DBF));
 
-        this.featureType = featureReader.getFeatureType();
+        this.featureType = (SimpleFeatureType) featureReader.getFeatureType();
 
         // set up buffers and write flags
-        emptyAtts = new Object[featureType.getAttributeCount()];
-        writeFlags = new byte[featureType.getAttributeCount()];
+        emptyAtts = new Object[featureType.getDescriptors().size()];
+        writeFlags = new byte[emptyAtts.length];
 
         int cnt = 0;
-        for (int i=0, n=featureType.getAttributeCount(); i<n; i++) {
+        for (int i=0, n=emptyAtts.length; i<n; i++) {
             // if its a geometry, we don't want to write it to the dbf...
             if (!(featureType.getDescriptor(i) instanceof GeometryDescriptor)) {
                 cnt++;
@@ -344,7 +343,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeatureType getFeatureType() {
+    public FeatureType getFeatureType() {
         return featureType;
     }
 
@@ -364,7 +363,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeature next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         // closed already, error!
         if (featureReader == null) {
             throw new FeatureStoreRuntimeException("Writer closed");
@@ -378,7 +377,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         // is there another? If so, return it
         if (featureReader.hasNext()) {
             try {
-                currentFeature = featureReader.next();
+                currentFeature = (SimpleFeature) featureReader.next();
                 originalFeature = FeatureUtilities.copy(currentFeature);
                 return currentFeature;
             } catch (IllegalAttributeException iae) {
@@ -389,9 +388,9 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         // reader has no more (no were are adding to the file)
         // so return an empty feature
         try {
-            final String featureID = getFeatureType().getTypeName()+"."+(records+1);
+            final String featureID = getFeatureType().getName().getLocalPart()+"."+(records+1);
             originalFeature = null;
-            return currentFeature = FeatureTypeUtilities.template(getFeatureType(),featureID,emptyAtts);
+            return currentFeature = (SimpleFeature) FeatureTypeUtilities.template(getFeatureType(),featureID,emptyAtts);
         } catch (IllegalAttributeException iae) {
             throw new FeatureStoreRuntimeException("Error creating empty Feature", iae);
         }
@@ -403,7 +402,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
      * @return a fid for the new feature
      */
     protected String nextFeatureId() {
-        return getFeatureType().getTypeName()+"."+(records+1);
+        return getFeatureType().getName().getLocalPart()+"."+(records+1);
     }
 
     /**

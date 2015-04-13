@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.feature.type.Name;
 
@@ -237,7 +238,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         FeatureId featureId = ff.featureId("streams.84");
         Id filter = ff.id(Collections.singleton(featureId));
 
-        FeatureIterator<SimpleFeature> iter = ds.getFeatureReader(QueryBuilder.filtered(ds.getName(), filter));
+        FeatureIterator<Feature> iter = ds.getFeatureReader(QueryBuilder.filtered(ds.getName(), filter));
         JTSEnvelope2D bounds;
         try {
             bounds = new JTSEnvelope2D(iter.next().getBounds());

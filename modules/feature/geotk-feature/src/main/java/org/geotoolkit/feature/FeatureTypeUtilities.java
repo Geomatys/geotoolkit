@@ -76,6 +76,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.function.string.LengthFunction;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Function;
+import org.opengis.util.GenericName;
 
 /**
  * Utility methods for working against the FeatureType interface.
@@ -1118,6 +1119,30 @@ public final class FeatureTypeUtilities {
         return true;
     }
 
+    public static int indexOfProperty(FeatureType type, final GenericName name) {
+        int i=0;
+        for(PropertyDescriptor descriptor : type.getDescriptors()){
+            final Name dname = descriptor.getName();
+            if (DefaultName.match(name, dname)) {
+                return i;
+            }
+            i++;
+        }
+        return -1;
+    }
+
+    public static int indexOfProperty(FeatureType type, final String name) {
+        int i=0;
+        for(PropertyDescriptor descriptor : type.getDescriptors()){
+            final Name dname = descriptor.getName();
+            if (DefaultName.match(dname, name)) {
+                return i;
+            }
+            i++;
+        }
+        return -1;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // about attribut types ////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -1167,23 +1192,26 @@ public final class FeatureTypeUtilities {
         return attributeNames;
     }
 
-    public static Object[] defaultValues(final SimpleFeatureType featureType)
+    public static Object[] defaultValues(final FeatureType featureType)
             throws IllegalAttributeException {
         return defaultValues(featureType, null);
     }
 
-    public static Object[] defaultValues(final SimpleFeatureType featureType,
+    public static Object[] defaultValues(final FeatureType featureType,
             Object[] values) throws IllegalAttributeException {
         if (values == null) {
-            values = new Object[featureType.getAttributeCount()];
-        } else if (values.length != featureType.getAttributeCount()) {
+            values = new Object[featureType.getDescriptors().size()];
+        } else if (values.length != featureType.getDescriptors().size()) {
             throw new ArrayIndexOutOfBoundsException("values");
         }
 
-        for (int i = 0; i < featureType.getAttributeCount(); i++) {
-            values[i] = defaultValue(featureType.getDescriptor(i));
+        int i = 0;
+        final Iterator<PropertyDescriptor> ite = featureType.getDescriptors().iterator();
+        while(ite.hasNext()){
+            final PropertyDescriptor propDesc = ite.next();
+            values[i] = defaultValue(propDesc);
+            i++;
         }
-
         return values;
     }
 
@@ -1244,22 +1272,22 @@ public final class FeatureTypeUtilities {
      * @throws IllegalAttributeException if we could not create featureType
      *         instance with acceptable default values
      */
-    public static SimpleFeature template(final SimpleFeatureType featureType)
+    public static Feature template(final FeatureType featureType)
             throws IllegalAttributeException {
         return SimpleFeatureBuilder.build(featureType, defaultValues(featureType), null);
     }
 
-    public static SimpleFeature template(final SimpleFeatureType featureType, final String featureID)
+    public static Feature template(final FeatureType featureType, final String featureID)
             throws IllegalAttributeException {
         return SimpleFeatureBuilder.build(featureType, defaultValues(featureType), featureID);
     }
 
-    public static SimpleFeature template(final SimpleFeatureType featureType, final Object[] atts)
+    public static Feature template(final FeatureType featureType, final Object[] atts)
             throws IllegalAttributeException {
         return SimpleFeatureBuilder.build(featureType, defaultValues(featureType, atts), null);
     }
 
-    public static SimpleFeature template(final SimpleFeatureType featureType, final String featureID,
+    public static Feature template(final FeatureType featureType, final String featureID,
             final Object[] atts) throws IllegalAttributeException {
         return SimpleFeatureBuilder.build(featureType, defaultValues(featureType, atts), featureID);
     }
@@ -1291,7 +1319,7 @@ public final class FeatureTypeUtilities {
      *
      * @throws IllegalAttributeException If opperation could not be performed
      */
-    public static SimpleFeature reType(final SimpleFeatureType featureType, final SimpleFeature feature)
+    public static Feature reType(final FeatureType featureType, final SimpleFeature feature)
             throws IllegalAttributeException {
         final SimpleFeatureType original = feature.getFeatureType();
 
@@ -1300,13 +1328,14 @@ public final class FeatureTypeUtilities {
         }
 
         final String id = feature.getID();
-        final int numAtts = featureType.getAttributeCount();
+        final int numAtts = featureType.getDescriptors().size();
         final Object[] attributes = new Object[numAtts];
         String xpath;
 
+        final Iterator<PropertyDescriptor> ite = featureType.getDescriptors().iterator();
         for (int i = 0; i < numAtts; i++) {
-            final AttributeDescriptor curAttType = featureType.getDescriptor(i);
-            xpath = curAttType.getLocalName();
+            final PropertyDescriptor curAttType = ite.next();
+            xpath = curAttType.getName().getLocalPart();
             attributes[i] = FeatureUtilities.duplicate(feature.getAttribute(xpath));
         }
 

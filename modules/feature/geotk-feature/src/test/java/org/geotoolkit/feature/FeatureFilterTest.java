@@ -35,10 +35,9 @@ import org.geotoolkit.referencing.CRS;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory2;
@@ -69,10 +68,10 @@ public class FeatureFilterTest {
         ftb.add(new DefaultName("http://test2.com", "att_string"), String.class);
         ftb.add(new DefaultName(null, "att_double"), String.class);
 
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildSimpleFeatureType();
 
         //test a no namespace property
-        Binding accessor = Bindings.getBinding(SimpleFeatureType.class, "att_double");
+        Binding accessor = Bindings.getBinding(FeatureType.class, "att_double");
         assertNotNull(accessor);
         AttributeDescriptor desc = (AttributeDescriptor) accessor.get(sft, "att_double", AttributeDescriptor.class);
 
@@ -80,7 +79,7 @@ public class FeatureFilterTest {
         assertEquals(desc.getName(), new DefaultName(null, "att_double"));
 
         //test a namespace property without namespace
-        accessor = Bindings.getBinding(SimpleFeatureType.class, "att_string");
+        accessor = Bindings.getBinding(FeatureType.class, "att_string");
         assertNotNull(accessor);
         desc = (AttributeDescriptor) accessor.get(sft, "att_string", AttributeDescriptor.class);
 
@@ -88,13 +87,13 @@ public class FeatureFilterTest {
         assertEquals(desc.getName(), new DefaultName("http://test1.com", "att_string"));
 
         //test a namespace property with namespace
-        accessor = Bindings.getBinding(SimpleFeatureType.class, "http://test1.com:att_string");
+        accessor = Bindings.getBinding(FeatureType.class, "http://test1.com:att_string");
         assertNotNull(accessor);
         desc = (AttributeDescriptor) accessor.get(sft, "http://test1.com:att_string", AttributeDescriptor.class);
         assertNotNull(desc);
         assertEquals(desc.getName(), new DefaultName("http://test1.com", "att_string"));
 
-        accessor = Bindings.getBinding(SimpleFeatureType.class, "http://test2.com:att_string");
+        accessor = Bindings.getBinding(FeatureType.class, "http://test2.com:att_string");
         assertNotNull(accessor);
         desc = (AttributeDescriptor) accessor.get(sft, "http://test2.com:att_string", AttributeDescriptor.class);
         assertNotNull(desc);
@@ -114,7 +113,7 @@ public class FeatureFilterTest {
         ftb.add(att_1, String.class);
         ftb.add(att_2, String.class);
         ftb.add(att_3, Double.class);
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildSimpleFeatureType();
 
         PropertyName property = null;
         PropertyDescriptor desc = null;
@@ -179,22 +178,22 @@ public class FeatureFilterTest {
         ftb.add(att_1, String.class);
         ftb.add(att_2, String.class);
         ftb.add(att_3, Double.class);
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildSimpleFeatureType();
 
         final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
         sfb.set(att_1, "str1");
         sfb.set(att_2, "str2");
         sfb.set(att_3, 10d);
-        final SimpleFeature sf = sfb.buildFeature("id");
+        final Feature sf = sfb.buildFeature("id");
 
         PropertyName property = null;
         Object value = null;
 
         // att 1 ---------------------------------------------------------------
-        assertEquals("str1", sf.getAttribute(att_1));
-        assertEquals("str1", sf.getAttribute("http://test1.com:att_string"));
-        assertEquals("str1", sf.getAttribute("{http://test1.com}att_string"));
-        assertEquals("str1", sf.getAttribute("att_string"));
+        assertEquals("str1", sf.getProperty(att_1).getValue());
+        assertEquals("str1", sf.getPropertyValue("http://test1.com:att_string"));
+        assertEquals("str1", sf.getPropertyValue("{http://test1.com}att_string"));
+        assertEquals("str1", sf.getPropertyValue("att_string"));
         assertEquals("str1", sf.getProperty(att_1).getValue());
         assertEquals("str1", sf.getProperty("http://test1.com:att_string").getValue());
         assertEquals("str1", sf.getProperty("{http://test1.com}att_string").getValue());
@@ -215,10 +214,10 @@ public class FeatureFilterTest {
         assertEquals("str1", value);
 
         // att 2 ---------------------------------------------------------------
-        assertEquals("str2", sf.getAttribute(att_2));
-        assertEquals("str2", sf.getAttribute("http://test2.com:att_string"));
-        assertEquals("str2", sf.getAttribute("{http://test2.com}att_string"));
-        assertEquals("str1", sf.getAttribute("att_string")); //no name space, must return the first att, so att_1 not att_2
+        assertEquals("str2", sf.getProperty(att_2).getValue());
+        assertEquals("str2", sf.getPropertyValue("http://test2.com:att_string"));
+        assertEquals("str2", sf.getPropertyValue("{http://test2.com}att_string"));
+        assertEquals("str1", sf.getPropertyValue("att_string")); //no name space, must return the first att, so att_1 not att_2
         assertEquals("str2", sf.getProperty(att_2).getValue());
         assertEquals("str2", sf.getProperty("http://test2.com:att_string").getValue());
         assertEquals("str2", sf.getProperty("{http://test2.com}att_string").getValue());
@@ -239,10 +238,10 @@ public class FeatureFilterTest {
         assertEquals("str1", value); //no name space, must return the first att, so att_1 not att_2
 
         //att 3 ----------------------------------------------------------------
-        assertEquals(10d, sf.getAttribute(att_3));
-        assertEquals(null, sf.getAttribute("http://test2.com:att_double"));
-        assertEquals(null, sf.getAttribute("{http://test2.com}att_double"));
-        assertEquals(10d, sf.getAttribute("att_double"));
+        assertEquals(10d, sf.getProperty(att_3).getValue());
+        assertEquals(null, sf.getPropertyValue("http://test2.com:att_double"));
+        assertEquals(null, sf.getPropertyValue("{http://test2.com}att_double"));
+        assertEquals(10d, sf.getPropertyValue("att_double"));
         assertEquals(10d, sf.getProperty(att_3).getValue());
         assertEquals(10d, sf.getProperty("att_double").getValue());
         assertEquals(null, sf.getProperty("http://test2.com:att_double"));
@@ -301,7 +300,7 @@ public class FeatureFilterTest {
         sftb.add(featureCode, String.class);
         sftb.add(id, String.class);
 
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureType sft = sftb.buildSimpleFeatureType();
 
         /*********************************************************************************************
          *                            AggregateGeoFeature 1                                          *
@@ -320,7 +319,7 @@ public class FeatureFilterTest {
         sfb.set(featureCode, "BK030");
         sfb.set(id, "f005");
 
-        final SimpleFeature sf = sfb.buildFeature("id");
+        final Feature sf = sfb.buildFeature("id");
 
         /*********************************************************************************************
          *                                                                                           *
@@ -343,7 +342,7 @@ public class FeatureFilterTest {
         sftb.add(featureRef, String.class);
         sftb.add(id, String.class);
 
-        final SimpleFeatureType entiteGeneriqueType = sftb.buildSimpleFeatureType();
+        final FeatureType entiteGeneriqueType = sftb.buildSimpleFeatureType();
 
         sfb = new SimpleFeatureBuilder(entiteGeneriqueType);
 
@@ -378,7 +377,7 @@ public class FeatureFilterTest {
         sfb.set(featureRef, "name-f003");
         sfb.set(id, "f004");
 
-        final SimpleFeature entiteGenerique1 = sfb.buildFeature("f004");
+        final Feature entiteGenerique1 = sfb.buildFeature("f004");
 
         sfb.reset();
 
@@ -417,7 +416,7 @@ public class FeatureFilterTest {
         sfb.set(str4Property, "def4");
         sfb.set(id, "f007");
 
-        final SimpleFeature entiteGenerique2 = sfb.buildFeature("f007");
+        final Feature entiteGenerique2 = sfb.buildFeature("f007");
 
         sfb.reset();
 
@@ -441,7 +440,7 @@ public class FeatureFilterTest {
         sfb.set(featureRef, "name-f015");
         sfb.set(id, "f017");
 
-        final SimpleFeature entiteGenerique3 = sfb.buildFeature("f017");
+        final Feature entiteGenerique3 = sfb.buildFeature("f017");
 
         Literal geometry = FF.literal(factory.createMultiPoint(points));
         PropertyName property = FF.property(multiPointProperty);

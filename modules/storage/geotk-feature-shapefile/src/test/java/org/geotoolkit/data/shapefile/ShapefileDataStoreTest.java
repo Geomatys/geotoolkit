@@ -67,6 +67,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.test.TestData;
 
 import static org.junit.Assert.*;
@@ -434,7 +436,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     @Test
     public void testAttributesWriting() throws Exception {
-        Collection<SimpleFeature> features = createFeatureCollection();
+        Collection<Feature> features = createFeatureCollection();
         File tmpFile = getTempFile();
         tmpFile.createNewFile();
         ShapefileFeatureStore s = new ShapefileFeatureStore(tmpFile.toURI().toURL());
@@ -446,7 +448,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         // open feature type
         SimpleFeatureType type = FeatureTypeUtilities.createType("junk",
                 "a:Point,b:java.math.BigDecimal,c:java.math.BigInteger");
-        Collection<SimpleFeature> features = new ArrayList<SimpleFeature>();
+        Collection<Feature> features = new ArrayList<>();
 
         BigInteger bigInteger = new BigInteger("1234567890123456789");
         BigDecimal bigDecimal = new BigDecimal(bigInteger, 2);
@@ -456,7 +458,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         build.add(bigDecimal);
         build.add(bigInteger);
 
-        SimpleFeature feature = build.buildFeature(null);
+        Feature feature = build.buildFeature(null);
         features.add(feature);
 
         // store features
@@ -605,7 +607,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         builder.add(bigInteger);
 
 
-        SimpleFeature feature = builder.buildFeature(null);;
+        Feature feature = builder.buildFeature(null);;
 
         // store features
         File tmpFile = getTempFile();
@@ -630,11 +632,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
      * @return FeatureCollection<SimpleFeature> For use in testing.
      * @throws Exception
      */
-    private Collection<SimpleFeature> createFeatureCollection() throws Exception {
+    private Collection<Feature> createFeatureCollection() throws Exception {
         SimpleFeatureType featureType = createExampleSchema();
         SimpleFeatureBuilder build = new SimpleFeatureBuilder(featureType);
 
-        Collection<SimpleFeature> features = new ArrayList<SimpleFeature>();
+        Collection<Feature> features = new ArrayList<>();
         for (int i = 0, ii = 20; i < ii; i++) {
 
             build.add(new GeometryFactory().createPoint(new Coordinate(1, -1)));
@@ -651,7 +653,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
                     "12345678901234567890123456789"), 2));
             build.add(new BigInteger("12345678901234567890123456789"));
 
-            SimpleFeature feature = build.buildFeature(null);
+            Feature feature = build.buildFeature(null);
             features.add(feature);
         }
         return features;
@@ -683,19 +685,18 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         }
     }
 
-    private void writeFeatures(final ShapefileFeatureStore s, final Collection<SimpleFeature> fc)
+    private void writeFeatures(final ShapefileFeatureStore s, final Collection<Feature> fc)
             throws Exception {
 
-        final SimpleFeatureType sft = fc.iterator().next().getFeatureType();
+        final FeatureType sft = fc.iterator().next().getType();
 
         s.createFeatureType(sft.getName(), sft);
-        FeatureWriter<SimpleFeatureType, SimpleFeature> fw = s.getFeatureWriter(sft.getName(),Filter.INCLUDE);
-        Iterator<SimpleFeature> it = fc.iterator();
+        FeatureWriter<FeatureType, Feature> fw = s.getFeatureWriter(sft.getName(),Filter.INCLUDE);
+        Iterator<Feature> it = fc.iterator();
         while (it.hasNext()) {
-            SimpleFeature feature = it.next();
-            SimpleFeature newFeature = fw.next();
-            newFeature.setAttributes(feature.getAttributes());
-
+            Feature feature = it.next();
+            Feature newFeature = fw.next();
+            FeatureUtilities.copy(feature, newFeature, false);
             fw.write();
         }
         fw.close();
@@ -709,11 +710,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ftb.add("a", geom.getClass(), CommonCRS.WGS84.normalizedGeographic());
         SimpleFeatureType type = ftb.buildSimpleFeatureType();
 
-        Collection<SimpleFeature> features = new ArrayList<SimpleFeature>();
+        Collection<Feature> features = new ArrayList<>();
         SimpleFeatureBuilder build = new SimpleFeatureBuilder(type);
         for (int i = 0, ii = 20; i < ii; i++) {
             build.set(0, (Geometry) geom.clone());
-            SimpleFeature feature = build.buildFeature(null);
+            Feature feature = build.buildFeature(null);
 
             features.add(feature);
         }
@@ -761,7 +762,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     private ShapefileFeatureStore createDataStore(final File f) throws Exception {
-        Collection<SimpleFeature> fc = createFeatureCollection();
+        Collection<Feature> fc = createFeatureCollection();
         ShapefileFeatureStore sds = new ShapefileFeatureStore(f.toURI().toURL());
         writeFeatures(sds, fc);
         return sds;

@@ -34,11 +34,14 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -66,14 +69,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
+public abstract class ShapefileFeatureReader implements FeatureReader<FeatureType, Feature> {
 
     /**
      * Stores the creation stack trace if assertion are enable.
      */
     protected Throwable creationStack;
     protected final ShapefileAttributeReader attributeReader;
-    protected final SimpleFeatureType schema;
+    protected final FeatureType schema;
     protected final FeatureIDReader fidReader;
     protected final Object[] buffer;
     protected final CoordinateReferenceSystem geomCRS;
@@ -96,7 +99,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
      * @throws SchemaException if we could not determine the correct FeatureType
      */
     private ShapefileFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
-            SimpleFeatureType schema) throws SchemaException {
+            FeatureType schema) throws SchemaException {
         this.attributeReader = attributeReader;
         this.fidReader = fidReader;
 
@@ -106,7 +109,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
         } else {
             //check if the attributs are mixed
             final AttributeDescriptor[] readerAtt = getDescriptors(attributeReader);
-            final AttributeDescriptor[] schemaAtt = schema.getAttributeDescriptors().toArray(new AttributeDescriptor[schema.getAttributeCount()]);
+            final AttributeDescriptor[] schemaAtt = schema.getDescriptors().toArray(new AttributeDescriptor[0]);
 
             if (Arrays.deepEquals(readerAtt, schemaAtt)) {
                 attributIndexes = new int[0];
@@ -114,7 +117,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
                 //attributs are mixed
                 attributIndexes = new int[readerAtt.length];
                 for (int i = 0; i < readerAtt.length; i++) {
-                    attributIndexes[i] = schema.indexOf(readerAtt[i].getName());
+                    attributIndexes[i] = FeatureTypeUtilities.indexOfProperty(schema, readerAtt[i].getName());
                 }
             }
 
@@ -138,7 +141,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeature next() throws FeatureStoreRuntimeException, NoSuchElementException {
+    public Feature next() throws FeatureStoreRuntimeException, NoSuchElementException {
         try {
             if (attributeReader.hasNext()) {
                 attributeReader.next();
@@ -155,7 +158,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
         }
     }
 
-    protected abstract SimpleFeature readFeature() throws DataStoreException;
+    protected abstract Feature readFeature() throws DataStoreException;
 
     /**
      * {@inheritDoc }
@@ -208,7 +211,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeatureType getFeatureType() {
+    public FeatureType getFeatureType() {
         return schema;
     }
 
@@ -256,7 +259,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
     }
 
     public static ShapefileFeatureReader create(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
-            final SimpleFeatureType schema, final Hints hints) throws SchemaException {
+            final FeatureType schema, final Hints hints) throws SchemaException {
         final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
         if (detached == null || detached) {
             //default behavior, make separate features
@@ -272,14 +275,14 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
         protected final SimpleFeatureBuilder builder;
 
         private DefaultSeparateFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
-                final SimpleFeatureType schema) throws SchemaException {
+                final FeatureType schema) throws SchemaException {
             super(attributeReader, fidReader, schema);
 
             this.builder = new SimpleFeatureBuilder(schema);
         }
 
         @Override
-        protected SimpleFeature readFeature() throws DataStoreException {
+        protected Feature readFeature() throws DataStoreException {
 
             final String fid = fidReader.next();
             builder.reset();
@@ -313,10 +316,10 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
         protected final DefaultSimpleFeature feature;
 
         private DefaultReuseFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
-                final SimpleFeatureType schema) throws SchemaException {
+                final FeatureType schema) throws SchemaException {
             super(attributeReader, fidReader, schema);
 
-            feature = new DefaultSimpleFeature(schema, null, new Object[schema.getAttributeCount()], false);
+            feature = new DefaultSimpleFeature((SimpleFeatureType) schema, null, new Object[schema.getDescriptors().size()], false);
         }
 
         @Override

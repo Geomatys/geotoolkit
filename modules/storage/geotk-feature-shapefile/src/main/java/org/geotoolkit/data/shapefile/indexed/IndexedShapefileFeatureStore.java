@@ -61,6 +61,7 @@ import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.*;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.util.NullProgressListener;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
@@ -192,9 +193,9 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      * file.
      */
     @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final Query query)
+    public FeatureReader<FeatureType, Feature> getFeatureReader(final Query query)
             throws DataStoreException {
-        final SimpleFeatureType originalSchema = getFeatureType();
+        final FeatureType originalSchema = getFeatureType();
         final Name              queryTypeName = query.getTypeName();
         final Name[]            queryPropertyNames = query.getPropertyNames();
         final Hints             queryHints = query.getHints();
@@ -215,13 +216,13 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
         if(queryPropertyNames == null){
             //return all properties
-            readProperties = new ArrayList<PropertyDescriptor>(originalSchema.getDescriptors());
+            readProperties = new ArrayList<>(originalSchema.getDescriptors());
             returnedProperties = readProperties;
         }else{
             //return only a subset of properties
-            returnedProperties = new ArrayList<PropertyDescriptor>(queryPropertyNames.length);
+            returnedProperties = new ArrayList<>(queryPropertyNames.length);
             for(Name n : queryPropertyNames){
-                final AttributeDescriptor property = originalSchema.getDescriptor(n);
+                final AttributeDescriptor property = (AttributeDescriptor) originalSchema.getDescriptor(n);
                 if(property == null){
                     throw new DataStoreException("Query requieres property : "+ n +
                         " which is not present in feature type :\n"+ originalSchema);
@@ -236,11 +237,11 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
                 //filter do not requiere attributs
                 readProperties = returnedProperties;
             } else {
-                final Set<Name> attributes = new LinkedHashSet<Name>(filterPropertyNames);
+                final Set<Name> attributes = new LinkedHashSet<>(filterPropertyNames);
                 attributes.addAll(Arrays.asList(queryPropertyNames));
-                readProperties = new ArrayList<PropertyDescriptor>(attributes.size());
+                readProperties = new ArrayList<>(attributes.size());
                 for (Name n : attributes) {
-                    final AttributeDescriptor property = originalSchema.getDescriptor(n);
+                    final AttributeDescriptor property = (AttributeDescriptor) originalSchema.getDescriptor(n);
                     if (property == null) {
                         throw new DataStoreException("Query filter requieres property : " + n
                                 + " which is not present in feature type :\n" + originalSchema);
@@ -306,7 +307,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         return handleRemaining(reader, qb.buildQuery());
     }
 
-    protected FeatureReader<SimpleFeatureType, SimpleFeature> createFeatureReader(
+    protected FeatureReader<FeatureType, Feature> createFeatureReader(
             final IndexedShapefileAttributeReader r, final SimpleFeatureType featureType, final Hints hints)
             throws SchemaException, IOException,DataStoreException {
 
@@ -599,7 +600,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      * @throws IOException If the typeName is not available or some other error occurs.
      */
     @Override
-    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(final Name typeName,
+    public FeatureWriter<FeatureType, Feature> getFeatureWriter(final Name typeName,
             final Filter filter, final Hints hints) throws DataStoreException {
 
         //will raise an error if it does not exist
@@ -610,8 +611,8 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
                 schema.getAttributeDescriptors(),Filter.INCLUDE,true,null);
 
         try{
-            final FeatureReader<SimpleFeatureType, SimpleFeature> reader = createFeatureReader(attReader, schema, null);
-            FeatureWriter<SimpleFeatureType, SimpleFeature> writer = new IndexedShapefileFeatureWriter(
+            final FeatureReader<FeatureType, Feature> reader = createFeatureReader(attReader, schema, null);
+            FeatureWriter<FeatureType, Feature> writer = new IndexedShapefileFeatureWriter(
                     typeName.getLocalPart(), shpFiles, attReader, reader, this, dbfCharset);
             return handleRemaining(writer, filter);
         } catch (IOException ex) {

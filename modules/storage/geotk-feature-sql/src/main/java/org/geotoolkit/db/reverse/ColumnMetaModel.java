@@ -16,19 +16,17 @@
  */
 package org.geotoolkit.db.reverse;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import org.geotoolkit.db.dialect.SQLDialect;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.feature.FeatureUtilities;
 
 /**
  * Description of a table column.
@@ -186,7 +184,7 @@ public class ColumnMetaModel {
 
             } else if (CharSequence.class.isAssignableFrom(clazz)) {
                 //generate a random string
-                next = SimpleFeatureBuilder.createDefaultFeatureId();
+                next = FeatureUtilities.createDefaultFeatureId();
             }
 
             if (next == null) {

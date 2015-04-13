@@ -23,12 +23,6 @@ import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -43,7 +37,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -83,8 +76,6 @@ import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
@@ -95,10 +86,8 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
-import org.geotoolkit.factory.FactoryFinder;
-import org.opengis.filter.Id;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 /**
  *
@@ -115,7 +104,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
     protected final boolean useMemoryMappedBuffer;
     protected final Charset dbfCharset;
     private Name name;
-    private SimpleFeatureType schema;
+    private FeatureType schema;
 
 
     /**
@@ -208,7 +197,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         return name;
     }
 
-    public SimpleFeatureType getFeatureType() throws DataStoreException{
+    public FeatureType getFeatureType() throws DataStoreException{
         checkTypeExist();
         return schema;
     }
@@ -335,8 +324,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             && (filterAttnames.length == 0 || (filterAttnames.length == 1 && filterAttnames[0].getLocalPart()
                         .equals(defaultGeomName.getLocalPart())))) {
             try {
-                final SimpleFeatureType newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(
-                        schema, propertyNames);
+                final FeatureType newSchema = FeatureTypeUtilities.createSubType(schema, propertyNames);
 
                 final ShapefileAttributeReader attReader = getAttributesReader(false,read3D,resample);
                 final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName);
@@ -357,9 +345,9 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             }
         }else{
              try {
-                final SimpleFeatureType newSchema;
+                final FeatureType newSchema;
                 if (propertyNames != null) {
-                    newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(schema, propertyNames);
+                    newSchema = FeatureTypeUtilities.createSubType(schema, propertyNames);
                 } else {
                     newSchema = schema;
                 }
@@ -395,7 +383,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
         final ShapefileAttributeReader attReader = getAttributesReader(true,true,null);
         final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName.getLocalPart());
-        FeatureReader<SimpleFeatureType, SimpleFeature> featureReader;
+        FeatureReader<FeatureType, Feature> featureReader;
         try {
             featureReader = ShapefileFeatureReader.create(attReader,idReader, schema, hints);
         } catch (Exception e) {
@@ -448,7 +436,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
         //update schema and name
         name = typeName;
-        schema = (SimpleFeatureType) featureType;
+        schema = featureType;
 
         final GeometryDescriptor desc = featureType.getGeometryDescriptor();
         CoordinateReferenceSystem crs = null;
@@ -640,12 +628,11 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             final boolean read3D, final double[] resample) throws DataStoreException {
 
         final AccessManager locker = shpFiles.createLocker();
-        final SimpleFeatureType schema = getFeatureType();
+        final FeatureType schema = getFeatureType();
 
         final PropertyDescriptor[] descs;
         if(readDbf){
-            final List<? extends PropertyDescriptor> lst = schema.getAttributeDescriptors();
-            descs =  lst.toArray(new PropertyDescriptor[lst.size()]);
+            descs =  schema.getDescriptors().toArray(new PropertyDescriptor[0]);
         }else{
             getLogger().fine("The DBF file won't be opened since no attributes will be read from it");
             descs = new PropertyDescriptor[]{schema.getGeometryDescriptor()};

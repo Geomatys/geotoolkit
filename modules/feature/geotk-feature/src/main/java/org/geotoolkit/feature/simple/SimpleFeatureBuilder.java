@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.feature.simple;
 
-import java.rmi.server.UID;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,12 @@ import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.filter.identity.FeatureId;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.util.GenericName;
 
 /**
@@ -125,9 +129,11 @@ import org.opengis.util.GenericName;
 public class SimpleFeatureBuilder {
 
     /** the feature type */
-    private final SimpleFeatureType featureType;
+    private final FeatureType featureType;
     /** the feature factory */
     private final FeatureFactory factory;
+    private PropertyDescriptor[] descs;
+    private final Map<String,Integer> names = new HashMap<>();
     /** the values */
     private Object[] values;
     /** pointer for next attribute */
@@ -135,28 +141,35 @@ public class SimpleFeatureBuilder {
     private Map<Object, Object>[] userData;
     boolean validating;
 
-    public SimpleFeatureBuilder(final SimpleFeatureType featureType) {
+    public SimpleFeatureBuilder(final FeatureType featureType) {
         this(featureType, FeatureFactory.LENIENT);
     }
 
-    public SimpleFeatureBuilder(final SimpleFeatureType featureType, final FeatureFactory factory) {
+    public SimpleFeatureBuilder(final FeatureType featureType, final FeatureFactory factory) {
         this.featureType = featureType;
         this.factory = factory;
 
+        descs = featureType.getDescriptors().toArray(new PropertyDescriptor[0]);
+        for(int i=0;i<descs.length;i++){
+            final Name name = descs[i].getName();
+            names.put(name.getLocalPart(),i);
+            names.put(Names.toExpandedString(name),i);
+            names.put(DefaultName.toExtendedForm(name),i);
+        }
         reset();
     }
 
     public void reset() {
-        values = new Object[featureType.getAttributeCount()];
+        values = new Object[featureType.getDescriptors().size()];
         next = 0;
         userData = null;
     }
 
     /**
      * Returns the simple feature type used by this builder as a feature template
-     * @return SimpleFeatureType
+     * @return FeatureType
      */
-    public SimpleFeatureType getFeatureType() {
+    public FeatureType getFeatureType() {
         return featureType;
     }
 
@@ -238,8 +251,8 @@ public class SimpleFeatureBuilder {
      *             If no such attribute with teh specified name exists.
      */
     public void set(final String name, final Object value) {
-        int index = featureType.indexOf(name);
-        if (index == -1) {
+        Integer index = names.get(name);
+        if (index == null) {
             throw new IllegalArgumentException("No such attribute:" + name);
         }
         set(index, value);
@@ -264,7 +277,7 @@ public class SimpleFeatureBuilder {
                     + featureType);
         }
 
-        final AttributeDescriptor descriptor = featureType.getDescriptor(index);
+        final AttributeDescriptor descriptor = (AttributeDescriptor) descs[index];
         values[index] = convert(value, descriptor);
         if (validating) {
             FeatureValidationUtilities.validate(descriptor, values[index]);
@@ -314,22 +327,22 @@ public class SimpleFeatureBuilder {
      *
      * @return The new feature.
      */
-    public SimpleFeature buildFeature(String id) {
+    public Feature buildFeature(String id) {
         // ensure id
         if (id == null) {
-            id = SimpleFeatureBuilder.createDefaultFeatureId();
+            id = FeatureUtilities.createDefaultFeatureId();
         }
 
         final Object[] values = this.values;
         final Map<Object, Object>[] userData = this.userData;
         reset();
-        final SimpleFeature sf = factory.createSimpleFeature(values, featureType, id);
+        final Feature sf = factory.createSimpleFeature(values, (SimpleFeatureType)featureType, id);
 
         // handle the user data
         if (userData != null) {
             for (int i = 0; i < userData.length; i++) {
                 if (userData[i] != null) {
-                    sf.getProperty(featureType.getDescriptor(i).getName()).getUserData().putAll(userData[i]);
+                    sf.getProperty(descs[i].getName()).getUserData().putAll(userData[i]);
                 }
             }
         }
@@ -343,26 +356,9 @@ public class SimpleFeatureBuilder {
      * @param values
      * @return SimpleFeature
      */
-    public SimpleFeature buildFeature(final String id, final Object[] values) {
+    public Feature buildFeature(final String id, final Object[] values) {
         addAll(values);
         return buildFeature(id);
-    }
-
-    /**
-     * Internal method for creating feature id's when none is specified.
-     */
-    public static String createDefaultFeatureId() {
-        // According to GML and XML schema standards, FID is a XML ID
-        // (http://www.w3.org/TR/xmlschema-2/#ID), whose acceptable values are those that match an
-        // NCNAME production (http://www.w3.org/TR/1999/REC-xml-names-19990114/#NT-NCName):
-        // NCName ::= (Letter | '_') (NCNameChar)* /* An XML Name, minus the ":" */
-        // NCNameChar ::= Letter | Digit | '.' | '-' | '_' | CombiningChar | Extender
-        // We have to fix the generated UID replacing all non word chars with an _ (it seems
-        // they area all ":")
-        //return "fid-" + NON_WORD_PATTERN.matcher(new UID().toString()).replaceAll("_");
-        // optimization, since the UID toString uses only ":" and converts long and integers
-        // to strings for the rest, so the only non word character is really ":"
-        return "fid-" + new UID().toString().replace(':', '_');
     }
 
     /**
@@ -374,7 +370,7 @@ public class SimpleFeatureBuilder {
         if (suggestedId != null) {
             return new DefaultFeatureId(suggestedId);
         }
-        return new DefaultFeatureId(createDefaultFeatureId());
+        return new DefaultFeatureId(FeatureUtilities.createDefaultFeatureId());
     }
 
     /**
@@ -388,7 +384,7 @@ public class SimpleFeatureBuilder {
      * internally and adds all the specified attributes.
      * </p>
      */
-    public static SimpleFeature build(final SimpleFeatureType type, final Object[] values,
+    public static Feature build(final FeatureType type, final Object[] values,
             final String id) {
         final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(type);
         builder.addAll(values);
@@ -402,7 +398,7 @@ public class SimpleFeatureBuilder {
      * and instead an instance should be instantiated directly.
      * </p>
      */
-    public static SimpleFeature build(final SimpleFeatureType type, final List values, final String id) {
+    public static Feature build(final FeatureType type, final List values, final String id) {
         return build(type, values.toArray(), id);
     }
 
@@ -423,7 +419,7 @@ public class SimpleFeatureBuilder {
      *
      * @return The copied feature, with a new type.
      */
-    public static SimpleFeature retype(final SimpleFeature feature, final SimpleFeatureType featureType) {
+    public static Feature retype(final Feature feature, final FeatureType featureType) {
         final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
         return retype(feature, builder);
     }
@@ -441,13 +437,13 @@ public class SimpleFeatureBuilder {
      * @return The copied feature, with a new type.
      * @since 2.5.3
      */
-    public static SimpleFeature retype(final SimpleFeature feature, final SimpleFeatureBuilder builder) {
+    public static Feature retype(final Feature feature, final SimpleFeatureBuilder builder) {
         builder.reset();
-        for (AttributeDescriptor att : builder.getFeatureType().getAttributeDescriptors()) {
-            final Object value = feature.getAttribute(att.getName());
+        for (PropertyDescriptor att : builder.getFeatureType().getDescriptors()) {
+            final Object value = feature.getProperty(att.getName()).getValue();
             builder.set(att.getName(), value);
         }
-        return builder.buildFeature(feature.getID());
+        return builder.buildFeature(feature.getIdentifier().getID());
     }
 
     /**

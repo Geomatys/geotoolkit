@@ -16,11 +16,9 @@
  */
 package org.geotoolkit.feature;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.NoSuchElementException;
 import junit.framework.TestCase;
 
 import org.geotoolkit.feature.simple.SimpleFeature;
@@ -38,8 +36,8 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 
@@ -67,23 +65,23 @@ import org.geotoolkit.geometry.DefaultBoundingBox;
 public abstract class DataTestCase extends TestCase {
 
     protected GeometryFactory gf;
-    protected SimpleFeatureType roadType; // road: id,geom,name
-    protected SimpleFeatureType subRoadType; // road: id,geom
-    protected SimpleFeature[] roadFeatures;
+    protected FeatureType roadType; // road: id,geom,name
+    protected FeatureType subRoadType; // road: id,geom
+    protected Feature[] roadFeatures;
     protected JTSEnvelope2D roadBounds;
     protected JTSEnvelope2D rd12Bounds;
     protected Filter rd1Filter;
     protected Filter rd2Filter;
     protected Filter rd12Filter;
-    protected SimpleFeature newRoad;
-    protected SimpleFeatureType riverType; // river: id, geom, river, flow
-    protected SimpleFeatureType subRiverType; // river: river, flow
-    protected SimpleFeature[] riverFeatures;
+    protected Feature newRoad;
+    protected FeatureType riverType; // river: id, geom, river, flow
+    protected FeatureType subRiverType; // river: river, flow
+    protected Feature[] riverFeatures;
     protected JTSEnvelope2D riverBounds;
     protected Filter rv1Filter;
-    protected SimpleFeature newRiver;
-    protected SimpleFeatureType lakeType; // lake: id, geom, name
-    protected SimpleFeature[] lakeFeatures;
+    protected Feature newRiver;
+    protected FeatureType lakeType; // lake: id, geom, name
+    protected Feature[] lakeFeatures;
     protected JTSEnvelope2D lakeBounds;
     protected FilterFactory2 ff;
 
@@ -115,7 +113,7 @@ public abstract class DataTestCase extends TestCase {
                 "id:0,geom:LineString");
         gf = new GeometryFactory();
 
-        roadFeatures = new SimpleFeature[3];
+        roadFeatures = new Feature[3];
 
         //           3,2
         //  2,2 +-----+-----+ 4,2

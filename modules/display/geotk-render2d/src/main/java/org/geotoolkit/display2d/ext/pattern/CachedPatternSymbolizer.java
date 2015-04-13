@@ -39,7 +39,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.parameter.ParameterValueGroup;
@@ -57,9 +57,9 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         super(symbol,renderer);
     }
 
-    public Map<SimpleFeature,List<CachedSymbolizer>> getMasks(final GridCoverage2D coverage) throws IOException, TransformException{
-        final Map<SimpleFeature,List<CachedSymbolizer>> features = new LinkedHashMap<SimpleFeature, List<CachedSymbolizer>>();
-        final Map<NumberRange,List<CachedSymbolizer>> styles = new LinkedHashMap<NumberRange, List<CachedSymbolizer>>();
+    public Map<Feature,List<CachedSymbolizer>> getMasks(final GridCoverage2D coverage) throws IOException, TransformException{
+        final Map<Feature,List<CachedSymbolizer>> features = new LinkedHashMap<>();
+        final Map<NumberRange,List<CachedSymbolizer>> styles = new LinkedHashMap<>();
         final Map<Expression, List<Symbolizer>> categorizes = styleElement.getRanges();
         final Expression[] steps = categorizes.keySet().toArray(new Expression[categorizes.size()]);
         Arrays.sort(steps, new Comparator<Expression>() {
@@ -137,7 +137,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         for(Geometry entry : polygons){
             sfBuilder.reset();
             sfBuilder.set(geometryField, entry);
-            final SimpleFeature sf = sfBuilder.buildFeature(String.valueOf(id++));
+            final Feature sf = sfBuilder.buildFeature(String.valueOf(id++));
 
             features.put(sf, styles.get(entry.getUserData()));
         }

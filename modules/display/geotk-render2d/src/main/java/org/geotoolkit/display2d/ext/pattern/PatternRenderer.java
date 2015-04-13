@@ -100,7 +100,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
         }
 
 
-        final Map<SimpleFeature, List<CachedSymbolizer>> features;
+        final Map<Feature, List<CachedSymbolizer>> features;
         try {
             features = symbol.getMasks(dataCoverage);
         } catch (IOException ex) {
@@ -134,7 +134,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
 
         final ProjectedFeature projectedFeature = new ProjectedFeature(params);
         try {
-            for(final Map.Entry<SimpleFeature,List<CachedSymbolizer>> entry : features.entrySet()){
+            for(final Map.Entry<Feature,List<CachedSymbolizer>> entry : features.entrySet()){
                 Feature f = entry.getKey();
                 f.getDefaultGeometryProperty().setValue(trs.transform((Geometry)f.getDefaultGeometryProperty().getValue()));
                 projectedFeature.setCandidate(entry.getKey());

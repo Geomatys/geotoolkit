@@ -23,10 +23,9 @@ import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.apache.sis.referencing.CommonCRS;
 
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 
 
@@ -49,9 +48,9 @@ public class SampleFeatureFixtures {
     public SampleFeatureFixtures() {
     }
 
-    public static SimpleFeature createFeature() {
+    public static Feature createFeature() {
         try {
-            SimpleFeatureType testType = createTestType();
+            FeatureType testType = createTestType();
             Object[] attributes = createAttributes();
 
             return SimpleFeatureBuilder.build( testType,attributes,null);
@@ -63,7 +62,7 @@ public class SampleFeatureFixtures {
         }
     }
 
-    public static SimpleFeature createAddressFeature() {
+    public static Feature createAddressFeature() {
         try {
             return createFeature();
 
@@ -182,7 +181,7 @@ public class SampleFeatureFixtures {
 //        return createGeomChoiceAttrType("choiceGeom", choices);
     }
 
-    public static SimpleFeatureType createChoiceFeatureType() {
+    public static FeatureType createChoiceFeatureType() {
         throw new RuntimeException("Figure out how to handle choice");
 
 //        DefaultFeatureTypeBuilder tb = new DefaultFeatureTypeBuilder();
@@ -202,7 +201,7 @@ public class SampleFeatureFixtures {
      *
      * @throws SchemaException
      */
-    public static SimpleFeatureType createTestType() throws SchemaException {
+    public static FeatureType createTestType() throws SchemaException {
         FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName(new DefaultName("test"));
 
