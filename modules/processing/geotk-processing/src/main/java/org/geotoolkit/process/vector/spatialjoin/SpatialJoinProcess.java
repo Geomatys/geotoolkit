@@ -69,8 +69,8 @@ public class SpatialJoinProcess extends AbstractProcess {
      */ 
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> sourceFeatureList = value(FEATURE_IN, inputParameters);
-        final FeatureCollection<Feature> targetFeatureList = value(FEATURE_TARGET, inputParameters);
+        final FeatureCollection sourceFeatureList = value(FEATURE_IN, inputParameters);
+        final FeatureCollection targetFeatureList = value(FEATURE_TARGET, inputParameters);
         final boolean method = value(INTERSECT, inputParameters);
 
         final FeatureCollection resultFeatureList =
@@ -100,7 +100,7 @@ public class SpatialJoinProcess extends AbstractProcess {
      * @return the joined feature
      */
     static Feature join(final Feature target, final FeatureType newType,
-            final FeatureCollection<Feature> sourceFC, final boolean method) {
+            final FeatureCollection sourceFC, final boolean method) {
 
         Feature resultFeature = FeatureUtilities.defaultFeature(newType, target.getIdentifier().getID());
 
@@ -139,9 +139,9 @@ public class SpatialJoinProcess extends AbstractProcess {
                 }
 
                 //run it
-                final FeatureCollection<Feature> featureOut;
+                final FeatureCollection featureOut;
                 try {
-                    featureOut = (FeatureCollection<Feature>) proc.call().parameter("feature_out").getValue();
+                    featureOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
                 } catch (ProcessException ex) {
                     Logger.getLogger(SpatialJoinProcess.class.getName()).log(Level.WARNING, null, ex);
                     return null;
@@ -212,12 +212,12 @@ public class SpatialJoinProcess extends AbstractProcess {
      * @param intersectGeometry
      * @return the Feature
      */
-    static Feature biggestIntersection(final FeatureCollection<Feature> outFC, final Geometry intersectGeometry) {
+    static Feature biggestIntersection(final FeatureCollection outFC, final Geometry intersectGeometry) {
         double area = 0.0;
 
         final ArrayList<Feature> listID = new ArrayList<Feature>();
 
-        final FeatureIterator<Feature> iter = outFC.iterator(null);
+        final FeatureIterator iter = outFC.iterator(null);
         try{
             while (iter.hasNext()) {
                 final Feature feature = iter.next();

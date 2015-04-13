@@ -36,8 +36,7 @@ import org.geotoolkit.feature.type.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
-        implements FeatureIterator<F> {
+public class GenericMaxFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
     protected final int maxFeatures;
@@ -58,7 +57,7 @@ public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureItera
      * {@inheritDoc }
      */
     @Override
-    public F next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         if (hasNext()) {
             counter++;
             return iterator.next();
@@ -106,19 +105,15 @@ public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureItera
     /**
      * Wrap a FeatureReader with a max limit.
      * 
-     * @param <T> extends FeatureType
-     * @param <F> extends Feature
-     * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericMaxFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericMaxFeatureIterator<F,R> implements FeatureReader<T,F>{
+    private static final class GenericMaxFeatureReader extends GenericMaxFeatureIterator<FeatureReader> implements FeatureReader{
 
-        private GenericMaxFeatureReader(final R reader,final int limit){
+        private GenericMaxFeatureReader(final FeatureReader reader,final int limit){
             super(reader,limit);
         }
         
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return iterator.getFeatureType();
         }
 
@@ -127,19 +122,15 @@ public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureItera
     /**
      * Wrap a FeatureWriter with a max limit.
      *
-     * @param <T> extends FeatureType
-     * @param <F> extends Feature
-     * @param <R> extends FeatureWriter<T,F>
      */
-    private static final class GenericMaxFeatureWriter<T extends FeatureType, F extends Feature, R extends FeatureWriter<T,F>>
-            extends GenericMaxFeatureIterator<F,R> implements FeatureWriter<T,F>{
+    private static final class GenericMaxFeatureWriter extends GenericMaxFeatureIterator<FeatureWriter> implements FeatureWriter{
 
-        private GenericMaxFeatureWriter(final R writer,final int limit){
+        private GenericMaxFeatureWriter(final FeatureWriter writer,final int limit){
             super(writer,limit);
         }
 
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return iterator.getFeatureType();
         }
 
@@ -173,7 +164,7 @@ public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureItera
     /**
      * Wrap a FeatureReader with a max limit.
      */
-    public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final int limit){
+    public static FeatureIterator wrap(final FeatureIterator reader, final int limit){
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,limit);
         }else if(reader instanceof FeatureWriter){
@@ -186,14 +177,14 @@ public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureItera
     /**
      * Wrap a FeatureReader with a max limit.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(final FeatureReader<T,F> reader, final int limit){
+    public static FeatureReader wrap(final FeatureReader reader, final int limit){
         return new GenericMaxFeatureReader(reader, limit);
     }
 
     /**
      * Wrap a FeatureWriter with a max limit.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrap(final FeatureWriter<T,F> writer, final int limit){
+    public static  FeatureWriter wrap(final FeatureWriter writer, final int limit){
         return new GenericMaxFeatureWriter(writer, limit);
     }
 

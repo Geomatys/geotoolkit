@@ -52,7 +52,7 @@ import java.util.logging.Logger;
 /**
  * @author Quentin Boileau (Geomatys)
  */
-public class GeoJSONReader implements FeatureReader<FeatureType, Feature> {
+public class GeoJSONReader implements FeatureReader {
 
     private final static Logger LOGGER = Logging.getLogger(GeoJSONReader.class);
     private final Map<Map.Entry<Class, Class>, ObjectConverter> convertersCache = new HashMap<Map.Entry<Class, Class>, ObjectConverter>();

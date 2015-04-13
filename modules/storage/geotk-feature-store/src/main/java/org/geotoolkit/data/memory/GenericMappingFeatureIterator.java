@@ -37,26 +37,26 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class GenericMappingFeatureIterator<F extends Feature> implements FeatureIterator<F>{
+public class GenericMappingFeatureIterator implements FeatureIterator{
 
-    private final FeatureIterator<F> ite;
+    private final FeatureIterator ite;
     private final FeatureMapper mapper;
 
-    public GenericMappingFeatureIterator(final FeatureIterator<F> ite,
+    public GenericMappingFeatureIterator(final FeatureIterator ite,
             final FeatureType originalType, final FeatureType newType,
             final Map<PropertyDescriptor,List<PropertyDescriptor>> mapping,
             final Map<PropertyDescriptor,Object> defaults){
         this(ite,new DefaultFeatureMapper((SimpleFeatureType)originalType,(SimpleFeatureType)newType,mapping,defaults));
     }
 
-    public GenericMappingFeatureIterator(final FeatureIterator<F> ite, final FeatureMapper mapper){
+    public GenericMappingFeatureIterator(final FeatureIterator ite, final FeatureMapper mapper){
         this.ite = ite;
         this.mapper = mapper;
     }
 
     @Override
-    public F next() {
-        return (F) mapper.transform(ite.next());
+    public Feature next() {
+        return mapper.transform(ite.next());
     }
 
     @Override

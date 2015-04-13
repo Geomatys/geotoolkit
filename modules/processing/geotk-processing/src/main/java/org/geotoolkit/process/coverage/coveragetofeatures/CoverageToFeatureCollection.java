@@ -67,7 +67,7 @@ public class CoverageToFeatureCollection extends RasterFeatureCollection {
      * @throws FeatureStoreRuntimeException
      */
     @Override
-    public FeatureIterator<Feature> iterator() throws FeatureStoreRuntimeException {
+    public FeatureIterator iterator() throws FeatureStoreRuntimeException {
         return new RasterFeatureIterator();
     }
 

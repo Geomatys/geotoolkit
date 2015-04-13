@@ -50,7 +50,7 @@ import org.opengis.filter.expression.PropertyName;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feature>{
+public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
 
     private static final FeatureFactory FEATURE_FACTORY = FeatureFactory.LENIENT;
 
@@ -143,14 +143,14 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
     }
 
     @Override
-    public FeatureCollection<Feature> subCollection(final Query query) throws DataStoreException {
+    public FeatureCollection subCollection(final Query query) throws DataStoreException {
         final Query combine = QueryUtilities.subQuery(this.query, query);
         //the result should be an absolute query too.
         return QueryUtilities.evaluate("sub-"+getID(), combine);
     }
 
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
+    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
         final JoinType jt = getSource().getJoinType();
 
         try{
@@ -189,10 +189,10 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
     /**
      * Iterate on both collections with an Inner join condition.
      */
-    private class JoinInnerRowIterator implements FeatureIterator<Feature>{
+    private class JoinInnerRowIterator implements FeatureIterator{
 
-        private final FeatureIterator<Feature> leftIterator;
-        private FeatureIterator<Feature> rightIterator;
+        private final FeatureIterator leftIterator;
+        private FeatureIterator rightIterator;
         private Feature leftFeature;
         private Feature combined;
 
@@ -301,10 +301,10 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
     /**
      * Iterate on both collections with an outer join condition.
      */
-    private class JoinOuterRowIterator implements FeatureIterator<Feature>{
+    private class JoinOuterRowIterator implements FeatureIterator{
 
-        private final FeatureIterator<Feature> primeIterator;
-        private FeatureIterator<Feature> secondIterator;
+        private final FeatureIterator primeIterator;
+        private FeatureIterator secondIterator;
         private final boolean left;
         private Feature primeFeature;
         private Feature nextFeature;

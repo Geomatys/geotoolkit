@@ -12,7 +12,7 @@ import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 
-public class FishReader implements FeatureReader<FeatureType, Feature> {
+public class FishReader implements FeatureReader {
 
 
     private final GeometryFactory gf = new GeometryFactory();

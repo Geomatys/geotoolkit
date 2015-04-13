@@ -64,7 +64,7 @@ public class NearestTest extends AbstractProcessTest{
     public void testNearest() throws FactoryException, ProcessException, NoSuchIdentifierException {
 
         // Inputs
-        final FeatureCollection<?> featureList = buildFeatureList();
+        final FeatureCollection featureList = buildFeatureList();
         final Geometry geom = buildIntersectionGeometry();
 
         // Process
@@ -76,10 +76,10 @@ public class NearestTest extends AbstractProcessTest{
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
+        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
-        final FeatureCollection<?> featureListResult = buildResultList();
+        final FeatureCollection featureListResult = buildResultList();
 
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
         assertEquals(featureListOut.size(), featureListResult.size());
@@ -97,11 +97,11 @@ public class NearestTest extends AbstractProcessTest{
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
+    private static FeatureCollection buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
         
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("nearest", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("nearest", type);
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-1");
         feature1.getProperty("name").setValue("feature1");
@@ -141,11 +141,11 @@ public class NearestTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultList() throws FactoryException {
+    private static FeatureCollection buildResultList() throws FactoryException {
 
         type = createSimpleType();
       
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("nearest", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("nearest", type);
 
         final Feature feature4 = FeatureUtilities.defaultFeature(type, "id-4");
         feature4.getProperty("name").setValue("feature4");

@@ -19,8 +19,6 @@ package org.geotoolkit.process.vector.retype;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.process.AbstractProcess;
-
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -46,7 +44,7 @@ public class RetypeProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList = value(FEATURE_IN, inputParameters);
         final FeatureType mask = value(MASK_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = GenericRetypeFeatureIterator.wrap(inputFeatureList, mask);

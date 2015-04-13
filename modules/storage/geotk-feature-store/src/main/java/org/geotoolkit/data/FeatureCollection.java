@@ -42,10 +42,9 @@ import org.opengis.geometry.Envelope;
  * occured on some methods.
  *
  * @author Johann Sorel (Geomatys)
- * @param <F> extends Feature
  * @module pending
  */
-public interface FeatureCollection<F extends Feature> extends Collection<F> {
+public interface FeatureCollection extends Collection<Feature> {
 
     /**
      * A feature collection is created with an id.
@@ -107,7 +106,7 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      * @return FeatureCollection , never null.
      * @throws DataStoreException
      */
-    FeatureCollection<F> subCollection(Query query) throws DataStoreException;
+    FeatureCollection subCollection(Query query) throws DataStoreException;
 
     /**
      * Override Iterator to return a limited type FeatureIterator.
@@ -118,7 +117,7 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      * @throws FeatureStoreRuntimeException
      */
     @Override
-    FeatureIterator<F> iterator() throws FeatureStoreRuntimeException;
+    FeatureIterator iterator() throws FeatureStoreRuntimeException;
 
     /**
      * Get an iterator using some extra hints to configure the reader parameters.
@@ -134,7 +133,7 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      * @return FeatureIterator
      * @throws FeatureStoreRuntimeException
      */
-    FeatureIterator<F> iterator(Hints hints) throws FeatureStoreRuntimeException;
+    FeatureIterator iterator(Hints hints) throws FeatureStoreRuntimeException;
 
     /**
      * Convinient method to update a single feature.

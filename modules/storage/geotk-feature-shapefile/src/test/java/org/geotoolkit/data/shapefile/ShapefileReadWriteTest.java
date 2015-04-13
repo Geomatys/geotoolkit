@@ -36,6 +36,7 @@ import java.util.Map;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.feature.type.Name;
 
@@ -186,7 +187,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         Name typeName = s.getNames().iterator().next();
         Session session = s.createSession(true);
         SimpleFeatureType type = (SimpleFeatureType) s.getFeatureType(typeName);
-        FeatureCollection<SimpleFeature> one = session.getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection one = session.getFeatureCollection(QueryBuilder.all(typeName));
         File tmp = getTempFile();
 
         ShapefileFeatureStoreFactory maker = new ShapefileFeatureStoreFactory();
@@ -197,7 +198,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         test(type, one, tmp2, maker, false, charset);
     }
 
-    private void test(final SimpleFeatureType type, final FeatureCollection<SimpleFeature> original,
+    private void test(final SimpleFeatureType type, final FeatureCollection original,
             final File tmp, final ShapefileFeatureStoreFactory maker, final boolean memorymapped, final Charset charset)
             throws IOException, MalformedURLException, Exception {
 
@@ -218,21 +219,21 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
         assertFalse(session.hasPendingChanges());
         
-        FeatureCollection<SimpleFeature> copy = session.getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection copy = session.getFeatureCollection(QueryBuilder.all(typeName));
         compare(original, copy);
 
         if (true) {
             // review open
             ShapefileFeatureStore review = new ShapefileFeatureStore(tmp.toURI().toURL(), tmp.toString(), memorymapped, charset);
             typeName = review.getNames().iterator().next();
-            FeatureCollection<SimpleFeature> again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+            FeatureCollection again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
             compare(copy, again);
             compare(original, again);
         }
     }
 
-    static void compare(Collection<SimpleFeature> one, Collection<SimpleFeature> two)
+    static void compare(Collection<Feature> one, Collection<Feature> two)
             throws Exception {
 
         if (one.size() != two.size()) {

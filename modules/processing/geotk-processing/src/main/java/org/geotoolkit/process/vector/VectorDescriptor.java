@@ -21,7 +21,6 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 
-import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
@@ -43,12 +42,12 @@ public abstract class VectorDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Feature Collection
      */
-    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_IN =
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_IN =
             new DefaultParameterDescriptor("feature_in", "Input FeatureCollection", FeatureCollection.class, null, true);
     /**
      * Mandatory - Resulting Feature Collection
      */
-    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_OUT =
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_OUT =
             new DefaultParameterDescriptor("feature_out", "Output FeatureFeatureCollection", FeatureCollection.class, null, true);
 
     /**

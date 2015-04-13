@@ -116,7 +116,7 @@ public class MapLayerTest extends TestCase{
 
         FeatureStore ds = new MemoryFeatureStore();
         ds.createFeatureType(name,type);
-        FeatureCollection<Feature> fs = ds.createSession(true).getFeatureCollection(QueryBuilder.all(name));
+        FeatureCollection fs = ds.createSession(true).getFeatureCollection(QueryBuilder.all(name));
 
 
         FeatureMapLayer layer = MapBuilder.createFeatureLayer(fs, new DefaultStyleFactory().style());

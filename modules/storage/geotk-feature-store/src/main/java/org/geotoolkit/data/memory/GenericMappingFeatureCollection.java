@@ -25,7 +25,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureStoreListener;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.data.memory.mapping.FeatureMapper;
 import org.geotoolkit.data.query.Query;
@@ -48,7 +47,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class GenericMappingFeatureCollection<F extends Feature> extends AbstractCollection<F> implements FeatureCollection<F> {
+public class GenericMappingFeatureCollection extends AbstractCollection<Feature> implements FeatureCollection {
 
     private final FeatureCollection original;
     private final FeatureType type;
@@ -103,18 +102,18 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     }
 
     @Override
-    public FeatureCollection<F> subCollection(final Query query) throws DataStoreException {
+    public FeatureCollection subCollection(final Query query) throws DataStoreException {
         throw new UnsupportedOperationException("Mapping feature collection is not made to allow sub query.");
     }
 
     @Override
-    public FeatureIterator<F> iterator() throws FeatureStoreRuntimeException {
+    public FeatureIterator iterator() throws FeatureStoreRuntimeException {
         return iterator(null);
     }
 
     @Override
-    public FeatureIterator<F> iterator(final Hints hints) throws FeatureStoreRuntimeException {
-        return new GenericMappingFeatureIterator<F>(original.iterator(), mapper);
+    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
+        return new GenericMappingFeatureIterator(original.iterator(), mapper);
     }
 
     @Override
@@ -162,7 +161,7 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     }
 
     @Override
-    public boolean add(final F e) {
+    public boolean add(final Feature e) {
         throw new FeatureStoreRuntimeException("Not writable");
     }
 
@@ -172,7 +171,7 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     }
 
     @Override
-    public boolean addAll(final Collection<? extends F> clctn) {
+    public boolean addAll(final Collection<? extends Feature> clctn) {
         throw new FeatureStoreRuntimeException("Not writable");
     }
 

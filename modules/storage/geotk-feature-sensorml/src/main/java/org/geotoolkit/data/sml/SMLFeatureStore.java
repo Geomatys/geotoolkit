@@ -308,7 +308,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader<FeatureType, Feature> getFeatureReader(final Query query) throws DataStoreException {
+    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName()); //raise an error if type does not exist.
 
         try {
@@ -418,7 +418,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
     // Feature Reader //////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    private class SMLFeatureReader implements FeatureReader<FeatureType, Feature>{
+    private class SMLFeatureReader implements FeatureReader{
 
         private final FeatureType type;
         private Feature current = null;

@@ -18,7 +18,6 @@
 package org.geotoolkit.data;
 
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 
 /**
@@ -26,11 +25,11 @@ import org.geotoolkit.feature.type.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractFeatureWriterAppend<T extends FeatureType, F extends Feature> implements FeatureWriter<T,F>{
+public abstract class AbstractFeatureWriterAppend implements FeatureWriter{
 
-    protected final T type;
+    protected final FeatureType type;
 
-    public AbstractFeatureWriterAppend(final T type){
+    public AbstractFeatureWriterAppend(final FeatureType type){
         ensureNonNull("type", type);
         this.type = type;
     }
@@ -39,7 +38,7 @@ public abstract class AbstractFeatureWriterAppend<T extends FeatureType, F exten
      * {@inheritDoc }
      */
     @Override
-    public T getFeatureType() {
+    public FeatureType getFeatureType() {
         return type;
     }
 

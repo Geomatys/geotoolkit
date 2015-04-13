@@ -383,7 +383,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
         final ShapefileAttributeReader attReader = getAttributesReader(true,true,null);
         final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName.getLocalPart());
-        FeatureReader<FeatureType, Feature> featureReader;
+        FeatureReader featureReader;
         try {
             featureReader = ShapefileFeatureReader.create(attReader,idReader, schema, hints);
         } catch (Exception e) {

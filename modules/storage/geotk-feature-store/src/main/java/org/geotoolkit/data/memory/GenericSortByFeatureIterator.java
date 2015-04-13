@@ -45,12 +45,11 @@ import org.opengis.filter.sort.SortBy;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
-        implements FeatureIterator<F> {
+public class GenericSortByFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
     private final Comparator<Feature> comparator;
-    protected List<F> ordered = null;
+    protected List<Feature> ordered = null;
     protected int index = 0;
 
     /**
@@ -67,10 +66,10 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
     private synchronized void sort() throws FeatureStoreRuntimeException{
         if(ordered != null) return;
 
-        ordered = new ArrayList<F>();
+        ordered = new ArrayList<>();
 
         while(iterator.hasNext()){
-            ordered.add((F) FeatureUtilities.copy( iterator.next()));
+            ordered.add(FeatureUtilities.copy( iterator.next()));
         }
 
         Collections.sort(ordered,comparator);
@@ -80,10 +79,10 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public F next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         sort();
         try{
-            F c = ordered.get(index);
+            Feature c = ordered.get(index);
             index++;
             return c;
         }catch(IndexOutOfBoundsException ex){
@@ -133,15 +132,14 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericSortByFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericSortByFeatureIterator<F,R> implements FeatureReader<T,F>{
+    private static final class GenericSortByFeatureReader extends GenericSortByFeatureIterator<FeatureReader> implements FeatureReader{
 
-        private GenericSortByFeatureReader(final R reader,final SortBy[] orders){
+        private GenericSortByFeatureReader(final FeatureReader reader,final SortBy[] orders){
             super(reader,orders);
         }
 
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return iterator.getFeatureType();
         }
 
@@ -171,14 +169,14 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
     /**
      * Wrap a FeatureReader will a sort by order.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(final FeatureReader<T,F> reader, final SortBy[] orders){
+    public static FeatureReader wrap(final FeatureReader reader, final SortBy[] orders){
         return new GenericSortByFeatureReader(reader, orders);
     }
 
     /**
      * Wrap a FeatureIterator will a sort by order.
      */
-    public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final SortBy[] orders){
+    public static FeatureIterator wrap(final FeatureIterator reader, final SortBy[] orders){
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,orders);
         }else{

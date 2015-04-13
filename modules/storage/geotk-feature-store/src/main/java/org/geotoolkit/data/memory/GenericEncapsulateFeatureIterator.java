@@ -36,8 +36,7 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class GenericEncapsulateFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
-        implements FeatureIterator<F> {
+public abstract class GenericEncapsulateFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final PropertyDescriptor desc;
     protected final R iterator;
@@ -64,9 +63,9 @@ public abstract class GenericEncapsulateFeatureIterator<F extends Feature, R ext
      * {@inheritDoc }
      */
     @Override
-    public F next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         final Feature next = iterator.next();
-        return (F) FeatureUtilities.wrapProperty(next, desc);
+        return (Feature) FeatureUtilities.wrapProperty(next, desc);
     }
     
     /**
@@ -92,16 +91,15 @@ public abstract class GenericEncapsulateFeatureIterator<F extends Feature, R ext
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericEncapsulateFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericEncapsulateFeatureIterator<F,R> implements FeatureReader<T,F>{
+    private static final class GenericEncapsulateFeatureReader extends GenericEncapsulateFeatureIterator<FeatureReader> implements FeatureReader{
 
 
-        private GenericEncapsulateFeatureReader(final R reader, final PropertyDescriptor desc){
+        private GenericEncapsulateFeatureReader(final FeatureReader reader, final PropertyDescriptor desc){
             super(reader,desc);
         }
 
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return iterator.getFeatureType();
         }
         
@@ -140,8 +138,7 @@ public abstract class GenericEncapsulateFeatureIterator<F extends Feature, R ext
     /**
      * Wrap a FeatureReader with a PropertyDescriptor.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(
-            final FeatureReader<T,F> reader, final PropertyDescriptor desc, final Hints hints){
+    public static FeatureReader wrap(final FeatureReader reader, final PropertyDescriptor desc, final Hints hints){
         return new GenericEncapsulateFeatureReader(reader,desc);
     }
 

@@ -57,8 +57,8 @@ public class DifferenceProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList           = value(FEATURE_IN, inputParameters);
-        final FeatureCollection<Feature> inputFeatureClippingList   = value(FEATURE_DIFF, inputParameters);
+        final FeatureCollection inputFeatureList           = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureClippingList   = value(FEATURE_DIFF, inputParameters);
 
         final FeatureCollection resultFeatureList = new DifferenceFeatureCollection(inputFeatureList, inputFeatureClippingList);
 
@@ -75,7 +75,7 @@ public class DifferenceProcess extends AbstractProcess {
      * @throws TransformException
      * @throws FactoryException
      */
-    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection<Feature> featureClippingList)
+    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection featureClippingList)
             throws MismatchedDimensionException, TransformException, FactoryException {
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
@@ -91,7 +91,7 @@ public class DifferenceProcess extends AbstractProcess {
                 //loop and test intersection between each geometry of each clipping feature from
                 //clipping FeatureCollection
                 Geometry resultGeometry = (Geometry) property.getValue();
-                final FeatureIterator<Feature> clipIterator = featureClippingList.iterator();
+                final FeatureIterator clipIterator = featureClippingList.iterator();
                 try {
                     while (clipIterator.hasNext()) {
                         final Feature clipFeature = clipIterator.next();

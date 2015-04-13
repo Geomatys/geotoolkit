@@ -30,7 +30,7 @@ import org.geotoolkit.feature.type.FeatureType;
 public class SpatialJoinFeatureCollection extends WrapFeatureCollection {
 
     private final FeatureType newFeatureType;
-    private final FeatureCollection<Feature> sourceFC;
+    private final FeatureCollection sourceFC;
     private final boolean method;
 
     /**
@@ -39,8 +39,8 @@ public class SpatialJoinFeatureCollection extends WrapFeatureCollection {
      * @param targetFC the target FeatureCollection
      * @param method boolean to set the used method
      */
-    public SpatialJoinFeatureCollection(final FeatureCollection<Feature> sourceFC,
-            final FeatureCollection<Feature> targetFC, final boolean method) {
+    public SpatialJoinFeatureCollection(final FeatureCollection sourceFC,
+            final FeatureCollection targetFC, final boolean method) {
 
         super(targetFC);
         this.sourceFC = sourceFC;

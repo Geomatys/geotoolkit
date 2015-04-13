@@ -411,8 +411,8 @@ public final class VectorProcessUtils extends Static {
      * @throws FactoryException
      * @throws TransformException
      */
-    public static FeatureCollection<Feature> intersectionFeatureToColl(final Feature inputFeature,
-            final FeatureCollection<Feature> featureList, String geometryName)
+    public static FeatureCollection intersectionFeatureToColl(final Feature inputFeature,
+            final FeatureCollection featureList, String geometryName)
             throws FactoryException, TransformException, ProcessException {
 
         //if the wanted feature geometry is null, we use the default geometry
@@ -424,7 +424,7 @@ public final class VectorProcessUtils extends Static {
         final FeatureType newType = VectorProcessUtils.oneGeometryFeatureType(inputFeature.getType(), geometryName);
 
         //name of the new collection "<inputFeatureID>-intersection"
-        final FeatureCollection<Feature> resultFeatureList =
+        final FeatureCollection resultFeatureList =
                 FeatureStoreUtilities.collection(inputFeature.getIdentifier().getID() + "-intersection", newType);
 
         Geometry inputGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
@@ -449,7 +449,7 @@ public final class VectorProcessUtils extends Static {
         final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //get all Features which intersects the intput Feature geometry
-        final FeatureCollection<Feature> featuresOut = (FeatureCollection<Feature>) proc.call().parameter(
+        final FeatureCollection featuresOut = (FeatureCollection) proc.call().parameter(
                 IntersectDescriptor.FEATURE_OUT.getName().getCode()).getValue();
 
         if (featuresOut.isEmpty()) {
@@ -458,7 +458,7 @@ public final class VectorProcessUtils extends Static {
         } else {
 
             //loop in resulting FeatureCollection
-            final FeatureIterator<Feature> ite = featuresOut.iterator();
+            final FeatureIterator ite = featuresOut.iterator();
             try {
                 while (ite.hasNext()) {
 

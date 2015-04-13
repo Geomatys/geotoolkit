@@ -36,9 +36,9 @@ import org.geotoolkit.feature.type.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIterator<F> {
+public class GenericWrapFeatureIterator implements FeatureIterator {
 
-    protected final Iterator<F> iterator;
+    protected final Iterator<? extends Feature> iterator;
 
     /**
      * Creates a new instance of GenericWrapFeatureIterator
@@ -46,7 +46,7 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
      * @param iterator FeatureReader to limit
      * @param maxFeatures maximum number of feature
      */
-    private GenericWrapFeatureIterator(final Iterator<F> iterator) {
+    private GenericWrapFeatureIterator(final Iterator<? extends Feature> iterator) {
         this.iterator = iterator;
     }
 
@@ -54,7 +54,7 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
      * {@inheritDoc }
      */
     @Override
-    public F next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         return iterator.next();
     }
 
@@ -108,18 +108,17 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericWrapFeatureReader<T extends FeatureType, F extends Feature>
-            extends GenericWrapFeatureIterator<F> implements FeatureReader<T,F>{
+    private static final class GenericWrapFeatureReader extends GenericWrapFeatureIterator implements FeatureReader{
 
-        private final T type;
+        private final FeatureType type;
 
-        private GenericWrapFeatureReader(final Iterator<F> ite, final T type){
+        private GenericWrapFeatureReader(final Iterator<? extends Feature> ite, final FeatureType type){
             super(ite);
             this.type = type;
         }
 
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return type;
         }
         
@@ -132,18 +131,17 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
      * @param <F> extends Feature
      * @param <R> extends FeatureWriter<T,F>
      */
-    private static final class GenericWrapFeatureWriter<T extends FeatureType, F extends Feature>
-            extends GenericWrapFeatureIterator<F> implements FeatureWriter<T,F>{
+    private static final class GenericWrapFeatureWriter extends GenericWrapFeatureIterator implements FeatureWriter{
 
-        private final T type;
+        private final FeatureType type;
 
-        private GenericWrapFeatureWriter(final Iterator<F> iterator, final T type){
+        private GenericWrapFeatureWriter(final Iterator<? extends Feature> iterator, final FeatureType type){
             super(iterator);
             this.type = type;
         }
 
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return type;
         }
 
@@ -156,21 +154,21 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
     /**
      * Wrap an Iterator as a FeatureIterator.
      */
-    public static <F extends Feature> FeatureIterator<F> wrapToIterator(final Iterator<F> reader){
+    public static FeatureIterator wrapToIterator(final Iterator<? extends Feature> reader){
         return new GenericWrapFeatureIterator(reader);
     }
 
     /**
      * Wrap an Iterator as a FeatureReader.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrapToReader(final Iterator<F> reader, final T type){
+    public static FeatureReader wrapToReader(final Iterator<? extends Feature> reader, final FeatureType type){
         return new GenericWrapFeatureReader(reader, type);
     }
 
     /**
      * Wrap an Iterator as a FeatureWriter.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrapToWriter(final Iterator<F> writer, final T type){
+    public static FeatureWriter wrapToWriter(final Iterator<? extends Feature> writer, final FeatureType type){
         return new GenericWrapFeatureWriter(writer, type);
     }
 

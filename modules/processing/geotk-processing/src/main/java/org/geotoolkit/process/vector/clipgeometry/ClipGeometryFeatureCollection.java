@@ -39,7 +39,7 @@ public class ClipGeometryFeatureCollection extends WrapFeatureCollection {
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
      */
-    public ClipGeometryFeatureCollection(final FeatureCollection<Feature> originalFC, final Geometry inputClipGeometry) {
+    public ClipGeometryFeatureCollection(final FeatureCollection originalFC, final Geometry inputClipGeometry) {
         super(originalFC);
         this.clipGeometry = inputClipGeometry;
         this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getFeatureType(), Geometry.class);

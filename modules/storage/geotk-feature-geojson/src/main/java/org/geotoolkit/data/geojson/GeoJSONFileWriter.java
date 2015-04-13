@@ -33,7 +33,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 /**
  * @author Quentin Boileau (Geomatys)
  */
-class GeoJSONFileWriter extends GeoJSONReader implements FeatureWriter<FeatureType, Feature> {
+class GeoJSONFileWriter extends GeoJSONReader implements FeatureWriter {
 
     private ReadWriteLock tmpLock;
     private final GeoJSONWriter writer;

@@ -193,7 +193,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      * file.
      */
     @Override
-    public FeatureReader<FeatureType, Feature> getFeatureReader(final Query query)
+    public FeatureReader getFeatureReader(final Query query)
             throws DataStoreException {
         final FeatureType originalSchema = getFeatureType();
         final Name              queryTypeName = query.getTypeName();
@@ -307,7 +307,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         return handleRemaining(reader, qb.buildQuery());
     }
 
-    protected FeatureReader<FeatureType, Feature> createFeatureReader(
+    protected FeatureReader createFeatureReader(
             final IndexedShapefileAttributeReader r, final SimpleFeatureType featureType, final Hints hints)
             throws SchemaException, IOException,DataStoreException {
 
@@ -600,7 +600,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      * @throws IOException If the typeName is not available or some other error occurs.
      */
     @Override
-    public FeatureWriter<FeatureType, Feature> getFeatureWriter(final Name typeName,
+    public FeatureWriter getFeatureWriter(final Name typeName,
             final Filter filter, final Hints hints) throws DataStoreException {
 
         //will raise an error if it does not exist
@@ -611,8 +611,8 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
                 schema.getAttributeDescriptors(),Filter.INCLUDE,true,null);
 
         try{
-            final FeatureReader<FeatureType, Feature> reader = createFeatureReader(attReader, schema, null);
-            FeatureWriter<FeatureType, Feature> writer = new IndexedShapefileFeatureWriter(
+            final FeatureReader reader = createFeatureReader(attReader, schema, null);
+            FeatureWriter writer = new IndexedShapefileFeatureWriter(
                     typeName.getLocalPart(), shpFiles, attReader, reader, this, dbfCharset);
             return handleRemaining(writer, filter);
         } catch (IOException ex) {

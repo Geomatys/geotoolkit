@@ -56,7 +56,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
      * @param intersList FeatureCollection
      * @param geometryName String
      */
-    public RegroupFeatureCollection(final FeatureCollection<Feature> originalFC, final String regroupAttribute,
+    public RegroupFeatureCollection(final FeatureCollection originalFC, final String regroupAttribute,
             final String geometryName) {
         super(originalFC);
         this.regroupAttribute = regroupAttribute;
@@ -89,13 +89,12 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
     private Feature modify2(final Object attributeValue) {
         try {
             if(attributeValue != null){
-                final FeatureCollection<Feature> fiteredFC = (FeatureCollection<Feature>) 
-                        super.getOriginalFeatureCollection().subCollection(filter(attributeValue));
+                final FeatureCollection fiteredFC = super.getOriginalFeatureCollection().subCollection(filter(attributeValue));
                 return RegroupProcess.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, fiteredFC);
             }else{
                 //In this case the request is Regroup.regroupFeature(null, null, newFeatureType, geometryName, originalFC);
                 return RegroupProcess.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, 
-                        (FeatureCollection<Feature>)super.getOriginalFeatureCollection());
+                        (FeatureCollection)super.getOriginalFeatureCollection());
             }
 
         } catch (FactoryException ex) {
@@ -114,14 +113,14 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
      * @return a Collection of Objects
      */
     private Collection<Object> getAttributeValues() {
-        return RegroupProcess.getAttributeValues(regroupAttribute, (FeatureCollection<Feature>) super.getOriginalFeatureCollection());
+        return RegroupProcess.getAttributeValues(regroupAttribute, super.getOriginalFeatureCollection());
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
+    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
         return new RegroupFeatureIterator(getOriginalFeatureCollection().iterator());
     }
 
@@ -141,9 +140,9 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
      * @author Quentin Boileau
      * @module pending
      */
-    private class RegroupFeatureIterator implements FeatureIterator<Feature> {
+    private class RegroupFeatureIterator implements FeatureIterator {
 
-        private final FeatureIterator<?> originalFI;
+        private final FeatureIterator originalFI;
         private Feature nextFeature;
         private final Collection<Object> attributeValues;
         private Object nextValue;
@@ -153,7 +152,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
          * Connect to the original FeatureIterator
          * @param originalFI FeatureIterator
          */
-        public RegroupFeatureIterator(final FeatureIterator<?> originalFI) {
+        public RegroupFeatureIterator(final FeatureIterator originalFI) {
             this.originalFI = originalFI;
 
             nextFeature = null;

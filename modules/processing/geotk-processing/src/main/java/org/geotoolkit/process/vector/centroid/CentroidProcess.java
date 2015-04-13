@@ -50,7 +50,7 @@ public class CentroidProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList = value(FEATURE_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = new CentroidFeatureCollection(inputFeatureList);
         

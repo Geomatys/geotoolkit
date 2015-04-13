@@ -63,7 +63,7 @@ public class ReprojectTest extends AbstractProcessTest {
     public void testReprojection() throws FactoryException, ProcessException, NoSuchIdentifierException {
         Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
         // Inputs
-        final FeatureCollection<?> featureList = buildFeatureList();
+        final FeatureCollection featureList = buildFeatureList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "reproject");
 
@@ -73,7 +73,7 @@ public class ReprojectTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //FeatureCollection out
-        final FeatureCollection<Feature> resultFC = (FeatureCollection<Feature>) proc.call().parameter("feature_out").getValue();
+        final FeatureCollection resultFC = (FeatureCollection) proc.call().parameter("feature_out").getValue();
 
         assertEquals(featureList.getID(), resultFC.getID());
         assertEquals(resultFC.size(), resultFC.size());
@@ -91,11 +91,11 @@ public class ReprojectTest extends AbstractProcessTest {
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
+    private static FeatureCollection buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;

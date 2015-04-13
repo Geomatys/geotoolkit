@@ -69,7 +69,7 @@ public class DouglasPeuckerProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
         final Double inputAccuracy                          = value(ACCURACY_IN, inputParameters);
         final Boolean inputBehavior                               = value(DEL_SMALL_GEO_IN, inputParameters) != null ? 
                                                                     value(DEL_SMALL_GEO_IN, inputParameters) : 

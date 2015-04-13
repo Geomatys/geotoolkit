@@ -16,7 +16,7 @@ import java.io.OutputStream;
 /**
  * @author Quentin Boileau (Geomatys)
  */
-public class GeoJSONStreamWriter implements FeatureWriter<FeatureType, Feature> {
+public class GeoJSONStreamWriter implements FeatureWriter {
 
     private final GeoJSONWriter writer;
     private final FeatureType featureType;

@@ -43,18 +43,15 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.memory.GenericMappingFeatureCollection;
-import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.BoundingBox;
@@ -251,24 +248,23 @@ public class FeatureStoreUtilities {
         return new FeatureCollectionSequence(id, collections);
     }
 
-    public static <F extends Feature> FeatureIterator<F> sequence(final FeatureIterator<F> ... iterators){
-        return new FeatureIteratorSequence<F>(iterators);
+    public static FeatureIterator sequence(final FeatureIterator ... iterators){
+        return new FeatureIteratorSequence(iterators);
     }
 
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> sequence(final FeatureReader<T,F> ... readers){
-        return new FeatureReaderSequence<T, F>(readers);
+    public static FeatureReader sequence(final FeatureReader ... readers){
+        return new FeatureReaderSequence(readers);
     }
 
     /**
      * Combine several FeatureIterator in one and merge them using the sort by orders.
      * All given iterator must already be sorted.
      *
-     * @param <F> extends Feature
      * @param sorts : sorting orders
      * @param iterators : iterators to combine
      * @return FeatureIterator combining all others
      */
-    public static <F extends Feature> FeatureIterator<F> combine(final SortBy[] sorts, final FeatureIterator<F> ... iterators){
+    public static FeatureIterator combine(final SortBy[] sorts, final FeatureIterator ... iterators){
         return combine(new SortByComparator(sorts), iterators);
     }
 
@@ -276,19 +272,18 @@ public class FeatureStoreUtilities {
      * Combine several FeatureIterator in one and merge them using the comparator given.
      * All given iterators must already be sorted.
      *
-     * @param <F> extends Feature
      * @param comparator : comparator
      * @param iterators : iterators to combine
      * @return FeatureIterator combining all others
      */
-    public static <F extends Feature> FeatureIterator<F> combine(final Comparator<? super F> comparator, final FeatureIterator<F> ... iterators){
+    public static FeatureIterator combine(final Comparator<Feature> comparator, final FeatureIterator ... iterators){
         if(iterators == null || iterators.length < 2 || (iterators.length == 1 && iterators[0] == null)){
             throw new IllegalArgumentException("There must be at least 2 non null iterators.");
         }
 
         ensureNonNull("comparator", comparator);
 
-        FeatureIterator<F> ite = iterators[0];
+        FeatureIterator ite = iterators[0];
 
         for(int i=1; i<iterators.length; i++){
             ite = new FeatureIteratorCombine(comparator, ite, iterators[i]);
@@ -517,13 +512,13 @@ public class FeatureStoreUtilities {
      * @author Johann Sorel (Geomatys)
      * @module pending
      */
-    private static class FeatureIteratorSequence<F extends Feature> implements FeatureIterator<F> {
+    private static class FeatureIteratorSequence implements FeatureIterator {
 
-        private final FeatureIterator<F>[] wrapped;
+        private final FeatureIterator[] wrapped;
         private int currentIndex = 0;
-        private FeatureIterator<F> active = null;
+        private FeatureIterator active = null;
 
-        private FeatureIteratorSequence(final FeatureIterator<F>[] wrapped) {
+        private FeatureIteratorSequence(final FeatureIterator[] wrapped) {
             if(wrapped == null || wrapped.length == 0 || wrapped[0] == null){
                 throw new IllegalArgumentException("Iterators can not be empty or null");
             }
@@ -532,7 +527,7 @@ public class FeatureStoreUtilities {
         }
 
         @Override
-        public F next() {
+        public Feature next() {
             if (active == null) {
                 throw new NoSuchElementException("No more elements");
             } else {
@@ -593,13 +588,13 @@ public class FeatureStoreUtilities {
      * @author Johann Sorel (Geomatys)
      * @module pending
      */
-    private static class FeatureReaderSequence<T extends FeatureType, F extends Feature> implements FeatureReader<T,F> {
+    private static class FeatureReaderSequence implements FeatureReader {
 
-        private final FeatureReader<T,F>[] wrapped;
+        private final FeatureReader[] wrapped;
         private int currentIndex = 0;
-        private FeatureReader<T,F> active = null;
+        private FeatureReader active = null;
 
-        private FeatureReaderSequence(final FeatureReader<T,F>[] wrapped) {
+        private FeatureReaderSequence(final FeatureReader[] wrapped) {
             if(wrapped == null || wrapped.length == 0 || wrapped[0] == null){
                 throw new IllegalArgumentException("Readers can not be empty or null");
             }
@@ -608,7 +603,7 @@ public class FeatureStoreUtilities {
         }
 
         @Override
-        public F next() {
+        public Feature next() {
             if (active == null) {
                 throw new NoSuchElementException("No more elements");
             } else {
@@ -660,7 +655,7 @@ public class FeatureStoreUtilities {
         }
 
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return wrapped[0].getFeatureType();
         }
 
@@ -673,17 +668,17 @@ public class FeatureStoreUtilities {
      *
      * @param <F> extends Feature
      */
-    private static class FeatureIteratorCombine<F extends Feature> implements FeatureIterator<F>{
+    private static class FeatureIteratorCombine implements FeatureIterator{
 
-        private final FeatureIterator<F> ite1;
-        private final FeatureIterator<F> ite2;
+        private final FeatureIterator ite1;
+        private final FeatureIterator ite2;
         private final Comparator<? super Feature> comparator;
-        private FeatureIterator<F> active = null;
-        private F ite1next = null;
-        private F ite2next = null;
-        private F next = null;
+        private FeatureIterator active = null;
+        private Feature ite1next = null;
+        private Feature ite2next = null;
+        private Feature next = null;
 
-        private FeatureIteratorCombine(final Comparator<? super Feature> comparator, final FeatureIterator<F> ite1, final FeatureIterator<F> ite2){
+        private FeatureIteratorCombine(final Comparator<? super Feature> comparator, final FeatureIterator ite1, final FeatureIterator ite2){
             ensureNonNull("iterator1", ite1);
             ensureNonNull("iterator2", ite2);
             if(comparator == null ){
@@ -696,7 +691,7 @@ public class FeatureStoreUtilities {
         }
 
         @Override
-        public F next() {
+        public Feature next() {
             if(next == null){
                 hasNext();
             }
@@ -704,7 +699,7 @@ public class FeatureStoreUtilities {
             if(next == null){
                 throw new NoSuchElementException("No more elements.");
             }else{
-                F candidate = next;
+                Feature candidate = next;
                 next = null;
                 return candidate;
             }

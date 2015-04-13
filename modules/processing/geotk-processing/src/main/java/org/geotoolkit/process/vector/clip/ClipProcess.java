@@ -63,8 +63,8 @@ public class ClipProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList           = value(FEATURE_IN, inputParameters);
-        final FeatureCollection<Feature> inputFeatureClippingList   = value(FEATURE_CLIP, inputParameters);
+        final FeatureCollection inputFeatureList           = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureClippingList   = value(FEATURE_CLIP, inputParameters);
 
         final FeatureCollection resultFeatureList = new ClipFeatureCollection(inputFeatureList,inputFeatureClippingList);
 
@@ -81,7 +81,7 @@ public class ClipProcess extends AbstractProcess {
      * @throws MismatchedDimensionException
      * @throws TransformException
      */
-    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection<Feature> featureClippingList)
+    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection featureClippingList)
             throws FactoryException, MismatchedDimensionException, TransformException {
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
@@ -98,7 +98,7 @@ public class ClipProcess extends AbstractProcess {
                 //loop and test intersection between each geometry of each clipping feature from
                 //clipping FeatureCollection
                 final List<Geometry> bufferInterGeometries = new ArrayList<Geometry>();
-                final FeatureIterator<Feature> clipIterator = featureClippingList.iterator();
+                final FeatureIterator clipIterator = featureClippingList.iterator();
                 try{
                     while(clipIterator.hasNext()) {
                         final Feature clipFeature = clipIterator.next();

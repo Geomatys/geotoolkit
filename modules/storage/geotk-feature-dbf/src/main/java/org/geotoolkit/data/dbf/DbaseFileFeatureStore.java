@@ -264,7 +264,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
         return new File[] { this.file };
     }
 
-    private class DBFFeatureReader implements FeatureReader<FeatureType, Feature>{
+    private class DBFFeatureReader implements FeatureReader{
 
         private final RandomAccessFile raf;
         protected final DbaseFileReader reader;

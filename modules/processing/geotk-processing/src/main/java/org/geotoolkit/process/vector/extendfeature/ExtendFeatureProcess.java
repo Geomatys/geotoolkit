@@ -20,9 +20,6 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.GenericExtendFeatureIterator;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.vector.VectorDescriptor;
-
-import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.vector.extendfeature.ExtendFeatureDescriptor.*;
@@ -47,7 +44,7 @@ public class ExtendFeatureProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList           = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList           = value(FEATURE_IN, inputParameters);
         final GenericExtendFeatureIterator.FeatureExtend extension  = value(EXTEND_IN, inputParameters);
         final Hints hints                                           = value(HINTS_IN, inputParameters);
 

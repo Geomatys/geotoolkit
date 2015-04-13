@@ -104,7 +104,7 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
      * @return Iterator
      */
     @Override
-    public FeatureIterator<Feature> iterator() {
+    public FeatureIterator iterator() {
         return new RasterFeatureIterator();
     }
 
@@ -127,7 +127,7 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
      * @author Quentin Boileau
      * @module pending
      */
-    protected class RasterFeatureIterator implements FeatureIterator<Feature> {
+    protected class RasterFeatureIterator implements FeatureIterator {
 
         private int iter;
 

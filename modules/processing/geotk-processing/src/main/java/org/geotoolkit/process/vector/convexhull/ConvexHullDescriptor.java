@@ -54,7 +54,7 @@ public final class ConvexHullDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Feature Collection
      */
-    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_IN =
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_IN =
             new DefaultParameterDescriptor("feature_in", "Inpute Feature", FeatureCollection.class, null, true);
     /**
      * Optional - GeometryAttribute name used to compute convex hull

@@ -20,14 +20,14 @@ import org.geotoolkit.util.collection.CloseableIterator;
 import org.geotoolkit.feature.Feature;
 
 /**
- * Extent the Standard Iterator, limit to Feature class
+ * Extent the Standard Iterator, limited to Feature class
  * and add a close method from interface Closeable that is needed by the feature store
  * to release potential resources.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface FeatureIterator<F extends Feature> extends CloseableIterator<F>{
+public interface FeatureIterator extends CloseableIterator<Feature>{
 
     /**
      * Reduce possibilities to Feature only.
@@ -35,7 +35,7 @@ public interface FeatureIterator<F extends Feature> extends CloseableIterator<F>
      * @throws FeatureStoreRuntimeException if error occured when reading.
      */
     @Override
-    F next() throws FeatureStoreRuntimeException;
+    Feature next() throws FeatureStoreRuntimeException;
     
     /**
      * {@inheritDoc }

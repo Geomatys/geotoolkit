@@ -39,7 +39,7 @@ public class DifferenceGeometryFeatureCollection extends WrapFeatureCollection {
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
      */
-    public DifferenceGeometryFeatureCollection(final FeatureCollection<Feature> originalFC, final Geometry diffGeometry) {
+    public DifferenceGeometryFeatureCollection(final FeatureCollection originalFC, final Geometry diffGeometry) {
         super(originalFC);
         this.diffGeometry = diffGeometry;
         this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getFeatureType(), Geometry.class);

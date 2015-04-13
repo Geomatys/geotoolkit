@@ -142,7 +142,7 @@ public final class MapBuilder {
      * @param collection layer data collection
      * @return FeatureMapLayer
      */
-    public static FeatureMapLayer createFeatureLayer(final FeatureCollection<? extends Feature> collection){
+    public static FeatureMapLayer createFeatureLayer(final FeatureCollection collection){
         return new DefaultFeatureMapLayer(collection, RandomStyleBuilder.createDefaultVectorStyle(collection.getFeatureType()));
     }
     
@@ -152,7 +152,7 @@ public final class MapBuilder {
      * @param style layer style
      * @return FeatureMapLayer
      */
-    public static FeatureMapLayer createFeatureLayer(final FeatureCollection<? extends Feature> collection, final MutableStyle style){
+    public static FeatureMapLayer createFeatureLayer(final FeatureCollection collection, final MutableStyle style){
         return new DefaultFeatureMapLayer(collection, style);
     }
 

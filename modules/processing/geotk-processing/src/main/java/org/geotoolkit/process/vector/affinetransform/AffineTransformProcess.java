@@ -44,10 +44,10 @@ public class AffineTransformProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
         final java.awt.geom.AffineTransform transform       = value(TRANSFORM_IN, inputParameters);
 
-        final FeatureCollection<Feature> resultFeatureList = new AffineTransformFeatureCollection(inputFeatureList, transform);
+        final FeatureCollection resultFeatureList = new AffineTransformFeatureCollection(inputFeatureList, transform);
         
         getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }

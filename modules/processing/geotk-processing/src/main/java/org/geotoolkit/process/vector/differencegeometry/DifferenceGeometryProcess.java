@@ -51,7 +51,7 @@ public class DifferenceGeometryProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
         final Geometry inputDifferenceGeometry              = value(DIFF_GEOMETRY_IN, inputParameters);
 
         final FeatureCollection resultFeatureList =

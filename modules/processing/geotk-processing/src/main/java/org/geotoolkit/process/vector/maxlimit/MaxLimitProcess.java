@@ -45,7 +45,7 @@ public class MaxLimitProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
         final int max                                       = value(MAX_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = GenericMaxFeatureIterator.wrap(inputFeatureList, max);

@@ -43,7 +43,7 @@ import org.opengis.filter.identity.FeatureId;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JDBCFeatureReader implements FeatureReader<FeatureType, Feature> {
+public class JDBCFeatureReader implements FeatureReader {
     
     protected final FeatureType type;
     protected final DefaultJDBCFeatureStore store;

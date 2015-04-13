@@ -69,7 +69,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class ShapefileFeatureReader implements FeatureReader<FeatureType, Feature> {
+public abstract class ShapefileFeatureReader implements FeatureReader {
 
     /**
      * Stores the creation stack trace if assertion are enable.

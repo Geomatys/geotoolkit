@@ -74,7 +74,7 @@ public class NearestProcess extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         try {
-            final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+            final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
             final Geometry interGeom                            = value(GEOMETRY_IN, inputParameters);
 
             final FeatureCollection resultFeatureList =
@@ -97,7 +97,7 @@ public class NearestProcess extends AbstractProcess {
      * @param geom
      * @return nearest query filter
      */
-    private Query nearestQuery(final FeatureCollection<Feature> original, final Geometry geom)
+    private Query nearestQuery(final FeatureCollection original, final Geometry geom)
             throws FactoryException, MismatchedDimensionException, TransformException {
 
         CoordinateReferenceSystem geomCrs = JTS.findCoordinateReferenceSystem(geom);
@@ -109,7 +109,7 @@ public class NearestProcess extends AbstractProcess {
         double dist = Double.POSITIVE_INFINITY;
         final Collection<Identifier> listID = new ArrayList<Identifier>();
 
-        final FeatureIterator<Feature> iter = original.iterator(null);
+        final FeatureIterator iter = original.iterator(null);
         try {
             while (iter.hasNext()) {
                 final Feature feature = iter.next();

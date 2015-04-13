@@ -39,7 +39,7 @@ import org.opengis.filter.Filter;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultFeatureStoreJoinFeatureCollection extends AbstractFeatureCollection<Feature>{
+public class DefaultFeatureStoreJoinFeatureCollection extends AbstractFeatureCollection{
 
     private final Session session;
     private final Query query;
@@ -89,14 +89,14 @@ public class DefaultFeatureStoreJoinFeatureCollection extends AbstractFeatureCol
     }
 
     @Override
-    public FeatureCollection<Feature> subCollection(final Query query) throws DataStoreException {
+    public FeatureCollection subCollection(final Query query) throws DataStoreException {
         final Query combine = QueryUtilities.subQuery(this.query, query);
         //the result should be an absolute query too.
         return QueryUtilities.evaluate("sub-"+getID(), combine);
     }
 
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
+    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
         try {
             return session.getFeatureIterator(query);
         } catch (DataStoreException ex) {

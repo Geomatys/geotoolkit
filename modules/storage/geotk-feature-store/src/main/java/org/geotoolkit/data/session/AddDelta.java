@@ -54,7 +54,7 @@ import org.opengis.geometry.Envelope;
  */
 public class AddDelta extends AbstractDelta{
 
-    protected final FeatureCollection<Feature> features;
+    protected final FeatureCollection features;
 
     /**
      *

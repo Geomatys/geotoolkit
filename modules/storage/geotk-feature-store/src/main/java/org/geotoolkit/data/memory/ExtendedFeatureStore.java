@@ -57,9 +57,9 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public final class ExtendedFeatureStore extends AbstractFeatureStore{
 
-    private final Map<Name,Query> queries = new ConcurrentHashMap<Name, Query>();
+    private final Map<Name,Query> queries = new ConcurrentHashMap<>();
     
-    private final Map<Name,FeatureType> featureTypes = new ConcurrentHashMap<Name, FeatureType>();
+    private final Map<Name,FeatureType> featureTypes = new ConcurrentHashMap<>();
     
     private final FeatureStore wrapped;
 

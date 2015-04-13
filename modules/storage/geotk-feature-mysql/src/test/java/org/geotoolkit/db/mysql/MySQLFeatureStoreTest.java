@@ -463,7 +463,7 @@ public class MySQLFeatureStoreTest {
         store.addFeatures(resType.getName(), Collections.singleton(feature));
         
         Session session = store.createSession(false);
-        FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
         assertEquals(1, col.size());
         
         FeatureIterator ite = col.iterator();
@@ -584,7 +584,7 @@ public class MySQLFeatureStoreTest {
         store.addFeatures(resType.getName(), Collections.singleton(feature));
         
         final Session session = store.createSession(false);
-        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
         assertEquals(1, col.size());
         
         //Postgis allow NULL in arrays, so returned array are not primitive types
@@ -660,7 +660,7 @@ public class MySQLFeatureStoreTest {
         store.addFeatures(resType.getName(), Collections.singleton(voyage));
         
         final Session session = store.createSession(false);
-        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
         assertEquals(1, col.size());
         
         final FeatureIterator ite = col.iterator();
@@ -743,7 +743,7 @@ public class MySQLFeatureStoreTest {
         store.addFeatures(soundingType.getName(), Collections.singleton(sounding));
         
         final Session session = store.createSession(false);
-        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(soundingType.getName()));
+        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(soundingType.getName()));
         assertEquals(1, col.size());
         
         final FeatureIterator ite = store.getFeatureReader(QueryBuilder.all(soundingType.getName()));
@@ -846,7 +846,7 @@ public class MySQLFeatureStoreTest {
         store.addFeatures(recordType.getName(), Collections.singleton(record));
         
         final Session session = store.createSession(false);
-        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(recordType.getName()));
+        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(recordType.getName()));
         assertEquals(1, col.size());
         
         final FeatureIterator ite = store.getFeatureReader(QueryBuilder.all(recordType.getName()));

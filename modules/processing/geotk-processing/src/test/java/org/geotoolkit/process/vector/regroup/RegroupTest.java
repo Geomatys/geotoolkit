@@ -65,7 +65,7 @@ public class RegroupTest extends AbstractProcessTest {
     public void testRegroupDefaultGeometry() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection<?> featureList = buildFeatureList();
+        final FeatureCollection featureList = buildFeatureList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "regroup");
 
@@ -75,10 +75,10 @@ public class RegroupTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
+        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
-        final FeatureCollection<?> featureListResult = buildResultList1();
+        final FeatureCollection featureListResult = buildResultList1();
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
         assertEquals(featureListOut.getID(), featureListResult.getID());
         assertEquals(featureListOut.size(), featureListResult.size());
@@ -89,7 +89,7 @@ public class RegroupTest extends AbstractProcessTest {
     public void testRegroupGeometrySelected() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection<?> featureList = buildFeatureList();
+        final FeatureCollection featureList = buildFeatureList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "regroup");
 
@@ -100,10 +100,10 @@ public class RegroupTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
+        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
-        final FeatureCollection<?> featureListResult = buildResultList2();
+        final FeatureCollection featureListResult = buildResultList2();
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
         assertEquals(featureListOut.getID(), featureListResult.getID());
         assertEquals(featureListOut.size(), featureListResult.size());
@@ -147,11 +147,11 @@ public class RegroupTest extends AbstractProcessTest {
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
+    private static FeatureCollection buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;
@@ -289,11 +289,11 @@ public class RegroupTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultList1() throws FactoryException {
+    private static FeatureCollection buildResultList1() throws FactoryException {
 
         type = createSimpleResultType();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;
@@ -376,11 +376,11 @@ public class RegroupTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultList2() throws FactoryException {
+    private static FeatureCollection buildResultList2() throws FactoryException {
 
         type = createSimpleResultType2();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;

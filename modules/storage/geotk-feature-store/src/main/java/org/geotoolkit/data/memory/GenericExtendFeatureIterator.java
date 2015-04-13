@@ -47,8 +47,7 @@ import org.opengis.filter.identity.FeatureId;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
-        implements FeatureIterator<F> {
+public class GenericExtendFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected static final FeatureFactory FF = FeatureFactory.LENIENT;
 
@@ -85,14 +84,14 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
     }
 
     @Override
-    public F next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         final Feature next = iterator.next();
-        final Collection<Property> properties = new ArrayList<Property>(next.getProperties());
+        final Collection<Property> properties = new ArrayList<>(next.getProperties());
         final AttributeDescriptor desc = new DefaultAttributeDescriptor( mask, mask.getName(), 1, 1, true, null);
         final NoCopyFeature feature = new NoCopyFeature(desc, properties, next.getIdentifier());
         extend.extendProperties(feature, properties);
         feature.getUserData().putAll(next.getUserData());
-        return (F) feature;
+        return feature;
     }
 
     @Override
@@ -110,16 +109,15 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
         return sb.toString();
     }
 
-    private static final class GenericSeparateExtendFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericExtendFeatureIterator<F,R> implements FeatureReader<T,F>{
+    private static final class GenericSeparateExtendFeatureReader extends GenericExtendFeatureIterator<FeatureReader> implements FeatureReader{
 
-        private GenericSeparateExtendFeatureReader(final R reader, final T mask, final FeatureExtend extend){
+        private GenericSeparateExtendFeatureReader(final FeatureReader reader, final FeatureType mask, final FeatureExtend extend){
             super(reader, mask, extend);
         }
 
         @Override
-        public T getFeatureType() {
-            return (T) mask;
+        public FeatureType getFeatureType() {
+            return mask;
         }
 
     }
@@ -127,8 +125,7 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
     /**
      * Wrap a FeatureReader with a new featuretype.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(
-            final FeatureReader<T,F> reader, final FeatureExtend extend, final Hints hints){
+    public static FeatureReader wrap(final FeatureReader reader, final FeatureExtend extend, final Hints hints){
 
         final FeatureType mask = extend.getExtendedType(reader.getFeatureType());
 

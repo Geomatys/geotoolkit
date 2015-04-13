@@ -33,7 +33,7 @@ import org.geotoolkit.feature.type.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIterator<F> {
+public class GenericEmptyFeatureIterator implements FeatureIterator {
 
     /**
      * Creates a new instance of GenericEmptyFeatureIterator
@@ -45,7 +45,7 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public F next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         throw new NoSuchElementException("No such Feature exists");
     }
 
@@ -76,17 +76,16 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericEmptyFeatureReader<T extends FeatureType, F extends Feature>
-            extends GenericEmptyFeatureIterator<F> implements FeatureReader<T,F>{
+    private static final class GenericEmptyFeatureReader extends GenericEmptyFeatureIterator implements FeatureReader{
 
-        private final T type;
+        private final FeatureType type;
 
-        private GenericEmptyFeatureReader(final T type){
+        private GenericEmptyFeatureReader(final FeatureType type){
             this.type = type;
         }
         
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return type;
         }
 
@@ -99,17 +98,16 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
      * @param <F> extends Feature
      * @param <R> extends FeatureWriter<T,F>
      */
-    private static final class GenericEmptyFeatureWriter<T extends FeatureType, F extends Feature>
-            extends GenericEmptyFeatureIterator<F> implements FeatureWriter<T,F>{
+    private static final class GenericEmptyFeatureWriter extends GenericEmptyFeatureIterator implements FeatureWriter{
 
-        private final T type;
+        private final FeatureType type;
 
-        private GenericEmptyFeatureWriter(final T type){
+        private GenericEmptyFeatureWriter(final FeatureType type){
             this.type = type;
         }
 
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return type;
         }
 
@@ -141,24 +139,23 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
      * Create an empty FeatureReader of the given type.
      * @param type FeatureType can be null
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> createReader(final T type){
-        return new GenericEmptyFeatureReader<T,F>(type);
+    public static FeatureReader createReader(final FeatureType type){
+        return new GenericEmptyFeatureReader(type);
     }
 
     /**
      * Create an empty FeatureWriter of the given type.
      * @param type FeatureType can be null
      */
-    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> createWriter(final T type){
-        return new GenericEmptyFeatureWriter<T,F>(type);
+    public static FeatureWriter createWriter(final FeatureType type){
+        return new GenericEmptyFeatureWriter(type);
     }
 
     /**
      * Create an empty FeatureIterator of the given type.
-     * @param type FeatureType can be null
      */
-    public static <F extends Feature> FeatureIterator<F> createIterator(){
-        return new GenericEmptyFeatureIterator<F>();
+    public static FeatureIterator createIterator(){
+        return new GenericEmptyFeatureIterator();
     }
 
     /**

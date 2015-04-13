@@ -62,7 +62,7 @@ public class ConvexHullTest extends AbstractProcessTest {
     public void testConvexHull() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection<?> featureList = buildFeatureList();
+        final FeatureCollection featureList = buildFeatureList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "convexhull");
 
@@ -108,11 +108,11 @@ public class ConvexHullTest extends AbstractProcessTest {
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
+    private static FeatureCollection buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;

@@ -53,7 +53,7 @@ public final class SpatialJoinDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Target FeatureCollection
      */
-    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_TARGET =
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_TARGET =
             new DefaultParameterDescriptor("feature_target", "Target Features", FeatureCollection.class, null, true);
 
      /**

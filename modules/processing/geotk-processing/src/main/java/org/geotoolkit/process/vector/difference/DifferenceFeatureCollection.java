@@ -36,14 +36,14 @@ import org.opengis.util.FactoryException;
 public class DifferenceFeatureCollection extends WrapFeatureCollection {
 
     private final FeatureType newFeatureType;
-    private final FeatureCollection<Feature> clippingList;
+    private final FeatureCollection clippingList;
 
     /**
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
      * @param clippingList 
      */
-    public DifferenceFeatureCollection(final FeatureCollection<Feature> originalFC, final FeatureCollection<Feature> clippingList) {
+    public DifferenceFeatureCollection(final FeatureCollection originalFC, final FeatureCollection clippingList) {
         super(originalFC);
         this.clippingList = clippingList;
         this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getFeatureType(), Geometry.class);

@@ -55,7 +55,7 @@ public class ConvexHullProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
         final String geometryName                           = value(GEOMETRY_NAME, inputParameters);
 
         final Geometry hull = computeConvexHull(inputFeatureList, geometryName);
@@ -69,12 +69,12 @@ public class ConvexHullProcess extends AbstractProcess {
      * @param geometryName
      * @return the convex hull geometry
      */
-    private Geometry computeConvexHull(final FeatureCollection<Feature> inputFeatureList, String geometryName) {
+    private Geometry computeConvexHull(final FeatureCollection inputFeatureList, String geometryName) {
 
 
         Geometry convexHull = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem crs = null;
-        final FeatureIterator<Feature> iter = inputFeatureList.iterator();
+        final FeatureIterator iter = inputFeatureList.iterator();
         try {
             while (iter.hasNext()) {
                 final Feature feature = iter.next();

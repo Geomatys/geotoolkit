@@ -75,7 +75,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
     public void testDouglasPeucker() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection<?> featureList = buildFeatureCollectionInput1();
+        final FeatureCollection featureList = buildFeatureCollectionInput1();
         Unit<Length> unit = SI.METRE;
 
         // Process
@@ -89,16 +89,16 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
+        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
         //Expected Features out
-        final FeatureCollection<?> featureListResult = buildFeatureCollectionResult();
+        final FeatureCollection featureListResult = buildFeatureCollectionResult();
 
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
         assertEquals(featureListOut.getID(), featureListResult.getID());
         assertEquals(featureListOut.size(), featureListResult.size());
 
-        FeatureIterator<?> iteratorOut = featureListOut.iterator();
-        FeatureIterator<?> iteratorResult = featureListResult.iterator();
+        FeatureIterator iteratorOut = featureListOut.iterator();
+        FeatureIterator iteratorResult = featureListResult.iterator();
 
         double precision = 0.0001;
         while (iteratorOut.hasNext() && iteratorResult.hasNext()) {
@@ -138,7 +138,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
     public void testDouglasPeuckerWithDelete() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection<?> featureList = buildFeatureCollectionInput2();
+        final FeatureCollection featureList = buildFeatureCollectionInput2();
         Unit<Length> unit = SI.METRE;
 
         // Process
@@ -152,7 +152,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
+        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
 
         assertTrue(featureListOut.isEmpty());
 
@@ -165,7 +165,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
     public void testDouglasPeuckerOptionalParam() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection<?> featureList = buildFeatureCollectionInput2();
+        final FeatureCollection featureList = buildFeatureCollectionInput2();
         Unit<Length> unit = SI.METRE;
 
         // Process
@@ -177,7 +177,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
+        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
 
         assertTrue(!featureListOut.isEmpty());
 
@@ -192,7 +192,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
     public void testDouglasPeuckerWithoutDelete() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection<?> featureList = buildFeatureCollectionInput2();
+        final FeatureCollection featureList = buildFeatureCollectionInput2();
         Unit<Length> unit = SI.METRE;
 
         // Process
@@ -206,16 +206,16 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
+        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
         //Expected Features out
-        final FeatureCollection<?> featureListResult = buildFeatureCollectionResult2();
+        final FeatureCollection featureListResult = buildFeatureCollectionResult2();
 
         assertEquals(featureListResult.getFeatureType(), featureListOut.getFeatureType());
         assertEquals(featureListResult.getID(), featureListOut.getID());
         assertEquals(featureListResult.size(), featureListOut.size());
 
-        FeatureIterator<?> iteratorOut = featureListOut.iterator();
-        FeatureIterator<?> iteratorResult = featureListResult.iterator();
+        FeatureIterator iteratorOut = featureListOut.iterator();
+        FeatureIterator iteratorResult = featureListResult.iterator();
 
         while (iteratorOut.hasNext() && iteratorResult.hasNext()) {
             Feature featureOut = iteratorOut.next();
@@ -241,10 +241,10 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         return sft;
     }
 
-    private static FeatureCollection<Feature> buildFeatureCollectionInput1() throws FactoryException {
+    private static FeatureCollection buildFeatureCollectionInput1() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -295,10 +295,10 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection<Feature> buildFeatureCollectionInput2() throws FactoryException {
+    private static FeatureCollection buildFeatureCollectionInput2() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -325,10 +325,10 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection<Feature> buildFeatureCollectionResult() throws FactoryException {
+    private static FeatureCollection buildFeatureCollectionResult() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -372,10 +372,10 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
 
     }
 
-    private static FeatureCollection<Feature> buildFeatureCollectionResult2() throws FactoryException {
+    private static FeatureCollection buildFeatureCollectionResult2() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 

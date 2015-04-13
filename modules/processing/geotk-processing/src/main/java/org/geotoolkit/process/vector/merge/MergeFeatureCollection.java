@@ -85,7 +85,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
     }
 
      @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
+    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
         try {
             return new MergeFeatureIterator(fcList);
         } catch (UnconvertibleObjectException ex) {
@@ -99,14 +99,14 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
      * @author Quentin Boileau
      * @module pending
      */
-    private class MergeFeatureIterator implements FeatureIterator<Feature> {
+    private class MergeFeatureIterator implements FeatureIterator {
 
         private final FeatureCollection[] fcList;
         private int fcIter;
         private int nbFC; /* Number of FeatureCollection*/
         
-        private FeatureCollection<Feature> nextFC;
-        private FeatureIterator<Feature> ite;
+        private FeatureCollection nextFC;
+        private FeatureIterator ite;
 
         private Feature nextFeature;
         private Map<Name,ObjectConverter> conversionMap;

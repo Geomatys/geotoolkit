@@ -35,11 +35,11 @@ public class UnionDemo {
         
         
         // Inputs
-        final FeatureCollection<?> featureList = buildFeatureList();
+        final FeatureCollection featureList = buildFeatureList();
         System.out.println("Input FeatureCollection 1 : "+featureList);
         System.out.println("----------------------------------------------------------------------------------------");
         
-        final FeatureCollection<?> featureUnionList = buildFeatureUnionList();
+        final FeatureCollection featureUnionList = buildFeatureUnionList();
         System.out.println("Input FeatureCollection 2 : "+featureUnionList);
         
         
@@ -58,7 +58,7 @@ public class UnionDemo {
         org.geotoolkit.process.Process process = descriptor.createProcess(in);
 
         //get the result
-        final FeatureCollection<?> featuresOut = (FeatureCollection <?>) process.call().parameter("feature_out").getValue();
+        final FeatureCollection featuresOut = (FeatureCollection) process.call().parameter("feature_out").getValue();
         
         System.out.println("----------------------------------------------------------------------------------------");
         System.out.println("Resulting FeatureCollection : "+featuresOut);
@@ -107,7 +107,7 @@ public class UnionDemo {
      * It define 4 features with basic geometry and property.
      * @return FeatureCollection
      */
-    private static FeatureCollection<?> buildFeatureList() {
+    private static FeatureCollection buildFeatureList() {
 
         try {
             type = createSimpleType();
@@ -117,7 +117,7 @@ public class UnionDemo {
             Logger.getLogger(UnionDemo.class.getName()).log(Level.WARNING, null, ex);
         }
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;
@@ -189,7 +189,7 @@ public class UnionDemo {
      * It define 4 features with basic geometry and property.
      * @return FeatureCollection
      */
-    private static FeatureCollection<?> buildFeatureUnionList() {
+    private static FeatureCollection buildFeatureUnionList() {
 
         try {
             type = createSimpleType2();
@@ -199,7 +199,7 @@ public class UnionDemo {
             Logger.getLogger(UnionDemo.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;

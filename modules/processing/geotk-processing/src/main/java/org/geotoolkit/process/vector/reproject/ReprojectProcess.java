@@ -19,8 +19,6 @@ package org.geotoolkit.process.vector.reproject;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.process.AbstractProcess;
-
-import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -46,7 +44,7 @@ public class ReprojectProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
         final CoordinateReferenceSystem targetCRS           = value(CRS_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = GenericReprojectFeatureIterator.wrap(inputFeatureList, targetCRS);

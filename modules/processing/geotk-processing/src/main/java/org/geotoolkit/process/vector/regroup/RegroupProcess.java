@@ -65,7 +65,7 @@ public class RegroupProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
         final String inputAttributeName                     = value(REGROUP_ATTRIBUTE, inputParameters);
         final String inputGeometryName                      = value(GEOMETRY_NAME, inputParameters);
 
@@ -154,11 +154,11 @@ public class RegroupProcess extends AbstractProcess {
      * @return a Feature
      */
     static Feature regroupFeature(final String regroupAttribute, final Object attributeValue,
-            final FeatureType newFeatureType, String geometryName, final FeatureCollection<Feature> filtredList) {
+            final FeatureType newFeatureType, String geometryName, final FeatureCollection filtredList) {
 
         final List<Geometry> geoms = new ArrayList<>();
         
-        final FeatureIterator<Feature> featureIter = filtredList.iterator();
+        final FeatureIterator featureIter = filtredList.iterator();
         try {
             while (featureIter.hasNext()) {
                 final Feature feature = featureIter.next();
@@ -205,13 +205,13 @@ public class RegroupProcess extends AbstractProcess {
      * @param featureList
      * @return a collection of Objects
      */
-    static Collection<Object> getAttributeValues(final String regroupAttribute, final FeatureCollection<Feature> featureList) {
+    static Collection<Object> getAttributeValues(final String regroupAttribute, final FeatureCollection featureList) {
 
         final Collection<Object> values = new ArrayList<Object>();
 
         if(regroupAttribute != null) {
 
-            final FeatureIterator<Feature> featureIter = featureList.iterator();
+            final FeatureIterator featureIter = featureList.iterator();
             try {
                 while (featureIter.hasNext()) {
                     final Feature feature = featureIter.next();

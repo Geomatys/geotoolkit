@@ -49,8 +49,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class GenericTransformFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
-        implements FeatureIterator<F> {
+public abstract class GenericTransformFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected static final FeatureFactory FF = FeatureFactory.LENIENT;
 
@@ -98,14 +97,10 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
     /**
      * Wrap a FeatureReader with a transform operation.
      *
-     * @param <T> extends FeatureType
-     * @param <F> extends Feature
-     * @param <R> extends FeatureReader<T,F>
      */
-    protected static final class GenericTransformFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericTransformFeatureIterator<F,R> implements FeatureReader<T,F>{
+    protected static final class GenericTransformFeatureReader extends GenericTransformFeatureIterator<FeatureReader> implements FeatureReader{
 
-        private GenericTransformFeatureReader(final R reader, final GeometryTransformer transformer) {
+        private GenericTransformFeatureReader(final FeatureReader reader, final GeometryTransformer transformer) {
             super(reader, transformer);
         }
 
@@ -113,7 +108,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
          * {@inheritDoc }
          */
         @Override
-        public F next() throws FeatureStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             Feature next = iterator.next();
             next = FeatureUtilities.deepCopy(next);
 
@@ -134,14 +129,14 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                     }
                 }
             }
-            return (F) next;
+            return next;
         }
 
         /**
          * {@inheritDoc }
          */
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return iterator.getFeatureType();
         }
 
@@ -157,17 +152,13 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
     /**
      * Wrap a FeatureReader with a transform operation.
      *
-     * @param <T> extends FeatureType
-     * @param <F> extends Feature
-     * @param <R> extends FeatureReader<T,F>
      */
-    protected static final class GenericReuseTransformFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericTransformFeatureIterator<F,R> implements FeatureReader<T,F>{
+    protected static final class GenericReuseTransformFeatureReader extends GenericTransformFeatureIterator<FeatureReader> implements FeatureReader{
 
         private final Collection<Property> properties;
         private final AbstractFeature feature;
 
-        private GenericReuseTransformFeatureReader(final R reader, final GeometryTransformer transformer) {
+        private GenericReuseTransformFeatureReader(final FeatureReader reader, final GeometryTransformer transformer) {
             super(reader, transformer);
 
             final FeatureType ft = reader.getFeatureType();
@@ -185,7 +176,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
          * {@inheritDoc }
          */
         @Override
-        public F next() throws FeatureStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             final Feature next = iterator.next();
             feature.setIdentifier(next.getIdentifier());
 
@@ -211,11 +202,11 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
 
             feature.getUserData().clear();
             feature.getUserData().putAll(next.getUserData());
-            return (F)feature;
+            return feature;
         }
 
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return iterator.getFeatureType();
         }
 
@@ -253,8 +244,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
     /**
      * Wrap a FeatureReader with a reprojection.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T, F> wrap(
-            final FeatureReader<T, F> reader, final GeometryTransformer transformer, final Hints hints) {
+    public static FeatureReader wrap(final FeatureReader reader, final GeometryTransformer transformer, final Hints hints) {
         final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
         if (desc != null) {
 

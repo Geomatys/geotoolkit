@@ -36,7 +36,7 @@ public class NearestFeatureCollection extends WrapFeatureCollection {
      * @param originalFC FeatureCollection
      * @param clippingList 
      */
-    public NearestFeatureCollection(final FeatureCollection<Feature> originalFC) {
+    public NearestFeatureCollection(final FeatureCollection originalFC) {
         super(originalFC);
         this.newFeatureType = super.getFeatureType();
     }

@@ -80,7 +80,7 @@ public class FidQueryTest extends FIDTestCase {
         name = ds.getNames().iterator().next();
         session = ds.createSession(true);
 
-        final FeatureIterator<Feature> features = ds.getFeatureReader(QueryBuilder.all(name));
+        final FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(name));
         try {
             while (features.hasNext()) {
                 numFeatures++;
@@ -129,7 +129,7 @@ public class FidQueryTest extends FIDTestCase {
         final Query query = builder.buildQuery();
 
 
-        final FeatureIterator<Feature> features = ds.getFeatureReader(query);
+        final FeatureIterator features = ds.getFeatureReader(query);
         try {
             feature = features.next();
             for(PropertyDescriptor desc : schema.getDescriptors()){
@@ -160,7 +160,7 @@ public class FidQueryTest extends FIDTestCase {
         session.updateFeatures(schema.getName(),createFidFilter, (AttributeDescriptor) schema.getDescriptor("ID"), new Integer(newId));
         session.commit();
 
-        final FeatureIterator<Feature> features = ds.getFeatureReader(QueryBuilder.filtered(name, createFidFilter));
+        final FeatureIterator features = ds.getFeatureReader(QueryBuilder.filtered(name, createFidFilter));
 
         try {
             assertFalse(feature.equals(features.next()));
@@ -175,7 +175,7 @@ public class FidQueryTest extends FIDTestCase {
 
     @Test
     public void testDeleteFeature() throws Exception {
-        FeatureIterator<Feature> features = ds.getFeatureReader(QueryBuilder.all(name));
+        FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(name));
         Feature feature;
         try {
             feature = features.next();
@@ -206,7 +206,7 @@ public class FidQueryTest extends FIDTestCase {
 
     @Test
     public void testFIDBBoxQuery() throws Exception {
-        FeatureIterator<Feature> features = ds.getFeatureReader(QueryBuilder.all(name));
+        FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(name));
         Feature feature;
         try {
             feature = features.next();
@@ -254,7 +254,7 @@ public class FidQueryTest extends FIDTestCase {
             final FeatureId id = fac.featureId(fid);
             final Filter filter = fac.id(Collections.singleton(id));
             final Query query = QueryBuilder.filtered(name, filter);
-            final FeatureIterator<Feature> features = ds.getFeatureReader(query);
+            final FeatureIterator features = ds.getFeatureReader(query);
             try {
                 final Feature feature = features.next();
                 assertFalse(features.hasNext());

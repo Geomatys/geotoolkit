@@ -40,7 +40,7 @@ import org.opengis.util.FactoryException;
 public class IntersectionFeatureCollection extends WrapFeatureCollection {
 
     private final FeatureType newFeatureType;
-    private final FeatureCollection<Feature> intersList;
+    private final FeatureCollection intersList;
     private final String geometryName;
 
     /**
@@ -48,7 +48,7 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
      * @param originalFC FeatureCollection
      * @param intersList FeatureCollection
      */
-    public IntersectionFeatureCollection(final FeatureCollection<Feature> originalFC, final FeatureCollection<Feature> intersList,
+    public IntersectionFeatureCollection(final FeatureCollection originalFC, final FeatureCollection intersList,
             final String geometryName) {
         super(originalFC);
         this.intersList = intersList;
@@ -93,7 +93,7 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
      *  {@inheritDoc }
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
+    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
         return new IntersectionFeatureIterator(getOriginalFeatureCollection().iterator());
     }
 
@@ -102,18 +102,18 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
      * @author Quentin Boileau
      * @module pending
      */
-    private class IntersectionFeatureIterator implements FeatureIterator<Feature> {
+    private class IntersectionFeatureIterator implements FeatureIterator {
 
-        private final FeatureIterator<?> originalFI;
+        private final FeatureIterator originalFI;
         private Feature nextFeature;
-        private FeatureCollection<Feature> nextFC;
-        private FeatureIterator<Feature> ite;
+        private FeatureCollection nextFC;
+        private FeatureIterator ite;
 
         /**
          * Connect to the original FeatureIterator
          * @param originalFI FeatureIterator
          */
-        public IntersectionFeatureIterator(final FeatureIterator<?> originalFI) {
+        public IntersectionFeatureIterator(final FeatureIterator originalFI) {
             this.originalFI = originalFI;
             nextFeature = null;
             nextFC = null;

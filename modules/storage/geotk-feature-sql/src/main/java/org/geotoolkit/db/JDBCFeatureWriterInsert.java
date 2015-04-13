@@ -38,7 +38,7 @@ import org.geotoolkit.feature.type.FeatureType;
  * 
  * @author Johann Sorel (Geomatys)
  */
-public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements FeatureWriter<FeatureType, Feature> {
+public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements FeatureWriter {
 
     private boolean batchInsert;
     private Collection<Feature> toAdd;

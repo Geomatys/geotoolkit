@@ -53,7 +53,7 @@ public final class UnionDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Union Feature Collection
      */
-    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_UNION =
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_UNION =
             new DefaultParameterDescriptor("feature_union", "Input FeatureCollection used for Union process", FeatureCollection.class, null, true);
     /**
      * Optional - Input geometry property name. Refer to the geometry form FEATURE_IN used for the union process

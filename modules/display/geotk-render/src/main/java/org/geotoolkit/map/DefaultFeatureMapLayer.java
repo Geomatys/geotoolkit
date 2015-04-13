@@ -19,7 +19,6 @@ package org.geotoolkit.map;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -29,8 +28,6 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import static org.apache.sis.util.ArgumentChecks.*;
@@ -86,7 +83,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
      * @param collection : the data source for this layer
      * @param style : the style used to represent this layer
      */
-    DefaultFeatureMapLayer(final FeatureCollection<? extends Feature> collection, final MutableStyle style) {
+    DefaultFeatureMapLayer(final FeatureCollection collection, final MutableStyle style) {
         super(collection,style);
     }
 
@@ -131,8 +128,8 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
      * {@inheritDoc }
      */
     @Override
-    public FeatureCollection<? extends Feature> getCollection() {
-        return (FeatureCollection<? extends Feature>) super.getCollection();
+    public FeatureCollection getCollection() {
+        return (FeatureCollection) super.getCollection();
     }
 
     /**
@@ -140,7 +137,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
      */
     @Override
     public Envelope getBounds() {
-        final FeatureCollection<? extends Feature> featureCol = getCollection();
+        final FeatureCollection featureCol = getCollection();
         final CoordinateReferenceSystem sourceCrs = featureCol.getFeatureType().getCoordinateReferenceSystem();
         Envelope env = null;
         try {

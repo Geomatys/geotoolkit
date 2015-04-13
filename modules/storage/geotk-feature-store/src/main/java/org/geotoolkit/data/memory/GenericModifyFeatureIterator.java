@@ -36,14 +36,13 @@ import org.opengis.filter.Filter;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
-        implements FeatureIterator<F> {
+public class GenericModifyFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
 
     protected final R iterator;
     protected final Filter filter;
     protected final Map<PropertyDescriptor,Object> values;
-    protected F nextFeature = null;
+    protected Feature nextFeature = null;
 
     /**
      * Creates a new instance of GenericModifyFeatureIterator
@@ -68,10 +67,10 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public F next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         if (hasNext()) {
             // hasNext() ensures that next != null
-            final F f = nextFeature;
+            final Feature f = nextFeature;
             nextFeature = null;
             return f;
         } else {
@@ -87,9 +86,9 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
         if(nextFeature != null) return true;
 
         if(iterator.hasNext()){
-            F candidate = iterator.next();
+            Feature candidate = iterator.next();
             if(filter.evaluate(candidate)){
-                candidate = (F) FeatureUtilities.copy(candidate);
+                candidate = FeatureUtilities.copy(candidate);
                 //must modify this feature
                 for(final Entry<PropertyDescriptor,Object> entry : values.entrySet()){
                     final Property prop = candidate.getProperty(entry.getKey().getName());
@@ -130,7 +129,7 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
     /**
      * Wrap a FeatureIterator with a modifiycation set
      */
-    public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values){
+    public static FeatureIterator wrap(final FeatureIterator reader, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values){
         return new GenericModifyFeatureIterator(reader, filter, values);
     }
 

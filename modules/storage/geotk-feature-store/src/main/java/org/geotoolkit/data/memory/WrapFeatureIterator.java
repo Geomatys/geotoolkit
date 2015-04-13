@@ -32,7 +32,7 @@ import org.geotoolkit.feature.Feature;
  * @author Quentin Boileau
  * @module pending
  */
-public abstract class WrapFeatureIterator implements FeatureIterator<Feature> {
+public abstract class WrapFeatureIterator implements FeatureIterator {
 
     private final Iterator<? extends Feature> originalFI;
     private Feature nextFeature;

@@ -66,8 +66,8 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class GenericReprojectFeatureIterator<F extends Feature, R extends FeatureReader<?extends FeatureType,F>>
-                        extends GenericTransformFeatureIterator<F,R> implements FeatureReader<FeatureType,F>{
+public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
+                        extends GenericTransformFeatureIterator<R> implements FeatureReader{
 
     protected final FeatureType schema;
     protected final CoordinateReferenceSystem targetCRS;
@@ -133,15 +133,14 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericReprojectFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericReprojectFeatureIterator<F,R>{
+    private static final class GenericReprojectFeatureReader extends GenericReprojectFeatureIterator{
 
-        private GenericReprojectFeatureReader(final R reader, final CoordinateReferenceSystem targetCRS) throws FactoryException, SchemaException{
+        private GenericReprojectFeatureReader(final FeatureReader reader, final CoordinateReferenceSystem targetCRS) throws FactoryException, SchemaException{
             super(reader,targetCRS);
         }
 
         @Override
-        public F next() throws FeatureStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             final Feature next = iterator.next();
 
             final Collection<Property> properties = new ArrayList<Property>();
@@ -202,7 +201,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                 properties.add(prop);
             }
             
-            final F f = (F) FF.createFeature(properties, schema, next.getIdentifier().getID());
+            final Feature f = FF.createFeature(properties, schema, next.getIdentifier().getID());
             f.getUserData().putAll(next.getUserData());
             return f;
         }
@@ -216,13 +215,12 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericReuseReprojectFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericReprojectFeatureIterator<F,R>{
+    private static final class GenericReuseReprojectFeatureReader extends GenericReprojectFeatureIterator{
 
         private final Collection<Property> properties;
         private final AbstractFeature feature;
 
-        private GenericReuseReprojectFeatureReader(final R reader, final CoordinateReferenceSystem targetCRS)
+        private GenericReuseReprojectFeatureReader(final FeatureReader reader, final CoordinateReferenceSystem targetCRS)
                                             throws FactoryException, SchemaException{
             super(reader, targetCRS);
             feature = new DefaultFeature(Collections.EMPTY_LIST, schema, null);
@@ -230,7 +228,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
         }
 
         @Override
-        public F next() throws FeatureStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             final Feature next = iterator.next();
             feature.setIdentifier(next.getIdentifier());
 
@@ -294,7 +292,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
             
             feature.getUserData().clear();
             feature.getUserData().putAll(next.getUserData());
-            return (F)feature;
+            return feature;
         }
 
     }
@@ -306,14 +304,13 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericSimpleReuseReprojectFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericReprojectFeatureIterator<F,R>{
+    private static final class GenericSimpleReuseReprojectFeatureReader extends GenericReprojectFeatureIterator{
 
         private final Object[] values;
         private final DefaultSimpleFeature feature;
         private final boolean[] geomIndexes;
 
-        private GenericSimpleReuseReprojectFeatureReader(final R reader, final CoordinateReferenceSystem targetCRS)
+        private GenericSimpleReuseReprojectFeatureReader(final FeatureReader reader, final CoordinateReferenceSystem targetCRS)
                                             throws FactoryException, SchemaException{
             super(reader, targetCRS);
 
@@ -328,7 +325,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
         }
 
         @Override
-        public F next() throws FeatureStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             final SimpleFeature next = (SimpleFeature) iterator.next();
             feature.setId(next.getID());
 
@@ -393,7 +390,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
 
             feature.getUserData().clear();
             feature.getUserData().putAll(next.getUserData());
-            return (F)feature;
+            return feature;
         }
 
     }
@@ -445,8 +442,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
     /**
      * Wrap a FeatureReader with a reprojection.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T, F> wrap(
-            final FeatureReader<T, F> reader, final CoordinateReferenceSystem crs, final Hints hints) throws FactoryException, SchemaException {
+    public static FeatureReader wrap(final FeatureReader reader, final CoordinateReferenceSystem crs, final Hints hints) throws FactoryException, SchemaException {
         final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
         if (desc != null) {
 

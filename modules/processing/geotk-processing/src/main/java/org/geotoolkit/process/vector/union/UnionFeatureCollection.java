@@ -41,7 +41,7 @@ import org.opengis.util.FactoryException;
 public class UnionFeatureCollection extends WrapFeatureCollection {
 
     private final FeatureType newFeatureType;
-    private final FeatureCollection<Feature> unionFC;
+    private final FeatureCollection unionFC;
     private final String inputGeomName; /* Geometry attribute name form inputFC used to compute intersections */
 
     private final String unionGeomName; /* Geometry attribute name form unionFC used to compute intersections */
@@ -52,7 +52,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
      * @param originalFC FeatureCollection
      * @param intersList FeatureCollection
      */
-    public UnionFeatureCollection(final FeatureCollection<Feature> inputFC, final FeatureCollection<Feature> unionFC,
+    public UnionFeatureCollection(final FeatureCollection inputFC, final FeatureCollection unionFC,
             final String inputGeomName, final String unionGeomName) {
 
         super(inputFC);
@@ -122,7 +122,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
      *  {@inheritDoc }
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
+    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
         return new IntersectionFeatureIterator(getOriginalFeatureCollection().iterator(), unionFC.iterator());
     }
 
@@ -131,13 +131,13 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
      * @author Quentin Boileau
      * @module pending
      */
-    private class IntersectionFeatureIterator implements FeatureIterator<Feature> {
+    private class IntersectionFeatureIterator implements FeatureIterator {
 
-        private final FeatureIterator<?> originalFI;
-        private final FeatureIterator<?> unionFI;
+        private final FeatureIterator originalFI;
+        private final FeatureIterator unionFI;
         private Feature nextFeature;
-        private FeatureCollection<Feature> nextFC;
-        private FeatureIterator<Feature> ite;
+        private FeatureCollection nextFC;
+        private FeatureIterator ite;
 
         /*
          * This boolean if used to do a second pass on the process in inverting FeatureCollection input and union.
@@ -156,7 +156,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
          * Connect to the original FeatureIterator
          * @param originalFI FeatureIterator
          */
-        public IntersectionFeatureIterator(final FeatureIterator<?> originalFI, final FeatureIterator<?> unionFI) {
+        public IntersectionFeatureIterator(final FeatureIterator originalFI, final FeatureIterator unionFI) {
             this.originalFI = originalFI;
             this.unionFI = unionFI;
             nextFeature = null;

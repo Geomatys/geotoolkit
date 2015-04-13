@@ -70,7 +70,7 @@ public class BufferProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
         final double inputDistance                          = value(DISTANCE_IN, inputParameters).doubleValue();
         Boolean inputLenient                                = value(LENIENT_TRANSFORM_IN, inputParameters);
 

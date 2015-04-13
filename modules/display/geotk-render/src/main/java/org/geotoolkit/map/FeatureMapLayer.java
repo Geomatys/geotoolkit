@@ -23,7 +23,6 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.measure.Range;
-import org.geotoolkit.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -44,7 +43,7 @@ public interface FeatureMapLayer extends CollectionMapLayer{
      * @return The features for this layer, can not be null.
      */
     @Override
-    FeatureCollection<? extends Feature> getCollection();
+    FeatureCollection getCollection();
 
 
     /**

@@ -70,7 +70,7 @@ public class IsolineTest {
         procparams.parameter("inIntervals").setValue(new double[]{150});
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
-        FeatureCollection<Feature> col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
+        FeatureCollection col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
         assertEquals(1, col.size());
         for(Feature f : col){
             System.out.println(f);
@@ -104,7 +104,7 @@ public class IsolineTest {
         procparams.parameter("inIntervals").setValue(new double[]{15});
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
-        FeatureCollection<Feature> col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
+        FeatureCollection col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
         assertEquals(2, col.size());
         for(Feature f : col){
             System.out.println(f);
@@ -138,7 +138,7 @@ public class IsolineTest {
         procparams.parameter("inIntervals").setValue(new double[]{15});
         final org.geotoolkit.process.Process process = desc.createProcess(procparams);
         final ParameterValueGroup result = process.call();
-        FeatureCollection<Feature> col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
+        FeatureCollection col = (FeatureCollection) result.parameter("outFeatureCollection").getValue();
         assertEquals(4, col.size());
         for(Feature f : col){
             System.out.println(f);

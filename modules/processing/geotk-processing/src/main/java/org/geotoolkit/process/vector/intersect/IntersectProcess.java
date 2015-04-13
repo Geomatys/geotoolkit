@@ -45,7 +45,7 @@ public class IntersectProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
         final Geometry interGeom                            = value(GEOMETRY_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = new IntersectFeatureCollection(inputFeatureList, interGeom);

@@ -72,8 +72,8 @@ public class UnionProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
-        final FeatureCollection<Feature> unionFeatureList   = value(FEATURE_UNION, inputParameters);
+        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final FeatureCollection unionFeatureList   = value(FEATURE_UNION, inputParameters);
         final String inputGeometryName                      = value(INPUT_GEOMETRY_NAME, inputParameters);
         final String unionGeometryName                      = value(UNION_GEOMETRY_NAME, inputParameters);
 
@@ -101,7 +101,7 @@ public class UnionProcess extends AbstractProcess {
             throws TransformException, FactoryException {
 
 
-        final FeatureCollection<Feature> resultFeatureList =
+        final FeatureCollection resultFeatureList =
                 FeatureStoreUtilities.collection(inputFeature.getIdentifier().getID(), newFeatureType);
 
          /*
@@ -120,7 +120,7 @@ public class UnionProcess extends AbstractProcess {
         Geometry remainingGeometry = inputGeometry;
         boolean isIntersected = false;
         //Check if each union Features intersect inputFeature. if yes, create a new Feature which is union of both
-        final FeatureIterator<Feature> unionIter = unionFC.iterator();
+        final FeatureIterator unionIter = unionFC.iterator();
         try {
             while (unionIter.hasNext()) {
                 final Feature unionFeature = unionIter.next();

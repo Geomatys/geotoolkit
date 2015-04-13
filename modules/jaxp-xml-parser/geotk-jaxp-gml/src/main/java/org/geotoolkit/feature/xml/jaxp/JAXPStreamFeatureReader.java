@@ -314,7 +314,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             if (collection == null) {
                                 collection = FeatureStoreUtilities.collection(id, ft);
                             }
-                            collection.add(readFeature(fid, ft));
+                            collection.add((Feature)readFeature(fid, ft));
                             find = true;
                         }
                         expectedFeatureType.append(ft.getName()).append('\n');
@@ -712,7 +712,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         this.properties.put(READ_EMBEDDED_FEATURE_TYPE, readEmbeddedFeatureType);
     }
 
-    private final class JAXPStreamIterator implements FeatureReader<FeatureType,Feature>{
+    private final class JAXPStreamIterator implements FeatureReader{
 
         private boolean singleFeature = false;
         private FeatureType type = null;

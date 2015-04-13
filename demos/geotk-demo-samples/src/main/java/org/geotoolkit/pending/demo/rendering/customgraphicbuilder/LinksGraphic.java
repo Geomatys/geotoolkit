@@ -45,7 +45,7 @@ public class LinksGraphic extends GraphicJ2D{
         final CanvasMonitor monitor = renderingContext.getMonitor();
         final Graphics2D g2d = renderingContext.getGraphics();
         
-        FeatureCollection<? extends Feature> collection = layer.getCollection();
+        FeatureCollection collection = layer.getCollection();
         try {
             //we reproject our collection
             collection = collection.subCollection(QueryBuilder.reprojected(

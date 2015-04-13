@@ -231,7 +231,7 @@ public class KrigingProcess extends AbstractProcess {
         }
 
         ///////////////  debug///////////////////////
-        FeatureIterator<Feature> featIter = col.iterator();
+        FeatureIterator featIter = col.iterator();
 
         final List<Shape> shapes = new ArrayList<Shape>();
 

@@ -47,7 +47,7 @@ import org.apache.sis.util.logging.Logging;
  * @author Alexis Manin (Geomatys)
  * @date : 22/02/13
  */
-public class MIFFeatureReader implements FeatureReader<FeatureType, Feature> {
+public class MIFFeatureReader implements FeatureReader {
 
     private final static Logger LOGGER = Logger.getLogger(MIFFeatureReader.class.getName());
 

@@ -30,7 +30,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CheckCloseFeatureIterator implements FeatureIterator<Feature>, FeatureReader<FeatureType, Feature>{
+public class CheckCloseFeatureIterator implements FeatureReader{
 
     private final FeatureIterator ite;
     private boolean isClosed = false;

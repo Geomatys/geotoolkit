@@ -50,7 +50,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<Feature>{
+public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
 
     private final Query query;
 
@@ -77,7 +77,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public FeatureCollection<Feature> subCollection(final Query query) throws DataStoreException {
+    public FeatureCollection subCollection(final Query query) throws DataStoreException {
         return getSession().getFeatureCollection(QueryUtilities.subQuery(this.query, query));
     }
 
@@ -107,7 +107,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException{
+    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException{
 
         final Query iteQuery;
         if(hints != null){

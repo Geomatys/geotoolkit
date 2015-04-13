@@ -170,12 +170,12 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
             final Filter filter = FILTER_FACTORY.id(Collections.singleton(id));
             Feature feature = null;
 
-            final FeatureCollection<? extends Feature> collection =
+            final FeatureCollection collection =
                     fml.getCollection().subCollection(
                     QueryBuilder.filtered(fml.getCollection().getFeatureType().getName(), filter));
 
             if(!collection.isEmpty()){
-                final FeatureIterator<? extends Feature> ite = collection.iterator();
+                final FeatureIterator ite = collection.iterator();
                 if(ite.hasNext()){
                     feature = ite.next();
                 }

@@ -100,7 +100,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         FeatureStore s1 = createDataStore(fac, TestData.url(AbstractTestCaseSupport.class, "shapes/stream.shp"), true);
         Name typeName = s1.getNames().iterator().next();
         SimpleFeatureType type = (SimpleFeatureType) s1.getFeatureType(typeName);
-        FeatureCollection<SimpleFeature> one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         ShapefileFeatureStoreFactory maker = new ShapefileFeatureStoreFactory();
 
@@ -117,7 +117,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         return createFeatureStore;
     }
 
-    private void doubleWrite( final SimpleFeatureType type, final FeatureCollection<SimpleFeature> one, final File tmp,
+    private void doubleWrite( final SimpleFeatureType type, final FeatureCollection one, final File tmp,
             final ShapefileFeatureStoreFactory maker, final boolean memorymapped ) throws IOException,
             MalformedURLException,
             DataStoreException {
@@ -142,14 +142,14 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         FeatureStore s = createDataStore(new ShapefileFeatureStoreFactory(), ShapeTestData.url(f), true);
         Name typeName = s.getNames().iterator().next();
         SimpleFeatureType type = (SimpleFeatureType) s.getFeatureType(typeName);
-        FeatureCollection<SimpleFeature> one = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection one = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         ShapefileFeatureStoreFactory maker = new ShapefileFeatureStoreFactory();
         test(type, one, getTempFile(), maker, false);
         test(type, one, getTempFile(), maker, true);
     }
 
-    private void test( final SimpleFeatureType type, final FeatureCollection<SimpleFeature> one, final File tmp,
+    private void test( final SimpleFeatureType type, final FeatureCollection one, final File tmp,
             final ShapefileFeatureStoreFactory maker, final boolean memorymapped ) throws IOException,
             MalformedURLException, Exception {
         FeatureStore s;
@@ -164,7 +164,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         s = createDataStore(new ShapefileFeatureStoreFactory(), tmp.toURI().toURL(), true);
         Name typeName = s.getNames().iterator().next();
 
-        FeatureCollection<SimpleFeature> two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         //copy values, order is not tested here.
         Collection<SimpleFeature> cone = new ArrayList<SimpleFeature>();
@@ -175,13 +175,13 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         two.containsAll(one);
     }
 
-    static void compare( final FeatureIterator<SimpleFeature> fs1, final FeatureIterator<SimpleFeature> fs2 ) throws Exception {
+    static void compare( final FeatureIterator fs1, final FeatureIterator fs2 ) throws Exception {
         try {
             while( fs1.hasNext() ) {
-                SimpleFeature f1 = fs1.next();
-                SimpleFeature f2 = fs2.next();
+                Feature f1 = fs1.next();
+                Feature f2 = fs2.next();
 
-                compare(f1, f2);
+                compare((SimpleFeature)f1, (SimpleFeature)f2);
             }
 
         } finally {
@@ -238,7 +238,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         FeatureId featureId = ff.featureId("streams.84");
         Id filter = ff.id(Collections.singleton(featureId));
 
-        FeatureIterator<Feature> iter = ds.getFeatureReader(QueryBuilder.filtered(ds.getName(), filter));
+        FeatureIterator iter = ds.getFeatureReader(QueryBuilder.filtered(ds.getName(), filter));
         JTSEnvelope2D bounds;
         try {
             bounds = new JTSEnvelope2D(iter.next().getBounds());

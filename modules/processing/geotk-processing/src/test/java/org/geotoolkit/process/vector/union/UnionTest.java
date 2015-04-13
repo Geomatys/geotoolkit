@@ -62,8 +62,8 @@ public class UnionTest extends AbstractProcessTest {
     public void testIntersection() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection<?> featureList = buildFeatureList();
-        final FeatureCollection<?> featureUnionList = buildFeatureUnionList();
+        final FeatureCollection featureList = buildFeatureList();
+        final FeatureCollection featureUnionList = buildFeatureUnionList();
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "union");
@@ -75,10 +75,10 @@ public class UnionTest extends AbstractProcessTest {
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
+        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
-        final FeatureCollection<?> featureListResult = buildResultList();
+        final FeatureCollection featureListResult = buildResultList();
         
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
         assertEquals(featureListOut.getID(), featureListResult.getID());
@@ -124,10 +124,10 @@ public class UnionTest extends AbstractProcessTest {
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
+    private static FeatureCollection buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;
@@ -194,11 +194,11 @@ public class UnionTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection<?> buildFeatureUnionList() throws FactoryException {
+    private static FeatureCollection buildFeatureUnionList() throws FactoryException {
 
         type = createSimpleType2();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature1;
@@ -289,11 +289,11 @@ public class UnionTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultList() throws FactoryException {
+    private static FeatureCollection buildResultList() throws FactoryException {
 
         type = createSimpleResultType();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
 
         Feature myFeature;

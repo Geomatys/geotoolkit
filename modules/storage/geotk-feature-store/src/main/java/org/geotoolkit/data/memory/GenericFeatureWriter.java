@@ -47,28 +47,28 @@ import org.opengis.filter.identity.FeatureId;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GenericFeatureWriter<T extends FeatureType, F extends Feature> implements FeatureWriter<T,F> {
+public class GenericFeatureWriter implements FeatureWriter {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     protected final FeatureStore store;
     protected final Name typeName;
-    protected final FeatureReader<T,F> reader;
-    protected final T type;
-    protected F currentFeature = null;
-    protected F modified = null;
+    protected final FeatureReader reader;
+    protected final FeatureType type;
+    protected Feature currentFeature = null;
+    protected Feature modified = null;
     private boolean remove = false;
 
     private GenericFeatureWriter(final FeatureStore store, final Name typeName, final Filter filter) throws DataStoreException {
         this.store = store;
         this.typeName = typeName;
         reader = store.getFeatureReader(QueryBuilder.filtered(typeName, filter));
-        type = (T) store.getFeatureType(typeName);
+        type = store.getFeatureType(typeName);
     }
 
 
     @Override
-    public T getFeatureType() throws FeatureStoreRuntimeException{
+    public FeatureType getFeatureType() throws FeatureStoreRuntimeException{
         return type;
     }
 
@@ -76,14 +76,14 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
      * {@inheritDoc }
      */
     @Override
-    public F next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         remove = false;
         if(hasNext()){
             currentFeature = reader.next();
-            modified = (F) FeatureUtilities.copy(currentFeature);
+            modified = FeatureUtilities.copy(currentFeature);
         }else{
             currentFeature = null;
-            modified = (F) FeatureUtilities.defaultFeature(type, "");
+            modified = FeatureUtilities.defaultFeature(type, "");
         }
 
         return modified;
@@ -190,13 +190,11 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
         return sb.toString();
     }
 
-    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrap(
-            final FeatureStore store, final Name typeName, final Filter filter) throws DataStoreException{
-        return new GenericFeatureWriter<T, F>(store, typeName, filter);
+    public static FeatureWriter wrap(final FeatureStore store, final Name typeName, final Filter filter) throws DataStoreException{
+        return new GenericFeatureWriter(store, typeName, filter);
     }
 
-    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrapAppend(
-            final FeatureStore store, final Name typeName) throws DataStoreException{
+    public static FeatureWriter wrapAppend(final FeatureStore store, final Name typeName) throws DataStoreException{
         return wrap(store,typeName,Filter.EXCLUDE);
     }
 

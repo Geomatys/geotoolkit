@@ -190,7 +190,7 @@ public class JClipboardPanel extends javax.swing.JPanel {
                 final ParameterValueGroup in = desc.getInputDescriptor().createValue();
                 in.parameter("feature_in").setValue(col);
                 org.geotoolkit.process.Process proc = desc.createProcess(in);
-                final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
+                final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
                 ite = featureListOut.iterator();
                 //we should have only one feature in this collection
                 while(ite.hasNext()){

@@ -41,7 +41,7 @@ public class AffineTransformFeatureCollection extends WrapFeatureCollection {
      * @param originalFC - FeatureCollection
      * @param transform - AffineTransformation
      */
-    public AffineTransformFeatureCollection(final FeatureCollection<Feature> originalFC, final java.awt.geom.AffineTransform transform ) {
+    public AffineTransformFeatureCollection(final FeatureCollection originalFC, final java.awt.geom.AffineTransform transform ) {
         super(originalFC);
         this.transform = transform;
         this.newFeatureType = super.getFeatureType();
@@ -64,7 +64,7 @@ public class AffineTransformFeatureCollection extends WrapFeatureCollection {
      * @throws FeatureStoreRuntimeException
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
+    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
         return (GenericTransformFeatureIterator.wrap(getOriginalFeatureCollection(),
                 new AffineTransformGeometryTransformer(transform))).iterator();
     }

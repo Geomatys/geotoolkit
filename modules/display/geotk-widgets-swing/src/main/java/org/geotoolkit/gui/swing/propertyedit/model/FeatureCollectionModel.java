@@ -94,7 +94,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
             columns.add(desc);
         }
 
-        FeatureIterator<Feature> fi = null;
+        FeatureIterator fi = null;
         try {
             fi = featureCollection.iterator();
             while (fi.hasNext()) {

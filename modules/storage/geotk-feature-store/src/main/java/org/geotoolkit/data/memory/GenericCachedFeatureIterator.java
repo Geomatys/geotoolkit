@@ -39,8 +39,7 @@ import org.geotoolkit.feature.type.FeatureType;
  * 
  * @author Johann Sorel (Geomatys)
  */
-public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
-        implements FeatureIterator<F> {
+public class GenericCachedFeatureIterator implements FeatureIterator {
         
     //TODO : wait for martin, there should already be a thread pool for global tasks somewhere.
     public static final Executor POOL = Executors.newCachedThreadPool();
@@ -55,11 +54,11 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
     
     private final ArrayBlockingQueue queue = new ArrayBlockingQueue(2);
     
-    protected R iterator;
+    protected FeatureIterator iterator;
     protected final int cacheSize;
     private Feature[] buffer = null;
     private int bufferIndex = 0;
-    protected F next = null;
+    protected Feature next = null;
     private FeatureStoreRuntimeException subException = null;
 
     /**
@@ -68,7 +67,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
      * @param iterator FeatureReader to limit
      * @param cacheSize cacheSize
      */
-    private GenericCachedFeatureIterator(final R iterator, final int cacheSize) {
+    private GenericCachedFeatureIterator(final FeatureIterator iterator, final int cacheSize) {
         this.iterator = iterator;
         this.cacheSize = cacheSize;
         
@@ -79,7 +78,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public F next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         if(subException != null){
             //forward sub exception
             final FeatureStoreRuntimeException d = subException;
@@ -88,7 +87,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
         }
         
         findNext();
-        final F c = next;
+        final Feature c = next;
         next = null;
         if(c == null){
             throw new NoSuchElementException("No such Feature exists");
@@ -155,7 +154,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
             }
         }
         
-        next = (F) buffer[bufferIndex];
+        next = buffer[bufferIndex];
         bufferIndex++;
         
         if(bufferIndex >= cacheSize){
@@ -195,18 +194,17 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericCachedFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericCachedFeatureIterator<F,R> implements FeatureReader<T,F>{
+    private static final class GenericCachedFeatureReader extends GenericCachedFeatureIterator implements FeatureReader{
 
-        private final T ft;
+        private final FeatureType ft;
         
-        private GenericCachedFeatureReader(final R reader, final int cacheSize){
+        private GenericCachedFeatureReader(final FeatureReader reader, final int cacheSize){
             super(reader,cacheSize);
-            ft = iterator.getFeatureType();
+            ft = reader.getFeatureType();
         }
         
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return ft;
         }
 
@@ -240,7 +238,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
     /**
      * Wrap a FeatureIterator with a cache size.
      */
-    public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final int cacheSize){
+    public static FeatureIterator wrap(final FeatureIterator reader, final int cacheSize){
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,cacheSize);
         }else if(reader instanceof FeatureWriter){
@@ -253,8 +251,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
     /**
      * Wrap a FeatureReader with a cache size.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(
-            final FeatureReader<T,F> reader, final int cacheSize){
+    public static FeatureReader wrap(final FeatureReader reader, final int cacheSize){
         return new GenericCachedFeatureIterator.GenericCachedFeatureReader(reader, cacheSize);
     }
 

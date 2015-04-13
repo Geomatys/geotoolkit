@@ -551,8 +551,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
 
         if (target instanceof FeatureMapLayer) {
             layer = (FeatureMapLayer) target;
-            final FeatureCollection<SimpleFeature> source =
-                    (FeatureCollection<SimpleFeature>) layer.getCollection();
+            final FeatureCollection source = layer.getCollection();
             editable = source.isWritable();
 
             jcb_edit.setEnabled(editable);

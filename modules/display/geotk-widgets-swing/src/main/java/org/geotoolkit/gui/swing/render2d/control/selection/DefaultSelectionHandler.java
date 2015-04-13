@@ -272,8 +272,8 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 builder.setProperties(new String[]{geoStr});
                                 final Query query = builder.buildQuery();
 
-                                FeatureCollection<Feature> fc = (FeatureCollection<Feature>) fl.getCollection().subCollection(query);
-                                FeatureIterator<Feature> fi = fc.iterator();
+                                FeatureCollection fc = fl.getCollection().subCollection(query);
+                                FeatureIterator fi = fc.iterator();
                                 while(fi.hasNext()){
                                     Feature fea = fi.next();
                                     ids.add(fea.getIdentifier());

@@ -40,8 +40,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
 
-public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements
-        FeatureWriter<FeatureType, Feature> {
+public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements FeatureWriter {
     
     //we keep the reference a bit longer
     private Feature last;

@@ -621,7 +621,7 @@ public class PostgresFeatureStoreTest {
         assertEquals(new DefaultFeatureId("testTable.1"), addedIds.get(0));
         
         Session session = store.createSession(false);
-        FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
         assertEquals(1, col.size());
         
         FeatureIterator ite = col.iterator();
@@ -708,7 +708,7 @@ public class PostgresFeatureStoreTest {
         assertEquals(new DefaultFeatureId("testTable.1"), addedIds.get(0));
         
         final Session session = store.createSession(false);
-        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
         assertEquals(1, col.size());
         
         //Postgis allow NULL in arrays, so returned array are not primitive types
@@ -753,7 +753,7 @@ public class PostgresFeatureStoreTest {
         assertEquals(new DefaultFeatureId("testTable.1"), addedIds.get(0));
 
         final Session session = store.createSession(false);
-        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
         assertEquals(1, col.size());
         
         //Postgis allow NULL in arrays, so returned array are not primitive types
@@ -839,7 +839,7 @@ public class PostgresFeatureStoreTest {
         assertEquals(new DefaultFeatureId("testTable.1"), addedIds.get(0));
         
         final Session session = store.createSession(false);
-        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
         assertEquals(1, col.size());
         
         //Postgis allow NULL in arrays, so returned array are not primitive types
@@ -917,7 +917,7 @@ public class PostgresFeatureStoreTest {
         assertEquals(new DefaultFeatureId("Voyage.1"), addedIds.get(0));
         
         final Session session = store.createSession(false);
-        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
+        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(resType.getName()));
         assertEquals(1, col.size());
         
         final FeatureIterator ite = col.iterator();
@@ -1002,7 +1002,7 @@ public class PostgresFeatureStoreTest {
         assertEquals(new DefaultFeatureId("Sounding.1"), addedIds.get(0));
         
         final Session session = store.createSession(false);
-        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(soundingType.getName()));
+        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(soundingType.getName()));
         assertEquals(1, col.size());
         
         final FeatureIterator ite = store.getFeatureReader(QueryBuilder.all(soundingType.getName()));
@@ -1109,7 +1109,7 @@ public class PostgresFeatureStoreTest {
         assertEquals(new DefaultFeatureId("Record.1"), addedIds.get(0));
         
         final Session session = store.createSession(false);
-        final FeatureCollection<Feature> col = session.getFeatureCollection(QueryBuilder.all(recordType.getName()));
+        final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(recordType.getName()));
         assertEquals(1, col.size());
         
         final FeatureIterator ite = store.getFeatureReader(QueryBuilder.all(recordType.getName()));

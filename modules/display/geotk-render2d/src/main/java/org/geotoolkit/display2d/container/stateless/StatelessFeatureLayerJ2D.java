@@ -191,10 +191,10 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }
         
         
-        final FeatureCollection<Feature> candidates;
+        final FeatureCollection candidates;
         try {
             //optimize
-            candidates = (FeatureCollection<Feature>)optimizeCollection(renderingContext, names, validRules);
+            candidates = (FeatureCollection)optimizeCollection(renderingContext, names, validRules);
         } catch (Exception ex) {
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return;
@@ -218,9 +218,9 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         
         final CanvasMonitor monitor = context.getMonitor();
         final StatelessContextParams params = getStatefullParameters(context);
-        final FeatureCollection<Feature> candidates;
+        final FeatureCollection candidates;
         try {
-            candidates = (FeatureCollection<Feature>)optimizeCollection(context);
+            candidates = (FeatureCollection)optimizeCollection(context);
         } catch (Exception ex) {
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
             return;
@@ -265,7 +265,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         //we detach feature since we are going to use a cache.
         currentQuery.getHints().put(HintsPending.FEATURE_DETACHED,Boolean.TRUE);
         final Query query = currentQuery;
-        FeatureCollection col = ((FeatureCollection<Feature>)item.getCollection()).subCollection(query);
+        FeatureCollection col = ((FeatureCollection)item.getCollection()).subCollection(query);
         col = GenericCachedFeatureIterator.wrap(col, 1000);
         return col;
     }
@@ -275,7 +275,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         //we detach feature since we are going to use a cache.
         currentQuery.getHints().put(HintsPending.FEATURE_DETACHED,Boolean.TRUE);
         final Query query = currentQuery;
-        FeatureCollection col = ((FeatureCollection<Feature>)item.getCollection()).subCollection(query);
+        FeatureCollection col = ((FeatureCollection)item.getCollection()).subCollection(query);
         col = GenericCachedFeatureIterator.wrap(col, 1000);
         return col;
     }
@@ -290,7 +290,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     protected RenderingIterator getIterator(final Collection<?> features,
             final RenderingContext2D renderingContext, final StatelessContextParams params) {
         final Hints iteHints = new Hints(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
-        final FeatureIterator<? extends Feature> iterator = ((FeatureCollection)features).iterator(iteHints);
+        final FeatureIterator iterator = ((FeatureCollection)features).iterator(iteHints);
         final ProjectedFeature projectedFeature = new ProjectedFeature(params);
         return new GraphicIterator(iterator, projectedFeature);
     }
@@ -340,9 +340,9 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             return graphics;
         }
 
-        final FeatureCollection<Feature> features;
+        final FeatureCollection features;
         try{
-            features = ((FeatureCollection<Feature>)layer.getCollection()).subCollection(query);
+            features = ((FeatureCollection)layer.getCollection()).subCollection(query);
         }catch(DataStoreException ex){
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
@@ -356,7 +356,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
 
         // iterate and find the first graphic that hit the given point
-        final FeatureIterator<Feature> iterator;
+        final FeatureIterator iterator;
         try{
             iterator = features.iterator();
         }catch(FeatureStoreRuntimeException ex){
@@ -421,7 +421,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     protected static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer,
             final Set<String> styleRequieredAtts, final List<Rule> rules, double symbolsMargin) throws PortrayalException{
 
-        final FeatureCollection<? extends Feature> fs            = layer.getCollection();
+        final FeatureCollection fs            = layer.getCollection();
         final FeatureType schema                                 = fs.getFeatureType();
         final GeometryDescriptor geomDesc                        = schema.getGeometryDescriptor();
         final BoundingBox bbox                                   = optimizeBBox(renderingContext, layer, symbolsMargin);
@@ -673,7 +673,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     protected static Query prepareQuery(final RenderingContext2D renderingContext, 
             final FeatureMapLayer layer, double symbolsMargin) throws PortrayalException{
 
-        final FeatureCollection<? extends Feature> fs            = layer.getCollection();
+        final FeatureCollection fs            = layer.getCollection();
         final FeatureType schema                                 = fs.getFeatureType();
         final GeometryDescriptor geomDesc                        = schema.getGeometryDescriptor();
         final BoundingBox bbox                                   = optimizeBBox(renderingContext,layer,symbolsMargin);
@@ -847,10 +847,10 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     
     private static class GraphicIterator implements RenderingIterator{
 
-        private final FeatureIterator<? extends Feature> ite;
+        private final FeatureIterator ite;
         private final ProjectedFeature projected;
 
-        public GraphicIterator(final FeatureIterator<? extends Feature> ite, final ProjectedFeature projected) {
+        public GraphicIterator(final FeatureIterator ite, final ProjectedFeature projected) {
             this.ite = ite;
             this.projected = projected;
         }

@@ -454,7 +454,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         return new File[] { this.file };
     }
 
-    private class CSVFeatureReader implements FeatureReader<FeatureType, Feature>{
+    private class CSVFeatureReader implements FeatureReader{
 
         private final WKTReader reader = new WKTReader();
         private final Scanner scanner;
@@ -557,7 +557,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     }
 
-    private class CSVFeatureWriter extends CSVFeatureReader implements FeatureWriter<FeatureType, Feature> {
+    private class CSVFeatureWriter extends CSVFeatureReader implements FeatureWriter {
 
         private final WKTWriter wktWriter = new WKTWriter(2);
         private final Writer writer;

@@ -62,7 +62,7 @@ public class CentroidTest extends AbstractProcessTest {
     public void testCentroid() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Features in
-        final FeatureCollection<?> featureList = buildFeatureList();
+        final FeatureCollection featureList = buildFeatureList();
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "centroid");
@@ -73,9 +73,9 @@ public class CentroidTest extends AbstractProcessTest {
 
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
+        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
         //Expected Features out
-        final FeatureCollection<?> featureListResult = buildResultList();
+        final FeatureCollection featureListResult = buildResultList();
 
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
         assertEquals(featureListOut.getID(), featureListResult.getID());
@@ -107,11 +107,11 @@ public class CentroidTest extends AbstractProcessTest {
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
+    private static FeatureCollection buildFeatureList() throws FactoryException {
 
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
         for (int i = 0; i < 5; i++) {
 
@@ -139,11 +139,11 @@ public class CentroidTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultList() throws FactoryException {
+    private static FeatureCollection buildResultList() throws FactoryException {
 
         type = createSimpleResultType();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
         for (int i = 0; i < 5; i++) {
 

@@ -28,7 +28,7 @@ import org.geotoolkit.feature.type.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface FeatureWriter<T extends FeatureType, F extends Feature> extends FeatureIterator<F>{
+public interface FeatureWriter extends FeatureIterator{
 
     /**
      * Get the writer FeatureType.
@@ -37,7 +37,7 @@ public interface FeatureWriter<T extends FeatureType, F extends Feature> extends
      * 
      * @return the featuretype of all feature returned by this iterator.
      */
-    T getFeatureType();
+    FeatureType getFeatureType();
 
     /**
      * Read the next feature, the returned feature can be modify.
@@ -51,7 +51,7 @@ public interface FeatureWriter<T extends FeatureType, F extends Feature> extends
      * @throws FeatureStoreRuntimeException if error occured while reading the next feature.
      */
     @Override
-    F next() throws FeatureStoreRuntimeException;
+    Feature next() throws FeatureStoreRuntimeException;
 
     /**
      * Delete the current feature.

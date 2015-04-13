@@ -42,6 +42,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.feature.Feature;
 
 import static org.junit.Assert.*;
 
@@ -145,7 +146,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     public void testHolyPolygons() throws Exception {
         SimpleFeatureType type = FeatureTypeUtilities.createType("junk",
                 "a:MultiPolygon");
-        Collection<SimpleFeature> features = new ArrayList<SimpleFeature>();
+        Collection<Feature> features = new ArrayList<>();
 
         File tmpFile = getTempFile();
         tmpFile.delete();
@@ -162,7 +163,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
 
         s = new ShapefileFeatureStore(tmpFile.toURI().toURL());
         typeName = s.getNames().iterator().next();
-        FeatureCollection<SimpleFeature> fc = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection fc = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         ShapefileReadWriteTest.compare(features, fc);
     }

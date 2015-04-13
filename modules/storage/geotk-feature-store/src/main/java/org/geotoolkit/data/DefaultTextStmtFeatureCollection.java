@@ -41,7 +41,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection<Feature>{
+public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection{
 
     private final Query query;
     private FeatureType ft = null;
@@ -64,7 +64,7 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public FeatureCollection<Feature> subCollection(final Query query) throws DataStoreException {
+    public FeatureCollection subCollection(final Query query) throws DataStoreException {
         //we can't make a subcollection, use generic wrapping
         final FeatureCollection col = getSession().getFeatureCollection(this.query);
         return GenericQueryFeatureIterator.wrap(col, query);
@@ -91,7 +91,7 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException{
+    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException{
 
         final Query iteQuery;
         if(hints != null){

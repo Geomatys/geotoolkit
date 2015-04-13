@@ -51,8 +51,8 @@ public class IntersectionProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList               = value(FEATURE_IN, inputParameters);
-        final FeatureCollection<Feature> inputFeatureIntersectionList   = value(FEATURE_INTER, inputParameters);
+        final FeatureCollection inputFeatureList               = value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureIntersectionList   = value(FEATURE_INTER, inputParameters);
         final String inputGeometryName                                  = value(GEOMETRY_NAME, inputParameters);
 
         final FeatureCollection resultFeatureList = new IntersectionFeatureCollection(inputFeatureList, inputFeatureIntersectionList, inputGeometryName);
@@ -68,7 +68,7 @@ public class IntersectionProcess extends AbstractProcess {
      * @return Feature
      */
     public static FeatureCollection intersetFeature(final Feature oldFeature, final FeatureType newType,
-            final FeatureCollection<Feature> featureClippingList, final String geometryName)
+            final FeatureCollection featureClippingList, final String geometryName)
             throws FactoryException, MismatchedDimensionException, TransformException, ProcessException {
 
         return VectorProcessUtils.intersectionFeatureToColl(oldFeature, featureClippingList, geometryName);

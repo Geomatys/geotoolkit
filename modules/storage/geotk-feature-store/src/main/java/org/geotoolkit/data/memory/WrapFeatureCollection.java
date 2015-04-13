@@ -34,15 +34,15 @@ import org.opengis.filter.Filter;
  * @author Quentin Boileau
  * @module pending
  */
-public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Feature> {
+public abstract class WrapFeatureCollection extends AbstractFeatureCollection {
 
-    private final FeatureCollection<?> originalFC;
+    private final FeatureCollection originalFC;
 
     /**
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
      */
-    public WrapFeatureCollection(final FeatureCollection<?> originalFC) {
+    public WrapFeatureCollection(final FeatureCollection originalFC) {
         super(originalFC.getID(), originalFC.getSource());
         this.originalFC = originalFC;
     }
@@ -57,7 +57,7 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Fe
      * Return the original FeatureCollection
      * @return FeatureCollection : original
      */
-    protected FeatureCollection<?> getOriginalFeatureCollection() {
+    protected FeatureCollection getOriginalFeatureCollection() {
         return originalFC;
     }
 
@@ -78,7 +78,7 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Fe
      * @throws FeatureStoreRuntimeException
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
+    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
         return new VectorFeatureIterator(originalFC.iterator());
     }
 
@@ -132,7 +132,7 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Fe
          * Connect to the original FeatureIterator
          * @param originalFI FeatureIterator
          */
-        public VectorFeatureIterator(final FeatureIterator<?> originalFI) {
+        public VectorFeatureIterator(final FeatureIterator originalFI) {
             super(originalFI);
         }
 

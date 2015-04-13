@@ -98,7 +98,7 @@ public class H2StoreTest {
             
             store.addFeatures(n, Collections.singleton(f));
             
-            final FeatureCollection<Feature> res = store.createSession(true).getFeatureCollection(QueryBuilder.all(n));
+            final FeatureCollection res = store.createSession(true).getFeatureCollection(QueryBuilder.all(n));
             for(Feature rf : res){
                 System.out.println(rf);
             }

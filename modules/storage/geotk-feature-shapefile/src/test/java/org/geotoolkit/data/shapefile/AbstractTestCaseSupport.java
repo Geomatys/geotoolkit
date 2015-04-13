@@ -34,6 +34,7 @@ import org.geotoolkit.feature.simple.SimpleFeature;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import org.geotoolkit.feature.Feature;
 
 import static org.junit.Assert.*;
 
@@ -148,9 +149,9 @@ public abstract class AbstractTestCaseSupport {
     /**
      * Returns the first feature in the given feature collection.
      */
-    protected SimpleFeature firstFeature(final FeatureCollection fc) {
-        FeatureIterator<SimpleFeature> features = fc.iterator();
-        SimpleFeature next = features.next();
+    protected Feature firstFeature(final FeatureCollection fc) {
+        FeatureIterator features = fc.iterator();
+        Feature next = features.next();
         features.close();
         return next;
     }

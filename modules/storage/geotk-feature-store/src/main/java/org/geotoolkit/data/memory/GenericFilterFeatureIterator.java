@@ -37,12 +37,11 @@ import org.opengis.filter.Filter;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
-        implements FeatureIterator<F> {
+public class GenericFilterFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
     protected final Filter filter;
-    protected F next = null;
+    protected Feature next = null;
 
     /**
      * Creates a new instance of GenericFilterFeatureIterator
@@ -59,10 +58,10 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
      * {@inheritDoc }
      */
     @Override
-    public F next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         if (hasNext()) {
             // hasNext() ensures that next != null
-            final F f = next;
+            final Feature f = next;
             next = null;
             return f;
         } else {
@@ -87,7 +86,7 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
             return true;
         }
 
-        F peek;
+        Feature peek;
         while (iterator.hasNext()) {
             peek = iterator.next();
 
@@ -125,15 +124,14 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericFilterFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericFilterFeatureIterator<F,R> implements FeatureReader<T,F>{
+    private static final class GenericFilterFeatureReader extends GenericFilterFeatureIterator<FeatureReader> implements FeatureReader{
 
-        private GenericFilterFeatureReader(final R reader, final Filter filter){
+        private GenericFilterFeatureReader(final FeatureReader reader, final Filter filter){
             super(reader,filter);
         }
         
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return iterator.getFeatureType();
         }
 
@@ -146,15 +144,14 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
      * @param <F> extends Feature
      * @param <R> extends FeatureWriter<T,F>
      */
-    private static final class GenericFilterFeatureWriter<T extends FeatureType, F extends Feature, R extends FeatureWriter<T,F>>
-            extends GenericFilterFeatureIterator<F,R> implements FeatureWriter<T,F>{
+    private static final class GenericFilterFeatureWriter extends GenericFilterFeatureIterator<FeatureWriter> implements FeatureWriter{
 
-        private GenericFilterFeatureWriter(final R writer, final Filter filter){
+        private GenericFilterFeatureWriter(final FeatureWriter writer, final Filter filter){
             super(writer,filter);
         }
 
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return iterator.getFeatureType();
         }
 
@@ -188,7 +185,7 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
     /**
      * Wrap a FeatureIterator with a filter.
      */
-    public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final Filter filter){
+    public static FeatureIterator wrap(final FeatureIterator reader, final Filter filter){
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,filter);
         }else if(reader instanceof FeatureWriter){
@@ -201,14 +198,14 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
     /**
      * Wrap a FeatureReader with a filter.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(final FeatureReader<T,F> reader, final Filter filter){
+    public static FeatureReader wrap(final FeatureReader reader, final Filter filter){
         return new GenericFilterFeatureReader(reader, filter);
     }
 
     /**
      * Wrap a FeatureWriter with a filter.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrap(final FeatureWriter<T,F> writer, final Filter filter){
+    public static FeatureWriter wrap(final FeatureWriter writer, final Filter filter){
         return new GenericFilterFeatureWriter(writer, filter);
     }
 

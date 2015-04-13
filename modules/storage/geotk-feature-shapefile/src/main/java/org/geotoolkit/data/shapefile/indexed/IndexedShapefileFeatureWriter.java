@@ -55,7 +55,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
 
     public IndexedShapefileFeatureWriter(final String typeName, final ShpFiles shpFiles,
             final IndexedShapefileAttributeReader attsReader,
-             final FeatureReader<FeatureType, Feature> featureReader, final IndexedShapefileFeatureStore featurestore,
+             final FeatureReader featureReader, final IndexedShapefileFeatureStore featurestore,
              final Charset charset)
             throws DataStoreException,IOException {
         super(featurestore, typeName, shpFiles, attsReader, featureReader, charset);

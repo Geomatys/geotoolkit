@@ -68,8 +68,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractFeatureCollection<F extends Feature> extends AbstractCollection<F>
-        implements FeatureCollection<F>, FeatureStoreListener{
+public abstract class AbstractFeatureCollection extends AbstractCollection<Feature>
+        implements FeatureCollection, FeatureStoreListener{
 
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
     private final FeatureStoreListener.Weak weakListener = new Weak(this);
@@ -141,7 +141,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * {@inheritDoc }
      */
     @Override
-    public final FeatureIterator<F> iterator(){
+    public final FeatureIterator iterator(){
         return iterator(null);
     }
 
@@ -167,7 +167,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
 
     @Override
     public boolean contains(Object o) {
-        final FeatureIterator<F> e = iterator();
+        final FeatureIterator e = iterator();
         try{
             if (o==null) {
                 while (e.hasNext())
@@ -202,7 +202,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
     @Override
     public boolean retainAll(Collection<?> c) {
         boolean modified = false;
-	final FeatureIterator<F> e = iterator();
+	final FeatureIterator e = iterator();
         try{
             while (e.hasNext()) {
                 if (!c.contains(e.next())) {
@@ -218,7 +218,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
 
     @Override
     public void clear() {
-        FeatureIterator<F> e = iterator();
+        FeatureIterator e = iterator();
         try{
             while (e.hasNext()) {
                 e.next();
@@ -259,7 +259,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
     }
 
     @Override
-    public FeatureCollection<F> subCollection(final Query remainingParameters) throws DataStoreException {
+    public FeatureCollection subCollection(final Query remainingParameters) throws DataStoreException {
 
         FeatureCollection result = this;
 

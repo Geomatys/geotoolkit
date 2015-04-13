@@ -90,8 +90,8 @@ public class GenericIteratorTest extends TestCase{
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     private static final GeometryFactory GF = new GeometryFactory();
 
-    private final FeatureCollection<SimpleFeature> collection;
-    private final FeatureCollection<Feature> collectionComplex;
+    private final FeatureCollection collection;
+    private final FeatureCollection collectionComplex;
     private final Name name;
     private final SimpleFeatureType originalType;
     private final SimpleFeatureType reducedType;

@@ -100,13 +100,13 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     static final String CHINESE = "shapes/chinese_poly.shp";
 
-    protected FeatureCollection<SimpleFeature> loadFeatures(final String resource, final Query q)
+    protected FeatureCollection loadFeatures(final String resource, final Query q)
             throws Exception {
 
         URL url = ShapeTestData.url(resource);
         IndexedShapefileFeatureStore s = new IndexedShapefileFeatureStore(url);
 
-        final FeatureCollection<SimpleFeature> features;
+        final FeatureCollection features;
         if(q == null){
             features = s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));
         }else{
@@ -117,13 +117,13 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         return features;
     }
 
-    protected FeatureCollection<SimpleFeature> loadFeatures(final String resource, final Charset charset,
+    protected FeatureCollection loadFeatures(final String resource, final Charset charset,
             final Query q) throws Exception {
 
         URL url = ShapeTestData.url(resource);
         ShapefileFeatureStore s = new IndexedShapefileFeatureStore(url, null, false, true, IndexType.QIX, charset);
 
-        final FeatureCollection<SimpleFeature> features;
+        final FeatureCollection features;
         if(q == null){
             features = s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));
         }else{
@@ -134,7 +134,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         return features;
     }
 
-    protected FeatureCollection<SimpleFeature> loadFeatures(final IndexedShapefileFeatureStore s)
+    protected FeatureCollection loadFeatures(final IndexedShapefileFeatureStore s)
             throws Exception {
         return s.createSession(false).getFeatureCollection(QueryBuilder.all(s.getName()));
     }
@@ -146,18 +146,18 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     @Test
     public void testLoadDanishChars() throws Exception {
-        FeatureCollection<SimpleFeature> fc = loadFeatures(DANISH, null);
-        SimpleFeature first = firstFeature(fc);
+        FeatureCollection fc = loadFeatures(DANISH, null);
+        Feature first = firstFeature(fc);
         // Charlï¿½tte, if you can read it with your OS charset
-        assertEquals("Charl\u00F8tte", first.getAttribute("TEKST1"));
+        assertEquals("Charl\u00F8tte", first.getPropertyValue("TEKST1"));
     }
 
     @Test
     public void testLoadChineseChars() throws Exception {
         try {
-            FeatureCollection<SimpleFeature> fc = loadFeatures(CHINESE, Charset.forName("GB18030"), null);
-            SimpleFeature first = firstFeature(fc);
-            String name = (String) first.getAttribute("NAME");
+            FeatureCollection fc = loadFeatures(CHINESE, Charset.forName("GB18030"), null);
+            Feature first = firstFeature(fc);
+            String name = (String) first.getPropertyValue("NAME");
             assertEquals("\u9ed1\u9f99\u6c5f\u7701", name);
         } catch (UnsupportedCharsetException no) {
             // this JDK has not been installed with the required
@@ -191,17 +191,17 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
      */
     @Test
     public void testEnvelope() throws Exception {
-        FeatureCollection<SimpleFeature> features = loadFeatures(STATE_POP, null);
+        FeatureCollection features = loadFeatures(STATE_POP, null);
         testEnvelope(features, IndexType.QIX);
         testEnvelope(features, IndexType.NONE);
     }
 
-    private void testEnvelope(final FeatureCollection<SimpleFeature> features, final IndexType treeType)
+    private void testEnvelope(final FeatureCollection features, final IndexType treeType)
             throws MalformedURLException, IOException, DataStoreException {
         IndexedShapefileFeatureStore s = new IndexedShapefileFeatureStore(ShapeTestData
                 .url(STATE_POP), null, true, true, treeType,null);
         Name typeName = s.getName();
-        FeatureCollection<SimpleFeature> all = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection all = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         assertEquals(features.getEnvelope(), all.getEnvelope());
         s.close();
@@ -222,7 +222,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         file.deleteOnExit();
 
         IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(url, null, true, true, IndexType.QIX,null);
-        FeatureIterator<Feature> indexIter = ds.getFeatureReader(QueryBuilder.all(ds.getName()));
+        FeatureIterator indexIter = ds.getFeatureReader(QueryBuilder.all(ds.getName()));
 
         GeometryFactory factory = new GeometryFactory();
         double area = Double.MAX_VALUE;
@@ -266,8 +266,8 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         File shpFile = copyShapefiles(STATE_POP);
         URL url = shpFile.toURI().toURL();
         IndexedShapefileFeatureStore ds = new IndexedShapefileFeatureStore(url, null, true, true, IndexType.NONE,null);
-        FeatureCollection<Feature> features = ds.createSession(true).getFeatureCollection(QueryBuilder.all(ds.getName()));
-        FeatureIterator<Feature> indexIter = features.iterator();
+        FeatureCollection features = ds.createSession(true).getFeatureCollection(QueryBuilder.all(ds.getName()));
+        FeatureIterator indexIter = features.iterator();
 
         Set<String> expectedFids = new HashSet<String>();
         final Filter fidFilter;
@@ -314,17 +314,17 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             final IndexedShapefileFeatureStore baselineDS, final JTSEnvelope2D newBounds)
             throws FactoryRegistryException,
             IOException, DataStoreException {
-        FeatureCollection<SimpleFeature> features;
-        FeatureIterator<SimpleFeature> indexIter;
+        FeatureCollection features;
+        FeatureIterator indexIter;
         FilterFactory2 fac = (FilterFactory2) FactoryFinder.getFilterFactory(null);
         String geometryName = indexedDS.getFeatureType().getGeometryDescriptor().getLocalName();
 
         Filter filter = fac.bbox(fac.property(geometryName), newBounds);
 
         features = indexedDS.createSession(true).getFeatureCollection(QueryBuilder.filtered(indexedDS.getName(),filter));
-        FeatureCollection<SimpleFeature> features2 = baselineDS.createSession(true).getFeatureCollection(QueryBuilder.filtered(baselineDS.getName(),filter));
+        FeatureCollection features2 = baselineDS.createSession(true).getFeatureCollection(QueryBuilder.filtered(baselineDS.getName(),filter));
 
-        FeatureIterator<SimpleFeature> baselineIter = features2.iterator();
+        FeatureIterator baselineIter = features2.iterator();
         indexIter = features.iterator();
 
         ArrayList baselineFeatures = new ArrayList();
@@ -350,20 +350,20 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     @Test
     public void testLoadAndVerify() throws Exception {
-        FeatureCollection<SimpleFeature> features = loadFeatures(STATE_POP, null);
+        FeatureCollection features = loadFeatures(STATE_POP, null);
 
         int count = features.size();
         assertTrue("Got Features", count > 0);
         // assertEquals("Number of Features loaded", 49, count); // FILE CORRECT
         // assertEquals("Number of Features loaded", 3, count); // JAR WRONG
 
-        SimpleFeatureType schema = firstFeature(features).getFeatureType();
+        FeatureType schema = firstFeature(features).getType();
         assertNotNull(schema.getGeometryDescriptor());
-        assertEquals("Number of Attributes", 253, schema.getAttributeCount());
+        assertEquals("Number of Attributes", 253, schema.getDescriptors().size());
         assertEquals("Value of statename is wrong", firstFeature(features)
-                .getAttribute("STATE_NAME"), "Illinois");
+                .getPropertyValue("STATE_NAME"), "Illinois");
         assertEquals("Value of land area is wrong", ((Double) firstFeature(
-                features).getAttribute("LAND_KM")).doubleValue(), 143986.61,
+                features).getPropertyValue("LAND_KM")).doubleValue(), 143986.61,
                 0.001);
     }
 
@@ -390,13 +390,13 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         IndexedShapefileFeatureStore sds = createDataStore();
         loadFeatures(sds);
 
-        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = null;
+        FeatureWriter writer = null;
 
         try {
             writer = sds.getFeatureWriter(sds.getName(), Filter.INCLUDE);
 
             while (writer.hasNext()) {
-                SimpleFeature feat = writer.next();
+                SimpleFeature feat = (SimpleFeature) writer.next();
                 Byte b = (Byte) feat.getAttribute(1);
 
                 if ((b.byteValue() % 2) == 0) {
@@ -411,13 +411,13 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             }
         }
 
-        FeatureCollection<SimpleFeature> fc = loadFeatures(sds);
+        FeatureCollection fc = loadFeatures(sds);
 
         assertEquals(10, fc.size());
 
-        FeatureIterator<SimpleFeature> i = fc.iterator();
+        FeatureIterator i = fc.iterator();
         for (; i.hasNext();) {
-            assertEquals(-1, ((Byte) i.next().getAttribute(1)).byteValue());
+            assertEquals(-1, ((Byte) ((SimpleFeature)i.next()).getAttribute(1)).byteValue());
         }
         i.close();
         sds.close();
@@ -434,7 +434,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         int idx = loadFeatures(sds).size();
 
         while (idx > 0) {
-            FeatureWriter<SimpleFeatureType, SimpleFeature> writer = null;
+            FeatureWriter writer = null;
 
             try {
                 writer = sds.getFeatureWriter(sds.getName(), Filter.INCLUDE);
@@ -463,7 +463,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         int idx = loadFeatures(sds).size();
 
         while (idx > 0) {
-            FeatureWriter<SimpleFeatureType, SimpleFeature> writer = null;
+            FeatureWriter writer = null;
 
             try {
                 writer = sds.getFeatureWriter(sds.getName(), Filter.INCLUDE);
@@ -490,7 +490,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         int idx = loadFeatures(sds).size();
 
         while (idx > 0) {
-            FeatureWriter<SimpleFeatureType, SimpleFeature> writer = null;
+            FeatureWriter writer = null;
 
             try {
                 writer = sds.getFeatureWriter(sds.getName(), Filter.INCLUDE);
@@ -626,7 +626,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         final FeatureType type = fc.iterator().next().getType();
         s.createFeatureType(type.getName(),type);
 
-        final FeatureWriter<FeatureType, Feature> fw = s.getFeatureWriter(type.getName(),Filter.INCLUDE);
+        final FeatureWriter fw = s.getFeatureWriter(type.getName(),Filter.INCLUDE);
         final Iterator<Feature> it = fc.iterator();
 
         while (it.hasNext()) {
@@ -670,13 +670,13 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         // read features
         s = new IndexedShapefileFeatureStore(tmpFile.toURI().toURL());
 
-        FeatureCollection<SimpleFeature> fc = loadFeatures(s);
-        FeatureIterator<SimpleFeature> fci = fc.iterator();
+        FeatureCollection fc = loadFeatures(s);
+        FeatureIterator fci = fc.iterator();
 
         // verify
         try{
             while (fci.hasNext()) {
-                SimpleFeature f = fci.next();
+                SimpleFeature f = (SimpleFeature) fci.next();
                 Geometry fromShape = (Geometry) f.getDefaultGeometry();
 
                 if (fromShape instanceof GeometryCollection) {
@@ -743,7 +743,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         final String validFid1, validFid2, invalidFid1, invalidFid2;
         {
-            FeatureIterator<Feature> features = ds.getFeatureReader(QueryBuilder.all(ds.getName()));
+            FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(ds.getName()));
             validFid1 = features.next().getIdentifier().getID();
             validFid2 = features.next().getIdentifier().getID();
             invalidFid1 = "_" + features.next().getIdentifier().getID();
@@ -778,7 +778,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     private int count(final FeatureStore ds, final String typeName, final Filter filter) throws Exception {
-        FeatureReader<SimpleFeatureType, SimpleFeature> reader;
+        FeatureReader reader;
         reader = ds.getFeatureReader(QueryBuilder.filtered(ds.getFeatureType(typeName).getName(), filter));
         int count = 0;
         try {

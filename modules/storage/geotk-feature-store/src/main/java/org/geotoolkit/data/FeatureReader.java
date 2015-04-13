@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 
 /**
@@ -28,7 +27,7 @@ import org.geotoolkit.feature.type.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface FeatureReader<T extends FeatureType, F extends Feature> extends FeatureIterator<F>{
+public interface FeatureReader extends FeatureIterator{
 
     /**
      * Get the reader FeatureType.
@@ -37,6 +36,6 @@ public interface FeatureReader<T extends FeatureType, F extends Feature> extends
      * 
      * @return the featuretype of all feature returned by this iterator.
      */
-    T getFeatureType();
+    FeatureType getFeatureType();
 
 }

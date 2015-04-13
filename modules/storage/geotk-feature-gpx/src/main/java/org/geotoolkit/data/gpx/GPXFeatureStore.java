@@ -223,7 +223,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
         return new File[] { this.file };
     }
 
-    private class GPXFeatureReader implements FeatureReader<FeatureType, Feature>{
+    private class GPXFeatureReader implements FeatureReader{
 
         protected final FeatureType restriction;
         protected final GPXReader reader;
@@ -310,7 +310,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     }
 
-    private class GPXFeatureWriter extends GPXFeatureReader implements FeatureWriter<FeatureType, Feature>{
+    private class GPXFeatureWriter extends GPXFeatureReader implements FeatureWriter{
 
         private final FeatureType writeRestriction;
         private final GPXWriter100 writer;

@@ -75,7 +75,7 @@ public class BufferTest extends AbstractProcessTest {
     public void testBuffer() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
-        final FeatureCollection<?> featureList = buildFeatureCollectionInput1();
+        final FeatureCollection featureList = buildFeatureCollectionInput1();
         Unit<Length> unit = SI.METRE;
 
         // Process
@@ -90,10 +90,10 @@ public class BufferTest extends AbstractProcessTest {
 
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
+        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
-        final FeatureCollection<?> featureListResult = buildFeatureCollectionResult();
+        final FeatureCollection featureListResult = buildFeatureCollectionResult();
 
         assertEquals(featureListResult.getFeatureType(), featureListOut.getFeatureType());
         assertEquals(featureListResult.getID(), featureListOut.getID());
@@ -101,7 +101,7 @@ public class BufferTest extends AbstractProcessTest {
 
         double precision = 0.01;
         //geometry out list
-        FeatureIterator<?> iteratorOut = featureListOut.iterator();
+        FeatureIterator iteratorOut = featureListOut.iterator();
         ArrayList<Geometry> geomsOut = new ArrayList<Geometry>();
         int itOut = 0;
         while (iteratorOut.hasNext()) {
@@ -114,7 +114,7 @@ public class BufferTest extends AbstractProcessTest {
             }
         }
         //geometry input list
-        FeatureIterator<?> listIterator = featureList.iterator();
+        FeatureIterator listIterator = featureList.iterator();
         ArrayList<Geometry> geomsInput = new ArrayList<Geometry>();
         int itResult = 0;
         while (listIterator.hasNext()) {
@@ -147,10 +147,10 @@ public class BufferTest extends AbstractProcessTest {
         return sft;
     }
 
-    private static FeatureCollection<Feature> buildFeatureCollectionInput1() throws FactoryException {
+    private static FeatureCollection buildFeatureCollectionInput1() throws FactoryException {
         type = createSimpleType();
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 
@@ -201,7 +201,7 @@ public class BufferTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection<Feature> buildFeatureCollectionResult() {
+    private static FeatureCollection buildFeatureCollectionResult() {
         try {
             type = createSimpleType();
         } catch (NoSuchAuthorityCodeException ex) {
@@ -210,7 +210,7 @@ public class BufferTest extends AbstractProcessTest {
             Logger.getLogger(BufferTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        final FeatureCollection<Feature> featureList = FeatureStoreUtilities.collection("", type);
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();
 

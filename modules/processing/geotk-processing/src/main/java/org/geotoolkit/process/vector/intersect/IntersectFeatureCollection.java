@@ -55,7 +55,7 @@ public class IntersectFeatureCollection extends WrapFeatureCollection {
      * @param originalFC FeatureCollection
      * @param interGeom
      */
-    public IntersectFeatureCollection(final FeatureCollection<Feature> originalFC, final Geometry interGeom) {
+    public IntersectFeatureCollection(final FeatureCollection originalFC, final Geometry interGeom) {
         super(originalFC);
         this.interGeom = interGeom;
         this.newFeatureType = super.getFeatureType();
@@ -78,8 +78,8 @@ public class IntersectFeatureCollection extends WrapFeatureCollection {
      * @throws FeatureStoreRuntimeException
      */
     @Override
-    public FeatureIterator<Feature> iterator(final Hints hints) throws FeatureStoreRuntimeException {
-        return (FeatureIterator<Feature>) GenericFilterFeatureIterator.wrap(getOriginalFeatureCollection().iterator(null), createFilter());
+    public FeatureIterator iterator(final Hints hints) throws FeatureStoreRuntimeException {
+        return GenericFilterFeatureIterator.wrap(getOriginalFeatureCollection().iterator(null), createFilter());
     }
 
     /**

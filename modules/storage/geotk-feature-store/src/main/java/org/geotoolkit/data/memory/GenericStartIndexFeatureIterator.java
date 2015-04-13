@@ -34,12 +34,11 @@ import org.geotoolkit.feature.type.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GenericStartIndexFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
-        implements FeatureIterator<F> {
+public class GenericStartIndexFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected final R iterator;
     protected final int startIndex;
-    protected F nextFeature = null;
+    protected Feature nextFeature = null;
     private boolean translateDone = false;
 
     /**
@@ -57,10 +56,10 @@ public class GenericStartIndexFeatureIterator<F extends Feature, R extends Featu
      * {@inheritDoc }
      */
     @Override
-    public F next() throws FeatureStoreRuntimeException {
+    public Feature next() throws FeatureStoreRuntimeException {
         if (hasNext()) {
             // hasNext() ensures that next != null
-            final F f = nextFeature;
+            final Feature f = nextFeature;
             nextFeature = null;
             return f;
         } else {
@@ -126,15 +125,14 @@ public class GenericStartIndexFeatureIterator<F extends Feature, R extends Featu
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericStartIndexFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericStartIndexFeatureIterator<F,R> implements FeatureReader<T,F>{
+    private static final class GenericStartIndexFeatureReader extends GenericStartIndexFeatureIterator<FeatureReader> implements FeatureReader{
 
-        private GenericStartIndexFeatureReader(final R reader,final int limit){
+        private GenericStartIndexFeatureReader(final FeatureReader reader,final int limit){
             super(reader,limit);
         }
 
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return iterator.getFeatureType();
         }
 
@@ -147,15 +145,14 @@ public class GenericStartIndexFeatureIterator<F extends Feature, R extends Featu
      * @param <F> extends Feature
      * @param <R> extends FeatureWriter<T,F>
      */
-    private static final class GenericStartIndexFeatureWriter<T extends FeatureType, F extends Feature, R extends FeatureWriter<T,F>>
-            extends GenericStartIndexFeatureIterator<F,R> implements FeatureWriter<T,F>{
+    private static final class GenericStartIndexFeatureWriter extends GenericStartIndexFeatureIterator<FeatureWriter> implements FeatureWriter{
 
-        private GenericStartIndexFeatureWriter(final R writer,final int limit){
+        private GenericStartIndexFeatureWriter(final FeatureWriter writer,final int limit){
             super(writer,limit);
         }
 
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return iterator.getFeatureType();
         }
         
@@ -190,7 +187,7 @@ public class GenericStartIndexFeatureIterator<F extends Feature, R extends Featu
     /**
      * Wrap a FeatureIterator with a start index.
      */
-    public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final int limit){
+    public static FeatureIterator wrap(final FeatureIterator reader, final int limit){
         if(reader instanceof FeatureReader){
             return wrap((FeatureReader)reader,limit);
         }else if(reader instanceof FeatureWriter){
@@ -203,14 +200,14 @@ public class GenericStartIndexFeatureIterator<F extends Feature, R extends Featu
     /**
      * Wrap a FeatureReader with a start index.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(final FeatureReader<T,F> reader, final int limit){
+    public static FeatureReader wrap(final FeatureReader reader, final int limit){
         return new GenericStartIndexFeatureReader(reader, limit);
     }
 
     /**
      * Wrap a FeatureWriter with a start index.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrap(final FeatureWriter<T,F> writer, final int limit){
+    public static FeatureWriter wrap(final FeatureWriter writer, final int limit){
         return new GenericStartIndexFeatureWriter(writer, limit);
     }
 

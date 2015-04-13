@@ -21,8 +21,6 @@ import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.vector.VectorDescriptor;
-
-import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.vector.sort.SortByDescriptor.*;
@@ -48,7 +46,7 @@ public class SortByProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList   = Parameters.value(FEATURE_IN, inputParameters);
+        final FeatureCollection inputFeatureList   = Parameters.value(FEATURE_IN, inputParameters);
         final org.opengis.filter.sort.SortBy[] sorter       = Parameters.value(SORTER_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = GenericSortByFeatureIterator.wrap(inputFeatureList, sorter);

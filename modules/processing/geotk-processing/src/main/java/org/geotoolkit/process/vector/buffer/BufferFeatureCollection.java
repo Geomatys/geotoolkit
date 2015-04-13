@@ -47,7 +47,7 @@ public class BufferFeatureCollection extends WrapFeatureCollection {
      * @param inputBehavior
      * @param inputLenient
      */
-    public BufferFeatureCollection(final FeatureCollection<Feature> originalFC, final double inputDistance, final Boolean inputLenient) {
+    public BufferFeatureCollection(final FeatureCollection originalFC, final double inputDistance, final Boolean inputLenient) {
         super(originalFC);
         this.inputDistance = inputDistance;
         this.inputLenient = inputLenient;

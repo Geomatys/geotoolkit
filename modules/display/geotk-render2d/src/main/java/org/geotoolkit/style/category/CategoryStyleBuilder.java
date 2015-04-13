@@ -265,7 +265,7 @@ public class CategoryStyleBuilder extends Factory {
         builder.setProperties(new String[]{property.getPropertyName()});
         final Query query = builder.buildQuery();
 
-        FeatureIterator<? extends Feature> features = null;
+        FeatureIterator features = null;
         try{
             features = layer.getCollection().subCollection(query).iterator();
             while(features.hasNext()){

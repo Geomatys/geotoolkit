@@ -52,7 +52,7 @@ public final class DifferenceDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Feature Collection for clipping
      */
-    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_DIFF =
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_DIFF =
             new DefaultParameterDescriptor("feature_diff", "Input FeatureCollection used for compute the difference", FeatureCollection.class, null, true);
 
     /** Input Parameters */

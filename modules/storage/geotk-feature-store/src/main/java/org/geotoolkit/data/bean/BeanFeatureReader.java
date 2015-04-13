@@ -26,7 +26,7 @@ import org.geotoolkit.feature.type.FeatureType;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class BeanFeatureReader implements FeatureReader<FeatureType, Feature>{
+public class BeanFeatureReader implements FeatureReader{
 
     private final BeanFeature.Mapping mapping;
     private final Iterator<Object> candidates;

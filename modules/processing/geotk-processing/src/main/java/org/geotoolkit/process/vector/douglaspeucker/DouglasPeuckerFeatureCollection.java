@@ -47,7 +47,7 @@ public class DouglasPeuckerFeatureCollection extends WrapFeatureCollection {
      * @param inputBehavior
      * @param inputLenient
      */
-    public DouglasPeuckerFeatureCollection(final FeatureCollection<Feature> originalFC, final double inputAccuracy,
+    public DouglasPeuckerFeatureCollection(final FeatureCollection originalFC, final double inputAccuracy,
             final Boolean inputBehavior, final Boolean inputLenient) {
         super(originalFC);
         this.inputAccuracy = inputAccuracy;

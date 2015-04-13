@@ -133,7 +133,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
 
         g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
-        FeatureCollection<? extends Feature> collection = item.getCollection();
+        FeatureCollection collection = item.getCollection();
         try {
             collection = collection.subCollection(item.getQuery());
         } catch (DataStoreException ex) {
@@ -147,8 +147,8 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         double maxx = Double.NaN;
         double maxy = Double.NaN;
         try {
-            final List<DirectPosition> coordinates = new ArrayList<DirectPosition>();
-            final FeatureIterator<? extends Feature> iterator = collection.iterator();
+            final List<DirectPosition> coordinates = new ArrayList<>();
+            final FeatureIterator iterator = collection.iterator();
             try {
                 while (iterator.hasNext()) {
                     final Feature feature = iterator.next();

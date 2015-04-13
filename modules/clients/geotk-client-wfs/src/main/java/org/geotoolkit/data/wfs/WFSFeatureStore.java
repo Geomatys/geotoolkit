@@ -306,13 +306,13 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader<FeatureType,Feature> getFeatureReader(final Query query) throws DataStoreException {
+    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final Name name = query.getTypeName();
         //will raise an error if typename in unknowned
         final FeatureType sft = getFeatureType(name);
 
         final QName q = new QName(name.getNamespaceURI(), name.getLocalPart(), prefixes.get(name.getNamespaceURI()));
-        final FeatureCollection<Feature> collection;
+        final FeatureCollection collection;
         try {
             collection = requestFeature(q, query);
         } catch (IOException ex) {
@@ -488,7 +488,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
     }
 
-    private FeatureCollection<Feature> requestFeature(final QName typeName, final Query query) throws IOException {
+    private FeatureCollection requestFeature(final QName typeName, final Query query) throws IOException {
         final Name name = new DefaultName(typeName);
         FeatureType sft = types.get(name);
         sft = FeatureTypeUtilities.createSubType(sft, query.getPropertyNames());
@@ -531,14 +531,14 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
             if(result instanceof Feature){
                 final Feature sf = (Feature) result;
-                final FeatureCollection<Feature> col = FeatureStoreUtilities.collection("id", sft);
+                final FeatureCollection col = FeatureStoreUtilities.collection("id", sft);
                 col.add(sf);
                 return col;
             }else if(result instanceof FeatureCollection){
-                final FeatureCollection<Feature> col = (FeatureCollection<Feature>) result;
+                final FeatureCollection col = (FeatureCollection) result;
                 return col;
             }else{
-                final FeatureCollection<Feature> col = FeatureStoreUtilities.collection("", sft);
+                final FeatureCollection col = FeatureStoreUtilities.collection("", sft);
                 return col;
             }
 

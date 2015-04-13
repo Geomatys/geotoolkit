@@ -70,14 +70,14 @@ import org.opengis.filter.identity.Identifier;
  * @author Jesse Eichar
  * @module pending
  */
-public class ShapefileFeatureWriter implements FeatureWriter<FeatureType, Feature> {
+public class ShapefileFeatureWriter implements FeatureWriter {
 
     protected final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     
     protected final ShapefileFeatureStore parent;
     
     // the  FeatureReader<SimpleFeatureType, SimpleFeature> to obtain the current Feature from
-    protected FeatureReader<FeatureType, Feature> featureReader;
+    protected FeatureReader featureReader;
 
     // the AttributeReader
     protected final ShapefileAttributeReader attReader;
@@ -129,7 +129,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<FeatureType, Featur
     
 
     public ShapefileFeatureWriter(final ShapefileFeatureStore parent, final String typeName, final ShpFiles shpFiles, final ShapefileAttributeReader attsReader,  
-            final FeatureReader<FeatureType, Feature> featureReader, final Charset charset) throws IOException,DataStoreException {
+            final FeatureReader featureReader, final Charset charset) throws IOException,DataStoreException {
         this.parent = parent;
         this.shpFiles = shpFiles;
         this.dbfCharset = charset;

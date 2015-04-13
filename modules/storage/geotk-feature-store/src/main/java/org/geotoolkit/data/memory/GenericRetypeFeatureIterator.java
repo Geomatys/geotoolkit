@@ -26,13 +26,10 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -45,8 +42,7 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
-        implements FeatureIterator<F> {
+public abstract class GenericRetypeFeatureIterator<R extends FeatureIterator> implements FeatureIterator {
 
     protected static final FeatureFactory FF = FeatureFactory.LENIENT;
 
@@ -188,24 +184,23 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericSeparateRetypeFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericRetypeFeatureIterator<F,R> implements FeatureReader<T,F>{
+    private static final class GenericSeparateRetypeFeatureReader extends GenericRetypeFeatureIterator<FeatureReader> implements FeatureReader{
 
         /**
          * The descriptors we are going to from the original reader
          */
         private final PropertyDescriptor[] types;
 
-        protected final T mask;
+        protected final FeatureType mask;
 
-        private GenericSeparateRetypeFeatureReader(final R reader, final T mask){
+        private GenericSeparateRetypeFeatureReader(final FeatureReader reader, final FeatureType mask){
             super(reader);
             this.mask = mask;
             types = typeAttributes(reader.getFeatureType(), mask);
         }
 
         @Override
-        public F next() throws FeatureStoreRuntimeException {
+        public Feature next() throws FeatureStoreRuntimeException {
             final Feature next = iterator.next();
 
             final Collection<Property> properties = new ArrayList<Property>();
@@ -213,14 +208,14 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
                 properties.addAll(next.getProperties(prop.getName()));
             }
 
-            final F cp = (F) FF.createFeature(properties, mask, next.getIdentifier().getID());
+            final Feature cp = FF.createFeature(properties, mask, next.getIdentifier().getID());
             //copy user datas
             cp.getUserData().putAll(next.getUserData());
             return cp;
         }
 
         @Override
-        public T getFeatureType() {
+        public FeatureType getFeatureType() {
             return mask;
         }
 
@@ -264,8 +259,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
     /**
      * Wrap a FeatureReader with a new featuretype.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(
-            final FeatureReader<T,F> reader, final FeatureType mask, final Hints hints){
+    public static FeatureReader wrap(final FeatureReader reader, final FeatureType mask, final Hints hints){
         final FeatureType original = reader.getFeatureType();
         if(mask.equals(original)){
             //same type mapping, no need to wrap it
