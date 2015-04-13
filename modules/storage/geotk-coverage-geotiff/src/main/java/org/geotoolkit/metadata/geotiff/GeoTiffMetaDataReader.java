@@ -251,7 +251,7 @@ public final class GeoTiffMetaDataReader {
         }
 
         //unknowned definition /////////////////////////////////////////////////
-        throw new IOException("Unknowned Grid to CRS transformation definition.");
+        LOGGER.log(Level.FINE, "Unknowned Grid to CRS transformation definition from image internaly metadatas");
     }
 
     /**
