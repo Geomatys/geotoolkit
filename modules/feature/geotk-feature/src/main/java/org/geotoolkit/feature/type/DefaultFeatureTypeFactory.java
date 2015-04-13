@@ -48,14 +48,6 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public Schema createSchema(final String uri) {
-        return new DefaultSchema(uri);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public AssociationDescriptor createAssociationDescriptor(final AssociationType type,
             final Name name, final int minOccurs, final int maxOccurs, final boolean isNillable){
         return new DefaultAssociationDescriptor(type, name, minOccurs, maxOccurs, isNillable);

@@ -1230,7 +1230,7 @@ public final class FeatureTypeUtilities {
         }
     }
 
-    /**
+   /**
      * Constructs an empty feature to use as a Template for new content.
      *
      * <p>

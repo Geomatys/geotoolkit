@@ -56,6 +56,8 @@ import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.simple.DefaultSimpleFeature;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.Identifier;
 

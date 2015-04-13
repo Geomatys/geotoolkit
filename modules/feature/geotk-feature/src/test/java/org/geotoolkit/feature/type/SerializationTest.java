@@ -24,20 +24,10 @@ import java.util.Collection;
 import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.geotoolkit.feature.type.DefaultName;
 import org.apache.sis.referencing.CommonCRS;
 import static org.geotoolkit.test.Assert.*;
 
 import org.junit.Test;
-
-import org.geotoolkit.feature.type.AssociationDescriptor;
-import org.geotoolkit.feature.type.AssociationType;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.Schema;
 
 /**
  * Test the different feature type and attribute classes serialization.
@@ -89,15 +79,6 @@ public class SerializationTest {
         ComplexType comType = new DefaultComplexType(DefaultName.valueOf("comType"),
                 (Collection)Collections.singleton(geomDesc), true, true, null, attType, null);
         assertSerializedEquals(comType);
-
-        //test schema
-        Schema schema = new DefaultSchema("http://geotoolkit.org");
-        assertSerializedEquals(schema);
-
-        //test profile
-        DefaultProfile profile = new DefaultProfile(schema, Collections.singleton(DefaultName.valueOf("profile")));
-        assertSerializedEquals(profile);
-
 
         assertSerializedEquals(BasicFeatureTypes.FEATURE);
 

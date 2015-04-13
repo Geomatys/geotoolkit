@@ -59,13 +59,6 @@ public interface FeatureTypeFactory {
     FeatureTypeFactory INSTANCE = new DefaultFeatureTypeFactory();
 
     /**
-     * Creates a schema.
-     *
-     * @param namespaceURI The uri of the schema.
-     */
-    Schema createSchema(String namespaceURI);
-
-    /**
      * Creates an association descriptor.
      *
      * @param type

@@ -39,10 +39,8 @@ import java.util.Map;
 import org.geotoolkit.feature.MockCRS;
 import org.geotoolkit.feature.MockDirectPosition2D;
 import org.geotoolkit.feature.MockInternationalString;
-import org.geotoolkit.feature.type.DefaultName;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.geotoolkit.feature.type.*;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -109,27 +107,6 @@ public abstract class AbstractSimpleFeatureTypeTest  {
         //description
         assertNotNull("Attribute description is NULL", res2.getDescription());
         assertEquals("Attribute description is wrong", descriptionSample.toString(), res2.getDescription().toString());
-    }
-
-    /**
-     * A test to verify the creation of a {@link Schema} and ensure it is valid (test access / writing).
-     */
-    @Test
-    public void testCreateSchema() {
-        final FeatureTypeFactory FTF = getFeatureTypeFactory();
-
-        final Schema test = FTF.createSchema("objectName");
-        assertNotNull("Schema creation failed", test);
-        //URI
-        assertNotNull("Schema URI is null", test.getURI());
-        assertEquals("Schema URI is not the one expected", "objectName", test.getURI());
-        //writing test
-        Name name = new DefaultName("objectName");
-        AttributeType type = FTF.createAttributeType(name, String.class, true, false, null, null, null);
-        test.put(name, type);
-        assertNotNull("Schema put() method has not worked", test.get(name));
-        assertEquals("Schema put() method has not worked", type, test.get(name));
-
     }
 
     /**

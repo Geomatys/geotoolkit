@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.simple.DefaultSimpleSchema;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.Classes;
@@ -44,7 +43,6 @@ import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
-import org.geotoolkit.feature.type.Schema;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
@@ -108,11 +106,6 @@ public class FeatureTypeBuilder {
     protected final FeatureTypeFactory factory;
     protected final AttributeDescriptorBuilder attributeDescBuilder;
     private final boolean nameCheck;
-
-    /**
-     * Map of java class bound to properties types.
-     */
-    protected final Map<Class,AttributeType> bindings = new HashMap<Class, AttributeType>();
 
     protected final List<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>(){
 
@@ -193,7 +186,6 @@ public class FeatureTypeBuilder {
         }
         this.attributeDescBuilder = new AttributeDescriptorBuilder(this.factory);
         this.nameCheck = namecheck;
-        setBindings(new DefaultSimpleSchema());
         reset();
     }
 
@@ -336,59 +328,6 @@ public class FeatureTypeBuilder {
      */
     public AttributeType getSuperType() {
         return superType;
-    }
-
-    /**
-     * Specifies an attribute type binding.
-     * <p>
-     * This method is used to associate an attribute type with a java class.
-     * The class is retreived from <code>type.getBinding()</code>. When the
-     * {@link #add(String, Class)} method is used to add an attribute to the
-     * type being built, this binding is used to locate the attribute type.
-     * </p>
-     *
-     * @param type The attribute type.
-     */
-    public void addBinding(final AttributeType type) {
-        bindings.put(type.getBinding(), type);
-    }
-
-    /**
-     * Specifies a number of attribute type bindings.
-     *
-     * @param schema The schema containing the attribute types.
-     *
-     * @see #addBinding(org.opengis.feature.type.AttributeType)
-     */
-    public void addBindings(final Schema schema) {
-        for (Iterator itr = schema.values().iterator(); itr.hasNext();) {
-            AttributeType type = (AttributeType) itr.next();
-            addBinding(type);
-        }
-    }
-
-    /**
-     * Specifies a number of attribute type bindings clearing out all existing
-     * bindings.
-     *
-     * @param schema The schema contianing attribute types.
-     *
-     * @see #addBinding(org.opengis.feature.type.AttributeType)
-     */
-    public void setBindings(final Schema schema) {
-        bindings.clear();
-        addBindings(schema);
-    }
-
-    /**
-     * Looks up an attribute type which has been bound to a class.
-     *
-     * @param binding The class.
-     *
-     * @return AttributeType The bound attribute type.
-     */
-    public AttributeType getBinding(final Class<?> binding) {
-        return bindings.get(binding);
     }
 
     /**
