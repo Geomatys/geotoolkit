@@ -20,7 +20,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -53,7 +52,7 @@ public class SampleFeatureFixtures {
             FeatureType testType = createTestType();
             Object[] attributes = createAttributes();
 
-            return SimpleFeatureBuilder.build( testType,attributes,null);
+            return FeatureBuilder.build( testType,attributes,null);
         } catch (Exception e) {
             Error ae = new AssertionError(
                     "Sample Feature for tests has been misscoded");

@@ -31,7 +31,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.vector.AbstractProcessTest;
@@ -53,7 +53,7 @@ import static org.junit.Assert.*;
  */
 public class RegroupTest extends AbstractProcessTest {
 
-    private static SimpleFeatureBuilder sfb;
+    private static FeatureBuilder sfb;
     private static final GeometryFactory GF = new GeometryFactory();
     private static SimpleFeatureType type;
 
@@ -163,12 +163,12 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(4.0, 3.0),
                     new Coordinate(3.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "grey");
-        sfb.set("height", "9");
-        sfb.set("type", "church");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", GF.createPoint(new Coordinate(3.5, 3.5)));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "grey");
+        sfb.setPropertyValue("height", "9");
+        sfb.setPropertyValue("type", "church");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", GF.createPoint(new Coordinate(3.5, 3.5)));
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
 
@@ -188,12 +188,12 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(4.0, 7.0),
                     new Coordinate(5.5, 6.5)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "blue");
-        sfb.set("height", "3");
-        sfb.set("type", "office");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", multPt);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "blue");
+        sfb.setPropertyValue("height", "3");
+        sfb.setPropertyValue("type", "office");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", multPt);
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
 
@@ -211,12 +211,12 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(7.0, 0.0),
                     new Coordinate(9.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "black");
-        sfb.set("height", "2");
-        sfb.set("type", "office");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", line);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "black");
+        sfb.setPropertyValue("height", "2");
+        sfb.setPropertyValue("type", "office");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", line);
         myFeature3 = sfb.buildFeature("id-03");
         featureList.add(myFeature3);
 
@@ -229,12 +229,12 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(3.0, 2.0),
                     new Coordinate(2.0, 2.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "yellow");
-        sfb.set("height", "2");
-        sfb.set("type", "post office");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", GF.createPoint(new Coordinate(10, 5)));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "yellow");
+        sfb.setPropertyValue("height", "2");
+        sfb.setPropertyValue("type", "post office");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", GF.createPoint(new Coordinate(10, 5)));
         myFeature4 = sfb.buildFeature("id-04");
         featureList.add(myFeature4);
 
@@ -252,12 +252,12 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(8.0, 0.0),
                     new Coordinate(5.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "yellow");
-        sfb.set("height", "9");
-        sfb.set("type", "office");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", line);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "yellow");
+        sfb.setPropertyValue("height", "9");
+        sfb.setPropertyValue("type", "office");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", line);
         myFeature5 = sfb.buildFeature("id-05");
         featureList.add(myFeature5);
 
@@ -277,12 +277,12 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(10.0, 2.0),
                     new Coordinate(8.0, 0.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "black");
-        sfb.set("height", "2");
-        sfb.set("type", "church");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", GF.createPolygon(ring2, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "black");
+        sfb.setPropertyValue("height", "2");
+        sfb.setPropertyValue("type", "church");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", GF.createPolygon(ring2, null));
         myFeature6 = sfb.buildFeature("id-06");
         featureList.add(myFeature6);
 
@@ -305,9 +305,9 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(6.0, 6.0),
                     new Coordinate(5.0, 6.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("height", 3);
-        sfb.set("geom1", GF.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("height", 3);
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
         myFeature1 = sfb.buildFeature("height-3");
         featureList.add(myFeature1);
 
@@ -330,9 +330,9 @@ public class RegroupTest extends AbstractProcessTest {
                 });
         Polygon poly1 = GF.createPolygon(ring1, null);
         Polygon poly2 = GF.createPolygon(ring2, null);
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("height", 9);
-        sfb.set("geom1", GF.createMultiPolygon(new Polygon[]{poly1, poly2}));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("height", 9);
+        sfb.setPropertyValue("geom1", GF.createMultiPolygon(new Polygon[]{poly1, poly2}));
         myFeature2 = sfb.buildFeature("height-9");
         featureList.add(myFeature2);
 
@@ -364,9 +364,9 @@ public class RegroupTest extends AbstractProcessTest {
         poly1 = GF.createPolygon(ring, null);
         poly2 = GF.createPolygon(ring1, null);
         Polygon poly3 = GF.createPolygon(ring2, null);
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("height", 2);
-        sfb.set("geom1", GF.createMultiPolygon(new Polygon[]{poly1, poly2, poly3}));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("height", 2);
+        sfb.setPropertyValue("geom1", GF.createMultiPolygon(new Polygon[]{poly1, poly2, poly3}));
         myFeature3 = sfb.buildFeature("height-2");
         featureList.add(myFeature3);
 
@@ -403,9 +403,9 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(9.0, 3.0)
                 });
         GeometryCollection collec = GF.createGeometryCollection(new Geometry[]{line1, multPt, line3});
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("type", "office");
-        sfb.set("geom2", collec);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("type", "office");
+        sfb.setPropertyValue("geom2", collec);
         myFeature1 = sfb.buildFeature("type-office");
         featureList.add(myFeature1);
 
@@ -419,17 +419,17 @@ public class RegroupTest extends AbstractProcessTest {
                     new Coordinate(8.0, 0.0)
                 });
         Polygon poly = GF.createPolygon(ring, null);
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("type", "church");
-        sfb.set("geom2", GF.createGeometryCollection(new Geometry[]{poly, pt1}));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("type", "church");
+        sfb.setPropertyValue("geom2", GF.createGeometryCollection(new Geometry[]{poly, pt1}));
         myFeature2 = sfb.buildFeature("type-church");
         featureList.add(myFeature2);
 
         Feature myFeature3;
 
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("type", "post office");
-        sfb.set("geom2", GF.createPoint(new Coordinate(10, 5)));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("type", "post office");
+        sfb.setPropertyValue("geom2", GF.createPoint(new Coordinate(10, 5)));
         myFeature3 = sfb.buildFeature("type-post office");
         featureList.add(myFeature3);
 

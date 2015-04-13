@@ -22,7 +22,7 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -61,9 +61,9 @@ public class CalculatedExpressionAttributeTest {
         ftb.add("att2", Integer.class);
         final FeatureType sft = ftb.buildSimpleFeatureType();
 
-        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
-        sfb.set("att1", 45);
-        sfb.set("att2", 12);
+        final FeatureBuilder sfb = new FeatureBuilder(sft);
+        sfb.setPropertyValue("att1", 45);
+        sfb.setPropertyValue("att2", 12);
         final Feature sf = sfb.buildFeature("id");
 
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();

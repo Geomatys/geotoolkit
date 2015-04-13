@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 
@@ -16,7 +16,7 @@ public class FishReader implements FeatureReader<FeatureType, Feature> {
 
 
     private final GeometryFactory gf = new GeometryFactory();
-    private final SimpleFeatureBuilder sfb;
+    private final FeatureBuilder sfb;
     private final FeatureType type;
     private final Scanner scanner;
 
@@ -25,7 +25,7 @@ public class FishReader implements FeatureReader<FeatureType, Feature> {
 
     public FishReader(File file, FeatureType type) throws FileNotFoundException {
         this.type = type;
-        sfb = new SimpleFeatureBuilder(type);
+        sfb = new FeatureBuilder(type);
         scanner = new Scanner(file);
     }
 
@@ -61,11 +61,11 @@ public class FishReader implements FeatureReader<FeatureType, Feature> {
             final String line = scanner.nextLine();
             final String[] parts = line.split("/");
 
-            sfb.set("name", parts[0]);
-            sfb.set("length", Integer.valueOf(parts[1]));
+            sfb.setPropertyValue("name", parts[0]);
+            sfb.setPropertyValue("length", Integer.valueOf(parts[1]));
             final double x = Double.valueOf(parts[2]);
             final double y = Double.valueOf(parts[3]);
-            sfb.set("position", gf.createPoint(new Coordinate(x, y)));
+            sfb.setPropertyValue("position", gf.createPoint(new Coordinate(x, y)));
 
             current = sfb.buildFeature(Integer.toString(inc++));
         }

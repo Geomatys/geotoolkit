@@ -33,7 +33,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -132,11 +132,11 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         sftBuilder.setDefaultGeometry(geometryField);
         final SimpleFeatureType sft = sftBuilder.buildSimpleFeatureType();
 
-        final SimpleFeatureBuilder sfBuilder = new SimpleFeatureBuilder(sft);
+        final FeatureBuilder sfBuilder = new FeatureBuilder(sft);
         int id = 0;
         for(Geometry entry : polygons){
             sfBuilder.reset();
-            sfBuilder.set(geometryField, entry);
+            sfBuilder.setPropertyValue(geometryField, entry);
             final Feature sf = sfBuilder.buildFeature(String.valueOf(id++));
 
             features.put(sf, styles.get(entry.getUserData()));

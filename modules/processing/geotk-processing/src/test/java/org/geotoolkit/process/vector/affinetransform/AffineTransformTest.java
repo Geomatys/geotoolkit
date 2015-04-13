@@ -27,7 +27,7 @@ import java.awt.geom.AffineTransform;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
@@ -51,7 +51,7 @@ import org.opengis.util.NoSuchIdentifierException;
  */
 public class AffineTransformTest extends AbstractProcessTest{
 
-    private static SimpleFeatureBuilder sfb;
+    private static FeatureBuilder sfb;
     private static final GeometryFactory GF = new GeometryFactory();
     private static SimpleFeatureType type;
 
@@ -128,12 +128,12 @@ public class AffineTransformTest extends AbstractProcessTest{
                     new Coordinate(4.0, 3.0),
                     new Coordinate(3.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "grey");
-        sfb.set("height", "9");
-        sfb.set("type", "church");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", GF.createPoint(new Coordinate(3.5, 3.5)));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "grey");
+        sfb.setPropertyValue("height", "9");
+        sfb.setPropertyValue("type", "church");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", GF.createPoint(new Coordinate(3.5, 3.5)));
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
 
@@ -153,12 +153,12 @@ public class AffineTransformTest extends AbstractProcessTest{
                     new Coordinate(4.0, 7.0),
                     new Coordinate(5.5, 6.5)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "blue");
-        sfb.set("height", "3");
-        sfb.set("type", "office");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", multPt);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "blue");
+        sfb.setPropertyValue("height", "3");
+        sfb.setPropertyValue("type", "office");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", multPt);
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
 
@@ -176,12 +176,12 @@ public class AffineTransformTest extends AbstractProcessTest{
                     new Coordinate(7.0, 0.0),
                     new Coordinate(9.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "black");
-        sfb.set("height", "2");
-        sfb.set("type", "office");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", line);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "black");
+        sfb.setPropertyValue("height", "2");
+        sfb.setPropertyValue("type", "office");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", line);
         myFeature3 = sfb.buildFeature("id-03");
         featureList.add(myFeature3);
 
@@ -194,12 +194,12 @@ public class AffineTransformTest extends AbstractProcessTest{
                     new Coordinate(3.0, 2.0),
                     new Coordinate(2.0, 2.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "yellow");
-        sfb.set("height", "2");
-        sfb.set("type", "post office");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", GF.createPoint(new Coordinate(10, 5)));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "yellow");
+        sfb.setPropertyValue("height", "2");
+        sfb.setPropertyValue("type", "post office");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", GF.createPoint(new Coordinate(10, 5)));
         myFeature4 = sfb.buildFeature("id-04");
         featureList.add(myFeature4);
 
@@ -217,12 +217,12 @@ public class AffineTransformTest extends AbstractProcessTest{
                     new Coordinate(8.0, 0.0),
                     new Coordinate(5.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "yellow");
-        sfb.set("height", "9");
-        sfb.set("type", "office");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", line);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "yellow");
+        sfb.setPropertyValue("height", "9");
+        sfb.setPropertyValue("type", "office");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", line);
         myFeature5 = sfb.buildFeature("id-05");
         featureList.add(myFeature5);
 
@@ -242,12 +242,12 @@ public class AffineTransformTest extends AbstractProcessTest{
                     new Coordinate(10.0, 2.0),
                     new Coordinate(8.0, 0.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "black");
-        sfb.set("height", "2");
-        sfb.set("type", "church");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2",GF.createPolygon(ring2, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "black");
+        sfb.setPropertyValue("height", "2");
+        sfb.setPropertyValue("type", "church");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2",GF.createPolygon(ring2, null));
         myFeature6 = sfb.buildFeature("id-06");
         featureList.add(myFeature6);
 
@@ -269,12 +269,12 @@ public class AffineTransformTest extends AbstractProcessTest{
                     new Coordinate(104.0, 103.0),
                     new Coordinate(103.0, 103.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "grey");
-        sfb.set("height", "9");
-        sfb.set("type", "church");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", GF.createPoint(new Coordinate(103.5, 103.5)));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "grey");
+        sfb.setPropertyValue("height", "9");
+        sfb.setPropertyValue("type", "church");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", GF.createPoint(new Coordinate(103.5, 103.5)));
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
 
@@ -294,12 +294,12 @@ public class AffineTransformTest extends AbstractProcessTest{
                     new Coordinate(104.0,107.0),
                     new Coordinate(105.5,106.5)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "blue");
-        sfb.set("height", "3");
-        sfb.set("type", "office");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", multPt);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "blue");
+        sfb.setPropertyValue("height", "3");
+        sfb.setPropertyValue("type", "office");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", multPt);
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
 
@@ -317,12 +317,12 @@ public class AffineTransformTest extends AbstractProcessTest{
                     new Coordinate(107.0, 100.0),
                     new Coordinate(109.0, 103.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "black");
-        sfb.set("height", "2");
-        sfb.set("type", "office");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", line);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "black");
+        sfb.setPropertyValue("height", "2");
+        sfb.setPropertyValue("type", "office");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", line);
         myFeature3 = sfb.buildFeature("id-03");
         featureList.add(myFeature3);
 
@@ -335,12 +335,12 @@ public class AffineTransformTest extends AbstractProcessTest{
                     new Coordinate(103.0, 102.0),
                     new Coordinate(102.0, 102.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "yellow");
-        sfb.set("height", "2");
-        sfb.set("type", "post office");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", GF.createPoint(new Coordinate(110, 105)));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "yellow");
+        sfb.setPropertyValue("height", "2");
+        sfb.setPropertyValue("type", "post office");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", GF.createPoint(new Coordinate(110, 105)));
         myFeature4 = sfb.buildFeature("id-04");
         featureList.add(myFeature4);
 
@@ -358,12 +358,12 @@ public class AffineTransformTest extends AbstractProcessTest{
                     new Coordinate(108.0, 100.0),
                     new Coordinate(105.0, 103.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "yellow");
-        sfb.set("height", "9");
-        sfb.set("type", "office");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2", line);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "yellow");
+        sfb.setPropertyValue("height", "9");
+        sfb.setPropertyValue("type", "office");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", line);
         myFeature5 = sfb.buildFeature("id-05");
         featureList.add(myFeature5);
 
@@ -383,12 +383,12 @@ public class AffineTransformTest extends AbstractProcessTest{
                     new Coordinate(110.0, 102.0),
                     new Coordinate(108.0, 100.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("color", "black");
-        sfb.set("height", "2");
-        sfb.set("type", "church");
-        sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2",GF.createPolygon(ring2, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("color", "black");
+        sfb.setPropertyValue("height", "2");
+        sfb.setPropertyValue("type", "church");
+        sfb.setPropertyValue("geom1", GF.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2",GF.createPolygon(ring2, null));
         myFeature6 = sfb.buildFeature("id-06");
         featureList.add(myFeature6);
 

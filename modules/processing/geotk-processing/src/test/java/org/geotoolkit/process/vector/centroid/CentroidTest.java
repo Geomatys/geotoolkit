@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.vector.AbstractProcessTest;
@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
  */
 public class CentroidTest extends AbstractProcessTest {
 
-    private static SimpleFeatureBuilder sfb;
+    private static FeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
     private static SimpleFeatureType type;
 
@@ -120,10 +120,10 @@ public class CentroidTest extends AbstractProcessTest {
 
 
 
-            sfb = new SimpleFeatureBuilder(type);
-            sfb.set("name", "Building" + i);
-            sfb.set("height", 12);
-            sfb.set("position", geometryFactory.createLinearRing(
+            sfb = new FeatureBuilder(type);
+            sfb.setPropertyValue("name", "Building" + i);
+            sfb.setPropertyValue("height", 12);
+            sfb.setPropertyValue("position", geometryFactory.createLinearRing(
                     new Coordinate[]{
                         new Coordinate(5.0, 18.0),
                         new Coordinate(10.0, 23.0),
@@ -159,10 +159,10 @@ public class CentroidTest extends AbstractProcessTest {
                     });
 
 
-            sfb = new SimpleFeatureBuilder(type);
-            sfb.set("name", "Building" + i);
-            sfb.set("height", 12);
-            sfb.set("position", ring.getCentroid());
+            sfb = new FeatureBuilder(type);
+            sfb.setPropertyValue("name", "Building" + i);
+            sfb.setPropertyValue("height", 12);
+            sfb.setPropertyValue("position", ring.getCentroid());
             myFeature = sfb.buildFeature("id-0" + i);
 
             featureList.add(myFeature);

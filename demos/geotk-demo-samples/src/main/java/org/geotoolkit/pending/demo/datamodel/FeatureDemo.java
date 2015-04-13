@@ -7,7 +7,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.Date;
 
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.feature.ComplexAttribute;
@@ -60,12 +60,12 @@ public class FeatureDemo {
     }
 
     private static Feature usingSimpleFeatureBuilder(SimpleFeatureType type){
-        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "placide");
-        sfb.set("length", 12);
-        sfb.set("lastPosition", GF.createPoint(new Coordinate(-10, 23)));
-        sfb.set("lastPositionDate", new Date());
-        sfb.set("direction", 56.498f);
+        final FeatureBuilder sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "placide");
+        sfb.setPropertyValue("length", 12);
+        sfb.setPropertyValue("lastPosition", GF.createPoint(new Coordinate(-10, 23)));
+        sfb.setPropertyValue("lastPositionDate", new Date());
+        sfb.setPropertyValue("direction", 56.498f);
         return sfb.buildFeature("id-0");
     }
 

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.simple;
 
+import org.geotoolkit.feature.FeatureBuilder;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -59,7 +60,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         immutable.add(Float.class);
     }
 
-    SimpleFeatureBuilder builder;
+    FeatureBuilder builder;
 
     public SimpleFeatureBuilderTest(final String testName) throws Exception {
         super(testName);
@@ -84,7 +85,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
 
         SimpleFeatureType featureType = typeBuilder.buildSimpleFeatureType();
 
-        builder = new SimpleFeatureBuilder(featureType);
+        builder = new FeatureBuilder(featureType);
         builder.setValidating(true);
     }
 
@@ -120,7 +121,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
     }
 
     public void testSetTooFew() throws Exception {
-        builder.set("integer", new Integer(1));
+        builder.setPropertyValue("integer", new Integer(1));
         Feature feature = builder.buildFeature("fid");
         assertNotNull(feature);
 
@@ -133,11 +134,11 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
     }
 
     public void testConverting() throws Exception {
-        builder.set("integer", "1");
+        builder.setPropertyValue("integer", "1");
         Feature feature = builder.buildFeature("fid");
 
         try {
-            builder.set("integer", "foo");
+            builder.setPropertyValue("integer", "foo");
             fail("should have failed");
         } catch (Exception e) {
         }
@@ -160,12 +161,12 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         builder.add(adb.buildDescriptor());
         
         FeatureType featureType = builder.buildSimpleFeatureType();
-        Feature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Val"}, "ID");
+        Feature feature = FeatureBuilder.build(featureType, new Object[]{"Val"}, "ID");
 
         assertNotNull(feature);
 
         try {
-            feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Longer Than 5"}, "ID");
+            feature = FeatureBuilder.build(featureType, new Object[]{"Longer Than 5"}, "ID");
             feature.validate();
             fail("this should fail because the value is longer than 5 characters");
         } catch (Exception e) {
@@ -193,12 +194,12 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         
 
         FeatureType featureType = builder.buildSimpleFeatureType();
-        Feature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"}, "ID");
+        Feature feature = FeatureBuilder.build(featureType, new Object[]{"Value"}, "ID");
 
         assertNotNull(feature);
 
         try {
-            Feature sf = SimpleFeatureBuilder.build(featureType, new Object[]{"NotValue"}, "ID");
+            Feature sf = FeatureBuilder.build(featureType, new Object[]{"NotValue"}, "ID");
             sf.validate();
             fail("PropertyIsEqualTo filter should have failed");
         } catch (Exception e) {
@@ -220,14 +221,14 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         SimpleFeatureType abstractType2 = tb.buildSimpleFeatureType();
 
         try {
-            SimpleFeatureBuilder.build(abstractType, new Object[0], null);
+            FeatureBuilder.build(abstractType, new Object[0], null);
             fail("abstract type allowed create");
         } catch (IllegalArgumentException iae) {
         } catch (UnsupportedOperationException uoe) {
         }
 
         try {
-            SimpleFeatureBuilder.build(abstractType2, new Object[0], null);
+            FeatureBuilder.build(abstractType2, new Object[0], null);
             fail("abstract type allowed create");
         } catch (IllegalArgumentException iae) {
         } catch (UnsupportedOperationException uoe) {
@@ -340,7 +341,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         builder.add(attributeName, String.class);
         SimpleFeatureType featureType = builder.buildSimpleFeatureType();
 
-        Feature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"},
+        Feature feature = FeatureBuilder.build(featureType, new Object[]{"Value"},
                 null);
 
         assertNotNull( feature );
@@ -369,7 +370,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
 
         FeatureType featureType = builder.buildSimpleFeatureType();
 
-        Feature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"},
+        Feature feature = FeatureBuilder.build(featureType, new Object[]{"Value"},
                 null);
 
         assertNotNull( feature );

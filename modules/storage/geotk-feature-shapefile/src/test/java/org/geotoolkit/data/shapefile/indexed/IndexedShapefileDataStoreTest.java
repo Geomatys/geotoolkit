@@ -48,7 +48,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
@@ -557,7 +557,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     private Collection<Feature> createFeatureCollection() throws Exception {
         SimpleFeatureType featureType = createExampleSchema();
-        SimpleFeatureBuilder build = new SimpleFeatureBuilder(featureType);
+        FeatureBuilder build = new FeatureBuilder(featureType);
 
         Collection<Feature> features = new ArrayList<>();
         for (int i = 0, ii = 20; i < ii; i++) {
@@ -650,7 +650,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         final Collection<Feature> features = new ArrayList<>();
 
         for (int i = 0, ii = 20; i < ii; i++) {
-            Feature feature = SimpleFeatureBuilder.build(type,
+            Feature feature = FeatureBuilder.build(type,
                     new Object[] { geom.clone() }, null);
             features.add(feature);
         }

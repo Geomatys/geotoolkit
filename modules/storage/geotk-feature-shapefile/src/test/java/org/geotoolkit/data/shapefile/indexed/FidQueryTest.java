@@ -35,7 +35,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
@@ -105,7 +105,7 @@ public class FidQueryTest extends FIDTestCase {
         Feature feature = fids.values().iterator().next();
         final SimpleFeatureType schema = (SimpleFeatureType) ds.getFeatureType(ds.getTypeNames()[0]);
 
-        final SimpleFeatureBuilder build = new SimpleFeatureBuilder(schema);
+        final FeatureBuilder build = new FeatureBuilder(schema);
         final GeometryFactory gf = new GeometryFactory();
         build.add(gf.createPoint((new Coordinate(0, 0))));
         build.add(new Long(0));

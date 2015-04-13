@@ -15,25 +15,22 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.feature.simple;
+package org.geotoolkit.feature;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.feature.type.DefaultName;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.apache.sis.util.ObjectConverters;
-
-import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.filter.identity.FeatureId;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -68,7 +65,7 @@ import org.opengis.util.GenericName;
  * creates a new attribute for the feature and stores it locally. When using the
  * add method to add attributes to the feature, values added must be added in the
  * same order as the attributes as defined by the feature type. The methods
- * {@link #set(String, Object)} and {@link #set(int, Object)} are used to add
+ * {@link #setPropertyValue(String, Object)} and {@link #setPropertyValue(int, Object)} are used to add
  * attributes out of order.
  * </p>
  * <p>
@@ -126,7 +123,7 @@ import org.opengis.util.GenericName;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class SimpleFeatureBuilder {
+public class FeatureBuilder {
 
     /** the feature type */
     private final FeatureType featureType;
@@ -141,11 +138,11 @@ public class SimpleFeatureBuilder {
     private Map<Object, Object>[] userData;
     boolean validating;
 
-    public SimpleFeatureBuilder(final FeatureType featureType) {
+    public FeatureBuilder(final FeatureType featureType) {
         this(featureType, FeatureFactory.LENIENT);
     }
 
-    public SimpleFeatureBuilder(final FeatureType featureType, final FeatureFactory factory) {
+    public FeatureBuilder(final FeatureType featureType, final FeatureFactory factory) {
         this.featureType = featureType;
         this.factory = factory;
 
@@ -196,7 +193,7 @@ public class SimpleFeatureBuilder {
      * </p>
      */
     public void add(final Object value) {
-        set(next, value);
+        setPropertyValue(next, value);
         next++;
     }
 
@@ -232,8 +229,8 @@ public class SimpleFeatureBuilder {
      * @throws IllegalArgumentException
      *             If no such attribute with teh specified name exists.
      */
-    public void set(final GenericName name, final Object value) {
-        set(DefaultName.toExtendedForm(name), value);
+    public void setPropertyValue(final GenericName name, final Object value) {
+        FeatureBuilder.this.setPropertyValue(DefaultName.toExtendedForm(name), value);
     }
 
     /**
@@ -250,12 +247,12 @@ public class SimpleFeatureBuilder {
      * @throws IllegalArgumentException
      *             If no such attribute with teh specified name exists.
      */
-    public void set(final String name, final Object value) {
+    public void setPropertyValue(final String name, final Object value) {
         Integer index = names.get(name);
         if (index == null) {
             throw new IllegalArgumentException("No such attribute:" + name);
         }
-        set(index, value);
+        setPropertyValue(index, value);
     }
 
     /**
@@ -269,7 +266,7 @@ public class SimpleFeatureBuilder {
      * @param value
      *            The value of the attribute.
      */
-    public void set(final int index, final Object value) {
+    public void setPropertyValue(final int index, final Object value) {
         if (index >= values.length) {
             throw new ArrayIndexOutOfBoundsException(
                     "Can handle " + values.length + " attributes only.\n"
@@ -295,7 +292,7 @@ public class SimpleFeatureBuilder {
                     value = converted;
                 }
             } catch (UnconvertibleObjectException e) {
-                Logging.recoverableException(SimpleFeatureBuilder.class, "convert", e);
+                Logging.recoverableException(FeatureBuilder.class, "convert", e);
                 // TODO - do we really want to ignore?
             }
         } else {
@@ -386,7 +383,7 @@ public class SimpleFeatureBuilder {
      */
     public static Feature build(final FeatureType type, final Object[] values,
             final String id) {
-        final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(type);
+        final FeatureBuilder builder = new FeatureBuilder(type);
         builder.addAll(values);
         return builder.buildFeature(id);
     }
@@ -420,7 +417,7 @@ public class SimpleFeatureBuilder {
      * @return The copied feature, with a new type.
      */
     public static Feature retype(final Feature feature, final FeatureType featureType) {
-        final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
+        final FeatureBuilder builder = new FeatureBuilder(featureType);
         return retype(feature, builder);
     }
 
@@ -437,11 +434,11 @@ public class SimpleFeatureBuilder {
      * @return The copied feature, with a new type.
      * @since 2.5.3
      */
-    public static Feature retype(final Feature feature, final SimpleFeatureBuilder builder) {
+    public static Feature retype(final Feature feature, final FeatureBuilder builder) {
         builder.reset();
         for (PropertyDescriptor att : builder.getFeatureType().getDescriptors()) {
             final Object value = feature.getProperty(att.getName()).getValue();
-            builder.set(att.getName(), value);
+            builder.setPropertyValue(att.getName(), value);
         }
         return builder.buildFeature(feature.getIdentifier().getID());
     }
@@ -454,11 +451,11 @@ public class SimpleFeatureBuilder {
      * @param key The key of the user data
      * @param value The value of the user data.
      */
-    public SimpleFeatureBuilder userData(final Object key, final Object value) {
+    public FeatureBuilder userData(final Object key, final Object value) {
         return setUserData(next, key, value);
     }
 
-    public SimpleFeatureBuilder setUserData(final int index, final Object key, final Object value) {
+    public FeatureBuilder setUserData(final int index, final Object key, final Object value) {
         if (userData == null) {
             userData = new Map[values.length];
         }

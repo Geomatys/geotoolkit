@@ -32,7 +32,7 @@ import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.vector.AbstractProcessTest;
@@ -57,7 +57,7 @@ import static org.junit.Assert.*;
  */
 public class DouglasPeuckerTest extends AbstractProcessTest {
 
-    private static SimpleFeatureBuilder sfb;
+    private static FeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
     private static SimpleFeatureType type;
 
@@ -264,9 +264,9 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
                     new Coordinate(40.0, 20.0),
                     new Coordinate(0.0, 0.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Feature1");
-        sfb.set("position", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Feature1");
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
 
@@ -286,9 +286,9 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
                     new Coordinate(10.0, -20.0),
                     new Coordinate(-10.0, -10.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Feature2");
-        sfb.set("position", geometryFactory.createPolygon(ring2, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Feature2");
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring2, null));
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
 
@@ -316,9 +316,9 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
                     new Coordinate(10.0, -20.0),
                     new Coordinate(-10.0, -10.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Feature2");
-        sfb.set("position", geometryFactory.createPolygon(ring2, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Feature2");
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring2, null));
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
 
@@ -343,9 +343,9 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
                     new Coordinate(60.0, 20.0),
                     new Coordinate(0.0, 0.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Feature1");
-        sfb.set("position", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Feature1");
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
 
@@ -362,9 +362,9 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
                     new Coordinate(20.0, -20.0),
                     new Coordinate(-10.0, -10.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Feature2");
-        sfb.set("position", geometryFactory.createPolygon(ring2, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Feature2");
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring2, null));
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
 
@@ -381,9 +381,9 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
 
         Feature myFeature2;
 
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Feature2");
-        sfb.set("position", null);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Feature2");
+        sfb.setPropertyValue("position", null);
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
 

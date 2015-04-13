@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.style.StyleConstants;
@@ -65,12 +65,12 @@ public class CategorizeTest {
         sftb.add(attribut, Double.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
 
-        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
-        sfb.set(attribut, -5d);
+        final FeatureBuilder sfb = new FeatureBuilder(sft);
+        sfb.setPropertyValue(attribut, -5d);
         final Feature f1 = sfb.buildFeature("id1");
-        sfb.set(attribut, 8d);
+        sfb.setPropertyValue(attribut, 8d);
         final Feature f2 = sfb.buildFeature("id2");
-        sfb.set(attribut, 30d);
+        sfb.setPropertyValue(attribut, 30d);
         final Feature f3 = sfb.buildFeature("id3");
 
 

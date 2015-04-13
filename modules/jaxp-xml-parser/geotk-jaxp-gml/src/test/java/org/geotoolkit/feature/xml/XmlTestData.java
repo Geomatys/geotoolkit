@@ -48,7 +48,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.DefaultName;
@@ -230,7 +230,7 @@ public class XmlTestData {
         ////////////////////////////////////////////////////////////////////////
 
         final GeometryFactory GF = new GeometryFactory();
-        SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(simpleTypeFull);
+        FeatureBuilder sfb = new FeatureBuilder(simpleTypeFull);
 
         final Point pt = GF.createPoint(new Coordinate(5, 10));
         final MultiPoint mpt = GF.createMultiPoint(new Coordinate[]{new Coordinate(5, 10), new Coordinate(15, 20)});
@@ -265,35 +265,35 @@ public class XmlTestData {
 
         int i=0;
         sfb.reset();
-        sfb.set(i++, 36);
-        sfb.set(i++, "stringValue");
-        sfb.set(i++, 12);
-        sfb.set(i++, 24);
-        sfb.set(i++, 48);
-        sfb.set(i++, 96.12);
-        sfb.set(i++, new BigDecimal(456789));
-        sfb.set(i++, calendar1.getTime());
-        sfb.set(i++, new Timestamp(calendar2.getTimeInMillis()));
-        sfb.set(i++, Boolean.TRUE);
-        sfb.set(i++, pt);
-        sfb.set(i++, mpt);
-        sfb.set(i++, line1);
-        sfb.set(i++, mline);
-        sfb.set(i++, poly1);
-        sfb.set(i++, mpoly);
-        sfb.set(i++, mpt);
-        sfb.set(i++, pt);
+        sfb.setPropertyValue(i++, 36);
+        sfb.setPropertyValue(i++, "stringValue");
+        sfb.setPropertyValue(i++, 12);
+        sfb.setPropertyValue(i++, 24);
+        sfb.setPropertyValue(i++, 48);
+        sfb.setPropertyValue(i++, 96.12);
+        sfb.setPropertyValue(i++, new BigDecimal(456789));
+        sfb.setPropertyValue(i++, calendar1.getTime());
+        sfb.setPropertyValue(i++, new Timestamp(calendar2.getTimeInMillis()));
+        sfb.setPropertyValue(i++, Boolean.TRUE);
+        sfb.setPropertyValue(i++, pt);
+        sfb.setPropertyValue(i++, mpt);
+        sfb.setPropertyValue(i++, line1);
+        sfb.setPropertyValue(i++, mline);
+        sfb.setPropertyValue(i++, poly1);
+        sfb.setPropertyValue(i++, mpoly);
+        sfb.setPropertyValue(i++, mpt);
+        sfb.setPropertyValue(i++, pt);
         simpleFeatureFull = sfb.buildFeature("id-156");
 
-        sfb = new SimpleFeatureBuilder(simpleTypeBasic);
-        sfb.set(0,"some text with words.");
-        sfb.set(1,56.14d);
+        sfb = new FeatureBuilder(simpleTypeBasic);
+        sfb.setPropertyValue(0,"some text with words.");
+        sfb.setPropertyValue(1,56.14d);
         simpleFeature1 = sfb.buildFeature("id-89");
-        sfb.set(0,"some words assembled in a text.");
-        sfb.set(1,39.45d);
+        sfb.setPropertyValue(0,"some words assembled in a text.");
+        sfb.setPropertyValue(1,39.45d);
         simpleFeature2 = sfb.buildFeature("id-36");
-        sfb.set(0,"a text composed of words.");
-        sfb.set(1,12.31d);
+        sfb.setPropertyValue(0,"a text composed of words.");
+        sfb.setPropertyValue(1,12.31d);
         simpleFeature3 = sfb.buildFeature("id-412");
 
         collectionSimple = FeatureStoreUtilities.collection("one of a kind ID", simpleTypeBasic);

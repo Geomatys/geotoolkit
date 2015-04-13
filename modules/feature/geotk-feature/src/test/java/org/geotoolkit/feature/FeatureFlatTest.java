@@ -30,7 +30,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import static org.apache.sis.test.Assert.assertSerializedEquals;
 
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.test.Assert;
@@ -126,7 +125,7 @@ public class FeatureFlatTest extends TestCase {
         SimpleFeatureType test = tb.buildSimpleFeatureType();
 
         try {
-            SimpleFeatureBuilder.build(test, new Object[32],null);
+            FeatureBuilder.build(test, new Object[32],null);
             fail("no error");
         } catch (Exception e) {
         }
@@ -150,7 +149,7 @@ public class FeatureFlatTest extends TestCase {
         tb.add("p4", Point.class, CommonCRS.WGS84.normalizedGeographic());
         SimpleFeatureType t = tb.buildSimpleFeatureType();
 
-        Feature f = SimpleFeatureBuilder.build(t, g, null);
+        Feature f = FeatureBuilder.build(t, g, null);
         Envelope b1 = gc.getEnvelopeInternal();
         DefaultBoundingBox b2 = DefaultBoundingBox.castOrCopy(f.getBounds());
         assertEquals(b1.getMinX(), b2.getMinX());
@@ -177,7 +176,7 @@ public class FeatureFlatTest extends TestCase {
     public void testClone2() throws Exception {
         FeatureType type = SampleFeatureFixtures.createTestType();
         Object[] attributes = SampleFeatureFixtures.createAttributes();
-        Feature feature = SimpleFeatureBuilder.build(type, attributes, "fid");
+        Feature feature = FeatureBuilder.build(type, attributes, "fid");
         Feature clone = FeatureUtilities.deepCopy(feature);
         assertTrue("Clone was not equal", feature.equals(clone));
     }
@@ -233,7 +232,7 @@ public class FeatureFlatTest extends TestCase {
         tb.add( "name", String.class );
         SimpleFeatureType type = tb.buildSimpleFeatureType();
 
-        assertTrue(!f1.equals(SimpleFeatureBuilder.build(type, new Object[1], null)));
+        assertTrue(!f1.equals(FeatureBuilder.build(type, new Object[1], null)));
     }
 
 }

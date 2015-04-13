@@ -29,7 +29,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.vector.AbstractProcessTest;
@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
  */
 public class ClipTest extends AbstractProcessTest {
 
-    private static SimpleFeatureBuilder sfb;
+    private static FeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
     private static SimpleFeatureType type;
 
@@ -128,10 +128,10 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(6.0, 4.0),
                     new Coordinate(6.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Building1");
-        sfb.set("height", 12);
-        sfb.set("position", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Building1");
+        sfb.setPropertyValue("height", 12);
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
 
@@ -144,10 +144,10 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(8.0, 7.0),
                     new Coordinate(8.0, 4.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Building2");
-        sfb.set("height", 12);
-        sfb.set("position", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Building2");
+        sfb.setPropertyValue("height", 12);
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
 
@@ -160,10 +160,10 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(6.0, 1.0),
                     new Coordinate(6.0, -2.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Building3");
-        sfb.set("height", 12);
-        sfb.set("position", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Building3");
+        sfb.setPropertyValue("height", 12);
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         myFeature3 = sfb.buildFeature("id-03");
         featureList.add(myFeature3);
 
@@ -176,10 +176,10 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(0.0, 9.0),
                     new Coordinate(0.0, 6.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Building4");
-        sfb.set("height", 12);
-        sfb.set("position", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Building4");
+        sfb.setPropertyValue("height", 12);
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         myFeature4 = sfb.buildFeature("id-04");
         featureList.add(myFeature4);
 
@@ -192,10 +192,10 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(-4.0, 3.0),
                     new Coordinate(-4.0, 1.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Building5");
-        sfb.set("height", 12);
-        sfb.set("position", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Building5");
+        sfb.setPropertyValue("height", 12);
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         myFeature5 = sfb.buildFeature("id-05");
         featureList.add(myFeature5);
 
@@ -220,10 +220,10 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(0.0, 3.0),
                     new Coordinate(0.0, 1.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Building11");
-        sfb.set("height", 12);
-        sfb.set("position", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Building11");
+        sfb.setPropertyValue("height", 12);
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         myFeature1 = sfb.buildFeature("id-11");
         featureList.add(myFeature1);
 
@@ -236,10 +236,10 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(3.0, 6.0),
                     new Coordinate(3.0, 5.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Building11");
-        sfb.set("height", 12);
-        sfb.set("position", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Building11");
+        sfb.setPropertyValue("height", 12);
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         myFeature2 = sfb.buildFeature("id-12");
         featureList.add(myFeature2);
 
@@ -252,10 +252,10 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(6.0, 6.0),
                     new Coordinate(6.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Building13");
-        sfb.set("height", 12);
-        sfb.set("position", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Building13");
+        sfb.setPropertyValue("height", 12);
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         myFeature3 = sfb.buildFeature("id-13");
         featureList.add(myFeature3);
 
@@ -268,10 +268,10 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(10.0, 4.0),
                     new Coordinate(10.0, 0.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Building14");
-        sfb.set("height", 12);
-        sfb.set("position", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Building14");
+        sfb.setPropertyValue("height", 12);
+        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         myFeature4 = sfb.buildFeature("id-14");
         featureList.add(myFeature4);
 
@@ -296,10 +296,10 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(7.0, 3.0)
                 });
         Polygon poly = geometryFactory.createPolygon(ring, null);
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Building1");
-        sfb.set("height", 12);
-        sfb.set("position", poly);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Building1");
+        sfb.setPropertyValue("height", 12);
+        sfb.setPropertyValue("position", poly);
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
 
@@ -318,10 +318,10 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(10.0, 4.0),
                     new Coordinate(11.0, 4.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Building2");
-        sfb.set("height", 12);
-        sfb.set("position", geometryFactory.createGeometryCollection(new Geometry[]{poly, lineString}));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Building2");
+        sfb.setPropertyValue("height", 12);
+        sfb.setPropertyValue("position", geometryFactory.createGeometryCollection(new Geometry[]{poly, lineString}));
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
 
@@ -335,19 +335,19 @@ public class ClipTest extends AbstractProcessTest {
                     new Coordinate(10.0, 1.0)
                 });
         poly = geometryFactory.createPolygon(ring, null);
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Building3");
-        sfb.set("height", 12);
-        sfb.set("position", poly);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Building3");
+        sfb.setPropertyValue("height", 12);
+        sfb.setPropertyValue("position", poly);
         myFeature3 = sfb.buildFeature("id-03");
         featureList.add(myFeature3);
 
         Feature myFeature4;
         Point pt = geometryFactory.createPoint(new Coordinate(3.0, 6.0));
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "Building4");
-        sfb.set("height", 12);
-        sfb.set("position", pt);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "Building4");
+        sfb.setPropertyValue("height", 12);
+        sfb.setPropertyValue("position", pt);
         myFeature4 = sfb.buildFeature("id-04");
         featureList.add(myFeature4);
 

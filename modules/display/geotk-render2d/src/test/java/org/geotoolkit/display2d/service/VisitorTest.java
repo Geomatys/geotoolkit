@@ -36,7 +36,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -90,7 +90,7 @@ public class VisitorTest {
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
 
         final FeatureCollection collection = FeatureStoreUtilities.collection("id", sft);
-        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
+        final FeatureBuilder sfb = new FeatureBuilder(sft);
 
         final GeometryFactory gf = new GeometryFactory();
         LinearRing ring = gf.createLinearRing(new Coordinate[]{
@@ -100,7 +100,7 @@ public class VisitorTest {
                     new Coordinate(10, 20),
                     new Coordinate(10, 10),});
         Polygon pol = gf.createPolygon(ring, new LinearRing[0]);
-        sfb.set("geom", pol);
+        sfb.setPropertyValue("geom", pol);
 
         collection.add(sfb.buildFeature(""));
 

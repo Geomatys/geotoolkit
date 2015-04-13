@@ -29,7 +29,7 @@ import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.vector.AbstractProcessTest;
@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
  */
 public class ReprojectTest extends AbstractProcessTest {
 
-    private static SimpleFeatureBuilder sfb;
+    private static FeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
     private static SimpleFeatureType type;
 
@@ -107,9 +107,9 @@ public class ReprojectTest extends AbstractProcessTest {
                     new Coordinate(4.0, 3.0),
                     new Coordinate(3.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature1");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature1");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         //sfb.set("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
@@ -130,9 +130,9 @@ public class ReprojectTest extends AbstractProcessTest {
                     new Coordinate(4.0, 7.0),
                     new Coordinate(5.5, 6.5)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature2");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature2");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         //sfb.set("geom2", multPt);
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
@@ -151,9 +151,9 @@ public class ReprojectTest extends AbstractProcessTest {
                     new Coordinate(7.0, 0.0),
                     new Coordinate(9.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature3");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature3");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         //sfb.set("geom2", line);
         myFeature3 = sfb.buildFeature("id-03");
         featureList.add(myFeature3);

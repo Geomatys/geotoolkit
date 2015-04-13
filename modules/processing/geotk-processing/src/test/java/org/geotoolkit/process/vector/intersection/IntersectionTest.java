@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.vector.AbstractProcessTest;
@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
  */
 public class IntersectionTest extends AbstractProcessTest {
 
-    private static SimpleFeatureBuilder sfb;
+    private static FeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
     private static SimpleFeatureType type;
 
@@ -125,10 +125,10 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(4.0, 3.0),
                     new Coordinate(3.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature1");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature1");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
 
@@ -148,10 +148,10 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(4.0, 7.0),
                     new Coordinate(5.5, 6.5)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature2");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2", multPt);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature2");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", multPt);
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
 
@@ -169,10 +169,10 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(7.0, 0.0),
                     new Coordinate(9.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature3");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2", line);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature3");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", line);
         myFeature3 = sfb.buildFeature("id-03");
         featureList.add(myFeature3);
 
@@ -201,10 +201,10 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(3.0, 6.0), //intersection with a point
                     new Coordinate(3.5, 3.5) //intersection with a polygon
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature11");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2", multPt);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature11");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", multPt);
         myFeature1 = sfb.buildFeature("id-11");
         featureList.add(myFeature1);
 
@@ -222,10 +222,10 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(8.0, 4.5),
                     new Coordinate(11.0, 4.5)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature12");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2", line);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature12");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", line);
         myFeature2 = sfb.buildFeature("id-12");
         featureList.add(myFeature2);
 
@@ -238,10 +238,10 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(10.0, 0.0),
                     new Coordinate(0.0, 0.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature13");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2", null);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature13");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
+        sfb.setPropertyValue("geom2", null);
         myFeature3 = sfb.buildFeature("id-13");
         featureList.add(myFeature3);
 
@@ -262,9 +262,9 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(4.0, 4.0),
                     new Coordinate(4.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature1");
-        sfb.set("geom1", line);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature1");
+        sfb.setPropertyValue("geom1", line);
         myFeature1 = sfb.buildFeature("id-01<->id-12");
         featureList.add(myFeature1);
 
@@ -277,16 +277,16 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(4.0, 3.0),
                     new Coordinate(3.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature1");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature1");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2 = sfb.buildFeature("id-01<->id-13");
         featureList.add(myFeature2);
 
         Feature myFeature3;
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature1");
-        sfb.set("geom1", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature1");
+        sfb.setPropertyValue("geom1", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
         myFeature3 = sfb.buildFeature("id-01<->id-11");
         featureList.add(myFeature3);
 
@@ -300,9 +300,9 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(10.0, 4.0),
                     new Coordinate(9.0, 4.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature3");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature3");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature4 = sfb.buildFeature("id-03<->id-13");
         featureList.add(myFeature4);
 
@@ -312,9 +312,9 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(9.0, 4.5),
                     new Coordinate(11.0, 4.5)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature3");
-        sfb.set("geom1", line);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature3");
+        sfb.setPropertyValue("geom1", line);
         myFeature5 = sfb.buildFeature("id-03<->id-12");
         featureList.add(myFeature5);
 
@@ -327,9 +327,9 @@ public class IntersectionTest extends AbstractProcessTest {
                     new Coordinate(6.0, 6.0),
                     new Coordinate(5.0, 6.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature2");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature2");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature5 = sfb.buildFeature("id-02<->id-13");
         featureList.add(myFeature5);
 

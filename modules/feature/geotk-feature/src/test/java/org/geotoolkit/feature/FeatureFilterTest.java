@@ -27,7 +27,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.filter.binding.Binding;
 import org.geotoolkit.filter.binding.Bindings;
@@ -180,10 +179,10 @@ public class FeatureFilterTest {
         ftb.add(att_3, Double.class);
         final FeatureType sft = ftb.buildSimpleFeatureType();
 
-        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
-        sfb.set(att_1, "str1");
-        sfb.set(att_2, "str2");
-        sfb.set(att_3, 10d);
+        final FeatureBuilder sfb = new FeatureBuilder(sft);
+        sfb.setPropertyValue(att_1, "str1");
+        sfb.setPropertyValue(att_2, "str2");
+        sfb.setPropertyValue(att_3, 10d);
         final Feature sf = sfb.buildFeature("id");
 
         PropertyName property = null;
@@ -305,19 +304,19 @@ public class FeatureFilterTest {
         /*********************************************************************************************
          *                            AggregateGeoFeature 1                                          *
          *********************************************************************************************/
-        SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
-        sfb.set(description, "description-f005");
-        sfb.set(name, "name-f005");
+        FeatureBuilder sfb = new FeatureBuilder(sft);
+        sfb.setPropertyValue(description, "description-f005");
+        sfb.setPropertyValue(name, "name-f005");
         GeometryFactory factory = new GeometryFactory();
         Point[] points = new Point[3];
         points[0] = factory.createPoint(new Coordinate(70.83, 29.86));
         points[1] = factory.createPoint(new Coordinate(68.87, 31.08));
         points[2] = factory.createPoint(new Coordinate(71.96, 32.19));
-        sfb.set(multiPointProperty, factory.createMultiPoint(points));
-        sfb.set(doubleProperty, 2012.78);
-        sfb.set(strProperty, "Ma quande lingues coalesce...");
-        sfb.set(featureCode, "BK030");
-        sfb.set(id, "f005");
+        sfb.setPropertyValue(multiPointProperty, factory.createMultiPoint(points));
+        sfb.setPropertyValue(doubleProperty, 2012.78);
+        sfb.setPropertyValue(strProperty, "Ma quande lingues coalesce...");
+        sfb.setPropertyValue(featureCode, "BK030");
+        sfb.setPropertyValue(id, "f005");
 
         final Feature sf = sfb.buildFeature("id");
 
@@ -344,13 +343,13 @@ public class FeatureFilterTest {
 
         final FeatureType entiteGeneriqueType = sftb.buildSimpleFeatureType();
 
-        sfb = new SimpleFeatureBuilder(entiteGeneriqueType);
+        sfb = new FeatureBuilder(entiteGeneriqueType);
 
         /*********************************************************************************************
          *                            EntitéGénérique 1                                              *
          *********************************************************************************************/
-        sfb.set(description, "description-f004");
-        sfb.set(name, "name-f004");
+        sfb.setPropertyValue(description, "description-f004");
+        sfb.setPropertyValue(name, "name-f004");
 
         Coordinate[] exteriorCoord = new Coordinate[5];
         exteriorCoord[0] = new Coordinate(60.5, 0);
@@ -371,11 +370,11 @@ public class FeatureFilterTest {
         LinearRing[] interiors = new LinearRing[1];
         interiors[0] = interior;
 
-        sfb.set(attributGeometrie, factory.createPolygon(exterior, interiors));
-        sfb.set(boolProperty, false);
-        sfb.set(str4Property, "abc3");
-        sfb.set(featureRef, "name-f003");
-        sfb.set(id, "f004");
+        sfb.setPropertyValue(attributGeometrie, factory.createPolygon(exterior, interiors));
+        sfb.setPropertyValue(boolProperty, false);
+        sfb.setPropertyValue(str4Property, "abc3");
+        sfb.setPropertyValue(featureRef, "name-f003");
+        sfb.setPropertyValue(id, "f004");
 
         final Feature entiteGenerique1 = sfb.buildFeature("f004");
 
@@ -385,8 +384,8 @@ public class FeatureFilterTest {
          *                            EntitéGénérique 2                                              *
          *********************************************************************************************/
 
-        sfb.set(description, "description-f007");
-        sfb.set(name, "name-f007");
+        sfb.setPropertyValue(description, "description-f007");
+        sfb.setPropertyValue(name, "name-f007");
 
         Coordinate[] exteriorCoord2 = new Coordinate[6];
         exteriorCoord2[0] = new Coordinate(35, 15);
@@ -411,10 +410,10 @@ public class FeatureFilterTest {
         LinearRing[] interiors2 = new LinearRing[1];
         interiors2[0] = interior;
 
-        sfb.set(attributGeometrie, factory.createPolygon(exterior2, interiors2));
-        sfb.set(boolProperty, false);
-        sfb.set(str4Property, "def4");
-        sfb.set(id, "f007");
+        sfb.setPropertyValue(attributGeometrie, factory.createPolygon(exterior2, interiors2));
+        sfb.setPropertyValue(boolProperty, false);
+        sfb.setPropertyValue(str4Property, "def4");
+        sfb.setPropertyValue(id, "f007");
 
         final Feature entiteGenerique2 = sfb.buildFeature("f007");
 
@@ -423,8 +422,8 @@ public class FeatureFilterTest {
         /*********************************************************************************************
          *                            EntitéGénérique 3                                              *
          *********************************************************************************************/
-        sfb.set(description, "description-f017");
-        sfb.set(name, "name-f017");
+        sfb.setPropertyValue(description, "description-f017");
+        sfb.setPropertyValue(name, "name-f017");
 
         Coordinate[] lineCoord = new Coordinate[5];
         lineCoord[0] = new Coordinate(50.174, 4.899);
@@ -434,11 +433,11 @@ public class FeatureFilterTest {
         lineCoord[4] = new Coordinate(54.982, 8.879);
 
 
-        sfb.set(attributGeometrie, factory.createLineString(lineCoord));
-        sfb.set(boolProperty, false);
-        sfb.set(str4Property, "qrst");
-        sfb.set(featureRef, "name-f015");
-        sfb.set(id, "f017");
+        sfb.setPropertyValue(attributGeometrie, factory.createLineString(lineCoord));
+        sfb.setPropertyValue(boolProperty, false);
+        sfb.setPropertyValue(str4Property, "qrst");
+        sfb.setPropertyValue(featureRef, "name-f015");
+        sfb.setPropertyValue(id, "f017");
 
         final Feature entiteGenerique3 = sfb.buildFeature("f017");
 

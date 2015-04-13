@@ -32,7 +32,6 @@ import java.util.StringTokenizer;
 
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
@@ -1274,22 +1273,22 @@ public final class FeatureTypeUtilities {
      */
     public static Feature template(final FeatureType featureType)
             throws IllegalAttributeException {
-        return SimpleFeatureBuilder.build(featureType, defaultValues(featureType), null);
+        return FeatureBuilder.build(featureType, defaultValues(featureType), null);
     }
 
     public static Feature template(final FeatureType featureType, final String featureID)
             throws IllegalAttributeException {
-        return SimpleFeatureBuilder.build(featureType, defaultValues(featureType), featureID);
+        return FeatureBuilder.build(featureType, defaultValues(featureType), featureID);
     }
 
     public static Feature template(final FeatureType featureType, final Object[] atts)
             throws IllegalAttributeException {
-        return SimpleFeatureBuilder.build(featureType, defaultValues(featureType, atts), null);
+        return FeatureBuilder.build(featureType, defaultValues(featureType, atts), null);
     }
 
     public static Feature template(final FeatureType featureType, final String featureID,
             final Object[] atts) throws IllegalAttributeException {
-        return SimpleFeatureBuilder.build(featureType, defaultValues(featureType, atts), featureID);
+        return FeatureBuilder.build(featureType, defaultValues(featureType, atts), featureID);
     }
 
    /**
@@ -1339,7 +1338,7 @@ public final class FeatureTypeUtilities {
             attributes[i] = FeatureUtilities.duplicate(feature.getAttribute(xpath));
         }
 
-        return SimpleFeatureBuilder.build(featureType, attributes, id);
+        return FeatureBuilder.build(featureType, attributes, id);
     }
 
 

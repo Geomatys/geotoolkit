@@ -29,7 +29,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
@@ -272,13 +272,13 @@ public abstract class ShapefileFeatureReader implements FeatureReader<FeatureTyp
 
     private static class DefaultSeparateFeatureReader extends ShapefileFeatureReader {
 
-        protected final SimpleFeatureBuilder builder;
+        protected final FeatureBuilder builder;
 
         private DefaultSeparateFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
                 final FeatureType schema) throws SchemaException {
             super(attributeReader, fidReader, schema);
 
-            this.builder = new SimpleFeatureBuilder(schema);
+            this.builder = new FeatureBuilder(schema);
         }
 
         @Override
@@ -302,7 +302,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader<FeatureTyp
             } else {
                 for (int i = 0; i < attributIndexes.length; i++) {
                     if (attributIndexes[i] >= 0) {
-                        builder.set(attributIndexes[i], buffer[i]);
+                        builder.setPropertyValue(attributIndexes[i], buffer[i]);
                     }
                 }
             }

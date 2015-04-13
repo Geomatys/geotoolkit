@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -56,14 +56,14 @@ public class InterpolateTest {
         sftb.add(attribut, Double.class);
         final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
 
-        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
-        sfb.set(attribut, 0d);
+        final FeatureBuilder sfb = new FeatureBuilder(sft);
+        sfb.setPropertyValue(attribut, 0d);
         final Feature f1 = sfb.buildFeature("id1");
-        sfb.set(attribut, 5d);
+        sfb.setPropertyValue(attribut, 5d);
         final Feature f2 = sfb.buildFeature("id2");
-        sfb.set(attribut, 10d);
+        sfb.setPropertyValue(attribut, 10d);
         final Feature f3 = sfb.buildFeature("id3");
-        sfb.set(attribut, 15d);
+        sfb.setPropertyValue(attribut, 15d);
         final Feature f4 = sfb.buildFeature("id4");
 
         final Expression Lookup = ff.property(attribut);

@@ -43,7 +43,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -453,7 +453,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         BigInteger bigInteger = new BigInteger("1234567890123456789");
         BigDecimal bigDecimal = new BigDecimal(bigInteger, 2);
 
-        SimpleFeatureBuilder build = new SimpleFeatureBuilder(type);
+        FeatureBuilder build = new FeatureBuilder(type);
         build.add(new GeometryFactory().createPoint(new Coordinate(1, -1)));
         build.add(bigDecimal);
         build.add(bigInteger);
@@ -601,7 +601,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         BigInteger bigInteger = new BigInteger("1234567890123456789");
         BigDecimal bigDecimal = new BigDecimal(bigInteger, 2);
 
-        SimpleFeatureBuilder builder = new SimpleFeatureBuilder(type);
+        FeatureBuilder builder = new FeatureBuilder(type);
         builder.add(new GeometryFactory().createPoint(new Coordinate(1, -1)));
         builder.add(bigDecimal);
         builder.add(bigInteger);
@@ -634,7 +634,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
      */
     private Collection<Feature> createFeatureCollection() throws Exception {
         SimpleFeatureType featureType = createExampleSchema();
-        SimpleFeatureBuilder build = new SimpleFeatureBuilder(featureType);
+        FeatureBuilder build = new FeatureBuilder(featureType);
 
         Collection<Feature> features = new ArrayList<>();
         for (int i = 0, ii = 20; i < ii; i++) {
@@ -711,9 +711,9 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         SimpleFeatureType type = ftb.buildSimpleFeatureType();
 
         Collection<Feature> features = new ArrayList<>();
-        SimpleFeatureBuilder build = new SimpleFeatureBuilder(type);
+        FeatureBuilder build = new FeatureBuilder(type);
         for (int i = 0, ii = 20; i < ii; i++) {
-            build.set(0, (Geometry) geom.clone());
+            build.setPropertyValue(0, (Geometry) geom.clone());
             Feature feature = build.buildFeature(null);
 
             features.add(feature);

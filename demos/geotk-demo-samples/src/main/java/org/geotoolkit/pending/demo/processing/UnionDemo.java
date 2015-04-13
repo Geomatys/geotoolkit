@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -26,7 +26,7 @@ import org.opengis.util.NoSuchIdentifierException;
 
 public class UnionDemo {
    
-    private static SimpleFeatureBuilder sfb;
+    private static FeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
     private static SimpleFeatureType type;
     
@@ -129,9 +129,9 @@ public class UnionDemo {
                     new Coordinate(6.0, 5.0),
                     new Coordinate(3.0, 5.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature1");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature1");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
 
@@ -144,9 +144,9 @@ public class UnionDemo {
                     new Coordinate(8.0, 5.0),
                     new Coordinate(6.0, 5.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature2");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature2");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
 
@@ -159,9 +159,9 @@ public class UnionDemo {
                     new Coordinate(8.0, 2.0),
                     new Coordinate(6.0, 2.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature3");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature3");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         //sfb.set("geom2", line);
         myFeature3 = sfb.buildFeature("id-03");
         featureList.add(myFeature3);
@@ -175,9 +175,9 @@ public class UnionDemo {
                     new Coordinate(3.0, 3.0),
                     new Coordinate(2.0, 3.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature4");
-        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature4");
+        sfb.setPropertyValue("geom1", geometryFactory.createPolygon(ring, null));
         myFeature4 = sfb.buildFeature("id-04");
         featureList.add(myFeature4);
 
@@ -211,11 +211,11 @@ public class UnionDemo {
                     new Coordinate(7.0, 4.0),
                     new Coordinate(4.0, 4.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature11");
-        sfb.set("color", "red");
-        sfb.set("geom3", geometryFactory.createPolygon(ring, null));
-        sfb.set("att",20);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature11");
+        sfb.setPropertyValue("color", "red");
+        sfb.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
+        sfb.setPropertyValue("att",20);
         myFeature1 = sfb.buildFeature("id-11");
         featureList.add(myFeature1);
 
@@ -228,11 +228,11 @@ public class UnionDemo {
                     new Coordinate(9.0, 4.0),
                     new Coordinate(7.0, 4.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature12");
-        sfb.set("color", "blue");
-        sfb.set("geom3", geometryFactory.createPolygon(ring, null));
-        sfb.set("att", 20);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature12");
+        sfb.setPropertyValue("color", "blue");
+        sfb.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
+        sfb.setPropertyValue("att", 20);
         myFeature2 = sfb.buildFeature("id-12");
         featureList.add(myFeature2);
 
@@ -245,11 +245,11 @@ public class UnionDemo {
                     new Coordinate(9.0, 2.0),
                     new Coordinate(6.0, 2.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature13");
-        sfb.set("color", "grey");
-        sfb.set("geom3", geometryFactory.createPolygon(ring, null));
-        sfb.set("att", 10);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature13");
+        sfb.setPropertyValue("color", "grey");
+        sfb.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
+        sfb.setPropertyValue("att", 10);
         myFeature3 = sfb.buildFeature("id-13");
         featureList.add(myFeature3);
 
@@ -262,11 +262,11 @@ public class UnionDemo {
                     new Coordinate(5.0, 2.0),
                     new Coordinate(4.0, 2.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature14");
-        sfb.set("color", "grey");
-        sfb.set("geom3", geometryFactory.createPolygon(ring, null));
-        sfb.set("att", 12);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature14");
+        sfb.setPropertyValue("color", "grey");
+        sfb.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
+        sfb.setPropertyValue("att", 12);
         myFeature4 = sfb.buildFeature("id-14");
         featureList.add(myFeature4);
         
@@ -279,11 +279,11 @@ public class UnionDemo {
                     new Coordinate(3.0, 5.0),
                     new Coordinate(2.0, 5.0)
                 });
-        sfb = new SimpleFeatureBuilder(type);
-        sfb.set("name", "feature15");
-        sfb.set("color", "grey");
-        sfb.set("geom3", geometryFactory.createPolygon(ring, null));
-        sfb.set("att", 12);
+        sfb = new FeatureBuilder(type);
+        sfb.setPropertyValue("name", "feature15");
+        sfb.setPropertyValue("color", "grey");
+        sfb.setPropertyValue("geom3", geometryFactory.createPolygon(ring, null));
+        sfb.setPropertyValue("att", 12);
         myFeature5 = sfb.buildFeature("id-15");
         featureList.add(myFeature5);
 

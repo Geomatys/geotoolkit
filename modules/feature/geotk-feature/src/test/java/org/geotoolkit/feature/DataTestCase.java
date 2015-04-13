@@ -36,7 +36,6 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.geometry.DefaultBoundingBox;
@@ -119,7 +118,7 @@ public abstract class DataTestCase extends TestCase {
         //  2,2 +-----+-----+ 4,2
         //     /     rd1     \
         // 1,1+               +5,1
-        roadFeatures[0] = SimpleFeatureBuilder.build(roadType, new Object[]{
+        roadFeatures[0] = FeatureBuilder.build(roadType, new Object[]{
                     new Integer(1),
                     line(new int[]{1, 1, 2, 2, 4, 2, 5, 1}),
                     "r1",},
@@ -130,7 +129,7 @@ public abstract class DataTestCase extends TestCase {
         //  rd2  + 3,2
         //       |
         //    3,0+
-        roadFeatures[1] = SimpleFeatureBuilder.build(roadType, new Object[]{
+        roadFeatures[1] = FeatureBuilder.build(roadType, new Object[]{
                     new Integer(2), line(new int[]{3, 0, 3, 2, 3, 3, 3, 4}),
                     "r2"
                 },
@@ -139,7 +138,7 @@ public abstract class DataTestCase extends TestCase {
         //     rd3     + 5,3
         //            /
         //  3,2 +----+ 4,2
-        roadFeatures[2] = SimpleFeatureBuilder.build(roadType, new Object[]{
+        roadFeatures[2] = FeatureBuilder.build(roadType, new Object[]{
                     new Integer(3),
                     line(new int[]{3, 2, 4, 2, 5, 3}), "r3"
                 },
@@ -162,7 +161,7 @@ public abstract class DataTestCase extends TestCase {
         //   + 2,3
         //  / rd4
         // + 1,2
-        newRoad = SimpleFeatureBuilder.build(roadType, new Object[]{
+        newRoad = FeatureBuilder.build(roadType, new Object[]{
                     new Integer(4), line(new int[]{1, 2, 2, 3}), "r4"
                 }, "road.rd4");
 
@@ -179,7 +178,7 @@ public abstract class DataTestCase extends TestCase {
         //  +---+ rv1
         //   7,5 \
         //    9,3 +----+ 11,3
-        riverFeatures[0] = SimpleFeatureBuilder.build(riverType, new Object[]{
+        riverFeatures[0] = FeatureBuilder.build(riverType, new Object[]{
                     new Integer(1),
                     lines(new int[][]{
                         {5, 5, 7, 4},
@@ -193,7 +192,7 @@ public abstract class DataTestCase extends TestCase {
         //    rv2+ 4,8
         //       |
         //   4,6 +
-        riverFeatures[1] = SimpleFeatureBuilder.build(riverType, new Object[]{
+        riverFeatures[1] = FeatureBuilder.build(riverType, new Object[]{
                     new Integer(2),
                     lines(new int[][]{
                         {4, 6, 4, 8, 6, 10}
@@ -210,7 +209,7 @@ public abstract class DataTestCase extends TestCase {
         //     rv3  \
         //           + 13,3
         //
-        newRiver = SimpleFeatureBuilder.build(riverType, new Object[]{
+        newRiver = FeatureBuilder.build(riverType, new Object[]{
                     new Integer(3),
                     lines(new int[][]{
                         {9, 5, 11, 5, 13, 3}
@@ -227,7 +226,7 @@ public abstract class DataTestCase extends TestCase {
         //            \  |
         //        14,4 +-+ 16,4
         //
-        lakeFeatures[0] = SimpleFeatureBuilder.build(lakeType, new Object[]{
+        lakeFeatures[0] = FeatureBuilder.build(lakeType, new Object[]{
                     new Integer(0),
                     polygon(new int[]{12, 6, 14, 8, 16, 6, 16, 4, 14, 4, 12, 6}),
                     "muddy"

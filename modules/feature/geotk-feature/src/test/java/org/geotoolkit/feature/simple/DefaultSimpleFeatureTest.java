@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.simple;
 
+import org.geotoolkit.feature.FeatureBuilder;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -44,7 +45,7 @@ public class DefaultSimpleFeatureTest {
 
     public DefaultSimpleFeatureTest() throws SchemaException {
         schema = FeatureTypeUtilities.createType("buildings", "the_geom:MultiPolygon,name:String,ADDRESS:String");
-        feature = SimpleFeatureBuilder.build(schema, new Object[] {null, "ABC", "Random Road, 12"}, "building.1");
+        feature = FeatureBuilder.build(schema, new Object[] {null, "ABC", "Random Road, 12"}, "building.1");
     }
 
     @Test
