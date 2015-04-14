@@ -19,9 +19,7 @@ package org.geotoolkit.feature;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AssociationDescriptor;
 import org.geotoolkit.feature.type.AssociationType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -243,6 +241,16 @@ abstract class WrapProperty<P extends org.geotoolkit.feature.Property> extends A
             return prop.getProperty(name);
         }
 
+        @Override
+        public Object getPropertyValue(String string) throws IllegalArgumentException {
+            return prop.getPropertyValue(string);
+        }
+
+        @Override
+        public void setPropertyValue(String string, Object o) throws IllegalArgumentException {
+            prop.setPropertyValue(string, o);
+        }
+
     }
 
     static class Feature<T extends org.geotoolkit.feature.Feature>
@@ -292,90 +300,5 @@ abstract class WrapProperty<P extends org.geotoolkit.feature.Property> extends A
             getProperty(name).setValue(value);
         }
     }
-
-    static class SimpleFeature extends Feature<org.geotoolkit.feature.simple.SimpleFeature>
-            implements org.geotoolkit.feature.simple.SimpleFeature{
-
-        SimpleFeature(final org.geotoolkit.feature.simple.SimpleFeature prop, final AttributeDescriptor desc){
-            super(prop,desc);
-        }
-
-        @Override
-        public String getID() {
-            return prop.getID();
-        }
-
-        @Override
-        public SimpleFeatureType getType() {
-            return prop.getType();
-        }
-
-        @Override
-        public SimpleFeatureType getFeatureType() {
-            return prop.getFeatureType();
-        }
-
-        @Override
-        public List<Object> getAttributes() {
-            return prop.getAttributes();
-        }
-
-        @Override
-        public void setAttributes(List<Object> values) {
-            prop.setAttributes(values);
-        }
-
-        @Override
-        public void setAttributes(Object[] values) {
-            prop.setAttributes(values);
-        }
-
-        @Override
-        public Object getAttribute(String name) {
-            return prop.getAttribute(name);
-        }
-
-        @Override
-        public void setAttribute(String name, Object value) {
-            prop.setAttribute(name, value);
-        }
-
-        @Override
-        public Object getAttribute(GenericName name) {
-            return prop.getAttribute(name);
-        }
-
-        @Override
-        public void setAttribute(GenericName name, Object value) {
-            prop.setAttribute(name, value);
-        }
-
-        @Override
-        public Object getAttribute(int index) throws IndexOutOfBoundsException {
-            return prop.getAttribute(index);
-        }
-
-        @Override
-        public void setAttribute(int index, Object value) throws IndexOutOfBoundsException {
-            prop.setAttribute(index, value);
-        }
-
-        @Override
-        public int getAttributeCount() {
-            return prop.getAttributeCount();
-        }
-
-        @Override
-        public Object getDefaultGeometry() {
-            return prop.getDefaultGeometry();
-        }
-
-        @Override
-        public void setDefaultGeometry(Object geometry) {
-            prop.setDefaultGeometry(geometry);
-        }
-
-    }
-
 
 }

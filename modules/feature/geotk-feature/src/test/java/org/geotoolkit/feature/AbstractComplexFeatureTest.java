@@ -36,11 +36,6 @@ import java.util.Collection;
 import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.geotoolkit.feature.Attribute;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.type.*;
 
 /**
@@ -170,7 +165,7 @@ public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTe
 
         //test it
         assertNotNull("Feature has not been set", feature);
-        assertFalse(feature instanceof SimpleFeature);
+        assertFalse(feature.getType().isSimple());
         //type
         assertNotNull("type has not been set", feature.getType());
         assertEquals("type is wrong", type, feature.getType());

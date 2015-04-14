@@ -37,8 +37,6 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureBuilder;
 
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -103,7 +101,7 @@ public class FidQueryTest extends FIDTestCase {
     @Test
     public void testAddFeature() throws Exception {
         Feature feature = fids.values().iterator().next();
-        final SimpleFeatureType schema = (SimpleFeatureType) ds.getFeatureType(ds.getTypeNames()[0]);
+        final FeatureType schema = ds.getFeatureType(ds.getTypeNames()[0]);
 
         final FeatureBuilder build = new FeatureBuilder(schema);
         final GeometryFactory gf = new GeometryFactory();

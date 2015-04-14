@@ -21,8 +21,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import junit.framework.TestCase;
 
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
@@ -170,7 +168,7 @@ public abstract class DataTestCase extends TestCase {
         subRiverType = FeatureTypeUtilities.createType(namespace + ".river",
                 "river:String,flow:0.0");
         gf = new GeometryFactory();
-        riverFeatures = new SimpleFeature[2];
+        riverFeatures = new Feature[2];
 
         //       9,7     13,7
         //        +------+
@@ -219,7 +217,7 @@ public abstract class DataTestCase extends TestCase {
 
         lakeType = FeatureTypeUtilities.createType(namespace + ".lake",
                 "id:0,geom:Polygon:nillable,name:String");
-        lakeFeatures = new SimpleFeature[1];
+        lakeFeatures = new Feature[1];
         //             + 14,8
         //            / \
         //      12,6 +   + 16,6

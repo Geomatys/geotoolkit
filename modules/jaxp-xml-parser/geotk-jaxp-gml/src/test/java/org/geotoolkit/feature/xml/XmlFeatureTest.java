@@ -46,12 +46,10 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.test.XMLComparator;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.*;
 
-import org.geotoolkit.feature.simple.SimpleFeature;
 import org.opengis.filter.sort.SortOrder;
 
 import static org.junit.Assert.*;
@@ -88,9 +86,9 @@ public class XmlFeatureTest {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
         reader.dispose();
 
-        assertTrue(obj instanceof SimpleFeature);
+        assertTrue(obj instanceof Feature);
 
-        SimpleFeature result = (SimpleFeature) obj;
+        Feature result = (Feature) obj;
         assertEquals(simpleFeatureFull, result);
 
         final XmlFeatureReader readerGml = new JAXPStreamFeatureReader(simpleTypeFull);
@@ -98,9 +96,9 @@ public class XmlFeatureTest {
         obj = readerGml.read(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
         readerGml.dispose();
 
-        assertTrue(obj instanceof SimpleFeature);
+        assertTrue(obj instanceof Feature);
 
-        result = (SimpleFeature) obj;
+        result = (Feature) obj;
         assertEquals(simpleFeatureFull, result);
     }
 
@@ -135,17 +133,17 @@ public class XmlFeatureTest {
         readerGml.getProperties().put(JAXPStreamFeatureReader.BINDING_PACKAGE, "GML");
         Object obj = readerGml.read(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc.xml"));
 
-        assertTrue(obj instanceof SimpleFeature);
+        assertTrue(obj instanceof Feature);
 
-        SimpleFeature result = (SimpleFeature) obj;
+        Feature result = (Feature) obj;
         assertEquals(simpleFeatureFull, result);
 
         obj = readerGml.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc2.xml"));
 
-        assertTrue(obj instanceof SimpleFeature);
+        assertTrue(obj instanceof Feature);
 
-        result = (SimpleFeature) obj;
+        result = (Feature) obj;
         assertEquals(simpleFeatureFull, result);
 
         // adding lineString encoding
@@ -153,9 +151,9 @@ public class XmlFeatureTest {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc3.xml"));
         readerGml.dispose();
 
-        assertTrue(obj instanceof SimpleFeature);
+        assertTrue(obj instanceof Feature);
 
-        result = (SimpleFeature) obj;
+        result = (Feature) obj;
         assertEquals(simpleFeatureFull, result);
 
         /*
@@ -171,18 +169,18 @@ public class XmlFeatureTest {
         obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc.xml"));
 
-        assertTrue(obj instanceof SimpleFeature);
+        assertTrue(obj instanceof Feature);
 
-        result = (SimpleFeature) obj;
+        result = (Feature) obj;
         assertEquals(simpleFeatureFull, result);
 
         // adding lineString encoding
         obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc2.xml"));
 
-        assertTrue(obj instanceof SimpleFeature);
+        assertTrue(obj instanceof Feature);
 
-        result = (SimpleFeature) obj;
+        result = (Feature) obj;
         assertEquals(simpleFeatureFull, result);
 
         // adding lineString encoding
@@ -190,9 +188,9 @@ public class XmlFeatureTest {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc3.xml"));
         reader.dispose();
 
-        assertTrue(obj instanceof SimpleFeature);
+        assertTrue(obj instanceof Feature);
 
-        result = (SimpleFeature) obj;
+        result = (Feature) obj;
         assertFalse(simpleFeatureFull.equals(result));
     }
 

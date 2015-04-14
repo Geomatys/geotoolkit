@@ -43,7 +43,6 @@ import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeature;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;

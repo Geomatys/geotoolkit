@@ -36,10 +36,9 @@ import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.geometry.jts.JTS;
 
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -243,7 +242,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader {
     /**
      * Create a FeatureType based on the attributs described in the attribut reader.
      */
-    private static SimpleFeatureType createSchema(final ShapefileAttributeReader attributeReader) throws SchemaException {
+    private static FeatureType createSchema(final ShapefileAttributeReader attributeReader) throws SchemaException {
         final FeatureTypeBuilder b = new FeatureTypeBuilder();
         b.setName("noTypeName");
         b.addAll(getDescriptors(attributeReader));
@@ -323,7 +322,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader {
         }
 
         @Override
-        protected SimpleFeature readFeature() throws DataStoreException {
+        protected Feature readFeature() throws DataStoreException {
 
             final String fid = fidReader.next();
             feature.setId(fid);

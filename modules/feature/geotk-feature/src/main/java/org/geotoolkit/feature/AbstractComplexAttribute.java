@@ -38,6 +38,7 @@ import org.geotoolkit.feature.type.AssociationType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.OperationType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.FeatureId;
@@ -233,6 +234,43 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         }
     }
 
+    public Object getPropertyValue(String name) throws IllegalArgumentException {
+        final Property prop = getProperty(name);
+        if(prop!=null) return prop.getValue();
+
+        //check if it's and operation
+        if(prop==null){
+            final PropertyDescriptor propDesc = getType().getDescriptor(name);
+            if(propDesc!=null && propDesc.getType() instanceof OperationType){
+                final OperationType opType = (OperationType) propDesc.getType();
+                final org.opengis.feature.Attribute att = opType.invokeGet(this, opType.getParameters().createValue());
+                if(att!=null) return att.getValue();
+            }
+        }
+
+        return null;
+    }
+
+    public void setPropertyValue(String name, Object value) throws IllegalArgumentException {
+        Property prop = getProperty(name);
+        if(prop==null){
+            final PropertyDescriptor desc = getType().getDescriptor(name);
+            if(desc==null){
+                throw new IllegalArgumentException("No property for name : "+name);
+            }
+            PropertyType attType = desc.getType();
+            if(attType instanceof OperationType){
+                //property is an operation
+                ((OperationType)attType).invokeSet(this, value);
+            }else{
+                prop = FeatureUtilities.defaultProperty(desc);
+                getProperties().add(prop);
+                prop.setValue(value);
+            }
+        }else{
+            prop.setValue(value);
+        }
+    }
 
 
 

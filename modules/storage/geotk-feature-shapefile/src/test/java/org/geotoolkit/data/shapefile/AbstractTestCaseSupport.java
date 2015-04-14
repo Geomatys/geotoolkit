@@ -29,8 +29,6 @@ import org.junit.After;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.feature.simple.SimpleFeature;
-
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;

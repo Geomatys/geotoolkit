@@ -90,7 +90,7 @@ public class DefaultSimpleFeatureTest {
             GF.createPoint(new Coordinate(10, 10))
         };
 
-        final SimpleFeature feature = new DefaultSimpleFeature(type, new DefaultFeatureId("-1"), properties, false);
+        final Feature feature = new DefaultSimpleFeature(type, new DefaultFeatureId("-1"), properties, false);
 
         BoundingBox bbox = DefaultBoundingBox.castOrCopy(feature.getBounds());
         assertEquals(10,bbox.getMinX(),DELTA);
@@ -112,7 +112,7 @@ public class DefaultSimpleFeatureTest {
         assertEquals(30,bbox.getMaxX(),DELTA);
         assertEquals(30,bbox.getMaxY(),DELTA);
 
-        feature.setAttribute("point",GF.createPoint(new Coordinate(40, 40)));
+        feature.setPropertyValue("point",GF.createPoint(new Coordinate(40, 40)));
         bbox = DefaultBoundingBox.castOrCopy(feature.getBounds());
         assertEquals(40,bbox.getMinX(),DELTA);
         assertEquals(40,bbox.getMinY(),DELTA);

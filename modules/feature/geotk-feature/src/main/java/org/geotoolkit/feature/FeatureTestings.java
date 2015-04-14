@@ -31,8 +31,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AssociationType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
@@ -246,10 +244,6 @@ public final class FeatureTestings {
             }
         }
         return FF.createComplexAttribute(props, type, id);
-    }
-
-    public static SimpleFeature testingFeature(final SimpleFeatureType type, final String id){
-        return (SimpleFeature)testingProperty(type, id);
     }
 
     /**

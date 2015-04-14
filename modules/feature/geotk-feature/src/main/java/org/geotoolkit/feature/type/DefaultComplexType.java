@@ -21,12 +21,12 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
 
-import org.opengis.feature.Attribute;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.util.iso.Names;
+import org.geotoolkit.feature.ComplexAttribute;
 
 import org.geotoolkit.feature.Property;
 import org.opengis.filter.Filter;
@@ -159,7 +159,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
     }
 
     @Override
-    public Attribute<Object> newInstance() {
+    public ComplexAttribute newInstance() {
         throw new UnsupportedOperationException();
     }
 

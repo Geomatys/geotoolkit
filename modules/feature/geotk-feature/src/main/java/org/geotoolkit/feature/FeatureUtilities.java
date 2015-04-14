@@ -33,8 +33,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.coverage.grid.GridCoverage;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.*;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.parameter.*;
@@ -464,10 +462,6 @@ public final class FeatureUtilities {
         return FF.createComplexAttribute(props, type, id);
     }
 
-    public static SimpleFeature defaultFeature(final SimpleFeatureType type, final String id){
-        return (SimpleFeature)defaultProperty(type, id);
-    }
-
     public static Feature defaultFeature(final FeatureType type, final String id){
         return (Feature)defaultProperty(type, id);
     }
@@ -542,9 +536,7 @@ public final class FeatureUtilities {
      * @return Property
      */
     public static Property wrapProperty(final Property property, final PropertyDescriptor desc){
-        if(property instanceof SimpleFeature){
-            return new WrapProperty.SimpleFeature((SimpleFeature)property, (AttributeDescriptor)desc);
-        }else if(property instanceof Feature){
+        if(property instanceof Feature){
             return new WrapProperty.Feature((Feature)property, (AttributeDescriptor)desc);
         }else if(property instanceof ComplexAttribute){
             return new WrapProperty.ComplexAttribute((ComplexAttribute)property, (AttributeDescriptor)desc);

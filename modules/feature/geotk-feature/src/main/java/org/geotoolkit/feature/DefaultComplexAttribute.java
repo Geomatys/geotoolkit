@@ -22,6 +22,9 @@ import java.util.Collection;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.OperationType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
 
 /**

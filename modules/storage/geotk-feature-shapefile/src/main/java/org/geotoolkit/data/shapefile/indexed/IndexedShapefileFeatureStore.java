@@ -61,9 +61,7 @@ import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.*;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.util.NullProgressListener;
-import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
@@ -73,7 +71,6 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
-import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

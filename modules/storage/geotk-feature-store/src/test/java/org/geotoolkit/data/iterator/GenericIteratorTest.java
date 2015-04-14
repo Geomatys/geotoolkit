@@ -63,8 +63,6 @@ import org.junit.Test;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
@@ -93,18 +91,18 @@ public class GenericIteratorTest extends TestCase{
     private final FeatureCollection collection;
     private final FeatureCollection collectionComplex;
     private final Name name;
-    private final SimpleFeatureType originalType;
-    private final SimpleFeatureType reducedType;
-    private final SimpleFeatureType reprojectedType;
+    private final FeatureType originalType;
+    private final FeatureType reducedType;
+    private final FeatureType reprojectedType;
     private final String id1;
     private final String id2;
     private final String id3;
     private final String cid1;
     private final String cid2;
 
-    private final SimpleFeature sf1;
-    private final SimpleFeature sf2;
-    private final SimpleFeature sf3;
+    private final Feature sf1;
+    private final Feature sf2;
+    private final Feature sf3;
 
     public GenericIteratorTest() throws NoSuchAuthorityCodeException, FactoryException{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
@@ -134,23 +132,23 @@ public class GenericIteratorTest extends TestCase{
         collection = FeatureStoreUtilities.collection("id", originalType);
 
         sf1 = FeatureUtilities.defaultFeature(originalType, "");
-        sf1.setAttribute("att_geom", GF.createPoint(new Coordinate(3, 0)));
-        sf1.setAttribute("att_string", "bbb");
-        sf1.setAttribute("att_double", 3d);
+        sf1.setPropertyValue("att_geom", GF.createPoint(new Coordinate(3, 0)));
+        sf1.setPropertyValue("att_string", "bbb");
+        sf1.setPropertyValue("att_double", 3d);
         collection.add(sf1);
         id1 = name.getLocalPart()+"."+0;
 
         sf2 = FeatureUtilities.defaultFeature(originalType, "");
-        sf2.setAttribute("att_geom", GF.createPoint(new Coordinate(1, 0)));
-        sf2.setAttribute("att_string", "ccc");
-        sf2.setAttribute("att_double", 1d);
+        sf2.setPropertyValue("att_geom", GF.createPoint(new Coordinate(1, 0)));
+        sf2.setPropertyValue("att_string", "ccc");
+        sf2.setPropertyValue("att_double", 1d);
         collection.add(sf2);
         id2 = name.getLocalPart()+"."+1;
 
         sf3 = FeatureUtilities.defaultFeature(originalType, "");
-        sf3.setAttribute("att_geom", GF.createPoint(new Coordinate(2, 0)));
-        sf3.setAttribute("att_string", "aaa");
-        sf3.setAttribute("att_double", 2d);
+        sf3.setPropertyValue("att_geom", GF.createPoint(new Coordinate(2, 0)));
+        sf3.setPropertyValue("att_string", "aaa");
+        sf3.setPropertyValue("att_double", 2d);
         collection.add(sf3);
         id3 = name.getLocalPart()+"."+2;
 
@@ -472,7 +470,7 @@ public class GenericIteratorTest extends TestCase{
         builder.reset();
         builder.setName(name);
         builder.add("att_geom", LineString.class, CommonCRS.WGS84.normalizedGeographic());
-        final SimpleFeatureType type = builder.buildSimpleFeatureType();
+        final FeatureType type = builder.buildFeatureType();
 
         final LineString geom = GF.createLineString(
                 new Coordinate[]{
@@ -485,8 +483,8 @@ public class GenericIteratorTest extends TestCase{
                 });
 
         final FeatureCollection collection = FeatureStoreUtilities.collection("id", type);
-        SimpleFeature sf = FeatureUtilities.defaultFeature(type, "");
-        sf.setAttribute("att_geom", geom);
+        Feature sf = FeatureUtilities.defaultFeature(type, "");
+        sf.setPropertyValue("att_geom", geom);
         collection.add(sf);
 
         //get the reader -------------------------------------------------------

@@ -52,8 +52,6 @@ import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -77,10 +75,12 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.type.FeatureType;
 
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import static org.junit.Assert.*;
@@ -169,8 +169,8 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     public void testSchema() throws Exception {
         URL url = ShapeTestData.url(STATE_POP);
         IndexedShapefileFeatureStore s = new IndexedShapefileFeatureStore(url);
-        SimpleFeatureType schema = (SimpleFeatureType) s.getFeatureType(s.getTypeNames()[0]);
-        List<AttributeDescriptor> types = schema.getAttributeDescriptors();
+        FeatureType schema = s.getFeatureType(s.getTypeNames()[0]);
+        Collection<PropertyDescriptor> types = schema.getDescriptors();
         assertEquals("Number of Attributes", 253, types.size());
         assertNotNull(schema.getCoordinateReferenceSystem());
     }
@@ -518,8 +518,8 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         final long idx = sds.getCount(QueryBuilder.all(sds.getName()));
         final Session session = sds.createSession(true);
 
-        Feature[] newFeatures1 = new SimpleFeature[1];
-        Feature[] newFeatures2 = new SimpleFeature[2];
+        Feature[] newFeatures1 = new Feature[1];
+        Feature[] newFeatures2 = new Feature[2];
         GeometryFactory fac = new GeometryFactory();
         newFeatures1[0] = FeatureTypeUtilities.template(sds.getFeatureType());
         newFeatures1[0].setPropertyValue("a",fac.createPoint(new Coordinate(0, 0)));
@@ -536,7 +536,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     }
 
-    private SimpleFeatureType createExampleSchema() {
+    private FeatureType createExampleSchema() {
         FeatureTypeBuilder build = new FeatureTypeBuilder();
         build.setName("junk");
         build.add("a", Point.class, CommonCRS.WGS84.normalizedGeographic());
@@ -556,7 +556,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     private Collection<Feature> createFeatureCollection() throws Exception {
-        SimpleFeatureType featureType = createExampleSchema();
+        FeatureType featureType = createExampleSchema();
         FeatureBuilder build = new FeatureBuilder(featureType);
 
         Collection<Feature> features = new ArrayList<>();
@@ -645,7 +645,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Junk");
         ftb.add("a", geom.getClass(), CommonCRS.WGS84.normalizedGeographic());
-        final SimpleFeatureType type = ftb.buildSimpleFeatureType();
+        final FeatureType type = ftb.buildSimpleFeatureType();
 
         final Collection<Feature> features = new ArrayList<>();
 

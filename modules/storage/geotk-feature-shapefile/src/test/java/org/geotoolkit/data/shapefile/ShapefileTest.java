@@ -18,7 +18,6 @@ package org.geotoolkit.data.shapefile;
 
 import org.junit.Test;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,14 +34,12 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.test.TestData;
-
 import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.feature.Feature;
 
 import static org.junit.Assert.*;
 
@@ -144,8 +141,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
 
     @Test
     public void testHolyPolygons() throws Exception {
-        SimpleFeatureType type = FeatureTypeUtilities.createType("junk",
-                "a:MultiPolygon");
+        FeatureType type = FeatureTypeUtilities.createType("junk","a:MultiPolygon");
         Collection<Feature> features = new ArrayList<>();
 
         File tmpFile = getTempFile();
@@ -190,9 +186,9 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     public void testDuplicateColumnNames() throws Exception {
         File file = TestData.file(AbstractTestCaseSupport.class, "bad/state.shp");
         ShapefileFeatureStore featureStore = new ShapefileFeatureStore(file.toURI().toURL());
-        SimpleFeatureType schema = (SimpleFeatureType) featureStore.getFeatureType(featureStore.getNames().iterator().next());
+        FeatureType schema = featureStore.getFeatureType(featureStore.getNames().iterator().next());
 
-        assertEquals(6, schema.getAttributeCount());
+        assertEquals(6, schema.getDescriptors().size());
         assertTrue(featureStore.getCount(QueryBuilder.all(schema.getName())) > 0);
     }
 

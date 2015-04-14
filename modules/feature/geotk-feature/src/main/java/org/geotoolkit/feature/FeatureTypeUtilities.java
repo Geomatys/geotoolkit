@@ -52,8 +52,6 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.expression.Literal;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -101,7 +99,7 @@ public final class FeatureTypeUtilities {
     public static final URI DEFAULT_NAMESPACE;
 
     /** abstract base type for all feature types */
-    public static final SimpleFeatureType ABSTRACT_FEATURE_TYPE;
+    public static final FeatureType ABSTRACT_FEATURE_TYPE;
 
     private static final Map<String, Class> TYPE_MAP = new HashMap<String, Class>();
     private static final Map<Class, String> TYPE_ENCODE = new HashMap<Class, String>();
@@ -166,7 +164,7 @@ public final class FeatureTypeUtilities {
             throw new IllegalStateException("Failed to parse URI.");
         }
 
-        SimpleFeatureType featureType = null;
+        FeatureType featureType = null;
         try {
             featureType = newFeatureType(null, "Feature", new URI("http://www.opengis.net/gml"), true);
         } catch (Exception e) {
@@ -183,7 +181,7 @@ public final class FeatureTypeUtilities {
     public static final int ANY_LENGTH = -1;
 
     /** An feature type with no attributes */
-    public static final SimpleFeatureType EMPTY = new DefaultSimpleFeatureType(
+    public static final FeatureType EMPTY = new DefaultSimpleFeatureType(
             new DefaultName("Empty"), Collections.EMPTY_LIST, null, false, Collections.EMPTY_LIST, null, null);
 
 
@@ -414,7 +412,7 @@ public final class FeatureTypeUtilities {
      *
      * @throws SchemaException
      */
-    public static SimpleFeatureType createType(final String identification, final String typeSpec)
+    public static FeatureType createType(final String identification, final String typeSpec)
             throws SchemaException
     {
         final int split = identification.lastIndexOf('.');
@@ -455,7 +453,7 @@ public final class FeatureTypeUtilities {
      *
      * @throws SchemaException
      */
-    public static SimpleFeatureType createType(final String namespace, final String typeName,
+    public static FeatureType createType(final String namespace, final String typeName,
             final String typeSpec) throws SchemaException
     {
         final FeatureTypeBuilder tb = new FeatureTypeBuilder();
@@ -604,13 +602,15 @@ public final class FeatureTypeUtilities {
      *
      * @return The string "specification" for the featureType
      */
-    public static String spec(final SimpleFeatureType featureType) {
-        final List types = featureType.getAttributeDescriptors();
+    public static String spec(final FeatureType featureType) {
+        final Collection types = featureType.getDescriptors();
 
         final StringBuilder buf = new StringBuilder();
 
-        for (int i = 0; i < types.size(); i++) {
-            final AttributeDescriptor type = (AttributeDescriptor) types.get(i);
+        boolean first = true;
+        final Iterator ite = types.iterator();
+        while(ite.hasNext()){
+            final AttributeDescriptor type = (AttributeDescriptor) ite.next();
             buf.append(type.getLocalName());
             buf.append(":");
             buf.append(typeMap(type.getType().getBinding()));
@@ -629,8 +629,10 @@ public final class FeatureTypeUtilities {
                 }
             }
 
-            if (i < (types.size() - 1)) {
-                buf.append(",");
+            if(!first){
+                buf.append(',');
+            }else{
+                first = false;
             }
         }
 
@@ -780,16 +782,16 @@ public final class FeatureTypeUtilities {
      * @throws MismatchedDimensionException
      * @throws IllegalAttributeException
      */
-    public static SimpleFeature transform(SimpleFeature feature, final SimpleFeatureType schema, final MathTransform transform)
+    public static Feature transform(Feature feature, final FeatureType schema, final MathTransform transform)
             throws MismatchedDimensionException, TransformException, SimpleIllegalAttributeException{
         feature = FeatureUtilities.copy(feature);
 
         final GeometryDescriptor geomType = schema.getGeometryDescriptor();
-        Geometry geom = (Geometry) feature.getAttribute(geomType.getLocalName());
+        Geometry geom = (Geometry) feature.getPropertyValue(geomType.getLocalName());
 
         geom = JTS.transform(geom, transform);
 
-        feature.setAttribute(geomType.getLocalName(), geom);
+        feature.setPropertyValue(geomType.getLocalName(), geom);
 
         return feature;
     }
@@ -807,8 +809,8 @@ public final class FeatureTypeUtilities {
      * @throws FactoryRegistryException If there are problems creating a factory.
      * @throws SchemaException If the AttributeTypes provided are invalid in some way.
      */
-    public static SimpleFeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
-            final URI ns, final boolean isAbstract, final SimpleFeatureType[] superTypes)
+    public static FeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
+            final URI ns, final boolean isAbstract, final FeatureType[] superTypes)
             throws FactoryRegistryException, SchemaException{
         return newFeatureType(types, name, ns, isAbstract, superTypes, null);
     }
@@ -826,8 +828,8 @@ public final class FeatureTypeUtilities {
      * @throws FactoryRegistryException If there are problems creating a factory.
      * @throws SchemaException If the AttributeTypes provided are invalid in some way.
      */
-    public static SimpleFeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
-            final URI ns, final boolean isAbstract, final SimpleFeatureType[] superTypes,
+    public static FeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
+            final URI ns, final boolean isAbstract, final FeatureType[] superTypes,
             final AttributeDescriptor defaultGeometry) throws FactoryRegistryException, SchemaException{
 
         final FeatureTypeBuilder tb = new FeatureTypeBuilder();
@@ -875,8 +877,8 @@ public final class FeatureTypeUtilities {
      * @throws FactoryRegistryException If there are problems creating a factory.
      * @throws SchemaException If the AttributeTypes provided are invalid in some way.
      */
-    public static SimpleFeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
-            final URI ns, final boolean isAbstract, final SimpleFeatureType[] superTypes,
+    public static FeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
+            final URI ns, final boolean isAbstract, final FeatureType[] superTypes,
             final GeometryDescriptor defaultGeometry) throws FactoryRegistryException, SchemaException{
         return newFeatureType(types, name, ns, isAbstract, superTypes, (AttributeDescriptor) defaultGeometry);
     }
@@ -893,7 +895,7 @@ public final class FeatureTypeUtilities {
      * @throws FactoryRegistryException If there are problems creating a factory.
      * @throws SchemaException If the AttributeTypes provided are invalid in some way.
      */
-    public static SimpleFeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
+    public static FeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
             final URI ns, final boolean isAbstract) throws FactoryRegistryException, SchemaException{
         return newFeatureType(types, name, ns, isAbstract, null);
     }
@@ -909,7 +911,7 @@ public final class FeatureTypeUtilities {
      * @throws FactoryRegistryException If there are problems creating a factory.
      * @throws SchemaException If the AttributeTypes provided are invalid in some way.
      */
-    public static SimpleFeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
+    public static FeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
             final URI ns) throws FactoryRegistryException, SchemaException{
         return newFeatureType(types, name, ns, false);
     }
@@ -925,7 +927,7 @@ public final class FeatureTypeUtilities {
      * @throws FactoryRegistryException If there are problems creating a factory.
      * @throws SchemaException If the AttributeTypes provided are invalid in some way.
      */
-    public static SimpleFeatureType newFeatureType(final AttributeDescriptor[] types, final String name)
+    public static FeatureType newFeatureType(final AttributeDescriptor[] types, final String name)
             throws FactoryRegistryException, SchemaException{
         return newFeatureType(types, name, DEFAULT_NAMESPACE, false);
     }
@@ -1147,13 +1149,16 @@ public final class FeatureTypeUtilities {
     ////////////////////////////////////////////////////////////////////////////
 
 
-    public static Name[] attributeNames(final SimpleFeatureType featureType) {
-        final Name[] names = new Name[featureType.getAttributeCount()];
-        final int count = featureType.getAttributeCount();
-        for (int i = 0; i < count; i++) {
-            names[i] = featureType.getDescriptor(i).getName();
+    public static Name[] attributeNames(final FeatureType featureType) {
+        final Collection<PropertyDescriptor> descriptors = featureType.getDescriptors();
+        final Name[] names = new Name[descriptors.size()];
+        final Iterator<PropertyDescriptor> ite = descriptors.iterator();
+        int i=0;
+        while(ite.hasNext()){
+            final PropertyDescriptor desc = ite.next();
+            names[i] = desc.getName();
+            i++;
         }
-
         return names;
     }
 
@@ -1164,7 +1169,7 @@ public final class FeatureTypeUtilities {
      * attributeName does not match the actual name of the type.
      * </p>
      */
-    public static Name[] attributeNames(final Filter filter, final SimpleFeatureType featureType) {
+    public static Name[] attributeNames(final Filter filter, final FeatureType featureType) {
         if (filter == null) {
             return new Name[0];
         }
@@ -1181,7 +1186,7 @@ public final class FeatureTypeUtilities {
      * attributeName does not match the actual name of the type.
      * </p>
      */
-    public static Name[] attributeNames(final Expression expression, final SimpleFeatureType featureType) {
+    public static Name[] attributeNames(final Expression expression, final FeatureType featureType) {
         if (expression == null) {
             return new Name[0];
         }
@@ -1318,15 +1323,15 @@ public final class FeatureTypeUtilities {
      *
      * @throws IllegalAttributeException If opperation could not be performed
      */
-    public static Feature reType(final FeatureType featureType, final SimpleFeature feature)
+    public static Feature reType(final FeatureType featureType, final Feature feature)
             throws IllegalAttributeException {
-        final SimpleFeatureType original = feature.getFeatureType();
+        final FeatureType original = feature.getType();
 
         if (featureType.equals(original)) {
             return FeatureUtilities.copy(feature);
         }
 
-        final String id = feature.getID();
+        final String id = feature.getIdentifier().getID();
         final int numAtts = featureType.getDescriptors().size();
         final Object[] attributes = new Object[numAtts];
         String xpath;
@@ -1335,7 +1340,7 @@ public final class FeatureTypeUtilities {
         for (int i = 0; i < numAtts; i++) {
             final PropertyDescriptor curAttType = ite.next();
             xpath = curAttType.getName().getLocalPart();
-            attributes[i] = FeatureUtilities.duplicate(feature.getAttribute(xpath));
+            attributes[i] = FeatureUtilities.duplicate(feature.getPropertyValue(xpath));
         }
 
         return FeatureBuilder.build(featureType, attributes, id);

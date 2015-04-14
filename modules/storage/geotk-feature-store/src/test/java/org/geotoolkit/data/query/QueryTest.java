@@ -34,12 +34,10 @@ import org.junit.Test;
 import org.geotoolkit.feature.ComplexAttribute;
 
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 
@@ -78,37 +76,37 @@ public class QueryTest extends TestCase{
         builder.setName(name1);
         builder.add(new DefaultName("http://type1.com", "att1"), String.class);
         builder.add(new DefaultName("http://type1.com", "att2"), Integer.class);
-        final SimpleFeatureType sft1 = builder.buildSimpleFeatureType();
+        final FeatureType sft1 = builder.buildFeatureType();
         store.createFeatureType(name1,sft1);
 
         FeatureWriter fw = store.getFeatureWriterAppend(name1);
-        SimpleFeature sf = (SimpleFeature) fw.next();
-        sf.setAttribute("att1", "str1");
-        sf.setAttribute("att2", 1);
+        Feature sf = fw.next();
+        sf.setPropertyValue("att1", "str1");
+        sf.setPropertyValue("att2", 1);
         fw.write();
         fid_1_0 = sf.getIdentifier().getID();
         
-        sf = (SimpleFeature) fw.next();
-        sf.setAttribute("att1", "str2");
-        sf.setAttribute("att2", 2);
+        sf = fw.next();
+        sf.setPropertyValue("att1", "str2");
+        sf.setPropertyValue("att2", 2);
         fw.write();
         fid_1_1 = sf.getIdentifier().getID();
         
-        sf = (SimpleFeature) fw.next();
-        sf.setAttribute("att1", "str3");
-        sf.setAttribute("att2", 3);
+        sf = fw.next();
+        sf.setPropertyValue("att1", "str3");
+        sf.setPropertyValue("att2", 3);
         fw.write();
         fid_1_2 = sf.getIdentifier().getID();
         
-        sf = (SimpleFeature) fw.next();
-        sf.setAttribute("att1", "str50");
-        sf.setAttribute("att2", 50);
+        sf = fw.next();
+        sf.setPropertyValue("att1", "str50");
+        sf.setPropertyValue("att2", 50);
         fw.write();
         fid_1_3 = sf.getIdentifier().getID();
         
-        sf = (SimpleFeature) fw.next();
-        sf.setAttribute("att1", "str51");
-        sf.setAttribute("att2", 51);
+        sf = fw.next();
+        sf.setPropertyValue("att1", "str51");
+        sf.setPropertyValue("att2", 51);
         fw.write();
         fid_1_4 = sf.getIdentifier().getID();
 
@@ -121,43 +119,43 @@ public class QueryTest extends TestCase{
         builder.setName(name2);
         builder.add(new DefaultName("http://type2.com", "att3"), Integer.class);
         builder.add(new DefaultName("http://type2.com", "att4"), Double.class);
-        final SimpleFeatureType sft2 = builder.buildSimpleFeatureType();
+        final FeatureType sft2 = builder.buildFeatureType();
         store.createFeatureType(name2,sft2);
 
         fw = store.getFeatureWriterAppend(name2);
-        sf = (SimpleFeature) fw.next();
-        sf.setAttribute("att3", 1);
-        sf.setAttribute("att4", 10d);
+        sf = fw.next();
+        sf.setPropertyValue("att3", 1);
+        sf.setPropertyValue("att4", 10d);
         fw.write();
         fid_2_0 = sf.getIdentifier().getID();
         
-        sf = (SimpleFeature) fw.next();
-        sf.setAttribute("att3", 2);
-        sf.setAttribute("att4", 20d);
+        sf = fw.next();
+        sf.setPropertyValue("att3", 2);
+        sf.setPropertyValue("att4", 20d);
         fw.write();
         fid_2_1 = sf.getIdentifier().getID();
         
-        sf = (SimpleFeature) fw.next();
-        sf.setAttribute("att3", 2);
-        sf.setAttribute("att4", 30d);
+        sf = fw.next();
+        sf.setPropertyValue("att3", 2);
+        sf.setPropertyValue("att4", 30d);
         fw.write();
         fid_2_2 = sf.getIdentifier().getID();
         
-        sf = (SimpleFeature) fw.next();
-        sf.setAttribute("att3", 3);
-        sf.setAttribute("att4", 40d);
+        sf = fw.next();
+        sf.setPropertyValue("att3", 3);
+        sf.setPropertyValue("att4", 40d);
         fw.write();
         fid_2_3 = sf.getIdentifier().getID();
         
-        sf = (SimpleFeature) fw.next();
-        sf.setAttribute("att3", 60);
-        sf.setAttribute("att4", 60d);
+        sf = fw.next();
+        sf.setPropertyValue("att3", 60);
+        sf.setPropertyValue("att4", 60d);
         fw.write();
         fid_2_4 = sf.getIdentifier().getID();
         
-        sf = (SimpleFeature) fw.next();
-        sf.setAttribute("att3", 61);
-        sf.setAttribute("att4", 61d);
+        sf = fw.next();
+        sf.setPropertyValue("att3", 61);
+        sf.setPropertyValue("att4", 61d);
         fw.write();
         fid_2_5 = sf.getIdentifier().getID();
 

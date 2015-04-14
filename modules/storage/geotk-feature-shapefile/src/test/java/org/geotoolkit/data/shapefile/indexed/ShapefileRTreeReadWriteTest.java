@@ -26,7 +26,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.simple.SimpleFeature;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
@@ -34,9 +33,11 @@ import java.util.Collection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import static org.junit.Assert.*;
 
@@ -146,8 +147,8 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         //copy values, order is not tested here.
-        Collection<SimpleFeature> cone = new ArrayList<SimpleFeature>();
-        Collection<SimpleFeature> ctwo = new ArrayList<SimpleFeature>();
+        Collection<Feature> cone = new ArrayList<>();
+        Collection<Feature> ctwo = new ArrayList<>();
         FeatureStoreUtilities.fill(one, cone);
         FeatureStoreUtilities.fill(two, ctwo);
         one.containsAll(two);
@@ -163,41 +164,41 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         int i = 0;
 
         while (fs1.hasNext()) {
-            SimpleFeature f1 = (SimpleFeature) fs1.next();
-            SimpleFeature f2 = (SimpleFeature) fs2.next();
-
+            Feature f1 = fs1.next();
+            Feature f2 = fs2.next();
             compare(f1, f2);
         }
         fs1.close();
         fs2.close();
     }
 
-    static void compare(final SimpleFeature f1, final SimpleFeature f2) throws Exception {
-        if (f1.getAttributeCount() != f2.getAttributeCount()) {
+    public static void compare(final Feature f1, final Feature f2) throws Exception {
+        Collection<PropertyDescriptor> descs = f1.getType().getDescriptors();
+        if (descs.size() != f2.getType().getDescriptors().size()) {
             throw new Exception("Unequal number of attributes");
         }
 
-        for (int i = 0; i < f1.getAttributeCount(); i++) {
-            Object att1 = f1.getAttribute(i);
-            Object att2 = f2.getAttribute(i);
-
+        for(PropertyDescriptor desc : descs){
+            final String name = desc.getName().getLocalPart();
+            Object att1 = f1.getPropertyValue(name);
+            Object att2 = f2.getPropertyValue(name);
             if (att1 instanceof Geometry && att2 instanceof Geometry) {
                 Geometry g1 = ((Geometry) att1);
                 Geometry g2 = ((Geometry) att2);
                 g1.normalize();
                 g2.normalize();
-
                 if (!g1.equalsExact(g2)) {
-                    throw new Exception("Different geometries (" + i + "):\n"
+                    throw new Exception("Different geometries (" + name + "):\n"
                             + g1 + "\n" + g2);
                 }
             } else {
                 if (!att1.equals(att2)) {
-                    throw new Exception("Different attribute (" + i + "): ["
+                    throw new Exception("Different attribute (" + name + "): ["
                             + att1 + "] - [" + att2 + "]");
                 }
             }
         }
+
     }
 
 }

@@ -25,8 +25,6 @@ import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
@@ -37,8 +35,10 @@ import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import static org.junit.Assert.*;
 
@@ -186,7 +186,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
                 TestData.url(AbstractTestCaseSupport.class, f), null, false, charset);
         Name typeName = s.getNames().iterator().next();
         Session session = s.createSession(true);
-        SimpleFeatureType type = (SimpleFeatureType) s.getFeatureType(typeName);
+        FeatureType type = s.getFeatureType(typeName);
         FeatureCollection one = session.getFeatureCollection(QueryBuilder.all(typeName));
         File tmp = getTempFile();
 
@@ -198,7 +198,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         test(type, one, tmp2, maker, false, charset);
     }
 
-    private void test(final SimpleFeatureType type, final FeatureCollection original,
+    private void test(final FeatureType type, final FeatureCollection original,
             final File tmp, final ShapefileFeatureStoreFactory maker, final boolean memorymapped, final Charset charset)
             throws IOException, MalformedURLException, Exception {
 
@@ -242,8 +242,8 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         }
 
         //copy values, order is not tested here.
-        one = FeatureStoreUtilities.fill(one, new ArrayList<SimpleFeature>());
-        two = FeatureStoreUtilities.fill(two, new ArrayList<SimpleFeature>());
+        one = FeatureStoreUtilities.fill(one, new ArrayList<>());
+        two = FeatureStoreUtilities.fill(two, new ArrayList<>());
 
         one.containsAll(two);
         two.containsAll(one);
@@ -266,27 +266,28 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 //        }
     }
 
-    static void compare(final SimpleFeature f1, final SimpleFeature f2) throws Exception {
-
-        if (f1.getAttributeCount() != f2.getAttributeCount()) {
+    static void compare(final Feature f1, final Feature f2) throws Exception {
+        Collection<PropertyDescriptor> descs = f1.getType().getDescriptors();
+        if (descs.size() != f2.getType().getDescriptors().size()) {
             throw new Exception("Unequal number of attributes");
         }
 
-        for (int i = 0; i < f1.getAttributeCount(); i++) {
-            Object att1 = f1.getAttribute(i);
-            Object att2 = f2.getAttribute(i);
+        for(PropertyDescriptor desc : descs){
+            final String name = desc.getName().getLocalPart();
+            Object att1 = f1.getPropertyValue(name);
+            Object att2 = f2.getPropertyValue(name);
             if (att1 instanceof Geometry && att2 instanceof Geometry) {
                 Geometry g1 = ((Geometry) att1);
                 Geometry g2 = ((Geometry) att2);
                 g1.normalize();
                 g2.normalize();
                 if (!g1.equalsExact(g2)) {
-                    throw new Exception("Different geometries (" + i + "):\n"
+                    throw new Exception("Different geometries (" + name + "):\n"
                             + g1 + "\n" + g2);
                 }
             } else {
                 if (!att1.equals(att2)) {
-                    throw new Exception("Different attribute (" + i + "): ["
+                    throw new Exception("Different attribute (" + name + "): ["
                             + att1 + "] - [" + att2 + "]");
                 }
             }

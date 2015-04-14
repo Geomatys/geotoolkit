@@ -23,7 +23,6 @@ import static org.geotoolkit.filter.binding.AttributeBinding.stripPrefix;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeature;
 
 /**
  *
@@ -75,10 +74,7 @@ public class ComplexAttributeBinding extends AbstractBinding<ComplexAttribute>{
     @Override
     public void set(ComplexAttribute candidate, String xpath, Object value) throws IllegalArgumentException {
         xpath = stripPrefix(xpath);
-        if(candidate instanceof SimpleFeature) {
-            ((SimpleFeature) candidate).setAttribute(xpath, value);
-        }
-        candidate.getProperty(xpath).setValue(value);
+        candidate.setPropertyValue(xpath,value);
     }
 
 }

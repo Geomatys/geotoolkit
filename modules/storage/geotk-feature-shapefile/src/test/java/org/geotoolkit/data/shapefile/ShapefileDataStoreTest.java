@@ -45,11 +45,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.Filter;
@@ -69,6 +65,8 @@ import java.util.Iterator;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.simple.SimpleFeature;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.test.TestData;
 
 import static org.junit.Assert.*;
@@ -178,8 +176,8 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         URL url = ShapeTestData.url(STATE_POP);
         ShapefileFeatureStore shapeFeatureStore = new ShapefileFeatureStore(url);
         String typeName = shapeFeatureStore.getTypeNames()[0];
-        SimpleFeatureType schema = (SimpleFeatureType) shapeFeatureStore.getFeatureType(typeName);
-        List<AttributeDescriptor> attributes = schema.getAttributeDescriptors();
+        FeatureType schema = shapeFeatureStore.getFeatureType(typeName);
+        Collection<PropertyDescriptor> attributes = schema.getDescriptors();
         assertEquals("Number of Attributes", 253, attributes.size());
     }
 
@@ -232,7 +230,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         File file = new File("test.shp");
         URL toURL = file.toURI().toURL();
         ShapefileFeatureStore ds = new ShapefileFeatureStore(toURL);
-        SimpleFeatureType toCreate = FeatureTypeUtilities.createType("test", "geom:MultiPolygon");
+        FeatureType toCreate = FeatureTypeUtilities.createType("test", "geom:MultiPolygon");
         ds.createFeatureType(toCreate.getName(),toCreate);
 
         assertEquals("test", ds.getTypeNames()[0]);
@@ -258,7 +256,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         File file = new File("test.shp");
         URL toURL = file.toURI().toURL();
         ShapefileFeatureStore ds = new ShapefileFeatureStore(toURL);
-        SimpleFeatureType featureType = FeatureTypeUtilities.createType("test", "geom:MultiPolygon:srid=32615");
+        FeatureType featureType = FeatureTypeUtilities.createType("test", "geom:MultiPolygon:srid=32615");
         CoordinateReferenceSystem crs = featureType.getGeometryDescriptor().getCoordinateReferenceSystem();
         assertNotNull( crs );
 
@@ -414,8 +412,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     @Test
     public void testWriteShapefileWithNoRecords() throws Exception {
-        SimpleFeatureType featureType = FeatureTypeUtilities.createType("whatever",
-                "a:Polygon,b:String");
+        FeatureType featureType = FeatureTypeUtilities.createType("whatever", "a:Polygon,b:String");
 
         File tempFile = getTempFile();
         ShapefileFeatureStore shapefileFeatureStore = new ShapefileFeatureStore(tempFile.toURI().toURL());
@@ -446,7 +443,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     @Test
     public void testWriteReadBigNumbers() throws Exception {
         // open feature type
-        SimpleFeatureType type = FeatureTypeUtilities.createType("junk",
+        FeatureType type = FeatureTypeUtilities.createType("junk",
                 "a:Point,b:java.math.BigDecimal,c:java.math.BigInteger");
         Collection<Feature> features = new ArrayList<>();
 
@@ -593,7 +590,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     @Test
     public void testWrite() throws Exception {
         // open feature type
-        SimpleFeatureType type = FeatureTypeUtilities.createType("junk","a:Point,b:java.math.BigDecimal,c:java.math.BigInteger");
+        FeatureType type = FeatureTypeUtilities.createType("junk","a:Point,b:java.math.BigDecimal,c:java.math.BigInteger");
 
         BigInteger bigInteger = new BigInteger("1234567890123456789");
         BigDecimal bigDecimal = new BigDecimal(bigInteger, 2);
@@ -630,7 +627,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
      * @throws Exception
      */
     private Collection<Feature> createFeatureCollection() throws Exception {
-        SimpleFeatureType featureType = createExampleSchema();
+        FeatureType featureType = createExampleSchema();
         FeatureBuilder build = new FeatureBuilder(featureType);
 
         Collection<Feature> features = new ArrayList<>();
@@ -656,7 +653,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         return features;
     }
 
-    private SimpleFeatureType createExampleSchema() {
+    private FeatureType createExampleSchema() {
         FeatureTypeBuilder build = new FeatureTypeBuilder();
         build.setName("junk");
         build.add("a", Point.class, CommonCRS.WGS84.normalizedGeographic());
@@ -705,7 +702,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Junk");
         ftb.add("a", geom.getClass(), CommonCRS.WGS84.normalizedGeographic());
-        SimpleFeatureType type = ftb.buildSimpleFeatureType();
+        FeatureType type = ftb.buildSimpleFeatureType();
 
         Collection<Feature> features = new ArrayList<>();
         FeatureBuilder build = new FeatureBuilder(type);

@@ -34,16 +34,9 @@ package org.geotoolkit.feature;
 import java.util.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.geotoolkit.feature.Association;
-import org.geotoolkit.feature.Attribute;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.GeometryAttribute;
-import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.type.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.feature.type.*;
 
 
 /**

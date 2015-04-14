@@ -69,8 +69,6 @@ import org.junit.Test;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridGeometry;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -117,11 +115,11 @@ public class PortrayalServiceTest {
     private static final GridCoverageBuilder GCF = new GridCoverageBuilder();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
 
-    private final List<FeatureCollection> featureColls = new ArrayList<FeatureCollection>();
-    private final List<GridCoverage2D> coverages = new ArrayList<GridCoverage2D>();
-    private final List<Envelope> envelopes = new ArrayList<Envelope>();
-    private final List<Date[]> dates = new ArrayList<Date[]>();
-    private final List<Double[]> elevations = new ArrayList<Double[]>();
+    private final List<FeatureCollection> featureColls = new ArrayList<>();
+    private final List<GridCoverage2D> coverages = new ArrayList<>();
+    private final List<Envelope> envelopes = new ArrayList<>();
+    private final List<Date[]> dates = new ArrayList<>();
+    private final List<Double[]> elevations = new ArrayList<>();
 
     private final Coverage coverage4D;
 
@@ -133,30 +131,30 @@ public class PortrayalServiceTest {
         sftb.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
         sftb.add("att1", String.class);
         sftb.add("att2", Double.class);
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureType sft = sftb.buildSimpleFeatureType();
         FeatureCollection col = FeatureStoreUtilities.collection("id", sft);
 
         final FeatureWriter writer = col.getSession().getFeatureStore().getFeatureWriterAppend(sft.getName());
 
-        SimpleFeature sf = (SimpleFeature) writer.next();
-        sf.setAttribute("geom", GF.createPoint(new Coordinate(0, 0)));
-        sf.setAttribute("att1", "value1");
+        Feature sf = writer.next();
+        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(0, 0)));
+        sf.setPropertyValue("att1", "value1");
         writer.write();
-        sf = (SimpleFeature) writer.next();
-        sf.setAttribute("geom", GF.createPoint(new Coordinate(-180, -90)));
-        sf.setAttribute("att1", "value1");
+        sf = writer.next();
+        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(-180, -90)));
+        sf.setPropertyValue("att1", "value1");
         writer.write();
-        sf = (SimpleFeature) writer.next();
-        sf.setAttribute("geom", GF.createPoint(new Coordinate(-180, 90)));
-        sf.setAttribute("att1", "value1");
+        sf = writer.next();
+        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(-180, 90)));
+        sf.setPropertyValue("att1", "value1");
         writer.write();
-        sf = (SimpleFeature) writer.next();
-        sf.setAttribute("geom", GF.createPoint(new Coordinate(180, -90)));
-        sf.setAttribute("att1", "value1");
+        sf = writer.next();
+        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(180, -90)));
+        sf.setPropertyValue("att1", "value1");
         writer.write();
-        sf = (SimpleFeature) writer.next();
-        sf.setAttribute("geom", GF.createPoint(new Coordinate(180, -90)));
-        sf.setAttribute("att1", "value1");
+        sf = writer.next();
+        sf.setPropertyValue("geom", GF.createPoint(new Coordinate(180, -90)));
+        sf.setPropertyValue("att1", "value1");
         writer.write();
 
         writer.close();

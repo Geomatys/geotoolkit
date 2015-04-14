@@ -250,4 +250,8 @@ public interface ComplexAttribute extends Attribute {
      * on each entry in turn (in order to check isNillable, binding and restrictions).
      */
     void validate();
+
+    Object getPropertyValue(String string) throws IllegalArgumentException;
+
+    void setPropertyValue(String string, Object o) throws IllegalArgumentException;
 }

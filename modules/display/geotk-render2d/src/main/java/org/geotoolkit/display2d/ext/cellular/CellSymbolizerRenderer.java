@@ -52,8 +52,6 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -66,6 +64,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 /**
  * TODO : For features, compute statistics only if input symbolizer needs
@@ -210,7 +209,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
         //render the cell features
         final Object[] values = new Object[2+7*numericProperties.length];
-        final SimpleFeature feature = new DefaultSimpleFeature(cellType, new DefaultFeatureId("cell-n"), values, false);
+        final Feature feature = new DefaultSimpleFeature(cellType, new DefaultFeatureId("cell-n"), values, false);
         final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(), null);
         params.update(renderingContext);
         final ProjectedFeature pf = new ProjectedFeature(params,feature);
@@ -311,7 +310,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         //prepare the cell feature type
         final SimpleFeatureType cellType = CellSymbolizer.buildCellType(coverage);
         final Object[] values = new Object[1+7*nbBand];
-        final SimpleFeature feature = new DefaultSimpleFeature(cellType, new DefaultFeatureId("cell-n"), values, false);
+        final Feature feature = new DefaultSimpleFeature(cellType, new DefaultFeatureId("cell-n"), values, false);
         final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(), null);
         params.update(renderingContext);
         final ProjectedFeature pf = new ProjectedFeature(params,feature);
@@ -368,7 +367,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
     }
 
-    private void renderCellFeature(SimpleFeature feature, final ProjectedFeature pf, DefaultCachedRule renderers) throws PortrayalException{
+    private void renderCellFeature(Feature feature, final ProjectedFeature pf, DefaultCachedRule renderers) throws PortrayalException{
         boolean painted = false;
         for(int i=0; i<renderers.elseRuleIndex; i++){
             final CachedRule rule = renderers.rules[i];

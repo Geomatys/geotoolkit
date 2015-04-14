@@ -32,9 +32,9 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -58,7 +58,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
-        final SimpleFeatureType type1 = builder.buildSimpleFeatureType();
+        final FeatureType type1 = builder.buildSimpleFeatureType();
 
         names.add(name);
         expecteds.add(new ExpectedResult(name,type1,0,null));
@@ -72,28 +72,28 @@ public class MemoryReadingTest extends AbstractReadingTests{
         builder.add("string", String.class);
         builder.add("double", Double.class);
         builder.add("date", Date.class);
-        final SimpleFeatureType type2 = builder.buildSimpleFeatureType();
+        final FeatureType type2 = builder.buildSimpleFeatureType();
         store.createFeatureType(name,type2);
 
         //create a few features
         FeatureWriter writer = store.getFeatureWriterAppend(name);
         try{
-            SimpleFeature f = (SimpleFeature) writer.next();
-            f.setAttribute("string", "hop3");
-            f.setAttribute("double", 3d);
-            f.setAttribute("date", new Date(1000L));
+            Feature f = writer.next();
+            f.setPropertyValue("string", "hop3");
+            f.setPropertyValue("double", 3d);
+            f.setPropertyValue("date", new Date(1000L));
             writer.write();
 
-            f = (SimpleFeature) writer.next();
-            f.setAttribute("string", "hop1");
-            f.setAttribute("double", 1d);
-            f.setAttribute("date", new Date(100000L));
+            f = writer.next();
+            f.setPropertyValue("string", "hop1");
+            f.setPropertyValue("double", 1d);
+            f.setPropertyValue("date", new Date(100000L));
             writer.write();
 
-            f = (SimpleFeature) writer.next();
-            f.setAttribute("string", "hop2");
-            f.setAttribute("double", 2d);
-            f.setAttribute("date", new Date(10000L));
+            f = writer.next();
+            f.setPropertyValue("string", "hop2");
+            f.setPropertyValue("double", 2d);
+            f.setPropertyValue("date", new Date(10000L));
             writer.write();
 
         }finally{
@@ -109,20 +109,20 @@ public class MemoryReadingTest extends AbstractReadingTests{
         builder.setName(name);
         builder.add("geometry", Point.class, CRS.decode("EPSG:27582"));
         builder.add("string", String.class);
-        final SimpleFeatureType type3 = builder.buildSimpleFeatureType();
+        final FeatureType type3 = builder.buildSimpleFeatureType();
         store.createFeatureType(name,type3);
 
         //create a few features
         writer = store.getFeatureWriterAppend(name);
         try{
-            SimpleFeature f = (SimpleFeature) writer.next();
-            f.setAttribute("geometry", gf.createPoint(new Coordinate(10, 11)));
-            f.setAttribute("string", "hop1");
+            Feature f = writer.next();
+            f.setPropertyValue("geometry", gf.createPoint(new Coordinate(10, 11)));
+            f.setPropertyValue("string", "hop1");
             writer.write();
 
-            f = (SimpleFeature) writer.next();
-            f.setAttribute("geometry", gf.createPoint(new Coordinate(-5, -1)));
-            f.setAttribute("string", "hop3");
+            f = writer.next();
+            f.setPropertyValue("geometry", gf.createPoint(new Coordinate(-5, -1)));
+            f.setPropertyValue("string", "hop3");
             writer.write();
 
 

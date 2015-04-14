@@ -33,8 +33,6 @@ import static org.apache.sis.test.Assert.assertSerializedEquals;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.test.Assert;
-
-import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import com.vividsolutions.jts.geom.Envelope;
@@ -179,12 +177,6 @@ public class FeatureFlatTest extends TestCase {
         Feature feature = FeatureBuilder.build(type, attributes, "fid");
         Feature clone = FeatureUtilities.deepCopy(feature);
         assertTrue("Clone was not equal", feature.equals(clone));
-    }
-
-    public void testToStringWontThrow() throws IllegalAttributeException {
-        final SimpleFeature f = (SimpleFeature)SampleFeatureFixtures.createFeature();
-        f.setAttributes(new Object[f.getAttributeCount()]);
-        String s = f.toString();
     }
 
     static AttributeDescriptor newAtt(final String name, final Class c) {

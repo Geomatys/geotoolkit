@@ -16,10 +16,8 @@
  */
 package org.geotoolkit.filter.binding;
 
-import java.util.regex.Pattern;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeature;
 
 /**
  *
@@ -51,10 +49,6 @@ public class ComplexAttributeArrayBinding extends AbstractBinding<ComplexAttribu
         if(candidate==null) return null;
         final int index = toIndex(xpath);
 
-        if(candidate instanceof SimpleFeature){
-            ((SimpleFeature) candidate).getAttribute(index);
-        }
-
         int i = 1;
         for(Property prop : candidate.getProperties()){
             if(i == index){
@@ -69,10 +63,6 @@ public class ComplexAttributeArrayBinding extends AbstractBinding<ComplexAttribu
     @Override
     public void set(ComplexAttribute candidate, String xpath, Object value) throws IllegalArgumentException {
         final int index = toIndex(xpath);
-
-        if(candidate instanceof SimpleFeature){
-            ((SimpleFeature) candidate).setAttribute(index, value);
-        }
 
         int i = 0;
         for(Property prop : candidate.getProperties()){

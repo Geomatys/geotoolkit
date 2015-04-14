@@ -35,6 +35,7 @@ import java.util.Collection;
 
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
+import org.opengis.feature.Attribute;
 import org.opengis.util.GenericName;
 
 /**

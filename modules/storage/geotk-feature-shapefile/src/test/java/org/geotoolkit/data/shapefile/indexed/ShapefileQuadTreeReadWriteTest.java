@@ -36,20 +36,17 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.data.query.QueryBuilder;
-
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
 
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.feature.type.Name;
 
@@ -99,7 +96,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         ShapefileFeatureStoreFactory fac = new ShapefileFeatureStoreFactory();
         FeatureStore s1 = createDataStore(fac, TestData.url(AbstractTestCaseSupport.class, "shapes/stream.shp"), true);
         Name typeName = s1.getNames().iterator().next();
-        SimpleFeatureType type = (SimpleFeatureType) s1.getFeatureType(typeName);
+        FeatureType type = s1.getFeatureType(typeName);
         FeatureCollection one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         ShapefileFeatureStoreFactory maker = new ShapefileFeatureStoreFactory();
@@ -117,7 +114,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         return createFeatureStore;
     }
 
-    private void doubleWrite( final SimpleFeatureType type, final FeatureCollection one, final File tmp,
+    private void doubleWrite( final FeatureType type, final FeatureCollection one, final File tmp,
             final ShapefileFeatureStoreFactory maker, final boolean memorymapped ) throws IOException,
             MalformedURLException,
             DataStoreException {
@@ -141,7 +138,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
 //        // JAR.
         FeatureStore s = createDataStore(new ShapefileFeatureStoreFactory(), ShapeTestData.url(f), true);
         Name typeName = s.getNames().iterator().next();
-        SimpleFeatureType type = (SimpleFeatureType) s.getFeatureType(typeName);
+        FeatureType type = s.getFeatureType(typeName);
         FeatureCollection one = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         ShapefileFeatureStoreFactory maker = new ShapefileFeatureStoreFactory();
@@ -149,7 +146,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         test(type, one, getTempFile(), maker, true);
     }
 
-    private void test( final SimpleFeatureType type, final FeatureCollection one, final File tmp,
+    private void test( final FeatureType type, final FeatureCollection one, final File tmp,
             final ShapefileFeatureStoreFactory maker, final boolean memorymapped ) throws IOException,
             MalformedURLException, Exception {
         FeatureStore s;
@@ -167,8 +164,8 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         //copy values, order is not tested here.
-        Collection<SimpleFeature> cone = new ArrayList<SimpleFeature>();
-        Collection<SimpleFeature> ctwo = new ArrayList<SimpleFeature>();
+        Collection<Feature> cone = new ArrayList<>();
+        Collection<Feature> ctwo = new ArrayList<>();
         FeatureStoreUtilities.fill(one, cone);
         FeatureStoreUtilities.fill(two, ctwo);
         one.containsAll(two);
@@ -181,39 +178,12 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
                 Feature f1 = fs1.next();
                 Feature f2 = fs2.next();
 
-                compare((SimpleFeature)f1, (SimpleFeature)f2);
+                ShapefileRTreeReadWriteTest.compare(f1, f2);
             }
 
         } finally {
             fs1.close();
             fs2.close();
-        }
-    }
-
-    static void compare( final SimpleFeature f1, final SimpleFeature f2 ) throws Exception {
-        if (f1.getAttributeCount() != f2.getAttributeCount()) {
-            throw new Exception("Unequal number of attributes");
-        }
-
-        for( int i = 0; i < f1.getAttributeCount(); i++ ) {
-            Object att1 = f1.getAttribute(i);
-            Object att2 = f2.getAttribute(i);
-
-            if (att1 instanceof Geometry && att2 instanceof Geometry) {
-                Geometry g1 = ((Geometry) att1);
-                Geometry g2 = ((Geometry) att2);
-                g1.normalize();
-                g2.normalize();
-
-                if (!g1.equalsExact(g2)) {
-                    throw new Exception("Different geometries (" + i + "):\n" + g1 + "\n" + g2);
-                }
-            } else {
-                if (!att1.equals(att2)) {
-                    throw new Exception("Different attribute (" + i + "): [" + att1 + "] - ["
-                            + att2 + "]");
-                }
-            }
         }
     }
 
