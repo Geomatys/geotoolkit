@@ -38,11 +38,13 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.geotoolkit.wps.converters.WPSConvertersUtils;
 
 /**
  * Implementation of ObjectConverter to convert a FeatureCollection into a {@link org.geotoolkit.wps.xml.v100.ComplexDataType}.
  *
  * @author Quentin Boileau (Geomatys).
+ * @author Theo Zozime
  */
 public final class FeatureCollectionToReferenceConverter extends AbstractReferenceOutputConverter<FeatureCollection> {
 
@@ -73,6 +75,10 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
             throw new UnconvertibleObjectException("The output directory should be defined.");
         }
 
+        if (params.get(TMP_DIR_URL) == null) {
+            throw new UnconvertibleObjectException("The output directory URL should be defined.");
+        }
+
         if (source == null) {
             throw new UnconvertibleObjectException("The output data should be defined.");
         }
@@ -96,14 +102,14 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
 
         final String randomFileName = UUID.randomUUID().toString();
 
-        if (reference.getMimeType().equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
+        if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
             //create file
             final String dataFileName = randomFileName + ".json";
             final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
 
             try {
                 FileOutputStream fos = new FileOutputStream(dataFile);
-                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, 7);
+                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS);
                 FeatureStoreUtilities.write(writer, source);
             } catch (DataStoreException e) {
                 throw new UnconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
@@ -113,7 +119,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
 
             reference.setHref(params.get(TMP_DIR_URL) + "/" + dataFileName);
             reference.setSchema(null);
-        } else {
+        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())) {
             try {
                 final String schemaFileName = randomFileName + "_schema" + ".xsd";
                 //create file
@@ -168,6 +174,8 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
                 }
             }
         }
+        else
+            throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + reference.getMimeType());
         return reference;
 
     }

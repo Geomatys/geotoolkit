@@ -76,6 +76,7 @@ public class WPSConverterRegistry {
         register(ReferenceToGridCoverageReaderConverter     .getInstance());
         register(ReferenceToRenderedImageConverter          .getInstance());
         register(ReferenceToStringConverter                 .getInstance());
+        register(ReferenceToGeometryArrayConverter          .getInstance());
 
         //Object -> ComplexDataType converters
         register(FeatureCollectionToComplexConverter        .getInstance());
@@ -98,6 +99,7 @@ public class WPSConverterRegistry {
         register(NumberToReferenceConverter                 .getInstance());
         register(BooleanToReferenceConverter                .getInstance());
         register(FileToReferenceConverter                   .getInstance());
+        register(GeometryArrayToReferenceConverter          .getInstance());
 
         //String -> Object converters
         register(new WPSObjectConverterAdapter(ObjectConverters.find(String.class, Unit.class)));

@@ -16,11 +16,20 @@
  */
 package org.geotoolkit.wps.converters.outputs.complex;
 
+import com.fasterxml.jackson.core.JsonEncoding;
 import com.vividsolutions.jts.geom.Geometry;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
+import org.geotoolkit.data.geojson.utils.GeometryUtils;
+import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -29,6 +38,7 @@ import org.opengis.util.FactoryException;
  * Implementation of ObjectConverter to convert a JTS Geometry into a {@link ComplexDataType}.
  *
  * @author Quentin Boileau
+ * @author Theo Zozime
  */
 public final class GeometryToComplexConverter extends AbstractComplexOutputConverter<Geometry> {
 
@@ -72,16 +82,35 @@ public final class GeometryToComplexConverter extends AbstractComplexOutputConve
             gmlVersion = "3.1.1";
         }
 
-        try {
+        if (WPSMimeType.APP_GML.val().equalsIgnoreCase(complex.getMimeType())) {
+            try {
 
-            final AbstractGeometry gmlGeom = JTStoGeometry.toGML(gmlVersion, source);
-            complex.getContent().add(gmlGeom);
+                final AbstractGeometry gmlGeom = JTStoGeometry.toGML(gmlVersion, source);
+                complex.getContent().add(gmlGeom);
 
-        } catch (NoSuchAuthorityCodeException ex) {
-            throw new UnconvertibleObjectException(ex);
-        } catch (FactoryException ex) {
-            throw new UnconvertibleObjectException(ex);
+            } catch (NoSuchAuthorityCodeException ex) {
+                throw new UnconvertibleObjectException(ex);
+            } catch (FactoryException ex) {
+                throw new UnconvertibleObjectException(ex);
+            }
         }
+        else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(complex.getMimeType())) {
+            GeoJSONGeometry jsonGeometry = GeometryUtils.toGeoJSONGeometry(source);
+
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try {
+                GeoJSONStreamWriter.writeSingleGeometry(baos, WPSConvertersUtils.convertGeoJSONGeometryToGeometry(jsonGeometry), JsonEncoding.UTF8, WPSConvertersUtils.FRACTION_DIGITS, true);
+                WPSConvertersUtils.addCDATAToComplex(baos.toString("UTF-8"), complex);
+            }  catch (UnsupportedEncodingException e) {
+                throw new UnconvertibleObjectException("Can't convert output stream into String.", e);
+            } catch (IOException ex) {
+                throw new UnconvertibleObjectException(ex);
+            } catch (FactoryException ex) {
+                throw new UnconvertibleObjectException("Couldn't decode a CRS.", ex);
+            }
+        }
+        else
+            throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + complex.getMimeType());
 
         return complex;
     }

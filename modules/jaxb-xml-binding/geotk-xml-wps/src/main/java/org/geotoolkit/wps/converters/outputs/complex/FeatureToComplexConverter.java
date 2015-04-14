@@ -35,12 +35,14 @@ import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.wps.converters.WPSConvertersUtils;
 
 
 /**
  * Implementation of ObjectConverter to convert a Feature into a {@link ComplexDataType}.
  *
  * @author Quentin Boileau (Geoamtys).
+ * @author Theo Zozime
  */
 public final class FeatureToComplexConverter extends AbstractComplexOutputConverter<Feature> {
 
@@ -67,10 +69,6 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
     @Override
     public ComplexDataType convert(Feature source, Map<String, Object> params) throws UnconvertibleObjectException {
 
-        if (params.get(TMP_DIR_PATH) == null) {
-            throw new UnconvertibleObjectException("The output directory should be defined.");
-        }
-
         if (source == null) {
             throw new UnconvertibleObjectException("The output data should be defined.");
         }
@@ -87,16 +85,16 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
         final String namespace = ft.getName().getURI();
         final Map<String, String> schemaLocation = new HashMap<String, String>();
 
-        if(complex.getMimeType().equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
+        if(WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(complex.getMimeType())) {
             try {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, ft, 7);
+                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(baos, ft, WPSConvertersUtils.FRACTION_DIGITS);
                 Feature next = writer.next();
                 FeatureUtilities.copy(source, next, true);
                 writer.write();
                 writer.close();
 
-                complex.getContent().add(baos.toString("UTF-8"));
+                WPSConvertersUtils.addCDATAToComplex(baos.toString("UTF-8"), complex);
                 complex.setSchema(null);
             } catch (DataStoreException e) {
                 throw new UnconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
@@ -104,7 +102,11 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
                 throw new UnconvertibleObjectException("Can't convert output stream into String.", e);
             }
 
-        } else {
+        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(complex.getMimeType())) {
+
+            if (params.get(TMP_DIR_PATH) == null) {
+                throw new UnconvertibleObjectException("The output directory should be defined.");
+            }
 
             try {
                 final String schemaFileName = "schema_" + UUID.randomUUID().toString() + ".xsd";
@@ -130,6 +132,8 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
                 throw new UnconvertibleObjectException("Can't write FeatureCollection into ResponseDocument.", ex);
             }
         }
+        else
+            throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + complex.getMimeType());
 
        return  complex;
 

@@ -18,16 +18,21 @@ package org.geotoolkit.wps.converters;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.image.RenderedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
 import java.util.Set;
 import javax.xml.bind.JAXBElement;
-
 import net.sf.json.JSONObject;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageIO;
@@ -47,10 +52,21 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.FileUtilities;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
+import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.URLP;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory;
+import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
+import org.geotoolkit.data.geojson.binding.GeoJSONObject;
+import org.geotoolkit.data.geojson.utils.GeoJSONParser;
+import org.geotoolkit.data.geojson.utils.GeometryUtils;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
@@ -63,10 +79,13 @@ import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
+import static org.geotoolkit.wps.converters.WPSObjectConverter.MIME;
+import org.geotoolkit.wps.xml.v100.ext.GeoJSONType;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.Identifier;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -78,6 +97,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -92,6 +112,7 @@ public class WPSConvertersUtils {
     public static final String WMS_INSTANCE_NAME    = "WMS_INSTANCE_NAME";  //WMS instance name
     public static final String WMS_INSTANCE_URL     = "WMS_INSTANCE_URL";   //WMS instance url
     public static final String WMS_LAYER_NAME       = "WMS_LAYER_NAME";   //WMS instance url
+    public static final int    FRACTION_DIGITS      = 12;                 // Number of fractions digits to write for floating point numbers
 
     /**
      * Fix the CRS problem for a Feature or a FeatureCollection
@@ -115,12 +136,12 @@ public class WPSConvertersUtils {
             final FeatureCollection featureColl = (FeatureCollection) dataValue;
 
             DefaultFeatureType ft = (DefaultFeatureType) featureColl.getFeatureType();
-            final FeatureIterator featureIter = featureColl.iterator();
-            if (featureIter.hasNext()) {
-                final Feature feature = featureIter.next();
-                fixFeatureType(feature, ft);
+            try (FeatureIterator featureIter = featureColl.iterator()) {
+                if (featureIter.hasNext()) {
+                    final Feature feature = featureIter.next();
+                    fixFeatureType(feature, ft);
+                }
             }
-            featureIter.close();
             return featureColl;
         }
 
@@ -215,6 +236,28 @@ public class WPSConvertersUtils {
     }
 
     /**
+     * Check that the given parameters map defines an encoding and a mime type.
+     *
+     * If the either the encoding or the mime type is null then a default one is
+     * set based on the default enconding/mime type
+     *
+     * @param clazz class needing default parameters
+     * @param ioType ioType of the class
+     * @param params parameters map to check
+     */
+    private static void ensureParametersDefined(final Class clazz, final WPSIO.IOType ioType, final Map<String, Object> params) {
+        ArgumentChecks.ensureNonNull("class", clazz);
+        ArgumentChecks.ensureNonNull("ioType", ioType);
+        ArgumentChecks.ensureNonNull("params", params);
+
+        if (params.get(MIME) == null)
+            params.put(MIME, WPSIO.getDefaultMimeType(clazz, ioType));
+
+        if (params.get(ENCODING) == null)
+            params.put(ENCODING, WPSIO.getDefaultEncoding(clazz, ioType));
+    }
+
+    /**
      * Get an convert data from a reference for an expected binding
      *
      * @param expectedClass
@@ -235,18 +278,12 @@ public class WPSConvertersUtils {
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
 
+        ensureParametersDefined(expectedClass, WPSIO.IOType.INPUT, parameters);
+
         final List<Object> content = complex.getContent();
 
         //remove white spaces
-        if (content != null) {
-            final Iterator<Object> ite = content.iterator();
-            while (ite.hasNext()) {
-                final Object obj = ite.next();
-                if (obj == null || (obj instanceof String && ((String) obj).trim().isEmpty())) {
-                    ite.remove();
-                }
-            }
-        }
+        removeWhiteSpaceFromList(content);
 
         final WPSObjectConverter converter = WPSIO.getConverter(expectedClass, WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX);
 
@@ -282,6 +319,7 @@ public class WPSConvertersUtils {
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
 
+        ensureParametersDefined(object.getClass(), WPSIO.IOType.OUTPUT, parameters);
 
         final WPSObjectConverter converter = WPSIO.getConverter(object.getClass(), WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX);
         if (converter == null) {
@@ -404,6 +442,8 @@ public class WPSConvertersUtils {
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
 
+        ensureParametersDefined(expectedClass, WPSIO.IOType.INPUT, parameters);
+
         final WPSObjectConverter converter = WPSIO.getConverter(expectedClass, WPSIO.IOType.INPUT, WPSIO.FormChoice.REFERENCE);
 
         if (converter == null) {
@@ -439,6 +479,8 @@ public class WPSConvertersUtils {
         parameters.put(WPSObjectConverter.MIME, mime);
         parameters.put(WPSObjectConverter.SCHEMA, schema);
         parameters.put(WPSObjectConverter.IOTYPE, iotype.toString());
+
+        ensureParametersDefined(object.getClass(), iotype, params);
 
         final WPSObjectConverter converter = WPSIO.getConverter(object.getClass(), WPSIO.IOType.OUTPUT, WPSIO.FormChoice.REFERENCE);
         if (converter == null) {
@@ -780,4 +822,217 @@ public class WPSConvertersUtils {
         return inputFile;
     }
 
+    /**
+     * Ensure that an URL points to a file on the filesystem.
+     *
+     * If it is a remote file, it will be copied and then an URL to this local
+     * file will be returned
+     *
+     * @param url url of a remote or a file on the filesystem
+     * @return an url of file on the filesystem
+     */
+    private static final URL makeLocalURL(final URL url) throws URISyntaxException, IOException {
+        ArgumentChecks.ensureNonNull("url", url);
+
+        URI uri = url.toURI();
+
+        // This condition detects that the file is not on the filesystem
+        // based on the java.io.File(URI uri) constructor
+        String scheme = uri.getScheme();
+        if ((scheme == null) || !scheme.equalsIgnoreCase("file")) {
+
+            final String toStringUrl = url.toString();
+            final String extension = toStringUrl.substring(toStringUrl.lastIndexOf("."), toStringUrl.length());
+
+            // Create a temporary file
+            final Path tmpFilePath = Files.createTempFile(UUID.randomUUID().toString(), extension);
+            final File tmpFile = tmpFilePath.toFile();
+
+            // Copy the content of the remote file into the file on the local filesystem
+            try (FileOutputStream fileStream = new FileOutputStream(tmpFile); InputStream remoteStream = url.openStream()) {
+                int byteRead;
+                while ((byteRead = remoteStream.read()) != -1)
+                    fileStream.write(byteRead);
+            }
+
+            tmpFile.deleteOnExit();
+
+            return tmpFile.toURI().toURL();
+        }
+        else
+            return url;
+    }
+
+    /**
+     * Read one feature from a GeoJSON file containing exactly one feature
+     * @param url location of the file to read
+     * @return the read feature
+     * @throws DataStoreException when there are more than one feature in the file
+     * or when errors occurs while reading
+     */
+    public static final Feature readFeatureFromJson(final URL url) throws DataStoreException, URISyntaxException, IOException {
+        ParameterValueGroup param = GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        param.parameter(URLP.getName().getCode()).setValue(makeLocalURL(url));
+        FeatureStore store = FeatureStoreFinder.open(param);
+
+        if (store == null)
+            throw new DataStoreException("No available factory found");
+
+        Iterator<Name> iterator = store.getNames().iterator();
+        Session session = store.createSession(false);
+
+        int typesNumber = store.getNames().size();
+        if (typesNumber != 1)
+            throw new UnconvertibleObjectException("Expected one feature. Found " + typesNumber);
+
+        Name name = iterator.next();
+        FeatureCollection featureCollection = session.getFeatureCollection(QueryBuilder.all(name));
+        if (featureCollection.size() != 1)
+            throw new DataStoreException("One feature expected. Found " + featureCollection.size());
+
+        try (FeatureIterator featureIterator = featureCollection.iterator()) {
+            return featureIterator.next();
+        }
+    }
+
+    /**
+     * Read one feature collection from a GeoJSON file containing one feature collection
+     * @param url location of the file to read
+     * @return the read feature collection
+     * @throws DataStoreException when no feature collection has been found,
+     * when more than one feature collection has been found or when an error
+     * occurs while reading the json file
+     */
+    public static final FeatureCollection readFeatureCollectionFromJson(final URL url) throws DataStoreException, URISyntaxException, IOException {
+        final ParameterValueGroup param = GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        param.parameter(URLP.getName().getCode()).setValue(makeLocalURL(url));
+        final FeatureStore store = FeatureStoreFinder.open(param);
+
+        if (store == null)
+            throw new DataStoreException("No available factory found");
+
+        final Iterator<Name> iterator = store.getNames().iterator();
+        int typesNumber = store.getNames().size();
+        final Session session = store.createSession(false);
+
+        if (typesNumber != 1)
+            throw new DataStoreException("One feature expected. Found " + typesNumber);
+
+        final Name name = iterator.next();
+        return session.getFeatureCollection(QueryBuilder.all(name));
+    }
+
+    /**
+     * Helper method which extracts the GeoJSONObject from a String.
+     *
+     * @param content content string containing a GeoJSONObject
+     * @return a GeoJSONObject
+     * @throws java.io.IOException on reading errors
+     */
+    public static final GeoJSONObject readGeoJSONObjectsFromString(String content) throws IOException {
+        ArgumentChecks.ensureNonEmpty("content", content);
+
+        // Parse GeoJSON
+        final GeoJSONParser parser = new GeoJSONParser();
+        try (InputStream inputStream = new ByteArrayInputStream(content.getBytes())) {
+            return parser.parse(inputStream);
+        }
+    }
+
+    /**
+     * Convert a GeoJSONGeometry to a Geometry object and take count of the CRS.
+     *
+     * If no crs can be found in the json a default crs will be applied.
+     * The default crs is WGS84
+     *
+     * @param jsonGeometry the json geometry to convert
+     * @return a geometry converted from the provided json
+     *
+     * @throws FactoryException when an error occur while decoding a CRS
+     */
+    public static Geometry convertGeoJSONGeometryToGeometry(GeoJSONGeometry jsonGeometry) throws FactoryException, MalformedURLException {
+        // Check that the json defines a crs, otherwise set a
+        // default one as indicated by the GeoJSON specification
+        CoordinateReferenceSystem crs = null;
+        if (jsonGeometry.getCrs() != null)
+            crs = jsonGeometry.getCrs().getCRS();
+        else
+            crs = org.geotoolkit.referencing.CRS.decode("EPSG:4326");
+
+        return GeometryUtils.toJTS(jsonGeometry, crs);
+    }
+
+    /**
+     * Helper method that encapsulates a String into an XML CDATA section before
+     * adding it to the content of a ComplexDataType instance.
+     *
+     * @param content content to put in a CDATA section
+     * @param complex complex in which to add the CDATA section
+     */
+    public static void addCDATAToComplex(final String content, final ComplexDataType complex) {
+        complex.getContent().add(new GeoJSONType(content));
+    }
+
+    /**
+     * Helper method that clean a list from all Strings containing only whitespace
+     *
+     * @param contentList the list to clean
+     *
+     */
+    public static void removeWhiteSpaceFromList(final List<Object> contentList) {
+        if (contentList != null) {
+            final Iterator<Object> ite = contentList.iterator();
+            while (ite.hasNext()) {
+                final Object obj = ite.next();
+                if (obj == null || (obj instanceof String && ((String) obj).trim().isEmpty())) {
+                    ite.remove();
+                }
+            }
+        }
+    }
+
+    /**
+     * Extract the GeoJSON content of a complex and return it as a String.
+     *
+     * Pre-condition : the complex must have exactly one content element
+     * Pre-condition : the content must be either of the type GeoJSONType, String
+     * or Node
+     *
+     * @param complex the complex to read
+     * @return the complex content as a String
+     */
+    public static String extractGeoJSONContentAsStringFromComplex(final ComplexDataType complex) {
+        ArgumentChecks.ensureNonNull("complex", complex);
+
+        if (complex.getContent().size() != 1)
+            throw new UnconvertibleObjectException("Expected a complex with a content size of 1. Actual content size : " + complex.getContent().size());
+
+        final Object objContent = complex.getContent().get(0);
+
+        if (objContent instanceof GeoJSONType)
+            return ((GeoJSONType)objContent).getContent();
+        else if (objContent instanceof String)
+            return (String) objContent;
+        else if (objContent instanceof Node)
+            return ((Node) objContent).getTextContent();
+        else
+            throw new UnconvertibleObjectException("Expected content type was "
+                                    + GeoJSONType.class.getName()
+                                    + ", Node or String. Actual content type : "
+                                    + objContent.getClass().getName());
+    }
+
+    /**
+     * Write a temporary file with the .json extension
+     * @param fileContent the content to write in the file
+     * @return a Path to the temporary file created
+     * @throws IOException when errors occur while writing the file
+     */
+    public static Path writeTempJsonFile(String fileContent) throws IOException {
+        final Path tmpFilePath = Files.createTempFile(UUID.randomUUID().toString(), ".json");
+        try (final FileOutputStream outputStream = new FileOutputStream(tmpFilePath.toFile())) {
+            outputStream.write(fileContent.getBytes());
+        }
+        return tmpFilePath;
+    }
 }

@@ -18,11 +18,17 @@ package org.geotoolkit.wps.converters.inputs.complex;
 
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.data.geojson.binding.GeoJSONFeature;
+import org.geotoolkit.data.geojson.binding.GeoJSONObject;
+import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.opengis.util.FactoryException;
 
@@ -31,6 +37,7 @@ import org.opengis.util.FactoryException;
  * Implementation of ObjectConverter to convert a complex input into a JTS Geometry.
  *
  * @author Quentin Boileau (Geomatys).
+ * @author Theo Zozime
  */
 public final class ComplexToGeometryConverter extends AbstractComplexInputConverter<Geometry> {
 
@@ -58,17 +65,39 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
     @Override
     public Geometry convert(final ComplexDataType source, final Map<String, Object> params) throws UnconvertibleObjectException {
 
+        String dataMimeTypeIdentifier = null;
         try {
             final List<Object> data = source.getContent();
-            if(data.size() == 1){
-                return GeometrytoJTS.toJTS((AbstractGeometryType) data.get(0));
-            }else{
+
+            if (data.size() != 1)
                 throw new UnconvertibleObjectException("Invalid data input : Only one geometry expected.");
+
+            if (WPSMimeType.APP_GML.val().equalsIgnoreCase(source.getMimeType())) {
+                dataMimeTypeIdentifier = "GML";
+                AbstractGeometryType abstractGeo = (AbstractGeometryType) data.get(0);
+                return GeometrytoJTS.toJTS(abstractGeo);
             }
+            else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(source.getMimeType())) {
+                dataMimeTypeIdentifier = "GeoJSON";
+                final String content = WPSConvertersUtils.extractGeoJSONContentAsStringFromComplex(source);
+                final GeoJSONObject jsonObject = WPSConvertersUtils.readGeoJSONObjectsFromString(content);
+
+                if (!(jsonObject instanceof GeoJSONFeature))
+                    throw new UnconvertibleObjectException("Expected a GeoJSONGeometry and found a " + jsonObject.getClass().getName());
+
+                return WPSConvertersUtils.convertGeoJSONGeometryToGeometry(((GeoJSONFeature) jsonObject).getGeometry());
+            }
+            else
+                throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + source.getMimeType());
+
         }catch(ClassCastException ex){
-            throw new UnconvertibleObjectException("Invalid data input : empty GML geometry.",ex);
+            throw new UnconvertibleObjectException("Invalid data input : empty " + dataMimeTypeIdentifier + " geometry.",ex);
         }catch (FactoryException ex) {
-            throw new UnconvertibleObjectException("Invalid data input : Cannot convert GML geometry.",ex);
+            throw new UnconvertibleObjectException("Invalid data input : Cannot convert " + dataMimeTypeIdentifier + " geometry.",ex);
+        } catch (MalformedURLException ex) {
+            throw new UnconvertibleObjectException("Unable to read the CRS from the GeoJSONGeometry.", ex);
+        } catch (IOException ex) {
+            throw new UnconvertibleObjectException(ex);
         }
     }
 }

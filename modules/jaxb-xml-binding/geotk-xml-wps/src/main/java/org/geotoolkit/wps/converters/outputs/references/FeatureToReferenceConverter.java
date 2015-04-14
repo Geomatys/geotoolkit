@@ -30,7 +30,6 @@ import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.FileUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.io.WPSMimeType;
@@ -39,11 +38,13 @@ import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.wps.converters.WPSConvertersUtils;
 
 /**
  * Implementation of ObjectConverter to convert a {@link Feature feature} into a {@link OutputReferenceType reference}.
  *
  * @author Quentin Boileau (Geomatys).
+ * @author Theo Zozime
  */
 public class FeatureToReferenceConverter extends AbstractReferenceOutputConverter<Feature> {
 
@@ -103,17 +104,17 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
 
         final String randomFileName = UUID.randomUUID().toString();
 
-        if(reference.getMimeType().equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
+        if(WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
             //create file
             final String dataFileName = randomFileName+".json";
             final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
             try {
                 FileOutputStream fos = new FileOutputStream(dataFile);
-                GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, 7);
-                Feature next = writer.next();
-                FeatureUtilities.copy(source, next, true);
-                writer.write();
-                writer.close();
+                try (GeoJSONStreamWriter writer = new GeoJSONStreamWriter(fos, ft, WPSConvertersUtils.FRACTION_DIGITS)) {
+                    Feature next = writer.next();
+                    FeatureUtilities.copy(source, next, true);
+                    writer.write();
+                }
 
             } catch (DataStoreException e) {
                 throw new UnconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
@@ -124,63 +125,65 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
             reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
             reference.setSchema(null);
 
-        } else {
-        //Write FeatureType
-        try {
-            final String schemaFileName = randomFileName + "_schema" + ".xsd";
-
-            //create file
-            final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
-            final OutputStream schemaStream = new FileOutputStream(schemaFile);
-
-            //write featureType xsd on file
-            final XmlFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
-            xmlFTWriter.write(ft, schemaStream);
-
-            reference.setSchema((String) params.get(TMP_DIR_URL) + "/" +schemaFileName);
-            schemaLocation.put(namespace, reference.getSchema());
-
-        } catch (JAXBException ex) {
-            throw new UnconvertibleObjectException("Can't write FeatureType into xsd schema.",ex);
-        } catch (FileNotFoundException ex) {
-            throw new UnconvertibleObjectException("Can't create xsd schema file.",ex);
-        }
-
-        //Write Feature
-        XmlFeatureWriter featureWriter = null;
-        try {
-
-            final String dataFileName = randomFileName+".xml";
-
-            //create file
-            final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
-            final OutputStream dataStream = new FileOutputStream(dataFile);
-
-            //Write feature in file
-            featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
-            featureWriter.write(source, dataStream);
-            reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
-
-        } catch (IOException ex) {
-            throw new UnconvertibleObjectException(ex);
-        } catch (XMLStreamException ex) {
-            throw new UnconvertibleObjectException("Stax exception while writing the feature collection", ex);
-        } catch (DataStoreException ex) {
-            throw new UnconvertibleObjectException("FeatureStore exception while writing the feature collection", ex);
-        } catch (FeatureStoreRuntimeException ex) {
-            throw new UnconvertibleObjectException("FeatureStoreRuntimeException exception while writing the feature collection", ex);
-        } finally {
+        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())) {
+            //Write FeatureType
             try {
-                if (featureWriter != null) {
-                    featureWriter.dispose();
-                }
+                final String schemaFileName = randomFileName + "_schema" + ".xsd";
+
+                //create file
+                final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
+                final OutputStream schemaStream = new FileOutputStream(schemaFile);
+
+                //write featureType xsd on file
+                final XmlFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
+                xmlFTWriter.write(ft, schemaStream);
+
+                reference.setSchema((String) params.get(TMP_DIR_URL) + "/" +schemaFileName);
+                schemaLocation.put(namespace, reference.getSchema());
+
+            } catch (JAXBException ex) {
+                throw new UnconvertibleObjectException("Can't write FeatureType into xsd schema.",ex);
+            } catch (FileNotFoundException ex) {
+                throw new UnconvertibleObjectException("Can't create xsd schema file.",ex);
+            }
+
+            //Write Feature
+            XmlFeatureWriter featureWriter = null;
+            try {
+
+                final String dataFileName = randomFileName+".xml";
+
+                //create file
+                final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
+                final OutputStream dataStream = new FileOutputStream(dataFile);
+
+                //Write feature in file
+                featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
+                featureWriter.write(source, dataStream);
+                reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
+
             } catch (IOException ex) {
-                 throw new UnconvertibleObjectException(ex);
+                throw new UnconvertibleObjectException(ex);
             } catch (XMLStreamException ex) {
-                 throw new UnconvertibleObjectException(ex);
+                throw new UnconvertibleObjectException("Stax exception while writing the feature collection", ex);
+            } catch (DataStoreException ex) {
+                throw new UnconvertibleObjectException("FeatureStore exception while writing the feature collection", ex);
+            } catch (FeatureStoreRuntimeException ex) {
+                throw new UnconvertibleObjectException("FeatureStoreRuntimeException exception while writing the feature collection", ex);
+            } finally {
+                try {
+                    if (featureWriter != null) {
+                        featureWriter.dispose();
+                    }
+                } catch (IOException ex) {
+                     throw new UnconvertibleObjectException(ex);
+                } catch (XMLStreamException ex) {
+                     throw new UnconvertibleObjectException(ex);
+                }
             }
         }
-        }
+        else
+            throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + reference.getMimeType());
         return reference;
     }
 }

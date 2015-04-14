@@ -19,9 +19,12 @@ package org.geotoolkit.wps.converters.inputs.references;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.apache.sis.util.UnconvertibleObjectException;
@@ -34,6 +37,7 @@ import org.opengis.util.FactoryException;
  * Implementation of ObjectConverter to convert a reference into a FeatureCollection.
  *
  * @author Quentin Boileau (Geomatys).
+ * @author Theo Zozime
  */
 public final class ReferenceToFeatureCollectionConverter extends AbstractReferenceInputConverter<FeatureCollection> {
 
@@ -93,6 +97,14 @@ public final class ReferenceToFeatureCollectionConverter extends AbstractReferen
                     fcollReader.dispose();
                 }
             }
+        } else if (mime.equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
+            try {
+                return WPSConvertersUtils.readFeatureCollectionFromJson(new URL(source.getHref()));
+            } catch (DataStoreException | MalformedURLException ex) {
+                throw new UnconvertibleObjectException(ex);
+            } catch (URISyntaxException | IOException ex) {
+                throw new UnconvertibleObjectException(ex);
+            }
             // SHP
         } else if (mime.equalsIgnoreCase(WPSMimeType.APP_SHP.val())
                 || mime.equalsIgnoreCase(WPSMimeType.APP_OCTET.val())) {
@@ -126,7 +138,7 @@ public final class ReferenceToFeatureCollectionConverter extends AbstractReferen
 //            }
 
         } else {
-            throw new UnconvertibleObjectException("Reference data mime is not supported");
+            throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + source.getMimeType());
         }
     }
 }

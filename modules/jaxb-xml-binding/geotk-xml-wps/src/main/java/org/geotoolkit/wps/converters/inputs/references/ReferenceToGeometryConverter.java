@@ -18,23 +18,40 @@ package org.geotoolkit.wps.converters.inputs.references;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Iterator;
 import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
+import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.PARAMETERS_DESCRIPTOR;
+import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.URLP;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.session.Session;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.GeometryAttribute;
+import org.geotoolkit.feature.type.Name;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a Geometry.
  *
  * @author Quentin Boileau (Geomatys).
+ * @author Theo Zozime
  */
 public final class ReferenceToGeometryConverter extends AbstractReferenceInputConverter<Geometry> {
 
@@ -86,8 +103,45 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
             } catch (JAXBException ex) {
                 throw new UnconvertibleObjectException("Reference geometry invalid input : Unmarshallable geometry", ex);
             }
-        } else {
-            throw new UnconvertibleObjectException("Reference data mime is not supported");
+        } else if (mime.equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
+            ParameterValueGroup param = PARAMETERS_DESCRIPTOR.createValue();
+            try {
+                param.parameter(URLP.getName().getCode()).setValue(new URL(source.getHref()));
+                FeatureStore store = FeatureStoreFinder.open(param);
+                Iterator<Name> iterator = store.getNames().iterator();
+
+                int typesSize = store.getNames().size();
+                if (typesSize != 1)
+                    throw new UnconvertibleObjectException("Expected one Geometry. Found " + typesSize);
+
+                Name name = iterator.next();
+
+                Session session = store.createSession(false);
+                FeatureCollection featureCollection = session.getFeatureCollection(QueryBuilder.all(name));
+
+                int collectionSize = featureCollection.size();
+                if (collectionSize != 1)
+                    throw new UnconvertibleObjectException("Expected one geometry. Found " + collectionSize);
+
+                try (FeatureIterator featureCollectionIterator = featureCollection.iterator()) {
+                    Feature feature = featureCollectionIterator.next();
+                    GeometryAttribute defaultGeom = feature.getDefaultGeometryProperty();
+
+                    if (defaultGeom == null)
+                        throw new UnconvertibleObjectException("No geometry found");
+
+                    Object value = defaultGeom.getValue();
+
+                    if (!(value instanceof Geometry))
+                        throw new UnconvertibleObjectException("The found value may not be of Geometry type or may be null");
+
+                    return (Geometry) value;
+                }
+            } catch (MalformedURLException | DataStoreException ex) {
+                throw new UnconvertibleObjectException(ex);
+            }
         }
+        else
+            throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + source.getMimeType());
     }
 }

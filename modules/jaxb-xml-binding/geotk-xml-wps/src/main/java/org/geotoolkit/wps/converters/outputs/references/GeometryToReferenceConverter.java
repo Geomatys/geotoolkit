@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.converters.outputs.references;
 
+import com.fasterxml.jackson.core.JsonEncoding;
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.*;
 import java.util.Map;
@@ -25,16 +26,20 @@ import javax.xml.bind.Marshaller;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSIO;
+import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.opengis.util.FactoryException;
+import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
+import org.geotoolkit.wps.converters.WPSConvertersUtils;
 
 /**
  * Implementation of ObjectConverter to convert a {@link Geometry geometry} into a {@link OutputReferenceType reference}.
  *
  * @author Quentin Boileau (Geomatys).
+ * @author Theo Zozime
  */
 public class GeometryToReferenceConverter extends AbstractReferenceOutputConverter<Geometry> {
 
@@ -53,6 +58,19 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
     @Override
     public Class<Geometry> getSourceClass() {
         return Geometry.class;
+    }
+
+    /**
+     * Helper method that returns a json extension if the provided mime-type is APP_GEOJSON.
+     *
+     * @param mimeType string containing a mime-type
+     * @return either an empty String or a String equals to ".json"
+     */
+    private static String getFileExtension(String mimeType) {
+        if (mimeType.equals(WPSMimeType.APP_GEOJSON.val()))
+            return ".json";
+        else
+            return "";
     }
 
     /**
@@ -90,16 +108,23 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
             gmlVersion = "3.1.1";
         }
 
-        final String randomFileName = UUID.randomUUID().toString();
+        final String randomFileName = UUID.randomUUID().toString() + getFileExtension(reference.getMimeType());
+        final File geometryFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
         OutputStream geometryStream = null;
         try {
-            //create file
-            final File geometryFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
             geometryStream = new FileOutputStream(geometryFile);
-            final Marshaller m = WPSMarshallerPool.getInstance().acquireMarshaller();
-            m.marshal( JTStoGeometry.toGML(gmlVersion, source), geometryStream);
-            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +randomFileName);
-            WPSMarshallerPool.getInstance().recycle(m);
+            if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())) {
+                final Marshaller m = WPSMarshallerPool.getInstance().acquireMarshaller();
+                m.marshal( JTStoGeometry.toGML(gmlVersion, source), geometryStream);
+                reference.setHref((String) params.get(TMP_DIR_URL) + File.separator + randomFileName);
+                WPSMarshallerPool.getInstance().recycle(m);
+            }
+            else if (WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(reference.getMimeType())) {
+                GeoJSONStreamWriter.writeSingleGeometry(geometryStream, source, JsonEncoding.UTF8, WPSConvertersUtils.FRACTION_DIGITS, true);
+                reference.setHref((String) params.get(TMP_DIR_URL) + File.separator + randomFileName);
+            }
+            else
+                throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + reference.getMimeType());
 
         } catch (FactoryException ex) {
             throw new UnconvertibleObjectException("Can't convert the JTS geometry to OpenGIS.", ex);
@@ -107,9 +132,12 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
             throw new UnconvertibleObjectException("Can't create output reference file.", ex);
         } catch (JAXBException ex) {
              throw new UnconvertibleObjectException("JAXB exception while writing the geometry", ex);
+        } catch (IOException ex) {
+            throw new UnconvertibleObjectException(ex);
         } finally {
             try {
-                geometryStream.close();
+                if (geometryStream != null)
+                    geometryStream.close();
             } catch (IOException ex) {
                 throw new UnconvertibleObjectException("Can't close the output reference file stream.", ex);
             }

@@ -16,8 +16,11 @@
  */
 package org.geotoolkit.wps.xml;
 
+import com.sun.xml.bind.marshaller.CharacterEscapeHandler;
+import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import org.apache.sis.xml.MarshallerPool;
 
 /**
@@ -29,14 +32,36 @@ public final class WPSMarshallerPool {
     private static final MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool(JAXBContext.newInstance(
-                      "org.geotoolkit.wps.xml.v100:"
+            instance = new MarshallerPoolProxy(JAXBContext.newInstance(
+                      "org.geotoolkit.wps.xml.v100.ext:"
+                    + "org.geotoolkit.wps.xml.v100:"
                     + "org.geotoolkit.gml.xml.v311:"
                     + "org.geotoolkit.ows.xml.v110:"
                     + "org.apache.sis.internal.jaxb.geometry:"
                     + "org.geotoolkit.mathml.xml"), null);
         } catch (JAXBException ex) {
             throw new AssertionError(ex); // Should never happen, unless we have a build configuration problem.
+        }
+    }
+
+    /**
+     * Proxy class that redefines the acquireMarshaller() method.
+     *
+     * The aim of this class is to set a CharacterEscapeHandler on all Marshaller
+     * instances in order to avoid escaping characters when marshalling datas that
+     * should be written inside a CDATA tag.
+     */
+    private static class MarshallerPoolProxy extends MarshallerPool {
+
+        public MarshallerPoolProxy(JAXBContext context, Map<String, ?> properties) throws JAXBException {
+            super(context, properties);
+        }
+
+        @Override
+        protected Marshaller createMarshaller() throws JAXBException {
+            Marshaller marshaller = super.createMarshaller();
+            marshaller.setProperty(CharacterEscapeHandler.class.getName(), new NoCharacterEscapeHandler());
+            return marshaller;
         }
     }
 

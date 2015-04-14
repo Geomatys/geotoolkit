@@ -19,9 +19,12 @@ package org.geotoolkit.wps.converters.inputs.references;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
@@ -36,6 +39,7 @@ import org.opengis.util.FactoryException;
  * Implementation of ObjectConverter to convert a reference into a Feature.
  *
  * @author Quentin Boileau (Geomatys).
+ * @author Theo Zozime
  */
 public final class ReferenceToFeatureConverter extends AbstractReferenceInputConverter<Feature> {
 
@@ -102,9 +106,16 @@ public final class ReferenceToFeatureConverter extends AbstractReferenceInputCon
                     fcollReader.dispose();
                 }
             }
-
-        } else {
-            throw new UnconvertibleObjectException("Reference data mime is not supported");
+        } else if (mime.equalsIgnoreCase(WPSMimeType.APP_GEOJSON.val())) {
+            try {
+                return WPSConvertersUtils.readFeatureFromJson(new URL(source.getHref()));
+            } catch (MalformedURLException | DataStoreException ex) {
+                throw new UnconvertibleObjectException(ex);
+            } catch (URISyntaxException | IOException ex) {
+                throw new UnconvertibleObjectException(ex);
+            }
         }
+        else
+            throw new UnconvertibleObjectException("Unsupported mime-type for " + this.getClass().getName() +  " : " + source.getMimeType());
     }
 }
