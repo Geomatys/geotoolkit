@@ -20,7 +20,18 @@ package org.geotoolkit.data.gpx.xml;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.data.gpx.GPXVersion;
+import org.geotoolkit.data.gpx.model.CopyRight;
+import org.geotoolkit.data.gpx.model.GPXModelConstants;
+import org.geotoolkit.data.gpx.model.MetaData;
+import org.geotoolkit.data.gpx.model.Person;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.temporal.object.TemporalUtilities;
+import org.geotoolkit.xml.StaxStreamReader;
+import org.opengis.geometry.Envelope;
 
+import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -30,22 +41,57 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.stream.XMLStreamException;
 
-import org.geotoolkit.data.gpx.GPXVersion;
-import org.geotoolkit.data.gpx.model.CopyRight;
-import org.geotoolkit.data.gpx.model.GPXModelConstants;
-import org.geotoolkit.data.gpx.model.MetaData;
-import org.geotoolkit.data.gpx.model.Person;
-import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.geotoolkit.xml.StaxStreamReader;
-
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Feature;
-import org.opengis.geometry.Envelope;
-
-import static javax.xml.stream.XMLStreamReader.*;
-import static org.geotoolkit.data.gpx.xml.GPXConstants.*;
+import static javax.xml.stream.XMLStreamReader.END_ELEMENT;
+import static javax.xml.stream.XMLStreamReader.START_ELEMENT;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.ATT_BOUNDS_MAXLAT;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.ATT_BOUNDS_MAXLON;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.ATT_BOUNDS_MINLAT;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.ATT_BOUNDS_MINLON;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.ATT_COPYRIGHT_AUTHOR;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.ATT_GPX_VERSION;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.ATT_LINK_HREF;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.ATT_WPT_LAT;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.ATT_WPT_LON;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_AUTHOR;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_AUTHOR_EMAIL;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_BOUNDS;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_CMT;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_COPYRIGHT;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_COPYRIGHT_LICENSE;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_COPYRIGHT_YEAR;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_DESC;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_GPX;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_LINK;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_LINK_TEXT;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_LINK_TYPE;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_METADATA;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_METADATA_KEYWORDS;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_METADATA_TIME;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_NAME;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_NUMBER;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_RTE;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_RTE_RTEPT;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_SRC;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_TRK;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_TRK_SEG;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_TRK_SEG_PT;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_TYPE;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_URL;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_URLNAME;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT_AGEOFGPSDATA;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT_DGPSID;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT_ELE;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT_FIX;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT_GEOIHEIGHT;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT_HDOP;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT_MAGVAR;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT_PDOP;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT_SAT;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT_SYM;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT_TIME;
+import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT_VDOP;
 
 /**
  * Stax reader class for GPX 1.0 and 1.1 files.
@@ -361,7 +407,7 @@ public class GPXReader extends StaxStreamReader{
             switch (type) {
                 case START_ELEMENT:
                     final String localName = reader.getLocalName();
-                    if(TAG_LINK_TEXT.equalsIgnoreCase(localName)){
+                    if(TAG_LINK_TEXT.equalsIgnoreCase(localName) && text==null){
                         text = reader.getElementText();
                     }else if(TAG_LINK_TYPE.equalsIgnoreCase(localName)){
                         mime = reader.getElementText();

@@ -17,10 +17,39 @@
 
 package org.geotoolkit.data.gpx;
 
-import java.net.URL;
+import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.data.AbstractFeatureStore;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreFactory;
+import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
+import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.gpx.model.MetaData;
+import org.geotoolkit.data.gpx.xml.GPXConstants;
+import org.geotoolkit.data.gpx.xml.GPXReader;
+import org.geotoolkit.data.gpx.xml.GPXWriter100;
+import org.geotoolkit.data.gpx.xml.GPXWriter110;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.storage.DataFileStore;
+import org.opengis.filter.Filter;
+import org.opengis.filter.identity.FeatureId;
+import org.opengis.parameter.ParameterValueGroup;
+
+import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -28,37 +57,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import javax.xml.stream.XMLStreamException;
 
-import org.geotoolkit.data.FeatureStoreFactory;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.data.AbstractFeatureStore;
-import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.gpx.model.MetaData;
-import org.geotoolkit.data.gpx.xml.GPXConstants;
-import org.geotoolkit.data.gpx.xml.GPXReader;
-import org.geotoolkit.data.gpx.xml.GPXWriter100;
-import org.geotoolkit.data.gpx.xml.GPXWriter110;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.internal.io.IOUtilities;
-import org.apache.sis.storage.DataStoreException;
-
-import org.geotoolkit.storage.DataFileStore;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.opengis.filter.Filter;
-import org.opengis.filter.identity.FeatureId;
-import org.opengis.parameter.ParameterValueGroup;
-
-import static org.geotoolkit.data.gpx.model.GPXModelConstants.*;
+import static org.geotoolkit.data.gpx.model.GPXModelConstants.TYPE_GPX_ENTITY;
+import static org.geotoolkit.data.gpx.model.GPXModelConstants.TYPE_ROUTE;
+import static org.geotoolkit.data.gpx.model.GPXModelConstants.TYPE_TRACK;
+import static org.geotoolkit.data.gpx.model.GPXModelConstants.TYPE_WAYPOINT;
 
 /**
  * GPX DataStore, holds 4 feature types.
@@ -74,6 +77,8 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
+
+    private static final QueryCapabilities QUERY_CAPABILITIES = new DefaultQueryCapabilities(false);
 
     private final File file;
 
@@ -179,7 +184,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     @Override
     public QueryCapabilities getQueryCapabilities() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return QUERY_CAPABILITIES;
     }
 
     @Override
