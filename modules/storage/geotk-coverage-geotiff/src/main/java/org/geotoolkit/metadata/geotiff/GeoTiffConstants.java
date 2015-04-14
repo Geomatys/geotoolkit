@@ -276,6 +276,10 @@ public final class GeoTiffConstants {
     public static final int VerticalDatumGeoKey     = 4098;   /* Section 6.3.4.2 codes */
     public static final int VerticalUnitsGeoKey     = 4099;   /* Section 6.3.1.3 codes */
 
+    // GDAL extension tags
+    public static final int GDAL_METADATA_KEY = 42112;  /* http://www.awaresystems.be/imaging/tiff/tifftags/gdal_metadata.html */
+    public static final int GDAL_NODATA_KEY   = 42113;  /* http://www.awaresystems.be/imaging/tiff/tifftags/gdal_nodata.html */
+
     ////////////////////////////////////////////////////////////////////////////
     // Codes
     ////////////////////////////////////////////////////////////////////////////

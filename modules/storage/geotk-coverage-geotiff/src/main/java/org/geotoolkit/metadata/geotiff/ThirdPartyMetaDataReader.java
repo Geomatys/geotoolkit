@@ -51,6 +51,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_METADATA_KEY;
+import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_NODATA_KEY;
+
 /**
  * Tiff format may contain multiple additional tags.
  * Some of them can have valuable metadata or style informations.
@@ -144,7 +147,7 @@ public strictfp class ThirdPartyMetaDataReader {
             switch (number) {
                 //-- apparemment meme categories pour tout les gridSampleDimensions ...??? (à definir pas rencontrer pour le moment).
                 //GDAL tags
-                case 42112 :  {//metadatas as xml
+                case GDAL_METADATA_KEY :  {//metadatas as xml
                     final Node valueNode = child.getChildNodes().item(0);
                     String stats = GeoTiffMetaDataUtils.readTiffAsciis(valueNode);
                     stats = stats.replaceAll(">( |\n|\t)*<", "><").trim();
@@ -180,7 +183,7 @@ public strictfp class ThirdPartyMetaDataReader {
                     }
                     break;
                 }
-                case 42113 : {// no data value as ascii text
+                case GDAL_NODATA_KEY: {// no data value as ascii text
                    /* 
                     * Il est possible avec geotiff que des nodata differents soient present pour chaque bandes de l'image.
                     * On peut donc potentiellement avoir un nodata different sur chacune de nos bandes -> String[].
