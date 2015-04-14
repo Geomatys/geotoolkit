@@ -401,7 +401,7 @@ nextPixel:          do {
     }
 
     /**
-     * Temporary Method in attemp to generalize comportement with reflexivity.
+     * Temporary Method in attempt to generalize comportment with reflexivity.
      * @param i
      * @return 
      */
@@ -414,7 +414,12 @@ nextPixel:          do {
         }
         return null;
     }
-    
+
+    /**
+     * Extract SampleDimension form accessor.
+     *
+     * @return list of SampleDimension or null
+     */
     public List<GridSampleDimension> getGridSampleDimensions() {
         selectParent();
         final Object userObj = getUserObject();
