@@ -81,7 +81,7 @@ public strictfp class ThirdPartyMetaDataReader {
      * Fill the given Spatial Metadatas with additional informations.
      */
     public void fillSpatialMetaData(SpatialMetadata metadata) throws IOException {
-        double[] realFillValue = null;
+        Double realFillValue = null;
         
         int samplePerPixels = -1;
         int bitsPerSamples = -1;
@@ -185,9 +185,8 @@ public strictfp class ThirdPartyMetaDataReader {
                 }
                 case GDAL_NODATA_KEY: {// no data value as ascii text
                    /* 
-                    * Il est possible avec geotiff que des nodata differents soient present pour chaque bandes de l'image.
-                    * On peut donc potentiellement avoir un nodata different sur chacune de nos bandes -> String[].
-                    * (Jamais rencontrer encore a voir ...)
+                    * GDal documentation assume only one value for All image bands.
+                    * http://www.gdal.org/frmt_gtiff.html
                     */
                     final Node valueNode = child.getChildNodes().item(0);
                     String str = GeoTiffMetaDataUtils.readTiffAsciis(valueNode);
@@ -197,15 +196,7 @@ public strictfp class ThirdPartyMetaDataReader {
                         str = strs[0] +"."+ strs[1];
                     }
                     try {
-                        double realFillVal;
-                        if (str.trim().equalsIgnoreCase("nan")) {
-                            realFillVal = Double.NaN;
-                        } else {
-                            realFillVal = Double.valueOf(str).doubleValue(); 
-                        }
-//                        final double realFillVal = Double.valueOf(str).doubleValue(); 
-                        realFillValue = new double[samplePerPixels];
-                        Arrays.fill(realFillValue, realFillVal);
+                        realFillValue = (str.trim().equalsIgnoreCase("nan")) ? Double.NaN : Double.valueOf(str).doubleValue();
                     } catch (NumberFormatException e) {
                         LOGGER.log(Level.INFO, "No data value cannot be read.", e);
                     }
@@ -279,9 +270,6 @@ public strictfp class ThirdPartyMetaDataReader {
             }
         }
 
-
-//        if (realFillValue == null && gDalMinSampleValue == null && gDalMaxSampleValue == null && minSampleValues == null && maxSampleValues == null) return;
-        
         final DimensionAccessor accessor = new DimensionAccessor(metadata);
         
         assert bitsPerSamples  != -1;
@@ -384,34 +372,34 @@ public strictfp class ThirdPartyMetaDataReader {
             
             final List<Category> categories = new ArrayList<>();
             if (realFillValue != null) {
-                    categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), 
-                                           getTypedRangeNumber(typeClass, realFillValue[b], true, realFillValue[b], true)));
-                    
-                    if (minSV[b] < realFillValue[b] && realFillValue[b] < maxSV[b]) {
-                        
-                        categories.add(new Category("data", null, 
-                                getTypedRangeNumber(typeClass, minSV[b], true, realFillValue[b], false), scaleZ, offsetZ));
-                        categories.add(new Category("data", null, 
-                                getTypedRangeNumber(typeClass, realFillValue[b], false, maxSV[b], true), scaleZ, offsetZ));
-                        
-                    } else {
-                        
-                        categories.add(new Category("data", null, 
-                            getTypedRangeNumber(typeClass, 
-                                                minSV[b], !(minSV[b] == realFillValue[b]), 
-                                                maxSV[b], !(maxSV[b] == realFillValue[b])), scaleZ, offsetZ));
-                    }
-                } else {
-                
+                categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), 
+                                       getTypedRangeNumber(typeClass, realFillValue, true, realFillValue, true)));
+
+                if (minSV[b] < realFillValue && realFillValue < maxSV[b]) {
+
                     categories.add(new Category("data", null, 
-                            getTypedRangeNumber(typeClass, minSV[b], true, maxSV[b], true), scaleZ, offsetZ));
-                    
+                            getTypedRangeNumber(typeClass, minSV[b], true, realFillValue, false), scaleZ, offsetZ));
+                    categories.add(new Category("data", null, 
+                            getTypedRangeNumber(typeClass, realFillValue, false, maxSV[b], true), scaleZ, offsetZ));
+
+                } else {
+
+                    categories.add(new Category("data", null, 
+                        getTypedRangeNumber(typeClass, 
+                                            minSV[b], !(minSV[b] == realFillValue), 
+                                            maxSV[b], !(maxSV[b] == realFillValue)), scaleZ, offsetZ));
                 }
+            } else {
+
+                categories.add(new Category("data", null, 
+                        getTypedRangeNumber(typeClass, minSV[b], true, maxSV[b], true), scaleZ, offsetZ));
+
+            }
             final GridSampleDimension dim = new GridSampleDimension(""+b, categories.toArray(new Category[categories.size()]), null);
             accessor.setDimension(dim, Locale.ENGLISH);
-            if (realFillValue != null) {
-                accessor.setAttribute("realFillValue", realFillValue[b]);
-            }
+            
+            if (realFillValue != null) 
+                accessor.setAttribute("realFillValue", realFillValue);
         }
     }
     
