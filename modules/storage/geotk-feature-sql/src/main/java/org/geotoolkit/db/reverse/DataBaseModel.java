@@ -961,14 +961,27 @@ public final class DataBaseModel {
 
         //find the descriptor to replace
         int index = -1;
-        final String searchedName = relation.isImported() ? relation.getCurrentColumn() : relation.getForeignColumn();
-        for(int i=0,n=descs.size();i<n;i++){
+        String searchedName = relation.isImported() ? relation.getCurrentColumn() : relation.getForeignTable()+ASSOCIATION_SEPARATOR+relation.getForeignColumn();
+        for (int i = 0, n = descs.size(); i < n; i++) {
             final PropertyDescriptor pd = descs.get(i);
             if(pd.getName().getLocalPart().equals(searchedName)){
                 index = i;
+                break;
             }
         }
 
+        // Foreign property cannot be found using its complete name, so we'll try to get it with simple name.
+        if (index < 0 && !relation.isImported()) {
+            searchedName = relation.getForeignColumn();
+            for (int i = 0, n = descs.size(); i < n; i++) {
+                final PropertyDescriptor pd = descs.get(i);
+                if (pd.getName().getLocalPart().equals(searchedName)) {
+                    index = i;
+                    break;
+                }
+            }
+        }
+        
         final PropertyDescriptor baseDescriptor = descs.get(index);
         adb.reset();
         adb.copy(baseDescriptor);

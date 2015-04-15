@@ -86,6 +86,7 @@ import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import static org.junit.Assert.*;
 import org.geotoolkit.feature.type.AssociationType;
+import org.junit.After;
 import org.opengis.filter.identity.FeatureId;
 
 /**
@@ -301,6 +302,13 @@ public class PostgresFeatureStoreTest {
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(simpleType);
         store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
         assertTrue(store.getNames().isEmpty());
+    }
+    
+    @After
+    public void disposeStore() {
+        if (store != null) {
+            store.close();
+        }
     }
     
     @Test
@@ -533,13 +541,13 @@ public class PostgresFeatureStoreTest {
     public void testCrossSchemaRelation() throws DataStoreException, VersioningException, SQLException{
         reload(false);
         
-        final Connection cnx = store.getDataSource().getConnection();
-        cnx.createStatement().executeUpdate("CREATE TABLE \"localtable\" (id serial, other integer);");
-        cnx.createStatement().executeUpdate("DROP SCHEMA  IF EXISTS someothertestschema CASCADE;");
-        cnx.createStatement().executeUpdate("CREATE SCHEMA someothertestschema;");
-        cnx.createStatement().executeUpdate("CREATE TABLE \"someothertestschema\".\"othertable\" (ident serial PRIMARY KEY, field double precision);");
-        cnx.createStatement().executeUpdate("ALTER TABLE \"localtable\" ADD FOREIGN KEY (other) REFERENCES someothertestschema.othertable(ident)");
-        cnx.close();
+        try (Connection cnx = store.getDataSource().getConnection()) {
+            cnx.createStatement().executeUpdate("CREATE TABLE \"localtable\" (id serial, other integer);");
+            cnx.createStatement().executeUpdate("DROP SCHEMA  IF EXISTS someothertestschema CASCADE;");
+            cnx.createStatement().executeUpdate("CREATE SCHEMA someothertestschema;");
+            cnx.createStatement().executeUpdate("CREATE TABLE \"someothertestschema\".\"othertable\" (ident serial PRIMARY KEY, field double precision);");
+            cnx.createStatement().executeUpdate("ALTER TABLE \"localtable\" ADD FOREIGN KEY (other) REFERENCES someothertestschema.othertable(ident)");
+        }
         
         store.refreshMetaModel();
         
@@ -1236,9 +1244,54 @@ public class PostgresFeatureStoreTest {
             ite.close();
         }
         
-        assertTrue(found);        
-        
+        assertTrue(found);
     }
     
-    
+    /**
+     * We test that table joints using similarly named foreign keys are 
+     * well-represented in read feature type.
+     * @throws Exception 
+     */
+    @Test
+    public void testTreeTableRelations() throws Exception {
+        reload(false);
+        
+        final String rootTable = "root_table";
+        final String nodeTable = "node_table";
+        final String leafTable = "leaf_table";
+        
+        final String foreignKeyName = "parent_id";
+        
+        try (Connection connection = store.getDataSource().getConnection()) {
+            // Initialize related tables
+            connection.createStatement().executeUpdate("create table \""+rootTable+"\" (id serial PRIMARY KEY, root_value integer);");
+            connection.createStatement().executeUpdate("create table \""+nodeTable+"\" (id serial PRIMARY KEY, node_value text, "+foreignKeyName+" integer);");
+            connection.createStatement().executeUpdate("create table \""+leafTable+"\" (id serial PRIMARY KEY, leaf_value bool, "+foreignKeyName+" integer);");
+            
+            // Add links
+            connection.createStatement().executeUpdate("ALTER TABLE \""+ nodeTable +"\" ADD FOREIGN KEY ("+foreignKeyName+") REFERENCES "+rootTable+"(id);");
+            connection.createStatement().executeUpdate("ALTER TABLE \""+ leafTable +"\" ADD FOREIGN KEY ("+foreignKeyName+") REFERENCES "+nodeTable+"(id);");            
+        }
+        
+        store.refreshMetaModel();
+        
+        // We start by checking intermediate node. We must ensure it refers to its parent and child tables.
+        FeatureType fType = store.getFeatureType(nodeTable);
+        org.opengis.feature.PropertyType foreignKey = fType.getProperty(foreignKeyName);
+        assertNotNull("Foreign key property", foreignKey);
+        assertTrue("Foreign key property should be an association property", foreignKey instanceof AssociationType);
+        
+        org.opengis.feature.AttributeType association = ((AssociationType) foreignKey).getRelatedType();
+        assertTrue("Association should point on a complex type.", association instanceof ComplexType);
+        assertNotNull("Association does not refer to parent node (root_table).", ((ComplexType)association).getDescriptor("root_value"));
+        
+        // ensure that child is well-refered
+        foreignKey = fType.getProperty(leafTable+"→"+foreignKeyName);
+        assertNotNull("Foreign key property does not exist", foreignKey);
+        assertTrue("Foreign key property should be an association property", foreignKey instanceof AssociationType);
+        
+        association = ((AssociationType) foreignKey).getRelatedType();
+        assertTrue("Association should point on a complex type.", association instanceof ComplexType);
+        assertNotNull("Association does not refer to child node (leaf_table).", ((ComplexType)association).getDescriptor("leaf_value"));
+    }
 }
