@@ -154,13 +154,23 @@ public class DimapExtension extends GeoTiffExtension {
             final String pattern1 = ((File)IOUtilities.changeExtension(file, "dim")).getName();
             final String pattern2 = "metadata.dim";
 
-            //scan file siblings and test siblings name matching patterns
-            final DirectoryStream<Path> dirStream = Files.newDirectoryStream(parent.toPath());
-            for (Path candidate : dirStream) {
-                if (pattern1.equalsIgnoreCase(candidate.getFileName().toString())) {
-                    return candidate.toFile();
-                } else if (pattern2.equalsIgnoreCase(candidate.getFileName().toString())) {
-                    return candidate.toFile();
+            // Quick search for "filename.dim"
+            final File candidate1 = new File(parent, pattern1);
+            if (candidate1.exists()) return candidate1;
+
+            // Quick search for "metadata.dim"
+            final File candidate2 = new File(parent, pattern2);
+            if (candidate2.exists()) return candidate2;
+
+            // Full directory scan.
+            // Search file with name matching patterns IGNORING case
+            try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(parent.toPath())) {
+                for (Path candidate : dirStream) {
+                    if (pattern1.equalsIgnoreCase(candidate.getFileName().toString())) {
+                        return candidate.toFile();
+                    } else if (pattern2.equalsIgnoreCase(candidate.getFileName().toString())) {
+                        return candidate.toFile();
+                    }
                 }
             }
 
