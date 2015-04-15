@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -78,6 +79,7 @@ import org.geotoolkit.feature.type.OperationType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.geotoolkit.xsd.xml.v2001.Annotated;
+import org.geotoolkit.xsd.xml.v2001.Any;
 import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroup;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroupRef;
@@ -751,6 +753,17 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 final List<PropertyDescriptor> att = elementToAttribute(ele, namespace);
                 if(att!=null)atts.addAll(att);
 
+            }else if(particle instanceof Any){
+                final Any ele = (Any) particle;
+                final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+                atb.setName(namespace, Utils.ANY_PROPERTY_NAME);
+                atb.setBinding(Object.class);
+                adb.setName(namespace, Utils.ANY_PROPERTY_NAME);
+                adb.setType(atb.buildType());
+                copyMinMax(ele, adb);
+                atts.add(adb.buildDescriptor());
+                
             }else if(particle instanceof GroupRef){
                 final GroupRef ref = (GroupRef) particle;
                 final QName groupRef = ref.getRef();
@@ -967,6 +980,21 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
 
         adb.setNillable(attributeElement.isNillable());
+    }
+
+    private static void copyMinMax(Any attributeElement, AttributeDescriptorBuilder adb){
+        //override properties which are defined
+        final BigInteger minAtt = attributeElement.getMinOccurs();
+        if(minAtt!=null){
+            adb.setMinOccurs(minAtt.intValue());
+        }
+
+        final String maxxAtt = attributeElement.getMaxOccurs();
+        if("unbounded".equalsIgnoreCase(maxxAtt)) {
+            adb.setMaxOccurs(Integer.MAX_VALUE);
+        } else if(maxxAtt!=null){
+            adb.setMaxOccurs(Integer.parseInt(maxxAtt));
+        }
     }
 
     private String getNewBaseLocation(final String schemalocation, final String oldBaseLocation) {

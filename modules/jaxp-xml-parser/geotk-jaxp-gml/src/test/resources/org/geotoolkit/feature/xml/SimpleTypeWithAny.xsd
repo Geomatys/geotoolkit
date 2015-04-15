@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema elementFormDefault="qualified" 
+    targetNamespace="http://www.opengis.net/gml"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" namespace="http://www.opengis.net/gml"/>
+    <xsd:element xmlns:gml="http://www.opengis.net/gml" name="TestSimple" type="gml:TestSimpleType" substitutionGroup="gml:_Feature"/>
+    <xsd:complexType name="TestSimpleType">
+        <xsd:complexContent mixed="true">
+            <xsd:extension xmlns:gml="http://www.opengis.net/gml" base="gml:AbstractFeatureType" >
+                <xsd:sequence>
+                    <xsd:any namespace="http://www.w3.org/1999/xhtml" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+</xsd:schema>

@@ -78,6 +78,10 @@ public class Utils {
      * "",".","$value",":value","#value" conflict with xpath qname constraint
      */
     public static final String VALUE_PROPERTY_NAME = "_value";
+    /**
+     * This named is used for element of type xsd:any.
+     */
+    public static final String ANY_PROPERTY_NAME = "_any";
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml");
 

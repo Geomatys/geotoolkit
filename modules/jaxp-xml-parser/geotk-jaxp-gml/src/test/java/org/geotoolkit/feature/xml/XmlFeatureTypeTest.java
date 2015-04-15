@@ -17,6 +17,13 @@
 
 package org.geotoolkit.feature.xml;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import java.io.BufferedReader;
 
 import java.io.File;
@@ -25,12 +32,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
+import static org.geotoolkit.data.AbstractFeatureStore.GML_311_NAMESPACE;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.xml.DomCompare;
@@ -77,6 +90,22 @@ public class XmlFeatureTypeTest {
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
         assertEquals(simpleTypeFull, types.get(0));
+    }
+
+    @Test
+    public void testReadSimpleFeatureTypeWithAny() throws JAXBException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTypeTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleTypeWithAny.xsd"));
+        removeGMLBaseTypes(types);
+        assertEquals(1, types.size());
+
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(GML_311_NAMESPACE,"TestSimple");
+        ftb.add(new DefaultName(GML_311_NAMESPACE,"_any"),Object.class,0,1,true,null);
+        final FeatureType simpleTypeAny = ftb.buildFeatureType();
+
+        assertEquals(simpleTypeAny, types.get(0));
     }
 
     @Test
