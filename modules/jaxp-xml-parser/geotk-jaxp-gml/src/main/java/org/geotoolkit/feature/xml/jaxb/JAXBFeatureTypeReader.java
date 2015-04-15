@@ -76,6 +76,7 @@ import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.OperationDescriptor;
 import org.geotoolkit.feature.type.OperationType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.PropertyType;
 import org.geotoolkit.xsd.xml.v2001.Annotated;
 import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroup;
@@ -212,7 +213,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     private final Map<String,String> locationMap = new HashMap<>();
 
     private final Map<QName,org.geotoolkit.feature.type.ComplexType> typeCache = new HashMap<>();
-    
+
     //Substitution group hierarchy
     // example : AbstractGeometry -> [AbstractGeometricAggregate,AbstractGeometricPrimitive,GeometricComplex,AbstractImplicitGeometry]
     private final Map<QName,List<QName>> substitutionGroups = new HashMap<>();
@@ -238,7 +239,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     public JAXBFeatureTypeReader(Map<String,String> locationMap) {
         //default relocations
         this.locationMap.putAll(RELOCATIONS);
-        
+
         if(locationMap!=null){
             this.locationMap.putAll(locationMap);
         }
@@ -393,7 +394,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
     private void listAllSchemas(final Schema schema, final String baseLocation, List<Entry<Schema,String>> refs) throws SchemaException{
         fillAllSubstitution(schema);
-        
+
         for (OpenAttrs attr: schema.getIncludeOrImportOrRedefine()) {
             if (attr instanceof Import || attr instanceof Include) {
                 final String schemalocation = Utils.getIncludedLocation(baseLocation, attr);
@@ -499,7 +500,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
     /**
      * Check if the given complex type inherit from FeatureType.
-     * 
+     *
      * @param search
      * @return true if this type is a feature type.
      */
@@ -548,7 +549,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         final FeatureTypeBuilder builder = new FeatureTypeBuilder(new ModifiableFeatureTypeFactory());
         builder.setAbstract(type.isAbstract());
         String properName = qname.getLocalPart();
-        
+
         //we remove the 'Type' extension for feature types.
         if (isFeatureType && properName.endsWith("Type")) {
             properName = properName.substring(0, properName.lastIndexOf("Type"));
@@ -607,7 +608,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                         }
                     }
                 }
-                
+
                 //sequence attributes
                 addOrReplace(finalType.getDescriptors(), getGroupAttributes(namespace, ext.getSequence()));
             }
@@ -624,23 +625,16 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             if(sext!=null){
                 //simple type base, it must be : this is the content of the tag <tag>XXX<tag>
                 //it is not named, so we call it value
-                QName base = sext.getBase();
-                final SimpleType st = findSimpleType(base);
-                if(st!=null) base = resolveSimpleTypeValueName(st);
+                final QName base = sext.getBase();
+                final PropertyType st = resolveSimpleType(base);
 
-                if(Utils.existPrimitiveType(base.getLocalPart())){
-                    final Class valueType = Utils.getTypeFromQName(base);
-                    final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                    finalType.getDescriptors().add(adb.create(new DefaultName(qname.getNamespaceURI(), Utils.VALUE_PROPERTY_NAME), valueType, 0, 1, false, null));
+                if(st instanceof org.geotoolkit.feature.type.ComplexType){
+                    addOrReplace(finalType.getDescriptors(), ((org.geotoolkit.feature.type.ComplexType)st).getDescriptors());
                 }else{
-                    //could be a complex type ... for a simple content, that's not an error. xsd/xml makes no sense at all sometimes
-                    final org.geotoolkit.feature.type.ComplexType sct = getType(base);
-                    if(sct==null){
-                        throw new SchemaException("Could not find type : "+base);
-                    }
-                    addOrReplace(finalType.getDescriptors(), sct.getDescriptors());
+                    final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                    finalType.getDescriptors().add(adb.create(st, new DefaultName(qname.getNamespaceURI(), Utils.VALUE_PROPERTY_NAME), 0, 1, false, null));
                 }
-                
+
                 //read attributes
                 final List<Annotated> attexts = sext.getAttributeOrAttributeGroup();
                 if(attexts!=null){
@@ -656,18 +650,16 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
             if(restriction!=null){
 
-                QName base = restriction.getBase();
+                final QName base = restriction.getBase();
                 if(base !=null){
                     final ComplexType sct = findComplexType(base);
                     if(sct!=null){
                         final org.geotoolkit.feature.type.ComplexType tct = getType(namespace, sct, null);
                         addOrReplace(finalType.getDescriptors(), tct.getDescriptors());
                     }else{
-                        final SimpleType st = findSimpleType(base);
-                        if(st!=null) base = resolveSimpleTypeValueName(st);
-                        final Class valueType = Utils.getTypeFromQName(base);
+                        final PropertyType restType = resolveSimpleType(base);
                         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                        addOrReplace(finalType.getDescriptors(), adb.create(new DefaultName(qname.getNamespaceURI(), Utils.VALUE_PROPERTY_NAME), valueType, 0, 1, false, null));
+                        addOrReplace(finalType.getDescriptors(), adb.create(restType,new DefaultName(qname.getNamespaceURI(), Utils.VALUE_PROPERTY_NAME), 0, 1, false, null));
                     }
                 }
 
@@ -686,6 +678,27 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             }
 
         }
+
+        //read choice if set
+//        final ExplicitGroup choice = type.getChoice();
+//        if(choice != null){
+//            final Integer minOccurs = choice.getMinOccurs();
+//            final String maxOccurs = choice.getMaxOccurs();
+//            final List<PropertyDescriptor> choices = getGroupAttributes(namespace, choice);
+//            for(PropertyDescriptor pd : choices){
+//                //change the min/max occurences
+//                final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+//                adb.copy(pd);
+//                adb.setMinOccurs(0);
+//                if("unbounded".equalsIgnoreCase(maxOccurs)) {
+//                    adb.setMaxOccurs(Integer.MAX_VALUE);
+//                } else if(maxOccurs!=null){
+//                    adb.setMaxOccurs(Integer.parseInt(maxOccurs));
+//                }
+//                addOrReplace(finalType.getDescriptors(), adb.buildDescriptor());
+//            }
+//        }
+
 
         removeAttributes(finalType, Utils.GML_ABSTRACT_FEATURE_PROPERTIES);
 
@@ -723,7 +736,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 final Element ele = (Element) particle;
                 final List<PropertyDescriptor> att = elementToAttribute(ele, namespace);
                 if(att!=null)atts.addAll(att);
-                
+
             }else if(particle instanceof GroupRef){
                 final GroupRef ref = (GroupRef) particle;
                 final QName groupRef = ref.getRef();
@@ -760,7 +773,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         final String id = att.getId();
         final String name = att.getName();
         final String def = att.getDefault();
-        final QName type = resolveAttributeValueName(att);
+        final PropertyType type = resolveAttributeValueName(att);
         final String use = att.getUse();
 
         if(id!=null || name!=null){
@@ -775,16 +788,11 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         adb.setMaxOccurs(1);
         adb.setNillable(false);
 
-        //search in knowned types
-        final Class c = Utils.getTypeFromQName(type);
-        if (c == null) {
-            throw new SchemaException("The attribute : " + att + " does no have a declared type.");
-        }
-        atb.setBinding(c);
+        atb.setBinding(type.getBinding());
         adb.setType(atb.buildType());
 
         if(def!=null && !def.isEmpty()){
-            final Object defVal = ObjectConverters.convert(def, c);
+            final Object defVal = ObjectConverters.convert(def, type.getBinding());
             adb.setDefaultValue(defVal);
         }
 
@@ -885,28 +893,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                     }
                     atb.setBinding(c);
                 }else{
-                    //search simple types
-                    final SimpleType simpleType = findSimpleType(elementType);
-                    if(simpleType != null){
-                        elementType = resolveSimpleTypeValueName(simpleType);
-                    }
-
-                    //search in complex types
-                    if(simpleType==null){
-                        final org.geotoolkit.feature.type.ComplexType cType = getType(elementType);
-                        if (cType != null) {
-                            adb.setType(cType);
-                        }
-                    }
-
-                    //search in knowned types
-                    if(adb.getType()==null && atb.getBinding()==Object.class){
-                        final Class c = Utils.getTypeFromQName(elementType);
-                        if (c == null) {
-                            throw new SchemaException("The attribute : " + attributeElement + " does no have a declared type.");
-                        }
-                        atb.setBinding(c);
-                    }
+                    final PropertyType pt = resolveSimpleType(elementType);
+                    adb.setType(pt);
                 }
             }
 
@@ -947,7 +935,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
 
         return results;
-        
+
     }
 
     private static void copyMinMaxNill(Element attributeElement, AttributeDescriptorBuilder adb){
@@ -1057,39 +1045,30 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return null;
     }
 
-    private QName resolveAttributeValueName(Attribute att) throws SchemaException{
+    private PropertyType resolveAttributeValueName(Attribute att) throws SchemaException{
         //test direct type
-        QName type = att.getType();
+        final QName type = att.getType();
         if(type!=null){
-            if(Utils.existPrimitiveType(type.getLocalPart())){
-                return type;
-            }else{
-                //it's a simple type reference
-                final SimpleType parentType = findSimpleType(type);
-                if(parentType==null){
-                    throw new SchemaException("The attribute : " + type + " has not been found.");
-                }
-                return resolveSimpleTypeValueName(parentType);
-            }
+            return resolveSimpleType(type);
         }
 
         //test reference
-        type = att.getRef();
-        if(type!=null){
-            final Attribute parentAtt = findGlobalAttribute(type);
+        final QName ref = att.getRef();
+        if(ref!=null){
+            final Attribute parentAtt = findGlobalAttribute(ref);
             if(parentAtt==null){
-                throw new SchemaException("The attribute : " + type + " has not been found.");
+                throw new SchemaException("The attribute : " + ref + " has not been found.");
             }
-            type = resolveAttributeValueName(parentAtt);
+            return resolveAttributeValueName(parentAtt);
         }
 
         //test local simple type
         final LocalSimpleType simpleType = att.getSimpleType();
         if(simpleType!=null){
-            type = resolveSimpleTypeValueName(simpleType);
+            return resolveSimpleType(simpleType);
         }
 
-        return type;
+        return null;
     }
 
     private SimpleType findSimpleType(final QName typeName) {
@@ -1109,16 +1088,41 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return null;
     }
 
-    private QName resolveSimpleTypeValueName(SimpleType simpleType) throws SchemaException{
+    private PropertyType resolveSimpleType(QName name) throws SchemaException{
+
+        //check if primitive type
+        if(Utils.existPrimitiveType(name.getLocalPart())){
+            final Class valueType = Utils.getTypeFromQName(name);
+            final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+            atb.setName(new DefaultName(name));
+            atb.setBinding(valueType);
+            return atb.buildType();
+        }
+
+        //check if a simple type exist
+        final SimpleType simpleType = findSimpleType(name);
+        if(simpleType!=null){
+            return resolveSimpleType(simpleType);
+        }else{
+            //could be a complex type ... for a simple content, that's not an error. xsd/xml makes no sense at all sometimes
+            final org.geotoolkit.feature.type.ComplexType sct = getType(name);
+            if(sct==null){
+                throw new SchemaException("Could not find type : "+name);
+            }
+            return sct;
+        }
+    }
+
+    private PropertyType resolveSimpleType(SimpleType simpleType) throws SchemaException{
         final Restriction restriction = simpleType.getRestriction();
         if(restriction!=null){
             QName base = restriction.getBase();
             if(base!=null){
-                return base;
+                return resolveSimpleType(base);
             }
             final LocalSimpleType localSimpleType = restriction.getSimpleType();
             if(localSimpleType!=null){
-                return resolveSimpleTypeValueName(localSimpleType);
+                return resolveSimpleType(localSimpleType);
             }
 
             return null;
@@ -1134,10 +1138,10 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 if(refType==null){
                     throw new SchemaException("Could not find type : "+name);
                 }
-                return resolveSimpleTypeValueName(refType);
+                return resolveSimpleType(refType);
             }else if(union.getSimpleType()!=null && !union.getSimpleType().isEmpty()){
                 final LocalSimpleType st = union.getSimpleType().get(0);
-                return resolveSimpleTypeValueName(st);
+                return resolveSimpleType(st);
             }
         }
 
@@ -1148,18 +1152,18 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             if(subTypeName!=null){
                 final SimpleType refType = findSimpleType(subTypeName);
                 if(refType!=null){
-                    return resolveSimpleTypeValueName(refType);
+                    return resolveSimpleType(refType);
                 }
-                return subTypeName;
+                return resolveSimpleType(subTypeName);
             }
             final LocalSimpleType subtype = list.getSimpleType();
             if(subtype!=null){
-                return resolveSimpleTypeValueName(simpleType);
+                return resolveSimpleType(simpleType);
             }
         }
 
         if(Utils.existPrimitiveType(simpleType.getName())){
-            return new QName(null, simpleType.getName());
+            return resolveSimpleType(new QName(null, simpleType.getName()));
         }else{
             return null;
         }
