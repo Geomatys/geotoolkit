@@ -680,24 +680,38 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
 
         //read choice if set
-//        final ExplicitGroup choice = type.getChoice();
-//        if(choice != null){
-//            final Integer minOccurs = choice.getMinOccurs();
-//            final String maxOccurs = choice.getMaxOccurs();
-//            final List<PropertyDescriptor> choices = getGroupAttributes(namespace, choice);
-//            for(PropertyDescriptor pd : choices){
-//                //change the min/max occurences
-//                final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-//                adb.copy(pd);
-//                adb.setMinOccurs(0);
-//                if("unbounded".equalsIgnoreCase(maxOccurs)) {
-//                    adb.setMaxOccurs(Integer.MAX_VALUE);
-//                } else if(maxOccurs!=null){
-//                    adb.setMaxOccurs(Integer.parseInt(maxOccurs));
-//                }
-//                addOrReplace(finalType.getDescriptors(), adb.buildDescriptor());
-//            }
-//        }
+        final ExplicitGroup choice = type.getChoice();
+        if(choice != null){
+            final Integer minOccurs = choice.getMinOccurs();
+            final String maxOccurs = choice.getMaxOccurs();
+            final List<PropertyDescriptor> choices = getGroupAttributes(namespace, choice);
+            for(PropertyDescriptor pd : choices){
+                //change the min/max occurences
+                int maxOcc = 1;
+                if("unbounded".equalsIgnoreCase(maxOccurs)) {
+                    maxOcc = Integer.MAX_VALUE;
+                } else if(maxOccurs!=null){
+                    maxOcc = Integer.parseInt(maxOccurs);
+                }
+                //NOTE : a choice with max occurence ? yet we must consider the limitation
+                //of each element
+                /*
+                final PropertyDescriptor rpd;
+                if(pd instanceof OperationDescriptor){
+                    final OperationDescriptor od = (OperationDescriptor) pd;
+                    rpd =  new DefaultOperationDescriptor(od.getType(), od.getName(), 0, maxOcc, od.isNillable());
+                }else{
+                    final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                    adb.copy(pd);
+                    adb.setMinOccurs(0);
+                    adb.setMaxOccurs(maxOcc);
+                    rpd = adb.buildDescriptor();
+                }
+                */
+                
+                addOrReplace(finalType.getDescriptors(), pd);
+            }
+        }
 
 
         removeAttributes(finalType, Utils.GML_ABSTRACT_FEATURE_PROPERTIES);

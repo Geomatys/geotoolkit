@@ -218,7 +218,9 @@ public class Utils {
         CLASS_BINDING.put("base64Binary",byte[].class);
         CLASS_BINDING.put("language", String.class);
         CLASS_BINDING.put("IDREF",    String.class);
-
+        CLASS_BINDING.put("normalizedString",String.class); //TODO String value of the xml should be trimmed
+        CLASS_BINDING.put("NMTOKEN",  String.class);
+        
         CLASS_BINDING.put("nonNegativeInteger", Integer.class);
         CLASS_BINDING.put("positiveInteger",    Integer.class);
         CLASS_BINDING.put("integerList",        Integer.class);
