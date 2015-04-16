@@ -10,6 +10,7 @@ import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.metadata.GeoTiffExtension;
 import org.geotoolkit.util.DomUtilities;
+import org.geotoolkit.util.dom.LazyLoadElement;
 import org.opengis.util.FactoryException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -67,7 +68,7 @@ public class DimapExtension extends GeoTiffExtension {
 
         //add new format to SpatialMetadata
         final SpatialMetadata dimapMetadata = new SpatialMetadata(DimapMetadataFormat.INSTANCE, reader, metadata);
-        dimapMetadata.mergeTree(DimapMetadataFormat.NATIVE_FORMAT, dimapNode);
+        dimapMetadata.mergeTree(DimapMetadataFormat.NATIVE_FORMAT, new LazyLoadElement(metadataFile));
 
         boolean geotkFormat = false;
         final String[] formatNames = dimapMetadata.getMetadataFormatNames();
