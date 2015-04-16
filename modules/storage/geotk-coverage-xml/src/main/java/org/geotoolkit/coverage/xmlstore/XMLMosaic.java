@@ -192,7 +192,7 @@ public class XMLMosaic implements GridMosaic {
             synchronized (this) {
                 //double check
                 if (isMissingCache == null) {
-                    long maxTile = gridWidth * gridHeight;
+                    long maxTile = (long)gridWidth * (long)gridHeight;
                     int cacheSize = maxTile > 1000 ? 1000 : (int) maxTile;
                     isMissingCache = new Cache<>(cacheSize, cacheSize, false);
                 }
