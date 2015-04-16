@@ -88,7 +88,7 @@ public class XMLMosaic implements GridMosaic {
     /*
      * Used only if we use the tile state cache mechanism, which means we don't use XML document to read / write tile states.
      */
-    private final Cache<Point, Boolean> isMissingCache = new Cache<>(1000, 1000, false);
+    private volatile Cache<Point, Boolean> isMissingCache = null;
 
     //empty tile information
     private byte[] emptyTileEncoded = null;
@@ -185,6 +185,20 @@ public class XMLMosaic implements GridMosaic {
                 LOGGER.log(Level.WARNING, "Mosaic folder cannot be scanned.", e);
             }
         }
+    }
+
+    private Cache<Point, Boolean> getIsMissingCache() {
+        if (isMissingCache == null) {
+            synchronized (this) {
+                //double check
+                if (isMissingCache == null) {
+                    long maxTile = gridWidth * gridHeight;
+                    int cacheSize = maxTile > 1000 ? 1000 : (int) maxTile;
+                    isMissingCache = new Cache<>(cacheSize, cacheSize, false);
+                }
+            }
+        }
+        return isMissingCache;
     }
 
     private synchronized byte[] createEmptyTile() throws DataStoreException {
@@ -353,7 +367,7 @@ public class XMLMosaic implements GridMosaic {
             if (tileExist == null || tileExist.isEmpty()) {
                 try {
                     final Point key = new Point(col, row);
-                    return isMissingCache.getOrCreate(key, new Callable<Boolean>() {
+                    return getIsMissingCache().getOrCreate(key, new Callable<Boolean>() {
                         @Override
                         public Boolean call() throws Exception {
                             return !getTileFile(key.x, key.y).isFile();
@@ -517,7 +531,7 @@ public class XMLMosaic implements GridMosaic {
                     bitsetLock.writeLock().unlock();
                 }
             } else {
-                isMissingCache.put(new Point(col, row), false);
+                getIsMissingCache().put(new Point(col, row), false);
             }
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
@@ -750,7 +764,7 @@ public class XMLMosaic implements GridMosaic {
                         bitsetLock.writeLock().unlock();
                     }
                 } else {
-                    isMissingCache.put(new Point(idx, idy), false);
+                    getIsMissingCache().put(new Point(idx, idy), false);
                 }
 
             } catch (Exception ex) {
