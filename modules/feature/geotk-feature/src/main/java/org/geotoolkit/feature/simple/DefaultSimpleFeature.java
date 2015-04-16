@@ -18,20 +18,35 @@
 package org.geotoolkit.feature.simple;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import java.util.List;
 import java.util.Map;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.io.TableAppender;
+import org.apache.sis.util.Utilities;
+import org.apache.sis.util.iso.Names;
+import org.geotoolkit.feature.AbstractFeature;
 
 import org.geotoolkit.feature.DefaultAttribute;
 import org.geotoolkit.feature.DefaultGeometryAttribute;
+import org.geotoolkit.feature.FeatureValidationUtilities;
+import org.geotoolkit.feature.GeometryAttribute;
+import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 
 import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
+import org.opengis.util.GenericName;
 
 /**
  * An implementation of {@link SimpleFeature} geared towards speed and backed by an Object[].
@@ -41,7 +56,7 @@ import org.opengis.filter.identity.Identifier;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public final class DefaultSimpleFeature extends AbstractSimpleFeature {
+public final class DefaultSimpleFeature extends AbstractFeature<List<Property>> implements SimpleFeature {
 
     private String strID;
 
@@ -143,6 +158,16 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
     }
 
     @Override
+    public SimpleFeatureType getFeatureType() {
+        return (SimpleFeatureType) getType();
+    }
+
+    @Override
+    public SimpleFeatureType getType() {
+        return (SimpleFeatureType) super.getType();
+    }
+
+    @Override
     public List<Property> getValue() {
         if(value == null || value.isEmpty()){
             value = toProperties();
@@ -153,20 +178,57 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
     @Override
     public Object getAttribute(int idx) throws IndexOutOfBoundsException {
         if(valueArray == null){
-            return super.getAttribute(idx);
+            return getProperties().get(idx).getValue();
         }
         return valueArray[idx];
     }
 
     @Override
+    public Object getAttribute(final GenericName name) {
+        final Integer idx = getIndex().get(name);
+        if (idx != null) {
+            return getAttribute(idx);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public Object getAttribute(String name) {
-        return super.getAttribute(name);
+        final Integer idx = getIndex().get(name);
+        if (idx != null) {
+            return getAttribute(idx);
+        } else {
+            return null;
+        }
+    }
+    
+    @Override
+    public List<Object> getAttributes() {
+        final List<Object> values = new ArrayList<>();
+        for(final Property prop : getProperties()){
+            values.add(prop.getValue());
+        }
+        return values;
+    }
+
+    @Override
+    public int getAttributeCount() {
+        return getProperties().size();
     }
 
     @Override
     public void setAttribute(int idx, Object value) throws IndexOutOfBoundsException {
         if(valueArray == null){
-            super.setAttribute(idx,value);
+            final Property prop = getProperties().get(idx);
+
+            // if necessary, validation too
+            if (isValidating()) {
+                FeatureValidationUtilities.validate((AttributeDescriptor)prop.getDescriptor(), value);
+            }
+
+            //the type must match, we don't test, user must know what he is doing or must validate feature.
+            prop.setValue(value);
             return;
         }
         valueArray[idx] = value;
@@ -182,11 +244,83 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
     }
 
     @Override
+    public void setAttributes(final List<Object> values) {
+        for (int i=0,n=values.size(); i<n; i++) {
+            setAttribute(i, values.get(i));
+        }
+    }
+
+    @Override
+    public void setAttributes(final Object[] values) {
+
+        final List<Property> properties = getProperties();
+        final boolean validating = isValidating();
+
+        for (int index = 0; index < values.length; index++) {
+            final Property prop = properties.get(index);
+            final Object val = values[index];
+
+            // if necessary, validation too
+            if (validating) {
+                FeatureValidationUtilities.validate((AttributeDescriptor)prop.getDescriptor(), val);
+            }
+
+            //the type must match, we don't test, user must know what he is doing or must validate feature.
+            prop.setValue(val);
+        }
+    }
+
+    @Override
+    public void setAttribute(final String name, final Object value) {
+        final Integer idx = getIndex().get(name);
+        if (idx == null) {
+            throw new SimpleIllegalAttributeException("Unknown attribute " + name);
+        }
+        setAttribute(idx, value);
+    }
+
+    @Override
+    public void setAttribute(final GenericName name, final Object value) {
+        final Integer idx = getIndex().get(name);
+        if (idx == null) {
+            throw new SimpleIllegalAttributeException("Unknown attribute " + name);
+        }
+        setAttribute(idx, value);
+    }
+
+    @Override
+    public Object getDefaultGeometry() {
+        final Map<Object,Integer> index = getIndex();
+
+        // should be specified in the index as the default key (null)
+        final Integer indexGeom = index.get(null);
+
+        if(indexGeom != null){
+            return getAttribute(indexGeom);
+        }else{
+            final GeometryDescriptor geometryDescriptor = getFeatureType().getGeometryDescriptor();
+            if (geometryDescriptor != null) {
+                final Integer defaultGeomIndex = index.get(geometryDescriptor.getName());
+                index.put(null, defaultGeomIndex);
+                return getAttribute(defaultGeomIndex.intValue());
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setDefaultGeometry(final Object geometry) {
+        final Integer geometryIndex = getIndex().get(null);
+        if (geometryIndex != null) {
+            setAttribute(geometryIndex, geometry);
+        }
+    }
+
     protected boolean isValidating() {
         return validating;
     }
 
-    @Override
     protected Map<Object, Integer> getIndex() {
         return index;
     }
@@ -362,6 +496,154 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             valueArray[index] = newValue;
         }
 
+    }
+
+    //feature methods ----------------------------------------------------------
+
+    @Override
+    public GeometryAttribute getDefaultGeometryProperty() {
+        final Map<Object,Integer> index = getIndex();
+
+        // should be specified in the index as the default key (null)
+        final Integer indexGeom = index.get(null);
+
+        if(indexGeom != null){
+            return (GeometryAttribute) getValue().get(indexGeom);
+        }else{
+            final GeometryDescriptor geometryDescriptor = getFeatureType().getGeometryDescriptor();
+            if (geometryDescriptor != null) {
+                final Integer defaultGeomIndex = index.get(geometryDescriptor.getName());
+                index.put(null, defaultGeomIndex);
+                return (GeometryAttribute) getValue().get(defaultGeomIndex.intValue());
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setDefaultGeometryProperty(final GeometryAttribute geometryAttribute) {
+        if (geometryAttribute != null) {
+            setDefaultGeometry(geometryAttribute.getValue());
+        } else {
+            setDefaultGeometry(null);
+        }
+    }
+
+    @Override
+    public Collection<Property> getProperties(final GenericName name) {
+        final Integer idx = getIndex().get(name);
+        if (idx != null) {
+            final Property prop = getProperties().get(idx);
+            // cast temporarily to a plain collection to avoid type problems with generics
+            final Collection c = Collections.singleton(prop);
+            return c;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public Property getProperty(final GenericName name) {
+        final Integer idx = getIndex().get(name);
+        if (idx == null) {
+            return null;
+        } else {
+            return getProperties().get(idx);
+        }
+    }
+
+    @Override
+    public Collection<Property> getProperties(final String name) {
+        final Integer idx = getIndex().get(name);
+        if (idx != null) {
+            final Property prop = getProperties().get(idx);
+            // cast temporarily to a plain collection to avoid type problems with generics
+            final Collection c = Collections.singleton(prop);
+            return c;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public Property getProperty(final String name) {
+        final Integer idx = getIndex().get(name);
+        if (idx == null) {
+            return null;
+        } else {
+            return getProperties().get(idx);
+        }
+    }
+
+    @Override
+    public void validate() throws IllegalAttributeException {
+        final List<Property> properties = getProperties();
+        final SimpleFeatureType type = getFeatureType();
+
+        for (int i=0,n=type.getAttributeCount(); i<n; i++) {
+            final AttributeDescriptor descriptor = type.getDescriptor(i);
+            //check for attribute identifier
+//            if(properties.get(i) instanceof Attribute){
+//                Attribute toTest = (Attribute)properties.get(i);
+//                for(int j = i+1 ; j < n ; j++){
+//                    if(properties.get(j) instanceof Attribute){
+//                        if(toTest.getIdentifier().equals(((Attribute)properties.get(j)).getIdentifier()))
+//                            throw new IllegalAttributeException(descriptor, toTest, "We can't have two attributes with the same identifier");
+//                    }
+//                }
+//            }
+            FeatureValidationUtilities.validate(descriptor, properties.get(i).getValue());
+        }
+    }
+
+    @Override
+    public void setValue(final Object newValue) {
+        setValue((Collection<Property>) newValue);
+    }
+
+    @Override
+    public String toString() {
+
+        final StringWriter writer = new StringWriter();
+        writer.append(this.getClass().getName());
+        writer.append('\n');
+
+        final FeatureType featureType = getFeatureType();
+        if (featureType != null) {
+            writer.append("featureType:").append(featureType.getName().toString()).append('\n');
+        }
+
+        //make a nice table to display
+        final TableAppender tablewriter = new TableAppender(writer);
+        tablewriter.appendHorizontalSeparator();
+        tablewriter.append("@id\t"+getID()+"\n");
+
+        for(Property prop : getProperties()){
+            tablewriter.append(Names.toExpandedString(prop.getName()));
+            tablewriter.append("\t");
+            Object value = prop.getValue();
+            if(value != null && value.getClass().isArray()){
+                value = Utilities.deepToString(value);
+            }else{
+                value = String.valueOf(value);
+            }
+
+            tablewriter.append((String)value);
+            tablewriter.append("\n");
+        }
+
+        tablewriter.appendHorizontalSeparator();
+
+        try {
+            tablewriter.flush();
+            writer.flush();
+        } catch (IOException ex) {
+            //will never happen is this case
+            ex.printStackTrace();
+        }
+
+        return writer.toString();
     }
 
 }
