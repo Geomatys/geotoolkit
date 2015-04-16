@@ -31,11 +31,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import static org.junit.Assert.*;
 import static java.awt.Color.*;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  *
@@ -63,7 +63,7 @@ public class CategorizeTest {
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");
         sftb.add(attribut, Double.class);
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureType sft = sftb.buildFeatureType();
 
         final FeatureBuilder sfb = new FeatureBuilder(sft);
         sfb.setPropertyValue(attribut, -5d);

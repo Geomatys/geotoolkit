@@ -9,7 +9,6 @@ import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
@@ -25,7 +24,7 @@ public class FeatureTypeBuilderDemo {
         System.out.println(createComplexType());
     }
 
-    public static SimpleFeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException{
+    public static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException{
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Fish");
         ftb.add("name", String.class);
@@ -34,7 +33,7 @@ public class FeatureTypeBuilderDemo {
         ftb.add("lastPositionDate", Date.class);
         ftb.add("direction", Float.class);
         ftb.setDefaultGeometry("lastPosition");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 

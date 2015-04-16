@@ -34,7 +34,7 @@ import org.geotoolkit.process.vector.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
 
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -51,7 +51,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
 
     private static FeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
-    private static SimpleFeatureType type;
+    private static FeatureType type;
 
     public SpatialJoinTest() {
         super("spatialjoin");
@@ -146,29 +146,29 @@ public class SpatialJoinTest extends AbstractProcessTest {
         assertTrue(featureListOut.containsAll(featureListResult));
     }
 
-    private static SimpleFeatureType createSimpleType1() throws NoSuchAuthorityCodeException, FactoryException {
+    private static FeatureType createSimpleType1() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("SJ_Type1");
         ftb.add("name", String.class);
         ftb.add("age", Integer.class);
         ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
         ftb.setDefaultGeometry("geom1");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 
-    private static SimpleFeatureType createSimpleType2() throws NoSuchAuthorityCodeException, FactoryException {
+    private static FeatureType createSimpleType2() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("SJ_Type2");
         ftb.add("type", String.class);
         ftb.add("age", Integer.class);
         ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
         ftb.setDefaultGeometry("geom1");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 
-    private static SimpleFeatureType createSimpleTypeResult() throws NoSuchAuthorityCodeException, FactoryException {
+    private static FeatureType createSimpleTypeResult() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("SJ_Type1_SJ_Type2");
         ftb.add("name", String.class);
@@ -177,7 +177,7 @@ public class SpatialJoinTest extends AbstractProcessTest {
         ftb.add("type_SJ_Type2", String.class);
         ftb.add("age_SJ_Type2", Integer.class);
         ftb.setDefaultGeometry("geom1");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 

@@ -34,7 +34,7 @@ import org.geotoolkit.process.vector.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
 
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 
@@ -50,7 +50,7 @@ public class NearestTest extends AbstractProcessTest{
 
     private static FeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
-    private static SimpleFeatureType type;
+    private static FeatureType type;
 
     public NearestTest() {
         super("nearest");
@@ -86,14 +86,14 @@ public class NearestTest extends AbstractProcessTest{
         assertTrue(featureListOut.containsAll(featureListResult));
     }
 
-    private static SimpleFeatureType createSimpleType() throws  FactoryException {
+    private static FeatureType createSimpleType() throws  FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("IntersectTest");
         ftb.add("name", String.class);
         ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
 
         ftb.setDefaultGeometry("geom1");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 

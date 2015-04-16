@@ -34,7 +34,7 @@ import org.geotoolkit.process.vector.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
 
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -51,7 +51,7 @@ public class DifferenceGeometryTest extends AbstractProcessTest {
 
     private static FeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
-    private static SimpleFeatureType type;
+    private static FeatureType type;
 
     public DifferenceGeometryTest() {
         super("diffGeometry");
@@ -86,7 +86,7 @@ public class DifferenceGeometryTest extends AbstractProcessTest {
 
     }
 
-    private static SimpleFeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
+    private static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Building");
         ftb.add("name", String.class);
@@ -94,11 +94,11 @@ public class DifferenceGeometryTest extends AbstractProcessTest {
         ftb.add("height", Integer.class);
 
         ftb.setDefaultGeometry("position");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 
-    private static SimpleFeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
+    private static FeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Building");
         ftb.add("name", String.class);
@@ -106,7 +106,7 @@ public class DifferenceGeometryTest extends AbstractProcessTest {
         ftb.add("height", Integer.class);
 
         ftb.setDefaultGeometry("position");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 

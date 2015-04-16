@@ -300,39 +300,4 @@ public final class FeatureValidationUtilities {
         }
     }
 
-    /**
-     * SimpleFeatureType comparison indicating that data from one FeatureType can
-     * be exchanged with another - specifically ensuring that the order / value is a
-     * reasonable match with the expected number of attributes on each side and the
-     * values correctly assignable.
-     * <p>
-     * After assertOrderCovered returns without error the following code will work:<pre><code>
-     * List<Object> values = feature.getAttributes();
-     * newFeature.setAttributes( values );
-     * </code></pre>
-     *
-     * @param expected
-     * @param actual
-     */
-    public static void assertOrderAssignable(final SimpleFeatureType expected, final SimpleFeatureType actual) {
-        // check feature type name
-        final String expectedName = expected.getName().getLocalPart();
-        final String actualName = actual.getName().getLocalPart();
-        if (!expectedName.equals(actualName)) {
-            throw new SimpleIllegalAttributeException("Expected '" + expectedName + "' but was supplied '" + actualName + "'.");
-        }
-        // check attributes names
-        if (expected.getAttributeCount() != actual.getAttributeCount()) {
-            throw new SimpleIllegalAttributeException("Expected " + expected.getAttributeCount() + " attributes, but was supplied " + actual.getAttributeCount());
-        }
-        for (int i = 0; i < expected.getAttributeCount(); i++) {
-            Class<?> expectedBinding = expected.getDescriptor(i).getType().getBinding();
-            Class<?> actualBinding = actual.getDescriptor(i).getType().getBinding();
-            if (!actualBinding.isAssignableFrom(expectedBinding)) {
-                String name = expected.getDescriptor(i).getLocalName();
-                throw new IllegalArgumentException("Expected " + expectedBinding.getSimpleName() + " for " + name + " but was " + actualBinding.getSimpleName());
-            }
-        }
-    }
-
 }

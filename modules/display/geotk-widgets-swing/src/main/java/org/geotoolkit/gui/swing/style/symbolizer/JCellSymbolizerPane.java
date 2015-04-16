@@ -28,6 +28,7 @@ import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display2d.ext.cellular.CellSymbolizer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.gui.swing.filter.JCQLEditor;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -39,7 +40,6 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Symbolizer;
@@ -148,7 +148,7 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
         if (candidate instanceof CoverageMapLayer) {
             setLayer((CoverageMapLayer) candidate);
             try {
-                final SimpleFeatureType sft = CellSymbolizer.buildCellType((CoverageMapLayer)this.layer);
+                final FeatureType sft = CellSymbolizer.buildCellType((CoverageMapLayer)this.layer);
                 cellMimicLayer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", sft), getStyleFactory().style());
             } catch (DataStoreException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(),ex);

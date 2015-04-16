@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2010-2015, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 
 package org.geotoolkit.style.function;
@@ -20,16 +32,16 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 
 import static org.junit.Assert.*;
 import static java.awt.Color.*;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  *
- * @author sorel
+ * @author Johann Sorel (Geomatys)
  */
 public class InterpolateTest {
 
@@ -54,7 +66,7 @@ public class InterpolateTest {
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");
         sftb.add(attribut, Double.class);
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureType sft = sftb.buildFeatureType();
 
         final FeatureBuilder sfb = new FeatureBuilder(sft);
         sfb.setPropertyValue(attribut, 0d);

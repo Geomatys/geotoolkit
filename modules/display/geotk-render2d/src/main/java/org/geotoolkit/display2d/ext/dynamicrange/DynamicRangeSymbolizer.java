@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
@@ -212,7 +212,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         
     }
 
-    public static SimpleFeatureType buildBandType(){
+    public static FeatureType buildBandType(){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("coverage");
         ftb.add(PROPERTY_MIN, double.class);
@@ -222,7 +222,7 @@ public class DynamicRangeSymbolizer extends SymbolizerType implements ExtensionS
         ftb.add(PROPERTY_HISTO, long[].class);
         ftb.add(PROPERTY_HISTO_MIN, double.class);
         ftb.add(PROPERTY_HISTO_MAX, double.class);
-        return ftb.buildSimpleFeatureType();
+        return ftb.buildFeatureType();
     }
 
 }

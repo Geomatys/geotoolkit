@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import java.util.logging.Level;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
@@ -27,7 +26,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -39,7 +37,7 @@ public class FishFeatureStore extends AbstractFeatureStore{
 
 
     private final File storage;
-    private final SimpleFeatureType type;
+    private final FeatureType type;
 
     public FishFeatureStore(ParameterValueGroup params) throws DataStoreException{
         super(params);

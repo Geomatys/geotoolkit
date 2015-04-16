@@ -34,8 +34,8 @@ import org.geotoolkit.referencing.CRS;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.spatial.Equals;
@@ -90,7 +90,7 @@ public class FeatureFilterSpatialTest {
         sftb.add(featureCode, String.class);
         sftb.add(id, String.class);
 
-        final SimpleFeatureType aggregateGeoFeatureType = sftb.buildSimpleFeatureType();
+        final FeatureType aggregateGeoFeatureType = sftb.buildFeatureType();
 
         /*********************************************************************************************
          *                            AggregateGeoFeature 1                                          *
@@ -132,7 +132,7 @@ public class FeatureFilterSpatialTest {
         sftb.add(featureRef, String.class);
         sftb.add(id, String.class);
 
-        final SimpleFeatureType entiteGeneriqueType = sftb.buildSimpleFeatureType();
+        final FeatureType entiteGeneriqueType = sftb.buildFeatureType();
 
         sfb = new FeatureBuilder(entiteGeneriqueType);
 

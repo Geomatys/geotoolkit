@@ -19,8 +19,7 @@ package org.geotoolkit.data.shapefile.indexed;
 import java.io.IOException;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.apache.sis.storage.DataStoreException;
-
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  * Reader that returns FeatureIds in a quick fashion.
@@ -44,9 +43,9 @@ public class ShapeFIDReader implements FeatureIDReader {
         this.reader = reader;
     }
 
-    public ShapeFIDReader(final SimpleFeatureType featureType,
+    public ShapeFIDReader(final FeatureType featureType,
             final IndexedShapefileAttributeReader reader) {
-        this(featureType.getTypeName(), reader);
+        this(featureType.getName().getLocalPart(), reader);
     }
 
     /**

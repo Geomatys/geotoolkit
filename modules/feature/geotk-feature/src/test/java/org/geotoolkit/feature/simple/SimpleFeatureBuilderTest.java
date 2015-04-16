@@ -83,7 +83,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         typeBuilder.add("integer", Integer.class);
         typeBuilder.add("float", Float.class);
 
-        SimpleFeatureType featureType = typeBuilder.buildSimpleFeatureType();
+        FeatureType featureType = typeBuilder.buildFeatureType();
 
         builder = new FeatureBuilder(featureType);
         builder.setValidating(true);
@@ -214,11 +214,11 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         tb.setName("http://www.nowhereinparticular.net", "AbstractThing");
         tb.setAbstract(true);
 
-        SimpleFeatureType abstractType = tb.buildSimpleFeatureType();
+        FeatureType abstractType = tb.buildFeatureType();
         tb.setName("http://www.nowhereinparticular.net", "AbstractType2");
         tb.setSuperType(abstractType);
         tb.add(new DefaultName("X"), String.class);
-        SimpleFeatureType abstractType2 = tb.buildSimpleFeatureType();
+        FeatureType abstractType2 = tb.buildFeatureType();
 
         try {
             FeatureBuilder.build(abstractType, new Object[0], null);
@@ -339,7 +339,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.setName("test");
         builder.add(attributeName, String.class);
-        SimpleFeatureType featureType = builder.buildSimpleFeatureType();
+        FeatureType featureType = builder.buildFeatureType();
 
         Feature feature = FeatureBuilder.build(featureType, new Object[]{"Value"},
                 null);
@@ -384,24 +384,24 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         builder.setName("Test");
         builder.add("name", String.class );
         builder.add("age", Double.class );
-        SimpleFeatureType test = builder.buildSimpleFeatureType();
+        FeatureType test = builder.buildFeatureType();
 
         builder.reset();
         builder.setName("Test");
         builder.add("age", Double.class );
         builder.add("name",String.class);
-        SimpleFeatureType test2 = builder.buildSimpleFeatureType();
+        FeatureType test2 = builder.buildFeatureType();
 
         builder.reset();
         builder.setName("Test");
         builder.add("name",String.class);
-        SimpleFeatureType test3 = builder.buildSimpleFeatureType();
+        FeatureType test3 = builder.buildFeatureType();
 
         builder.reset();
         builder.setName("Test");
         builder.add("name",String.class);
         builder.add("distance", Double.class );
-        SimpleFeatureType test4 = builder.buildSimpleFeatureType();
+        FeatureType test4 = builder.buildFeatureType();
 
         FeatureValidationUtilities.assertNameAssignable( test, test );
         FeatureValidationUtilities.assertNameAssignable( test, test2 );
@@ -413,7 +413,6 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         catch ( IllegalArgumentException expected ){
         }
 
-        FeatureValidationUtilities.assertOrderAssignable( test, test4 );
     }
 
 }

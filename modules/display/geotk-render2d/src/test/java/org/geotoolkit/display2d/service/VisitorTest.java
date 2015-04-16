@@ -45,6 +45,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 
@@ -52,7 +53,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.filter.identity.FeatureId;
 import static org.junit.Assert.*;
 
@@ -87,7 +87,7 @@ public class VisitorTest {
         sftb.setName("testingIntersect");
         sftb.add("geom", Polygon.class, CommonCRS.WGS84.normalizedGeographic());
         sftb.setDefaultGeometry("geom");
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureType sft = sftb.buildFeatureType();
 
         final FeatureCollection collection = FeatureStoreUtilities.collection("id", sft);
         final FeatureBuilder sfb = new FeatureBuilder(sft);

@@ -35,7 +35,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Rule;
 
@@ -164,13 +164,13 @@ public class CellRendererService extends AbstractSymbolizerRendererService<CellS
         //fake layer
         if(layer instanceof CoverageMapLayer){
             try {
-                final SimpleFeatureType sft = CellSymbolizer.buildCellType((CoverageMapLayer)layer);
+                final FeatureType sft = CellSymbolizer.buildCellType((CoverageMapLayer)layer);
                 layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", sft), GO2Utilities.STYLE_FACTORY.style());
             } catch (DataStoreException ex) {
                 //not important
             }
         }else if(layer instanceof FeatureMapLayer){
-            final SimpleFeatureType sft = CellSymbolizer.buildCellType( ((FeatureMapLayer)layer).getCollection().getFeatureType(),null);
+            final FeatureType sft = CellSymbolizer.buildCellType( ((FeatureMapLayer)layer).getCollection().getFeatureType(),null);
             layer = MapBuilder.createFeatureLayer(FeatureStoreUtilities.collection("", sft), GO2Utilities.STYLE_FACTORY.style());
         }else{
             layer = null;

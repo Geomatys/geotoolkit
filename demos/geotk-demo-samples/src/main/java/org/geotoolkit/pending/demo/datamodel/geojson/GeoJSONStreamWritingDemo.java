@@ -7,13 +7,13 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.geojson.GeoJSONStreamWriter;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.Feature;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import org.geotoolkit.feature.type.FeatureType;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -32,7 +32,7 @@ public class GeoJSONStreamWritingDemo {
         ftb.add("length", Integer.class);
         ftb.add("position", Point.class, CommonCRS.WGS84.normalizedGeographic());
         ftb.setDefaultGeometry("position");
-        final SimpleFeatureType type = ftb.buildSimpleFeatureType();
+        final FeatureType type = ftb.buildFeatureType();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final FeatureWriter writer = new GeoJSONStreamWriter(baos, type, 7);

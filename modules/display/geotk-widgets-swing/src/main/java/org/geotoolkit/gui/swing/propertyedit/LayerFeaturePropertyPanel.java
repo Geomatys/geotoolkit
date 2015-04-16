@@ -82,7 +82,7 @@ import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
@@ -556,7 +556,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
 
             final FeatureType type = source.getFeatureType();
 
-            if(type instanceof SimpleFeatureType){
+            if(FeatureTypeUtilities.isSimple(type)){
                 //use table view
                 final FeatureCollectionModel m = new FeatureCollectionModel(tab_data, layer, guiShowId.isSelected());
                 tab_data.setModel(m);

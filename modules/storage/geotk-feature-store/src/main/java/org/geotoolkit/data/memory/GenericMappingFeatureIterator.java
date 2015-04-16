@@ -26,7 +26,6 @@ import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.data.memory.mapping.FeatureMapper;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 
@@ -46,7 +45,7 @@ public class GenericMappingFeatureIterator implements FeatureIterator{
             final FeatureType originalType, final FeatureType newType,
             final Map<PropertyDescriptor,List<PropertyDescriptor>> mapping,
             final Map<PropertyDescriptor,Object> defaults){
-        this(ite,new DefaultFeatureMapper((SimpleFeatureType)originalType,(SimpleFeatureType)newType,mapping,defaults));
+        this(ite,new DefaultFeatureMapper(originalType,newType,mapping,defaults));
     }
 
     public GenericMappingFeatureIterator(final FeatureIterator ite, final FeatureMapper mapper){

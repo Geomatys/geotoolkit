@@ -27,7 +27,6 @@ import org.geotoolkit.data.geojson.binding.GeoJSONObject;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.data.geojson.utils.GeometryUtils;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.ObjectConverter;
@@ -172,7 +171,7 @@ public class GeoJSONReader implements FeatureReader {
         ComplexType complexType = attribute.getType();
 
         //clear attribute properties
-        boolean isSimple = complexType instanceof SimpleFeatureType;
+        boolean isSimple = complexType instanceof FeatureType ? FeatureTypeUtilities.isSimple((FeatureType)complexType) : false;
         if(!isSimple)attribute.getProperties().clear();
 
         PropertyType type;

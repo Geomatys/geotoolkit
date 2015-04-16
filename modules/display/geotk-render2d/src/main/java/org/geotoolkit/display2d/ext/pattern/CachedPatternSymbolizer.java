@@ -40,7 +40,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
@@ -130,7 +130,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         sftBuilder.setName("DynamicFeature");
         sftBuilder.add(geometryField, Geometry.class, coverage.getCoordinateReferenceSystem());
         sftBuilder.setDefaultGeometry(geometryField);
-        final SimpleFeatureType sft = sftBuilder.buildSimpleFeatureType();
+        final FeatureType sft = sftBuilder.buildFeatureType();
 
         final FeatureBuilder sfBuilder = new FeatureBuilder(sft);
         int id = 0;

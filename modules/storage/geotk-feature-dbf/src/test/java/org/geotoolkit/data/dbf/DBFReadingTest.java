@@ -32,7 +32,6 @@ import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import static org.junit.Assert.assertNotNull;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -99,7 +98,7 @@ public class DBFReadingTest extends AbstractReadingTests{
         buildDesc.setType(buildAtt.buildType());
         builder.add(buildDesc.buildDescriptor());
         
-        final SimpleFeatureType type3 = builder.buildSimpleFeatureType();
+        final FeatureType type3 = builder.buildFeatureType();
         
         names.add(name);
         expecteds.add(new ExpectedResult(name,type3,3,null));

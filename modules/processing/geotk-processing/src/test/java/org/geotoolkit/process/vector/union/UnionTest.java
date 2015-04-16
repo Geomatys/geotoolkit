@@ -35,7 +35,7 @@ import org.geotoolkit.process.vector.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
 
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -52,7 +52,7 @@ public class UnionTest extends AbstractProcessTest {
 
     private static FeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
-    private static SimpleFeatureType type;
+    private static FeatureType type;
 
     public UnionTest() {
         super("union");
@@ -86,7 +86,7 @@ public class UnionTest extends AbstractProcessTest {
         assertTrue(featureListOut.containsAll(featureListResult));
     }
 
-    private static SimpleFeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
+    private static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("UnionTest");
         ftb.add("name", String.class);
@@ -94,11 +94,11 @@ public class UnionTest extends AbstractProcessTest {
         ftb.add("geom2", Geometry.class, CRS.decode("EPSG:3395"));
 
         ftb.setDefaultGeometry("geom1");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 
-    private static SimpleFeatureType createSimpleType2() throws NoSuchAuthorityCodeException, FactoryException {
+    private static FeatureType createSimpleType2() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("UnionTest");
         ftb.add("name", String.class);
@@ -107,11 +107,11 @@ public class UnionTest extends AbstractProcessTest {
         ftb.add("att", Integer.class);
 
         ftb.setDefaultGeometry("geom3");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 
-    private static SimpleFeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
+    private static FeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("UnionTest-UnionTest");
         ftb.add("name", String.class);
@@ -120,7 +120,7 @@ public class UnionTest extends AbstractProcessTest {
         ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
 
         ftb.setDefaultGeometry("geom1");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 

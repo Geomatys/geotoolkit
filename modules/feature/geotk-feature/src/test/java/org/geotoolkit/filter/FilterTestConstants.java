@@ -44,7 +44,6 @@ import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
@@ -74,7 +73,7 @@ public class FilterTestConstants {
     public static final Geometry RIGHT_GEOMETRY;
     public static final Geometry WRONG_GEOMETRY;
     public static final Date DATE;
-    public static final SimpleFeatureType FEATURE_TYPE_1;
+    public static final FeatureType FEATURE_TYPE_1;
     public static final Feature FEATURE_1;
     public static final FeatureType CX_FEATURE_TYPE;
     public static final Feature CX_FEATURE;
@@ -155,7 +154,7 @@ public class FilterTestConstants {
         ftb.add("datetime2", java.sql.Timestamp.class);
         ftb.add("testNull", String.class);
         ftb.add("attribut.Géométrie", String.class);
-        final SimpleFeatureType ft = ftb.buildSimpleFeatureType();
+        final FeatureType ft = ftb.buildFeatureType();
 
         // Builds the test feature
         final Collection<Property> properties = new ArrayList<Property>();

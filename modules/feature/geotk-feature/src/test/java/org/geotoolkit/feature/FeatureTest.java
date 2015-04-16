@@ -35,7 +35,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
@@ -80,7 +79,7 @@ public class FeatureTest {
         ftb.add("string", String.class);
         ftb.setDefaultGeometry("geom");
         final FeatureType type = ftb.buildFeatureType();
-        assertTrue(type instanceof SimpleFeatureType);
+        assertTrue(type.isSimple());
         assertNotNull(type.getGeometryDescriptor());
 
 
@@ -114,7 +113,7 @@ public class FeatureTest {
         ftb.add("string", String.class, 0,Integer.MAX_VALUE,false,null);
         ftb.setDefaultGeometry("geom");
         final FeatureType type = ftb.buildFeatureType();
-        assertFalse(type instanceof SimpleFeatureType);
+        assertFalse(type.isSimple());
         assertNotNull(type.getGeometryDescriptor());
 
 
@@ -148,7 +147,7 @@ public class FeatureTest {
         ftb.add("{http://test.com}geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
         ftb.add("{http://test.com}att_String", String.class);
         ftb.setDefaultGeometry("geom");
-        final SimpleFeatureType type = ftb.buildSimpleFeatureType();
+        final FeatureType type = ftb.buildFeatureType();
 
         final Point pt = GF.createPoint(new Coordinate(50, 60));
 

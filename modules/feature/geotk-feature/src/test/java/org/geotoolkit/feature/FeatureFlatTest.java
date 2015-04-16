@@ -120,7 +120,7 @@ public class FeatureFlatTest extends TestCase {
         adb.setType(atb.buildType());
         tb.add(adb.buildDescriptor());
 
-        SimpleFeatureType test = tb.buildSimpleFeatureType();
+        FeatureType test = tb.buildFeatureType();
 
         try {
             FeatureBuilder.build(test, new Object[32],null);
@@ -145,7 +145,7 @@ public class FeatureFlatTest extends TestCase {
         tb.add("p2", Point.class, CommonCRS.WGS84.normalizedGeographic());
         tb.add("p3", Point.class, CommonCRS.WGS84.normalizedGeographic());
         tb.add("p4", Point.class, CommonCRS.WGS84.normalizedGeographic());
-        SimpleFeatureType t = tb.buildSimpleFeatureType();
+        FeatureType t = tb.buildFeatureType();
 
         Feature f = FeatureBuilder.build(t, g, null);
         Envelope b1 = gc.getEnvelopeInternal();
@@ -222,7 +222,7 @@ public class FeatureFlatTest extends TestCase {
         FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName( "different" );
         tb.add( "name", String.class );
-        SimpleFeatureType type = tb.buildSimpleFeatureType();
+        FeatureType type = tb.buildFeatureType();
 
         assertTrue(!f1.equals(FeatureBuilder.build(type, new Object[1], null)));
     }

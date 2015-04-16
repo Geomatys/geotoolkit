@@ -39,7 +39,6 @@ import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.vector.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -47,6 +46,7 @@ import org.opengis.util.FactoryException;
 
 import org.junit.Test;
 import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import static org.junit.Assert.*;
 
@@ -59,7 +59,7 @@ public class BufferTest extends AbstractProcessTest {
 
     private static FeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
-    private static SimpleFeatureType type;
+    private static FeatureType type;
     private static final Double distance = new Double(5);
 
     public BufferTest() {
@@ -136,14 +136,14 @@ public class BufferTest extends AbstractProcessTest {
         }
     }
 
-    private static SimpleFeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
+    private static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("BufferTest");
         ftb.add("name", String.class);
         ftb.add("position", Geometry.class, CRS.decode("EPSG:3395"));
 
         ftb.setDefaultGeometry("position");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 

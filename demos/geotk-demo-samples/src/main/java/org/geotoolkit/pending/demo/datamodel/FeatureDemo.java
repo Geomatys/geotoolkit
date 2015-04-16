@@ -13,7 +13,6 @@ import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -35,31 +34,16 @@ public class FeatureDemo {
     public static void main(String[] args) throws NoSuchAuthorityCodeException, FactoryException {
         Demos.init();
 
-        final SimpleFeatureType type = FeatureTypeBuilderDemo.createSimpleType();
+        final FeatureType type = FeatureTypeBuilderDemo.createSimpleType();
         final FeatureType cpxtype = FeatureTypeBuilderDemo.createComplexType();
 
-        System.out.println(usingFeatureFactory(type));
         System.out.println(usingSimpleFeatureBuilder(type));
         System.out.println(usingFeatureUtilities(type));
         System.out.println(withComplexFeatureType(cpxtype));
 
     }
 
-    private static Feature usingFeatureFactory(SimpleFeatureType type){
-
-        final Object[] values = new Object[]{
-            "placide",
-            12,
-            GF.createPoint(new Coordinate(-10, 23)),
-            new Date(),
-            56.498f
-        };
-
-        final Feature feature = LFF.createSimpleFeature(values, type, "id-0");
-        return feature;
-    }
-
-    private static Feature usingSimpleFeatureBuilder(SimpleFeatureType type){
+    private static Feature usingSimpleFeatureBuilder(FeatureType type){
         final FeatureBuilder sfb = new FeatureBuilder(type);
         sfb.setPropertyValue("name", "placide");
         sfb.setPropertyValue("length", 12);
@@ -69,7 +53,7 @@ public class FeatureDemo {
         return sfb.buildFeature("id-0");
     }
 
-    private static Feature usingFeatureUtilities(SimpleFeatureType type){
+    private static Feature usingFeatureUtilities(FeatureType type){
         final Feature feature = FeatureUtilities.defaultFeature(type, "id-0");
         feature.getProperty("name").setValue("placide");
         feature.getProperty("length").setValue(12);

@@ -618,11 +618,11 @@ public class FeatureTypeBuilder {
 
     /**
      *
-     * @param simple
+     * @param checkSimple
      * @return
      * @throws IllegalArgumentException : if asking for a simple type and one property is not simple
      */
-    private FeatureType buildFeatureType(final boolean simple) throws IllegalArgumentException{
+    public FeatureType buildFeatureType(final boolean checkSimple) throws IllegalArgumentException{
         GeometryDescriptor defaultGeometry = null;
 
         if(superType == null){
@@ -663,7 +663,7 @@ public class FeatureTypeBuilder {
         for(PropertyDescriptor desc : properties){
             //to be simple property must have min = 1 and max 1
             if(desc.getMinOccurs() != 1 || desc.getMaxOccurs() != 1){
-                if(simple){
+                if(checkSimple){
                     throw new IllegalArgumentException("Property "+desc.getName()+"must have min = 1 and max = 1");
                 }
                 isSimple = false;
@@ -690,7 +690,7 @@ public class FeatureTypeBuilder {
             }
         }
 
-        if(simple && !isSimple){
+        if(checkSimple && !isSimple){
             throw new IllegalArgumentException("Property descriptors are not all Attribut Descriptor. Can not create a simple type");
         }
 

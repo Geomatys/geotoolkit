@@ -22,7 +22,7 @@ import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.Identifier;
@@ -44,7 +44,7 @@ public class FeatureStoreWritingDemo {
         ftb.add("length", Integer.class);
         ftb.add("position", Point.class, CommonCRS.WGS84.normalizedGeographic());
         ftb.setDefaultGeometry("position");
-        final SimpleFeatureType type = ftb.buildSimpleFeatureType();
+        final FeatureType type = ftb.buildFeatureType();
 
 
         //create the featurestore ---------------------------------------------------------

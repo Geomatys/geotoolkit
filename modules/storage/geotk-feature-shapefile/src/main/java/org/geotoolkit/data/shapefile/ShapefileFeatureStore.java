@@ -66,7 +66,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
@@ -87,7 +86,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 /**
  *
@@ -420,7 +418,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             throw new DataStoreException("Type name can not be null.");
         }
 
-        if(!(featureType instanceof SimpleFeatureType)){
+        if(!featureType.isSimple()){
             throw new DataStoreException("Feature type must not be null and must be a simple feature type.");
         }
 
@@ -554,7 +552,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * @return The FeatureType that this featurestore contains.
      * @throws IOException If a type by the requested name is not present.
      */
-    private synchronized SimpleFeatureType buildSchema(final String namespace) throws DataStoreException {
+    private synchronized FeatureType buildSchema(final String namespace) throws DataStoreException {
 
         //read all attributes///////////////////////////////////////////////////
         final AccessManager locker = shpFiles.createLocker();

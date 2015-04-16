@@ -36,7 +36,7 @@ import org.geotoolkit.process.vector.AbstractProcessTest;
 
 
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -54,7 +54,7 @@ public class MaxLimitTest extends AbstractProcessTest {
 
     private static FeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
-    private static SimpleFeatureType type;
+    private static FeatureType type;
 
     public MaxLimitTest() {
         super("maxlimit");
@@ -80,14 +80,14 @@ public class MaxLimitTest extends AbstractProcessTest {
         assertEquals(5, featureListOut.size());
     }
 
-    private static SimpleFeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
+    private static FeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("MaxTest");
         ftb.add("name", String.class);
         ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
 
         ftb.setDefaultGeometry("geom1");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 

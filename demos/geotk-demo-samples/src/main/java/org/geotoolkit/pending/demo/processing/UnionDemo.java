@@ -17,7 +17,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
+import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -28,7 +28,7 @@ public class UnionDemo {
    
     private static FeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
-    private static SimpleFeatureType type;
+    private static FeatureType type;
     
     public static void main(String[] args) throws ProcessException, NoSuchIdentifierException{
         Demos.init();        
@@ -71,7 +71,7 @@ public class UnionDemo {
      * @throws NoSuchAuthorityCodeException
      * @throws FactoryException 
      */
-    private static SimpleFeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
+    private static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("UnionTest");
         ftb.add("name", String.class);
@@ -79,7 +79,7 @@ public class UnionDemo {
         ftb.add("geom2", Geometry.class, CRS.decode("EPSG:3395"));
 
         ftb.setDefaultGeometry("geom1");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 
@@ -89,7 +89,7 @@ public class UnionDemo {
      * @throws NoSuchAuthorityCodeException
      * @throws FactoryException 
      */
-    private static SimpleFeatureType createSimpleType2() throws NoSuchAuthorityCodeException, FactoryException {
+    private static FeatureType createSimpleType2() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("UnionTest");
         ftb.add("name", String.class);
@@ -98,7 +98,7 @@ public class UnionDemo {
         ftb.add("att", Integer.class);
 
         ftb.setDefaultGeometry("geom3");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 

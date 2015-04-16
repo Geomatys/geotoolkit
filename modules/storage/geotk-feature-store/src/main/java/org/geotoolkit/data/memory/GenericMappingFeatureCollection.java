@@ -33,7 +33,6 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -58,8 +57,8 @@ public class GenericMappingFeatureCollection extends AbstractCollection<Feature>
             final Map<PropertyDescriptor,Object> defaults){
         this(original,
                 new DefaultFeatureMapper(
-                        (SimpleFeatureType)original.getFeatureType(),
-                        (SimpleFeatureType)newType,
+                        original.getFeatureType(),
+                        newType,
                         mapping,
                         defaults)
                 );

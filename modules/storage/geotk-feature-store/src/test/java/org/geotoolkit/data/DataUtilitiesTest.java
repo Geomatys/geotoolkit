@@ -27,7 +27,6 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 
@@ -53,17 +52,17 @@ public class DataUtilitiesTest {
         builder.reset();
         builder.setName(name1);
         builder.add("att_string", String.class);
-        SimpleFeatureType sft1 = builder.buildSimpleFeatureType();
+        FeatureType sft1 = builder.buildFeatureType();
 
         builder.reset();
         builder.setName(name2);
         builder.add("att_string", String.class);
-        SimpleFeatureType sft2 = builder.buildSimpleFeatureType();
+        FeatureType sft2 = builder.buildFeatureType();
 
         builder.reset();
         builder.setName(name3);
         builder.add("att_string", String.class);
-        SimpleFeatureType sft3 = builder.buildSimpleFeatureType();
+        FeatureType sft3 = builder.buildFeatureType();
 
         store.createFeatureType(sft1.getName(), sft1);
         store.createFeatureType(sft2.getName(), sft2);

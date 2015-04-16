@@ -34,10 +34,9 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 import org.junit.Test;
-
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 import static org.junit.Assert.*;
 
@@ -69,9 +68,9 @@ public class FeatureTypeBuilderTest {
 
         //both should create a simple feature type
         FeatureType ft1 = ftb.buildFeatureType();
-        SimpleFeatureType ft2 = ftb.buildSimpleFeatureType();
+        FeatureType ft2 = ftb.buildFeatureType();
 
-        assertTrue(ft1 instanceof SimpleFeatureType);
+        assertTrue(ft1.isSimple());
         assertEquals(ft1, ft2);
     }
 
@@ -87,13 +86,7 @@ public class FeatureTypeBuilderTest {
         ftb.add("att", String.class,0,1,true,null);
 
         ft = ftb.buildFeatureType();
-        assertFalse(ft instanceof SimpleFeatureType);
-        try{
-            ft = ftb.buildSimpleFeatureType();
-            fail("should have raised an error, type is not simple");
-        }catch(IllegalArgumentException ex){
-            //ok
-        }
+        assertFalse(ft.isSimple());
 
         ////////////////////////////////////////////////////////////////////////
         // if one attribut maximum is more than 1 , it's not a simple type /////
@@ -102,13 +95,7 @@ public class FeatureTypeBuilderTest {
         ftb.add("att", String.class,1,12,true,null);
 
         ft = ftb.buildFeatureType();
-        assertFalse(ft instanceof SimpleFeatureType);
-        try{
-            ft = ftb.buildSimpleFeatureType();
-            fail("should have raised an error, type is not simple");
-        }catch(IllegalArgumentException ex){
-            //ok
-        }
+        assertFalse(ft.isSimple());
 
         ////////////////////////////////////////////////////////////////////////
         // if one attribut maximum is more than 1 , it's not a simple type /////
@@ -117,13 +104,7 @@ public class FeatureTypeBuilderTest {
         ftb.add("att", String.class,1,12,true,null);
 
         ft = ftb.buildFeatureType();
-        assertFalse(ft instanceof SimpleFeatureType);
-        try{
-            ft = ftb.buildSimpleFeatureType();
-            fail("should have raised an error, type is not simple");
-        }catch(IllegalArgumentException ex){
-            //ok
-        }
+        assertFalse(ft.isSimple());
 
         ////////////////////////////////////////////////////////////////////////
         // if one attribut is complex it's not a simple type ///////////////////
@@ -137,13 +118,7 @@ public class FeatureTypeBuilderTest {
         ftb.add(ct,DefaultName.valueOf("att"),null,1,1,true,null);
 
         ft = ftb.buildFeatureType();
-        assertFalse(ft instanceof SimpleFeatureType);
-        try{
-            ft = ftb.buildSimpleFeatureType();
-            fail("should have raised an error, type is not simple");
-        }catch(IllegalArgumentException ex){
-            //ok
-        }
+        assertFalse(ft.isSimple());
 
     }
 

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.util.converter;
 
-import org.geotoolkit.util.converter.StringToFeatureTypeConverter;
 import com.vividsolutions.jts.geom.Point;
 
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -26,7 +25,6 @@ import org.apache.sis.util.ObjectConverter;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 
 import org.junit.Test;
 import org.geotoolkit.feature.type.FeatureType;
@@ -60,7 +58,7 @@ public class FeatureTypeConverterTest {
         ftb.add("position", Point.class, CRS.decode("EPSG:3395"));
 
         ftb.setDefaultGeometry("position");
-        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        final FeatureType sft = ftb.buildFeatureType();
         return sft;
     }
 }

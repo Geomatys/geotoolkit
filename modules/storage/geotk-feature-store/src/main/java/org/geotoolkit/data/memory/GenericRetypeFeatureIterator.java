@@ -30,7 +30,6 @@ import org.apache.sis.util.Classes;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 
@@ -114,7 +113,7 @@ public abstract class GenericRetypeFeatureIterator<R extends FeatureIterator> im
      *
      * @throws IllegalArgumentException if unable to provide a mapping
      */
-    protected static int[] typeIndexes(final SimpleFeatureType original, final SimpleFeatureType target) {
+    protected static int[] typeIndexes(final FeatureType original, final FeatureType target) {
 
         if (target.equals(original)) {
             throw new IllegalArgumentException("FeatureReader already produces contents with the correct schema");

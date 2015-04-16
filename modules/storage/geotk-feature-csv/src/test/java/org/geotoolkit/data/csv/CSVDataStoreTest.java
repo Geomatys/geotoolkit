@@ -37,7 +37,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -86,7 +85,7 @@ public class CSVDataStoreTest {
         ftb.add("doubleProp", Double.class);
         ftb.add("stringProp", String.class);
         ftb.add("geometryProp", Geometry.class, CommonCRS.WGS84.normalizedGeographic());
-        SimpleFeatureType sft = ftb.buildSimpleFeatureType();
+        FeatureType sft = ftb.buildFeatureType();
         ds.createFeatureType(sft.getName(), sft);
         Name name = ds.getNames().iterator().next();
 

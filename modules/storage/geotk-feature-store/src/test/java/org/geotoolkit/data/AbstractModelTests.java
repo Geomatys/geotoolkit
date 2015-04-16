@@ -22,10 +22,10 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.filter.FilterFactory;
 
@@ -73,7 +73,7 @@ public abstract class AbstractModelTests {
             for(int i=0; i<bindinds.size(); i++){
                 sftb.add("att"+i, bindinds.get(i));
             }            
-            final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+            final FeatureType sft = sftb.buildFeatureType();
 
             //add listeners
             StorageCountListener storeListen = new StorageCountListener();
@@ -83,7 +83,7 @@ public abstract class AbstractModelTests {
 
             store.createFeatureType(sft.getName(), sft);
 
-            final SimpleFeatureType type = (SimpleFeatureType) store.getFeatureType(name);
+            final FeatureType type = store.getFeatureType(name);
             assertNotNull(type);
             assertEquals(sft, type);
 
