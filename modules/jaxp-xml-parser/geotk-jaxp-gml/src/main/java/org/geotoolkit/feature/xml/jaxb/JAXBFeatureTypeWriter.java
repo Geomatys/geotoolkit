@@ -20,6 +20,7 @@ package org.geotoolkit.feature.xml.jaxb;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,6 +55,7 @@ import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.OperationDescriptor;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
+import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -163,8 +165,9 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
             } else {
                 schema.addImport(GML_IMPORT_311);
             }
+            final Set<String> alreadyWritten = new HashSet<>();
             for (FeatureType ftype : featureTypes) {
-                fillSchemaWithFeatureType(ftype, schema, true);
+                fillSchemaWithFeatureType(ftype, schema, true, alreadyWritten);
             }
         }
         return schema;
@@ -183,7 +186,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
             } else {
                 schema.addImport(GML_IMPORT_311);
             }
-            fillSchemaWithFeatureType(featureType, schema, true);
+            fillSchemaWithFeatureType(featureType, schema, true, new HashSet<String>());
             return schema;
         }
         return null;
@@ -198,15 +201,16 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
             } else {
                 schema.addImport(GML_IMPORT_311);
             }
+            final Set<String> alreadyWritten = new HashSet<>();
             for (FeatureType ftype : featureTypes) {
-                fillSchemaWithFeatureType(ftype, schema, false);
+                fillSchemaWithFeatureType(ftype, schema, false, alreadyWritten);
             }
             return schema;
         }
         return null;
     }
 
-    private void fillSchemaWithFeatureType(final FeatureType featureType, final Schema schema, boolean addTopElement) {
+    private void fillSchemaWithFeatureType(final FeatureType featureType, final Schema schema, boolean addTopElement, Set<String> alreadyWritten) {
         final String typeNamespace    = featureType.getName().getNamespaceURI();
         final String elementName      = featureType.getName().getLocalPart();
         final String typeName         = elementName + "Type";
@@ -220,15 +224,18 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
             }
             schema.addElement(topElement);
         }
-        Set<String> alreadyWritten = new HashSet<>();
+        boolean ar = alreadyWritten.add(typeName);
 
         final ExplicitGroup sequence  = new ExplicitGroup();
+        final List<Attribute> attributes = new ArrayList<>();
         for (final PropertyDescriptor pdesc : featureType.getDescriptors()) {
-            writeProperty(pdesc, sequence, schema, alreadyWritten);
+            writeProperty(pdesc, sequence, schema, attributes, alreadyWritten);
         }
-        if (addTopElement) {
-            final ComplexContent content  = getComplexContent(sequence);
-            schema.addComplexType(1, new TopLevelComplexType(typeName, content));
+        if (addTopElement && ar) {
+            final ComplexContent content      = getComplexContent(sequence);
+            final TopLevelComplexType tlcType = new TopLevelComplexType(typeName, content);
+            tlcType.getAttributeOrAttributeGroup().addAll(attributes);
+            schema.addComplexType(1, tlcType);
         }
     }
 
@@ -247,18 +254,20 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
 
 
         //complex type
-        final ExplicitGroup sequence  = new ExplicitGroup();
+        final ExplicitGroup sequence      = new ExplicitGroup();
+        final TopLevelComplexType tlcType = new TopLevelComplexType(nameWithSuffix, sequence);
         if (write) {
-            schema.addComplexType(new TopLevelComplexType(nameWithSuffix, sequence));
+            schema.addComplexType(tlcType);
         }
-
+        final List<Attribute> attributes = new ArrayList<>();
         for (final PropertyDescriptor pdesc : ctype.getDescriptors()) {
-            writeProperty(pdesc, sequence, schema, alreadyWritten);
+            writeProperty(pdesc, sequence, schema, attributes, alreadyWritten);
         }
+        tlcType.getAttributeOrAttributeGroup().addAll(attributes);
 
     }
 
-    private void writeProperty(final PropertyDescriptor pdesc, final ExplicitGroup sequence, final Schema schema, final Set<String> alreadyWritten) {
+    private void writeProperty(final PropertyDescriptor pdesc, final ExplicitGroup sequence, final Schema schema, final List<Attribute> attributes, final Set<String> alreadyWritten) {
         if(pdesc instanceof OperationDescriptor){
             //operation types are not written in the xsd.
             return;
@@ -276,7 +285,19 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
         } else {
             maxOcc = Integer.toString(maxOccurs);
         }
-        sequence.addElement(new LocalElement(name, type, minOccurs, maxOcc, nillable));
+        if (name.startsWith("@")) {
+            Attribute att = new Attribute();
+            att.setName(name.substring(1));
+            att.setType(type);
+            if (minOccurs == 0) {
+                att.setUse("optional");
+            } else {
+                att.setUse("required");
+            }
+            attributes.add(att);
+        } else {
+            sequence.addElement(new LocalElement(name, type, minOccurs, maxOcc, nillable));
+        }
 
         // for a complexType we have to add 2 complexType (PropertyType and type)
         if (pType instanceof ComplexType) {
