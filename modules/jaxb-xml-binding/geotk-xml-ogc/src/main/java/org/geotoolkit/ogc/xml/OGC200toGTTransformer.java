@@ -102,7 +102,10 @@ public class OGC200toGTTransformer {
 
         if (ops instanceof org.geotoolkit.ogc.xml.v200.BinarySpatialOpType) {
             final org.geotoolkit.ogc.xml.v200.BinarySpatialOpType binary = (org.geotoolkit.ogc.xml.v200.BinarySpatialOpType) ops;
-            final Object geom = binary.getAny();
+            Object geom = binary.getAny();
+            if (geom instanceof JAXBElement) {
+                geom = ((JAXBElement)geom).getValue();
+            }
 
             final Expression left = visitPropertyName(binary.getValueReference());
             final Expression right;
