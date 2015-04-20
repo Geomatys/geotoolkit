@@ -68,7 +68,7 @@ import org.geotoolkit.display.shape.XRectangle2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.Envelope2D;
-import org.geotoolkit.geometry.Envelopes;
+import org.apache.sis.geometry.Envelopes;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
@@ -656,7 +656,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
                 crs = dataCRS; // 'dataCRS' is already 2D.
             } else if (dataCRS != null && !CRS.equalsIgnoreMetadata(dataCRS, crs)) {
                 final CoordinateOperation op = createOperation(dataCRS, crs);
-                geodeticBounds = Envelopes.transform(op, geodeticBounds, geodeticBounds);
+                geodeticBounds = org.geotoolkit.geometry.Envelopes.transform(op, geodeticBounds, geodeticBounds);
                 ensureNonEmpty(geodeticBounds);
             }
             validEnvelope = new Envelope2D(crs, geodeticBounds);

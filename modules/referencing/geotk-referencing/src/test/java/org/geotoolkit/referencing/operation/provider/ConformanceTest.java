@@ -105,7 +105,7 @@ public final strictfp class ConformanceTest extends ReferencingTestBase {
         final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
 skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(SingleOperation.class)) {
             for (final Identifier id : method.getIdentifiers()) {
-                if (Citations.identifierMatches(authority, id.getAuthority())) {
+                if (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, id.getAuthority())) {
                     final String code = id.getCode().trim();
                     if (code.equals("9602") && codes.containsKey(code)) {
                         /*
@@ -123,7 +123,7 @@ skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(Single
 //            assertTrue("In Geotk implementation, the aliases shall contain the primary name as a " +
 //                    "GenericName in addition of Identifier", aliases.contains(method.getName()));
             for (final GenericName alias : aliases) {
-                if (Citations.identifierMatches(authority, alias.head().toString())) {
+                if (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, alias.head().toString())) {
                     final String name = alias.tip().toString().trim();
                     if (ArraysExt.contains(IGNORE, name)) {
                         assertTrue(name, ((Deprecable) alias).isDeprecated());

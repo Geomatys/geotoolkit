@@ -55,7 +55,7 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
-import org.geotoolkit.geometry.Envelopes;
+import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -131,7 +131,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * to define an applet of black colors to replace with alpha data.
      */
     private static final int COLOR_TOLERANCE = 13;
-    
+
     public DefaultRasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){
         super(service,symbol,context);
     }
@@ -189,7 +189,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     }
                 }
             }
-            
+
             /*
              * If we haven't got any reprojection we delegate affine transformation to java2D
              * we must switch to objectiveCRS for grid coverage
@@ -343,7 +343,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     public static  double[] fixResolutionWithCRS(final double[] resolution, final CoordinateReferenceSystem coverageCRS) {
         assert resolution.length == 2; //-- resolution from rendering context (2D space)
-        if (coverageCRS == null) return resolution; 
+        if (coverageCRS == null) return resolution;
         final int minOrdi      = CRSUtilities.firstHorizontalAxis(coverageCRS);
         final double[] tempRes = new double[coverageCRS.getCoordinateSystem().getDimension()];
         Arrays.fill(tempRes, 1);
@@ -486,7 +486,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final CoordinateReferenceSystem demCRS = demGridGeom.getCoordinateReferenceSystem2D();
 
         final MathTransform demCRSToCov = CRS.findMathTransform(demCRS, covCRS); // dem -> cov
-        
+
         if (demCRSToCov.isIdentity())
             return dem;
 
@@ -705,14 +705,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
     /**
      * {@inheritDoc }
-     * 
+     *
      * Prepare coverage for Raster rendering.
      */
     @Override
     protected GridCoverage2D prepareCoverageToResampling(final GridCoverage2D coverageSource, final CachedRasterSymbolizer symbolizer) {
         return getReadyToResampleCoverage(coverageSource, symbolizer.getSource());
     }
-    
+
     /**
      * Analyse input coverage to know if we need to add an alpha channel. Alpha channel is required in photographic
      * coverage case, in order for the resample to deliver a ready to style image.
@@ -734,7 +734,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final GridCoverage2D photoCvg = source.view(ViewType.PHOTOGRAPHIC);
             RenderedImage img = photoCvg.getRenderedImage();
             final int datatype = img.getSampleModel().getDataType();
-            if (datatype != DataBuffer.TYPE_BYTE && datatype != DataBuffer.TYPE_USHORT) return source; 
+            if (datatype != DataBuffer.TYPE_BYTE && datatype != DataBuffer.TYPE_USHORT) return source;
             RenderedImage imga = forceAlpha(img);
 
             if (imga != img) {
@@ -748,7 +748,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             }
         }
     }
-    
+
      /**
      * Add an alpha band to the image and remove any black border if asked.
      *
@@ -764,7 +764,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }
         return img;
     }
-    
+
     /**
      * Remove black border of an ARGB image to replace them with transparent pixels.
      * @param toFilter Image to ermove black border from.
@@ -797,11 +797,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     }
 
     /**
-     * Returns a {@link GridCoverage2D} which contain band extracted from sourceCoverage 
+     * Returns a {@link GridCoverage2D} which contain band extracted from sourceCoverage
      * at band indices given by indice array parameter.<br><br>
-     * 
+     *
      * note : out coverage will have same band number than indice array length.
-     * 
+     *
      * @param sourceCoverage coverage which contain all needed band.
      * @param indices an array which contain band index of sourceCoverage to build another {@link GridCoverage2D}.
      * @return a new {@link GridCoverage2D} with extracted band from sourceCoverage at indice given by indice array.

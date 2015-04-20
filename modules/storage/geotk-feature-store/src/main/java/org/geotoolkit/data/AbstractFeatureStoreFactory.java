@@ -63,7 +63,7 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
         MultiLineString.class,
         MultiPolygon.class
     };
-    
+
     private static final String BUNDLE_PATH = "org/geotoolkit/data/bundle";
 
     /**

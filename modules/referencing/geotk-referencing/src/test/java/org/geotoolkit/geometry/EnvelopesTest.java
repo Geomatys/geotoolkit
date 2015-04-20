@@ -114,12 +114,12 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
         envelopeλφ.setCoordinateReferenceSystem(sourceCRS);
         assertRectangleEquals(rectλφ, envelopeλφ.toRectangle2D(), GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
 
-        final GeneralEnvelope envelopeXY = wrap(Envelopes.transform(transformNo2D, envelopeλφ));
+        final GeneralEnvelope envelopeXY = wrap(org.apache.sis.geometry.Envelopes.transform(transformNo2D, envelopeλφ));
         envelopeXY.setCoordinateReferenceSystem(targetCRS);
         assertRectangleEquals(rectXY, envelopeXY.toRectangle2D(), PROJECTED_CENTIMETRE, PROJECTED_CENTIMETRE);
-        assertTrue(envelopeXY.equals(Envelopes.transform(conversion, envelopeλφ), EPS, true));
+        assertTrue(envelopeXY.equals(org.apache.sis.geometry.Envelopes.transform(conversion, envelopeλφ), EPS, true));
 
-        final GeneralEnvelope envelopeBack = wrap(Envelopes.transform(transformNo2D.inverse(), envelopeXY));
+        final GeneralEnvelope envelopeBack = wrap(org.apache.sis.geometry.Envelopes.transform(transformNo2D.inverse(), envelopeXY));
         envelopeBack.setCoordinateReferenceSystem(sourceCRS);
         assertRectangleEquals(rectBack, envelopeBack.toRectangle2D(), GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
 
@@ -168,7 +168,7 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
          */
         Rectangle2D actual = Envelopes.transform(transform, rectangle, null);
         assertRectangleEquals(expected, actual, GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
-        assertRectangleEquals(actual, wrap(Envelopes.transform(transformNo2D, new GeneralEnvelope(rectangle))).toRectangle2D(), EPS, EPS);
+        assertRectangleEquals(actual, wrap(org.apache.sis.geometry.Envelopes.transform(transformNo2D, new GeneralEnvelope(rectangle))).toRectangle2D(), EPS, EPS);
         /*
          * Using the transform(CoordinateOperation, ...) method,
          * the singularity at South pole is taken in account.
@@ -176,7 +176,7 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
         expected = XRectangle2D.createFromExtremums(-180, -90, 180, -40.905775004205864);
         actual   = Envelopes.transform(conversion, rectangle, actual);
         assertRectangleEquals(expected, actual, GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
-        assertRectangleEquals(actual, wrap(Envelopes.transform(conversionNo2D, new GeneralEnvelope(rectangle))).toRectangle2D(), EPS, EPS);
+        assertRectangleEquals(actual, wrap(org.apache.sis.geometry.Envelopes.transform(conversionNo2D, new GeneralEnvelope(rectangle))).toRectangle2D(), EPS, EPS);
         /*
          * Another rectangle containing the South pole, but this time the south
          * pole is almost in a corner of the rectangle
@@ -185,7 +185,7 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
         expected  = XRectangle2D.createFromExtremums(-180, -90, 180, -41.03163170198091);
         actual    = Envelopes.transform(conversion, rectangle, actual);
         assertRectangleEquals(expected, actual, GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
-        assertRectangleEquals(actual, wrap(Envelopes.transform(conversionNo2D, new GeneralEnvelope(rectangle))).toRectangle2D(), EPS, EPS);
+        assertRectangleEquals(actual, wrap(org.apache.sis.geometry.Envelopes.transform(conversionNo2D, new GeneralEnvelope(rectangle))).toRectangle2D(), EPS, EPS);
         /*
          * Another rectangle with the South pole close to the border.
          * This test should execute the step #3 in the transform method code.
@@ -194,7 +194,7 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
         expected  = XRectangle2D.createFromExtremums(-180, -90, 180, -64.3861643256928);
         actual    = Envelopes.transform(conversion, rectangle, actual);
         assertRectangleEquals(expected, actual, GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
-        assertRectangleEquals(actual, wrap(Envelopes.transform(conversionNo2D, new GeneralEnvelope(rectangle))).toRectangle2D(), EPS, EPS);
+        assertRectangleEquals(actual, wrap(org.apache.sis.geometry.Envelopes.transform(conversionNo2D, new GeneralEnvelope(rectangle))).toRectangle2D(), EPS, EPS);
     }
 
     /**
@@ -219,7 +219,7 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
         assertTrue(env.isEmpty());
         final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
         assertSame(CommonCRS.WGS84.normalizedGeographic(), crs2D);
-        final Envelope env2D = Envelopes.transform(env, crs2D);
+        final Envelope env2D = org.apache.sis.geometry.Envelopes.transform(env, crs2D);
         /*
          * If the referencing framework has selected the CopyTransform implementation
          * as expected, then the envelope ordinates should not be NaN.

@@ -23,14 +23,9 @@ package org.geotoolkit.parameter;
 import java.util.Map;
 import java.util.Collections;
 import net.jcip.annotations.Immutable;
-import org.opengis.metadata.citation.Citation;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
-import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.metadata.Citations;
 
 
 /**
@@ -72,37 +67,7 @@ public class DefaultParameterDescriptorGroup extends org.apache.sis.parameter.De
     public DefaultParameterDescriptorGroup(final String name,
                                            final GeneralParameterDescriptor... parameters)
     {
-        this(Collections.singletonMap(NAME_KEY, name), parameters);
-    }
-
-    /**
-     * Constructs a parameter group from a name and an authority.
-     * This parameter group will be required exactly once.
-     *
-     * @param authority The authority (e.g. {@link Citations#OGC OGC}).
-     * @param name The parameter group name.
-     * @param parameters The {@linkplain #descriptors() parameter descriptors} for this group.
-     *
-     * @since 2.2
-     */
-    public DefaultParameterDescriptorGroup(final Citation authority, final String name,
-                                           final GeneralParameterDescriptor... parameters)
-    {
-        this(Collections.singletonMap(NAME_KEY, new NamedIdentifier(authority, name)), parameters);
-    }
-
-    /**
-     * Constructs a parameter group from a set of properties.
-     * This parameter group will be required exactly once. The properties map is given unchanged to
-     * the {@linkplain AbstractIdentifiedObject#AbstractIdentifiedObject(Map) super-class constructor}.
-     *
-     * @param properties Set of properties. Should contains at least {@code "name"}.
-     * @param parameters The {@linkplain #descriptors() parameter descriptors} for this group.
-     */
-    public DefaultParameterDescriptorGroup(final Map<String,?> properties,
-                                           final GeneralParameterDescriptor... parameters)
-    {
-        this(properties, 1, 1, parameters);
+        this(Collections.singletonMap(NAME_KEY, name), 1, 1, parameters);
     }
 
     /**
@@ -123,28 +88,5 @@ public class DefaultParameterDescriptorGroup extends org.apache.sis.parameter.De
                                            GeneralParameterDescriptor... parameters)
     {
         super(properties, minimumOccurs, maximumOccurs, parameters);
-    }
-
-    /**
-     * Creates a new instance of {@linkplain ParameterGroup parameter value group}
-     * initialized with the {@linkplain ParameterDescriptor#getDefaultValue default values}.
-     * The {@linkplain ParameterGroup#getDescriptor parameter descriptor} for the
-     * created group will be {@code this} object.
-     */
-    @Override
-    public ParameterValueGroup createValue() {
-        return new ParameterGroup(this);
-    }
-
-    /**
-     * Returns a string representation of this descriptor. The default implementation
-     * delegates to {@link ParameterWriter#toString(ParameterDescriptorGroup)}, which
-     * will format this descriptor in a table.
-     *
-     * @since 3.17
-     */
-    @Override
-    public String toString() {
-        return ParameterWriter.toString(this);
     }
 }

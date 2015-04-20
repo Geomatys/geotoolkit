@@ -35,7 +35,7 @@ import org.opengis.metadata.spatial.PixelOrientation; // For javadoc
 
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.geometry.Envelopes;
+import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;

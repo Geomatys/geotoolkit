@@ -25,16 +25,12 @@ import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
-
 import javax.measure.unit.Unit;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
-
-import org.opengis.util.CodeList;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
-
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.storage.IOUtilities;
 
@@ -73,7 +69,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.20
  *
  * @see DefaultParameterDescriptor
  * @see ParameterGroup
@@ -131,72 +126,6 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         super(descriptor);
         unit = descriptor.getUnit();
         setValue(value);
-    }
-
-    /**
-     * Constructs a parameter from the specified name and value.
-     *
-     * {@section Proposed alternative}
-     * This convenience constructor creates a {@link DefaultParameterDescriptor} object. But
-     * if such descriptor is available, then the preferred way to get a {@code ParameterValue}
-     * is to invoke {@link ParameterDescriptor#createValue()}.
-     *
-     * @param  name  The parameter name.
-     * @param  value The parameter value.
-     * @return A new parameter instance for the given name and value.
-     *
-     * @since 2.5
-     *
-     * @deprecated Moved to {@link Parameters}
-     */
-    @Deprecated
-    public static Parameter<Integer> create(final String name, final int value) {
-        return Parameters.create(name, value);
-    }
-
-    /**
-     * Constructs a parameter from the specified name, value and unit.
-     *
-     * {@section Proposed alternative}
-     * This convenience constructor creates a {@link DefaultParameterDescriptor} object. But
-     * if such descriptor is available, then the preferred way to get a {@code ParameterValue}
-     * is to invoke {@link ParameterDescriptor#createValue()}.
-     *
-     * @param name  The parameter name.
-     * @param value The parameter value.
-     * @param unit  The unit for the parameter value.
-     * @return A new parameter instance for the given name and value.
-     *
-     * @since 2.5
-     *
-     * @deprecated Moved to {@link Parameters}
-     */
-    @Deprecated
-    public static Parameter<Double> create(final String name, final double value, Unit<?> unit) {
-        return Parameters.create(name, value, unit);
-    }
-
-    /**
-     * Constructs a parameter from the specified code list.
-     *
-     * {@section Proposed alternative}
-     * This convenience constructor creates a {@link DefaultParameterDescriptor} object. But
-     * if such descriptor is available, then the preferred way to get a {@code ParameterValue}
-     * is to invoke {@link ParameterDescriptor#createValue()}.
-     *
-     * @param  <T>   The parameter type.
-     * @param  name  The parameter name.
-     * @param  type  The parameter type.
-     * @param  value The parameter value.
-     * @return A new parameter instance for the given name and value.
-     *
-     * @since 2.5
-     *
-     * @deprecated Moved to {@link Parameters}
-     */
-    @Deprecated
-    public static <T extends CodeList<T>> Parameter<T> create(final String name, final Class<T> type, final T value) {
-        return Parameters.create(name, type, value);
     }
 
     /**

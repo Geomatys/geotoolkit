@@ -29,7 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.jdesktop.swingx.JXList;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
@@ -38,16 +38,16 @@ import org.opengis.util.FactoryException;
 
 /**
  * CRS list
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
 public class JCRSList extends JComponent{
-    
-    private CodeList codeList;    
+
+    private CodeList codeList;
     private JXList liste = new JXList();
     private CoordinateReferenceSystem selectedCRS = null;
-    
+
     public JCRSList(){
 
         //obtain the factory only for epsg codes
@@ -61,18 +61,18 @@ public class JCRSList extends JComponent{
         }catch(FactoryException e){
             e.printStackTrace();
         }
-                        
+
         liste.getSelectionModel().setSelectionMode(liste.getSelectionModel().SINGLE_SELECTION);
-        
+
         setLayout(new GridLayout());
         add(BorderLayout.CENTER,new JScrollPane(liste));
-        
+
         liste.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int index = e.getFirstIndex();
-                
+
                 if(index>=0){
                     try{
                         selectedCRS = (CoordinateReferenceSystem) getSelectedItem();
@@ -81,36 +81,36 @@ public class JCRSList extends JComponent{
                     }
                 }
             }
-        });        
-        
+        });
+
     }
-    
+
     public void addListSelectionListener(final ListSelectionListener lst){
         liste.getSelectionModel().addListSelectionListener(lst);
     }
-    
+
     public void removeListSelectionListener(final ListSelectionListener lst){
         liste.getSelectionModel().removeListSelectionListener(lst);
     }
-    
-    
+
+
     public void setCRS(final CoordinateReferenceSystem crs){
-        selectedCRS = crs;       
+        selectedCRS = crs;
     }
-            
-    
+
+
     public void searchCRS(final String searchword){
         filter(searchword);
     }
-    
+
     public CoordinateReferenceSystem getCRS(){
         return selectedCRS;
     }
-    
-    
+
+
     /**
      * Returns the code for the selected object, or {@code null} if none.
-     * @return 
+     * @return
      */
     public String getSelectedCode() {
         final Code code = (Code) liste.getSelectedValue();
@@ -120,15 +120,15 @@ public class JCRSList extends JComponent{
     /**
      * Returns the selected object, usually as a {@link CoordinateReferenceSystem}.
      *
-     * @return 
+     * @return
      * @throws FactoryException if the factory can't create the selected object.
      */
     public IdentifiedObject getSelectedItem() throws FactoryException {
         final String code = getSelectedCode();
         return (code != null) ? codeList.getFactory().createObject(code) : null;
     }
-    
-    
+
+
     /**
      * Display only the CRS name that contains the specified keywords. The {@code keywords}
      * argument is a space-separated list, usually provided by the user after he pressed the
@@ -160,9 +160,9 @@ public class JCRSList extends JComponent{
         }
         liste.setModel(model);
     }
-    
-    
-    
+
+
+
     /**
      * Returns a collection containing only the factories of the specified authority.
      */
@@ -177,5 +177,5 @@ public class JCRSList extends JComponent{
         }
         return filtered;
     }
-    
+
 }

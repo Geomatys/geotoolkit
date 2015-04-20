@@ -93,7 +93,7 @@ public final strictfp class DirectPostgisFactoryTest {
             /*
              * Test general information.
              */
-            assertEquals("EPSG", Citations.getIdentifier(factory.getAuthority()));
+            assertEquals("EPSG", org.apache.sis.metadata.iso.citation.Citations.getIdentifier(factory.getAuthority()));
             assertTrue(factory.getBackingStoreDescription().contains("PostgreSQL"));
             /*
              * Test fetching a few CRS.
@@ -152,7 +152,7 @@ public final strictfp class DirectPostgisFactoryTest {
             /*
              * Test general information.
              */
-            assertEquals("EPSG", Citations.getIdentifier(factory.getAuthority()));
+            assertEquals("EPSG", org.apache.sis.metadata.iso.citation.Citations.getIdentifier(factory.getAuthority()));
             assertTrue(factory.getBackingStoreDescription().contains("PostgreSQL"));
             /*
              * Test fetching a few CRS.

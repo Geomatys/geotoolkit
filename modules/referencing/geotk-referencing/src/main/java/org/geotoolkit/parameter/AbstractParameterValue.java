@@ -31,20 +31,9 @@ import org.geotoolkit.internal.Listeners;
  * for {@link ChangeListener} notifications. Those change listeners are not included in the
  * serialization neither in {@linkplain #clone() cloned} objects.
  *
- * {@section Future changes planned for listeners}
- * The current implementation leverages the Swing {@link ChangeListener} interface (note that it
- * does not cause a large dependency toward the Swing framework). However future Geotk versions
- * will implement the JavaFX {@code ObservableValue} interface and replace all Swing
- * {@link ChangeListener} by JavaFX {@code ChangeListener} dependencies. This replacement will
- * happen on the JDK8 branch. The JDK7 and JDK6 branches will continue to use the Swing listener.
- *
  * @param <T> The value type.
  *
- * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.20
- * @module
+ * @deprecated Replaced by Apache SIS parameters.
  */
 @Deprecated
 public abstract class AbstractParameterValue<T> extends AbstractParameter implements ParameterValue<T> {

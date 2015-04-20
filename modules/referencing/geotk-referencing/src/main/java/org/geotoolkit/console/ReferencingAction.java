@@ -43,7 +43,6 @@ import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.parameter.ParameterWriter;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
@@ -52,6 +51,7 @@ import org.apache.sis.referencing.datum.BursaWolfParameters;
 
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
+import org.apache.sis.parameter.ParameterFormat;
 import static org.geotoolkit.referencing.IdentifiedObjects.NAME_COMPARATOR;
 import static org.geotoolkit.console.CommandLine.*;
 
@@ -337,17 +337,10 @@ final class ReferencingAction {
         final MathTransformFactory factory = FactoryFinder.getMathTransformFactory(HINTS);
         final Set<OperationMethod> methods = new TreeSet<>(NAME_COMPARATOR);
         methods.addAll(factory.getAvailableMethods(type));
-        final ParameterWriter writer = new ParameterWriter(cmd.out);
-        writer.setLocale(cmd.locale);
-        writer.setColorEnabled(cmd.colors);
-        writer.setAuthorities("EPSG:#", (authority != null) ? authority : "Geotk");
-        try {
-            writer.summary(methods);
-        } catch (IOException exception) {
-            cmd.printException(exception);
-            cmd.exit(IO_EXCEPTION_EXIT_CODE);
-            return;
-        }
+        final ParameterFormat writer = new ParameterFormat(cmd.locale, null);
+        writer.setPreferredCodespaces("EPSG:#", (authority != null) ? authority : "Geotk");
+        writer.setContentLevel(ParameterFormat.ContentLevel.NAME_SUMMARY);
+        cmd.out.println(writer.format(methods.toArray(new OperationMethod[methods.size()])));
     }
 
     /**

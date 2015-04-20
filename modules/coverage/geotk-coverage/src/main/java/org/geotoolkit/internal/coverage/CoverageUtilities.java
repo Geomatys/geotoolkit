@@ -48,7 +48,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.geometry.Envelopes;
+import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.Category;
@@ -479,7 +479,7 @@ public final class CoverageUtilities extends Static {
          *
          * Note : final envelope can be the fusion of two neighbour Quad-Tree cells.
          */
-        final Envelope tmpDomain = Envelopes.getDomainOfValidity(targetCRS);
+        final Envelope tmpDomain = org.geotoolkit.geometry.Envelopes.getDomainOfValidity(targetCRS);
         final GeneralEnvelope quadTreeCell;
         if (tmpDomain == null) {
             final GeographicCRS crs84 = CommonCRS.defaultGeographic();

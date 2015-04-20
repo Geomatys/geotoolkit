@@ -240,31 +240,10 @@ public class DefaultParameterDescriptor<T> extends org.apache.sis.parameter.Defa
     public static DefaultParameterDescriptor<Double> create(final String name,
             final double defaultValue, final double minimum, final double maximum, final Unit<?> unit)
     {
-        return create(Collections.singletonMap(NAME_KEY, name),
-                defaultValue, minimum, maximum, unit, true);
-    }
-
-    /**
-     * Constructs a descriptor for a parameter in a range of floating point values.
-     *
-     * @param  properties   The parameter properties (name, identifiers, alias...).
-     * @param  defaultValue The default value for the parameter, or {@link Double#NaN} if none.
-     * @param  minimum      The minimum parameter value, or {@link Double#NEGATIVE_INFINITY} if none.
-     * @param  maximum      The maximum parameter value, or {@link Double#POSITIVE_INFINITY} if none.
-     * @param  unit         The unit of measurement for default, minimum and maximum values.
-     * @param  required     {@code true} if this parameter is required, {@code false} otherwise.
-     * @return The parameter descriptor for the given range of values.
-     *
-     * @since 2.5
-     */
-    public static DefaultParameterDescriptor<Double> create(final Map<String,?> properties,
-            final double defaultValue, final double minimum, final double maximum,
-            final Unit<?> unit, final boolean required)
-    {
-        return new DefaultParameterDescriptor<>(properties, Double.class, null,
+        return new DefaultParameterDescriptor<>(Collections.singletonMap(NAME_KEY, name), Double.class, null,
                 Double.isNaN(defaultValue)          ? null : Double.valueOf(defaultValue),
                 minimum == Double.NEGATIVE_INFINITY ? null : Double.valueOf(minimum),
-                maximum == Double.POSITIVE_INFINITY ? null : Double.valueOf(maximum), unit, required);
+                maximum == Double.POSITIVE_INFINITY ? null : Double.valueOf(maximum), unit, true);
     }
 
     /**
@@ -301,21 +280,5 @@ public class DefaultParameterDescriptor<T> extends org.apache.sis.parameter.Defa
             properties.put(REMARKS_KEY, remarks);
         }
         return properties;
-    }
-
-    /**
-     * Creates a new instance of {@code ParameterValue} initialized with the
-     * {@linkplain #getDefaultValue default value}. The {@linkplain DefaultParameterDescriptor
-     * parameter descriptor} for the created parameter value will be {@code this} object.
-     *
-     * @return A parameter initialized to the default value.
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public ParameterValue<T> createValue() {
-        if (super.getValueClass() == Double.class) {
-            return (ParameterValue<T>) new FloatParameter((ParameterDescriptor<Double>) this);
-        }
-        return new Parameter<>(this);
     }
 }

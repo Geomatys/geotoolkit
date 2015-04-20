@@ -30,7 +30,6 @@ import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
-import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.referencing.IdentifiedObject;
@@ -542,7 +541,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
             final String candidate = scope.toString();
             final Citation[] authorities = getAuthorities();
             for (int i=0; i<authorities.length; i++) {
-                if (Citations.identifierMatches(authorities[i], candidate)) {
+                if (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authorities[i], candidate)) {
                     return name.tip().toString().trim();
                 }
             }

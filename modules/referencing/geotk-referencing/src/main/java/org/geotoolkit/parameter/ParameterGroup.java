@@ -171,7 +171,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         }
         ensureValidOccurs(values, occurrences);
         final Set<GeneralParameterDescriptor> descriptors = occurrences.keySet();
-        return new DefaultParameterDescriptorGroup(properties,
+        return new DefaultParameterDescriptorGroup(properties, 1, 1,
                 descriptors.toArray(new GeneralParameterDescriptor[descriptors.size()]));
     }
 

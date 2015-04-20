@@ -22,7 +22,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.geotoolkit.parameter.Parameters;
+import org.apache.sis.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
@@ -64,7 +64,7 @@ import static org.geotoolkit.data.mapinfo.ProjectionParameters.getProjectionPara
  */
 public class ProjectionUtils {
 
-    private static final String MAP_INFO_NAMESPACE = Citations.getIdentifier(Citations.MAP_INFO);
+    private static final String MAP_INFO_NAMESPACE = org.apache.sis.metadata.iso.citation.Citations.getIdentifier(Citations.MAP_INFO);
     private static final char NAMESPACE_SEPARATOR = ':';
 
     private static final Logger LOGGER = Logger.getLogger(ProjectionUtils.class.getName());

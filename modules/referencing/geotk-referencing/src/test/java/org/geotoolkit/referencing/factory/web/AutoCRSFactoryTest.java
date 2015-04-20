@@ -83,10 +83,10 @@ public final strictfp class AutoCRSFactoryTest extends ReferencingTestBase {
     @Test
     public void testAuthority() {
         final Citation authority = factory.getAuthority();
-        assertTrue (Citations.identifierMatches(authority, "AUTO"));
-        assertTrue (Citations.identifierMatches(authority, "AUTO2"));
-        assertFalse(Citations.identifierMatches(authority, "EPSG"));
-        assertFalse(Citations.identifierMatches(authority, "CRS"));
+        assertTrue (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "AUTO"));
+        assertTrue (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "AUTO2"));
+        assertFalse(org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "EPSG"));
+        assertFalse(org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "CRS"));
     }
 
     /**

@@ -39,7 +39,7 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.search.Filter;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.geometry.Envelopes;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
@@ -79,7 +79,7 @@ public class LuceneSearcherTest {
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");
     private static final CoordinateReferenceSystem WGS84;
     private static final double TOLERANCE = 0.001;
-    
+
     static {
         try {
             WGS84 = CRS.decode("CRS:84");
@@ -101,7 +101,7 @@ public class LuceneSearcherTest {
             FileUtilities.deleteDirectory(directory);
         }
         directory.mkdir();
-        
+
         // the tree CRS (must be) cartesian
         treeCrs = CRS.decode("CRS:84");
 
@@ -118,7 +118,7 @@ public class LuceneSearcherTest {
     @AfterClass
     public static void tearDownMethod() throws Exception {
         searcher.destroy();
-        
+
         FileUtilities.deleteDirectory(directory);
     }
 
@@ -283,7 +283,7 @@ public class LuceneSearcherTest {
         docs.clear();
         resultID = rTree.searchID(env);
         getresultsfromID(resultID, tem, docs);
-        
+
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
 
@@ -1353,7 +1353,7 @@ public class LuceneSearcherTest {
         SerialChainFilter serialFilter = new SerialChainFilter(filters, filterType);
 
         SpatialQuery sQuery = new SpatialQuery("", serialFilter, SerialChainFilter.AND);
-        
+
         //we perform a lucene query
         Set<String> results = searcher.doSearch(sQuery);
 
@@ -1378,7 +1378,7 @@ public class LuceneSearcherTest {
         int filterType2[]  = {SerialChainFilter.AND,SerialChainFilter.AND};
         serialFilter = new SerialChainFilter(filters, filterType2);
         sQuery = new SpatialQuery("", serialFilter, SerialChainFilter.AND);
-        
+
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
 
@@ -1404,9 +1404,9 @@ public class LuceneSearcherTest {
         filters3.add(spatialQuery.getSpatialFilter());
         int filterType3[]         = {SerialChainFilter.NOT};
         serialFilter              = new SerialChainFilter(filters3, filterType3);
-        
+
         sQuery = new SpatialQuery("", serialFilter, SerialChainFilter.AND);
-        
+
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
 
@@ -1443,9 +1443,9 @@ public class LuceneSearcherTest {
         filters4.add(bboxQuery.getSpatialFilter());
         int filterType4[]         = {SerialChainFilter.AND,SerialChainFilter.AND};
         serialFilter              = new SerialChainFilter(filters4, filterType4);
-        
+
         sQuery = new SpatialQuery("", serialFilter, SerialChainFilter.AND);
-        
+
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
 
@@ -1467,7 +1467,7 @@ public class LuceneSearcherTest {
         serialFilter      = new SerialChainFilter(filters4, filterType5);
 
         sQuery = new SpatialQuery("", serialFilter, SerialChainFilter.AND);
-        
+
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
 
@@ -2295,7 +2295,7 @@ public class LuceneSearcherTest {
 
         //we perform a lucene query
         SpatialQuery sQuery = new SpatialQuery("id:point*", bboxQuery.getSpatialFilter(), SerialChainFilter.AND);
-                
+
         results = searcher.doSearch(sQuery);
 
         nbResults = results.size();
@@ -2321,7 +2321,7 @@ public class LuceneSearcherTest {
         results = new HashSet<>();
         results.addAll(hits1);
         results.addAll(hits2);
-        
+
         nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS: name like point* OR BBOX 1: nb Results: {0}", nbResults);
 
@@ -2353,7 +2353,7 @@ public class LuceneSearcherTest {
         geom1.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom1));
         SpatialQuery interQuery = new SpatialQuery(wrap(filter));
-        
+
         SpatialQuery query1     = new SpatialQuery("id:point*", bboxQuery.getSpatialFilter(), SerialChainFilter.AND);
         SpatialQuery query2     = new SpatialQuery("id:box*", interQuery.getSpatialFilter(),  SerialChainFilter.AND);
 
@@ -2363,7 +2363,7 @@ public class LuceneSearcherTest {
         results      = new HashSet<>();
         results.addAll(hits1);
         results.addAll(hits2);
-        
+
         nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS: (name like point* AND BBOX 1) OR (name like box* AND INTERSECT line 1): nb Results: {0}", nbResults);
 
@@ -2390,7 +2390,7 @@ public class LuceneSearcherTest {
         DocumentIndexer indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.removeDocument("box 2 projected");
         indexer.destroy();
-        
+
         searcher.destroy();
         searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9), false);
 
@@ -2430,7 +2430,7 @@ public class LuceneSearcherTest {
         docu.add(new StringField("docid", 66 + "", Field.Store.YES));
         docu.add(new StringField("metafile", "doc",   Field.Store.YES));
         NamedEnvelope env = addBoundingBox(docu,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395); // attention !! reprojeté
-        
+
         indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.indexDocument(new DocumentIndexer.DocumentEnvelope(docu, env));
         indexer.destroy();
@@ -2587,10 +2587,10 @@ public class LuceneSearcherTest {
 
         return docs;
     }
-    
+
     /**
-     * Get all {@link NamedEnvelope} from {@link TreeElementMapper} and tableID and add each of them in List. 
-     * 
+     * Get all {@link NamedEnvelope} from {@link TreeElementMapper} and tableID and add each of them in List.
+     *
      * @param tableID treeIdentifier table results.
      * @param tem contain stored {@link NamedEnvelope}.
      * @param list which is filled by NamedEnvelope results.
@@ -2600,7 +2600,7 @@ public class LuceneSearcherTest {
             list.add(tem.getObjectFromTreeIdentifier(id));
         }
     }
-    
+
     /**
      * Add a Line geometry to the specified Document.
      *

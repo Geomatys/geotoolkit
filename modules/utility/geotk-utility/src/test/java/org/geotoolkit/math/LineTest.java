@@ -44,12 +44,12 @@ public final strictfp class LineTest {
     @Test
     public void testIsoscelesTriangleBase() {
         final Line test = new Line();
-        test.setLine(new Point2D.Double(20,30), new Point2D.Double(80,95));
+        test.setFromPoints(20,30, 80,95);
         final double slope  = 1.083333333333333333333333;
         final double offset = 8.333333333333333333333333;
-        assertEquals("slope", slope,        test.getSlope(), EPS);
-        assertEquals("y0",    offset,       test.getY0(),    EPS);
-        assertEquals("x0",   -offset/slope, test.getX0(),    EPS);
+        assertEquals("slope", slope,        test.slope(), EPS);
+        assertEquals("y0",    offset,       test.y0(),    EPS);
+        assertEquals("x0",   -offset/slope, test.x0(),    EPS);
 
         final double distance = 40;
         final Point2D summit = new Point2D.Double(27, -9); // An arbitrary point.

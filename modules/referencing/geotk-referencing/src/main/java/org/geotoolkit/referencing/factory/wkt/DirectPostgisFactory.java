@@ -121,7 +121,7 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
         final Vocabulary resources = Vocabulary.getResources(null);
         CharSequence cs;
         if ((cs=authority.getEdition()) != null) {
-            final String identifier = Citations.getIdentifier(authority);
+            final String identifier = org.apache.sis.metadata.iso.citation.Citations.getIdentifier(authority);
             table.write(resources.getString(Vocabulary.Keys.VERSION_OF_1, identifier));
             table.write(':');
             table.nextColumn();

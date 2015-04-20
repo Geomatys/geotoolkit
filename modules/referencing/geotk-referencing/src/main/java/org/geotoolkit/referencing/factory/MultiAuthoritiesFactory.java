@@ -190,7 +190,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
             int authorityIndex;
             for (authorityIndex=0; authorityIndex<authorityCount; authorityIndex++) {
                 final Citation candidate = authorities[authorityIndex];
-                if (Citations.identifierMatches(candidate, authority)) {
+                if (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(candidate, authority)) {
                     authority = candidate;
                     break;
                 }
@@ -345,7 +345,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
         final Set<String> names = new HashSet<>();
         if (factories != null) {
             for (final AuthorityFactory factory : factories) {
-                names.add(Citations.getIdentifier(factory.getAuthority()));
+                names.add(org.apache.sis.metadata.iso.citation.Citations.getIdentifier(factory.getAuthority()));
             }
         }
         return names;
@@ -480,7 +480,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
             if (factories != null) {
                 for (final AuthorityFactory factory : factories) {
                     if (type.isAssignableFrom(factory.getClass())) {
-                        if (Citations.identifierMatches(factory.getAuthority(), authority)) {
+                        if (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(factory.getAuthority(), authority)) {
                             return type.cast(factory);
                         }
                     }

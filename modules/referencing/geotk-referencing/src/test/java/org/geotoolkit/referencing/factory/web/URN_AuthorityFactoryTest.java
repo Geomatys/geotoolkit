@@ -175,7 +175,7 @@ public final strictfp class URN_AuthorityFactoryTest extends ReferencingTestBase
         final CRSAuthorityFactory factory = getCRSAuthorityFactory("URN:OGC:DEF", null);
         assertTrue("The correct working of IdentifiedObjects.lookupIdentifier(authority, crs) requires " +
                    "that the URN_AuthorityFactory can been found from the Citations.URN_OGC constant.",
-                   Citations.identifierMatches(factory.getAuthority(), Citations.URN_OGC));
+                   org.apache.sis.metadata.iso.citation.Citations.identifierMatches(factory.getAuthority(), Citations.URN_OGC));
         assertTrue(factory instanceof AbstractAuthorityFactory);
 
         final IdentifiedObjectFinder finder = ((AbstractAuthorityFactory) factory)

@@ -26,9 +26,6 @@ import static java.lang.Double.*;
 /**
  * Equation of a line in a two dimensional space (<var>x</var>,<var>y</var>).
  *
- * <p><b>NOTE:</b> this class partially moved to Apache SIS in {@link org.apache.sis.math}.
- * Methods deprecated in this class are methods having an equivalent method in SIS.</p>
- *
  * @author Martin Desruisseaux (MPO, IRD)
  * @version 3.00
  *
@@ -62,81 +59,6 @@ public class Line extends org.apache.sis.math.Line {
      */
     public Line(final double slope, final double y0) {
         super(slope, y0);
-    }
-
-    /**
-     * Sets the slope and offset for this line.
-     * The linear equation will be <var>y</var>=<var>slope</var>*<var>x</var>+<var>y0</var>.
-     *
-     * @param slope The slope.
-     * @param y0 The <var>y</var> value at <var>x</var>==0.
-     *
-     * @see #setLine(Point2D, Point2D)
-     * @see #setLine(Line2D)
-     * @see #fit(double[], double[])
-     */
-    @Deprecated
-    public void setLine(final double slope, final double y0) {
-        setEquation(slope, y0);
-    }
-
-    /**
-     * Sets a line colinear with the specified line segment. The line will continues
-     * toward infinity after the line segment extremities.
-     *
-     * @param line The line segment.
-     *
-     * @see #setLine(Point2D,Point2D)
-     */
-    @Deprecated
-    public void setLine(final Line2D line) {
-        setFromPoints(line.getX1(), line.getY1(), line.getX2(), line.getY2());
-    }
-
-    /**
-     * Sets a line through the specified point. The line will continues
-     * toward infinity after the point.
-     *
-     * @param p1 Coordinate of the first point.
-     * @param p2 Coordinate of the second point.
-     *
-     * @see #setLine(Line2D)
-     */
-    @Deprecated
-    public void setLine(final Point2D p1, final Point2D p2) {
-        setFromPoints(p1.getX(), p1.getY(), p2.getX(), p2.getY());
-    }
-
-    /**
-     * Returns the <var>y</var> value for <var>x</var>==0.
-     * Coordinate (0, <var>y0</var>) is the intersection point with the <var>y</var> axis.
-     *
-     * @return The <var>y</var> value for x=0.
-     */
-    @Deprecated
-    public final double getY0() {
-        return y0();
-    }
-
-    /**
-     * Returns the <var>x</var> value for <var>y</var>==0.
-     * Coordinate (<var>x0</var>,0) is the intersection point with the <var>x</var> axis.
-     *
-     * @return The <var>x</var> value for y=0.
-     */
-    @Deprecated
-    public final double getX0() {
-        return x0();
-    }
-
-    /**
-     * Returns the slope.
-     *
-     * @return The slope.
-     */
-    @Deprecated
-    public final double getSlope() {
-        return slope();
     }
 
     /**

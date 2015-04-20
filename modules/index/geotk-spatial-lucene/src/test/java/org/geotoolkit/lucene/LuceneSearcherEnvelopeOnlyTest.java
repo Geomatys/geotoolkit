@@ -35,7 +35,7 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.search.Filter;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.geometry.Envelopes;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
@@ -85,23 +85,23 @@ public class LuceneSearcherEnvelopeOnlyTest {
             throw new RuntimeException(ex);
         }
     }
-    
+
     private static final Map<String, NamedEnvelope> envelopes = new HashMap<>();
     private static final File directory = new File("luceneSearcherEnvTest");
     private static LuceneIndexSearcher searcher;
     private static CoordinateReferenceSystem treeCrs;
     private org.opengis.filter.Filter filter;
     private Geometry geom;
-    
+
     @BeforeClass
     public static void setUpMethod() throws Exception {
 
         FileUtilities.deleteDirectory(directory);
         directory.mkdir();
-        
+
         // the tree CRS (must be) cartesian
         treeCrs = CRS.decode("CRS:84");
-        
+
         //creating tree (R-Tree)------------------------------------------------
 
         final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
@@ -109,7 +109,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         indexer.createIndex();
         indexer.destroy();
         searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9), true);
-        
+
     }
 
     @AfterClass
@@ -210,7 +210,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
     @Test
     public void rTreeBBOXTest() throws Exception {
         final Tree rTree = SQLRtreeManager.get(searcher.getFileDirectory(), this);
-        
+
         /*
          * first bbox
          */
@@ -223,7 +223,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         //we perform a retree query
         List<Envelope> docs = new ArrayList<>();
         final TreeElementMapper<NamedEnvelope> tem = rTree.getTreeElementMapper();
-        
+
         int[] resultsID = rTree.searchID(env);
         getresultsfromID(resultsID, tem, docs);
 
@@ -945,7 +945,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
          /*
          * case 8: another line
          *
-        
+
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(0, 0),
             new Coordinate(-40, -40),
@@ -1253,7 +1253,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         int filterType2[]  = {SerialChainFilter.AND, SerialChainFilter.AND};
         serialFilter = new SerialChainFilter(filters, filterType2);
         sQuery = new SpatialQuery("", serialFilter, SerialChainFilter.AND);
-        
+
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
 
@@ -1279,7 +1279,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         int filterType3[]         = {SerialChainFilter.NOT};
         serialFilter              = new SerialChainFilter(filters3, filterType3);
         sQuery = new SpatialQuery("", serialFilter, SerialChainFilter.AND);
-        
+
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
 
@@ -1329,7 +1329,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         int filterType5[] = {SerialChainFilter.AND, SerialChainFilter.NOT};
         serialFilter      = new SerialChainFilter(filters4, filterType5);
         sQuery = new SpatialQuery("", serialFilter, SerialChainFilter.AND);
-        
+
         //we perform a lucene query
         results = searcher.doSearch(sQuery);
 
@@ -2073,7 +2073,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         results = new HashSet<>();
         results.addAll(hits1);
         results.addAll(hits2);
-        
+
         nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS: name like point* OR BBOX 1: nb Results: {0}", nbResults);
 
@@ -2096,7 +2096,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         geom1.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom1));
         SpatialQuery interQuery = new SpatialQuery(wrap(filter));
-        
+
         SpatialQuery query1     = new SpatialQuery("id:point*", bboxQuery.getSpatialFilter(), SerialChainFilter.AND);
         SpatialQuery query2     = new SpatialQuery("id:box*", interQuery.getSpatialFilter(),  SerialChainFilter.AND);
 
@@ -2106,7 +2106,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         results      = new HashSet<>();
         results.addAll(hits1);
         results.addAll(hits2);
-        
+
         nbResults = results.size();
         LOGGER.log(Level.FINER, "QnS: (name like point* AND BBOX 1) OR (name like box* AND INTERSECT line 1): nb Results: {0}", nbResults);
 
@@ -2122,10 +2122,10 @@ public class LuceneSearcherEnvelopeOnlyTest {
      */
     @Test
     public void QueryAndSpatialFilterAfterRemoveTest() throws Exception {
-        
+
         org.opengis.filter.Filter bboxFilter = FF.bbox(GEOMETRY_PROPERTY, -20, -20, 20, 20, "CRS:84");
         SpatialQuery bboxQuery = new SpatialQuery(wrap(bboxFilter));
-        
+
         Set<String> results = searcher.doSearch(bboxQuery);
 
         int nbResults = results.size();
@@ -2136,10 +2136,10 @@ public class LuceneSearcherEnvelopeOnlyTest {
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-        
-        /* 
+
+        /*
          * we remove a document
-         */ 
+         */
         final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
         DocumentIndexer indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.removeDocument("box 2 projected");
@@ -2147,7 +2147,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         searcher.destroy();
 
         searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9), true);
-        
+
         //we perform a lucene query
         results = searcher.doSearch(bboxQuery);
 
@@ -2161,7 +2161,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
 
 
         // re-add the document
-        
+
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
         Document doc = new Document();
         doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
@@ -2169,14 +2169,14 @@ public class LuceneSearcherEnvelopeOnlyTest {
         doc.add(new StringField("metafile", "doc", Field.Store.YES));
         NamedEnvelope env = addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395);
         envelopes.put("box 2 projected", env); // attention !! reprojeté
-        
+
         indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.indexDocument(new DocumentEnvelope(doc, env));
         indexer.destroy();
         searcher.destroy();
 
         searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9), true);
-        
+
          //we perform a lucene query
         results = searcher.doSearch(bboxQuery);
 
@@ -2184,10 +2184,10 @@ public class LuceneSearcherEnvelopeOnlyTest {
         LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults,  3);   
+        assertEquals(nbResults,  3);
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 2"));
-        assertTrue(results.contains("box 2 projected")); 
+        assertTrue(results.contains("box 2 projected"));
     }
 
     private static List<DocumentEnvelope> fillTestData() throws Exception {
@@ -2262,7 +2262,7 @@ public class LuceneSearcherEnvelopeOnlyTest {
         final Geometry poly = LuceneUtils.getPolygon(minx, maxx, miny, maxy, srid);
         final String id = doc.get("id");
         final NamedEnvelope namedBound = LuceneUtils.getNamedEnvelope(id, poly, treeCrs);
-        
+
         doc.add(new StoredField(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(poly)));
         return namedBound;
     }

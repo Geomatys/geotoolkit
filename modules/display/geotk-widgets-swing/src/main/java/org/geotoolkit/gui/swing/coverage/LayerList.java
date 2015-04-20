@@ -725,7 +725,6 @@ public class LayerList extends WindowCreator {
                     final StringBuffer buffer = new StringBuffer();
                     final List<String> fz = new ArrayList<>(z.size());
                     synchronized (heightFormat) {
-                        org.geotoolkit.math.Statistics.configure(stats, heightFormat);
                         for (final Number value : z) {
                             heightFormat.format(value, buffer, pos).append("    ");
                             fz.add(buffer.toString());

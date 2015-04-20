@@ -29,7 +29,8 @@ import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import javax.vecmath.GMatrix;
 import javax.vecmath.GVector;
-import org.geotoolkit.math.Plane;
+import org.apache.sis.math.Plane;
+
 
 /**
  *

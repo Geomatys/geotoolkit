@@ -17,10 +17,7 @@
  */
 package org.geotoolkit.referencing.operation;
 
-import java.io.IOException;
-
 import org.opengis.util.FactoryException;
-import org.opengis.util.NoSuchIdentifierException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
@@ -29,7 +26,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
 import org.apache.sis.geometry.DirectPosition2D;
-import org.geotoolkit.parameter.ParameterWriter;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.apache.sis.referencing.IdentifiedObjects;
@@ -133,22 +129,6 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
         assertPositionEquals(target, calculated, TOL_DEG);
     }
 
-    /**
-     * Prints parameters for the specified projection.
-     * Used to see the if parameters for a transform are correct.
-     */
-    private void printParameters(final String proj) throws NoSuchIdentifierException {
-        if (out != null) {
-            final ParameterValueGroup values = mtFactory.getDefaultParameters(proj);
-            final ParameterWriter writer = new ParameterWriter(out);
-            try {
-                writer.format(values.getDescriptor());
-            } catch (IOException exception) {
-                // Should never happen, since we are writing to a buffer.
-                throw new AssertionError(exception);
-            }
-        }
-    }
 
     /**
      * Prints the given transform, if the output is verbose.
@@ -172,7 +152,6 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
         ///////////////////////////////////////
         // Equidistant_Cylindrical tests     //
         ///////////////////////////////////////
-        printParameters("Equidistant Cylindrical (Spherical)");
         MathTransform transform;
         ParameterValueGroup params;
 
@@ -202,7 +181,6 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
         ///////////////////////////////////////
         // Mercator_1SP tests                //
         ///////////////////////////////////////
-        printParameters("Mercator_1SP");
         MathTransform transform;
         ParameterValueGroup params;
 
@@ -261,7 +239,6 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
         ///////////////////////////////////////
         // Mercator_2SP tests                //
         ///////////////////////////////////////
-        printParameters("Mercator_2SP");
         // EPSG p25. Note FE and FN are wrong in guide 7. Correct in epsg database v6.3.
         params = mtFactory.getDefaultParameters("Mercator_2SP");
         params.parameter("semi_major")         .setValue(6378245.000);
@@ -298,7 +275,6 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
      */
     @Test
     public void testObliqueMercator() throws FactoryException, TransformException {
-        printParameters("Oblique Mercator");
         MathTransform transform;
         ParameterValueGroup params;
 
@@ -346,7 +322,6 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
         ///////////////////////////////////////
         // Lambert_Conformal_Conic_1SP tests //
         ///////////////////////////////////////
-        printParameters("Lambert_Conformal_Conic_1SP");
         MathTransform transform;
         ParameterValueGroup params;
 
@@ -381,7 +356,6 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
         ///////////////////////////////////////
         // Lambert_Conformal_Conic_2SP tests //
         ///////////////////////////////////////
-        printParameters("Lambert_Conformal_Conic_2SP");
         // EPSG p. 17
         params = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_2SP");
         params.parameter("semi_major")         .setValue(6378206.4);
@@ -430,7 +404,6 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
         ///////////////////////////////////////////////
         // Lambert_Conformal_Conic_2SP_Belgium test  //
         ///////////////////////////////////////////////
-        printParameters("Lambert_Conformal_Conic_2SP_Belgium");
         // EPSG p. 19
         params = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_2SP_Belgium");
         params.parameter("semi_major")         .setValue(6378388.0);
@@ -459,7 +432,6 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
         ///////////////////////////////////////
         //          Krovak tests             //
         ///////////////////////////////////////
-        printParameters("Krovak");
         MathTransform transform;
         ParameterValueGroup params;
 
@@ -489,7 +461,6 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
         ///////////////////////////////////////
         //     Polar_Stereographic tests     //
         ///////////////////////////////////////
-        printParameters("Polar_Stereographic");
         MathTransform transform;
         ParameterValueGroup params;
 

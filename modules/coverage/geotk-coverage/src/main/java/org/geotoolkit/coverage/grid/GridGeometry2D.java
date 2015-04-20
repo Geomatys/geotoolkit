@@ -380,7 +380,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
                            final CoordinateReferenceSystem crs,
                            final Hints hints)
     {
-        this(extent, anchor, (gridToCRS == null || PixelOrientation.CENTER.equals(anchor)) 
+        this(extent, anchor, (gridToCRS == null || PixelOrientation.CENTER.equals(anchor))
                             ? PixelInCell.CELL_CENTER : PixelInCell.CELL_CORNER, gridToCRS,
              getMathTransform2D(gridToCRS, extent, dimensions, hints), dimensions, crs);
     }

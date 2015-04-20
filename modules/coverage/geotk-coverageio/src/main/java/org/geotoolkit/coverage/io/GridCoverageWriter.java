@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.geometry.Envelopes;
+import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;

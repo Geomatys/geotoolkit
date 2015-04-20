@@ -18,8 +18,6 @@
 package org.geotoolkit.console;
 
 import java.util.*;
-import java.io.IOException;
-
 import org.opengis.referencing.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.parameter.ParameterValueGroup;
@@ -29,10 +27,10 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 
 import org.geotoolkit.io.wkt.WKTFormat;
-import org.geotoolkit.parameter.ParameterWriter;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.FactoryDependencies;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
+import org.apache.sis.parameter.ParameterFormat;
 
 
 /**
@@ -233,9 +231,7 @@ public class ReferencingCommands extends CommandLine {
     @Action(minimalArgumentCount = 1, examples = {"Affine", "EPSG:9624", "9624"})
     protected void parameters() {
         final MathTransformFactory factory = FactoryFinder.getMathTransformFactory(HINTS);
-        final ParameterWriter writer = new ParameterWriter(out);
-        writer.setLocale(locale);
-        writer.setColorEnabled(colors);
+        final ParameterFormat writer = new ParameterFormat(locale, null);
         for (int i=0; i<arguments.length; i++) {
             final ParameterValueGroup value;
             try {
@@ -248,13 +244,7 @@ public class ReferencingCommands extends CommandLine {
             if (i != 0) {
                 out.println();
             }
-            try {
-                writer.format(value.getDescriptor());
-            } catch (IOException exception) {
-                printException(exception);
-                exit(IO_EXCEPTION_EXIT_CODE);
-                return;
-            }
+            out.println(writer.format(value.getDescriptor()));
         }
     }
 

@@ -2434,7 +2434,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     }
                     final OperationMethod method;
                     method = new DefaultOperationMethod(properties, dim[0], dim[1],
-                            new DefaultParameterDescriptorGroup(properties, descriptors));
+                            new DefaultParameterDescriptorGroup(properties, 1, 1, descriptors));
                     returnValue = ensureSingleton(method, returnValue, code);
                 }
             }

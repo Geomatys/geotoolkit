@@ -28,7 +28,6 @@ import java.io.EOFException;
 import java.text.ParseException;
 import java.text.ParsePosition;
 
-import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
@@ -165,20 +164,6 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
         if (!isNullOrEmpty(hints)) {
             parser = new ReferencingParser(super.getSymbols(), hints);
         }
-    }
-
-    /**
-     * @deprecated Renamed {@code getNameAuthority()}.
-     */
-    public Citation getAuthority() {
-        return getNameAuthority();
-    }
-
-    /**
-     * @deprecated Renamed {@code setNameAuthority(Citation)}.
-     */
-    public void setAuthority(final Citation authority) {
-        setNameAuthority(authority);
     }
 
     /**

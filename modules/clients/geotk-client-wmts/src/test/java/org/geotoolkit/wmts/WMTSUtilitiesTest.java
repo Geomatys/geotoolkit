@@ -21,7 +21,7 @@ import java.util.List;
 import org.junit.Test;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.geometry.Envelopes;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 
 /**
  * Test if {@link CrsChoice#getAppropriateCRS(org.opengis.geometry.Envelope, java.util.List)}
- * method return {@code CoordinateReferenceSystem} with lesser deformation from a 
+ * method return {@code CoordinateReferenceSystem} with lesser deformation from a
  * {@code CoordinateReferenceSystem} referent.
  *
  * @author Rémi Marechal (Geomatys).
@@ -59,7 +59,7 @@ public class WMTSUtilitiesTest {
     /**
      * Test about "EPSG:27571" {@code CoordinateReferenceSystem}.
      * Test at : 2*10E-6 meters precision.
-     * 
+     *
      * @throws FactoryException
      * @throws TransformException
      */
@@ -98,9 +98,9 @@ public class WMTSUtilitiesTest {
     }
 
     /**
-     * Test about "WGS84" {@code CoordinateReferenceSystem}. 
+     * Test about "WGS84" {@code CoordinateReferenceSystem}.
      * Test at : 2*10E-14 ° precision.
-     * 
+     *
      * @throws FactoryException
      * @throws TransformException
      */

@@ -23,12 +23,9 @@ import java.util.concurrent.ExecutorService;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.lineage.Processing;
 import org.opengis.metadata.lineage.ProcessStep;
-import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.InternationalString;
-
-import org.geotoolkit.internal.simple.SimpleParameterDescriptor;
 
 
 /**
@@ -55,26 +52,6 @@ import org.geotoolkit.internal.simple.SimpleParameterDescriptor;
  * @module
  */
 public interface ProcessDescriptor extends Processing {
-    /**
-     * An optional parameter which should be part of the {@linkplain #getOutputDescriptor() output
-     * descriptor}. If presents, this parameter shall contains a description of the process, the
-     * geographic inputs and outputs and other metadata. This parameter is suitable to processes
-     * on geographic data and may not be applicable to every kind of processes.
-     * <p>
-     * If this parameter is provided, then:
-     * <p>
-     * <ul>
-     *   <li>{@link ProcessStep#getDate()} is the execution date and time of the process.</li>
-     *   <li>{@link ProcessStep#getSources()} are the geographic {@linkplain Process#getInput() process inputs}.</li>
-     *   <li>{@link ProcessStep#getOutputs()} are the geographic {@linkplain Process#call() process outputs}.</li>
-     *   <li>{@link ProcessStep#getProcessingInformation()} is the {@linkplain Process#getDescriptor() process descriptor}.</li>
-     * </ul>
-     *
-     * @deprecated Moved to an explicit method as {@link Process#getMetadata()}.
-     */
-    @Deprecated
-    ParameterDescriptor<ProcessStep> PROCESS_STEP = new SimpleParameterDescriptor<>(ProcessStep.class, "Geotk", "ProcessStep");
-
     /**
      * Information to identify the processing package that run the process.
      * The identifier {@linkplain Identifier#getAuthority() authority} shall matches the

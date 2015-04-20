@@ -660,7 +660,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             NamedIdentifier identifier = identifiersMap.get(candidateId.getCode());
             while (identifier != null) {
                 final Citation authority = candidateId.getAuthority();
-                if (authority == null || identifierMatches(authority, identifier.getAuthority())) {
+                if (authority == null || org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, identifier.getAuthority())) {
                     if (candidate instanceof ParameterDescriptor<?>) {
                         if (found != null) {
                             throw new IllegalArgumentException(Errors.format(
@@ -717,8 +717,10 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             final Identifier[] identifiers, final double defaultValue,
             final double minimum, final double maximum, final Unit<?> unit, final boolean required)
     {
-        return DefaultParameterDescriptor.create(toMap(identifiers),
-                    defaultValue, minimum, maximum, unit, required);
+        return new DefaultParameterDescriptor<Double>(toMap(identifiers), Double.class, null,
+                Double.isNaN(defaultValue)          ? null : Double.valueOf(defaultValue),
+                minimum == Double.NEGATIVE_INFINITY ? null : Double.valueOf(minimum),
+                maximum == Double.POSITIVE_INFINITY ? null : Double.valueOf(maximum), unit, required);
     }
 
     /**
@@ -795,7 +797,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             }
         }
         final Map<String,Object> properties = toMap(identifiers);
-        return (supplement == 0) ? new DefaultParameterDescriptorGroup(properties, parameters) :
+        return (supplement == 0) ? new DefaultParameterDescriptorGroup(properties, 1, 1, parameters) :
                 new MapProjectionDescriptor(properties, parameters, supplement);
     }
 

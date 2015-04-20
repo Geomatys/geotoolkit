@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.processing.operation;
 
+import java.util.Collections;
 import javax.media.jai.Interpolation;
 import javax.media.jai.operator.WarpDescriptor;
 import javax.media.jai.operator.AffineDescriptor;
@@ -49,6 +50,8 @@ import org.geotoolkit.coverage.processing.CannotReprojectException;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.NamedIdentifier;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
 /**
@@ -211,7 +214,7 @@ public class Resample extends Operation2D {
      * Constructs a {@code "Resample"} operation.
      */
     public Resample() {
-        super(new DefaultParameterDescriptorGroup(Citations.OGC, "Resample",
+        super(new DefaultParameterDescriptorGroup(Collections.singletonMap(NAME_KEY, new NamedIdentifier(Citations.OGC, "Resample")), 1, 1,
                 SOURCE_0, INTERPOLATION_TYPE, COORDINATE_REFERENCE_SYSTEM, GRID_GEOMETRY, BACKGROUND
         ));
     }

@@ -28,12 +28,13 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.ArrayList;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.io.ExpandedTabWriter;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.io.LineAppender;
 
 
 /**
@@ -104,8 +105,16 @@ public final class Exceptions extends Static {
      */
     public static String formatStackTrace(final Throwable exception) {
         final StringWriter writer = new StringWriter();
-        exception.printStackTrace(new PrintWriter(new ExpandedTabWriter(writer, TAB_WIDTH)));
-        return writer.toString();
+        exception.printStackTrace(new PrintWriter(writer));
+        final StringBuilder buffer = new StringBuilder();
+        final LineAppender formatter = new LineAppender(buffer);
+        formatter.setTabulationWidth(TAB_WIDTH);
+        try {
+            formatter.append(writer.toString());
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        return buffer.toString();
     }
 
     /**
@@ -221,10 +230,7 @@ public final class Exceptions extends Static {
             // This is the expected exception if the widget module is not available.
             throw new UnsupportedOperationException(Errors.format(
                     Errors.Keys.MISSING_MODULE_1, "geotk-widgets-swing"), e);
-        } catch (NoSuchMethodException e) {
-            // Should never happen, since have control on our implementation.
-            throw new AssertionError(e);
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchMethodException | IllegalAccessException e) {
             // Should never happen, since have control on our implementation.
             throw new AssertionError(e);
         } catch (InvocationTargetException e) {

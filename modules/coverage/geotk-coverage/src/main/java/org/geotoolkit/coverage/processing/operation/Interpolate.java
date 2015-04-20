@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.processing.operation;
 
+import java.util.Collections;
 import java.lang.reflect.Array;
 import javax.media.jai.Interpolation;
 import net.jcip.annotations.Immutable;
@@ -34,6 +35,8 @@ import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.internal.image.ImageUtilities;
+import org.apache.sis.referencing.NamedIdentifier;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
 /**
@@ -126,7 +129,7 @@ public class Interpolate extends Operation2D {
      * Constructs an {@code "Interpolate"} operation.
      */
     public Interpolate() {
-        super(new DefaultParameterDescriptorGroup(Citations.OGC, "Interpolate", SOURCE_0, TYPE));
+        super(new DefaultParameterDescriptorGroup(Collections.singletonMap(NAME_KEY, new NamedIdentifier(Citations.OGC, "Interpolate")), 1, 1, SOURCE_0, TYPE));
     }
 
     /**

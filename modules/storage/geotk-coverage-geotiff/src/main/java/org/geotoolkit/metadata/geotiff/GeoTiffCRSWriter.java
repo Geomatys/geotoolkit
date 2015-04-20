@@ -604,7 +604,7 @@ public final class GeoTiffCRSWriter {
         // looking for an EPSG code
         for(final Identifier rid : candidate.getIdentifiers()){
             final Citation citation = rid.getAuthority();
-            if(Citations.identifierMatches(citation, Citations.EPSG)){
+            if(org.apache.sis.metadata.iso.citation.Citations.identifierMatches(citation, Citations.EPSG)){
                 return Integer.parseInt(rid.getCode());
             }
         }

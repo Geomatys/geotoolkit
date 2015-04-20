@@ -108,8 +108,8 @@ public final strictfp class PropertyEpsgFactoryTest extends ReferencingTestBase 
         final Citation authority = factory.getAuthority();
         assertNotNull(authority);
         assertEquals("European Petroleum Survey Group", authority.getTitle().toString());
-        assertTrue (Citations.identifierMatches(authority, "EPSG"));
-        assertFalse(Citations.identifierMatches(authority, "ESRI"));
+        assertTrue (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "EPSG"));
+        assertFalse(org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "ESRI"));
         assertTrue(factory instanceof PropertyEpsgFactory);
     }
 

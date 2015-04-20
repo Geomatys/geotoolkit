@@ -963,7 +963,7 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
         final GenericName name  = nameFactory.parseGenericName(null, code);
         if (name instanceof ScopedName) {
             final GenericName scope = ((ScopedName) name).path();
-            if (Citations.identifierMatches(getAuthority(), scope.toString())) {
+            if (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(getAuthority(), scope.toString())) {
                 return name.tip().toString().trim();
             }
         }

@@ -48,7 +48,7 @@ import javax.swing.JPanel;
 import javax.vecmath.GVector;
 import javax.vecmath.GMatrix;
 import javax.vecmath.Point3d;
-import org.geotoolkit.math.Plane;
+import org.apache.sis.math.Plane;
 
 /**
  * <p align=justify>Classe ayant la charge d'interpoller sur une grille régulière des

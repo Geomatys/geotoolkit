@@ -46,7 +46,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.geometry.Envelopes;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;

@@ -249,7 +249,7 @@ public final class IdentifiedObjects extends Static {
         }
         final DefaultAuthorityFactory df = (DefaultAuthorityFactory) CRS.getAuthorityFactory(true);
         for (final AuthorityFactory factory : df.backingStore.getFactories()) {
-            if (!Citations.identifierMatches(factory.getAuthority(), authority)) {
+            if (!org.apache.sis.metadata.iso.citation.Citations.identifierMatches(factory.getAuthority(), authority)) {
                 continue;
             }
             if (!(factory instanceof AbstractAuthorityFactory)) {

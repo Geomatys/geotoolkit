@@ -31,7 +31,7 @@ import javax.vecmath.GMatrix;
 import javax.media.jai.RasterFactory;
 
 import org.opengis.metadata.spatial.PixelOrientation;
-
+import org.apache.sis.math.Plane;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.internal.image.ScaledColorSpace;

@@ -369,13 +369,13 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
         authority = factory.getAuthority();
         assertNotNull(authority);
         assertEquals("European Petroleum Survey Group", authority.getTitle().toString(Locale.US));
-        assertTrue(Citations.identifierMatches(authority, "EPSG"));
+        assertTrue(org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "EPSG"));
 
         // Tests the modified factory.
         factory   = new OrderedAxisAuthorityFactory("EPSG", null, null);
         authority = factory.getAuthority();
         assertNotNull(authority);
-        assertTrue(Citations.identifierMatches(authority, "EPSG"));
+        assertTrue(org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, "EPSG"));
     }
 
     /**
@@ -390,7 +390,7 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
         vendor  = factory.getVendor();
         assertNotNull(vendor);
         assertEquals("Geotoolkit.org", vendor.getTitle().toString(Locale.US));
-        assertFalse(Citations.identifierMatches(vendor, "EPSG"));
+        assertFalse(org.apache.sis.metadata.iso.citation.Citations.identifierMatches(vendor, "EPSG"));
     }
 
     /**

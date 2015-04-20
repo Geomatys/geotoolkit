@@ -47,14 +47,9 @@ import static org.geotoolkit.referencing.operation.provider.MapProjectionDescrip
  * The main purpose of this class is to supported transparently the NetCDF ways to express
  * some parameter values.
  *
- * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/reference/StandardCoordinateTransforms.html">NetCDF projection parameters</a>
- *
- * @since 3.20
- * @module
+ * @deprecated Moved to Apache SIS.
  */
+@Deprecated
 final class MapProjectionParameters extends ParameterGroup {
     /**
      * For cross-version compatibility.

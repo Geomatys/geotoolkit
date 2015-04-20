@@ -29,7 +29,6 @@ import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Vocabulary;
-import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.metadata.iso.citation.DefaultContact;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -710,110 +709,10 @@ public final class Citations extends Static {
             return null;
         }
         for (final Citation citation : AUTHORITIES) {
-            if (titleMatches(citation, title)) {
+            if (org.apache.sis.metadata.iso.citation.Citations.titleMatches(citation, title)) {
                 return citation;
             }
         }
         return new DefaultCitation(title);
-    }
-
-    /**
-     * Returns {@code true} if at least one {@linkplain Citation#getTitle title} or
-     * {@linkplain Citation#getAlternateTitles alternate title} in {@code c1} is equal to a title
-     * or alternate title in {@code c2}. The comparison is case-insensitive and ignores leading
-     * and trailing spaces. The titles ordering is not significant.
-     *
-     * @param  c1 The first citation to compare.
-     * @param  c2 the second citation to compare.
-     * @return {@code true} if at least one title or alternate title matches.
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.metadata.iso.citation.Citations}.
-     */
-    @Deprecated
-    public static boolean titleMatches(final Citation c1, final Citation c2) {
-        ArgumentChecks.ensureNonNull("c1", c1);
-        ArgumentChecks.ensureNonNull("c2", c2);
-        return org.apache.sis.internal.util.Citations.titleMatches(c1, c2);
-    }
-
-    /**
-     * Returns {@code true} if the {@linkplain Citation#getTitle title} or any
-     * {@linkplain Citation#getAlternateTitles alternate title} in the given citation
-     * matches the given string. The comparison is case-insensitive and ignores leading
-     * and trailing spaces.
-     *
-     * @param  citation The citation to check for.
-     * @param  title The title or alternate title to compare.
-     * @return {@code true} if the title or alternate title matches the given string.
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.metadata.iso.citation.Citations}.
-     */
-    @Deprecated
-    public static boolean titleMatches(final Citation citation, String title) {
-        ArgumentChecks.ensureNonNull("citation", citation);
-        ArgumentChecks.ensureNonNull("title", title);
-        return org.apache.sis.internal.util.Citations.titleMatches(citation, title);
-    }
-
-    /**
-     * Returns {@code true} if at least one {@linkplain Citation#getIdentifiers identifier} in
-     * {@code c1} is equal to an identifier in {@code c2}. The comparison is case-insensitive
-     * and ignores leading and trailing spaces. The identifier ordering is not significant.
-     * <p>
-     * If (and <em>only</em> if) the citations do not contains any identifier, then this method
-     * fallback on titles comparison using the {@link #titleMatches(Citation,Citation)
-     * titleMatches} method. This fallback exists for compatibility with client codes using
-     * citation {@linkplain Citation#getTitle titles} without identifiers.
-     *
-     * @param  c1 The first citation to compare.
-     * @param  c2 the second citation to compare.
-     * @return {@code true} if at least one identifier, title or alternate title matches.
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.metadata.iso.citation.Citations}.
-     */
-    @Deprecated
-    public static boolean identifierMatches(final Citation c1, final Citation c2) {
-        ArgumentChecks.ensureNonNull("c1", c1);
-        ArgumentChecks.ensureNonNull("c2", c2);
-        return org.apache.sis.internal.util.Citations.identifierMatches(c1, c2);
-    }
-
-    /**
-     * Returns {@code true} if any {@linkplain Citation#getIdentifiers identifiers} in the given
-     * citation matches the given string. The comparison is case-insensitive and ignores leading
-     * and trailing spaces. If (and <em>only</em> if) the citation do not contains any identifier,
-     * then this method fallback on titles comparison using the {@link #titleMatches(Citation,
-     * String) titleMatches} method. This fallback exists for compatibility with client codes using
-     * citation {@linkplain Citation#getTitle titles} without identifiers.
-     *
-     * @param  citation The citation to check for.
-     * @param  identifier The identifier to compare.
-     * @return {@code true} if the title or alternate title matches the given string.
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.metadata.iso.citation.Citations}.
-     */
-    @Deprecated
-    public static boolean identifierMatches(final Citation citation, final String identifier) {
-        ArgumentChecks.ensureNonNull("citation", citation);
-        ArgumentChecks.ensureNonNull("identifier", identifier);
-        return org.apache.sis.internal.util.Citations.identifierMatches(citation, null, identifier);
-    }
-
-    /**
-     * Returns the shortest identifier for the specified citation, or the title if there is
-     * no identifier. This method is useful for extracting the namespace from an authority,
-     * for example {@code "EPSG"}.
-     *
-     * @param  citation The citation for which to get the identifier, or {@code null}.
-     * @return The shortest identifier of the given citation, or {@code null} if the
-     *         given citation was null or doesn't declare any identifier or title.
-     *
-     * @since 2.4
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.metadata.iso.citation.Citations}.
-     */
-    @Deprecated
-    public static String getIdentifier(final Citation citation) {
-        return org.apache.sis.metadata.iso.citation.Citations.getIdentifier(citation);
     }
 }

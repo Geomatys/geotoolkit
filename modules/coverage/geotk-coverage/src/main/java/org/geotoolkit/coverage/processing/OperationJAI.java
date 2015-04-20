@@ -247,7 +247,7 @@ public class OperationJAI extends Operation2D {
     protected ParameterBlockJAI prepareParameters(final ParameterValueGroup parameters) {
         final ImagingParameters copy = (ImagingParameters) descriptor.createValue();
         final ParameterBlockJAI block = (ParameterBlockJAI) copy.parameters;
-        org.geotoolkit.parameter.Parameters.copy(parameters, copy);
+        org.apache.sis.parameter.Parameters.copy(parameters, copy);
         return block;
     }
 

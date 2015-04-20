@@ -37,7 +37,7 @@ import org.apache.lucene.store.MMapDirectory;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.geotoolkit.filter.SpatialFilterType;
-import org.geotoolkit.geometry.Envelopes;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.apache.sis.measure.Units;
@@ -59,14 +59,14 @@ public class LuceneUtils {
     private static final Logger LOGGER = Logging.getLogger(LuceneUtils.class);
 
     public static final GeometryFactory GF = new GeometryFactory();
-    
+
     public static Directory getAppropriateDirectory(final File indexDirectory) throws IOException {
-        
+
         // for windows
         if (System.getProperty("os.name", "").startsWith("Windows")) {
              return new SimpleFSDirectory(indexDirectory);
-             
-        // for unix     
+
+        // for unix
         } else {
             final String archModel = System.getProperty("sun.arch.data.model");
             LOGGER.log(Level.FINER, "archmodel:{0}", archModel);
@@ -77,10 +77,10 @@ public class LuceneUtils {
             }
         }
     }
-    
+
     public static GeneralEnvelope getExtendedReprojectedEnvelope(final Object geom, final CoordinateReferenceSystem treeCrs, final String strUnit, final double distance) throws FactoryException {
         GeneralEnvelope bound = getReprojectedEnvelope(geom, treeCrs);
-        
+
         // add the reprojected distance
         if (bound != null) {
             final Unit unit    = Units.valueOf(strUnit);
@@ -116,7 +116,7 @@ public class LuceneUtils {
         System.out.println("OBTAINED REPROJECTED ENV:" + bound);
         return bound;
     }
-    
+
     public static GeneralEnvelope getReprojectedEnvelope(final Object geom, final CoordinateReferenceSystem treeCrs) {
         if (geom instanceof Geometry) {
             return getReprojectedEnvelope((Geometry) geom, treeCrs);
@@ -130,10 +130,10 @@ public class LuceneUtils {
     }
     /**
      * Extract the internal envelope from the geometry and reprojected it to the treeCRS.
-     * 
+     *
      * @param geom
      * @param treeCrs
-     * @return 
+     * @return
      */
     private static GeneralEnvelope getReprojectedEnvelope(final Geometry geom, final CoordinateReferenceSystem treeCrs) {
         final Envelope jtsBound = geom.getEnvelopeInternal();
@@ -153,12 +153,12 @@ public class LuceneUtils {
         }
         return null;
     }
-    
+
     /**
      * Reproject the envelope in the tree CRS.
      * @param env
      * @param treeCrs
-     * @return 
+     * @return
      */
     private static GeneralEnvelope getReprojectedEnvelope(final org.opengis.geometry.Envelope env, final CoordinateReferenceSystem treeCrs) {
         try {
@@ -168,9 +168,9 @@ public class LuceneUtils {
         }
         return null;
     }
-    
+
     public static SpatialFilterType getSpatialFilterType(final Filter filter) {
-     
+
         if (filter instanceof BBOX) {
             return SpatialFilterType.BBOX;
         } else if (filter instanceof Beyond){

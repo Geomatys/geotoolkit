@@ -18,14 +18,11 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import java.util.Map;
-import net.jcip.annotations.Immutable;
-
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
-
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 
 
 /**
@@ -49,14 +46,10 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
  * some parameter values.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
  *
- * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/reference/StandardCoordinateTransforms.html">NetCDF projection parameters</a>
- *
- * @since 3.20
- * @module
+ * @deprecated Moved to Apache SIS.
  */
-@Immutable
+@Deprecated
 final class MapProjectionDescriptor extends DefaultParameterDescriptorGroup {
     /**
      * For cross-version compatibility.
@@ -99,7 +92,7 @@ final class MapProjectionDescriptor extends DefaultParameterDescriptorGroup {
      * Creates a new parameter descriptor from the given properties and parameters.
      */
     MapProjectionDescriptor(final Map<String,?> properties, final ParameterDescriptor<?>[] parameters, final int supplement) {
-        super(properties, parameters);
+        super(properties, 1, 1, parameters);
         this.supplement = supplement;
     }
 

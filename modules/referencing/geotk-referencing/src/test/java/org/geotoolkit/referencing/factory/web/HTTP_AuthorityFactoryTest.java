@@ -194,7 +194,7 @@ public final strictfp class HTTP_AuthorityFactoryTest extends ReferencingTestBas
         final CRSAuthorityFactory factory = getCRSAuthorityFactory("http://www.opengis.net", null);
         assertTrue("The correct working of IdentifiedObjects.lookupIdentifier(authority, crs) requires " +
                    "that the URN_AuthorityFactory can been found from the Citations.URN_OGC constant.",
-                   Citations.identifierMatches(factory.getAuthority(), Citations.HTTP_OGC));
+                   org.apache.sis.metadata.iso.citation.Citations.identifierMatches(factory.getAuthority(), Citations.HTTP_OGC));
         assertTrue(factory instanceof AbstractAuthorityFactory);
 
         final IdentifiedObjectFinder finder = ((AbstractAuthorityFactory) factory)

@@ -21,11 +21,9 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.AbstractList;
 import java.util.RandomAccess;
-
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.util.collection.WeakHashSet;
-import org.apache.sis.util.collection.CheckedContainer;
 
 import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
 
@@ -59,11 +57,8 @@ import static org.apache.sis.util.ArgumentChecks.ensureValidIndex;
  *
  * @since 1.0
  * @module
- *
- * @deprecated Partially duplicated the work of {@link java.nio.DoubleBuffer}.
  */
-@Deprecated
-public abstract class Vector extends AbstractList<Number> implements CheckedContainer/*<Number>*/, RandomAccess {
+public abstract class Vector extends AbstractList<Number> implements RandomAccess {
     /**
      * A pool of indices used by the {@link Vector.View} inner class.
      */
@@ -146,8 +141,9 @@ public abstract class Vector extends AbstractList<Number> implements CheckedCont
      * primitive type, then this method returns the <em>wrapper</em> class, not the primitive
      * type. For example if this vector is backed by an array of type {@code float[]}, then
      * this method returns {@code Float.class}, not {@link Float#TYPE}.
+     *
+     * @return The type of elements in this vector.
      */
-    @Override
     public abstract Class<? extends Number> getElementType();
 
     /**

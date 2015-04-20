@@ -20,15 +20,11 @@
  */
 package org.geotoolkit.coverage.processing;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
-import java.io.IOException;
-import java.io.Writer;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.coverage.Coverage;
@@ -37,7 +33,6 @@ import org.opengis.coverage.processing.Operation;
 import org.opengis.coverage.processing.OperationNotFoundException;
 import org.opengis.coverage.processing.GridCoverageProcessor;
 import org.opengis.parameter.ParameterNotFoundException;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
 
@@ -239,56 +234,5 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
             }
         }
         return Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED);
-    }
-
-    /**
-     * Lists a summary of all operations to the specified stream.
-     *
-     * @param  out The destination stream.
-     * @throws IOException if an error occurred will writing to the stream.
-     */
-    public void listOperations(final Writer out) throws IOException {
-        final Collection<Operation> operations = getOperations();
-        final CoverageParameterWriter writer = new CoverageParameterWriter(out);
-        final List<ParameterDescriptorGroup> descriptors = new ArrayList<ParameterDescriptorGroup>(operations.size());
-        for (final Operation operation : operations) {
-            if (operation instanceof AbstractOperation) {
-                descriptors.add(((AbstractOperation) operation).descriptor);
-            }
-        }
-        writer.summary(descriptors);
-    }
-
-    /**
-     * Prints a description of operations to the specified stream. If the {@code names} array
-     * is non-null, then only the specified operations are printed. Otherwise, all operations
-     * are printed. The description details include operation names and lists of parameters.
-     *
-     * @param  out The destination stream.
-     * @param  names The operation to print, or an empty array for none, or {@code null} for all.
-     * @throws IOException if an error occurred will writing to the stream.
-     * @throws OperationNotFoundException if an operation named in {@code names} was not found.
-     */
-    public void printOperations(final Writer out, final String[] names)
-            throws OperationNotFoundException, IOException
-    {
-        final CoverageParameterWriter writer = new CoverageParameterWriter(out);
-        final String lineSeparator = System.lineSeparator();
-        if (names != null) {
-            for (int i=0; i<names.length; i++) {
-                final Operation operation = getOperation(names[i]);
-                if (operation instanceof AbstractOperation) {
-                    out.write(lineSeparator);
-                    writer.format(((AbstractOperation) operation).descriptor);
-                }
-            }
-        } else {
-            for (final Operation operation : getOperations()) {
-                if (operation instanceof AbstractOperation) {
-                    out.write(lineSeparator);
-                    writer.format(((AbstractOperation) operation).descriptor);
-                }
-            }
-        }
     }
 }

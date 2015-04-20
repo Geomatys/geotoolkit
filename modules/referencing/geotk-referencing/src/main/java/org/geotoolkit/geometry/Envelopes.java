@@ -34,7 +34,6 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -116,102 +115,6 @@ public final class Envelopes extends Static {
         final Matrix derivative = derivate ? transform.derivative(new DirectPositionView(srcPts, 0, transform.getSourceDimensions())) : null;
         transform.transform(srcPts, 0, dstPts, dstOff, 1);
         return derivative;
-    }
-
-    /**
-     * Transforms the given envelope to the specified CRS. If any argument is null, or if the
-     * {@linkplain Envelope#getCoordinateReferenceSystem() envelope CRS} is null or the same
-     * instance than the given target CRS, then the given envelope is returned unchanged.
-     * Otherwise a new transformed envelope is returned.
-     *
-     * {@section Performance tip}
-     * If there is many envelopes to transform with the same source and target CRS, then it
-     * is more efficient to get the {@linkplain CoordinateOperation coordinate operation} or
-     * {@linkplain MathTransform math transform} once for ever and invoke one of the methods
-     * below.
-     *
-     * @param  envelope The envelope to transform (may be {@code null}).
-     * @param  targetCRS The target CRS (may be {@code null}).
-     * @return A new transformed envelope, or directly {@code envelope} if no change was required.
-     * @throws TransformException If a transformation was required and failed.
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.geometry.Envelopes}.
-     */
-    @Deprecated
-    public static Envelope transform(Envelope envelope, final CoordinateReferenceSystem targetCRS)
-            throws TransformException
-    {
-        return org.apache.sis.geometry.Envelopes.transform(envelope, targetCRS);
-    }
-
-    /**
-     * Transforms an envelope using the given {@linkplain MathTransform math transform}.
-     * The transformation is only approximative: the returned envelope may be bigger than
-     * necessary, or smaller than required if the bounding box contains a pole.
-     * <p>
-     * This method can not handle the case where the envelope contains the North or South pole,
-     * or when it cross the &plusmn;180&deg; longitude, because {@linkplain MathTransform math
-     * transforms} does not carry sufficient informations. For a more robust envelope
-     * transformation, use {@link #transform(CoordinateOperation, Envelope)} instead.
-     *
-     * @param  transform The transform to use.
-     * @param  envelope Envelope to transform, or {@code null}. This envelope will not be modified.
-     * @return The transformed envelope, or {@code null} if {@code envelope} was null.
-     * @throws TransformException if a transform failed.
-     *
-     * @see #transform(CoordinateOperation, Envelope)
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.geometry.Envelopes}.
-     */
-    @Deprecated
-    public static GeneralEnvelope transform(final MathTransform transform, final Envelope envelope)
-            throws TransformException
-    {
-        ensureNonNull("transform", transform);
-        if (envelope == null) {
-            return null;
-        }
-        if (transform instanceof MathTransform2D && envelope.getDimension() == 2) {
-            final XRectangle2D tmp = XRectangle2D.createFromExtremums(
-                    envelope.getMinimum(0), envelope.getMinimum(1),
-                    envelope.getMaximum(0), envelope.getMaximum(1));
-            transform((MathTransform2D) transform, tmp, tmp);
-            return new GeneralEnvelope(
-                    new double[] {tmp.getMinX(), tmp.getMinY()},
-                    new double[] {tmp.getMaxX(), tmp.getMaxY()});
-        }
-        return org.apache.sis.geometry.Envelopes.transform(transform, envelope);
-    }
-
-    /**
-     * Transforms an envelope using the given {@linkplain CoordinateOperation coordinate operation}.
-     * The transformation is only approximative: the returned envelope may be bigger than the
-     * smallest possible bounding box, but should not be smaller in most cases.
-     * <p>
-     * This method can handle the case where the envelope contains the North or South pole,
-     * or when it cross the &plusmn;180&deg; longitude.
-     *
-     * {@note If the envelope CRS is non-null, then the caller should ensure that the operation
-     * source CRS is the same than the envelope CRS. In case of mismatch, this method transforms
-     * the envelope to the operation source CRS before to apply the operation. This extra step
-     * may cause a lost of accuracy. In order to prevent this method from performing such
-     * pre-transformation (if not desired), callers can ensure that the envelope CRS is
-     * <code>null</code> before to call this method.}
-     *
-     * @param  operation The operation to use.
-     * @param  envelope Envelope to transform, or {@code null}. This envelope will not be modified.
-     * @return The transformed envelope, or {@code null} if {@code envelope} was null.
-     * @throws TransformException if a transform failed.
-     *
-     * @see #transform(MathTransform, Envelope)
-     *
-     * @deprecated Moved to Apache SIS {@link org.apache.sis.geometry.Envelopes}.
-     */
-    @Deprecated
-    public static GeneralEnvelope transform(final CoordinateOperation operation, Envelope envelope)
-            throws TransformException
-    {
-        return org.apache.sis.geometry.Envelopes.transform(operation, envelope);
     }
 
     /**
@@ -671,39 +574,39 @@ public final class Envelopes extends Static {
     private static void recoverableException(final TransformException exception) {
         Logging.recoverableException(Envelopes.class, "transform", exception);
     }
-    
+
     /**
-     * Returns {@code true} if {@link Envelope} contain at least one 
+     * Returns {@code true} if {@link Envelope} contain at least one
      * {@link Double#NaN} value, else {@code false}.
-     * 
+     *
      * @param envelope the envelope which will be verify.
      * @return {@code true} if {@link Envelope} contain at least one {@link Double#NaN} value, else {@code false}.
-     * @see #containNAN(org.opengis.geometry.Envelope, int, int) 
+     * @see #containNAN(org.opengis.geometry.Envelope, int, int)
      */
     public static boolean containNAN(final Envelope envelope) {
         return containNAN(envelope, 0, envelope.getDimension() - 1);
     }
-    
+
     /**
-     * Returns {@code true} if {@link Envelope} contain at least one 
+     * Returns {@code true} if {@link Envelope} contain at least one
      * {@link Double#NaN} value into its horizontal geographic part, else {@code false}.
-     * 
+     *
      * @param envelope the envelope which will be verify.
      * @return {@code true} if {@link Envelope} contain at least one {@link Double#NaN} value, else {@code false}.
-     * @see CRSUtilities#firstHorizontalAxis(org.opengis.referencing.crs.CoordinateReferenceSystem) 
-     * @see #containNAN(org.opengis.geometry.Envelope, int, int) 
+     * @see CRSUtilities#firstHorizontalAxis(org.opengis.referencing.crs.CoordinateReferenceSystem)
+     * @see #containNAN(org.opengis.geometry.Envelope, int, int)
      */
     public static boolean containNANInto2DGeographicPart(final Envelope envelope) {
         ArgumentChecks.ensureNonNull("Envelopes.containNANInto2DGeographicPart()", envelope);
         final int minOrdiGeo = CRSUtilities.firstHorizontalAxis(envelope.getCoordinateReferenceSystem());
         return containNAN(envelope, minOrdiGeo, minOrdiGeo + 1);
     }
-    
+
     /**
-     * Returns {@code true} if {@link Envelope} contain at least one 
-     * {@link Double#NaN} value on each inclusive dimension stipulate by 
+     * Returns {@code true} if {@link Envelope} contain at least one
+     * {@link Double#NaN} value on each inclusive dimension stipulate by
      * firstIndex and lastIndex, else {@code false}.
-     * 
+     *
      * @param envelope the envelope which will be verify.
      * @param firstIndex first inclusive dimension index.
      * @param lastIndex last <strong>INCLUSIVE</strong> dimension.
@@ -713,7 +616,7 @@ public final class Envelopes extends Static {
         ArgumentChecks.ensureNonNull("Envelopes.containNAN()", envelope);
         ArgumentChecks.ensurePositive("firstIndex", firstIndex);
         ArgumentChecks.ensurePositive("lastIndex", lastIndex);
-        if (lastIndex >= envelope.getDimension()) 
+        if (lastIndex >= envelope.getDimension())
             throw new IllegalArgumentException("LastIndex must be strictly lower than "
                     + "envelope dimension number. Expected maximum valid index = "+(envelope.getDimension() - 1)+". Found : "+lastIndex);
         ArgumentChecks.ensureValidIndex(lastIndex + 1, firstIndex);

@@ -51,9 +51,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.factory.FactoryRegistryException;
-import org.geotoolkit.geometry.Envelopes;
+import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.resources.Errors;
@@ -1187,7 +1186,7 @@ compare:    for (final SingleCRS component : actualComponents) {
                                               Rectangle2D     destination)
             throws TransformException
     {
-        return Envelopes.transform(transform, envelope, destination);
+        return org.geotoolkit.geometry.Envelopes.transform(transform, envelope, destination);
     }
 
     /**
@@ -1216,7 +1215,7 @@ compare:    for (final SingleCRS component : actualComponents) {
                                               Rectangle2D         destination)
             throws TransformException
     {
-        return Envelopes.transform(operation, envelope, destination);
+        return org.geotoolkit.geometry.Envelopes.transform(operation, envelope, destination);
     }
 
     /**

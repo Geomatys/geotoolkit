@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.processing.operation;
 
+import java.util.Collections;
 import java.awt.Color;
 import net.jcip.annotations.Immutable;
 
@@ -29,6 +30,8 @@ import org.geotoolkit.coverage.processing.IndexColorOperation;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.referencing.NamedIdentifier;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
 /**
@@ -94,7 +97,7 @@ public class Recolor extends IndexColorOperation {
      * Constructs a new "Recolor" operation.
      */
     public Recolor() {
-        super(new DefaultParameterDescriptorGroup(Citations.GEOTOOLKIT, "Recolor", SOURCE_0, COLOR_MAPS));
+        super(new DefaultParameterDescriptorGroup(Collections.singletonMap(NAME_KEY, new NamedIdentifier(Citations.GEOTOOLKIT, "Recolor")), 1, 1, SOURCE_0, COLOR_MAPS));
     }
 
     /**

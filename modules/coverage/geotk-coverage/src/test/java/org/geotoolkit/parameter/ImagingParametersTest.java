@@ -163,7 +163,6 @@ public final strictfp class ImagingParametersTest extends TestBase {
 
         // Note that we are supposed to use spatial coordinates for this value we are seeting here.
         p.setValue(Double.valueOf(2.3));
-        assertTrue(p.toString().startsWith("xPeriod = 2.3"));
 
         // Tests direct access to the parameter list.
         final ParameterList pl = ((ImagingParameters) rip).parameters;

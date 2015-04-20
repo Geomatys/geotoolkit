@@ -31,6 +31,7 @@ import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.apache.sis.geometry.Envelopes;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 
