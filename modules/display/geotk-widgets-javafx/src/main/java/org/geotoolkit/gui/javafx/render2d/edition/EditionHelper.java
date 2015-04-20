@@ -309,8 +309,8 @@ public class EditionHelper {
 
         Feature candidate = null;
 
-        FeatureCollection<Feature> editgeoms = null;
-        FeatureIterator<Feature> fi = null;
+        FeatureCollection editgeoms = null;
+        FeatureIterator fi = null;
         try {
             final Polygon geo = mousePositionToGeometry(mx, my);
             Filter flt = toFilter(geo, editedLayer);
@@ -341,7 +341,7 @@ public class EditionHelper {
             QueryBuilder qb = new QueryBuilder(editedLayer.getCollection().getFeatureType().getName());
             //we filter in the map CRS
             qb.setCRS(map.getCanvas().getObjectiveCRS2D());
-            editgeoms = (FeatureCollection<Feature>) editedLayer.getCollection().subCollection(qb.buildQuery());
+            editgeoms = (FeatureCollection) editedLayer.getCollection().subCollection(qb.buildQuery());
 
             //we filter ourself since we want the filter to occure after the reprojection
             editgeoms = GenericFilterFeatureIterator.wrap(editgeoms, flt);
@@ -358,7 +358,7 @@ public class EditionHelper {
                 qb.reset();
                 qb.setTypeName(editedLayer.getCollection().getFeatureType().getName());
                 qb.setFilter(flt);
-                editgeoms = (FeatureCollection<Feature>) editedLayer.getCollection().subCollection(qb.buildQuery());
+                editgeoms = (FeatureCollection) editedLayer.getCollection().subCollection(qb.buildQuery());
                 fi = editgeoms.iterator();
                 if (fi.hasNext()){
                     sf = fi.next();

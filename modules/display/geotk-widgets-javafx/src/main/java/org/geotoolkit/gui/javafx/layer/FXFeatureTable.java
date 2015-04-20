@@ -156,7 +156,7 @@ public class FXFeatureTable extends FXPropertyPane{
         if(!(candidate instanceof FeatureMapLayer)) return false;
         
         layer = (FeatureMapLayer) candidate;
-        final FeatureCollection<? extends Feature> features = layer.getCollection();
+        final FeatureCollection features = layer.getCollection();
         
         table.getColumns().clear();
         final FeatureType featureType = features.getFeatureType();
@@ -259,15 +259,15 @@ public class FXFeatureTable extends FXPropertyPane{
     }
     
     private void loadData(ActionEvent event){
-        final FeatureCollection<? extends Feature> col = layer.getCollection();
+        final FeatureCollection col = layer.getCollection();
         table.setItems(FXCollections.observableArrayList((Feature[])col.toArray(new Feature[0])));
     }
         
     private static class ObservableFeatureCollection extends AbstractSequentialList<Feature> implements ObservableList<Feature>{
 
-        private final FeatureCollection<Feature> features;
+        private final FeatureCollection features;
         
-        private ObservableFeatureCollection(FeatureCollection<Feature> features){
+        private ObservableFeatureCollection(FeatureCollection features){
             this.features = features;
         }
         
