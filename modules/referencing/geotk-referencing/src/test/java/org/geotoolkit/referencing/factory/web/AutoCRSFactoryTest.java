@@ -184,9 +184,9 @@ public final strictfp class AutoCRSFactoryTest extends ReferencingTestBase {
     @Test
     public void test42004() throws FactoryException {
         final ProjectedCRS proj = factory.createProjectedCRS("AUTO:42004,9001,0.0,35");
-        assertEquals ("Equidistant_Cylindrical", proj.getConversionFromBase().getMethod().getName().getCode());
+        assertEquals ("Equidistant Cylindrical (Spherical)", proj.getConversionFromBase().getMethod().getName().getCode());
         assertNull   ("Should have been optimized to an AffineTransform.", getProjectionClass(proj));
-        final double stdParallel1 = proj.getConversionFromBase().getParameterValues().parameter("latitude_of_origin").doubleValue();
+        final double stdParallel1 = proj.getConversionFromBase().getParameterValues().parameter("standard_parallel").doubleValue();
         assertEquals("The parameter should still available, even if the projection " +
                 "has been optimized to an AffineTransform.", 35.0, stdParallel1, 1E-9);
     }

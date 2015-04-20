@@ -29,7 +29,6 @@ import static org.geotoolkit.referencing.operation.provider.NewZealandMapGrid.PA
  * Tests the {@link NewZealandMapGrid} implementation.
  *
  * @author Justin Deoliveira (Refractions)
- * @version 3.00
  *
  * @since 2.2
  */
@@ -65,7 +64,7 @@ public final strictfp class NewZealandMapGridTest extends ProjectionTestBase {
      */
     @Before
     public void createProjection() {
-        transform = NewZealandMapGrid.create(PARAMETERS, PARAMETERS.createValue());
+        transform = NewZealandMapGrid.create(wrap(PARAMETERS), PARAMETERS.createValue());
     }
 
     /**

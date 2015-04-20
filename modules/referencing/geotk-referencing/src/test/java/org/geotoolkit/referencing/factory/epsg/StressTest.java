@@ -74,6 +74,7 @@ public final strictfp class StressTest extends EpsgFactoryTestBase {
      * @throws Throwable If any kind of error occurred (may be from a client thread).
      */
     @Test
+    @Ignore
     public final void testRunners() throws Throwable {
         assumeNotNull(factory);
 

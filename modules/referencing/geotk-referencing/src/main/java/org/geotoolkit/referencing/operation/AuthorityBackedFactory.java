@@ -731,8 +731,8 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
          * may have been added to the source and/or target CRS.
          */
         if (updated) {
-            final Integer srcDim = sourceCRS.getCoordinateSystem().getDimension();
-            final Integer tgtDim = targetCRS.getCoordinateSystem().getDimension();
+            final int srcDim = sourceCRS.getCoordinateSystem().getDimension();
+            final int tgtDim = targetCRS.getCoordinateSystem().getDimension();
             Class<? extends CoordinateOperation> type = AbstractCoordinateOperation.getType(operation);
             OperationMethod method = null;
             if (operation instanceof SingleOperation) {

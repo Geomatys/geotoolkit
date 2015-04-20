@@ -17,17 +17,24 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import net.jcip.annotations.Immutable;
-
+import javax.measure.unit.NonSI;
+import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.Identifier;
-
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.Citations;
+import org.apache.sis.internal.referencing.provider.LambertConformal1SP;
+import org.apache.sis.internal.referencing.provider.Mercator1SP;
+import org.apache.sis.internal.referencing.provider.PseudoMercator;
+import org.apache.sis.internal.referencing.provider.Mercator2SP;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.parameter.ParameterBuilder;
 
 
 /**
@@ -51,7 +58,6 @@ import org.geotoolkit.metadata.Citations;
  *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
- *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
  *   <tr><td>{@code central_meridian}</td><td>0°</td></tr>
  *   <tr><td>{@code latitude_of_origin}</td><td>0°</td></tr>
  *   <tr><td>{@code scale_factor}</td><td>1</td></tr>
@@ -70,7 +76,6 @@ import org.geotoolkit.metadata.Citations;
  * @since 2.4
  * @module
  */
-@Immutable
 public class PolarStereographic extends Stereographic {
     /**
      * For compatibility with different versions during deserialization.
@@ -151,10 +156,6 @@ public class PolarStereographic extends Stereographic {
      *     </table>
      *   </td></tr>
      *   <tr><td>
-     *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-     *     </table>
-     *   </td><td>
      *     <table class="compact">
      *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
      *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
@@ -246,7 +247,13 @@ public class PolarStereographic extends Stereographic {
                 "Longitude of natural origin",  // EPSG
                 "central_meridian",             // OGC
                 "StraightVertPoleLong");        // GeoTIFF
-        LATITUDE_OF_ORIGIN = Mercator1SP.LATITUDE_OF_ORIGIN;
+
+        ParameterBuilder builder = new ParameterBuilder();
+        builder.addNamesAndIdentifiers(LambertConformal1SP.LATITUDE_OF_ORIGIN);
+        LATITUDE_OF_ORIGIN = builder.createBounded(MeasurementRange.create(
+                Latitude.MIN_VALUE, true,
+                Latitude.MAX_VALUE, true,
+                NonSI.DEGREE_ANGLE), 0.0);
 
         PARAMETERS = UniversalParameters.createDescriptorGroup(
             new Identifier[] {
@@ -258,12 +265,11 @@ public class PolarStereographic extends Stereographic {
                 sameNameAs(Citations.PROJ4,      Stereographic.PARAMETERS),
                 sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
             }, excludes, new ParameterDescriptor<?>[] {
-                sameParameterAs(Mercator1SP.PARAMETERS, "semi_major"),
-                sameParameterAs(Mercator1SP.PARAMETERS, "semi_minor"),
-                ROLL_LONGITUDE,
+                Mercator1SP.SEMI_MAJOR,
+                Mercator1SP.SEMI_MINOR,
                 CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
-                Mercator1SP.FALSE_EASTING,
-                Mercator1SP.FALSE_NORTHING
+                Mercator2SP.FALSE_EASTING,    // TODO: actually Mercator1SP
+                Mercator2SP.FALSE_NORTHING    // TODO: actually Mercator1SP
             }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
     }
 
@@ -287,8 +293,8 @@ public class PolarStereographic extends Stereographic {
      * {@inheritDoc}
      */
     @Override
-    protected MathTransform2D createMathTransform(ParameterValueGroup values) {
-        return org.geotoolkit.referencing.operation.projection.PolarStereographic.create(getParameters(), values);
+    public MathTransform2D createMathTransform(MathTransformFactory factory, ParameterValueGroup values) {
+        return org.geotoolkit.referencing.operation.projection.PolarStereographic.create(this, values);
     }
 
 
@@ -312,7 +318,6 @@ public class PolarStereographic extends Stereographic {
      *   <tr><th>Parameter name</th><th>Default value</th></tr>
      *   <tr><td>{@code semi_major}</td><td></td></tr>
      *   <tr><td>{@code semi_minor}</td><td></td></tr>
-     *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
      *   <tr><td>{@code central_meridian}</td><td>0°</td></tr>
      *   <tr><td>{@code standard_parallel_1}</td><td>90°</td></tr>
      *   <tr><td>{@code false_easting}</td><td>0 metres</td></tr>
@@ -329,7 +334,6 @@ public class PolarStereographic extends Stereographic {
      * @since 2.4
      * @module
      */
-    @Immutable
     public static class VariantB extends PolarStereographic {
         /**
          * For compatibility with different versions during deserialization.
@@ -398,10 +402,6 @@ public class PolarStereographic extends Stereographic {
          *     </table>
          *   </td></tr>
          *   <tr><td>
-         *     <table class="compact">
-         *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-         *     </table>
-         *   </td><td>
          *     <table class="compact">
          *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
          *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
@@ -479,6 +479,7 @@ public class PolarStereographic extends Stereographic {
                     "Latitude of standard parallel",  // EPSG
                     "standard_parallel_1");           // OGC
 
+            final ParameterDescriptorGroup p = new PseudoMercator().getParameters(); // TODO
             PARAMETERS = UniversalParameters.createDescriptorGroup(
                 new Identifier[] {
                     new NamedIdentifier(Citations.EPSG, "Polar Stereographic (variant B)"),
@@ -488,12 +489,12 @@ public class PolarStereographic extends Stereographic {
 //                    new IdentifierCode (Citations.S57,   11),
                     sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
                 }, excludes, new ParameterDescriptor<?>[] {
-                    sameParameterAs(PseudoMercator.PARAMETERS, "semi_major"),
-                    sameParameterAs(PseudoMercator.PARAMETERS, "semi_minor"),
-                    ROLL_LONGITUDE,
+                    sameParameterAs(p, "semi_major"),
+                    sameParameterAs(p, "semi_minor"),
                     CENTRAL_MERIDIAN, STANDARD_PARALLEL,
-                    sameParameterAs(PseudoMercator.PARAMETERS, "false_easting"),
-                    sameParameterAs(PseudoMercator.PARAMETERS, "false_northing"),
+                    sameParameterAs(new LambertConformal2SP().getParameters(), "scale_factor"), // TODO
+                    sameParameterAs(p, "false_easting"),
+                    sameParameterAs(p, "false_northing"),
                 }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
         }
 
@@ -520,7 +521,6 @@ public class PolarStereographic extends Stereographic {
      *   <tr><th>Parameter name</th><th>Default value</th></tr>
      *   <tr><td>{@code Semi_Major}</td><td></td></tr>
      *   <tr><td>{@code Semi_Minor}</td><td></td></tr>
-     *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
      *   <tr><td>{@code Central_Meridian}</td><td>0°</td></tr>
      *   <tr><td>{@code Standard_Parallel_1}</td><td>90°</td></tr>
      *   <tr><td>{@code Scale_Factor}</td><td>1</td></tr>
@@ -538,7 +538,6 @@ public class PolarStereographic extends Stereographic {
      * @since 2.4
      * @module
      */
-    @Immutable
     public static class North extends PolarStereographic {
         /**
          * For compatibility with different versions during deserialization.
@@ -590,10 +589,6 @@ public class PolarStereographic extends Stereographic {
          *     </table>
          *   </td></tr>
          *   <tr><td>
-         *     <table class="compact">
-         *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-         *     </table>
-         *   </td><td>
          *     <table class="compact">
          *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
          *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
@@ -678,8 +673,8 @@ public class PolarStereographic extends Stereographic {
                 }, excludes, new ParameterDescriptor<?>[] {
                     sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "semi_major"),
                     sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "semi_minor"),
-                    ROLL_LONGITUDE, Stereographic.CENTRAL_MERIDIAN, STANDARD_PARALLEL,
-                    sameParameterAs(LambertConformal2SP     .PARAMETERS, "scale_factor"),
+                    Stereographic.CENTRAL_MERIDIAN, STANDARD_PARALLEL,
+                    sameParameterAs(new LambertConformal2SP().getParameters(), "scale_factor"), // TODO
                     sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "false_easting"),
                     sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "false_northing"),
                 }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
@@ -708,7 +703,6 @@ public class PolarStereographic extends Stereographic {
      *   <tr><th>Parameter name</th><th>Default value</th></tr>
      *   <tr><td>{@code Semi_Major}</td><td></td></tr>
      *   <tr><td>{@code Semi_Minor}</td><td></td></tr>
-     *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
      *   <tr><td>{@code Central_Meridian}</td><td>0°</td></tr>
      *   <tr><td>{@code Standard_Parallel_1}</td><td>-90°</td></tr>
      *   <tr><td>{@code Scale_Factor}</td><td>1</td></tr>
@@ -726,7 +720,6 @@ public class PolarStereographic extends Stereographic {
      * @since 2.4
      * @module
      */
-    @Immutable
     public static class South extends PolarStereographic {
         /**
          * For compatibility with different versions during deserialization.
@@ -778,10 +771,6 @@ public class PolarStereographic extends Stereographic {
          *     </table>
          *   </td></tr>
          *   <tr><td>
-         *     <table class="compact">
-         *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-         *     </table>
-         *   </td><td>
          *     <table class="compact">
          *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
          *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
@@ -865,7 +854,6 @@ public class PolarStereographic extends Stereographic {
                 }, null, new ParameterDescriptor<?>[] {
                     sameParameterAs(North.PARAMETERS, "semi_major"),
                     sameParameterAs(North.PARAMETERS, "semi_minor"),
-                    ROLL_LONGITUDE,
                     sameParameterAs(North.PARAMETERS, "central_meridian"),
                     STANDARD_PARALLEL,
                     sameParameterAs(North.PARAMETERS, "scale_factor"),

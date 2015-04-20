@@ -17,9 +17,6 @@
  */
 package org.geotoolkit.referencing.cs;
 
-import java.util.List;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import javax.measure.unit.SI;
@@ -36,16 +33,11 @@ import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
-import org.apache.sis.internal.referencing.AxisDirections;
 import org.apache.sis.measure.Units;
 import org.apache.sis.math.MathFunctions;
-import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.referencing.cs.DefaultAffineCS;
 import org.apache.sis.referencing.cs.DefaultCartesianCS;
 import org.apache.sis.referencing.cs.DefaultSphericalCS;
 import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
-import org.apache.sis.referencing.cs.DefaultCompoundCS;
-import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 
 import static org.opengis.referencing.IdentifiedObject.ALIAS_KEY;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
@@ -59,7 +51,7 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  * @author Martin Desruisseaux (IRD)
  * @module
  */
-public final class PredefinedCS extends Static implements Comparator<CoordinateSystem> {
+public final class PredefinedCS extends Static {
     /**
      * A two-dimensional Cartesian CS with
      * <var>{@linkplain Axes#EASTING Easting}</var>,
@@ -167,53 +159,10 @@ public final class PredefinedCS extends Static implements Comparator<CoordinateS
                     Axes.GEODETIC_LATITUDE,
                     Axes.ELLIPSOIDAL_HEIGHT);
 
-
-    /**
-     * An instance of {@link PredefinedCS}. Will be created only when first needed.
-     */
-    private static Comparator<CoordinateSystem> csComparator;
-
-    /**
-     * Our ordering for coordinate system objects.
-     */
-    @SuppressWarnings({"unchecked","rawtypes"})
-    private final Class<? extends CoordinateSystem>[] types = new Class[] {
-        CartesianCS  .class,
-        AffineCS     .class,
-        EllipsoidalCS.class,
-        SphericalCS  .class,
-        CylindricalCS.class,
-        PolarCS      .class,
-        VerticalCS   .class,
-        TimeCS       .class,
-        LinearCS     .class,
-        UserDefinedCS.class
-    };
-
     /**
      * Creates a comparator.
      */
     private PredefinedCS() {
-    }
-
-    /**
-     * Compares the ordering between two coordinate systems. This comparator is used for sorting
-     * the axis in an user-supplied compound CS in an order closes to some "standard" order.
-     *
-     * <p>This method is public as an implementation side-effect.
-     * It will be removed from public API in a future Geotk version.</p>
-     */
-    @Override
-    public int compare(final CoordinateSystem object1, final CoordinateSystem object2) {
-        final Class<? extends CoordinateSystem> type1 = object1.getClass();
-        final Class<? extends CoordinateSystem> type2 = object2.getClass();
-        for (final Class<?> type : types) {
-            final boolean a1 = type.isAssignableFrom(type1);
-            final boolean a2 = type.isAssignableFrom(type2);
-            if (a1) return a2 ? 0 : -1;
-            if (a2) return a1 ? 0 : +1;
-        }
-        return 0;
     }
 
     /**
@@ -248,232 +197,6 @@ public final class PredefinedCS extends Static implements Comparator<CoordinateS
             throw new MismatchedDimensionException(Errors.format(
                     Errors.Keys.MISMATCHED_DIMENSION_3,
                     name, coordinates.length, dimension));
-        }
-    }
-
-    /**
-     * Returns {@code true} if every axis in the specified {@code userCS} are colinear with axis
-     * in this coordinate system. The comparison is insensitive to axis order and units. What
-     * matter is axis names (because they are fixed by ISO 19111 specification) and directions.
-     * <p>
-     * If this method returns {@code true}, then there is good chances that this CS can be used
-     * together with {@code userCS} as arguments to {@link #swapAndScaleAxis swapAndScaleAxis}.
-     * <p>
-     * This method should not be public because current implementation is not fully consistent
-     * for every pair of CS. It tries to check the opposite direction in addition of the usual
-     * one, but only a few pre-defined axis declare their opposite. This method should be okay
-     * when invoked on pre-defined CS declared in this package. {@link PredefinedCS} uses this
-     * method only that way.
-     */
-    private static boolean axisColinearWith(final CoordinateSystem standardCS, final CoordinateSystem userCS) {
-        if (userCS.getDimension() != standardCS.getDimension()) {
-            return false;
-        }
-        final int c0 = standardCS.getDimension();
-        final int c1 = userCS    .getDimension();
-        final boolean[] done = new boolean[c1];
-next:   for (int i=0; i<c0; i++) {
-            final CoordinateSystemAxis direct   = standardCS.getAxis(i);
-            final CoordinateSystemAxis opposite = Axes.getOpposite(direct);
-            for (int j=0; j<c1; j++) {
-                if (!done[j]) {
-                    final CoordinateSystemAxis candidate = userCS.getAxis(j);
-                    if (Axes.equalsMetadata(candidate, direct) || (opposite != null &&
-                        Axes.equalsMetadata(candidate, opposite)))
-                    {
-                        done[j] = true; // Flags as already compared.
-                        continue next;
-                    }
-                }
-            }
-            return false;
-        }
-        assert directionColinearWith(standardCS, userCS);
-        return true;
-    }
-
-    /**
-     * Compares directions only, without consideration for the axis name.
-     */
-    private static boolean directionColinearWith(final CoordinateSystem standardCS, final CoordinateSystem userCS) {
-        final int dimension = standardCS.getDimension();
-        if (userCS.getDimension() != dimension) {
-            return false;
-        }
-        final AxisDirection[] checks = new AxisDirection[dimension];
-        for (int i=0; i<checks.length; i++) {
-            checks[i] = AxisDirections.absolute(userCS.getAxis(i).getDirection());
-        }
-next:   for (int i=0; i<dimension; i++) {
-            final AxisDirection direction = AxisDirections.absolute(standardCS.getAxis(i).getDirection());
-            for (int j=0; j<checks.length; j++) {
-                final AxisDirection candidate = checks[j];
-                if (candidate != null && candidate.equals(direction)) {
-                    checks[j] = null;  // Flags as already compared.
-                    continue next;
-                }
-            }
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Returns a coordinate system with "standard" axis order and units.
-     * Most of the time, this method returns one of the predefined constants with axis in
-     * (<var>longitude</var>,<var>latitude</var>) or (<var>X</var>,<var>Y</var>) order,
-     * and units in degrees or metres. In some particular cases like
-     * {@linkplain org.opengis.referencing.cs.CartesianCS Cartesian CS}, this method may
-     * create a new instance on the fly. In every cases this method attempts to return a
-     * <A HREF="http://en.wikipedia.org/wiki/Right_hand_rule">right-handed</A> coordinate
-     * system, but this is not guaranteed.
-     * <p>
-     * This method is typically used together with {@link #swapAndScaleAxis swapAndScaleAxis}
-     * for the creation of a transformation step before some
-     * {@linkplain org.opengis.referencing.operation.MathTransform math transform}.
-     * Example:
-     *
-     * {@preformat java
-     *     Matrix step1 = swapAndScaleAxis(sourceCS, standard(sourceCS));
-     *     Matrix step2 = ... some transform operating on standard axis ...
-     *     Matrix step3 = swapAndScaleAxis(standard(targetCS), targetCS);
-     * }
-     *
-     * A rational for standard axis order and units is explained in the <cite>Axis units and
-     * direction</cite> section in the {@linkplain org.geotoolkit.referencing.operation.projection
-     * description of map projection package}.
-     *
-     * @param  cs The coordinate system.
-     * @return A constant similar to the specified {@code cs} with "standard" axis.
-     * @throws IllegalArgumentException if the specified coordinate system is unknown to this method.
-     *
-     * @since 2.2
-     *
-     * @deprecated Replaced by {@link org.apache.sis.referencing.cs.AxesConvention#NORMALIZED}.
-     */
-    @Deprecated
-    public static CoordinateSystem standard(final CoordinateSystem cs) throws IllegalArgumentException {
-        final int dimension = cs.getDimension();
-        if (cs instanceof CartesianCS) {
-            switch (dimension) {
-                case 2: {
-                    if (axisColinearWith(PROJECTED, cs)) {
-                        return PROJECTED;
-                    }
-                    if (axisColinearWith(GRID, cs)) {
-                        return GRID;
-                    }
-                    if (directionColinearWith(CARTESIAN_2D, cs)) {
-                        return CARTESIAN_2D;
-                    }
-                    return rightHanded((CartesianCS) cs);
-                }
-                case 3: {
-                    if (axisColinearWith(GEOCENTRIC, cs)) {
-                        return GEOCENTRIC;
-                    }
-                    if (directionColinearWith(CARTESIAN_3D, cs)) {
-                        return CARTESIAN_3D;
-                    }
-                    return rightHanded((CartesianCS) cs);
-                }
-            }
-        }
-        if (cs instanceof AffineCS) {
-            return rightHanded((AffineCS) cs);
-        }
-        if (cs instanceof EllipsoidalCS) {
-            switch (dimension) {
-                case 2: return GEODETIC_2D;
-                case 3: return GEODETIC_3D;
-            }
-        }
-        if (cs instanceof SphericalCS) {
-            switch (dimension) {
-                case 3: return SPHERICAL;
-            }
-        }
-        if (cs instanceof VerticalCS) {
-            switch (dimension) {
-                case 1: {
-                    return CommonCRS.Vertical.ELLIPSOIDAL.crs().getCoordinateSystem();
-                }
-            }
-        }
-        if (cs instanceof TimeCS) {
-            switch (dimension) {
-                case 1: return CommonCRS.Temporal.JULIAN.crs().getCoordinateSystem();
-            }
-        }
-        if (cs instanceof DefaultCompoundCS) {
-            final List<CoordinateSystem> components = ((DefaultCompoundCS) cs).getComponents();
-            final CoordinateSystem[] user = new CoordinateSystem[components.size()];
-            final CoordinateSystem[] std  = new CoordinateSystem[user.length];
-            for (int i=0; i<std.length; i++) {
-                std[i] = standard(user[i] = components.get(i));
-            }
-            if (csComparator == null) {
-                csComparator = new PredefinedCS();
-            }
-            Arrays.sort(std, csComparator);
-            return Arrays.equals(user, std) ? cs : new DefaultCompoundCS(std);
-        }
-        throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.UNSUPPORTED_COORDINATE_SYSTEM_1, cs.getName().getCode()));
-    }
-
-    /**
-     * Reorder the axis in the specified Affine CS in an attempt to get a right-handed system.
-     * Units are standardized to meters in the process. If no axis change is needed, then this
-     * method returns {@code cs} unchanged.
-     */
-    private static AffineCS rightHanded(final AffineCS cs) {
-        boolean changed = false;
-        final int dimension = cs.getDimension();
-        final CoordinateSystemAxis[] axis = new CoordinateSystemAxis[dimension];
-        for (int i=0; i<dimension; i++) {
-            /*
-             * Gets the axis and replaces it by one of the predefined constants declared in
-             * DefaultCoordinateSystemAxis, if possible. The predefined constants use ISO 19111
-             * names with metres or degrees units, so it is pretty close to the "standard" axis
-             * we are looking for.
-             */
-            CoordinateSystemAxis axe = axis[i] = cs.getAxis(i);
-            DefaultCoordinateSystemAxis standard = Axes.getPredefined(axe);
-            if (standard != null) {
-                axe = standard;
-            }
-            /*
-             * Changes units to meters. Every units in an affine CS should be linear or
-             * dimensionless (the later is used for grid coordinates).  The 'usingUnit'
-             * method will thrown an exception if the unit is incompatible. See
-             * DefaultAffineCS.isCompatibleUnit(Unit).
-             */
-            final Unit<?> unit = axe.getUnit();
-            if (!Unit.ONE.equals(unit) && !SI.METRE.equals(unit)) try {
-                axe = Axes.usingUnit(axe, SI.METRE);
-            } catch (ConversionException e) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, SI.METRE), e);
-            }
-            changed |= (axe != axis[i]);
-            axis[i] = axe;
-        }
-        /*
-         * Sorts the axis in an attempt to create a right-handed system
-         * and creates a new Coordinate System if at least one axis changed.
-         */
-        changed |= ComparableAxisWrapper.sort(axis);
-        if (!changed) {
-            return cs;
-        }
-        final Map<String,?> properties = org.geotoolkit.referencing.IdentifiedObjects.getProperties(cs, null);
-        if (cs instanceof CartesianCS) {
-            return createCartesian(properties, axis);
-        }
-        switch (axis.length) {
-            case 2: return new DefaultAffineCS(properties, axis[0], axis[1]);
-            case 3: return new DefaultAffineCS(properties, axis[0], axis[1], axis[2]);
-            default: throw new AssertionError();
         }
     }
 

@@ -224,52 +224,6 @@ public abstract class AbstractMathTransform extends org.apache.sis.referencing.o
     }
 
     /**
-     * Ensures that the specified longitude stay within the [-<var>bound</var> &hellip;
-     * <var>bound</var>] range. This method is typically invoked before to project geographic
-     * coordinates. It may add or subtract some amount of 2&times;<var>bound</var>
-     * from <var>x</var>.
-     * <p>
-     * The <var>bound</var> value is typically 180 if the longitude is express in degrees,
-     * or {@link Math#PI} it the longitude is express in radians. But it can also be some
-     * other value if the longitude has already been multiplied by a scale factor before
-     * this method is invoked.
-     *
-     * @param  x The longitude.
-     * @param  bound The absolute value of the minimal and maximal allowed value, or
-     *         {@link Double#POSITIVE_INFINITY} if no rolling should be applied.
-     * @return The longitude between &plusmn;<var>bound</var>.
-     */
-    protected static double rollLongitude(double x, final double bound) {
-        /*
-         * Note: we could do the same than the code below with this single line
-         * (assuming bound == PI):
-         *
-         *     return x - (2*PI) * floor(x / (2*PI) + 0.5);
-         *
-         * However the code below tries to reduce the amount of floating point operations: only
-         * a division followed by a cast to (long) in the majority of cases. The multiplication
-         * happen only if there is effectively a rolling to apply. All the remaining operations
-         * are using integer arithmetic, so it should be fast.
-         *
-         * Note: usage of long instead of int is necessary, otherwise overflows do occur.
-         */
-        long n = (long) (x / bound); // Really want rounding toward zero.
-        if (n != 0) {
-            if (n < 0) {
-                if ((n &= ~1) == -2) { // If odd number, decrement to the previous even number.
-                    if (x == -bound) { // Special case for this one: don't rool to +180°.
-                        return x;
-                    }
-                }
-            } else if ((n & 1) != 0) {
-                n++; // If odd number, increment to the next even number.
-            }
-            x -= n * bound;
-        }
-        return x;
-    }
-
-    /**
      * Default implementation for inverse math transform. This inner class is the inverse of
      * the enclosing {@link AbstractMathTransform}. It is serializable only if the enclosing
      * math transform is also serializable.
@@ -423,13 +377,17 @@ public abstract class AbstractMathTransform extends org.apache.sis.referencing.o
         public String formatTo(final Formatter formatter) {
             final ParameterValueGroup parameters = getParameterValues();
             if (parameters != null) {
-                WKTUtilities.appendName(parameters.getDescriptor(), formatter, null);
-                WKTUtilities.append(parameters, formatter);
+                WKTUtilities.appendParamMT(parameters, formatter);
                 return "PARAM_MT";
             } else {
                 formatter.append((FormattableObject) AbstractMathTransform.this);
                 return "INVERSE_MT";
             }
         }
+    }
+
+    @Override
+    public String formatTo(Formatter formatter) {
+        return super.formatTo(formatter);
     }
 }

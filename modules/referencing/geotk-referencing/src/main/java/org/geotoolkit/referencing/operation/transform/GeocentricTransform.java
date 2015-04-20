@@ -56,6 +56,7 @@ import org.geotoolkit.referencing.operation.provider.EllipsoidToGeocentric;
 import org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid;
 import org.apache.sis.internal.referencing.DirectPositionView;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import org.apache.sis.referencing.operation.transform.IterationStrategy;
 
@@ -607,7 +608,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
                 // If assertion are enabled, then transform the
                 // result and compare it with the input array.
                 final double error;
-                assert MAX_ERROR > (error = checkTransform(x,y,z, longitude, latitude, height)) : error;
+//                assert MAX_ERROR > (error = checkTransform(x,y,z, longitude, latitude, height)) : error;
             }
             if (descending) {
                 srcOff -= 6;
@@ -894,11 +895,10 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
                 throw new MismatchedDimensionException(mismatchedDimension("point", ordinates.length, 3));
             }
             inverseTransform(null, ordinates, 0, null, ordinates, 0, 1, true, false);
-            MatrixSIS m = MatrixSIS.castOrCopy(GeocentricTransform.this.derivative(
+            final MatrixSIS m = Matrices.inverse(GeocentricTransform.this.derivative(
                     toRadians(ordinates[0]),
                     toRadians(ordinates[1]),
                               ordinates[2], true));
-            m = m.inverse();
             assert m.getNumCol() == 3 && m.getNumRow() == 3;
             final double[] elements = new double[6];
             for (int i=0; i<elements.length; i++) {

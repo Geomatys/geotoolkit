@@ -54,6 +54,8 @@ import org.apache.sis.measure.Units;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.util.iso.DefaultNameSpace;
 
+import static org.apache.sis.parameter.Parameters.castOrWrap;
+
 
 /**
  * Helper methods for working with the parameter API from {@link org.opengis.parameter} package.
@@ -442,47 +444,6 @@ public final class Parameters extends Static {
     }
 
     /**
-     * Returns the parameter value for the specified operation parameter.
-     *
-     * @param  parameter The parameter to look for.
-     * @param  group The parameter value group to search into.
-     * @return The requested parameter value.
-     * @throws ParameterNotFoundException if the parameter is not found.
-     */
-    private static ParameterValue<?> getParameter(final ParameterDescriptor<?> parameter,
-            final ParameterValueGroup group) throws ParameterNotFoundException
-    {
-        /*
-         * Searches for an identifier matching the group's authority, if any.
-         * This is needed if the parameter values group was created from an
-         * EPSG database for example: we need to use the EPSG names instead
-         * of the OGC ones.
-         */
-        final String name = getName(parameter, group.getDescriptor());
-        if (parameter.getMinimumOccurs() != 0) {
-            return group.parameter(name);
-        }
-        /*
-         * The parameter is optional. We don't want to invokes 'parameter(name)', because we don't
-         * want to create a new parameter if the user didn't supplied one. Search the parameter
-         * ourself (so we don't create any), and returns null if we don't find any.
-         *
-         * TODO: A simpler solution would be to add a 'isDefined' method in GeoAPI,
-         *       or something similar.
-         */
-        final GeneralParameterDescriptor search;
-        search = group.getDescriptor().descriptor(name);
-        if (search instanceof ParameterDescriptor<?>) {
-            for (final GeneralParameterValue candidate : group.values()) {
-                if (search.equals(candidate.getDescriptor())) {
-                    return (ParameterValue<?>) candidate;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Returns the value of the given parameter in the given group if defined, or create a
      * default parameter otherwise. This method is equivalent to:
      *
@@ -502,12 +463,14 @@ public final class Parameters extends Static {
      *
      * @since 3.18
      * @category query
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
      */
+    @Deprecated
     public static ParameterValue<?> getOrCreate(final ParameterDescriptor<?> parameter,
             final ParameterValueGroup group) throws ParameterNotFoundException
     {
-        return org.apache.sis.parameter.Parameters.cast(
-                group.parameter(getName(parameter, group.getDescriptor())), parameter.getValueClass());
+        return castOrWrap(group).getOrCreate(parameter);
     }
 
     /**
@@ -523,12 +486,14 @@ public final class Parameters extends Static {
      *
      * @since 3.00
      * @category query
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
      */
+    @Deprecated
     public static <T> T value(final ParameterDescriptor<T> parameter, final ParameterValueGroup group)
             throws ParameterNotFoundException
     {
-        final ParameterValue<?> value = getParameter(parameter, group);
-        return (value != null) ? parameter.getValueClass().cast(value.getValue()) : null;
+        return castOrWrap(group).getValue(parameter);
     }
 
     /**
@@ -545,12 +510,18 @@ public final class Parameters extends Static {
      *
      * @category query
      * @since 3.00
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
      */
+    @Deprecated
     public static String stringValue(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
             throws ParameterNotFoundException
     {
-        final ParameterValue<?> value = getParameter(parameter, group);
-        return (value != null) ? value.stringValue() : null;
+        try {
+            return castOrWrap(group).stringValue((ParameterDescriptor) parameter);
+        } catch (IllegalStateException e) {
+            return null; // Deprecated practice, but done for now for compatibility with previous behaviour.
+        }
     }
 
     /**
@@ -567,12 +538,18 @@ public final class Parameters extends Static {
      *
      * @category query
      * @since 3.18
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
      */
+    @Deprecated
     public static Boolean booleanValue(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
             throws ParameterNotFoundException
     {
-        final ParameterValue<?> value = getParameter(parameter, group);
-        return (value != null) ? value.booleanValue() : null;
+        try {
+            return castOrWrap(group).booleanValue((ParameterDescriptor) parameter);
+        } catch (IllegalStateException e) {
+            return null; // Deprecated practice, but done for now for compatibility with previous behaviour.
+        }
     }
 
     /**
@@ -589,12 +566,18 @@ public final class Parameters extends Static {
      *
      * @category query
      * @since 3.00
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
      */
+    @Deprecated
     public static Integer integerValue(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
             throws ParameterNotFoundException
     {
-        final ParameterValue<?> value = getParameter(parameter, group);
-        return (value != null) ? value.intValue() : null;
+        try {
+            return castOrWrap(group).intValue((ParameterDescriptor) parameter);
+        } catch (IllegalStateException e) {
+            return null; // Deprecated practice, but done for now for compatibility with previous behaviour.
+        }
     }
 
     /**
@@ -611,12 +594,18 @@ public final class Parameters extends Static {
      *
      * @category query
      * @since 3.18
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
      */
+    @Deprecated
     public static int[] integerValueList(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
             throws ParameterNotFoundException
     {
-        final ParameterValue<?> value = getParameter(parameter, group);
-        return (value != null) ? value.intValueList() : null;
+        try {
+            return castOrWrap(group).intValueList((ParameterDescriptor) parameter);
+        } catch (IllegalStateException e) {
+            return null; // Deprecated practice, but done for now for compatibility with previous behaviour.
+        }
     }
 
     /**
@@ -636,14 +625,18 @@ public final class Parameters extends Static {
      *
      * @category query
      * @since 3.00
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
      */
+    @Deprecated
     public static double doubleValue(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
             throws ParameterNotFoundException
     {
-        final Unit<?> unit = parameter.getUnit();
-        final ParameterValue<?> value = getParameter(parameter, group);
-        return (value == null) ? Double.NaN :
-                (unit != null) ? value.doubleValue(unit) : value.doubleValue();
+        try {
+            return castOrWrap(group).doubleValue((ParameterDescriptor) parameter);
+        } catch (IllegalStateException e) {
+            return Double.NaN; // Deprecated practice, but done for now for compatibility with previous behaviour.
+        }
     }
 
     /**
@@ -663,14 +656,18 @@ public final class Parameters extends Static {
      *
      * @category query
      * @since 3.18
+     *
+     * @deprecated Moved to Apache SIS {@link org.apache.sis.parameter.Parameters}.
      */
+    @Deprecated
     public static double[] doubleValueList(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
             throws ParameterNotFoundException
     {
-        final Unit<?> unit = parameter.getUnit();
-        final ParameterValue<?> value = getParameter(parameter, group);
-        return (value == null) ? null :
-                (unit != null) ? value.doubleValueList(unit) : value.doubleValueList();
+        try {
+            return castOrWrap(group).doubleValueList((ParameterDescriptor) parameter);
+        } catch (IllegalStateException e) {
+            return null; // Deprecated practice, but done for now for compatibility with previous behaviour.
+        }
     }
 
     /**
@@ -826,11 +823,10 @@ public final class Parameters extends Static {
     }
 
     /**
-     * Ensures that a value is set for the parameter of the specified name. This method returns
-     * {@code true} if the parameter value <i>has been</i> or <i>should be</i> changed (depending
-     * on the {@code force} argument value), or {@code false} otherwise.
-     * More specifically this method performs the following steps:
-     * <p>
+     * Ensures that a value is set for the parameter of the specified name. This method returns {@code true}
+     * if the parameter value <i>has been</i> or <i>should be</i> changed (depending on the {@code force}
+     * argument value), or {@code false} otherwise. More specifically this method performs the following steps:
+     *
      * <ul>
      *   <li>If the parameter for the given name has no value, unconditionally assign the given
      *       value to that parameter and returns {@code true}.</li>
@@ -844,8 +840,8 @@ public final class Parameters extends Static {
      *     </ul>
      *     Then return {@code true}.</li>
      * </ul>
-     * <p>
-     * This method can used when the same parameter value may be specified more than once
+     *
+     * This method can be used when the same parameter values may be specified more than once
      * (for example from different sources of information), and we want to ensure that all
      * those values are consistent, without treating mismatches as fatal errors.
      *
@@ -853,15 +849,16 @@ public final class Parameters extends Static {
      * @param name       The parameter name to set.
      * @param value      The value to set, or to expect if the parameter is already set.
      * @param unit       The value unit.
-     * @param force      {@code true} for forcing the parameter to the specified {@code value}
-     *                   is case of mismatch.
-     * @return {@code true} if the were a mismatch (in which case the value has been updated if
-     *         the {@code force} argument is {@code true}), or {@code false} if the parameter
-     *         has been left unchanged.
+     * @param force      {@code true} for forcing the parameter to the specified {@code value} in case of mismatch.
+     * @return {@code true} if they were a mismatch (in which case the value has been updated if the {@code force}
+     *         argument is {@code true}), or {@code false} if the parameter has been left unchanged.
      * @throws ParameterNotFoundException If no parameter of the given name has been found.
      *
      * @category update
+     *
+     * @deprecated Not used anymore. To avoid because of arbitrary threshold.
      */
+    @Deprecated
     public static boolean ensureSet(final ParameterValueGroup parameters, final String name,
             final double value, final Unit<?> unit, boolean force) throws ParameterNotFoundException
     {
@@ -887,7 +884,6 @@ public final class Parameters extends Static {
         }
         return true;
     }
-
 
     /**
      * Convert a ParameterValueGroup in a Map of values. Map keys will be parameter names, and their associated value are
@@ -920,10 +916,6 @@ public final class Parameters extends Static {
     /**
      * Transform a Map in a ParameterValueGroup. A default parameter is first created and all key found in the map
      * that match the descriptor will be completed.
-     *
-     * @param params
-     * @param desc
-     * @return
      */
     public static ParameterValueGroup toParameter(final Map<String, ?> params, final ParameterDescriptorGroup desc) {
         ArgumentChecks.ensureNonNull("params", params);
@@ -939,12 +931,13 @@ public final class Parameters extends Static {
      * @param desc           The descriptor for the group to create.
      * @param checkMandatory if True, a parameter will be returned only if the map provide all mandatory parameters with
      *                       no default value.
-     * @return A parameter value group matching input descriptor, filled with input map value. Return null if input map
-     * is incompatible with input descriptor.
-     * @throws org.opengis.parameter.ParameterNotFoundException If the map does not contains all needed mandatory
-     *                                                          parameters required by this descriptor.
-     * @throws org.apache.sis.util.UnconvertibleObjectException If an error occurred while putting a value from input map
-     *                                                          to target Parameter group.
+     * @return A parameter value group matching input descriptor, filled with input map value.
+     *         Return null if input map is incompatible with input descriptor.
+     *
+     * @throws ParameterNotFoundException If the map does not contains all needed mandatory
+     *         parameters required by this descriptor.
+     * @throws UnconvertibleObjectException If an error occurred while putting a value from input map
+     *         to target Parameter group.
      */
     public static ParameterValueGroup toParameter(final Map<String, ?> params,
                                                   final ParameterDescriptorGroup desc, final boolean checkMandatory)

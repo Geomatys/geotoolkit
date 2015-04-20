@@ -26,8 +26,8 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
-import org.geotoolkit.referencing.operation.projection.UnitaryProjection;
 
+import org.apache.sis.referencing.operation.projection.NormalizedProjection;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.junit.Assert.*;
 
@@ -89,7 +89,7 @@ public strictfp final class Commons extends org.geotoolkit.test.Commons {
      *
      * @since 3.09
      */
-    public static Class<? extends UnitaryProjection> getProjectionClass(final ProjectedCRS crs) {
+    public static Class<? extends NormalizedProjection> getProjectionClass(final ProjectedCRS crs) {
         return getProjectionClass(crs.getConversionFromBase().getMathTransform());
     }
 
@@ -97,10 +97,10 @@ public strictfp final class Commons extends org.geotoolkit.test.Commons {
      * Returns the class of the projection, or {@code null} if none.
      * This method invokes itself recursively down the concatenated transforms tree.
      */
-    private static Class<? extends UnitaryProjection> getProjectionClass(final MathTransform transform) {
+    private static Class<? extends NormalizedProjection> getProjectionClass(final MathTransform transform) {
         for (final MathTransform step : MathTransforms.getSteps(transform)) {
-            if (step instanceof UnitaryProjection) {
-                return ((UnitaryProjection) step).getClass();
+            if (step instanceof NormalizedProjection) {
+                return ((NormalizedProjection) step).getClass();
             }
         }
         return null;

@@ -21,16 +21,16 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.AffineTransform;
-import net.jcip.annotations.Immutable;
-
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
-
+import org.opengis.referencing.operation.OperationMethod;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
@@ -58,12 +58,10 @@ import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
  * @author Beate Stollberg
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.20
  *
  * @since 2.4
  * @module
  */
-@Immutable
 public class LambertAzimuthalEqualArea extends UnitaryProjection {
     /**
      * For cross-version compatibility.
@@ -137,17 +135,23 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
      *
      * @since 3.00
      */
-    public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
+    public static MathTransform2D create(final OperationMethod descriptor,
                                          final ParameterValueGroup values)
     {
-        final Parameters parameters = new Parameters(descriptor, values);
+        final Parameters parameters = Parameters.castOrWrap(values);
         final LambertAzimuthalEqualArea projection;
-        if (parameters.isSpherical()) {
-            projection = new Spherical(parameters);
+        if (isSpherical(parameters)) {
+            projection = new Spherical(descriptor, parameters);
         } else {
-            projection = new LambertAzimuthalEqualArea(parameters);
+            projection = new LambertAzimuthalEqualArea(descriptor, parameters);
         }
-        return projection.createConcatenatedTransform();
+        try {
+            return (MathTransform2D) projection.createMapProjection(
+                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
+                            org.opengis.referencing.operation.MathTransformFactory.class));
+        } catch (org.opengis.util.FactoryException e) {
+            throw new IllegalArgumentException(e); // TODO
+        }
     }
 
     /**
@@ -155,12 +159,12 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
      *
      * @param parameters The parameters of the projection to be created.
      */
-    protected LambertAzimuthalEqualArea(final Parameters parameters) {
-        super(parameters);
+    protected LambertAzimuthalEqualArea(final OperationMethod method, final Parameters parameters) {
+        super(method, parameters, null);
         /*
          * Detects the mode (oblique, etc.).
          */
-        latitudeOfOrigin = toRadians(parameters.latitudeOfOrigin);
+        latitudeOfOrigin = toRadians(getAndStore(parameters, org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea.LATITUDE_OF_CENTRE));
         final double t = abs(latitudeOfOrigin);
         if (abs(t - PI/2) < EPSILON) {
             pole    = true;
@@ -196,7 +200,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
          * The polar case is sinb1 = 2/qp for North, -2/qp for South.
          */
         final double sinφ = sin(latitudeOfOrigin);
-        final boolean isSpherical = isSpherical();
+        final boolean isSpherical = (this instanceof Spherical);
         if (isSpherical) {
             sinb1 = sinφ;
             cosb1 = cos(latitudeOfOrigin);
@@ -208,12 +212,11 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
          */
-        final AffineTransform   normalize = parameters.normalize(true);
-        final AffineTransform denormalize = parameters.normalize(false);
-        parameters.validate();
+        final MatrixSIS   normalize = getContextualParameters().getMatrix(true);
+        final MatrixSIS denormalize = getContextualParameters().getMatrix(false);
         if (north) {
-            normalize  .scale(1, -1);
-            denormalize.scale(1, -1);
+            normalize  .convertBefore(1, -1, null);
+            denormalize.convertBefore(1, -1, null);
         } else if (!isSpherical) {
             if (oblique) {
                 /*
@@ -222,7 +225,8 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                  * dd = 1/rq. With rq = 1 (see above), we get dd = 1.
                  */
                 final double dd = cos(latitudeOfOrigin) / (sqrt(1 - excentricitySquared*(sinφ*sinφ))*rq*cosb1);
-                denormalize.scale(dd, 1/dd);
+                denormalize.convertBefore(0,   dd, null);
+                denormalize.convertBefore(1, 1/dd, null);
             } else {
                 /*
                  * In the equatorial case the above equation simplify to dd = 1/rq. However the
@@ -231,7 +235,6 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                  */
             }
         }
-        finish();
     }
 
     /**
@@ -255,7 +258,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                             final double[] dstPts, final int dstOff,
                             final boolean derivate) throws ProjectionException
     {
-        final double λ = rollLongitude(srcPts[srcOff]);
+        final double λ = srcPts[srcOff];
         final double φ = srcPts[srcOff + 1];
         final double cosλ = cos(λ);
         final double sinλ = sin(λ);
@@ -410,7 +413,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
             t = asin(ab);
         }
         dstPts[dstOff+1] = t + APA0 * sin(t += t) + APA1 * sin(t += t) + APA2 * sin(t + t);
-        dstPts[dstOff  ] = unrollLongitude(atan2(x, y));
+        dstPts[dstOff  ] = atan2(x, y);
     }
 
 
@@ -425,7 +428,6 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
      * @since 2.4
      * @module
      */
-    @Immutable
     static final class Spherical extends LambertAzimuthalEqualArea {
         /**
          * For cross-version compatibility.
@@ -437,17 +439,8 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
          *
          * @param parameters The parameters of the projection to be created.
          */
-        protected Spherical(final Parameters parameters) {
-            super(parameters);
-            parameters.ensureSpherical();
-        }
-
-        /**
-         * Returns {@code true} since this class uses spherical formulas.
-         */
-        @Override
-        final boolean isSpherical() {
-            return true;
+        protected Spherical(final OperationMethod method, final Parameters parameters) {
+            super(method, parameters);
         }
 
         /**
@@ -458,7 +451,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                                 final double[] dstPts, final int dstOff,
                                 final boolean derivate) throws ProjectionException
         {
-            final double λ    = rollLongitude(srcPts[srcOff]);
+            final double λ    = srcPts[srcOff];
             final double φ    = srcPts[srcOff + 1];
             final double sinλ = sin(λ);
             final double cosλ = cos(λ);
@@ -586,7 +579,6 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                 x *= sinz;
                 λ = atan2(x, y);
             }
-            λ = unrollLongitude(λ);
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, λ, φ);
             dstPts[dstOff  ] = λ;
             dstPts[dstOff+1] = φ;

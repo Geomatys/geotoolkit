@@ -24,7 +24,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.metadata.iso.citation.Citations;
-import org.geotoolkit.internal.LazySet;
+import org.apache.sis.internal.util.LazySet;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;

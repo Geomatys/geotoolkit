@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import java.util.Collections;
+import java.util.Objects;
 import javax.measure.unit.SI;
 import net.jcip.annotations.Immutable;
 
@@ -30,8 +31,11 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.OperationMethod;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.Identifier;
 
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -39,7 +43,7 @@ import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.GeocentricTransform;
-import org.geotoolkit.internal.referencing.MathTransformDecorator;
+import org.apache.sis.internal.referencing.provider.PseudoMercator;
 
 import static org.geotoolkit.parameter.Parameters.*;
 
@@ -69,7 +73,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * <!-- END OF PARAMETERS -->
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
+ * @version 4.0
  *
  * @see GeocentricTransform
  * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
@@ -94,7 +98,7 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> SEMI_MAJOR =
-            (ParameterDescriptor<Double>) PseudoMercator.PARAMETERS.descriptor("semi_major");
+            (ParameterDescriptor<Double>) new PseudoMercator().getParameters().descriptor("semi_major"); // TODO
 
     /**
      * The operation parameter descriptor for the {@code "semi_minor"} parameter value.
@@ -106,7 +110,7 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> SEMI_MINOR =
-            (ParameterDescriptor<Double>) PseudoMercator.PARAMETERS.descriptor("semi_minor");
+            (ParameterDescriptor<Double>) new PseudoMercator().getParameters().descriptor("semi_minor");
 
     /**
      * The operation parameter descriptor for the number of geographic dimension (2 or 3).
@@ -202,7 +206,7 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
      * Constructs a provider with default parameters.
      */
     public EllipsoidToGeocentric() {
-        super(3, 3, PARAMETERS);
+        super(PARAMETERS); // TODO: (3, 3)
         complement = new EllipsoidToGeocentric(this);
     }
 
@@ -255,16 +259,27 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
      * @throws ParameterNotFoundException if a required parameter was not found.
      */
     @Override
-    protected MathTransform createMathTransform(final ParameterValueGroup values)
+    public MathTransform createMathTransform(MathTransformFactory factory, final ParameterValueGroup values)
             throws ParameterNotFoundException
     {
         final double semiMajor = doubleValue(SEMI_MAJOR, values);
         final double semiMinor = doubleValue(SEMI_MINOR, values);
         final int    dimension = dimension(values);
         MathTransform transform = GeocentricTransform.create(semiMajor, semiMinor, SI.METRE, dimension != 2);
-        if (dimension != getSourceDimensions()) {
-            transform = new MathTransformDecorator(transform, complement);
-        }
         return transform;
+    }
+
+    /**
+     * Returns the same operation method, but for different dimensions.
+     *
+     * @param  sourceDimensions The desired number of input dimensions.
+     * @param  targetDimensions The desired number of output dimensions.
+     * @return The redimensioned operation method, or {@code this} if no change is needed.
+     */
+    @Override
+    public OperationMethod redimension(final int sourceDimensions, final int targetDimensions) {
+        ArgumentChecks.ensureBetween("sourceDimensions", 2, 3, sourceDimensions);
+        ArgumentChecks.ensureBetween("targetDimensions", 3, 3, targetDimensions);
+        return (Objects.equals(sourceDimensions, getSourceDimensions())) ? this : complement;
     }
 }

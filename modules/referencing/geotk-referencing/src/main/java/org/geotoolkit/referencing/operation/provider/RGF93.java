@@ -23,6 +23,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.Transformation;
 
 import org.geotoolkit.metadata.Citations;
@@ -124,7 +125,7 @@ public class RGF93 extends MathTransformProvider {
      * @throws FactoryException If the grid files can not be loaded.
      */
     @Override
-    protected MathTransform createMathTransform(final ParameterValueGroup values) throws FactoryException {
+    public MathTransform createMathTransform(MathTransformFactory factory, final ParameterValueGroup values) throws FactoryException {
         final String file = Parameters.stringValue(TRANSLATION_FILE, values);
         if (!"gr3df97a.txt".equals(file)) {
             throw new FactoryException(Errors.format(Errors.Keys.CANT_READ_FILE_1, file));

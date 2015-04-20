@@ -814,6 +814,6 @@ public final class Citations extends Static {
      */
     @Deprecated
     public static String getIdentifier(final Citation citation) {
-        return org.apache.sis.internal.util.Citations.getIdentifier(citation);
+        return org.apache.sis.metadata.iso.citation.Citations.getIdentifier(citation);
     }
 }

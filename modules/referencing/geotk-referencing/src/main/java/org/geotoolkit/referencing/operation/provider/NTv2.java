@@ -23,6 +23,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.Transformation;
 
 import org.geotoolkit.metadata.Citations;
@@ -137,7 +138,7 @@ public class NTv2 extends MathTransformProvider {
      * @throws FactoryException If the grid files can not be loaded.
      */
     @Override
-    protected MathTransform createMathTransform(final ParameterValueGroup values) throws FactoryException {
+    public MathTransform createMathTransform(MathTransformFactory factory, final ParameterValueGroup values) throws FactoryException {
         return new NTv2Transform(Parameters.stringValue(DIFFERENCE_FILE, values));
     }
 }

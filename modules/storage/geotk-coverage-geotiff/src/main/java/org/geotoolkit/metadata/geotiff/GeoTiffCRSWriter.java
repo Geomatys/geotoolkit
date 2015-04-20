@@ -33,10 +33,10 @@ import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
 import org.geotoolkit.referencing.operation.provider.ObliqueMercator;
 import org.geotoolkit.referencing.operation.provider.PolarStereographic;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
-import org.geotoolkit.referencing.operation.provider.LambertConformal2SP;
-import org.geotoolkit.referencing.operation.provider.Mercator1SP;
-import org.geotoolkit.referencing.operation.provider.LambertConformal1SP;
-import org.geotoolkit.referencing.operation.provider.Mercator2SP;
+import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
+import org.apache.sis.internal.referencing.provider.Mercator1SP;
+import org.apache.sis.internal.referencing.provider.LambertConformal1SP;
+import org.apache.sis.internal.referencing.provider.Mercator2SP;
 import org.geotoolkit.referencing.operation.provider.TransverseMercator;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
@@ -63,14 +63,15 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.opengis.util.FactoryException;
 
+import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
  * Encode a CoordinateReferenceSystem as GeoTiff tags.
  *
- * note : with java 9 class will become only accessible by its module (no public signature on class header). 
- * 
+ * note : with java 9 class will become only accessible by its module (no public signature on class header).
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -368,8 +369,8 @@ public final class GeoTiffCRSWriter {
         // Mercator_1SP
         // Mercator_2SP
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.isHeuristicMatchForName(Mercator2SP.PARAMETERS, desc) ||
-            IdentifiedObjects.isHeuristicMatchForName(Mercator1SP.PARAMETERS, desc))
+        if (IdentifiedObjects.isHeuristicMatchForName(new Mercator2SP().getParameters(), desc) ||   // TODO: need an other way to check for match.
+            IdentifiedObjects.isHeuristicMatchForName(new Mercator1SP().getParameters(), desc))
         {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_Mercator);
@@ -387,7 +388,7 @@ public final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // Lamber conformal 1sp
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.isHeuristicMatchForName(LambertConformal1SP.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(new LambertConformal1SP().getParameters(), desc)) {   // TODO: need an other way to check for match.
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_LambertConfConic_Helmert);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -405,14 +406,14 @@ public final class GeoTiffCRSWriter {
         // LAMBERT_CONFORMAL_CONIC_2SP
         // lambert_conformal_conic_2SP_Belgium
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.isHeuristicMatchForName(LambertConformal2SP.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(new LambertConformal2SP().getParameters(), desc)) {   // TODO: need an other way to check for match.
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_LambertConfConic_2SP);
             stack.addAscii(PCSCitationGeoKey, name);
 
             // params
-            stack.addDouble(ProjNatOriginLongGeoKey, value(parameters,LambertConformal2SP.CENTRAL_MERIDIAN));
-            stack.addDouble(ProjNatOriginLatGeoKey,  value(parameters,LambertConformal2SP.LATITUDE_OF_ORIGIN));
+            stack.addDouble(ProjNatOriginLongGeoKey, value(parameters,LambertConformal2SP.LONGITUDE_OF_FALSE_ORIGIN));
+            stack.addDouble(ProjNatOriginLatGeoKey,  value(parameters,LambertConformal2SP.LATITUDE_OF_FALSE_ORIGIN));
             stack.addDouble(ProjStdParallel1GeoKey,  value(parameters,LambertConformal2SP.STANDARD_PARALLEL_1));
             stack.addDouble(ProjStdParallel2GeoKey,  value(parameters,LambertConformal2SP.STANDARD_PARALLEL_2));
             stack.addDouble(ProjFalseEastingGeoKey,  value(parameters,LambertConformal2SP.FALSE_EASTING));
@@ -626,9 +627,14 @@ public final class GeoTiffCRSWriter {
             if(factory instanceof AbstractAuthorityFactory){
                 final AbstractAuthorityFactory auth = (AbstractAuthorityFactory) factory;
                 final IdentifiedObjectFinder finder = auth.getIdentifiedObjectFinder(CoordinateOperation.class);
-                final String code = finder.findIdentifier(candidate);
-                if(code != null){
-                    return Integer.valueOf(code);
+                try {
+                    final String code = finder.findIdentifier(candidate);
+                    if(code != null){
+                        return Integer.valueOf(code);
+                    }
+                } catch (IllegalArgumentException e) {
+                    // TODO: Workaround for a problem in "Ordnance Survey National Transformation" not yet fixed.
+                    Logging.recoverableException(GeoTiffCRSWriter.class, "getEPSGCode", e);
                 }
             }
         }

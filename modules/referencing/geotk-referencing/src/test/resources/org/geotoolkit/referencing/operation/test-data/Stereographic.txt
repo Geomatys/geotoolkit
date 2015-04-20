@@ -862,17 +862,12 @@ target pt = (6949231.62438508, 1382215.87566019)
 source pt = (18.45, -33.9166666666)
 target pt = (7265980.56818263, -8446857.93987766)
 
-
-// error (replaced with libproj output)
 tolerance inverse = null
 source pt = (151.283333333, -33.9166666666)
-target pt = (-7466458.20136069, -4150816.18942717)
-// ArcGIS = (-7460003.39378955, -4124311.05369635)
+target pt = (-7460003.39378955, -4124311.05369635)
 
-// error (replaced with libproj output)
 source pt = (139.733333333, 35.6833333333)
-target pt = (-25009078.87841832, 5079217.18056460)
-// ArcGIS = (-24924065.4478382,  5124122.41314095)
+target pt = (-24924065.4478382,  5124122.41314095)
 
 // Longitude is meanless at pole.
 tolerance inverse = (360, 1e-5)

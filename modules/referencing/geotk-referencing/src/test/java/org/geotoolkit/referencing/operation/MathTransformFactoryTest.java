@@ -172,12 +172,12 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
         ///////////////////////////////////////
         // Equidistant_Cylindrical tests     //
         ///////////////////////////////////////
-        printParameters("Equidistant_Cylindrical");
+        printParameters("Equidistant Cylindrical (Spherical)");
         MathTransform transform;
         ParameterValueGroup params;
 
         // Approx bristol UK
-        params = mtFactory.getDefaultParameters("Equidistant_Cylindrical");
+        params = mtFactory.getDefaultParameters("Equidistant Cylindrical (Spherical)");
         params.parameter("semi_major")         .setValue(6378137);
         params.parameter("semi_minor")         .setValue(6378137);
         params.parameter("central_meridian")   .setValue(  0.000);
@@ -244,17 +244,18 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
                     new DirectPosition2D(-13688089.02443480, 6304639.84599441), transform);
 
         // Ellipsoidal with latitude of origin not zero, (simone)
+        // TODO: Not valid for "Mercator_1SP", but could be valid for "Mercator (variant C)".
         params.parameter("semi_major")        .setValue(6378137.0);
         params.parameter("semi_minor")        .setValue(6356752.314245);
-        params.parameter("latitude_of_origin").setValue(     38.0);
+//      params.parameter("latitude_of_origin").setValue(     38.0);
         params.parameter("central_meridian")  .setValue(     3.03);
         params.parameter("scale_factor")      .setValue(      1.0);
         params.parameter("false_easting")     .setValue(      0.0);
         params.parameter("false_northing")    .setValue(      0.0);
         transform = mtFactory.createParameterizedTransform(params);
-        printTransform(transform);
-        doTransform(new DirectPosition2D(5.0, 26.996561536844165),
-                    new DirectPosition2D(173029.94823812644, 2448819.342941506), transform);
+//      printTransform(transform);
+//      doTransform(new DirectPosition2D(5.0, 26.996561536844165),
+//                  new DirectPosition2D(173029.94823812644, 2448819.342941506), transform);
 
 
         ///////////////////////////////////////
@@ -283,10 +284,10 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
         params.parameter("false_easting")      .setValue( -500000.0);
         params.parameter("false_northing")     .setValue(-1000000.0);
         transform = mtFactory.createParameterizedTransform(params);
-        printTransform(transform);
-        doTransform(new DirectPosition2D(-123.1, 49.2166666666),
-                    new DirectPosition2D(2663494.1734, 2152319.9230), transform);
-
+//      printTransform(transform);
+//      TODO: point too far from central meridian.
+//      doTransform(new DirectPosition2D(-123.1, 49.2166666666),
+//                  new DirectPosition2D(2663494.1734, 2152319.9230), transform);
     }
 
     /**
@@ -406,9 +407,10 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
         params.parameter("false_easting")      .setValue(      0.0);
         params.parameter("false_northing")     .setValue(      0.0);
         transform = mtFactory.createParameterizedTransform(params);
-        printTransform(transform);
-        doTransform(new DirectPosition2D(139.733333333, 35.6833333333),
-                    new DirectPosition2D(-6789805.6471, 7107623.6859), transform);
+//      printTransform(transform);
+//      TODO: test point below is too far from central meridian.
+//      doTransform(new DirectPosition2D(139.733333333, 35.6833333333),
+//                  new DirectPosition2D(-6789805.6471, 7107623.6859), transform);
 
         // 1SP where SP != lat of origin (me)
         params.parameter("semi_major")         .setValue(6378137.0);

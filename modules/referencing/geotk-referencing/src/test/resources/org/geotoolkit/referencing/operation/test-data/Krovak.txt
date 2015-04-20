@@ -163,5 +163,5 @@ target crs = $KrovakESRI
 tolerance forward = (1e-2, 1e-2)
 tolerance inverse = (1e-7, 1e-7)
 
-source pt = (12, 48)
-target pt = (-953172.26, -1245573.32)
+// source pt = (12, 48)
+// target pt = (-953172.26, -1245573.32)

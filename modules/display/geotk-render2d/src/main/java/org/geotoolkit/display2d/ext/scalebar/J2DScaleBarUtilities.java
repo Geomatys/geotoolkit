@@ -40,6 +40,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
+import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.datum.Ellipsoid;
@@ -173,7 +174,7 @@ public class J2DScaleBarUtilities {
             throw new NullPointerException("no unit for one axi.");
         }
         double logicalLength;
-        final Ellipsoid ellipsoid = CRSUtilities.getHeadGeoEllipsoid(mapCRS);
+        final Ellipsoid ellipsoid = ReferencingUtilities.getEllipsoidOfGeographicCRS(mapCRS);
         try {
 
             if (ellipsoid != null && ellipsoid instanceof DefaultEllipsoid) {

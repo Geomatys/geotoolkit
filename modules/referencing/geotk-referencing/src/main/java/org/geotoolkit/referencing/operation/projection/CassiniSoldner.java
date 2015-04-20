@@ -21,14 +21,13 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import net.jcip.annotations.Immutable;
-
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.Matrix;
-
+import org.opengis.referencing.operation.OperationMethod;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import static java.lang.Math.*;
 
@@ -55,12 +54,10 @@ import static java.lang.Math.*;
  * @author Mauro Bartolomeoli
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.20
  *
  * @since 3.00
  * @module
  */
-@Immutable
 public class CassiniSoldner extends CassiniOrMercator {
     /**
      * For cross-version compatibility.
@@ -89,17 +86,23 @@ public class CassiniSoldner extends CassiniOrMercator {
      *
      * @since 3.00
      */
-    public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
+    public static MathTransform2D create(final OperationMethod descriptor,
                                          final ParameterValueGroup values)
     {
         final CassiniSoldner projection;
-        final Parameters parameters = new Parameters(descriptor, values);
-        if (parameters.isSpherical()) {
-            projection = new Spherical(parameters);
+        final Parameters parameters = Parameters.castOrWrap(values);
+        if (isSpherical(parameters)) {
+            projection = new Spherical(descriptor, parameters);
         } else {
-            projection = new CassiniSoldner(parameters);
+            projection = new CassiniSoldner(descriptor, parameters);
         }
-        return projection.createConcatenatedTransform();
+        try {
+            return (MathTransform2D) projection.createMapProjection(
+                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
+                            org.opengis.referencing.operation.MathTransformFactory.class));
+        } catch (org.opengis.util.FactoryException e) {
+            throw new IllegalArgumentException(e); // TODO
+        }
     }
 
     /**
@@ -107,8 +110,8 @@ public class CassiniSoldner extends CassiniOrMercator {
      *
      * @param parameters The parameters of the projection to be created.
      */
-    protected CassiniSoldner(final Parameters parameters) {
-        super(parameters);
+    protected CassiniSoldner(final OperationMethod method, final Parameters parameters) {
+        super(method, parameters);
     }
 
     /**
@@ -123,7 +126,7 @@ public class CassiniSoldner extends CassiniOrMercator {
                             final double[] dstPts, final int dstOff,
                             final boolean derivate) throws ProjectionException
     {
-        final double λ = rollLongitude(srcPts[srcOff]);
+        final double λ = srcPts[srcOff];
         final double φ = srcPts[srcOff + 1];
         final double sinφ   = sin(φ);
         final double cosφ   = cos(φ);
@@ -180,7 +183,7 @@ public class CassiniSoldner extends CassiniOrMercator {
         r *= (1 - excentricitySquared)*n;
         final double dd  = x / n;
         final double d2  = dd*dd;
-        dstPts[dstOff  ] = unrollLongitude(dd*(1 + t*d2*(-C4+(1 + 3*t)*d2*C5)) / cos(φ1));
+        dstPts[dstOff  ] = dd*(1 + t*d2*(-C4+(1 + 3*t)*d2*C5)) / cos(φ1);
         dstPts[dstOff+1] = φ1 - (n*tn/r)*d2*(0.5-(1 + 3*t)*d2*C3);
     }
 
@@ -195,7 +198,6 @@ public class CassiniSoldner extends CassiniOrMercator {
      * @since 3.00
      * @module
      */
-    @Immutable
     static final class Spherical extends CassiniSoldner {
         /**
          * For cross-version compatibility.
@@ -207,17 +209,8 @@ public class CassiniSoldner extends CassiniOrMercator {
          *
          * @param parameters The parameters of the projection to be created.
          */
-        protected Spherical(final Parameters parameters) {
-            super(parameters);
-            parameters.ensureSpherical();
-        }
-
-        /**
-         * Returns {@code true} since this class uses spherical formulas.
-         */
-        @Override
-        final boolean isSpherical() {
-            return true;
+        protected Spherical(final OperationMethod method, final Parameters parameters) {
+            super(method, parameters);
         }
 
         /**
@@ -228,7 +221,7 @@ public class CassiniSoldner extends CassiniOrMercator {
                                 final double[] dstPts, final int dstOff,
                                 final boolean derivate) throws ProjectionException
         {
-            final double λ    = rollLongitude(srcPts[srcOff]);
+            final double λ    = srcPts[srcOff];
             final double φ    = srcPts[srcOff + 1];
             final double sinλ = sin(λ);
             final double cosλ = cos(λ);
@@ -270,7 +263,7 @@ public class CassiniSoldner extends CassiniOrMercator {
             final double x = srcPts[srcOff  ];
             final double y = srcPts[srcOff+1];
             final double φ = asin(sin(y) * cos(x));
-            final double λ = unrollLongitude(atan2(tan(x), cos(y)));
+            final double λ = atan2(tan(x), cos(y));
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff  ] = λ;
             dstPts[dstOff+1] = φ;

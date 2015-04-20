@@ -38,12 +38,11 @@ import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.operation.projection.Mercator;
+import org.apache.sis.referencing.operation.projection.Mercator;
 import org.geotoolkit.referencing.operation.transform.LinearInterpolator1D;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.identification.Resolution;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -141,52 +140,52 @@ public final class ReferencingUtilities {
         }
         return true;
     }
-    
+
     /**
-     * Convert resolution from old resolution and {@linkplain Envelope#getCoordinateReferenceSystem() source CRS} 
+     * Convert resolution from old resolution and {@linkplain Envelope#getCoordinateReferenceSystem() source CRS}
      * within srcEnvelope, and store result into destination array newResolution.<br><br>
-     * 
+     *
      * <strong>
      * Note 1 : newResolution array may be {@code null}, in this case a new array result will be created,
      * where its length will be equals to targetCRS dimensions number.<br>
-     * Note 2 : the resolution convertion will be compute from 
+     * Note 2 : the resolution convertion will be compute from
      * {@linkplain CRSUtilities#getCRS2D(org.opengis.referencing.crs.CoordinateReferenceSystem) 2D CRS horizontal part}
      * of source CRS from {@link Envelope} and 2D targetCRS horizontal part.<br>
-     * Note 3 : if destination resolution array is not {@code null} the resolution values about 
-     * other dimensions than 2D horizontal targetCRS part are unchanged, else (if new resolution array is {@code null}) 
+     * Note 3 : if destination resolution array is not {@code null} the resolution values about
+     * other dimensions than 2D horizontal targetCRS part are unchanged, else (if new resolution array is {@code null})
      * the resolution values on other dimensions are setted to {@code 1}.<br>
      * Note 4 : oldResolution array length may not be mandatory equal to {@linkplain Envelope#getDimension() source Envelope dimension number}.
      * The resolution convertion will be computed on horizontal CRS 2D part.
      * </strong>
-     * 
+     *
      * @param srcEnvelope source envelope in relation with the source resolution.
      * @param oldResolution the old resolution which will be convert.
      * @param targetCrs destination {@link CoordinateReferenceSystem} where the new resolution will be exprimate.
-     * @param newResolution the result array of the transformed resolution. 
+     * @param newResolution the result array of the transformed resolution.
      * You may pass the same array than oldResolution if you want to store result in the same array.
-     * 
-     * @return a new resolution array compute from oldResolution exprimate into targetCRS. 
+     *
+     * @return a new resolution array compute from oldResolution exprimate into targetCRS.
      * @throws org.opengis.referencing.operation.TransformException if problem during Envelope transformation into targetCrs.
      * @throws NullArgumentException if one of these parameter is {@code null} : srcEnvelope, oldResolution or targetCRS.
      * @throws MismatchedDimensionException if oldResolution array have length different than 2.
      * @throws MismatchedDimensionException if newResolution array length and target CRS dimension are differents.
      */
-    public static double[] convertResolution(final Envelope srcEnvelope, final double[] oldResolution, 
+    public static double[] convertResolution(final Envelope srcEnvelope, final double[] oldResolution,
                                              final CoordinateReferenceSystem targetCrs, double... newResolution) throws TransformException {
         ArgumentChecks.ensureNonNull("srcEnvelope",   srcEnvelope);
         ArgumentChecks.ensureNonNull("oldResolution", oldResolution);
         ArgumentChecks.ensureNonNull("targetCRS",     targetCrs);
-        
+
         //-- initialize destination array if it is null.
         if (newResolution == null || newResolution.length == 0) {
             newResolution = new double[targetCrs.getCoordinateSystem().getDimension()];
             Arrays.fill(newResolution, 1);
         } else {
-            if (targetCrs.getCoordinateSystem().getDimension() != newResolution.length) 
+            if (targetCrs.getCoordinateSystem().getDimension() != newResolution.length)
             throw new MismatchedDimensionException("Destination resolution array lenght should be equals than target CRS dimension number."
                     + "Destination resolution array length = "+newResolution.length+", CRS dimension number = "+targetCrs.getCoordinateSystem().getDimension());
         }
-        
+
         final CoordinateReferenceSystem srcCRS = srcEnvelope.getCoordinateReferenceSystem();
         if (oldResolution.length != 2)
             throw new IllegalArgumentException("Resolution array lenght should be equals to 2. Founded array length : "+oldResolution.length);
@@ -199,20 +198,20 @@ public final class ReferencingUtilities {
             System.arraycopy(oldResolution, 0, newResolution, targetMinOrdi, oldResolution.length);
         } else {
             final int srcMinOrdi = CRSUtilities.firstHorizontalAxis(srcCRS);
-            
+
             //-- grid envelope
             final int displayWidth  = (int) StrictMath.ceil(srcEnvelope.getSpan(srcMinOrdi)     / oldResolution[0]);
             final int displayHeight = (int) StrictMath.ceil(srcEnvelope.getSpan(srcMinOrdi + 1) / oldResolution[1]);
-            
+
             //-- resolution working is only available on 2D horizontal CRS part
             //-- also avoid mismatch dimension problem
             final CoordinateReferenceSystem srcCRS2D    = CRSUtilities.getCRS2D(srcCRS);
             final CoordinateReferenceSystem targetCRS2D = CRSUtilities.getCRS2D(targetCrs);
-            
+
             final GeneralEnvelope srcEnvelope2D = new GeneralEnvelope(srcCRS2D);
             srcEnvelope2D.setRange(0, srcEnvelope.getMinimum(srcMinOrdi),     srcEnvelope.getMaximum(srcMinOrdi));
             srcEnvelope2D.setRange(1, srcEnvelope.getMinimum(srcMinOrdi + 1), srcEnvelope.getMaximum(srcMinOrdi + 1));
-            
+
             //-- target image into target CRS 2D
             final Envelope targetEnvelope2D = Envelopes.transform(srcEnvelope2D, targetCRS2D);
 
@@ -678,11 +677,11 @@ public final class ReferencingUtilities {
     }
 
     /**
-     * 
+     *
      * @param base
      * @param values
      * @return
-     * @deprecated replaced by {@link #toTransform(int, org.opengis.referencing.operation.MathTransform, java.util.Map, int) 
+     * @deprecated replaced by {@link #toTransform(int, org.opengis.referencing.operation.MathTransform, java.util.Map, int)
      */
     @Deprecated
     public static MathTransform toTransform(final MathTransform base, double[] ... values){
@@ -705,29 +704,29 @@ public final class ReferencingUtilities {
 
         return result;
     }
-    
+
     /**
-     * Returns a {@link PassThroughTransform} with <strong>expectedTargetDimension</strong> number, 
+     * Returns a {@link PassThroughTransform} with <strong>expectedTargetDimension</strong> number,
      * from <strong>subtransform</strong> at dimension index <strong>firstBaseOrdinate</strong>
      * and with <strong>axisValues</strong> infomation on each other dimensions.
-     * 
+     *
      * @param firstBaseOrdinate the first minimum ordinate of subtransform into the expected target dimension.
      * @param subTransform the sub transformation which will be wrapped by other mathematical functions.
      * @param axisValues the list of mathmatical function for each other dimensions than already present subtransform dimensions.
      * @param expectedTargetDimension the expected target {@link PassThroughTransform} dimension.
      * @return expected {@link PassThroughTransform}, created from given parameters.
-     * @see #checkMTToTransform(int, org.opengis.referencing.operation.MathTransform, java.util.Map, int) 
+     * @see #checkMTToTransform(int, org.opengis.referencing.operation.MathTransform, java.util.Map, int)
      */
-    public static MathTransform toTransform(final int firstBaseOrdinate, final MathTransform subTransform, 
+    public static MathTransform toTransform(final int firstBaseOrdinate, final MathTransform subTransform,
                                             final Map<Integer, double[]> axisValues, final int expectedTargetDimension) {
         checkMTToTransform(firstBaseOrdinate, subTransform, axisValues, expectedTargetDimension);
-        
+
         MathTransform result = PassThroughTransform.create(firstBaseOrdinate, subTransform, expectedTargetDimension - subTransform.getTargetDimensions() - firstBaseOrdinate);
         for (Integer dim : axisValues.keySet()) {
             final double[] currentAxisValues = axisValues.get(dim);
             final MathTransform1D axistrs;
             if(currentAxisValues.length <= 1) {
-                axistrs = (MathTransform1D) MathTransforms.linear(1, (currentAxisValues.length == 0) 
+                axistrs = (MathTransform1D) MathTransforms.linear(1, (currentAxisValues.length == 0)
                                                                      ? 0 : currentAxisValues[0]);
             } else {
                 axistrs = LinearInterpolator1D.create(currentAxisValues);
@@ -739,8 +738,8 @@ public final class ReferencingUtilities {
     }
 
     /**
-     * Check than all needed parameters to build appropriate {@link PassThroughTransform} are conform. 
-     * 
+     * Check than all needed parameters to build appropriate {@link PassThroughTransform} are conform.
+     *
      * @param firstBaseOrdinate the first minimum ordinate of subtransform into the expected target dimension.
      * @param subTransform the sub transformation which will be wrapped by other mathematical functions.
      * @param axisValues the list of mathmatical function for each other dimensions than already present subtransform dimensions.
@@ -748,9 +747,9 @@ public final class ReferencingUtilities {
      * @return {@code true} if all needed dimension are informed else {@code false}.
      * @throws NullArgumentException if subtransform or axisValues are {@code null}.
      * @throws MismatchedDimensionException if expected targetDimension is lesser than subtransform dimension.
-     * @throws IllegalArgumentException if firstBaseOrdinate is out of target dimension boundary [0 ---> targetDim - subtransform target dim] 
+     * @throws IllegalArgumentException if firstBaseOrdinate is out of target dimension boundary [0 ---> targetDim - subtransform target dim]
      */
-    private static void checkMTToTransform(final int firstBaseOrdinate,             final MathTransform subTransform, 
+    private static void checkMTToTransform(final int firstBaseOrdinate,             final MathTransform subTransform,
                                            final Map<Integer, double[]> axisValues, final int expectedTargetDimension) {
         ArgumentChecks.ensureNonNull("subTransform", subTransform);
         ArgumentChecks.ensureNonNull("axisValues", axisValues);
@@ -760,9 +759,9 @@ public final class ReferencingUtilities {
                     + "upper than subtransform target dimension. Expected upper than : "
                     +subTransformDimensionNumber+" found : "+expectedTargetDimension);
         ArgumentChecks.ensureBetween("firstBaseOrdinate", 0, expectedTargetDimension - subTransformDimensionNumber, firstBaseOrdinate);
-        if (expectedTargetDimension > 64) 
+        if (expectedTargetDimension > 64)
             throw new IllegalArgumentException("targetDimension > 64 not supported");
-        //-- create a long where the bits ordinate are at 1 in relation with subtransform ordinate. 
+        //-- create a long where the bits ordinate are at 1 in relation with subtransform ordinate.
         long isOrdinateChecked = ((1 << (subTransformDimensionNumber)) -1) << (expectedTargetDimension - firstBaseOrdinate - subTransformDimensionNumber);
         for (final Integer dim : axisValues.keySet()) {
             isOrdinateChecked = isOrdinateChecked | (1 << (expectedTargetDimension - dim - 1));
@@ -779,7 +778,7 @@ public final class ReferencingUtilities {
             throw new IllegalArgumentException(strB.toString());
         }
     }
-    
+
     /**
      * Recursively explor given crs, and return a list of distinct unary CRS.
      * @param crs

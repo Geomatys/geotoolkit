@@ -76,7 +76,7 @@ final class Reports {
      * @throws IOException If the root directory can not be found.
      */
     static File getProjectRootDirectory() throws IOException {
-        File file = IOUtilities.toFile(JavadocUpdater.class.getResource("Reports.class"), null);
+        File file = IOUtilities.toFile(Reports.class.getResource("Reports.class"), null);
         while (file != null) {
             if (new File(file, "pom.xml").isFile() &&
                 new File(file, "modules").isDirectory() &&

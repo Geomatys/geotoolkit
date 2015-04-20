@@ -39,12 +39,6 @@ import org.geotoolkit.metadata.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 
-// Following are for Javadoc only.
-import org.apache.sis.measure.Units;
-import org.geotoolkit.referencing.operation.projection.Orthographic;
-import org.geotoolkit.referencing.operation.projection.Equirectangular;
-import org.geotoolkit.referencing.operation.projection.TransverseMercator;
-
 
 /**
  * The factory for {@linkplain ProjectedCRS projected CRS} in the {@code AUTO} and {@code AUTO2}

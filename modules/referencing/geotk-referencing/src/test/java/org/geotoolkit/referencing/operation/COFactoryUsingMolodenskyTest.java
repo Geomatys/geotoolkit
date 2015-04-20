@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation;
 
-import java.io.IOException;
 import java.awt.geom.Point2D;
 import javax.imageio.spi.ServiceRegistry;
 
@@ -37,7 +36,6 @@ import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.Projection;
 
 import org.geotoolkit.test.referencing.WKT;
-import org.apache.sis.util.Classes;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
@@ -46,7 +44,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.factory.FactoryDependencies;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
@@ -209,26 +206,6 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
     public void ensureClassLoaded() {
         assertNotNull(DATUM_SHIFT_APPLIED);
         assertNotNull(DATUM_SHIFT_OMITTED);
-    }
-
-    /**
-     * Initialize the {@link #messageOnFailure} field.
-     */
-    @Before
-    public void initMessageOnFailure() {
-        final StringBuilder buffer = new StringBuilder("Test failure in ")
-                .append(Classes.getShortClassName(this))
-                .append("[datumShiftMethod=").append(getDatumShiftMethod())
-                .append(", isEpsgFactoryAvailable=").append(isEpsgFactoryAvailable())
-                .append(']').append(System.lineSeparator());
-        final FactoryDependencies dep = new FactoryDependencies(opFactory);
-        try {
-            dep.print(buffer);
-        } catch (IOException e) {
-            // Should never happen, since we are printing in a StringBuilder.
-            throw new AssertionError(e);
-        }
-        messageOnFailure = buffer.toString();
     }
 
     /**

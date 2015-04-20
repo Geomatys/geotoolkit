@@ -24,6 +24,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.test.CalculationType;
 
 import org.geotoolkit.referencing.operation.provider.NADCON;
+import org.apache.sis.referencing.operation.transform.CoordinateDomain;
 
 import static org.junit.Assume.*;
 import static org.junit.Assert.*;
@@ -60,7 +61,10 @@ public final strictfp class NadconTransformTest extends TransformTestBase {
         assertEquals(ascii, binary);
         transform = ascii;
         tolerance = 1E-10;
-        stress(CoordinateDomain.GEOGRAPHIC, 426005043);
+
+//      Disabled for now because outside domain of validity.
+        isDerivativeSupported = false;
+        verifyInDomain(CoordinateDomain.GEOGRAPHIC, 426005043);
     }
 
     /**

@@ -24,10 +24,12 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.Identifier;
 
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.Citations;
+import org.apache.sis.internal.referencing.provider.Mercator2SP;
 
 
 /**
@@ -52,7 +54,6 @@ import org.geotoolkit.metadata.Citations;
  *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td>6378388 metres</td></tr>
  *   <tr><td>{@code semi_minor}</td><td>6356911.9461279465 metres</td></tr>
- *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
  *   <tr><td>{@code latitude_of_origin}</td><td>-41°</td></tr>
  *   <tr><td>{@code central_meridian}</td><td>173°</td></tr>
  *   <tr><td>{@code false_easting}</td><td>2510000 metres</td></tr>
@@ -233,10 +234,6 @@ public class NewZealandMapGrid extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-     *     </table>
-     *   </td><td>
-     *     <table class="compact">
      *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
      *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
      *       <tr><td><b>Default value:</b></td><td>false</td></tr>
@@ -314,9 +311,9 @@ public class NewZealandMapGrid extends MapProjection {
             new NamedIdentifier(Citations.PROJ4,   "nzmg"),
             new IdentifierCode (Citations.MAP_INFO, 18)
         }, null, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+            SEMI_MAJOR, SEMI_MINOR,
             LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN,
-            Mercator2SP.SCALE_FACTOR, // Not an official parameter, provided for compatibility with those who still use it.
+            (ParameterDescriptor) new Mercator2SP().getParameters().descriptor("scale_factor"), // Not an official parameter, provided for compatibility with those who still use it.
             FALSE_EASTING, FALSE_NORTHING
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 
@@ -331,7 +328,7 @@ public class NewZealandMapGrid extends MapProjection {
      * {@inheritDoc}
      */
     @Override
-    protected MathTransform2D createMathTransform(ParameterValueGroup values) {
-        return org.geotoolkit.referencing.operation.projection.NewZealandMapGrid.create(getParameters(), values);
+    public MathTransform2D createMathTransform(MathTransformFactory factory, ParameterValueGroup values) {
+        return org.geotoolkit.referencing.operation.projection.NewZealandMapGrid.create(this, values);
     }
 }

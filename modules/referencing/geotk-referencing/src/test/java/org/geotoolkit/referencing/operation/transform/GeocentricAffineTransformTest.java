@@ -25,6 +25,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.referencing.operation.provider.PositionVector7Param;
 import org.geotoolkit.referencing.operation.provider.GeocentricTranslation;
 import org.geotoolkit.referencing.operation.provider.CoordinateFrameRotation;
+import org.apache.sis.referencing.operation.transform.CoordinateDomain;
 
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.test.DependsOn;
@@ -65,7 +66,7 @@ public final strictfp class GeocentricAffineTransformTest extends TransformTestB
         param.parameter("dz").setValue(116.95);
 
         transform = mtFactory.createParameterizedTransform(param);
-        verifyParameters(GeocentricTranslation.PARAMETERS, param);
+        assertParameterEquals(GeocentricTranslation.PARAMETERS, param);
         validate();
 
         tolerance = 0.005;
@@ -97,14 +98,15 @@ public final strictfp class GeocentricAffineTransformTest extends TransformTestB
 
         tolerance = 1E-10;
         transform = mtFactory.createParameterizedTransform(param);
-        verifyParameters(PositionVector7Param.PARAMETERS, param);
+        assertParameterEquals(PositionVector7Param.PARAMETERS, param);
         validate();
 
         tolerance = 0.01;
         verifyTransform(new double[] {3657660.66, 255768.55, 5201382.11},
                         new double[] {3657660.78, 255778.43, 5201387.75});
 
-        stress(CoordinateDomain.GEOCENTRIC, 943559739);
+        isDerivativeSupported = false;  // TODO
+        verifyInDomain(CoordinateDomain.GEOCENTRIC, 943559739);
     }
 
     /**
@@ -129,7 +131,7 @@ public final strictfp class GeocentricAffineTransformTest extends TransformTestB
 
         tolerance = 1E-10;
         transform = mtFactory.createParameterizedTransform(param);
-        verifyParameters(CoordinateFrameRotation.PARAMETERS, param);
+        assertParameterEquals(CoordinateFrameRotation.PARAMETERS, param);
         validate();
 
         tolerance = 0.01;
@@ -177,6 +179,7 @@ public final strictfp class GeocentricAffineTransformTest extends TransformTestB
         verifyTransform(new double[] {4.00, 55.00, -191.61},  // (longitude, latitude, height)
                         new double[] {4.00, 55.00,    3.23});
 
-        stress(CoordinateDomain.GEOGRAPHIC, 699525038);
+        isDerivativeSupported = false;  // TODO
+        verifyInDomain(CoordinateDomain.GEOGRAPHIC, 699525038);
     }
 }

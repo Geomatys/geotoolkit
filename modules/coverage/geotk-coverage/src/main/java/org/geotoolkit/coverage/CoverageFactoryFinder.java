@@ -30,7 +30,7 @@ import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
-import org.geotoolkit.internal.LazySet;
+import org.apache.sis.internal.util.LazySet;
 
 
 /**

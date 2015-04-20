@@ -510,6 +510,8 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
      * @throws FactoryException Should not happen.
      *
      * @since 3.15
+     *
+     * @deprecated This is the legacy pseudo-Mercator, no longer in EPSG database.
      */
     @Test
     public void test3785() throws FactoryException {

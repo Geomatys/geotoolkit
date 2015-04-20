@@ -30,6 +30,7 @@ import org.opengis.referencing.operation.Transformation;
 
 import org.apache.sis.referencing.NamedIdentifier;
 import org.opengis.referencing.datum.GeodeticDatum;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.Citations;
@@ -156,7 +157,7 @@ public class EllipsoidToGeoid extends MathTransformProvider {
      * @throws FactoryException if this method failed to load the coefficient file.
      */
     @Override
-    protected MathTransform createMathTransform(final ParameterValueGroup values)
+    public MathTransform createMathTransform(MathTransformFactory factory, final ParameterValueGroup values)
             throws ParameterNotFoundException, FactoryException
     {
         final GeodeticDatum datum;

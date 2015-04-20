@@ -1068,8 +1068,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
              *
              * We compute: matrix = normalizeTarget * datumShift * normalizeSource
              */
-            matrix = MatrixSIS.castOrCopy(normalizeTarget);
-            matrix = matrix.multiply(datumShift);
+            matrix = Matrices.multiply(normalizeTarget, datumShift);
             matrix = matrix.multiply(normalizeSource);
         } catch (SingularMatrixException cause) {
             throw new OperationNotFoundException(getErrorMessage(sourceDatum, targetDatum), cause);

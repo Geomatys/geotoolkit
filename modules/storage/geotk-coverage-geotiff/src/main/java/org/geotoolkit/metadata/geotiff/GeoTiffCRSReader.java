@@ -36,8 +36,6 @@
 
 package org.geotoolkit.metadata.geotiff;
 
-import org.geotoolkit.referencing.operation.provider.Mercator1SP;
-import org.geotoolkit.referencing.operation.provider.LambertConformal1SP;
 import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
@@ -65,11 +63,13 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
-import org.geotoolkit.referencing.operation.provider.EquidistantCylindrical;
+import org.apache.sis.internal.referencing.provider.Equirectangular;
 import org.geotoolkit.referencing.operation.provider.Krovak;
 import org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea;
-import org.geotoolkit.referencing.operation.provider.LambertConformal2SP;
-import org.geotoolkit.referencing.operation.provider.Mercator2SP;
+import org.apache.sis.internal.referencing.provider.Mercator1SP;
+import org.apache.sis.internal.referencing.provider.Mercator2SP;
+import org.apache.sis.internal.referencing.provider.LambertConformal1SP;
+import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
 import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
 import org.geotoolkit.referencing.operation.provider.ObliqueMercator;
 import org.geotoolkit.referencing.operation.provider.ObliqueStereographic;
@@ -746,11 +746,11 @@ final class GeoTiffCRSReader {
                     || name.equalsIgnoreCase("Plate_Carree")
                     || name.equalsIgnoreCase("Equidistant_Cylindrical")
                     || code == CT_Equirectangular) {
-                parameters = mtFactory.getDefaultParameters(code(EquidistantCylindrical.PARAMETERS));
-                parameters.parameter(code(EquidistantCylindrical.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
-                parameters.parameter(code(EquidistantCylindrical.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata));
-                parameters.parameter(code(EquidistantCylindrical.FALSE_EASTING)).setValue(getFalseEasting(metadata));
-                parameters.parameter(code(EquidistantCylindrical.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
+                parameters = mtFactory.getDefaultParameters("Equirectangular");
+                parameters.parameter(code(Equirectangular.STANDARD_PARALLEL)).setValue(getOriginLat(metadata));
+                parameters.parameter(code(Equirectangular.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata));
+                parameters.parameter(code(Equirectangular.FALSE_EASTING)).setValue(getFalseEasting(metadata));
+                parameters.parameter(code(Equirectangular.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
                 return parameters;
             }
             /**
@@ -764,14 +764,14 @@ final class GeoTiffCRSReader {
                 final double standard_parallel_1 = metadata.getAsDouble(ProjStdParallel1GeoKey);
                 boolean isMercator2SP = false;
                 if (!Double.isNaN(standard_parallel_1)) {
-                    parameters = mtFactory.getDefaultParameters(code(Mercator2SP.PARAMETERS));
+                    parameters = mtFactory.getDefaultParameters("Mercator_2SP");
                     isMercator2SP = true;
                 } else {
-                    parameters = mtFactory.getDefaultParameters(code(Mercator1SP.PARAMETERS));
+                    parameters = mtFactory.getDefaultParameters("Mercator_1SP");
                 }
 
-                parameters.parameter(code(Mercator2SP.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata));
-                parameters.parameter(code(Mercator2SP.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
+                parameters.parameter(code(Mercator1SP.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata));
+                parameters.parameter(code(Mercator1SP.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(Mercator2SP.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(Mercator2SP.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
                 if (isMercator2SP) {
@@ -787,7 +787,7 @@ final class GeoTiffCRSReader {
              */
             if (name.equalsIgnoreCase("lambert_conformal_conic_1SP")
                     || code == CT_LambertConfConic_Helmert) {
-                parameters = mtFactory.getDefaultParameters(code(LambertConformal1SP.PARAMETERS));
+                parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_1SP");
                 parameters.parameter(code(LambertConformal1SP.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(LambertConformal1SP.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(LambertConformal1SP.SCALE_FACTOR)).setValue(metadata.getAsDouble(ProjScaleAtNatOriginGeoKey));
@@ -802,9 +802,9 @@ final class GeoTiffCRSReader {
             if (name.equalsIgnoreCase("lambert_conformal_conic_2SP")
                     || name.equalsIgnoreCase("lambert_conformal_conic_2SP_Belgium")
                     || code == CT_LambertConfConic_2SP) {
-                parameters = mtFactory.getDefaultParameters(code(LambertConformal2SP.PARAMETERS));
-                parameters.parameter(code(LambertConformal2SP.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata));
-                parameters.parameter(code(LambertConformal2SP.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
+                parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_2SP");
+                parameters.parameter(code(LambertConformal2SP.LONGITUDE_OF_FALSE_ORIGIN)).setValue(getOriginLong(metadata));
+                parameters.parameter(code(LambertConformal2SP.LATITUDE_OF_FALSE_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(LambertConformal2SP.STANDARD_PARALLEL_1)).setValue(metadata.getAsDouble(ProjStdParallel1GeoKey));
                 parameters.parameter(code(LambertConformal2SP.STANDARD_PARALLEL_2)).setValue(metadata.getAsDouble(ProjStdParallel2GeoKey));
                 parameters.parameter(code(LambertConformal2SP.FALSE_EASTING)).setValue(getFalseEasting(metadata));

@@ -21,10 +21,11 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import net.jcip.annotations.Immutable;
-
 import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.OperationMethod;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import static java.lang.Math.*;
 
@@ -38,7 +39,6 @@ import static java.lang.Math.*;
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.20
  *
  * @see PolarStereographic
  * @see ObliqueStereographic
@@ -46,7 +46,6 @@ import static java.lang.Math.*;
  * @since 2.0
  * @module
  */
-@Immutable
 public class EquatorialStereographic extends Stereographic {
     /**
      * For cross-version compatibility.
@@ -58,8 +57,8 @@ public class EquatorialStereographic extends Stereographic {
      *
      * @param parameters The parameters of the projection to be created.
      */
-    protected EquatorialStereographic(final Parameters parameters) {
-        super(parameters);
+    protected EquatorialStereographic(final OperationMethod method, final Parameters parameters) {
+        super(method, parameters);
         assert φ0 == 0 : φ0;
     }
 
@@ -73,7 +72,7 @@ public class EquatorialStereographic extends Stereographic {
                             final double[] dstPts, final int dstOff,
                             final boolean derivate) throws ProjectionException
     {
-        final double λ    = rollLongitude(srcPts[srcOff]);
+        final double λ    = srcPts[srcOff];
         final double φ    = srcPts[srcOff + 1];
         final double sinφ = sin(φ);
         final double sinλ = sin(λ);
@@ -127,7 +126,6 @@ public class EquatorialStereographic extends Stereographic {
      * @since 2.4
      * @module
      */
-    @Immutable
     static final class Spherical extends EquatorialStereographic {
         /**
          * For cross-version compatibility.
@@ -139,17 +137,8 @@ public class EquatorialStereographic extends Stereographic {
          *
          * @param parameters The parameters of the projection to be created.
          */
-        protected Spherical(final Parameters parameters) {
-            super(parameters);
-            parameters.ensureSpherical();
-        }
-
-        /**
-         * Returns {@code true} since this class uses spherical formulas.
-         */
-        @Override
-        final boolean isSpherical() {
-            return true;
+        protected Spherical(final OperationMethod method, final Parameters parameters) {
+            super(method, parameters);
         }
 
         /**
@@ -160,7 +149,7 @@ public class EquatorialStereographic extends Stereographic {
                                 final double[] dstPts, final int dstOff,
                                 final boolean derivate) throws ProjectionException
         {
-            final double λ        = rollLongitude(srcPts[srcOff]);
+            final double λ        = srcPts[srcOff];
             final double φ        = srcPts[srcOff + 1];
             final double sinφ     = sin(φ);
             final double sinλ     = sin(λ);
@@ -212,7 +201,6 @@ public class EquatorialStereographic extends Stereographic {
                 y = asin(y * sinc/ρ);  // (20-14)  with φ1=0
                 x = atan2(t, ct);
             }
-            x = unrollLongitude(x);
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff  ] = x;
             dstPts[dstOff+1] = y;

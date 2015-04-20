@@ -21,9 +21,9 @@ import java.util.Arrays;
 import java.awt.Dimension;
 import java.awt.image.DataBufferDouble;
 import org.opengis.referencing.operation.TransformException;
-
-import org.junit.*;
 import org.opengis.referencing.operation.MathTransform;
+import org.apache.sis.referencing.operation.transform.CoordinateDomain;
+import org.junit.*;
 
 import static java.lang.Double.NaN;
 import static org.apache.sis.test.Assert.*;
@@ -54,6 +54,9 @@ public final strictfp class GridTransformTest extends TransformTestBase {
      */
     @Test
     public void testSerialization() throws TransformException {
+//      Disabled for now because test is outside domain of validity.
+        isDerivativeSupported = false;
+
         final int width  = 3;
         final int height = 2;
         final double[] x = {
@@ -71,7 +74,7 @@ public final strictfp class GridTransformTest extends TransformTestBase {
                 new double[][] {x,y}, width*height, new int[] {3, 1});
         transform = GridTransform.create(GridType.LOCALIZATION, buffer, new Dimension(width, height), null);
         assertInstanceOf("Expected a MathTransform2D.", GridTransform2D.class, transform);
-        stress(CoordinateDomain.GEOGRAPHIC_RADIANS, 956296895);
+        verifyInDomain(CoordinateDomain.GEOGRAPHIC_RADIANS, 956296895);
         final MathTransform deserialized = assertSerializedEquals(transform);
         final double[][] check = ((DataBufferDouble) ((GridTransform) deserialized).grid).getBankData();
         assertTrue(Arrays.equals(check[0], new double[] {1, 2, 3, 4, 5, 6}));

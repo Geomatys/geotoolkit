@@ -21,16 +21,15 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import net.jcip.annotations.Immutable;
-
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.Matrix;
-
+import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.referencing.operation.provider.PolarStereographic.*;
@@ -46,7 +45,6 @@ import static org.geotoolkit.referencing.operation.provider.PolarStereographic.*
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.20
  *
  * @see EquatorialStereographic
  * @see ObliqueStereographic
@@ -54,7 +52,6 @@ import static org.geotoolkit.referencing.operation.provider.PolarStereographic.*
  * @since 2.0
  * @module
  */
-@Immutable
 public class PolarStereographic extends Stereographic {
     /**
      * For compatibility with different versions during deserialization.
@@ -73,12 +70,18 @@ public class PolarStereographic extends Stereographic {
      *
      * @since 3.00
      */
-    public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
+    public static MathTransform2D create(final OperationMethod descriptor,
                                          final ParameterValueGroup values)
     {
-        final Parameters parameters = new Parameters(descriptor, values);
-        final PolarStereographic projection = create(parameters);
-        return projection.createConcatenatedTransform();
+        final Parameters parameters = Parameters.castOrWrap(values);
+        final PolarStereographic projection = create(descriptor, parameters);
+        try {
+            return (MathTransform2D) projection.createMapProjection(
+                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
+                            org.opengis.referencing.operation.MathTransformFactory.class));
+        } catch (org.opengis.util.FactoryException e) {
+            throw new IllegalArgumentException(e); // TODO
+        }
     }
 
     /**
@@ -87,30 +90,30 @@ public class PolarStereographic extends Stereographic {
      * @param parameters The parameters of the projection to be created.
      * @return The map projection.
      */
-    static PolarStereographic create(final Parameters parameters) {
-        final boolean isSpherical = parameters.isSpherical();
-        if (parameters.nameMatches(North.PARAMETERS)) {
+    static PolarStereographic create(final OperationMethod descriptor, final Parameters parameters) {
+        final boolean isSpherical = isSpherical(parameters);
+        if (nameMatches(parameters, North.PARAMETERS)) {
             if (isSpherical) {
-                return new PolarStereographic.Spherical(parameters, false, Boolean.FALSE);
+                return new PolarStereographic.Spherical(descriptor, parameters, false, Boolean.FALSE);
             } else {
-                return new PolarStereographic(parameters, false, Boolean.FALSE);
+                return new PolarStereographic(descriptor, parameters, false, Boolean.FALSE);
             }
-        } else if (parameters.nameMatches(South.PARAMETERS)) {
+        } else if (nameMatches(parameters, South.PARAMETERS)) {
             if (isSpherical) {
-                return new PolarStereographic.Spherical(parameters, false, Boolean.TRUE);
+                return new PolarStereographic.Spherical(descriptor, parameters, false, Boolean.TRUE);
             } else {
-                return new PolarStereographic(parameters, false, Boolean.TRUE);
+                return new PolarStereographic(descriptor, parameters, false, Boolean.TRUE);
             }
-        } else if (parameters.nameMatches(VariantB.PARAMETERS)) {
+        } else if (nameMatches(parameters, VariantB.PARAMETERS)) {
             if (isSpherical) {
-                return new PolarStereographic.Spherical(parameters, false, null);
+                return new PolarStereographic.Spherical(descriptor, parameters, false, null);
             } else {
-                return new PolarStereographic.Series(parameters, false, null);
+                return new PolarStereographic.Series(descriptor, parameters, false, null);
             }
         } if (isSpherical) {
-            return new PolarStereographic.Spherical(parameters, true, null);
+            return new PolarStereographic.Spherical(descriptor, parameters, true, null);
         } else {
-            return new PolarStereographic.Series(parameters, true, null);
+            return new PolarStereographic.Series(descriptor, parameters, true, null);
         }
     }
 
@@ -119,8 +122,8 @@ public class PolarStereographic extends Stereographic {
      *
      * @param parameters The parameters of the projection to be created.
      */
-    protected PolarStereographic(final Parameters parameters) {
-        this(parameters, parameters.nameMatches(PARAMETERS), null);
+    protected PolarStereographic(final OperationMethod method, final Parameters parameters) {
+        this(method, parameters, nameMatches(parameters, PARAMETERS), null);
     }
 
     /**
@@ -143,7 +146,7 @@ public class PolarStereographic extends Stereographic {
      * every cases (including Polar A, but it is meanless in this case), except
      * for "Stereographic South Pole" where it default to 90°S.
      */
-    private static double latitudeTrueScale(final Parameters parameters,
+    private double latitudeTrueScale(final Parameters parameters,
                 final boolean isVariantA, final Boolean forceSouthPole)
     {
         final ParameterDescriptor<Double> trueScaleDescriptor =
@@ -151,13 +154,11 @@ public class PolarStereographic extends Stereographic {
         final double latitudeTrueScale;
         if (isVariantA) {
             // Polar A case
-            latitudeTrueScale = copySign(90, parameters.latitudeOfOrigin);
+            latitudeTrueScale = copySign(90, getAndStore(parameters, LATITUDE_OF_ORIGIN));
         } else {
             // Any cases except Polar A
-            latitudeTrueScale = (parameters.standardParallels.length != 0) ?
-                    parameters.standardParallels[0] : trueScaleDescriptor.getDefaultValue();
+            latitudeTrueScale = getAndStore(parameters, trueScaleDescriptor);
         }
-        Parameters.ensureLatitudeInRange(trueScaleDescriptor, latitudeTrueScale, true);
         return toRadians(latitudeTrueScale);
     }
 
@@ -171,14 +172,14 @@ public class PolarStereographic extends Stereographic {
      *        to South pole if {@link Boolean#TRUE}, or do not force (i.e. detect
      *        from other parameter values) if {@code null}.
      */
-    private PolarStereographic(final Parameters parameters,
+    private PolarStereographic(final OperationMethod method, final Parameters parameters,
             final boolean isVariantA, final Boolean forceSouthPole)
     {
         /*
          * Sets unconditionally the latitude of origin to 90°N, because the South case will
          * be handle by reverting the sign of y through the (de)normalize affine transforms.
          */
-        super(parameters, 90);
+        super(method, parameters, 90);
         double latitudeTrueScale = latitudeTrueScale(parameters, isVariantA, forceSouthPole);
         final boolean southPole;
         if (forceSouthPole != null) {
@@ -213,13 +214,12 @@ public class PolarStereographic extends Stereographic {
          */
         double yk0 = k0;
         if (southPole) {
-            parameters.normalize(true).scale(1, -1);
+            getContextualParameters().getMatrix(true).convertAfter(1, -1, null);
         } else {
             yk0 = -yk0;
         }
-        parameters.validate();
-        parameters.normalize(false).scale(k0, yk0);
-        finish();
+        getContextualParameters().getMatrix(false).convertBefore(0,  k0, null);
+        getContextualParameters().getMatrix(false).convertBefore(1, yk0, null);
     }
 
     /**
@@ -232,7 +232,7 @@ public class PolarStereographic extends Stereographic {
                             final double[] dstPts, final int dstOff,
                             final boolean derivate) throws ProjectionException
     {
-        final double λ    = rollLongitude(srcPts[srcOff]);
+        final double λ    = srcPts[srcOff];
         final double φ    = srcPts[srcOff + 1];
         final double sinφ = sin(φ);
         final double sinλ = sin(λ);
@@ -278,10 +278,10 @@ public class PolarStereographic extends Stereographic {
                 break;
             }
             if (--i < 0) {
-                throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
+                throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
             }
         }
-        dstPts[dstOff  ] = unrollLongitude(atan2(x, y));
+        dstPts[dstOff  ] = atan2(x, y);
         dstPts[dstOff+1] = φ;
     }
 
@@ -301,7 +301,6 @@ public class PolarStereographic extends Stereographic {
      * @since 2.4
      * @module
      */
-    @Immutable
     static final class Spherical extends PolarStereographic {
         /**
          * For compatibility with different versions during deserialization.
@@ -318,17 +317,8 @@ public class PolarStereographic extends Stereographic {
          *        to South pole if {@link Boolean#TRUE}, or do not force (i.e. detect
          *        from other parameter values) if {@code null}.
          */
-        Spherical(final Parameters parameters, final boolean isVariantA, final Boolean forceSouthPole) {
-            super(parameters, isVariantA, forceSouthPole);
-            parameters.ensureSpherical();
-        }
-
-        /**
-         * Returns {@code true} since this class uses spherical formulas.
-         */
-        @Override
-        final boolean isSpherical() {
-            return true;
+        Spherical(final OperationMethod method, final Parameters parameters, final boolean isVariantA, final Boolean forceSouthPole) {
+            super(method, parameters, isVariantA, forceSouthPole);
         }
 
         /**
@@ -339,7 +329,7 @@ public class PolarStereographic extends Stereographic {
                                 final double[] dstPts, final int dstOff,
                                 final boolean derivate) throws ProjectionException
         {
-            final double λ     = rollLongitude(srcPts[srcOff]);
+            final double λ     = srcPts[srcOff];
             final double φ     = srcPts[srcOff + 1];
             final double sinλ  = sin(λ);
             final double cosλ  = cos(λ);
@@ -373,7 +363,7 @@ public class PolarStereographic extends Stereographic {
             double x = srcPts[srcOff  ];
             double y = srcPts[srcOff+1];
             final double ρ = hypot(x, y);
-            x = unrollLongitude(atan2(x, y));
+            x = atan2(x, y);
             y = PI/2 - abs(2*atan(ρ)); // (20-14) with phi1=90° and cos(y) = sin(π/2 + y).
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff  ] = x;
@@ -412,7 +402,6 @@ public class PolarStereographic extends Stereographic {
      * @since 2.4
      * @module
      */
-    @Immutable
     static final class Series extends PolarStereographic {
         /**
          * For compatibility with different versions during deserialization.
@@ -439,8 +428,8 @@ public class PolarStereographic extends Stereographic {
          *        to South pole if {@link Boolean#TRUE}, or do not force (i.e. detect
          *        from other parameter values) if {@code null}.
          */
-        Series(final Parameters parameters, final boolean isVariantA, final Boolean forceSouthPole) {
-            super(parameters, isVariantA, forceSouthPole);
+        Series(final OperationMethod method, final Parameters parameters, final boolean isVariantA, final Boolean forceSouthPole) {
+            super(method, parameters, isVariantA, forceSouthPole);
             // See Snyde P. 19, "Computation of Series"
             final double e4 = excentricitySquared * excentricitySquared;
             final double e6 = e4 * excentricitySquared;
@@ -477,7 +466,7 @@ public class PolarStereographic extends Stereographic {
             double y = srcPts[srcOff+1];
             final double t = hypot(x, y);
             final double χ = PI/2 - 2*atan(t);
-            x = unrollLongitude(atan2(x, y));
+            x = atan2(x, y);
 
             // See Snyde P. 19, "Computation of Series"
             final double sin2χ = sin(2 * χ);

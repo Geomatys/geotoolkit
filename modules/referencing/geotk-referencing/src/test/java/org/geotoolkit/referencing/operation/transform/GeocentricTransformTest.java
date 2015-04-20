@@ -34,8 +34,8 @@ import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
+import org.apache.sis.referencing.operation.transform.CoordinateDomain;
 
-import org.apache.sis.test.DependsOn;
 import org.junit.*;
 import org.opengis.referencing.datum.Ellipsoid;
 
@@ -58,7 +58,6 @@ import static java.lang.StrictMath.*;
  *
  * @since 2.1
  */
-@DependsOn(AbstractMathTransformTest.class)
 public final strictfp class GeocentricTransformTest extends TransformTestBase {
     /**
      * Creates the test suite.
@@ -105,6 +104,9 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
      */
     @Test
     public void testEpsgExample() throws TransformException {
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
+        derivativeDeltas = new double[] {delta, delta};
+
         double[] source = new double[] {
              2 + ( 7 + 46.38/60)/60,  // Longitude
             53 + (48 + 33.82/60)/60,  // Latitude
@@ -119,7 +121,8 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
         transform = GeocentricTransform.create(CommonCRS.WGS84.ellipsoid(), true);
         validate();
         verifyTransform(source, target);
-        stress(CoordinateDomain.GEOGRAPHIC, 306954540);
+        tolerance = 1E-1;
+        verifyInDomain(CoordinateDomain.GEOGRAPHIC, 306954540);
         /*
          * Applies the datum shift.
          */
@@ -137,7 +140,7 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
         transform = new GeocentricAffineTransform(parameters);
         validate();
         verifyTransform(source, target);
-        stress(CoordinateDomain.GEOCENTRIC, 288326602);
+        verifyInDomain(CoordinateDomain.GEOCENTRIC, 288326602);
         /*
          * Back to geographic coordinates, now in ED50 datum.
          */
@@ -151,7 +154,8 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
         transform = GeocentricTransform.create(CommonCRS.ED50.ellipsoid(), true).inverse();
         validate();
         verifyTransform(source, target);
-        stress(CoordinateDomain.GEOCENTRIC, 831342815);
+        tolerance = 10;
+        verifyInDomain(CoordinateDomain.GEOCENTRIC, 831342815);
     }
 
     /**

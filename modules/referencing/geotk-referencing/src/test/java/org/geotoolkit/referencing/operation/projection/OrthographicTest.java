@@ -18,10 +18,9 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import org.opengis.referencing.operation.TransformException;
-
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
-
+import org.apache.sis.referencing.operation.transform.CoordinateDomain;
 import org.junit.*;
 
 import static java.lang.StrictMath.*;
@@ -34,7 +33,6 @@ import static org.geotoolkit.referencing.operation.provider.Orthographic.PARAMET
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
  *
  * @since 3.00
  */
@@ -60,10 +58,10 @@ public final strictfp class OrthographicTest extends ProjectionTestBase {
      * @return Newly created projection.
      */
     private static Orthographic create(final double cx, final double cy) {
-        final UnitaryProjection.Parameters parameters = parameters(PARAMETERS, false);
-        parameters.centralMeridian  = cx;
-        parameters.latitudeOfOrigin = cy;
-        return new Orthographic(parameters);
+        final Parameters parameters = parameters(wrap(PARAMETERS), false, 0);
+        parameters.parameter("central_meridian").setValue(cx);
+        parameters.parameter("latitude_of_origin").setValue(cy);
+        return new Orthographic(new org.geotoolkit.referencing.operation.provider.Orthographic(), parameters);
     }
 
     /**
@@ -73,16 +71,16 @@ public final strictfp class OrthographicTest extends ProjectionTestBase {
      */
     @Test
     public void testEquatorial() throws TransformException {
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
+        derivativeDeltas = new double[] {delta, delta};
         transform = create(0, 0);
         tolerance = TOLERANCE;
         validate();
-        assertTrue(isSpherical());
-        stress(CoordinateDomain.GEOGRAPHIC_RADIANS_HALF, 209067359);
+//      assertTrue(isSpherical());
+        verifyInDomain(CoordinateDomain.GEOGRAPHIC_RADIANS_HALF_λ, 209067359);
 
         // Test the derivative on the same MathTransform than above.
         tolerance = DERIVATIVE_TOLERANCE;
-        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
-        derivativeDeltas = new double[] {delta, delta};
         verifyDerivative(toRadians(5), toRadians(3));
     }
 
@@ -93,23 +91,23 @@ public final strictfp class OrthographicTest extends ProjectionTestBase {
      */
     @Test
     public void testPolar() throws TransformException {
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
+        derivativeDeltas = new double[] {delta, delta};
         boolean south = false;
         do {
             transform = create(0, south ? -90 : 90);
             tolerance = TOLERANCE;
             validate();
-            assertTrue(isSpherical());
+//          assertTrue(isSpherical());
             /*
              * Note: we would expect CoordinateDomain.GEOGRAPHIC_RADIANS_SOUTH in the South case,
              * but then the latitudes are multiplied by -1 by the normalize affine transform. The
              * result is equivalent to using positive latitudes in the first place.
              */
-            stress(CoordinateDomain.GEOGRAPHIC_RADIANS_NORTH, 753524735);
+            verifyInDomain(CoordinateDomain.GEOGRAPHIC_RADIANS_NORTH, 753524735);
 
             // Test the derivative on the same MathTransform than above.
             tolerance = DERIVATIVE_TOLERANCE;
-            final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
-            derivativeDeltas = new double[] {delta, delta};
             verifyDerivative(toRadians(5), toRadians(85));
         } while ((south = !south) == true);
     }

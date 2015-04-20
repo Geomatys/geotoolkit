@@ -21,26 +21,23 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.AffineTransform;
-import net.jcip.annotations.Immutable;
-
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.Matrix;
-
+import org.opengis.referencing.operation.OperationMethod;
 import org.apache.sis.measure.Latitude;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.apache.sis.math.MathFunctions.atanh;
-import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
-import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
-import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.ensureLatitudeInRange;
 
 
 /**
@@ -77,14 +74,12 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.20
  *
  * @see <A HREF="http://srmwww.gov.bc.ca/gis/bceprojection.html">British Columbia Albers Standard Projection</A>
  *
  * @since 2.1
  * @module
  */
-@Immutable
 public class AlbersEqualArea extends UnitaryProjection {
     /**
      * For cross-version compatibility.
@@ -126,17 +121,23 @@ public class AlbersEqualArea extends UnitaryProjection {
      *
      * @since 3.00
      */
-    public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
+    public static MathTransform2D create(final OperationMethod descriptor,
                                          final ParameterValueGroup values)
     {
-        final Parameters parameters = new Parameters(descriptor, values);
+        final Parameters parameters = Parameters.castOrWrap(values);
         final AlbersEqualArea projection;
-        if (parameters.isSpherical()) {
-            projection = new Spherical(parameters);
+        if (isSpherical(parameters)) {
+            projection = new Spherical(descriptor, parameters);
         } else {
-            projection = new AlbersEqualArea(parameters);
+            projection = new AlbersEqualArea(descriptor, parameters);
         }
-        return projection.createConcatenatedTransform();
+        try {
+            return (MathTransform2D) projection.createMapProjection(
+                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
+                            org.opengis.referencing.operation.MathTransformFactory.class));
+        } catch (org.opengis.util.FactoryException e) {
+            throw new IllegalArgumentException(e); // TODO
+        }
     }
 
     /**
@@ -144,30 +145,16 @@ public class AlbersEqualArea extends UnitaryProjection {
      *
      * @param parameters The parameters of the projection to be created.
      */
-    protected AlbersEqualArea(final Parameters parameters) {
-        super(parameters);
-        double φ1, phi2;
-        double latitudeOfOrigin = parameters.latitudeOfOrigin;
-        switch (parameters.standardParallels.length) {
-            default: {
-                throw unknownParameter("standard_parallel_3");
-            }
-            case 2: {
-                φ1 = parameters.standardParallels[0];
-                phi2 = parameters.standardParallels[1];
-                break;
-            }
-            case 1: {
-                phi2 = φ1 = parameters.standardParallels[0];
-                break;
-            }
-            case 0: {
-                phi2 = φ1 = parameters.latitudeOfOrigin;
-                break;
-            }
+    protected AlbersEqualArea(final OperationMethod method, final Parameters parameters) {
+        super(method, parameters, null);
+        double latitudeOfOrigin = getAndStore(parameters, org.geotoolkit.referencing.operation.provider.AlbersEqualArea.LATITUDE_OF_ORIGIN);
+        double φ1 = getAndStore(parameters, org.geotoolkit.referencing.operation.provider.AlbersEqualArea.STANDARD_PARALLEL_1);
+        double phi2;
+        try {
+            phi2 = getAndStore(parameters, org.geotoolkit.referencing.operation.provider.AlbersEqualArea.STANDARD_PARALLEL_2);
+        } catch (IllegalStateException e) {
+            phi2 = φ1; // TODO: use a better mechanism for this default value.
         }
-        ensureLatitudeInRange(org.geotoolkit.referencing.operation.provider.AlbersEqualArea.STANDARD_PARALLEL_1, φ1, true);
-        ensureLatitudeInRange(org.geotoolkit.referencing.operation.provider.AlbersEqualArea.STANDARD_PARALLEL_2, phi2, true);
         if (abs(φ1 + phi2) < ANGLE_TOLERANCE * (180/PI)) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.LATITUDES_ARE_OPPOSITE_2,
                     new Latitude(φ1), new Latitude(phi2)));
@@ -187,7 +174,7 @@ public class AlbersEqualArea extends UnitaryProjection {
         double  n      = sinφ;
         boolean secant = (abs(φ1 - phi2) >= ANGLE_TOLERANCE);
         final double ρ0;
-        if (parameters.isSpherical()) {
+        if (excentricity == 0) {
             if (secant) {
                 n = 0.5 * (n + sin(phi2));
             }
@@ -213,13 +200,11 @@ public class AlbersEqualArea extends UnitaryProjection {
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
          */
-        final AffineTransform normalize   = parameters.normalize(true);
-        final AffineTransform denormalize = parameters.normalize(false);
-        normalize.scale(n, 1);
-        parameters.validate();
-        denormalize.translate(0, ρ0);
-        denormalize.scale(1/n, -1/n);
-        finish();
+        final MatrixSIS normalize   = getContextualParameters().getMatrix(true);
+        final MatrixSIS denormalize = getContextualParameters().getMatrix(false);
+        normalize.convertAfter(0, n, null);
+        denormalize.convertBefore(0,  1/n, null);
+        denormalize.convertBefore(1, -1/n, ρ0);
     }
 
     /**
@@ -236,19 +221,19 @@ public class AlbersEqualArea extends UnitaryProjection {
      * returns the parameters defined in the {@linkplain UnitaryProjection#getParameterValues
      * super-class}, with the addition of standard parallels and the latitude of origin.
      */
-    @Override
-    public ParameterValueGroup getParameterValues() {
-        final double[] standardParallels = parameters.standardParallels;
-        final int n = standardParallels.length;
-        final double φ0 = parameters.latitudeOfOrigin;
-        final double φ1 = (n != 0) ? standardParallels[0] : φ0;
-        final double φ2 = (n >= 2) ? standardParallels[1] : φ1;
-        final ParameterValueGroup values = super.getParameterValues();
-        getOrCreate(LATITUDE_OF_ORIGIN,  values).setValue(parameters.latitudeOfOrigin);
-        getOrCreate(STANDARD_PARALLEL_1, values).setValue(φ1);
-        getOrCreate(STANDARD_PARALLEL_2, values).setValue(φ2);
-        return values;
-    }
+//    @Override
+//    public ParameterValueGroup getParameterValues() {
+//        final double[] standardParallels = parameters.standardParallels;
+//        final int n = standardParallels.length;
+//        final double φ0 = parameters.latitudeOfOrigin;
+//        final double φ1 = (n != 0) ? standardParallels[0] : φ0;
+//        final double φ2 = (n >= 2) ? standardParallels[1] : φ1;
+//        final ParameterValueGroup values = super.getParameterValues();
+//        getOrCreate(LATITUDE_OF_ORIGIN,  values).setValue(parameters.latitudeOfOrigin);
+//        getOrCreate(STANDARD_PARALLEL_1, values).setValue(φ1);
+//        getOrCreate(STANDARD_PARALLEL_2, values).setValue(φ2);
+//        return values;
+//    }
 
     /**
      * Converts the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinate (units in radians)
@@ -262,7 +247,7 @@ public class AlbersEqualArea extends UnitaryProjection {
                             final double[] dstPts, final int dstOff,
                             final boolean derivate) throws ProjectionException
     {
-        final double λ = rollLongitude(srcPts[srcOff]);
+        final double λ = srcPts[srcOff];
         final double φ = srcPts[srcOff + 1];
         final double cosλ = cos(λ);
         final double sinλ = sin(λ);
@@ -272,7 +257,7 @@ public class AlbersEqualArea extends UnitaryProjection {
             if (ρ > -EPSILON) {
                 ρ = 0.0;
             } else {
-                throw new ProjectionException(Errors.Keys.TOLERANCE_ERROR);
+                throw new ProjectionException(Errors.format(Errors.Keys.TOLERANCE_ERROR));
             }
         }
         ρ = sqrt(ρ);
@@ -330,7 +315,7 @@ public class AlbersEqualArea extends UnitaryProjection {
                 y = phi1(y);
             }
         }
-        dstPts[dstOff  ] = unrollLongitude(x);
+        dstPts[dstOff  ] = x;
         dstPts[dstOff+1] = y;
     }
 
@@ -358,17 +343,8 @@ public class AlbersEqualArea extends UnitaryProjection {
          *
          * @param parameters The parameters of the projection to be created.
          */
-        protected Spherical(final Parameters parameters) {
-            super(parameters);
-            parameters.ensureSpherical();
-        }
-
-        /**
-         * Returns {@code true} since this class uses spherical formulas.
-         */
-        @Override
-        final boolean isSpherical() {
-            return true;
+        protected Spherical(final OperationMethod method, final Parameters parameters) {
+            super(method, parameters);
         }
 
         /**
@@ -379,7 +355,7 @@ public class AlbersEqualArea extends UnitaryProjection {
                                 final double[] dstPts, final int dstOff,
                                 final boolean derivate) throws ProjectionException
         {
-            final double λ = rollLongitude(srcPts[srcOff]);
+            final double λ = srcPts[srcOff];
             final double φ = srcPts[srcOff + 1];
             final double cosλ = cos(λ);
             final double sinλ = sin(λ);
@@ -389,7 +365,7 @@ public class AlbersEqualArea extends UnitaryProjection {
                 if (ρ > -EPSILON) {
                     ρ = 0.0;
                 } else {
-                    throw new ProjectionException(Errors.Keys.TOLERANCE_ERROR);
+                    throw new ProjectionException(Errors.format(Errors.Keys.TOLERANCE_ERROR));
                 }
             }
             ρ = sqrt(ρ);
@@ -423,7 +399,7 @@ public class AlbersEqualArea extends UnitaryProjection {
             double x = srcPts[srcOff];
             double y = srcPts[srcOff + 1];
             final double ρ = hypot(x, y);
-            x = unrollLongitude(atan2(x, y));
+            x = atan2(x, y);
             if (ρ <= EPSILON) {
                 y = copySign(PI/2, n);
             } else {
@@ -476,7 +452,7 @@ public class AlbersEqualArea extends UnitaryProjection {
                 return φ;
             }
         }
-        throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
+        throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
     }
 
     /**

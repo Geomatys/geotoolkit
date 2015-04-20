@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -18,17 +18,10 @@
 package org.geotoolkit.temporal.object;
 
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import org.apache.sis.util.logging.Logging;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.temporal.Duration;
 import org.opengis.temporal.Instant;
-import org.opengis.temporal.OrdinalReferenceSystem;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.RelativePosition;
 import org.opengis.temporal.Separation;
@@ -37,29 +30,21 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
 /**
  * An abstract class with two subclasses for representing
  * a temporal instant and a temporal period.
- * 
+ *
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.NONE)
 //@XmlSeeAlso({DefaultInstant.class, DefaultPeriod.class})
  public abstract class DefaultTemporalGeometricPrimitive extends DefaultTemporalPrimitive implements TemporalGeometricPrimitive, Separation {
-
-    private static final Logger LOGGER = Logging.getLogger(DefaultTemporalGeometricPrimitive.class);
-
-    /**
-     * 
-     * @param properties
-     * @throws IllegalArgumentException 
-     */
     public DefaultTemporalGeometricPrimitive(Map<String, ?> properties) throws IllegalArgumentException {
         super(properties);
     }
-    
+
     protected DefaultTemporalGeometricPrimitive() {
         super();
     }
-    
+
     /**
      * Constructs a new instance initialized with the values from the specified metadata object.
      * This is a <cite>shallow</cite> copy constructor, since the other metadata contained in the
@@ -78,7 +63,7 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
 //            this.utcReference   = object.getUTCReference();
 //            if (object instanceof DefaultPeriod) {
 //                this.dateBasis = ((DefaultClock) object).getDateBasis();
-//            }            
+//            }
 //        }
     }
 
@@ -106,9 +91,9 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
 //        }
 //        return new DefaultTemporalGeometricPrimitive(object);
 //    }
-    
+
     /**
-     * Returns the distance from this TM_GeometricPrimitive to another TM_GeometricPrimitive, 
+     * Returns the distance from this TM_GeometricPrimitive to another TM_GeometricPrimitive,
      * i.e. the absolute value of the difference between their temporal positions.
      * @param other
      * @return Duration between this geometry and the given one.
@@ -147,7 +132,7 @@ import org.opengis.temporal.TemporalGeometricPrimitive;
 //                }
 //            }
 //        }
-        
+
         if (this.relativePosition(other).equals(RelativePosition.BEFORE) || this.relativePosition(other).equals(RelativePosition.AFTER)) {
             if (this instanceof Instant && other instanceof Instant) {
                 diff = Math.min(Math.abs(((Instant) other).getDate().getTime() - ((Instant) this).getDate().getTime()),

@@ -21,17 +21,17 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.AffineTransform;
-import net.jcip.annotations.Immutable;
-
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
-
+import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
@@ -64,12 +64,10 @@ import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.20
  *
  * @since 2.0
  * @module
  */
-@Immutable
 public class Orthographic extends UnitaryProjection {
     /**
      * For compatibility with different versions during deserialization.
@@ -115,12 +113,18 @@ public class Orthographic extends UnitaryProjection {
      *
      * @since 3.00
      */
-    public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
+    public static MathTransform2D create(final OperationMethod descriptor,
                                          final ParameterValueGroup values)
     {
-        final Parameters parameters = new Parameters(descriptor, values);
-        final Orthographic projection = new Orthographic(parameters);
-        return projection.createConcatenatedTransform();
+        final Parameters parameters = Parameters.castOrWrap(values);
+        final Orthographic projection = new Orthographic(descriptor, parameters);
+        try {
+            return (MathTransform2D) projection.createMapProjection(
+                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
+                            org.opengis.referencing.operation.MathTransformFactory.class));
+        } catch (org.opengis.util.FactoryException e) {
+            throw new IllegalArgumentException(e); // TODO
+        }
     }
 
     /**
@@ -128,12 +132,13 @@ public class Orthographic extends UnitaryProjection {
      *
      * @param parameters The parameters of the projection to be created.
      */
-    protected Orthographic(final Parameters parameters) {
-        super(parameters);
-        double latitudeOfOrigin = toRadians(parameters.latitudeOfOrigin);
-        boolean north=false, south=false;
+    protected Orthographic(final OperationMethod method, final Parameters parameters) {
+        super(method, parameters, null);
+        double latitudeOfOrigin = toRadians(getAndStore(parameters, org.geotoolkit.referencing.operation.provider.Orthographic.LATITUDE_OF_CENTRE));
+        boolean north = false;
+        boolean south = false;
         /*
-         * Detect the special cases (equtorial or polar). In the polar case, we use the
+         * Detect the special cases (equatorial or polar). In the polar case, we use the
          * same formulas for the North pole than the ones for the South pole, with only
          * the sign of y reversed.
          */
@@ -160,31 +165,22 @@ public class Orthographic extends UnitaryProjection {
          * validation and the initialization of (de)normalize affine transforms.
          */
         if (south) {
-            parameters.normalize(true).scale(1, -1);
+            getContextualParameters().getMatrix(true).convertAfter(1, -1, null);
         }
-        parameters.validate();
-        final AffineTransform denormalize = parameters.normalize(false);
-        if (!parameters.isSpherical()) {
+        final MatrixSIS denormalize = getContextualParameters().getMatrix(false);
+        if (excentricity != 0) {
             /*
              * In principle the elliptical case is not supported. If nevertheless the user gave
              * an ellipsoid, use the same Earth radius than the one computed in Equirectangular.
              */
             double p = sin(abs(latitudeOfOrigin));
-            p = sqrt(1 - excentricitySquared) / (1 - (p*p)*excentricitySquared);
-            denormalize.scale(p, p);
+            p = sqrt(1 - excentricitySquared) / (1 - (p*p)*excentricitySquared); // TODO: radiusOfConformanceSphere.
+            denormalize.convertBefore(0, p, null);
+            denormalize.convertBefore(1, p, null);
         }
         if (north) {
-            denormalize.scale(1, -1);
+            denormalize.convertBefore(1, -1, null);
         }
-        finish();
-    }
-
-    /**
-     * Returns {@code true} since this projection is implemented using spherical formulas.
-     */
-    @Override
-    boolean isSpherical() {
-        return true;
     }
 
     /**
@@ -208,7 +204,7 @@ public class Orthographic extends UnitaryProjection {
                             final double[] dstPts, final int dstOff,
                             final boolean derivate) throws ProjectionException
     {
-        final double λ = rollLongitude(srcPts[srcOff]);
+        final double λ = srcPts[srcOff];
         final double φ = srcPts[srcOff + 1];
         final double cosφ = cos(φ);
         final double cosλ = cos(λ);
@@ -233,7 +229,7 @@ public class Orthographic extends UnitaryProjection {
             }
         }
         if (threshold < -EPSILON) {
-            throw new ProjectionException(Errors.Keys.POINT_OUTSIDE_HEMISPHERE);
+            throw new ProjectionException(Errors.format(Errors.Keys.POINT_OUTSIDE_HEMISPHERE));
         }
         if (dstPts != null) {
             dstPts[dstOff  ] = cosφ * sinλ;
@@ -284,7 +280,7 @@ public class Orthographic extends UnitaryProjection {
         double sinc = ρ;
         if (sinc > 1) {
             if (sinc - 1 > ANGLE_TOLERANCE) {
-                throw new ProjectionException(Errors.Keys.POINT_OUTSIDE_HEMISPHERE);
+                throw new ProjectionException(Errors.format(Errors.Keys.POINT_OUTSIDE_HEMISPHERE));
             }
             sinc = 1;
         }
@@ -313,7 +309,7 @@ public class Orthographic extends UnitaryProjection {
             }
             x = atan2(x, y);
         }
-        dstPts[dstOff  ] = unrollLongitude(x);
+        dstPts[dstOff  ] = x;
         dstPts[dstOff+1] = φ;
     }
 

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import org.apache.sis.internal.referencing.provider.Equirectangular;
 import java.util.List;
 import net.jcip.annotations.Immutable;
 
@@ -54,7 +55,6 @@ import org.geotoolkit.metadata.Citations;
  *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
- *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
  *   <tr><td>{@code longitude_of_center}</td><td>0°</td></tr>
  *   <tr><td>{@code latitude_of_center}</td><td>0°</td></tr>
  *   <tr><td>{@code azimuth}</td><td></td></tr>
@@ -90,7 +90,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    static final ParameterDescriptor<Double> FALSE_EASTING = EquidistantCylindrical.FALSE_EASTING;
+    static final ParameterDescriptor<Double> FALSE_EASTING = Equirectangular.FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -100,7 +100,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    static final ParameterDescriptor<Double> FALSE_NORTHING = EquidistantCylindrical.FALSE_NORTHING;
+    static final ParameterDescriptor<Double> FALSE_NORTHING = Equirectangular.FALSE_NORTHING;
 
     /**
      * The group of all parameters expected by this coordinate operation.
@@ -153,10 +153,6 @@ public class HotineObliqueMercator extends ObliqueMercator {
      *     </table>
      *   </td></tr>
      *   <tr><td>
-     *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-     *     </table>
-     *   </td><td>
      *     <table class="compact">
      *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
      *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
@@ -275,8 +271,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
      * </table>
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
-        new Identifier[] {
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(new Identifier[] {
             new NamedIdentifier(Citations.OGC,     "Hotine_Oblique_Mercator"),
             new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator (variant A)"), // Starting from 7.6
             new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator"), // Prior to EPSG version 7.6
@@ -292,9 +287,8 @@ public class HotineObliqueMercator extends ObliqueMercator {
             new NamedIdentifier(Citations.GEOTOOLKIT, "Rectified Skew Orthomorphic (RSO)"), // Legacy EPSG (TODO: use versions instead)
                      sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)
         }, null, new ParameterDescriptor<?>[] {
-            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_major"),
-            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_minor"),
-            ROLL_LONGITUDE,
+            sameParameterAs(new Equirectangular().getParameters(), "semi_major"),   // TODO
+            sameParameterAs(new Equirectangular().getParameters(), "semi_minor"),
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             AZIMUTH,             RECTIFIED_GRID_ANGLE,
             SCALE_FACTOR,
@@ -331,7 +325,6 @@ public class HotineObliqueMercator extends ObliqueMercator {
      *   <tr><th>Parameter name</th><th>Default value</th></tr>
      *   <tr><td>{@code Semi_Major}</td><td></td></tr>
      *   <tr><td>{@code Semi_Minor}</td><td></td></tr>
-     *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
      *   <tr><td>{@code Latitude_Of_1st_Point}</td><td></td></tr>
      *   <tr><td>{@code Longitude_Of_1st_Point}</td><td></td></tr>
      *   <tr><td>{@code Latitude_Of_2nd_Point}</td><td></td></tr>
@@ -427,10 +420,6 @@ public class HotineObliqueMercator extends ObliqueMercator {
          *     </table>
          *   </td></tr>
          *   <tr><td>
-         *     <table class="compact">
-         *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-         *     </table>
-         *   </td><td>
          *     <table class="compact">
          *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
          *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>

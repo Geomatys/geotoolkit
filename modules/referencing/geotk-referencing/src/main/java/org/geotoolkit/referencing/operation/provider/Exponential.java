@@ -26,6 +26,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.content.TransferFunctionType;
 
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -157,7 +158,7 @@ public class Exponential extends MathTransformProvider {
      * @throws ParameterNotFoundException if a required parameter was not found.
      */
     @Override
-    protected MathTransform1D createMathTransform(final ParameterValueGroup values)
+    public MathTransform1D createMathTransform(MathTransformFactory factory, final ParameterValueGroup values)
             throws ParameterNotFoundException
     {
         final TransferFunction f = new TransferFunction();

@@ -1,7 +1,5 @@
 org.geotoolkit.referencing.operation.provider.Logarithmic
 org.geotoolkit.referencing.operation.provider.Exponential
-org.geotoolkit.referencing.operation.provider.Affine
-org.geotoolkit.referencing.operation.provider.LongitudeRotation
 org.geotoolkit.referencing.operation.provider.EllipsoidToGeocentric
 org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid
 org.geotoolkit.referencing.operation.provider.GeocentricTranslation
@@ -9,15 +7,6 @@ org.geotoolkit.referencing.operation.provider.PositionVector7Param
 org.geotoolkit.referencing.operation.provider.CoordinateFrameRotation
 org.geotoolkit.referencing.operation.provider.Molodensky
 org.geotoolkit.referencing.operation.provider.AbridgedMolodensky
-org.geotoolkit.referencing.operation.provider.EquidistantCylindrical
-org.geotoolkit.referencing.operation.provider.PlateCarree
-org.geotoolkit.referencing.operation.provider.Mercator1SP
-org.geotoolkit.referencing.operation.provider.Mercator2SP
-org.geotoolkit.referencing.operation.provider.PseudoMercator
-org.geotoolkit.referencing.operation.provider.MillerCylindrical
-org.geotoolkit.referencing.operation.provider.LambertConformal1SP
-org.geotoolkit.referencing.operation.provider.LambertConformal2SP
-org.geotoolkit.referencing.operation.provider.LambertConformal2SP$Belgium
 org.geotoolkit.referencing.operation.provider.AlbersEqualArea
 org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea
 org.geotoolkit.referencing.operation.provider.Orthographic

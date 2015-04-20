@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import org.apache.sis.internal.referencing.provider.Equirectangular;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.citation.Citation;
@@ -25,6 +26,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.resources.Vocabulary;
@@ -54,7 +56,6 @@ import org.geotoolkit.metadata.Citations;
  *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
- *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
  *   <tr><td>{@code longitude_of_center}</td><td>0°</td></tr>
  *   <tr><td>{@code latitude_of_center}</td><td>0°</td></tr>
  *   <tr><td>{@code azimuth}</td><td></td></tr>
@@ -260,10 +261,6 @@ public class ObliqueMercator extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-     *     </table>
-     *   </td><td>
-     *     <table class="compact">
      *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
      *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
      *       <tr><td><b>Default value:</b></td><td>false</td></tr>
@@ -380,8 +377,7 @@ public class ObliqueMercator extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
-        new Identifier[] {
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(new Identifier[] {
             new NamedIdentifier(Citations.OGC,     "Oblique_Mercator"),
             new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator (variant B)"), // Starting from 7.6
             new NamedIdentifier(Citations.EPSG,    "Rectified Skew Orthomorphic (RSO)"),
@@ -398,9 +394,8 @@ public class ObliqueMercator extends MapProjection {
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.OBLIQUE_MERCATOR_PROJECTION))
         }, null, new ParameterDescriptor<?>[] {
-            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_major"),
-            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_minor"),
-            ROLL_LONGITUDE,
+            sameParameterAs(new Equirectangular().getParameters(), "semi_major"),   // TODO
+            sameParameterAs(new Equirectangular().getParameters(), "semi_minor"),
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             AZIMUTH, RECTIFIED_GRID_ANGLE, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING
@@ -432,8 +427,8 @@ public class ObliqueMercator extends MapProjection {
      * {@inheritDoc}
      */
     @Override
-    protected MathTransform2D createMathTransform(ParameterValueGroup values) {
-        return org.geotoolkit.referencing.operation.projection.ObliqueMercator.create(getParameters(), values);
+    public MathTransform2D createMathTransform(MathTransformFactory factory, ParameterValueGroup values) {
+        return org.geotoolkit.referencing.operation.projection.ObliqueMercator.create(this, values);
     }
 
 
@@ -452,7 +447,6 @@ public class ObliqueMercator extends MapProjection {
      *   <tr><th>Parameter name</th><th>Default value</th></tr>
      *   <tr><td>{@code Semi_Major}</td><td></td></tr>
      *   <tr><td>{@code Semi_Minor}</td><td></td></tr>
-     *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
      *   <tr><td>{@code Latitude_Of_1st_Point}</td><td></td></tr>
      *   <tr><td>{@code Longitude_Of_1st_Point}</td><td></td></tr>
      *   <tr><td>{@code Latitude_Of_2nd_Point}</td><td></td></tr>
@@ -561,10 +555,6 @@ public class ObliqueMercator extends MapProjection {
          *   </td></tr>
          *   <tr><td>
          *     <table class="compact">
-         *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-         *     </table>
-         *   </td><td>
-         *     <table class="compact">
          *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
          *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
          *       <tr><td><b>Default value:</b></td><td>false</td></tr>
@@ -672,7 +662,7 @@ public class ObliqueMercator extends MapProjection {
             }, new Citation[] { // Authorities to exclude from the parameter descriptors.
                 Citations.EPSG, Citations.OGC, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
             }, new ParameterDescriptor<?>[] {
-                SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+                SEMI_MAJOR, SEMI_MINOR,
                 LAT_OF_1ST_POINT,    LONG_OF_1ST_POINT,
                 LAT_OF_2ND_POINT,    LONG_OF_2ND_POINT,
                 LATITUDE_OF_CENTRE,  SCALE_FACTOR,

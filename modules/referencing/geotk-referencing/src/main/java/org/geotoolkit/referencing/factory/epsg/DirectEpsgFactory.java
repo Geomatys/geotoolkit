@@ -83,12 +83,12 @@ import org.apache.sis.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.DefaultConcatenatedOperation;
 import org.geotoolkit.internal.referencing.factory.ImplementationHints;
 import org.geotoolkit.internal.referencing.DeprecatedCode;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.SimpleRecord;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.TableWriter;
+import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.cs.CoordinateSystems;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
@@ -2665,7 +2665,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      * of operation methods. For example the "Geocentric translation" operation
                      * method has 3-dimensional source and target.
                      */
-                    final Integer sourceDimensions, targetDimensions;
+                    final int sourceDimensions, targetDimensions;
                     final CoordinateReferenceSystem sourceCRS, targetCRS;
                     if (sourceCode != null) {
                         sourceCRS = buffered.createCoordinateReferenceSystem(sourceCode);
@@ -2816,14 +2816,14 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                          * the case of Molodenski transforms, the axis length to set are the same.
                          */
                         if (isBursaWolf) try {
-                            Ellipsoid ellipsoid = CRSUtilities.getHeadGeoEllipsoid(sourceCRS);
+                            Ellipsoid ellipsoid = ReferencingUtilities.getEllipsoidOfGeographicCRS(sourceCRS);
                             if (ellipsoid != null) {
                                 final Unit<Length> axisUnit = ellipsoid.getAxisUnit();
                                 parameters.parameter("src_semi_major").setValue(ellipsoid.getSemiMajorAxis(), axisUnit);
                                 parameters.parameter("src_semi_minor").setValue(ellipsoid.getSemiMinorAxis(), axisUnit);
                                 parameters.parameter("src_dim").setValue(sourceCRS.getCoordinateSystem().getDimension());
                             }
-                            ellipsoid = CRSUtilities.getHeadGeoEllipsoid(targetCRS);
+                            ellipsoid = ReferencingUtilities.getEllipsoidOfGeographicCRS(targetCRS);
                             if (ellipsoid != null) {
                                 final Unit<Length> axisUnit = ellipsoid.getAxisUnit();
                                 parameters.parameter("tgt_semi_major").setValue(ellipsoid.getSemiMajorAxis(), axisUnit);

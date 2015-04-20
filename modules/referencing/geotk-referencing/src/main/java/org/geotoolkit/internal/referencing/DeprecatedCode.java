@@ -21,6 +21,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
+import org.apache.sis.util.Deprecable;
 
 
 /**
@@ -33,7 +34,7 @@ import org.apache.sis.metadata.iso.ImmutableIdentifier;
  * @module
  */
 @Immutable
-public final class DeprecatedCode extends ImmutableIdentifier {
+public final class DeprecatedCode extends ImmutableIdentifier implements Deprecable {
     /**
      * For cross-version compatibility.
      */

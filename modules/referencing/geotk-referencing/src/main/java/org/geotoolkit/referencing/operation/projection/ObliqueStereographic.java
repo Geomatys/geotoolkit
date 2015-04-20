@@ -21,10 +21,11 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import net.jcip.annotations.Immutable;
-
 import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.OperationMethod;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;
@@ -62,7 +63,6 @@ import static java.lang.Math.*;
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.20
  *
  * @see PolarStereographic
  * @see EquatorialStereographic
@@ -70,7 +70,6 @@ import static java.lang.Math.*;
  * @since 2.4
  * @module
  */
-@Immutable
 public class ObliqueStereographic extends Stereographic {
     /**
      * For compatibility with different versions during deserialization.
@@ -99,8 +98,8 @@ public class ObliqueStereographic extends Stereographic {
      *
      * @param parameters The parameters of the projection to be created.
      */
-    protected ObliqueStereographic(final Parameters parameters) {
-        super(parameters, parameters.latitudeOfOrigin);
+    protected ObliqueStereographic(final OperationMethod method, final Parameters parameters) {
+        super(method, parameters, parameters.doubleValue(org.geotoolkit.referencing.operation.provider.ObliqueStereographic.LATITUDE_OF_ORIGIN));
         final double cphi = cosφ0 * cosφ0;
         final double r = 2 * sqrt(1-excentricitySquared) / (1 - excentricitySquared*(sinφ0*sinφ0));
         C      = sqrt(1 + excentricitySquared*(cphi*cphi) / (1 - excentricitySquared));
@@ -114,10 +113,9 @@ public class ObliqueStereographic extends Stereographic {
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
          */
-        parameters.normalize(true).scale(C, 1);
-        parameters.validate();
-        parameters.normalize(false).scale(r, r);
-        finish();
+        getContextualParameters().getMatrix(true).convertAfter(0, C, null);
+        getContextualParameters().getMatrix(false).convertBefore(0, r, null);
+        getContextualParameters().getMatrix(false).convertBefore(1, r, null);
     }
 
     /**
@@ -130,7 +128,7 @@ public class ObliqueStereographic extends Stereographic {
                             final double[] dstPts, final int dstOff,
                             final boolean derivate) throws ProjectionException
     {
-        final double λ = rollLongitude(srcPts[srcOff]);
+        final double λ = srcPts[srcOff];
         final double φ = srcPts[srcOff + 1];
         final double sinλ = sin(λ);
         final double cosλ = cos(λ);
@@ -212,12 +210,12 @@ public class ObliqueStereographic extends Stereographic {
             }
             φ = φi;
             if (--i < 0) {
-                throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
+                throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
             }
         }
         // End pj_inv_gauss(...) method inlined
 
-        dstPts[dstOff  ] = unrollLongitude(λ);
+        dstPts[dstOff  ] = λ;
         dstPts[dstOff+1] = φ;
         /*
          * We can not compare easily with the calculation performed by the superclass

@@ -45,7 +45,6 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
-import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.cs.Axes;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
@@ -512,7 +511,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
         Exception failure;
         try {
             final CoordinateSystem sourceCS = crs.getCoordinateSystem();
-            final CoordinateSystem targetCS = PredefinedCS.standard(sourceCS);
+            final CoordinateSystem targetCS = CoordinateSystems.normalize(sourceCS);
             if (inverse) {
                 return CoordinateSystems.swapAndScaleAxes(targetCS, sourceCS);
             } else {

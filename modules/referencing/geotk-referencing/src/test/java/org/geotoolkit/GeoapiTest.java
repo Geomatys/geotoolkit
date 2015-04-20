@@ -20,38 +20,25 @@ package org.geotoolkit;
 import java.util.EnumSet;
 
 import org.opengis.util.Factory;
-import org.opengis.util.NameFactory;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.datum.DatumFactory;
-import org.opengis.referencing.datum.DatumAuthorityFactory;
-import org.opengis.referencing.cs.CSFactory;
-import org.opengis.referencing.cs.CSAuthorityFactory;
-import org.opengis.referencing.crs.CRSFactory;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransformFactory;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
-import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.opengis.test.ImplementationDetails;
 import org.opengis.test.ToleranceModifier;
 import org.opengis.test.FactoryFilter;
 import org.opengis.test.Configuration;
 import org.opengis.test.TestSuite;
 
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.referencing.operation.transform.Accessor;
-import org.apache.sis.util.logging.Logging;
 
 import static org.opengis.test.CalculationType.*;
 import static org.opengis.test.ToleranceModifiers.*;
 import static org.apache.sis.referencing.IdentifiedObjects.*;
-import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
 
 
 /**
@@ -82,35 +69,9 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
  *       should fail when "gravity-related depth" is not on the list of allowed axis names - this
  *       is not currently the case.
  */
-public final strictfp class GeoapiTest extends TestSuite implements ImplementationDetails, FactoryFilter {
+public final strictfp class GeoapiTest implements ImplementationDetails, FactoryFilter {
     /**
-     * Fix the authority factories to use for testing purpose. We do not rely on the
-     * {@code META-INF/services/} discovery mechanism because the same implementation
-     * is often used for many services.
-     */
-    static {
-        setFactories(NameFactory.class,                getNameFactory                   (null));
-        setFactories(CSFactory.class,                  getCSFactory                     (null));
-        setFactories(CRSFactory.class,                 getCRSFactory                    (null));
-        setFactories(DatumFactory.class,               getDatumFactory                  (null));
-        setFactories(MathTransformFactory.class,       getMathTransformFactory          (null));
-        setFactories(CoordinateOperationFactory.class, CRS.getCoordinateOperationFactory(false));
-        setFactories(CRSAuthorityFactory.class,        CRS.getAuthorityFactory          (false));
-        try {
-            setFactories(CSAuthorityFactory.class,                  getCSAuthorityFactory                 ("EPSG", null));
-            setFactories(DatumAuthorityFactory.class,               getDatumAuthorityFactory              ("EPSG", null));
-            setFactories(CoordinateOperationAuthorityFactory.class, getCoordinateOperationAuthorityFactory("EPSG", null));
-        } catch (FactoryNotFoundException e) {
-            Logging.getLogger(GeoapiTest.class).warning(e.getLocalizedMessage());
-            setFactories(CSAuthorityFactory.class);
-            setFactories(DatumAuthorityFactory.class);
-            setFactories(CoordinateOperationAuthorityFactory.class);
-        }
-        GeoapiWorkaround.install();
-    }
-
-    /**
-     * Whatever the EPSG factory is available, or {@code null} if not yet tested.
+     * Whether the EPSG factory is available, or {@code null} if not yet tested.
      */
     private static Boolean isEpsgFactoryAvailable;
 

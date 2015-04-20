@@ -17,23 +17,23 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import net.jcip.annotations.Immutable;
-
+import java.util.Map;
+import java.util.EnumMap;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.Matrix;
-
+import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
-import org.geotoolkit.referencing.operation.provider.UniversalParameters;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
+import org.apache.sis.parameter.Parameters;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.referencing.operation.provider.Krovak.*;
-import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.*;
 
 
 /**
@@ -91,17 +91,24 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Jan Jezek (HSRS)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.20
  *
  * @since 2.4
  * @module
  */
-@Immutable
 public class Krovak extends UnitaryProjection {
     /**
      * For cross-version compatibility.
      */
     private static final long serialVersionUID = -8359105634355342212L;
+
+    private static Map<ParameterRole, ParameterDescriptor<Double>> roles() {
+        final EnumMap<ParameterRole, ParameterDescriptor<Double>> roles = new EnumMap<>(ParameterRole.class);
+        roles.put(ParameterRole.CENTRAL_MERIDIAN, LONGITUDE_OF_CENTRE);
+        roles.put(ParameterRole.SCALE_FACTOR,     SCALE_FACTOR);
+        roles.put(ParameterRole.FALSE_EASTING,    FALSE_EASTING);
+        roles.put(ParameterRole.FALSE_NORTHING,   FALSE_NORTHING);
+        return roles;
+    }
 
     /**
      * When to stop the iteration.
@@ -134,13 +141,19 @@ public class Krovak extends UnitaryProjection {
      *
      * @since 3.00
      */
-    public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
+    public static MathTransform2D create(final OperationMethod descriptor,
                                          final ParameterValueGroup values)
     {
         final Krovak projection;
-        final Parameters parameters = new Parameters(descriptor, values);
-        projection = new Krovak(parameters);
-        return projection.createConcatenatedTransform();
+        final Parameters parameters = Parameters.castOrWrap(values);
+        projection = new Krovak(descriptor, parameters);
+        try {
+            return (MathTransform2D) projection.createMapProjection(
+                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
+                            org.opengis.referencing.operation.MathTransformFactory.class));
+        } catch (org.opengis.util.FactoryException e) {
+            throw new IllegalArgumentException(e); // TODO
+        }
     }
 
     /**
@@ -148,27 +161,12 @@ public class Krovak extends UnitaryProjection {
      *
      * @param parameters The parameters of the projection to be created.
      */
-    protected Krovak(final Parameters parameters) {
-        super(parameters);
-        double latitudeOfOrigin = parameters.latitudeOfOrigin;
-        ensureLatitudeInRange(LATITUDE_OF_CENTRE, latitudeOfOrigin, false);
+    protected Krovak(final OperationMethod method, final Parameters parameters) {
+        super(method, parameters, roles());
+        double latitudeOfOrigin = getAndStore(parameters, LATITUDE_OF_CENTRE);
         latitudeOfOrigin = toRadians(latitudeOfOrigin);
-        double pseudoStandardParallel;
-        switch (parameters.standardParallels.length) {
-            default: {
-                throw unknownParameter(UniversalParameters.STANDARD_PARALLEL_2);
-            }
-            case 0: {
-                pseudoStandardParallel = PSEUDO_STANDARD_PARALLEL.getDefaultValue();
-                break;
-            }
-            case 1: {
-                pseudoStandardParallel = parameters.standardParallels[0];
-                break;
-            }
-        }
-        pseudoStandardParallel = toRadians(pseudoStandardParallel);
-        final double azimuth = toRadians(parameters.azimuth);
+        final double pseudoStandardParallel = toRadians(getAndStore(parameters, PSEUDO_STANDARD_PARALLEL));
+        final double azimuth = toRadians(getAndStore(parameters, AZIMUTH));
         sinAzim = sin(azimuth);
         cosAzim = cos(azimuth);
         n       = sin(pseudoStandardParallel);
@@ -188,16 +186,15 @@ public class Krovak extends UnitaryProjection {
         k1  = pow(tan(latitudeOfOrigin/2 + PI/4), alfa) * g / tan(u0/2 + PI/4);
         ka  = pow(1/k1, -1/alfa);
         ro0 = pow(tanS2, -n);
-        final double radius = sqrt(1 - excentricitySquared) / (1 - (excentricitySquared * (sinLat*sinLat)));
+        final double radius = sqrt(1 - excentricitySquared) / (1 - (excentricitySquared * (sinLat*sinLat))); // TODO: radiusOfConformanceSphere.
         final double rop = radius / (ro0 * tan(pseudoStandardParallel));
         /*
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
          */
-        parameters.normalize(true).scale(-alfa, 1);
-        parameters.validate();
-        parameters.normalize(false).scale(-rop, -rop);
-        finish();
+        getContextualParameters().getMatrix(true).convertAfter(0, -alfa, null);
+        getContextualParameters().getMatrix(false).convertBefore(0, -rop, null);
+        getContextualParameters().getMatrix(false).convertBefore(1, -rop, null);
     }
 
     /**
@@ -288,7 +285,7 @@ public class Krovak extends UnitaryProjection {
                 break;
             }
             if (--i < 0) {
-                throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
+                throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
             }
         }
         dstPts[dstOff  ] = Δv;

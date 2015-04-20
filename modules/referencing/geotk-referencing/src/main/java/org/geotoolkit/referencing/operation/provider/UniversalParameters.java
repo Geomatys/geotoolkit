@@ -149,19 +149,6 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
         }, Double.NaN, 0.0, Double.POSITIVE_INFINITY, Unit.ONE, false);
 
     /**
-     * All known names for the parameter that specify whatever a projection should roll longitude.
-     * If {@code true}, then the value of (<var>longitude</var> - {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#centralMeridian
-     * central meridian}) will be rolled to the [-180 &hellip; 180)&deg; range before the projection
-     * is applied. If {@code false}, then longitude rolling is never applied. If not provided, then
-     * the default behavior is to roll longitude only if the central meridian is different than zero.
-     * <p>
-     * This is a Geotk-specific parameter.
-     */
-    public static final ParameterDescriptor<Boolean> ROLL_LONGITUDE = new DefaultParameterDescriptor<>(
-            GEOTOOLKIT, "roll_longitude", Boolean.class, null, null, null, null, null, false);
-
-    /**
      * All known names for the
      * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#centralMeridian
      * central meridian} parameter.
@@ -189,7 +176,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(EPSG,    "Longitude of projection centre"),
             new NamedIdentifier(ESRI,    "Central_Meridian"),
             new NamedIdentifier(ESRI,    "Longitude_Of_Center"),
-            new NamedIdentifier(ESRI,    "Longitude_Of_Origin"),
+            new NamedIdentifier(ESRI,    "Longitude_Of_Origin"),                // LGPL
             new NamedIdentifier(NETCDF,  "longitude_of_projection_origin"),
             new NamedIdentifier(NETCDF,  "longitude_of_central_meridian"),
             new NamedIdentifier(GEOTIFF, "NatOriginLong"),

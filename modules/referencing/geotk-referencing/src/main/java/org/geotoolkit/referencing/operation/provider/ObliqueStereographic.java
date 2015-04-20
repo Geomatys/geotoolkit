@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import org.apache.sis.internal.referencing.provider.Equirectangular;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -48,7 +49,6 @@ import org.geotoolkit.metadata.Citations;
  *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
- *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
  *   <tr><td>{@code central_meridian}</td><td>0°</td></tr>
  *   <tr><td>{@code latitude_of_origin}</td><td>0°</td></tr>
  *   <tr><td>{@code scale_factor}</td><td>1</td></tr>
@@ -152,10 +152,6 @@ public class ObliqueStereographic extends Stereographic {
      *     </table>
      *   </td></tr>
      *   <tr><td>
-     *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-     *     </table>
-     *   </td><td>
      *     <table class="compact">
      *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
      *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
@@ -264,13 +260,12 @@ public class ObliqueStereographic extends Stereographic {
             new IdentifierCode (Citations.S57,      14),
             sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
         }, null, new ParameterDescriptor<?>[] {
-            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_major"),
-            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_minor"),
-            ROLL_LONGITUDE,
+            sameParameterAs(new Equirectangular().getParameters(), "semi_major"),   // TODO
+            sameParameterAs(new Equirectangular().getParameters(), "semi_minor"),
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
             Orthographic.SCALE_FACTOR,
-            EquidistantCylindrical.FALSE_EASTING,
-            EquidistantCylindrical.FALSE_NORTHING
+            Equirectangular.FALSE_EASTING,
+            Equirectangular.FALSE_NORTHING
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
     }
 

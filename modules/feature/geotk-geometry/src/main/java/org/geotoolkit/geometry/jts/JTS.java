@@ -35,7 +35,7 @@ import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.referencing.operation.TransformPathNotFoundException;
-import org.geotoolkit.referencing.operation.projection.ProjectionException;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.resources.Errors;

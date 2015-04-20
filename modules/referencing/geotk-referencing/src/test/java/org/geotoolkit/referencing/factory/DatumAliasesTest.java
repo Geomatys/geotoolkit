@@ -34,7 +34,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.referencing.IdentifiedObjects;
 
 import org.apache.sis.referencing.CommonCRS;
-import org.geotools.referencing.datum.GeotoolsFactory; // A dummy factory for testing purpose.
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -71,17 +70,11 @@ public final strictfp class DatumAliasesTest extends TestBase {
                 assertEquals(-1, objects);
                 objects = position;
             }
-            if (factory instanceof GeotoolsFactory) {
-                assertEquals(-1, geotools);
-                geotools = position;
-            }
             position++;
         }
         assertTrue("DatumAliases factory not found.",      aliases  >= 0);
         assertTrue("ReferencingObjectFactory not found.",  objects  >= 0);
-        assertTrue("Pseudo-GeotoolsFactory not found.",    geotools >= 0);
         assertTrue("DatumAliases should have precedence.", aliases < objects);
-        assertTrue("GeotoolsFactory should be last.",      objects < geotools);
     }
 
     /**

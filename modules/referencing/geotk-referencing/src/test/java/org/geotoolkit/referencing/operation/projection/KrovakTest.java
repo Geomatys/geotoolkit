@@ -20,9 +20,9 @@ package org.geotoolkit.referencing.operation.projection;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
-
 import org.apache.sis.test.DependsOn;
 import org.junit.*;
+
 import static java.lang.StrictMath.*;
 import static org.geotoolkit.referencing.operation.provider.Krovak.PARAMETERS;
 
@@ -32,7 +32,6 @@ import static org.geotoolkit.referencing.operation.provider.Krovak.PARAMETERS;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
  *
  * @since 3.00
  */
@@ -60,7 +59,7 @@ public final strictfp class KrovakTest extends ProjectionTestBase {
         param.parameter("semi_minor").setValue(6377397.155 * (1 - 1/299.15281));
 
         tolerance = 1E-3;
-        transform = Krovak.create(PARAMETERS, param);
+        transform = Krovak.create(wrap(PARAMETERS), param);
         validate();
 
         final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.

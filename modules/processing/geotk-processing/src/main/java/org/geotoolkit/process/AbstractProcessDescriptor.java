@@ -21,7 +21,7 @@ import org.opengis.metadata.lineage.Algorithm;
 import java.util.Collections;
 import java.util.Collection;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.internal.util.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.identification.Identification;

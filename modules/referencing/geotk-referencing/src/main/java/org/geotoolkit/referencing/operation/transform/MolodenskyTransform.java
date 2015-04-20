@@ -30,6 +30,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.util.Utilities;
+import org.apache.sis.measure.Longitude;
 import org.apache.sis.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
@@ -593,7 +594,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
                 λ = 0;
                 φ = copySign(90, φ);
             } else {
-                λ = rollLongitude(toDegrees(λ), 180);
+                λ = Longitude.normalize(toDegrees(λ));
                 φ = toDegrees(φ);
             }
             if (dstPts2 != null) {

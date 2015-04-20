@@ -25,8 +25,9 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.ConicProjection;
-
+import org.apache.sis.internal.referencing.provider.Mercator2SP;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.Citations;
 
@@ -51,7 +52,6 @@ import org.geotoolkit.metadata.Citations;
  *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
- *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
  *   <tr><td>{@code latitude_of_origin}</td><td>0°</td></tr>
  *   <tr><td>{@code central_meridian}</td><td>0°</td></tr>
  *   <tr><td>{@code false_easting}</td><td>0 metres</td></tr>
@@ -118,10 +118,6 @@ public class Polyconic extends MapProjection {
      *     </table>
      *   </td></tr>
      *   <tr><td>
-     *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-     *     </table>
-     *   </td><td>
      *     <table class="compact">
      *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
      *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
@@ -199,7 +195,7 @@ public class Polyconic extends MapProjection {
             new IdentifierCode (Citations.GEOTIFF,  22),
             new IdentifierCode (Citations.MAP_INFO, 27)
         }, excludes, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+            SEMI_MAJOR, SEMI_MINOR,
             UniversalParameters.LATITUDE_OF_ORIGIN.select(excludes,
                 "Latitude of natural origin",   // EPSG
                 "latitude_of_origin",           // OGC
@@ -208,7 +204,7 @@ public class Polyconic extends MapProjection {
                 "Longitude of natural origin",  // EPSG
                 "central_meridian",             // OGC
                 "NatOriginLong"),               // GeoTIFF
-            PseudoMercator.SCALE_FACTOR, // Not an official parameter, provided for compatibility with those who still use it.
+            (ParameterDescriptor) new Mercator2SP().getParameters().descriptor("scale_factor"), // Not an official parameter, provided for compatibility with those who still use it.
             UniversalParameters.FALSE_EASTING.select(excludes,
                 "False easting",                // EPSG
                 "FalseEasting"),                // GeoTIFF
@@ -237,7 +233,7 @@ public class Polyconic extends MapProjection {
      * {@inheritDoc}
      */
     @Override
-    protected MathTransform2D createMathTransform(ParameterValueGroup values) {
-        return org.geotoolkit.referencing.operation.projection.Polyconic.create(getParameters(), values);
+    public MathTransform2D createMathTransform(MathTransformFactory factory, ParameterValueGroup values) {
+        return org.geotoolkit.referencing.operation.projection.Polyconic.create(this, values);
     }
 }

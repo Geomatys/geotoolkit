@@ -34,7 +34,6 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.apache.sis.util.CharSequences;
 import static org.junit.Assert.*;
 
 
@@ -42,8 +41,6 @@ import static org.junit.Assert.*;
  * Provides shared methods and constants for Geotk tests.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
  * @since 3.00
  */
 public strictfp class Commons {
@@ -185,60 +182,6 @@ public strictfp class Commons {
      */
     public static String decodeQuotes(final String text) {
         return text.replace(OPENING_QUOTE, '"').replace(CLOSING_QUOTE, '"');
-    }
-
-    /**
-     * Prints the given text to the standard output stream, formatted as a Java {@link String}
-     * declaration constant. The quote character is escaped to special unicode characters for
-     * easier reading. The generated code presumes that the following import statement is
-     * declared in the class where to code is going to be copied:
-     *
-     * {@preformat java
-     *     import static org.geotoolkit.test.Commons.*;
-     * }
-     *
-     * @param text The text to format as Java code.
-     */
-    public static void printAsJavaCode(final String text) {
-        final PrintStream out = System.out;
-        out.print("        final String text =");
-        final boolean hasQuotes = text.indexOf('"') >= 0;
-        if (hasQuotes) {
-            out.print(" decodeQuotes(");
-        }
-        out.println();
-
-        final String margin = "                "; // 4 indentation levels (16 spaces).
-        boolean continuing = false;
-        for (final CharSequence cs : CharSequences.splitOnEOL(text)) {
-            if (continuing) {
-                out.println("\\n\" +");
-            }
-            continuing = true;
-            out.print(margin);
-            out.print('"');
-            int quotes = 0;
-            final String line = cs.toString();
-            for (int i=0; i<line.length(); i++) {
-                char c = line.charAt(i);
-                switch (c) {
-                    case OPENING_QUOTE: // fallthrough
-                    case CLOSING_QUOTE: {
-                        throw new IllegalArgumentException("Text already contains quotation marks.");
-                    }
-                    case '"': {
-                        c = (quotes & 1) == 0 ? OPENING_QUOTE : CLOSING_QUOTE;
-                        quotes++;
-                    }
-                }
-                out.print(c);
-            }
-        }
-        out.print('"');
-        if (hasQuotes) {
-            out.print(')');
-        }
-        out.println(';');
     }
 
     /**

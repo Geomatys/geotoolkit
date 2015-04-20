@@ -21,10 +21,11 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.AffineTransform;
-import net.jcip.annotations.Immutable;
-
+import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import static java.lang.Math.*;
 
@@ -37,12 +38,10 @@ import static java.lang.Math.*;
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
  *
  * @since 3.00
  * @module
  */
-@Immutable
 abstract class CassiniOrMercator extends UnitaryProjection {
     /**
      * For cross-version compatibility.
@@ -86,8 +85,8 @@ abstract class CassiniOrMercator extends UnitaryProjection {
      *
      * @param parameters The parameters of the projection to be created.
      */
-    CassiniOrMercator(final Parameters parameters) {
-        super(parameters);
+    CassiniOrMercator(final OperationMethod method, final Parameters parameters) {
+        super(method, parameters, null);
         final double excentricitySquared = this.excentricitySquared;
         double t;
         en0 = C00 - excentricitySquared  * (C02 + excentricitySquared  *
@@ -99,7 +98,7 @@ abstract class CassiniOrMercator extends UnitaryProjection {
         en3 = (t *= excentricitySquared) * (C66 - excentricitySquared  * C68);
         en4 =  t *  excentricitySquared  *  C88;
 
-        final double latitudeOfOrigin = toRadians(parameters.latitudeOfOrigin);
+        final double latitudeOfOrigin = toRadians(getAndStore(parameters, org.geotoolkit.referencing.operation.provider.TransverseMercator.LATITUDE_OF_ORIGIN));
         final double ml0;
         if (excentricitySquared != 0) {
             ml0 = mlfn(latitudeOfOrigin, sin(latitudeOfOrigin), cos(latitudeOfOrigin));
@@ -129,10 +128,8 @@ abstract class CassiniOrMercator extends UnitaryProjection {
          * of FE and FN (despite their names) there is actually nothing special to do in this
          * method for the South Orientated case.
          */
-        parameters.validate();
-        final AffineTransform denormalize = parameters.normalize(false);
-        denormalize.translate(0, -ml0);
-        finish();
+        final MatrixSIS denormalize = getContextualParameters().getMatrix(false);
+        denormalize.convertBefore(1, null, -ml0);
     }
 
     /**
@@ -190,6 +187,6 @@ abstract class CassiniOrMercator extends UnitaryProjection {
                 return φ;
             }
         } while (--i >= 0);
-        throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
+        throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
     }
 }

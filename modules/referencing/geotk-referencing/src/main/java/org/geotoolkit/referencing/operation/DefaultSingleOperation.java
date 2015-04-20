@@ -40,7 +40,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.parameter.Parameterized;
 import org.apache.sis.internal.referencing.OperationMethods;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
-import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.apache.sis.internal.system.Semaphores;
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.util.ComparisonMode;
@@ -128,7 +127,7 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
         ensureNonNull("method", method);
         this.method = method;
         if (transform != null) {
-            OperationMethods.checkDimensions(method, transform, properties);
+// TODO     OperationMethods.checkDimensions(method, transform, properties);
         }
         /*
          * Undocumented property. We do not document it because parameters are usually either
@@ -250,17 +249,13 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
         while (mt != null) {
             if (mt instanceof Parameterized) {
                 final ParameterValueGroup param;
-                if (mt instanceof ParameterizedAffine) {
-                    param = ((ParameterizedAffine) mt).parameters.getParameterValues();
-                } else {
-                    if (Semaphores.queryAndSet(Semaphores.PROJCS)) {
-                        throw new AssertionError(); // Should never happen.
-                    }
-                    try {
-                        param = ((Parameterized) mt).getParameterValues();
-                    } finally {
-                        Semaphores.clear(Semaphores.PROJCS);
-                    }
+                if (Semaphores.queryAndSet(Semaphores.PROJCS)) {
+                    throw new AssertionError(); // Should never happen.
+                }
+                try {
+                    param = ((Parameterized) mt).getParameterValues();
+                } finally {
+                    Semaphores.clear(Semaphores.PROJCS);
                 }
                 if (param != null) {
                     return param;

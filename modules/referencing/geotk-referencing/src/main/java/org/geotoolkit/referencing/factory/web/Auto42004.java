@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *         SPHEROID["WGS_1984", 6378137, 298.257223563]],
  *       PRIMEM["Greenwich", 0],
  *       UNIT["Decimal_Degree", 0.0174532925199433]],
- *     PROJECTION["Equidistant_Cylindrical"],
+ *     PROJECTION["Equirectangular"],
  *     PARAMETER["Latitude_of_Origin", 0],
  *     PARAMETER["Central_Meridian", ${central_meridian}],
  *     PARAMETER["Standard_Parallel_1", ${standard_parallel}],
@@ -90,7 +90,7 @@ final class Auto42004 extends Factlet {
      */
     @Override
     public String getClassification() {
-        return "Equidistant_Cylindrical";
+        return "Equirectangular";
     }
 
     /**

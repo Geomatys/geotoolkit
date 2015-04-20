@@ -40,7 +40,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
 
 import org.apache.sis.metadata.ValueExistencePolicy;
 import org.apache.sis.metadata.MetadataStandard;
-import org.apache.sis.internal.util.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.IdentifierGenerator;
 import org.geotoolkit.internal.sql.StatementEntry;

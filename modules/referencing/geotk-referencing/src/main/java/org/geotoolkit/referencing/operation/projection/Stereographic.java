@@ -21,16 +21,15 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import net.jcip.annotations.Immutable;
-
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
-
+import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
@@ -138,14 +137,12 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.20
  *
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/random_issues.html#stereographic">Some Random Stereographic Issues</A>
  *
  * @since 1.0
  * @module
  */
-@Immutable
 public class Stereographic extends UnitaryProjection {
     /**
      * For compatibility with different versions during deserialization.
@@ -194,34 +191,40 @@ public class Stereographic extends UnitaryProjection {
      *
      * @since 3.00
      */
-    public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
+    public static MathTransform2D create(final OperationMethod descriptor,
                                          final ParameterValueGroup values)
     {
-        final Parameters parameters = new Parameters(descriptor, values);
-        final double latitudeOfOrigin = toRadians(parameters.latitudeOfOrigin);
+        final Parameters parameters = Parameters.castOrWrap(values);
+        final double latitudeOfOrigin = toRadians(parameters.doubleValue(org.geotoolkit.referencing.operation.provider.Stereographic.LATITUDE_OF_ORIGIN));
         final Stereographic projection;
         if (abs(latitudeOfOrigin - PI/2) < ANGLE_TOLERANCE) {
-            projection = PolarStereographic.create(parameters);
+            projection = PolarStereographic.create(descriptor, parameters);
         } else {
-            final boolean isSpherical = parameters.isSpherical();
-            final boolean isEPSG = parameters.nameMatches(PARAMETERS);
+            final boolean isSpherical = isSpherical(parameters);
+            final boolean isEPSG = nameMatches(parameters, PARAMETERS);
             if (abs(latitudeOfOrigin) < ANGLE_TOLERANCE) {
                 if (isSpherical) {
-                    projection = new EquatorialStereographic.Spherical(parameters);
+                    projection = new EquatorialStereographic.Spherical(descriptor, parameters);
                 } else if (!isEPSG) {
-                    projection = new EquatorialStereographic(parameters);
+                    projection = new EquatorialStereographic(descriptor, parameters);
                 } else {
-                    projection = new ObliqueStereographic(parameters);
+                    projection = new ObliqueStereographic(descriptor, parameters);
                 }
             } else if (isSpherical) {
-                projection = new Stereographic.Spherical(parameters);
+                projection = new Stereographic.Spherical(descriptor, parameters);
             } else if (!isEPSG) {
-                projection = new Stereographic(parameters);
+                projection = new Stereographic(descriptor, parameters);
             } else {
-                projection = new ObliqueStereographic(parameters);
+                projection = new ObliqueStereographic(descriptor, parameters);
             }
         }
-        return projection.createConcatenatedTransform();
+        try {
+            return (MathTransform2D) projection.createMapProjection(
+                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
+                            org.opengis.referencing.operation.MathTransformFactory.class));
+        } catch (org.opengis.util.FactoryException e) {
+            throw new IllegalArgumentException(e); // TODO
+        }
     }
 
     /**
@@ -229,8 +232,8 @@ public class Stereographic extends UnitaryProjection {
      *
      * @param parameters The parameters of the projection to be created.
      */
-    protected Stereographic(final Parameters parameters) {
-        this(parameters, parameters.latitudeOfOrigin);
+    protected Stereographic(final OperationMethod method, final Parameters parameters) {
+        this(method, parameters, Double.NaN);
         double k0 = 2*msfn(sinφ0, cosφ0) / cosχ1;   // part of (14 - 15)
         if (excentricity == 0) {
             k0 = 2; // For fixing rounding errors.
@@ -242,20 +245,21 @@ public class Stereographic extends UnitaryProjection {
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
          */
-        parameters.validate();
-        parameters.normalize(false).scale(k0, k0);
-        finish();
+        getContextualParameters().getMatrix(false).convertBefore(0, k0, null);
+        getContextualParameters().getMatrix(false).convertBefore(1, k0, null);
     }
 
     /**
-     * Constructs an oblique stereographic projection. Callers must invoke {@link #finish}
-     * when they have finished their work.
+     * Constructs an oblique stereographic projection.
      *
      * @param parameters The parameters of the projection to be created.
      * @param latitudeOfOrigin the latitude of origin, in decimal degrees.
      */
-    Stereographic(final Parameters parameters, final double latitudeOfOrigin) {
-        super(parameters);
+    Stereographic(final OperationMethod method, final Parameters parameters, double latitudeOfOrigin) {
+        super(method, parameters, null);
+        if (Double.isNaN(latitudeOfOrigin)) {
+            latitudeOfOrigin = getAndStore(parameters, org.geotoolkit.referencing.operation.provider.Stereographic.LATITUDE_OF_ORIGIN);
+        }
         double phi0 = toRadians(latitudeOfOrigin);
         if (abs(phi0) < ANGLE_TOLERANCE) { // Equatorial
             phi0    = 0;
@@ -286,7 +290,7 @@ public class Stereographic extends UnitaryProjection {
                             final double[] dstPts, final int dstOff,
                             final boolean derivate) throws ProjectionException
     {
-        final double λ    = rollLongitude(srcPts[srcOff]);
+        final double λ    = srcPts[srcOff];
         final double φ    = srcPts[srcOff + 1];
         final double sinφ = sin(φ);
         final double sinλ = sin(λ);
@@ -363,10 +367,10 @@ public class Stereographic extends UnitaryProjection {
                 break;
             }
             if (--i < 0) {
-                throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
+                throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
             }
         }
-        dstPts[dstOff  ] = unrollLongitude(atan2(t, ct));
+        dstPts[dstOff  ] = atan2(t, ct);
         dstPts[dstOff+1] = φ;
     }
 
@@ -385,7 +389,6 @@ public class Stereographic extends UnitaryProjection {
      * @since 2.1
      * @module
      */
-    @Immutable
     static final class Spherical extends Stereographic {
         /**
          * For compatibility with different versions during deserialization.
@@ -397,17 +400,8 @@ public class Stereographic extends UnitaryProjection {
          *
          * @param parameters The parameters of the projection to be created.
          */
-        protected Spherical(final Parameters parameters) {
-            super(parameters);
-            parameters.ensureSpherical();
-        }
-
-        /**
-         * Returns {@code true} since this class uses spherical formulas.
-         */
-        @Override
-        final boolean isSpherical() {
-            return true;
+        protected Spherical(final OperationMethod method, final Parameters parameters) {
+            super(method, parameters);
         }
 
         /**
@@ -418,7 +412,7 @@ public class Stereographic extends UnitaryProjection {
                                 final double[] dstPts, final int dstOff,
                                 final boolean derivate) throws ProjectionException
         {
-            final double λ = rollLongitude(srcPts[srcOff]);
+            final double λ = srcPts[srcOff];
             final double φ = srcPts[srcOff + 1];
             final double sinφ = sin(φ);
             final double cosφ = cos(φ);
@@ -476,7 +470,6 @@ public class Stereographic extends UnitaryProjection {
                 φ = asin(cosc*sinφ0 + y*sinc*cosφ0/ρ);           // (20-14)
                 λ = atan2(t, ct);
             }
-            λ = unrollLongitude(λ);
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, λ, φ);
             dstPts[dstOff]   = λ;
             dstPts[dstOff+1] = φ;

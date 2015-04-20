@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import org.apache.sis.internal.referencing.provider.Equirectangular;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.citation.Citation;
@@ -25,6 +26,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.ConicProjection;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.Identifier;
 
 import org.apache.sis.referencing.NamedIdentifier;
@@ -53,7 +55,6 @@ import org.geotoolkit.metadata.Citations;
  *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
- *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
  *   <tr><td>{@code latitude_of_center}</td><td>49.5°</td></tr>
  *   <tr><td>{@code longitude_of_center}</td><td>24.83333333333333°</td></tr>
  *   <tr><td>{@code azimuth}</td><td>30.28813972222222°</td></tr>
@@ -209,8 +210,8 @@ public class Krovak extends MapProjection {
                 "Scale factor on pseudo standard parallel", // EPSG
                 "ScaleAtCenter");                           // GeoTIFF
         // Following are the same than Mercator1SP except for the exclusion list.
-        FALSE_EASTING  = EquidistantCylindrical.FALSE_EASTING;
-        FALSE_NORTHING = EquidistantCylindrical.FALSE_NORTHING;
+        FALSE_EASTING  = Equirectangular.FALSE_EASTING;
+        FALSE_NORTHING = Equirectangular.FALSE_NORTHING;
     }
 
     /**
@@ -262,10 +263,6 @@ public class Krovak extends MapProjection {
      *     </table>
      *   </td></tr>
      *   <tr><td>
-     *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-     *     </table>
-     *   </td><td>
      *     <table class="compact">
      *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
      *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
@@ -434,7 +431,6 @@ public class Krovak extends MapProjection {
         }, null, new ParameterDescriptor<?>[] {
             sameParameterAs(ObliqueStereographic.PARAMETERS, "semi_major"),
             sameParameterAs(ObliqueStereographic.PARAMETERS, "semi_minor"),
-            ROLL_LONGITUDE,
             LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,
             AZIMUTH, PSEUDO_STANDARD_PARALLEL, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING,
@@ -460,7 +456,7 @@ public class Krovak extends MapProjection {
      * {@inheritDoc}
      */
     @Override
-    protected MathTransform2D createMathTransform(ParameterValueGroup values) {
-        return org.geotoolkit.referencing.operation.projection.Krovak.create(getParameters(), values);
+    public MathTransform2D createMathTransform(MathTransformFactory factory, ParameterValueGroup values) {
+        return org.geotoolkit.referencing.operation.projection.Krovak.create(this, values);
     }
 }

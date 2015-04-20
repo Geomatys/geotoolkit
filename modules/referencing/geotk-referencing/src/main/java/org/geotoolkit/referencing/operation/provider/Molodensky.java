@@ -28,18 +28,20 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterValueException;
+import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.metadata.Identifier;
 
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.MolodenskyTransform;
-import org.geotoolkit.internal.referencing.MathTransformDecorator;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
@@ -91,7 +93,7 @@ import static org.geotoolkit.referencing.operation.provider.UniversalParameters.
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
+ * @version 4.0
  *
  * @see MolodenskyTransform
  * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
@@ -461,7 +463,9 @@ public class Molodensky extends MathTransformProvider {
      */
     public Molodensky() {
         // Following constructors register themself in the "complements" array.
-        this(2, 2, PARAMETERS, new Molodensky[4]);
+        super(PARAMETERS); // TODO (2,2)
+        complements = new Molodensky[4];
+        complements[index(2, 2)] = this;
         new Molodensky(2, 3, PARAMETERS, complements);
         new Molodensky(3, 2, PARAMETERS, complements);
         new Molodensky(3, 3, PARAMETERS, complements);
@@ -528,22 +532,28 @@ public class Molodensky extends MathTransformProvider {
      * @throws ParameterNotFoundException if a required parameter was not found.
      */
     @Override
-    protected MathTransform createMathTransform(final ParameterValueGroup values)
+    public MathTransform createMathTransform(MathTransformFactory factory, final ParameterValueGroup values)
             throws ParameterNotFoundException
     {
-        int srcDim = getSourceDimensions();
-        int tgtDim = getTargetDimensions();
+        Integer srcDim = getSourceDimensions();
+        Integer tgtDim = getTargetDimensions();
+        if (srcDim == null) srcDim = 2; // TODO: temporary patch.
+        if (tgtDim == null) tgtDim = 2; // TODO: temporary patch.
         int dimension = dimension(DIM, values);
         if (dimension != 0) {
             srcDim = tgtDim = dimension;
         }
-        dimension = dimension(SRC_DIM, values);
-        if (dimension != 0) {
-            srcDim = dimension;
+        if (srcDim != 3) {  // We will keep max value.
+            dimension = dimension(SRC_DIM, values);
+            if (dimension != 0) {
+                srcDim = dimension;
+            }
         }
-        dimension = dimension(TGT_DIM, values);
-        if (dimension != 0) {
-            tgtDim = dimension;
+        if (tgtDim != 3) {
+            dimension = dimension(TGT_DIM, values);
+            if (dimension != 0) {
+                tgtDim = dimension;
+            }
         }
         final double a = doubleValue(SRC_SEMI_MAJOR, values);
         final double b = doubleValue(SRC_SEMI_MINOR, values);
@@ -559,13 +569,22 @@ public class Molodensky extends MathTransformProvider {
         final double dx = doubleValue(DX, values);
         final double dy = doubleValue(DY, values);
         final double dz = doubleValue(DZ, values);
-        MathTransform transform = MolodenskyTransform.create(isAbridged(),
+        return MolodenskyTransform.create(isAbridged(),
                 a, b, srcDim == 3, ta, tb, tgtDim == 3, dx, dy, dz);
-        final Molodensky provider = complements[index(srcDim, tgtDim)];
-        if (provider != this) {
-            transform = new MathTransformDecorator(transform, provider);
-        }
-        return transform;
+    }
+
+    /**
+     * Returns the same operation method, but for different dimensions.
+     *
+     * @param  sourceDimensions The desired number of input dimensions.
+     * @param  targetDimensions The desired number of output dimensions.
+     * @return The redimensioned operation method, or {@code this} if no change is needed.
+     */
+    @Override
+    public OperationMethod redimension(final int sourceDimensions, final int targetDimensions) {
+        ArgumentChecks.ensureBetween("sourceDimensions", 2, 3, sourceDimensions);
+        ArgumentChecks.ensureBetween("targetDimensions", 2, 3, targetDimensions);
+        return complements[index(sourceDimensions, targetDimensions)];
     }
 
     /**

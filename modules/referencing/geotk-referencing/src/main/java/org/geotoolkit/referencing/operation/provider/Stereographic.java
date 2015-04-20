@@ -25,6 +25,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.PlanarProjection;
 
 import org.geotoolkit.resources.Vocabulary;
@@ -53,7 +54,6 @@ import org.geotoolkit.metadata.Citations;
  *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
- *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
  *   <tr><td>{@code central_meridian}</td><td>0°</td></tr>
  *   <tr><td>{@code latitude_of_origin}</td><td>0°</td></tr>
  *   <tr><td>{@code scale_factor}</td><td>1</td></tr>
@@ -228,10 +228,6 @@ public class Stereographic extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-     *     </table>
-     *   </td><td>
-     *     <table class="compact">
      *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
      *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
      *       <tr><td><b>Default value:</b></td><td>false</td></tr>
@@ -334,7 +330,7 @@ public class Stereographic extends MapProjection {
             Citations.EPSG
         },
         new ParameterDescriptor<?>[] {
-            SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+            SEMI_MAJOR, SEMI_MINOR,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
@@ -367,7 +363,7 @@ public class Stereographic extends MapProjection {
      * {@inheritDoc}
      */
     @Override
-    protected MathTransform2D createMathTransform(ParameterValueGroup values) {
-        return org.geotoolkit.referencing.operation.projection.Stereographic.create(getParameters(), values);
+    public MathTransform2D createMathTransform(MathTransformFactory factory, ParameterValueGroup values) {
+        return org.geotoolkit.referencing.operation.projection.Stereographic.create(this, values);
     }
 }

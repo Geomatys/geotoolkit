@@ -21,15 +21,14 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import net.jcip.annotations.Immutable;
-
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
-
+import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import static java.lang.Math.*;
 
@@ -63,12 +62,10 @@ import static java.lang.Math.*;
  * @author Simon Reynard (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.20
  *
  * @since 3.11
  * @module
  */
-@Immutable
 public class Polyconic extends CassiniOrMercator {
     /**
      * For cross-version compatibility.
@@ -85,17 +82,23 @@ public class Polyconic extends CassiniOrMercator {
      * @param  values The parameter values of the projection to create.
      * @return The map projection.
      */
-    public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
+    public static MathTransform2D create(final OperationMethod descriptor,
                                          final ParameterValueGroup values)
     {
         final Polyconic projection;
-        final Parameters parameters = new Parameters(descriptor, values);
-        if (parameters.isSpherical()) {
-            projection = new Spherical(parameters);
+        final Parameters parameters = Parameters.castOrWrap(values);
+        if (isSpherical(parameters)) {
+            projection = new Spherical(descriptor, parameters);
         } else {
-            projection = new Polyconic(parameters);
+            projection = new Polyconic(descriptor, parameters);
         }
-        return projection.createConcatenatedTransform();
+        try {
+            return (MathTransform2D) projection.createMapProjection(
+                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
+                            org.opengis.referencing.operation.MathTransformFactory.class));
+        } catch (org.opengis.util.FactoryException e) {
+            throw new IllegalArgumentException(e); // TODO
+        }
     }
 
     /**
@@ -103,8 +106,8 @@ public class Polyconic extends CassiniOrMercator {
      *
      * @param parameters The parameters of the projection to be created.
      */
-    protected Polyconic(final Parameters parameters) {
-        super(parameters);
+    protected Polyconic(final OperationMethod method, final Parameters parameters) {
+        super(method, parameters);
     }
 
     /**
@@ -122,7 +125,7 @@ public class Polyconic extends CassiniOrMercator {
                             final double[] dstPts, final int dstOff,
                             final boolean derivate) throws ProjectionException
     {
-        final double λ     = rollLongitude(srcPts[srcOff]);
+        final double λ     = srcPts[srcOff];
         final double φ     = srcPts[srcOff + 1];
         final double sinφ  = sin(φ);
         final double cosφ  = cos(φ);
@@ -132,7 +135,7 @@ public class Polyconic extends CassiniOrMercator {
          * If y == 0, then we have (1/0) == infinity. Then we would have below
          * y = 0 + infinity * (1 - 1)  ==  infinity * zero  ==  indetermination.
          * Actually the indetermination resolve as being just leaving y unchanged
-         * (same for x, except for longitude rolling).
+         * (same for x).
          *
          * In Proj4 this was handled by a check for a threshold: if (abs(y) > 1E-10).
          * In Geotk, we try to avoid threshold as much as possible in order to have
@@ -195,7 +198,7 @@ public class Polyconic extends CassiniOrMercator {
             int i = MAXIMUM_ITERATIONS;
             do {
                 if (--i < 0) {
-                    throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
+                    throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
                 }
                 final double cosφ = cos(φ);
                 if (abs(cosφ) < ITERATION_TOLERANCE) {
@@ -218,7 +221,7 @@ public class Polyconic extends CassiniOrMercator {
             final double c = sin(φ);
             λ = asin(x*tan(φ) * sqrt(1 - excentricitySquared*(c*c))) / c;
         }
-        dstPts[dstOff  ] = unrollLongitude(λ);
+        dstPts[dstOff  ] = λ;
         dstPts[dstOff+1] = φ;
     }
 
@@ -233,7 +236,6 @@ public class Polyconic extends CassiniOrMercator {
      * @since 3.11
      * @module
      */
-    @Immutable
     static final class Spherical extends Polyconic {
         /**
          * For cross-version compatibility.
@@ -250,17 +252,10 @@ public class Polyconic extends CassiniOrMercator {
          *
          * @param parameters The parameters of the projection to be created.
          */
-        Spherical(final Parameters parameters) {
-            super(parameters);
-            phi0 = toRadians(parameters.latitudeOfOrigin);
-        }
-
-        /**
-         * Returns {@code true} since this class uses spherical formulas.
-         */
-        @Override
-        final boolean isSpherical() {
-            return true;
+        Spherical(final OperationMethod method, final Parameters parameters) {
+            super(method, parameters);
+            phi0 = toRadians(parameters.doubleValue((org.opengis.parameter.ParameterDescriptor)
+                    org.geotoolkit.referencing.operation.provider.Polyconic.PARAMETERS.descriptor("latitude_of_origin")));
         }
 
         /**
@@ -271,7 +266,7 @@ public class Polyconic extends CassiniOrMercator {
                                 final double[] dstPts, final int dstOff,
                                 final boolean derivate) throws ProjectionException
         {
-            final double λ    = rollLongitude(srcPts[srcOff]);
+            final double λ    = srcPts[srcOff];
             final double φ    = srcPts[srcOff + 1];
             final double sinφ = sin(φ);
             final double cotφ = 1 / tan(φ);
@@ -309,7 +304,7 @@ public class Polyconic extends CassiniOrMercator {
                                         final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            final double x = unrollLongitude(srcPts[srcOff]);
+            final double x = srcPts[srcOff];
             final double y = srcPts[srcOff + 1];
             double λ;
             double φ;
@@ -323,7 +318,7 @@ public class Polyconic extends CassiniOrMercator {
                 int i = MAXIMUM_ITERATIONS;
                 do {
                     if (--i < 0) {
-                        throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
+                        throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
                     }
                     final double tanφ = tan(φ);
                     dφ = (y * (φ*tanφ + 1) - φ - 0.5*(φ*φ + B) * tanφ) / ((φ - y) / tanφ - 1);

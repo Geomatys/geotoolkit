@@ -17,15 +17,15 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import net.jcip.annotations.Immutable;
-
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.ConicProjection;
 import org.opengis.metadata.Identifier;
-
+import org.opengis.referencing.operation.MathTransformFactory;
+import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
+import org.apache.sis.internal.referencing.provider.Mercator2SP;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.Citations;
@@ -52,7 +52,6 @@ import org.geotoolkit.metadata.Citations;
  *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
- *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
  *   <tr><td>{@code central_meridian}</td><td>0°</td></tr>
  *   <tr><td>{@code latitude_of_origin}</td><td>0°</td></tr>
  *   <tr><td>{@code standard_parallel_1}</td><td><var>latitude of origin</var></td></tr>
@@ -72,7 +71,6 @@ import org.geotoolkit.metadata.Citations;
  * @since 2.1
  * @module
  */
-@Immutable
 public class AlbersEqualArea extends MapProjection {
     /**
      * For cross-version compatibility.
@@ -252,10 +250,6 @@ public class AlbersEqualArea extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-     *     </table>
-     *   </td><td>
-     *     <table class="compact">
      *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
      *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
      *       <tr><td><b>Default value:</b></td><td>false</td></tr>
@@ -383,10 +377,10 @@ public class AlbersEqualArea extends MapProjection {
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.ALBERS_EQUAL_AREA_PROJECTION))
         }, null, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
+            SEMI_MAJOR,          SEMI_MINOR,
             CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
             STANDARD_PARALLEL_1, STANDARD_PARALLEL_2,
-            Mercator2SP.SCALE_FACTOR, // Not an official parameter, provided for compatibility with those who still use it.
+            (ParameterDescriptor) new Mercator2SP().getParameters().descriptor("scale_factor"), // Not an official parameter, provided for compatibility with those who still use it.
             FALSE_EASTING,       FALSE_NORTHING
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS |
            MapProjectionDescriptor.ADD_STANDARD_PARALLEL);
@@ -410,7 +404,7 @@ public class AlbersEqualArea extends MapProjection {
      * {@inheritDoc}
      */
     @Override
-    protected MathTransform2D createMathTransform(ParameterValueGroup values) {
-        return org.geotoolkit.referencing.operation.projection.AlbersEqualArea.create(getParameters(), values);
+    public MathTransform2D createMathTransform(MathTransformFactory factory, ParameterValueGroup values) {
+        return org.geotoolkit.referencing.operation.projection.AlbersEqualArea.create(this, values);
     }
 }

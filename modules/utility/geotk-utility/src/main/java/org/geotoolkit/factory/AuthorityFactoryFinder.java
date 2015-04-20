@@ -31,7 +31,7 @@ import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
 import org.geotoolkit.lang.Configuration;
-import org.apache.sis.internal.util.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 
 import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
 
@@ -390,7 +390,7 @@ loop:           for (int i=0; ; i++) {
         public boolean filter(final Object provider) {
             if (authority != null) {
                 final Citation declared = ((AuthorityFactory) provider).getAuthority();
-                if (Citations.identifierMatches(declared, null, authority)) {
+                if (Citations.identifierMatches(declared, authority)) {
                     return (filter == null) || filter.filter(provider);
                 }
             }

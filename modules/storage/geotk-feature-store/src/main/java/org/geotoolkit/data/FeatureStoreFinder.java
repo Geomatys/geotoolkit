@@ -25,7 +25,7 @@ import java.util.Set;
 import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.internal.util.Citations;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.internal.LazySet;
+import org.apache.sis.internal.util.LazySet;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.parameter.ParameterValueGroup;

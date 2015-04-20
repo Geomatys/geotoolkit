@@ -271,25 +271,6 @@ public final class CRSUtilities extends Static {
     }
 
     /**
-     * Returns the ellipsoid used by the specified coordinate reference system, providing that
-     * the two first dimensions use an instance of {@link GeographicCRS}. Otherwise (i.e. if the
-     * two first dimensions are not geographic), returns {@code null}.
-     *
-     * @param  crs The coordinate reference system for which to get the ellipsoid.
-     * @return The ellipsoid in the given CRS, or {@code null} if none.
-     */
-    public static Ellipsoid getHeadGeoEllipsoid(CoordinateReferenceSystem crs) {
-        while (!(crs instanceof GeographicCRS)) {
-            if (crs instanceof CompoundCRS) {
-                crs = ((CompoundCRS) crs).getComponents().get(0);
-            } else {
-                return null;
-            }
-        }
-        return ((GeographicCRS) crs).getDatum().getEllipsoid();
-    }
-
-    /**
      * Computes the resolution of the horizontal component, or {@code null} if it can not be
      * computed.
      *

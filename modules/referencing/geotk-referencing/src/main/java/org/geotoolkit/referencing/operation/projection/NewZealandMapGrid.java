@@ -17,16 +17,15 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.AffineTransform;
-import net.jcip.annotations.Immutable;
-
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
-
+import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.math.Complex;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import static java.lang.Math.*;
 
@@ -51,12 +50,10 @@ import static java.lang.Math.*;
  *
  * @author Justin Deoliveira (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
  *
  * @since 2.2
  * @module
  */
-@Immutable
 public class NewZealandMapGrid extends UnitaryProjection {
     /**
      * For compatibility with different versions during deserialization.
@@ -115,12 +112,18 @@ public class NewZealandMapGrid extends UnitaryProjection {
      *
      * @since 3.00
      */
-    public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
+    public static MathTransform2D create(final OperationMethod descriptor,
                                          final ParameterValueGroup values)
     {
-        final Parameters parameters = new Parameters(descriptor, values);
-        final NewZealandMapGrid projection = new NewZealandMapGrid(parameters);
-        return projection.createConcatenatedTransform();
+        final Parameters parameters = Parameters.castOrWrap(values);
+        final NewZealandMapGrid projection = new NewZealandMapGrid(descriptor, parameters);
+        try {
+            return (MathTransform2D) projection.createMapProjection(
+                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
+                            org.opengis.referencing.operation.MathTransformFactory.class));
+        } catch (org.opengis.util.FactoryException e) {
+            throw new IllegalArgumentException(e); // TODO
+        }
     }
 
     /**
@@ -128,13 +131,11 @@ public class NewZealandMapGrid extends UnitaryProjection {
      *
      * @param parameters The parameters of the projection to be created.
      */
-    protected NewZealandMapGrid(final Parameters parameters) {
-        super(parameters);
-        parameters.validate();
-        final AffineTransform normalize = parameters.normalize(true);
-        normalize.scale(1, 180/PI * 3600E-5);
-        normalize.translate(0, -parameters.latitudeOfOrigin);
-        finish();
+    protected NewZealandMapGrid(final OperationMethod method, final Parameters parameters) {
+        super(method, parameters, null);
+        final MatrixSIS normalize = getContextualParameters().getMatrix(true);
+        normalize.convertBefore(1, 180/PI * 3600E-5, null);
+        normalize.convertBefore(1, null, -getAndStore(parameters, org.geotoolkit.referencing.operation.provider.NewZealandMapGrid.LATITUDE_OF_ORIGIN));
     }
 
     /**
@@ -157,7 +158,7 @@ public class NewZealandMapGrid extends UnitaryProjection {
                 dphi_pow_i *= dphi;
             }
             // See implementation note in class javadoc.
-            final Complex theta = new Complex(dpsi, rollLongitude(srcPts[srcOff]));
+            final Complex theta = new Complex(dpsi, srcPts[srcOff]);
             final Complex power = new Complex(theta);
             final Complex z     = new Complex();
             z.multiply(A[0], power);
@@ -169,7 +170,7 @@ public class NewZealandMapGrid extends UnitaryProjection {
             dstPts[dstOff+1] = z.real;
         }
         if (derivate) {
-            throw new ProjectionException(Errors.Keys.CANT_COMPUTE_DERIVATIVE);
+            throw new ProjectionException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
         }
         return null;
     }
@@ -224,7 +225,7 @@ public class NewZealandMapGrid extends UnitaryProjection {
             dpsi_pow_i *= dpsi;
             dphi += (TPHI[i] * dpsi_pow_i);
         }
-        dstPts[dstOff  ] = unrollLongitude(theta.imag);
+        dstPts[dstOff  ] = theta.imag;
         dstPts[dstOff+1] = dphi;
     }
 }

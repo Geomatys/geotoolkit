@@ -17,14 +17,12 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import org.junit.*;
-
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
-
-
 import org.apache.sis.test.DependsOn;
+import org.junit.*;
+
 import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
 
@@ -34,7 +32,6 @@ import static org.junit.Assert.*;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
  *
  * @since 3.00
  */

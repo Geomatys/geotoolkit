@@ -19,10 +19,10 @@ package org.geotoolkit.referencing.operation.projection;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
-
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 
-import org.apache.sis.test.DependsOn;
 import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.Polyconic.PARAMETERS;
@@ -34,7 +34,6 @@ import static org.geotoolkit.referencing.operation.provider.Polyconic.PARAMETERS
  * @author Simon Reynard (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
  *
  * @since 3.11
  */
@@ -54,12 +53,12 @@ public final strictfp class PolyconicTest extends ProjectionTestBase {
      * @return Newly created projection.
      */
     private static Polyconic create(final boolean ellipse, final double latitudeOfOrigin) {
-        final UnitaryProjection.Parameters parameters = parameters(PARAMETERS, ellipse);
-        parameters.latitudeOfOrigin = latitudeOfOrigin;
+        final Parameters parameters = parameters(wrap(PARAMETERS), ellipse, 0);
+        parameters.parameter("latitude_of_origin").setValue(latitudeOfOrigin);
         if (ellipse) {
-            return new Polyconic(parameters);
+            return new Polyconic(new org.geotoolkit.referencing.operation.provider.Polyconic(), parameters);
         } else {
-            return new Polyconic.Spherical(parameters);
+            return new Polyconic.Spherical(new org.geotoolkit.referencing.operation.provider.Polyconic(), parameters);
         }
     }
 

@@ -26,10 +26,9 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.junit.*;
-import org.apache.sis.test.DependsOn;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform2D;
 
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
@@ -42,35 +41,15 @@ import static org.geotoolkit.test.Commons.*;
  * was created from a single set of parameters.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
  *
  * @since 3.00
  */
-//@DependsOn(ConcatenatedTransformTest.class)
 public final strictfp class FormattingTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */
     public FormattingTest() {
         super(AbstractMathTransform2D.class, null);
-    }
-
-    /**
-     * Tests the WKT formatting of {@link UnitaryProjection}.
-     */
-    @Test
-    @Ignore
-    public void testUnitary() {
-        transform = MercatorTest.create(true);
-        assertWktEquals(
-                "PARAM_MT[“Mercator_1SP”,\n" +
-                "  PARAMETER[“semi_major”, 1.0],\n" +
-                "  PARAMETER[“semi_minor”, 0.9966471893352525],\n" +
-                "  PARAMETER[“latitude_of_origin”, 0.0],\n" +
-                "  PARAMETER[“central_meridian”, 0.0],\n" +
-                "  PARAMETER[“scale_factor”, 1.0],\n" +
-                "  PARAMETER[“false_easting”, 0.0],\n" +
-                "  PARAMETER[“false_northing”, 0.0]]");
     }
 
     /**
@@ -102,24 +81,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
               "  PARAMETER[“scale_factor”, 0.997],\n" +
               "  PARAMETER[“false_easting”, 3900000.0],\n" +
               "  PARAMETER[“false_northing”, 900000.0]]";
-        wkt = assertWktEquals(wkt);
-        /*
-         * Sets the Geotk-specific "roll_longitude" parameter to false. This is needed
-         * for the final test performed at the end of this method (the whole concatenatation
-         * simplified to a single affine transform).
-         */
-        parameters.parameter("roll_longitude").setValue(false);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        wkt = "PARAM_MT[“Mercator_1SP”,\n" +
-              "  PARAMETER[“semi_major”, 6377397.155],\n" +
-              "  PARAMETER[“semi_minor”, 6356078.9626186555],\n" +
-              "  PARAMETER[“latitude_of_origin”, 0.0],\n" +
-              "  PARAMETER[“central_meridian”, 110.0],\n" +
-              "  PARAMETER[“scale_factor”, 0.997],\n" +
-              "  PARAMETER[“false_easting”, 3900000.0],\n" +
-              "  PARAMETER[“false_northing”, 900000.0],\n" +
-              "  PARAMETER[“roll_longitude”, FALSE]]";
-        wkt = assertWktEquals(wkt);
+        assertWktEquals(wkt);
         assertEquals(transform, mtFactory.createFromWKT(wkt));
         if (isInverseTransformSupported) {
             assertSame(transform, transform.inverse().inverse());
@@ -131,9 +93,8 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
                   "    PARAMETER[“central_meridian”, 110.0],\n" +
                   "    PARAMETER[“scale_factor”, 0.997],\n" +
                   "    PARAMETER[“false_easting”, 3900000.0],\n" +
-                  "    PARAMETER[“false_northing”, 900000.0],\n" +
-                  "    PARAMETER[“roll_longitude”, FALSE]]]";
-            wkt = assertWktEquals(wkt);
+                  "    PARAMETER[“false_northing”, 900000.0]]]";
+            assertWktEquals(wkt);
             assertEquals(transform, mtFactory.createFromWKT(wkt));
             transform = transform.inverse();
         }
@@ -156,9 +117,8 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
               "    PARAMETER[“central_meridian”, 110.0],\n" +
               "    PARAMETER[“scale_factor”, 0.997],\n" +
               "    PARAMETER[“false_easting”, 3900000.0],\n" +
-              "    PARAMETER[“false_northing”, 900000.0],\n" +
-              "    PARAMETER[“roll_longitude”, FALSE]]]";
-        wkt = assertWktEquals(wkt);
+              "    PARAMETER[“false_northing”, 900000.0]]]";
+        assertWktEquals(wkt);
         assertEquals(transform, mtFactory.createFromWKT(wkt));
         if (isInverseTransformSupported) {
             assertSame(transform, transform.inverse().inverse());
@@ -170,8 +130,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
                   "      PARAMETER[“central_meridian”, 110.0],\n" +
                   "      PARAMETER[“scale_factor”, 0.997],\n" +
                   "      PARAMETER[“false_easting”, 3900000.0],\n" +
-                  "      PARAMETER[“false_northing”, 900000.0],\n" +
-                  "      PARAMETER[“roll_longitude”, FALSE]]],\n" +
+                  "      PARAMETER[“false_northing”, 900000.0]]],\n" +
                   "  PARAM_MT[“Affine”,\n" +
                   "    PARAMETER[“num_row”, 3],\n" +
                   "    PARAMETER[“num_col”, 3],\n" +
@@ -179,7 +138,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
                   "    PARAMETER[“elt_0_1”, 1.0],\n" +
                   "    PARAMETER[“elt_1_0”, 1.0],\n" +
                   "    PARAMETER[“elt_1_1”, 0.0]]]";
-            wkt = assertWktEquals(wkt);
+            assertWktEquals(wkt);
             assertEquals(transform, mtFactory.createFromWKT(wkt));
             transform = transform.inverse();
         }
@@ -202,14 +161,13 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
               "    PARAMETER[“central_meridian”, 110.0],\n" +
               "    PARAMETER[“scale_factor”, 0.997],\n" +
               "    PARAMETER[“false_easting”, 3900000.0],\n" +
-              "    PARAMETER[“false_northing”, 900000.0],\n" +
-              "    PARAMETER[“roll_longitude”, FALSE]],\n" +
+              "    PARAMETER[“false_northing”, 900000.0]],\n" +
               "  PARAM_MT[“Affine”,\n" +
               "    PARAMETER[“num_row”, 3],\n" +
               "    PARAMETER[“num_col”, 3],\n" +
               "    PARAMETER[“elt_0_0”, 0.001],\n" +
               "    PARAMETER[“elt_1_1”, 0.001]]]";
-        wkt = assertWktEquals(wkt);
+        assertWktEquals(wkt);
         assertEquals(transform, mtFactory.createFromWKT(wkt));
         if (isInverseTransformSupported) {
             assertSame(transform, transform.inverse().inverse());
@@ -226,8 +184,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
                   "      PARAMETER[“central_meridian”, 110.0],\n" +
                   "      PARAMETER[“scale_factor”, 0.997],\n" +
                   "      PARAMETER[“false_easting”, 3900000.0],\n" +
-                  "      PARAMETER[“false_northing”, 900000.0],\n" +
-                  "      PARAMETER[“roll_longitude”, FALSE]]],\n" +
+                  "      PARAMETER[“false_northing”, 900000.0]]],\n" +
                   "  PARAM_MT[“Affine”,\n" +
                   "    PARAMETER[“num_row”, 3],\n" +
                   "    PARAMETER[“num_col”, 3],\n" +
@@ -235,7 +192,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
                   "    PARAMETER[“elt_0_1”, 1.0],\n" +
                   "    PARAMETER[“elt_1_0”, 1.0],\n" +
                   "    PARAMETER[“elt_1_1”, 0.0]]]";
-            wkt = assertWktEquals(wkt);
+            assertWktEquals(wkt);
             // Can not test the full object because of slight rounding error
             // (last digit in the translateY term of an affine transform).
             assertMultilinesEquals(wkt, mtFactory.createFromWKT(wkt).toWKT());
@@ -250,7 +207,6 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
         parameters = mtFactory.getDefaultParameters("Mercator_2SP");
         parameters.parameter("semi-major axis").setValue(6378245.0);
         parameters.parameter("semi-minor axis").setValue(6356863.018773047);
-        parameters.parameter("roll_longitude").setValue(false);
         parameters.parameter("Latitude of 1st standard parallel").setValue(42.0);
         parameters.parameter("Longitude of natural origin").setValue(51.0);
         transform = mtFactory.createParameterizedTransform(parameters);
@@ -261,9 +217,8 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
               "  PARAMETER[“latitude_of_origin”, 0.0],\n" +
               "  PARAMETER[“central_meridian”, 51.0],\n" +
               "  PARAMETER[“false_easting”, 0.0],\n" +
-              "  PARAMETER[“false_northing”, 0.0],\n" +
-              "  PARAMETER[“roll_longitude”, FALSE]]";
-        wkt = assertWktEquals(wkt);
+              "  PARAMETER[“false_northing”, 0.0]]";
+        assertWktEquals(wkt);
         assertEquals(transform, mtFactory.createFromWKT(wkt));
         if (isInverseTransformSupported) {
             assertSame(transform, transform.inverse().inverse());
@@ -275,9 +230,8 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
                   "    PARAMETER[“latitude_of_origin”, 0.0],\n" +
                   "    PARAMETER[“central_meridian”, 51.0],\n" +
                   "    PARAMETER[“false_easting”, 0.0],\n" +
-                  "    PARAMETER[“false_northing”, 0.0],\n" +
-                  "    PARAMETER[“roll_longitude”, FALSE]]]";
-            wkt = assertWktEquals(wkt);
+                  "    PARAMETER[“false_northing”, 0.0]]]";
+            assertWktEquals(wkt);
             assertEquals(transform, mtFactory.createFromWKT(wkt));
             transform = transform.inverse();
         }
@@ -292,14 +246,13 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
               "    PARAMETER[“latitude_of_origin”, 0.0],\n" +
               "    PARAMETER[“central_meridian”, 51.0],\n" +
               "    PARAMETER[“false_easting”, 0.0],\n" +
-              "    PARAMETER[“false_northing”, 0.0],\n" +
-              "    PARAMETER[“roll_longitude”, FALSE]],\n" +
+              "    PARAMETER[“false_northing”, 0.0]],\n" +
               "  PARAM_MT[“Affine”,\n" +
               "    PARAMETER[“num_row”, 3],\n" +
               "    PARAMETER[“num_col”, 3],\n" +
               "    PARAMETER[“elt_0_0”, 0.001],\n" +
               "    PARAMETER[“elt_1_1”, 0.001]]]";
-        wkt = assertWktEquals(wkt);
+        assertWktEquals(wkt);
         assertEquals(transform, mtFactory.createFromWKT(wkt));
         if (isInverseTransformSupported) {
             assertSame(transform, transform.inverse().inverse());
@@ -316,9 +269,8 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
                   "      PARAMETER[“latitude_of_origin”, 0.0],\n" +
                   "      PARAMETER[“central_meridian”, 51.0],\n" +
                   "      PARAMETER[“false_easting”, 0.0],\n" +
-                  "      PARAMETER[“false_northing”, 0.0],\n" +
-                  "      PARAMETER[“roll_longitude”, FALSE]]]]";
-            wkt = assertWktEquals(wkt);
+                  "      PARAMETER[“false_northing”, 0.0]]]]";
+            assertWktEquals(wkt);
             assertEquals(transform, mtFactory.createFromWKT(wkt));
             transform = transform.inverse();
         }
@@ -340,14 +292,13 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
               "    PARAMETER[“latitude_of_origin”, 0.0],\n" +
               "    PARAMETER[“central_meridian”, 51.0],\n" +
               "    PARAMETER[“false_easting”, 0.0],\n" +
-              "    PARAMETER[“false_northing”, 0.0],\n" +
-              "    PARAMETER[“roll_longitude”, FALSE]],\n" +
+              "    PARAMETER[“false_northing”, 0.0]],\n" +
               "  PARAM_MT[“Affine”,\n" +
               "    PARAMETER[“num_row”, 3],\n" +
               "    PARAMETER[“num_col”, 3],\n" +
               "    PARAMETER[“elt_0_0”, 0.001],\n" +
               "    PARAMETER[“elt_1_1”, 0.001]]]";
-        wkt = assertWktEquals(wkt);
+        assertWktEquals(wkt);
         assertEquals(transform, mtFactory.createFromWKT(wkt));
         if (isInverseTransformSupported) {
             assertSame(transform, transform.inverse().inverse());
@@ -364,8 +315,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
                   "      PARAMETER[“latitude_of_origin”, 0.0],\n" +
                   "      PARAMETER[“central_meridian”, 51.0],\n" +
                   "      PARAMETER[“false_easting”, 0.0],\n" +
-                  "      PARAMETER[“false_northing”, 0.0],\n" +
-                  "      PARAMETER[“roll_longitude”, FALSE]]],\n" +
+                  "      PARAMETER[“false_northing”, 0.0]]],\n" +
                   "  PARAM_MT[“Affine”,\n" +
                   "    PARAMETER[“num_row”, 3],\n" +
                   "    PARAMETER[“num_col”, 3],\n" +
@@ -373,7 +323,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
                   "    PARAMETER[“elt_0_1”, 1.0],\n" +
                   "    PARAMETER[“elt_1_0”, 1.0],\n" +
                   "    PARAMETER[“elt_1_1”, 0.0]]]";
-            wkt = assertWktEquals(wkt);
+            assertWktEquals(wkt);
             assertEquals(transform, mtFactory.createFromWKT(wkt));
             transform = transform.inverse();
         }
@@ -398,8 +348,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
               "      PARAMETER[“central_meridian”, 110.0],\n" +
               "      PARAMETER[“scale_factor”, 0.997],\n" +
               "      PARAMETER[“false_easting”, 3900000.0],\n" +
-              "      PARAMETER[“false_northing”, 900000.0],\n" +
-              "      PARAMETER[“roll_longitude”, FALSE]]],\n" +
+              "      PARAMETER[“false_northing”, 900000.0]]],\n" +
               "  PARAM_MT[“Mercator_2SP”,\n" +
               "    PARAMETER[“semi_major”, 6378245.0],\n" +
               "    PARAMETER[“semi_minor”, 6356863.018773047],\n" +
@@ -407,14 +356,13 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
               "    PARAMETER[“latitude_of_origin”, 0.0],\n" +
               "    PARAMETER[“central_meridian”, 51.0],\n" +
               "    PARAMETER[“false_easting”, 0.0],\n" +
-              "    PARAMETER[“false_northing”, 0.0],\n" +
-              "    PARAMETER[“roll_longitude”, FALSE]],\n" +
+              "    PARAMETER[“false_northing”, 0.0]],\n" +
               "  PARAM_MT[“Affine”,\n" +
               "    PARAMETER[“num_row”, 3],\n" +
               "    PARAMETER[“num_col”, 3],\n" +
               "    PARAMETER[“elt_0_0”, 0.001],\n" +
               "    PARAMETER[“elt_1_1”, 0.001]]]";
-        wkt = assertWktEquals(wkt);
+        assertWktEquals(wkt);
         // Can not test the full object because of slight rounding error
         assertMultilinesEquals(wkt, mtFactory.createFromWKT(wkt).toWKT());
         /*

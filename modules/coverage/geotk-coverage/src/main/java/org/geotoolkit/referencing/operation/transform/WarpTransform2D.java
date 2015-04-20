@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
-import org.apache.sis.referencing.operation.transform.IterationStrategy;
 import java.util.Arrays;
 import java.util.Objects;
 import java.io.Serializable;
@@ -45,6 +44,8 @@ import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform2D;
+import org.apache.sis.referencing.operation.transform.IterationStrategy;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
@@ -395,7 +396,7 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
     public Matrix derivative(Point2D point) throws TransformException {
         throw new TransformException("Derivative not implemented yet.");
     }
-    
+
     /**
      * Transforms a single source coordinate (usually pixel indices) into destination coordinate
      * (usually "real world" coordinates).

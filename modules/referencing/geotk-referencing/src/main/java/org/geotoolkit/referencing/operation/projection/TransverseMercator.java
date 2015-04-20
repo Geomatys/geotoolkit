@@ -21,17 +21,15 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import net.jcip.annotations.Immutable;
-
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
-
-import org.geotoolkit.resources.Errors;
-import org.opengis.parameter.ParameterNotFoundException;
+import org.opengis.referencing.operation.OperationMethod;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
+import org.geotoolkit.resources.Errors;
 
+import org.apache.sis.parameter.Parameters;
 import static java.lang.Math.*;
 import static org.apache.sis.math.MathFunctions.atanh;
 
@@ -84,7 +82,6 @@ import static org.apache.sis.math.MathFunctions.atanh;
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.20
  *
  * @see Mercator
  * @see ObliqueMercator
@@ -92,7 +89,6 @@ import static org.apache.sis.math.MathFunctions.atanh;
  * @since 1.0
  * @module
  */
-@Immutable
 public class TransverseMercator extends CassiniOrMercator {
     /**
      * For cross-version compatibility.
@@ -100,138 +96,106 @@ public class TransverseMercator extends CassiniOrMercator {
     private static final long serialVersionUID = -4717976245811852528L;
 
     /**
-     * Parameters of a Transverse Mercator projection. This class contains
-     * convenience methods for computing the zone of current projection.
+     * Convenience method computing the zone code from the central meridian.
+     * Information about zones convention must be specified in argument. Two
+     * widely set of arguments are of Universal Transverse Mercator (UTM) and
+     * Modified Transverse Mercator (MTM) projections:
+     * <p>
+     * UTM projection (zones numbered from 1 to 60):
      *
-     * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * {@preformat java
+     *     getZone(-177, 6);
+     * }
      *
-     * @since 3.00
-     * @module
+     * MTM projection (zones numbered from 1 to 120):
+     *
+     * {@preformat java
+     *     getZone(-52.5, -3);
+     * }
+     *
+     * @param  centralLongitudeZone1 Longitude in the middle of zone 1, in decimal degrees
+     *         relative to Greenwich. Positive longitudes are toward east, and negative
+     *         longitudes toward west.
+     * @param  zoneWidth Number of degrees of longitudes in one zone. A positive value
+     *         means that zones are numbered from west to east (i.e. in the direction of
+     *         positive longitudes). A negative value means that zones are numbered from
+     *         east to west.
+     * @return The zone number. First zone is numbered 1.
      */
-    protected static class Parameters extends UnitaryProjection.Parameters {
-        /**
-         * For cross-version compatibility.
-         */
-        private static final long serialVersionUID = -1689301305119562861L;
+    private static int computeZone(final double centralMeridian, final double centralLongitudeZone1, final double zoneWidth) {
+        final double zoneCount = abs(360 / zoneWidth);
+        double t;
+        t  = centralLongitudeZone1 - 0.5*zoneWidth; // Longitude at the beginning of the first zone.
+        t  = toDegrees(centralMeridian) - t;        // Degrees of longitude between the central longitude and longitude 1.
+        t  = floor(t/zoneWidth + ANGLE_TOLERANCE);  // Number of zones between the central longitude and longitude 1.
+        t -= zoneCount*floor(t/zoneCount);          // If negative, bring back to the interval 0 to (zoneCount-1).
+        return ((int) t)+1;
+    }
 
-        /**
-         * Creates parameters initialized to values extracted from the given parameter group.
-         *
-         * @param  descriptor The descriptor of parameters that are legal
-         *         for the projection being constructed.
-         * @param  values The parameter values in standard units.
-         * @throws ParameterNotFoundException if a mandatory parameter is missing.
-         */
-        public Parameters(final ParameterDescriptorGroup descriptor,
-                          final ParameterValueGroup values)
-                throws ParameterNotFoundException
-        {
-            super(descriptor, values);
-        }
+    /**
+     * Convenience method returning the meridian in the middle of current zone. This meridian is
+     * typically the central meridian. This method may be invoked to make sure that the central
+     * meridian is correctly set.
+     *
+     * @param  centralLongitudeZone1 Longitude in the middle of zone 1, in decimal degrees
+     *         relative to Greenwich. Positive longitudes are toward east, and negative
+     *         longitudes toward west.
+     * @param  zoneWidth Number of degrees of longitudes in one zone. A positive value
+     *         means that zones are numbered from west to east (i.e. in the direction of
+     *         positive longitudes). A negative value means that zones are numbered from
+     *         east to west.
+     * @return The central meridian.
+     */
+    private static double computeCentralMedirian(final double centralMeridian, final double centralLongitudeZone1, final double zoneWidth) {
+        double t;
+        t  = centralLongitudeZone1 + (getZone(centralMeridian, centralLongitudeZone1, zoneWidth)-1)*zoneWidth;
+        t -= 360 * floor((t+180) / 360); // Bring back into [-180..+180] range.
+        return t;
+    }
 
-        /**
-         * Convenience method computing the zone code from the central meridian.
-         * Information about zones convention must be specified in argument. Two
-         * widely set of arguments are of Universal Transverse Mercator (UTM) and
-         * Modified Transverse Mercator (MTM) projections:
-         * <p>
-         * UTM projection (zones numbered from 1 to 60):
-         *
-         * {@preformat java
-         *     getZone(-177, 6);
-         * }
-         *
-         * MTM projection (zones numbered from 1 to 120):
-         *
-         * {@preformat java
-         *     getZone(-52.5, -3);
-         * }
-         *
-         * @param  centralLongitudeZone1 Longitude in the middle of zone 1, in decimal degrees
-         *         relative to Greenwich. Positive longitudes are toward east, and negative
-         *         longitudes toward west.
-         * @param  zoneWidth Number of degrees of longitudes in one zone. A positive value
-         *         means that zones are numbered from west to east (i.e. in the direction of
-         *         positive longitudes). A negative value means that zones are numbered from
-         *         east to west.
-         * @return The zone number. First zone is numbered 1.
-         */
-        private int getZone(final double centralLongitudeZone1, final double zoneWidth) {
-            final double zoneCount = abs(360 / zoneWidth);
-            double t;
-            t  = centralLongitudeZone1 - 0.5*zoneWidth; // Longitude at the beginning of the first zone.
-            t  = toDegrees(centralMeridian) - t;        // Degrees of longitude between the central longitude and longitude 1.
-            t  = floor(t/zoneWidth + ANGLE_TOLERANCE);  // Number of zones between the central longitude and longitude 1.
-            t -= zoneCount*floor(t/zoneCount);          // If negative, bring back to the interval 0 to (zoneCount-1).
-            return ((int) t)+1;
+    /**
+     * Convenience method computing the zone code from the central meridian. This method uses
+     * the {@linkplain #scaleFactor scale factor} and {@linkplain #falseEasting false easting}
+     * to decide if this is a UTM or MTM case.
+     *
+     * @return The zone number. Numbering starts at 1.
+     * @throws IllegalStateException if the case of the projection cannot be determined.
+     */
+    private static int getZone(final double centralMeridian, final double scaleFactor, final double falseEasting) throws IllegalStateException {
+        // UTM
+        if (scaleFactor == 0.9996 && falseEasting == 500000) {
+            return computeZone(centralMeridian, -177, 6);
         }
+        // MTM
+        if (scaleFactor == 0.9999 && falseEasting == 304800){
+            return computeZone(centralMeridian, -52.5, -3);
+        }
+        // unknown
+        throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_PROJECTION_TYPE));
+    }
 
-        /**
-         * Convenience method returning the meridian in the middle of current zone. This meridian is
-         * typically the central meridian. This method may be invoked to make sure that the central
-         * meridian is correctly set.
-         *
-         * @param  centralLongitudeZone1 Longitude in the middle of zone 1, in decimal degrees
-         *         relative to Greenwich. Positive longitudes are toward east, and negative
-         *         longitudes toward west.
-         * @param  zoneWidth Number of degrees of longitudes in one zone. A positive value
-         *         means that zones are numbered from west to east (i.e. in the direction of
-         *         positive longitudes). A negative value means that zones are numbered from
-         *         east to west.
-         * @return The central meridian.
-         */
-        private double getCentralMedirian(final double centralLongitudeZone1, final double zoneWidth) {
-            double t;
-            t  = centralLongitudeZone1 + (getZone(centralLongitudeZone1, zoneWidth)-1)*zoneWidth;
-            t -= 360 * floor((t+180) / 360); // Bring back into [-180..+180] range.
-            return t;
+    /**
+     * Convenience method returning the meridian in the middle of current zone. This meridian is
+     * typically the central meridian. This method may be invoked to make sure that the central
+     * meridian is correctly set.
+     * <p>
+     * This method uses the {@linkplain #scaleFactor scale factor} and {@linkplain #falseEasting
+     * false easting} to decide if this is a UTM or MTM case.
+     *
+     * @return The central meridian, in decimal degrees.
+     * @throws IllegalStateException if the case of the projection cannot be determined.
+     */
+    private static double getCentralMeridian(final double centralMeridian, final double scaleFactor, final double falseEasting) throws IllegalStateException {
+        // UTM
+        if (scaleFactor == 0.9996 && falseEasting == 500000) {
+            return computeCentralMedirian(centralMeridian, -177, 6);
         }
-
-        /**
-         * Convenience method computing the zone code from the central meridian. This method uses
-         * the {@linkplain #scaleFactor scale factor} and {@linkplain #falseEasting false easting}
-         * to decide if this is a UTM or MTM case.
-         *
-         * @return The zone number. Numbering starts at 1.
-         * @throws IllegalStateException if the case of the projection cannot be determined.
-         */
-        public int getZone() throws IllegalStateException {
-            // UTM
-            if (scaleFactor == 0.9996 && falseEasting == 500000) {
-                return getZone(-177, 6);
-            }
-            // MTM
-            if (scaleFactor == 0.9999 && falseEasting == 304800){
-                return getZone(-52.5, -3);
-            }
-            // unknown
-            throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_PROJECTION_TYPE));
+        // MTM
+        if (scaleFactor == 0.9999 && falseEasting == 304800){
+            return computeCentralMedirian(centralMeridian, -52.5, -3);
         }
-
-        /**
-         * Convenience method returning the meridian in the middle of current zone. This meridian is
-         * typically the central meridian. This method may be invoked to make sure that the central
-         * meridian is correctly set.
-         * <p>
-         * This method uses the {@linkplain #scaleFactor scale factor} and {@linkplain #falseEasting
-         * false easting} to decide if this is a UTM or MTM case.
-         *
-         * @return The central meridian, in decimal degrees.
-         * @throws IllegalStateException if the case of the projection cannot be determined.
-         */
-        public double getCentralMeridian() throws IllegalStateException {
-            // UTM
-            if (scaleFactor == 0.9996 && falseEasting == 500000) {
-                return getCentralMedirian(-177, 6);
-            }
-            // MTM
-            if (scaleFactor == 0.9999 && falseEasting == 304800){
-                return getCentralMedirian(-52.5, -3);
-            }
-            // unknown
-            throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_PROJECTION_TYPE));
-        }
+        // unknown
+        throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_PROJECTION_TYPE));
     }
 
     /**
@@ -267,17 +231,23 @@ public class TransverseMercator extends CassiniOrMercator {
      *
      * @since 3.00
      */
-    public static MathTransform2D create(final ParameterDescriptorGroup descriptor,
+    public static MathTransform2D create(final OperationMethod descriptor,
                                          final ParameterValueGroup values)
     {
         final TransverseMercator projection;
-        final Parameters parameters = new Parameters(descriptor, values);
-        if (parameters.isSpherical()) {
-            projection = new Spherical(parameters);
+        final Parameters parameters = Parameters.castOrWrap(values);
+        if (isSpherical(parameters)) {
+            projection = new Spherical(descriptor, parameters);
         } else {
-            projection = new TransverseMercator(parameters);
+            projection = new TransverseMercator(descriptor, parameters);
         }
-        return projection.createConcatenatedTransform();
+        try {
+            return (MathTransform2D) projection.createMapProjection(
+                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
+                            org.opengis.referencing.operation.MathTransformFactory.class));
+        } catch (org.opengis.util.FactoryException e) {
+            throw new IllegalArgumentException(e); // TODO
+        }
     }
 
     /**
@@ -285,8 +255,8 @@ public class TransverseMercator extends CassiniOrMercator {
      *
      * @param parameters The parameters of the projection to be created.
      */
-    protected TransverseMercator(final Parameters parameters) {
-        super(parameters);
+    protected TransverseMercator(final OperationMethod method, final Parameters parameters) {
+        super(method, parameters);
         esp = excentricitySquared / (1 - excentricitySquared);
     }
 
@@ -302,7 +272,7 @@ public class TransverseMercator extends CassiniOrMercator {
                             final double[] dstPts, final int dstOff,
                             final boolean derivate) throws ProjectionException
     {
-        final double λ      = rollLongitude(srcPts[srcOff]);
+        final double λ      = srcPts[srcOff];
         final double φ      = srcPts[srcOff + 1];
         final double sinφ   = sin(φ);
         final double cosφ   = cos(φ);
@@ -405,7 +375,7 @@ public class TransverseMercator extends CassiniOrMercator {
                 ds *  FC5 * (5 + t*(28 + 24* t + 8*n) + 6*n -
                 ds *  FC7 * (61 + t*(662 + t*(1320 + 720*t)))))) / cosφ;
         }
-        dstPts[dstOff  ] = unrollLongitude(x);
+        dstPts[dstOff  ] = x;
         dstPts[dstOff+1] = y;
     }
 
@@ -421,7 +391,6 @@ public class TransverseMercator extends CassiniOrMercator {
      * @since 2.1
      * @module
      */
-    @Immutable
     static final class Spherical extends TransverseMercator {
         /**
          * For cross-version compatibility.
@@ -433,17 +402,8 @@ public class TransverseMercator extends CassiniOrMercator {
          *
          * @param parameters The parameters of the projection to be created.
          */
-        protected Spherical(final Parameters parameters) {
-            super(parameters);
-            parameters.ensureSpherical();
-        }
-
-        /**
-         * Returns {@code true} since this class uses spherical formulas.
-         */
-        @Override
-        final boolean isSpherical() {
-            return true;
+        protected Spherical(final OperationMethod method, final Parameters parameters) {
+            super(method, parameters);
         }
 
         /**
@@ -454,7 +414,7 @@ public class TransverseMercator extends CassiniOrMercator {
                                 final double[] dstPts, final int dstOff,
                                 final boolean derivate) throws ProjectionException
         {
-            final double λ    = rollLongitude(srcPts[srcOff]);
+            final double λ    = srcPts[srcOff];
             final double φ    = srcPts[srcOff + 1];
             final double sinλ = sin(λ);
             final double cosλ = cos(λ);
@@ -503,7 +463,7 @@ public class TransverseMercator extends CassiniOrMercator {
             final double cosD = cos(y);
             // 'copySign' corrects for the fact that we made everything positive using sqrt(...)
             y = copySign(asin(sqrt((1 - cosD*cosD) / (1 + sinhX*sinhX))), y);
-            x = unrollLongitude(atan2(sinhX, cosD));
+            x = atan2(sinhX, cosD);
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff  ] = x;
             dstPts[dstOff+1] = y;

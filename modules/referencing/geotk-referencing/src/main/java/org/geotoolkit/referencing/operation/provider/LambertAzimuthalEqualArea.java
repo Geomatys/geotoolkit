@@ -23,10 +23,12 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.Identifier;
 
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.Citations;
+import org.apache.sis.internal.referencing.provider.Mercator2SP;
 
 
 /**
@@ -60,7 +62,6 @@ import org.geotoolkit.metadata.Citations;
  *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
- *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
  *   <tr><td>{@code latitude_of_center}</td><td>0°</td></tr>
  *   <tr><td>{@code longitude_of_center}</td><td>0°</td></tr>
  *   <tr><td>{@code false_easting}</td><td>0 metres</td></tr>
@@ -209,10 +210,6 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-     *     </table>
-     *   </td><td>
-     *     <table class="compact">
      *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
      *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
      *       <tr><td><b>Default value:</b></td><td>false</td></tr>
@@ -305,9 +302,9 @@ public class LambertAzimuthalEqualArea extends MapProjection {
             new NamedIdentifier(Citations.PROJ4,    "laea"),
             new IdentifierCode(Citations.MAP_INFO, 4)
         }, null, new ParameterDescriptor<?>[] {
-                SEMI_MAJOR,         SEMI_MINOR, ROLL_LONGITUDE,
+                SEMI_MAJOR,         SEMI_MINOR,
                 LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,
-                Mercator2SP.SCALE_FACTOR, // Not an official parameter, provided for compatibility with those who still use it.
+                (ParameterDescriptor) new Mercator2SP().getParameters().descriptor("scale_factor"), // Not an official parameter, provided for compatibility with those who still use it.
                 FALSE_EASTING,      FALSE_NORTHING
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 
@@ -329,7 +326,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      * {@inheritDoc}
      */
     @Override
-    protected MathTransform2D createMathTransform(ParameterValueGroup values) {
-        return org.geotoolkit.referencing.operation.projection.LambertAzimuthalEqualArea.create(getParameters(), values);
+    public MathTransform2D createMathTransform(MathTransformFactory factory, ParameterValueGroup values) {
+        return org.geotoolkit.referencing.operation.projection.LambertAzimuthalEqualArea.create(this, values);
     }
 }

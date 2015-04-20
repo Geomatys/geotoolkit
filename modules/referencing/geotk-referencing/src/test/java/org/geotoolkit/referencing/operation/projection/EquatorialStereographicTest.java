@@ -18,9 +18,10 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import org.opengis.referencing.operation.TransformException;
-
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.test.DependsOn;
 import org.junit.*;
+
 import static java.lang.StrictMath.*;
 import static org.geotoolkit.referencing.operation.provider.Stereographic.PARAMETERS;
 
@@ -29,7 +30,6 @@ import static org.geotoolkit.referencing.operation.provider.Stereographic.PARAME
  * Tests the {@link EquatorialStereographic} class.
  *
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
  *
  * @since 3.18
  */
@@ -49,11 +49,11 @@ public final strictfp class EquatorialStereographicTest extends ProjectionTestBa
      * @return Newly created projection.
      */
     private static EquatorialStereographic create(final boolean ellipse) {
-        final UnitaryProjection.Parameters parameters = parameters(PARAMETERS, ellipse);
+        final Parameters parameters = parameters(wrap(PARAMETERS), ellipse, 0);
         if (ellipse) {
-            return new EquatorialStereographic(parameters);
+            return new EquatorialStereographic(new org.geotoolkit.referencing.operation.provider.Stereographic(), parameters);
         } else {
-            return new EquatorialStereographic.Spherical(parameters);
+            return new EquatorialStereographic.Spherical(new org.geotoolkit.referencing.operation.provider.Stereographic(), parameters);
         }
     }
 

@@ -28,8 +28,10 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.referencing.operation.OperationMethod;
 
 import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
@@ -42,6 +44,7 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.GeocentricTransform;
 import org.geotoolkit.referencing.operation.transform.GeocentricAffineTransform;
+import org.apache.sis.util.ArgumentChecks;
 
 import static java.util.Collections.singletonMap;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptor;
@@ -501,14 +504,21 @@ public class PositionVector7Param extends MathTransformProvider {
      * Constructs the provider.
      */
     public PositionVector7Param() {
-        this(PARAMETERS);
+        super(PARAMETERS); // TODO (3, 3)
+    }
+
+    PositionVector7Param(final ParameterDescriptorGroup parameters) {
+        super(parameters);
     }
 
     /**
      * Constructs a provider with the specified parameters.
      */
-    PositionVector7Param(final ParameterDescriptorGroup parameters) {
-        super(3, 3, parameters);
+    PositionVector7Param(final int sourceDimensions,
+                         final int targetDimensions,
+                         final ParameterDescriptorGroup parameters)
+    {
+        super(sourceDimensions, targetDimensions, parameters);
     }
 
     /**
@@ -527,7 +537,7 @@ public class PositionVector7Param extends MathTransformProvider {
      * @throws ParameterNotFoundException if a required parameter was not found.
      */
     @Override
-    protected MathTransform createMathTransform(final ParameterValueGroup values)
+    public MathTransform createMathTransform(MathTransformFactory factory, final ParameterValueGroup values)
             throws ParameterNotFoundException
     {
         final BursaWolfParameters parameters = new BursaWolfParameters(null, null);
@@ -567,12 +577,11 @@ public class PositionVector7Param extends MathTransformProvider {
         double  semiMajor = Parameters.doubleValue(major, values);
         double  semiMinor = Parameters.doubleValue(minor, values);
         Integer dimension = Parameters.integerValue(dim,  values);
+        if (Double.isNaN(semiMajor) && Double.isNaN(semiMinor)) {
+            return transform;
+        }
         boolean hasHeight = false;
-        if (dimension == null) {
-            if (Double.isNaN(semiMajor) && Double.isNaN(semiMinor)) {
-                return transform;
-            }
-        } else {
+        if (dimension != null) {
             switch (dimension) {
                 case DEFAULT_DIMENSION: break;
                 case 3: hasHeight = true; break;
@@ -605,5 +614,19 @@ public class PositionVector7Param extends MathTransformProvider {
             throw new IllegalStateException(Errors.format(
                     Errors.Keys.NO_PARAMETER_1, param.getName().getCode()));
         }
+    }
+
+    /**
+     * Returns the same operation method, but for different dimensions.
+     *
+     * @param  sourceDimensions The desired number of input dimensions.
+     * @param  targetDimensions The desired number of output dimensions.
+     * @return The redimensioned operation method, or {@code this} if no change is needed.
+     */
+    @Override
+    public OperationMethod redimension(final int sourceDimensions, final int targetDimensions) {
+        ArgumentChecks.ensureBetween("sourceDimensions", 2, 3, sourceDimensions);
+        ArgumentChecks.ensureBetween("targetDimensions", 2, 3, targetDimensions);
+        return new PositionVector7Param(sourceDimensions, targetDimensions, PARAMETERS); // TODO: cache the instances.
     }
 }

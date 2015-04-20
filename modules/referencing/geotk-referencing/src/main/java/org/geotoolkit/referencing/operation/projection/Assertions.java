@@ -18,9 +18,9 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import org.opengis.referencing.operation.Matrix;
-
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 
 import static java.lang.Math.*;
 import static java.lang.Double.POSITIVE_INFINITY;
@@ -34,7 +34,6 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.20
  *
  * @since 2.0
  * @module
@@ -190,7 +189,7 @@ final class Assertions extends Static {
                     return;
                 }
             }
-            throw new ProjectionError(Errors.format(Errors.Keys.TEST_FAILURE_3, variable,
+            throw new ProjectionException(Errors.format(Errors.Keys.TEST_FAILURE_3, variable,
                     String.valueOf(expected), String.valueOf(actual)) + // Force full precision.
                     "(Δ" + variable + '=' + delta + " ε=" + tolerance + ')');
         }

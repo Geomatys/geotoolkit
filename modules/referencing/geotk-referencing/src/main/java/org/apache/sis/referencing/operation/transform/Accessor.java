@@ -28,8 +28,6 @@ import org.opengis.referencing.operation.TransformException;
  */
 @Deprecated
 public final class Accessor {
-    public static final int MAXIMUM_BUFFER_SIZE = AbstractMathTransform.MAXIMUM_BUFFER_SIZE;
-
     public static Shape createTransformedShape(final MathTransform2D mt,
                                                final Shape           shape,
                                                final AffineTransform preTransform,

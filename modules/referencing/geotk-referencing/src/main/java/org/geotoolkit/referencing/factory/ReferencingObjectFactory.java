@@ -50,7 +50,7 @@ import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
-import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.apache.sis.referencing.cs.DefaultAffineCS;
 import org.apache.sis.util.collection.WeakHashSet;
 
@@ -1003,7 +1003,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
              * getting a math transform which is different in the sense of equals(Object), with
              * the usual consequences on cached instances.
              */
-            mt = ((DefaultMathTransformFactory) mtFactory).createBaseToDerived(baseCRS, existing, derivedCS);
+            mt = ((DefaultMathTransformFactory) mtFactory).createBaseToDerived(baseCRS.getCoordinateSystem(), existing, derivedCS);
         } else {
             /*
              * Non-Geotk implementation, or no existing MathTransform instance.

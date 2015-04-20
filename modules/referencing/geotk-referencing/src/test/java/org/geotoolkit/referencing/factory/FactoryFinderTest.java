@@ -20,10 +20,8 @@ package org.geotoolkit.referencing.factory;
 import java.util.Iterator;
 import javax.imageio.spi.ServiceRegistry;
 import org.opengis.referencing.datum.DatumFactory;
-
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotools.referencing.datum.GeotoolsFactory; // A dummy factory for testing purpose.
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -49,13 +47,12 @@ public final strictfp class FactoryFinderTest {
         final Iterator<DatumFactory> it = FactoryFinder.getDatumFactories(hints).iterator();
         assertTrue (it.hasNext()); assertTrue(it.next() instanceof DatumAliases);
         assertTrue (it.hasNext()); assertTrue(it.next() instanceof ReferencingObjectFactory);
-        assertTrue (it.hasNext()); assertTrue(it.next() instanceof GeotoolsFactory);
         assertFalse(it.hasNext());
     }
 
     /**
      * Tests the application of filters. We ask for {@link ReferencingFactory} subclasses
-     * only. The {@link GeotoolsFactory} should not be in the returned set anymore.
+     * only.
      * <p>
      * Note that we can't use {@link Hints#DATUM_FACTORY} since {@code ReferencingFactory}
      * does not implement {@link DatumFactory}, thus is an illegal value for that key.

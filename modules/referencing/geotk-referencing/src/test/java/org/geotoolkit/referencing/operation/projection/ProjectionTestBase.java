@@ -17,24 +17,21 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
-
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.test.CalculationType;
-
-import org.apache.sis.test.DependsOn;
+import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 import org.geotoolkit.referencing.operation.transform.TransformTestBase;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.DefaultOperationMethod;
+import org.apache.sis.referencing.operation.projection.ProjectionException;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 
 import static java.lang.StrictMath.*;
+import static java.util.Collections.singletonMap;
 import static org.opengis.test.Assert.*;
 
 
@@ -42,7 +39,6 @@ import static org.opengis.test.Assert.*;
  * Base class for tests of {@link UnitaryProjection} implementations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
  *
  * @since 3.00
  */
@@ -63,30 +59,23 @@ public abstract strictfp class ProjectionTestBase extends TransformTestBase {
         super(type, hints);
     }
 
-    /**
-     * Returns default projection parameter for the given descriptor.
-     *
-     * @param  The descriptor for which to create projection parameters.
-     * @param  ellipse {@code false} for a sphere, or {@code true} for WGS84 ellipsoid.
-     * @return Newly created projection parameters.
-     */
-    static UnitaryProjection.Parameters parameters(final ParameterDescriptorGroup descriptor, final boolean ellipse) {
-        return parameters(descriptor, ellipse, 0, UnitaryProjection.Parameters.class);
+    static OperationMethod wrap(final ParameterDescriptorGroup descriptor) {
+        return new DefaultOperationMethod(singletonMap(DefaultOperationMethod.NAME_KEY, "Test"), 2, 2, descriptor);
     }
 
     /**
      * Returns default projection parameter for the given descriptor.
      *
-     * @param  The descriptor for which to create projection parameters.
+     * @param  descriptor The descriptor for which to create projection parameters.
      * @param  ellipse {@code false} for a sphere, or {@code true} for WGS84 ellipsoid.
      * @param  numStandardParallels Number of standard parallels (0, 1 or 2).
      * @return Newly created projection parameters.
      */
     @SuppressWarnings("fallthrough")
-    static <T extends UnitaryProjection.Parameters> T parameters(final ParameterDescriptorGroup descriptor,
-            final boolean ellipse, final int numStandardParallels, final Class<T> type)
+    static Parameters parameters(final OperationMethod descriptor,
+            final boolean ellipse, final int numStandardParallels)
     {
-        final ParameterValueGroup values = descriptor.createValue();
+        final ParameterValueGroup values = descriptor.getParameters().createValue();
         final Ellipsoid ellipsoid = (ellipse ? CommonCRS.WGS84 : CommonCRS.SPHERE).ellipsoid();
         values.parameter("semi_major").setValue(ellipsoid.getSemiMajorAxis());
         values.parameter("semi_minor").setValue(ellipsoid.getSemiMinorAxis());
@@ -96,15 +85,7 @@ public abstract strictfp class ProjectionTestBase extends TransformTestBase {
             case 1:  values.parameter("standard_parallel_1").setValue(0);
             case 0:  break;
         }
-        final UnitaryProjection.Parameters param;
-        if (TransverseMercator.Parameters.class.isAssignableFrom(type)) {
-            param = new TransverseMercator.Parameters(descriptor, values);
-        } else if (ObliqueMercator.Parameters.class.isAssignableFrom(type)) {
-            param = new ObliqueMercator.Parameters(descriptor, values);
-        } else {
-            param = new UnitaryProjection.Parameters(descriptor, values);
-        }
-        return type.cast(param);
+        return Parameters.castOrWrap(values);
     }
 
     /**
@@ -114,7 +95,13 @@ public abstract strictfp class ProjectionTestBase extends TransformTestBase {
      * @return The complete projection, from degrees to linear units.
      */
     static MathTransform concatenated(final UnitaryProjection projection) {
-        return projection.parameters.createConcatenatedTransform(projection);
+        try {
+            return projection.createMapProjection(
+                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
+                            org.opengis.referencing.operation.MathTransformFactory.class));
+        } catch (org.opengis.util.FactoryException e) {
+            throw new AssertionError(e); // TODO
+        }
     }
 
     /**
@@ -166,40 +153,6 @@ public abstract strictfp class ProjectionTestBase extends TransformTestBase {
     }
 
     /**
-     * Tests longitude rolling. Testing on the sphere is sufficient, since the
-     * assertions contained in the {@code Spherical} nested class will compare
-     * with the ellipsoidal case.
-     * <p>
-     * The domain should be geographic coordinates in decimal degrees.
-     *
-     * @param  domain The domain of the random coordinate points to generate.
-     * @throws TransformException If a projection failed.
-     */
-    final void stressLongitudeRolling(final CoordinateDomain domain) throws TransformException {
-        assertInstanceOf("This method works on unitary projections.", UnitaryProjection.class, transform);
-        final UnitaryProjection projection = (UnitaryProjection) transform;
-        final double centralMeridian = projection.parameters.centralMeridian;
-        assertEquals("Longitude rolling", centralMeridian != 0, projection.rollLongitude());
-
-        final MathTransform inverse = projection.inverse();
-        final AffineTransform normalize = projection.parameters.normalize(true);
-        final AffineTransform denormalize;
-        try {
-            denormalize = normalize.createInverse();
-        } catch (NoninvertibleTransformException e) {
-            throw new AssertionError(e);
-        }
-        final double[] source = generateRandomCoordinates(domain, 159484270);
-        final double[] target = source.clone();
-        final int numPts = target.length/2;
-        normalize.  transform(target, 0, target, 0, numPts);
-        projection. transform(target, 0, target, 0, numPts);
-        inverse.    transform(target, 0, target, 0, numPts);
-        denormalize.transform(target, 0, target, 0, numPts);
-        assertCoordinatesEqual("Longitude rolling", 2, source, 0, target, 0, numPts, CalculationType.DIRECT_TRANSFORM);
-    }
-
-    /**
      * Returns the unitary projection.
      */
     private static UnitaryProjection unitary(final MathTransform transform) {
@@ -219,7 +172,7 @@ public abstract strictfp class ProjectionTestBase extends TransformTestBase {
      * @return {@code true} if the transform is spherical.
      */
     static boolean isSpherical(final MathTransform transform) {
-        return unitary(transform).isSpherical();
+        return unitary(transform).getClass().getSimpleName().equals("Spherical");
     }
 
     /**

@@ -115,8 +115,8 @@ transform = $Mercator5
 tolerance forward = (1e-4, 1e-4)
 tolerance inverse = (1e-7, 1e-7)
 
-source pt = (-123.1, 49.2166666666)
-target pt = (2663494.1734, 2152319.9230)
+// source pt = (-123.1, 49.2166666666)
+// target pt = (2663494.1734, 2152319.9230)
 
 
 
@@ -213,8 +213,8 @@ transform = $Lambert4
 tolerance forward = (1e-4, 1e-4)
 tolerance inverse = (1e-7, 1e-7)
 
-source pt = (139.733333333, 35.6833333333)
-target pt = (-6789805.6471, 7107623.6859)
+// source pt = (139.733333333, 35.6833333333)
+// target pt = (-6789805.6471, 7107623.6859)
 
 
 transform = $Lambert5

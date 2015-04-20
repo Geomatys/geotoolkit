@@ -27,6 +27,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.referencing.Commons;
 import org.opengis.test.CalculationType;
+import org.apache.sis.referencing.operation.transform.CoordinateDomain;
 
 import org.junit.*;
 import static org.junit.Assume.*;
@@ -159,7 +160,10 @@ public final strictfp class RGF93TransformTest extends TransformTestBase {
         final NTv2Transform rgf = new NTv2Transform(FILE);
         transform = rgf;
         tolerance = 1E-10;
-        stress(CoordinateDomain.GEOGRAPHIC, 426005043);
+
+//      Disabled for now because test is outside domain of validity.
+        isDerivativeSupported = false;
+        verifyInDomain(CoordinateDomain.GEOGRAPHIC, 426005043);
     }
 
     /**

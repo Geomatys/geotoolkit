@@ -26,6 +26,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Transformation;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.parameter.Parameters;
@@ -191,7 +192,7 @@ public class NADCON extends MathTransformProvider {
      * @throws FactoryException If the grid files can not be loaded.
      */
     @Override
-    protected MathTransform createMathTransform(final ParameterValueGroup values) throws FactoryException {
+    public MathTransform createMathTransform(MathTransformFactory factory, final ParameterValueGroup values) throws FactoryException {
         final String latitudeGridFile  = Parameters.stringValue(LAT_DIFF_FILE,  values);
         final String longitudeGridFile = Parameters.stringValue(LONG_DIFF_FILE, values);
         return new NadconTransform(longitudeGridFile, latitudeGridFile);

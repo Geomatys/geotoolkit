@@ -36,7 +36,6 @@ import static org.junit.Assert.*;
  * Tests some south-oriented map projections.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
  *
  * @since 2.3
  */

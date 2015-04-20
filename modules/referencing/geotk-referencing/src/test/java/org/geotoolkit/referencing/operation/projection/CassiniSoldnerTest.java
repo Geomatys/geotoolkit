@@ -19,12 +19,12 @@ package org.geotoolkit.referencing.operation.projection;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
-
+import org.apache.sis.parameter.Parameters;
+import org.apache.sis.test.DependsOn;
 import org.junit.*;
 
-import org.apache.sis.test.DependsOn;
-import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 import static org.geotoolkit.referencing.operation.provider.CassiniSoldner.PARAMETERS;
 
 
@@ -33,7 +33,6 @@ import static org.geotoolkit.referencing.operation.provider.CassiniSoldner.PARAM
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
  *
  * @since 3.00
  */
@@ -53,11 +52,11 @@ public final strictfp class CassiniSoldnerTest extends ProjectionTestBase {
      * @return Newly created projection.
      */
     static CassiniSoldner create(final boolean ellipse) {
-        final UnitaryProjection.Parameters parameters = parameters(PARAMETERS, ellipse);
+        final Parameters parameters = parameters(wrap(PARAMETERS), ellipse, 0);
         if (ellipse) {
-            return new CassiniSoldner(parameters);
+            return new CassiniSoldner(new org.geotoolkit.referencing.operation.provider.CassiniSoldner(), parameters);
         } else {
-            return new CassiniSoldner.Spherical(parameters);
+            return new CassiniSoldner.Spherical(new org.geotoolkit.referencing.operation.provider.CassiniSoldner(), parameters);
         }
     }
 

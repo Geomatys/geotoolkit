@@ -96,8 +96,7 @@ final class FilenameFormatter implements Serializable {
         suffix = "";
         final String[] suffixes = tileReaderSpi.getFileSuffixes();
         if (suffixes != null) {
-            for (int i=0; i<suffixes.length; i++) {
-                final String s = suffixes[i];
+            for (final String s : suffixes) {
                 if (s.length() > suffix.length()) {
                     suffix = s;
                 }

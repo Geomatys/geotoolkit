@@ -20,7 +20,9 @@ package org.geotoolkit.referencing.operation.provider;
 import net.jcip.annotations.Immutable;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.operation.OperationMethod;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
+import org.apache.sis.util.ArgumentChecks;
 
 
 /**
@@ -260,7 +262,11 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      * Constructs the provider.
      */
     public CoordinateFrameRotation() {
-        super(PARAMETERS);
+        super(PARAMETERS); // TODO (3,3)
+    }
+
+    private CoordinateFrameRotation(final int sourceDimensions, final int targetDimensions) {
+        super(sourceDimensions, targetDimensions, PARAMETERS);
     }
 
     /**
@@ -270,5 +276,19 @@ public class CoordinateFrameRotation extends PositionVector7Param {
     final void fill(final BursaWolfParameters parameters, final ParameterValueGroup values) {
         super.fill(parameters, values);
         parameters.reverseRotation();
+    }
+
+    /**
+     * Returns the same operation method, but for different dimensions.
+     *
+     * @param  sourceDimensions The desired number of input dimensions.
+     * @param  targetDimensions The desired number of output dimensions.
+     * @return The redimensioned operation method, or {@code this} if no change is needed.
+     */
+    @Override
+    public OperationMethod redimension(final int sourceDimensions, final int targetDimensions) {
+        ArgumentChecks.ensureBetween("sourceDimensions", 2, 3, sourceDimensions);
+        ArgumentChecks.ensureBetween("targetDimensions", 2, 3, targetDimensions);
+        return new CoordinateFrameRotation(sourceDimensions, targetDimensions); // TODO: cache the instances.
     }
 }

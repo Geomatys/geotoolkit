@@ -18,10 +18,10 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import org.opengis.referencing.operation.TransformException;
-
-import org.junit.*;
+import org.apache.sis.parameter.Parameters;
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
+import org.apache.sis.referencing.operation.transform.CoordinateDomain;
+import org.junit.*;
 
 import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
@@ -35,7 +35,6 @@ import static org.geotoolkit.referencing.operation.provider.AlbersEqualArea.PARA
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
  *
  * @since 3.00
  */
@@ -66,13 +65,13 @@ public final strictfp class AlbersEqualAreaTest extends ProjectionTestBase {
      * @return Newly created projection.
      */
     private static AlbersEqualArea create(final boolean ellipse, double phi1, double phi2) {
-        final UnitaryProjection.Parameters parameters = parameters(PARAMETERS, ellipse, 2, UnitaryProjection.Parameters.class);
-        parameters.standardParallels[0] = phi1;
-        parameters.standardParallels[1] = phi2;
+        final Parameters parameters = parameters(wrap(PARAMETERS), ellipse, 2);
+        parameters.parameter("standard_parallel_1").setValue(phi1);
+        parameters.parameter("standard_parallel_2").setValue(phi2);
         if (ellipse) {
-            return new AlbersEqualArea(parameters);
+            return new AlbersEqualArea(new org.geotoolkit.referencing.operation.provider.AlbersEqualArea(), parameters);
         } else {
-            return new AlbersEqualArea.Spherical(parameters);
+            return new AlbersEqualArea.Spherical(new org.geotoolkit.referencing.operation.provider.AlbersEqualArea(), parameters);
         }
     }
 
@@ -83,6 +82,8 @@ public final strictfp class AlbersEqualAreaTest extends ProjectionTestBase {
      */
     @Test
     public void testUnitaryOnEllipse() throws TransformException {
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
+        derivativeDeltas = new double[] {delta, delta};
         for (int phi1=-90; phi1<=90; phi1+=45) {
             for (int phi2=-90; phi2<=90; phi2+=45) {
                 if (phi1 != -phi2) {
@@ -90,7 +91,7 @@ public final strictfp class AlbersEqualAreaTest extends ProjectionTestBase {
                     tolerance = TOLERANCE;
                     validate();
                     assertFalse(isSpherical());
-                    stress(CoordinateDomain.GEOGRAPHIC_RADIANS, 218639110);
+                    verifyInDomain(CoordinateDomain.GEOGRAPHIC_RADIANS, 218639110);
                 }
             }
         }
@@ -105,6 +106,8 @@ public final strictfp class AlbersEqualAreaTest extends ProjectionTestBase {
      */
     @Test
     public void testUnitaryOnSphere() throws TransformException {
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
+        derivativeDeltas = new double[] {delta, delta};
         for (int phi1=-90; phi1<=90; phi1+=45) {
             for (int phi2=-90; phi2<=90; phi2+=60) {
                 if (phi1 != -phi2) {
@@ -112,30 +115,9 @@ public final strictfp class AlbersEqualAreaTest extends ProjectionTestBase {
                     tolerance = TOLERANCE;
                     validate();
                     assertTrue(isSpherical());
-                    stress(CoordinateDomain.GEOGRAPHIC_RADIANS, 304204376);
+                    verifyInDomain(CoordinateDomain.GEOGRAPHIC_RADIANS, 304204376);
                 }
             }
-        }
-    }
-
-    /**
-     * Tests longitude rolling. Testing on the sphere is sufficient, since the
-     * assertions contained in the {@code Spherical} class will compare with
-     * the ellipsoidal case.
-     *
-     * @throws TransformException Should never happen.
-     */
-    @Test
-    public void testLongitudeRolling() throws TransformException {
-        tolerance = TOLERANCE;
-        for (int centralMeridian=-180; centralMeridian<=180; centralMeridian+=45) {
-            final UnitaryProjection.Parameters parameters = parameters(PARAMETERS, false);
-            parameters.centralMeridian = centralMeridian;
-            parameters.latitudeOfOrigin = 45;
-            transform = new AlbersEqualArea.Spherical(parameters);
-            validate();
-            assertTrue(isSpherical());
-            stressLongitudeRolling(CoordinateDomain.GEOGRAPHIC);
         }
     }
 

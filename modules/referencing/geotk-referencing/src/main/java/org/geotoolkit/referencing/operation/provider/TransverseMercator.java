@@ -25,11 +25,15 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CylindricalProjection;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.Citations;
+import org.apache.sis.internal.referencing.provider.Mercator2SP;
+import org.apache.sis.internal.referencing.provider.PseudoMercator;
+import org.apache.sis.internal.referencing.provider.LambertConformal1SP;
 
 
 /**
@@ -53,7 +57,6 @@ import org.geotoolkit.metadata.Citations;
  *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
- *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
  *   <tr><td>{@code central_meridian}</td><td>0°</td></tr>
  *   <tr><td>{@code latitude_of_origin}</td><td>0°</td></tr>
  *   <tr><td>{@code scale_factor}</td><td>1</td></tr>
@@ -111,7 +114,7 @@ public class TransverseMercator extends MapProjection {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN = Mercator2SP.LATITUDE_OF_ORIGIN;
+    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN = PolarStereographic.LATITUDE_OF_ORIGIN; // TODO: was Mercator1SP, but without constraint on range.
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -215,10 +218,6 @@ public class TransverseMercator extends MapProjection {
      *     </table>
      *   </td></tr>
      *   <tr><td>
-     *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-     *     </table>
-     *   </td><td>
      *     <table class="compact">
      *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
      *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
@@ -333,7 +332,7 @@ public class TransverseMercator extends MapProjection {
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.TRANSVERSE_MERCATOR_PROJECTION)),
         }, null, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+            SEMI_MAJOR, SEMI_MINOR,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
             SCALE_FACTOR, FALSE_EASTING, FALSE_NORTHING
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
@@ -364,8 +363,8 @@ public class TransverseMercator extends MapProjection {
      * {@inheritDoc}
      */
     @Override
-    protected MathTransform2D createMathTransform(ParameterValueGroup values) {
-        return org.geotoolkit.referencing.operation.projection.TransverseMercator.create(getParameters(), values);
+    public MathTransform2D createMathTransform(MathTransformFactory factory, ParameterValueGroup values) {
+        return org.geotoolkit.referencing.operation.projection.TransverseMercator.create(this, values);
     }
 
 
@@ -393,7 +392,6 @@ public class TransverseMercator extends MapProjection {
      *   <tr><th>Parameter name</th><th>Default value</th></tr>
      *   <tr><td>{@code semi_major}</td><td></td></tr>
      *   <tr><td>{@code semi_minor}</td><td></td></tr>
-     *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
      *   <tr><td>{@code central_meridian}</td><td>0°</td></tr>
      *   <tr><td>{@code latitude_of_origin}</td><td>0°</td></tr>
      *   <tr><td>{@code scale_factor}</td><td>1</td></tr>
@@ -459,10 +457,6 @@ public class TransverseMercator extends MapProjection {
          *     </table>
          *   </td></tr>
          *   <tr><td>
-         *     <table class="compact">
-         *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-         *     </table>
-         *   </td><td>
          *     <table class="compact">
          *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
          *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
@@ -542,20 +536,20 @@ public class TransverseMercator extends MapProjection {
             final Citation[] excludes = {
                 Citations.ESRI, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
             };
+            final ParameterDescriptorGroup p = new PseudoMercator().getParameters();    // TODO
             PARAMETERS = UniversalParameters.createDescriptorGroup(
                 new Identifier[] {
                     new NamedIdentifier(Citations.EPSG, "Transverse Mercator (South Orientated)"),
                     new IdentifierCode (Citations.EPSG,  9808),
                     sameNameAs(Citations.GEOTOOLKIT, TransverseMercator.PARAMETERS)
             }, excludes, new ParameterDescriptor<?>[] {
-                sameParameterAs(PseudoMercator.PARAMETERS, "semi_major"),
-                sameParameterAs(PseudoMercator.PARAMETERS, "semi_minor"),
-                ROLL_LONGITUDE,
-                sameParameterAs(PseudoMercator.PARAMETERS, "central_meridian"),
-                sameParameterAs(PseudoMercator.PARAMETERS, "latitude_of_origin"),
+                sameParameterAs(p, "semi_major"),
+                sameParameterAs(p, "semi_minor"),
+                sameParameterAs(p, "central_meridian"),
+                sameParameterAs(new LambertConformal1SP().getParameters(), "latitude_of_origin"),
                 SCALE_FACTOR,
-                sameParameterAs(PseudoMercator.PARAMETERS, "false_easting"),
-                sameParameterAs(PseudoMercator.PARAMETERS, "false_northing")
+                sameParameterAs(p, "false_easting"),
+                sameParameterAs(p, "false_northing")
             }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
         }
 

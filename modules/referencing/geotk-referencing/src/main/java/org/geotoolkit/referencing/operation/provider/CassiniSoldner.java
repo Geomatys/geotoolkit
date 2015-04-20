@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import org.apache.sis.internal.referencing.provider.Equirectangular;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.citation.Citation;
@@ -25,6 +26,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.metadata.Identifier;
+import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.referencing.NamedIdentifier;
@@ -52,7 +54,6 @@ import org.geotoolkit.metadata.Citations;
  *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
- *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
  *   <tr><td>{@code central_meridian}</td><td>0°</td></tr>
  *   <tr><td>{@code latitude_of_origin}</td><td>0°</td></tr>
  *   <tr><td>{@code scale_factor}</td><td>1</td></tr>
@@ -147,8 +148,8 @@ public class CassiniSoldner extends MapProjection {
         SCALE_FACTOR = UniversalParameters.SCALE_FACTOR.select(excludes,
                 "Scale factor at natural origin",   // EPSG
                 "ScaleAtNatOrigin");                // GeoTIFf
-        FALSE_EASTING  = EquidistantCylindrical.FALSE_EASTING;
-        FALSE_NORTHING = EquidistantCylindrical.FALSE_NORTHING;
+        FALSE_EASTING  = Equirectangular.FALSE_EASTING;
+        FALSE_NORTHING = Equirectangular.FALSE_NORTHING;
     }
 
     /**
@@ -200,10 +201,6 @@ public class CassiniSoldner extends MapProjection {
      *     </table>
      *   </td></tr>
      *   <tr><td>
-     *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
-     *     </table>
-     *   </td><td>
      *     <table class="compact">
      *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
      *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
@@ -292,8 +289,7 @@ public class CassiniSoldner extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
-        new Identifier[] {
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(new Identifier[] {
             new NamedIdentifier(Citations.OGC,     "Cassini_Soldner"),
             new NamedIdentifier(Citations.EPSG,    "Cassini-Soldner"),
             new IdentifierCode (Citations.EPSG,     9806),
@@ -304,9 +300,8 @@ public class CassiniSoldner extends MapProjection {
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.CASSINI_SOLDNER_PROJECTION))
         }, null, new ParameterDescriptor<?>[] {
-            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_major"),
-            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_minor"),
-            ROLL_LONGITUDE,
+            sameParameterAs(new Equirectangular().getParameters(), "semi_major"),   // TODO
+            sameParameterAs(new Equirectangular().getParameters(), "semi_minor"),
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING
         }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
@@ -322,7 +317,7 @@ public class CassiniSoldner extends MapProjection {
      * {@inheritDoc}
      */
     @Override
-    protected MathTransform2D createMathTransform(ParameterValueGroup values) {
-        return org.geotoolkit.referencing.operation.projection.CassiniSoldner.create(getParameters(), values);
+    public MathTransform2D createMathTransform(MathTransformFactory factory, ParameterValueGroup values) {
+        return org.geotoolkit.referencing.operation.projection.CassiniSoldner.create(this, values);
     }
 }

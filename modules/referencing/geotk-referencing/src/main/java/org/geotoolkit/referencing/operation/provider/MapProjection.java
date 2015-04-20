@@ -28,6 +28,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.Projection;
 
 import org.apache.sis.referencing.NamedIdentifier;
@@ -80,20 +81,6 @@ public abstract class MapProjection extends MathTransformProvider {
      * is mandatory and has no default value.
      */
     static final ParameterDescriptor<Double> SEMI_MINOR = UniversalParameters.SEMI_MINOR;
-
-    /**
-     * The operation parameter descriptor for whatever the projection should roll longitude.
-     * If {@code true}, then the value of (<var>longitude</var> - {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#centralMeridian
-     * central meridian}) will be rolled to the [-180 &hellip; 180)&deg; range before the projection
-     * is applied. If {@code false}, then longitude rolling is never applied. If not provided, then
-     * the default behavior is to roll longitude only if the central meridian is different than zero.
-     * <p>
-     * This is a Geotk-specific parameter.
-     *
-     * @since 3.00
-     */
-    static final ParameterDescriptor<Boolean> ROLL_LONGITUDE = UniversalParameters.ROLL_LONGITUDE;
 
     /**
      * The operation parameter descriptor for the ESRI {@code "X_Scale"} parameter value.
@@ -188,6 +175,6 @@ public abstract class MapProjection extends MathTransformProvider {
      * @throws ParameterNotFoundException if a required parameter was not found.
      */
     @Override
-    protected abstract MathTransform2D createMathTransform(ParameterValueGroup values)
+    public abstract MathTransform2D createMathTransform(MathTransformFactory factory, ParameterValueGroup values)
             throws ParameterNotFoundException;
 }

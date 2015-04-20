@@ -42,13 +42,14 @@ import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
 import org.apache.sis.referencing.datum.DefaultPrimeMeridian;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.factory.DatumAliasesTest;
 
 import org.apache.sis.io.wkt.Symbols;
 import org.apache.sis.test.DependsOn;
 import org.apache.sis.io.wkt.Convention;
 
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.referencing.CommonCRS;
 import org.junit.*;
 
@@ -98,6 +99,7 @@ public final strictfp class WKTFormatTest {
                "  AXIS[“y”, NORTH]]\n");
         assertTrue(Symbols.getDefault().containsAxis(wkt1));
         final WKTFormat wktFormat = new WKTFormat();
+        wktFormat.setNameAuthority(Citations.OGC);
         wktFormat.setConvention(org.apache.sis.io.wkt.Convention.WKT1);
         final DefaultProjectedCRS crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
         final String              wkt2  = wktFormat.format(crs1);
@@ -105,7 +107,7 @@ public final strictfp class WKTFormatTest {
         final ParameterValueGroup param = crs1.getConversionFromBase().getParameterValues();
         assertEqualsIgnoreMetadata(crs1, crs2);
 // TODO assertEquals(crs1, crs2);
-        assertEquals("Mercator_1SP", crs1.getConversionFromBase().getMethod().getName().getCode());
+        assertEquals("Mercator (variant A)", crs1.getConversionFromBase().getMethod().getName().getCode());
 //      assertTrue(crs1.getConversionFromBase().getMathTransform().toWKT().startsWith("PARAM_MT[\"Mercator_1SP\""));
         assertFalse (wkt2.contains("semi_major"));
         assertFalse (wkt2.contains("semi_minor"));
@@ -144,12 +146,13 @@ public final strictfp class WKTFormatTest {
                "  AXIS[“y”, NORTH]]\n");
         assertTrue(Symbols.getDefault().containsAxis(wkt1));
         final WKTFormat wktFormat = new WKTFormat();
+        wktFormat.setNameAuthority(Citations.OGC);
         final DefaultProjectedCRS crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
         final String              wkt2  = wktFormat.format(crs1);
         final DefaultProjectedCRS crs2  = (DefaultProjectedCRS) wktFormat.parseObject(wkt2);
         final ParameterValueGroup param = crs1.getConversionFromBase().getParameterValues();
         assertEquals(crs1, crs2);
-        assertEquals("Mercator_1SP", crs1.getConversionFromBase().getMethod().getName().getCode());
+        assertEquals("Mercator (variant A)", crs1.getConversionFromBase().getMethod().getName().getCode());
 //      assertTrue(crs1.getConversionFromBase().getMathTransform().toWKT().startsWith("CONCAT_MT[PARAM_MT["));
         assertFalse (wkt2.contains("semi_major"));
         assertFalse (wkt2.contains("semi_minor"));
@@ -190,6 +193,7 @@ public final strictfp class WKTFormatTest {
                "  AUTHORITY[“EPSG”, “27700”]]\n");
         assertTrue(Symbols.getDefault().containsAxis(wkt1));
         final WKTFormat wktFormat = new WKTFormat();
+        wktFormat.setNameAuthority(Citations.OGC);
         final DefaultProjectedCRS crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
         final String              wkt2  = wktFormat.format(crs1);
         final DefaultProjectedCRS crs2  = (DefaultProjectedCRS) wktFormat.parseObject(wkt2);
@@ -236,6 +240,7 @@ public final strictfp class WKTFormatTest {
                "  AXIS[“y”, NORTH]]");
         assertTrue(Symbols.getDefault().containsAxis(wkt1));
         final WKTFormat wktFormat = new WKTFormat();
+        wktFormat.setNameAuthority(Citations.OGC);
         final DefaultProjectedCRS crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
         final String              wkt2  = wktFormat.format(crs1);
         final DefaultProjectedCRS crs2  = (DefaultProjectedCRS) wktFormat.parseObject(wkt2);
@@ -268,6 +273,7 @@ public final strictfp class WKTFormatTest {
                "  AUTHORITY[“EPSG”, “100001”]]");
         assertFalse(Symbols.getDefault().containsAxis(wkt1));
         final WKTFormat wktFormat = new WKTFormat();
+        wktFormat.setNameAuthority(Citations.OGC);
         final String wkt2 = wktFormat.format(wktFormat.parseObject(wkt1));
         assertFalse(wkt2.contains("semi_major"));
         assertFalse(wkt2.contains("semi_minor"));
@@ -302,8 +308,8 @@ public final strictfp class WKTFormatTest {
         CoordinateReferenceSystem crs = new DefaultProjectedCRS("Lambert", base, mt, cs);
 
         final String wkt = crs.toWKT();
-        assertTrue(wkt.contains("Semi-major axis"));
-        assertTrue(wkt.contains("Semi-minor axis"));
+        assertTrue(wkt.contains("semi_major"));
+        assertTrue(wkt.contains("semi_minor"));
 //        final ReferencingParser parser = new ReferencingParser(Symbols.getDefault(), (Hints) null);
 //        CoordinateReferenceSystem check = parser.parseCoordinateReferenceSystem(wkt);
 //        assertEquals(wkt, check.toWKT());
@@ -318,6 +324,7 @@ public final strictfp class WKTFormatTest {
     @Test
     public void parseAndFormatGeocentric() throws ParseException {
         final WKTFormat wktFormat = new WKTFormat();
+        wktFormat.setNameAuthority(Citations.OGC);
         wktFormat.setConvention(org.apache.sis.io.wkt.Convention.WKT1);
         /*
          * First try the formatting as internal WKT. Geotk
@@ -370,7 +377,7 @@ public final strictfp class WKTFormatTest {
     }
 
     /**
-     * Tests the Equidistant Cylindrical projected CRS. This one is a special case because it
+     * Tests the “Equidistant Cylindrical (Spherical)” projected CRS. This one is a special case because it
      * is simplified to an affine transform. The referencing module should be able to find the
      * projection parameters from the affine transform.
      * <p>
@@ -383,8 +390,9 @@ public final strictfp class WKTFormatTest {
     @Test
     public void parseAndFormatEquidistantCylindrical() throws ParseException {
         final WKTFormat wktFormat = new WKTFormat();
+        wktFormat.setNameAuthority(Citations.OGC);
         String wkt = decodeQuotes(
-                "PROJCS[“Equidistant Cylindrical”,\n" +
+                "PROJCS[“Equidistant Cylindrical (Spherical)”,\n" +
                 "  GEOGCS[“WGS 84”,\n" +
                 "    DATUM[“World Geodetic System 1984”,\n" +
                 "      SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
@@ -392,9 +400,9 @@ public final strictfp class WKTFormatTest {
                 "    UNIT[“degree”, 0.017453292519943295],\n" +
                 "    AXIS[“Latitude”, NORTH],\n" +
                 "    AXIS[“Longitude”, EAST]],\n" +
-                "  PROJECTION[“Equidistant_Cylindrical”],\n" +
-                "  PARAMETER[“central_meridian”, 0.0],\n" +
-                "  PARAMETER[“latitude_of_origin”, 10.0],\n" +
+                "  PROJECTION[“Equirectangular”],\n" +
+//              "  PARAMETER[“central_meridian”, 0.0],\n" +
+//              "  PARAMETER[“latitude_of_origin”, 10.0],\n" +
                 "  PARAMETER[“false_easting”, 1000.0],\n" +
                 "  PARAMETER[“false_northing”, 2000.0],\n" +
                 "  UNIT[“metre”, 1],\n" +
@@ -599,6 +607,7 @@ public final strictfp class WKTFormatTest {
                 + "UNIT[“Meter”,1],"
                 + "AXIS[“East”,East],AXIS[“North”,North]]");
         final WKTFormat wktFormat = new WKTFormat();
+        wktFormat.setNameAuthority(Citations.OGC);
         final ProjectedCRS crs = wktFormat.parse(wkt, 0, ProjectedCRS.class);
         assertEquals("NTF=GR3DF97A", crs.getBaseCRS().getName().getCode());
     }
@@ -613,6 +622,7 @@ public final strictfp class WKTFormatTest {
     @Test
     public void testEsriConvention() throws ParseException {
         final WKTFormat wktFormat = new WKTFormat();
+        wktFormat.setNameAuthority(Citations.OGC);
         ProjectedCRS crs = (ProjectedCRS) wktFormat.parseObject(ParserTest.IGNF_LAMBE);
         ParserTest.verifyLambertII(crs, false);
         /*

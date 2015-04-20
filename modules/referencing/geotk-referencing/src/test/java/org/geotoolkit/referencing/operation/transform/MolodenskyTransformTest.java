@@ -27,9 +27,9 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.test.referencing.ParameterizedTransformTest;
 
-import org.apache.sis.test.DependsOn;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.transform.CoordinateDomain;
 
 import org.junit.*;
 import static java.lang.StrictMath.*;
@@ -46,7 +46,6 @@ import static org.opengis.test.Assert.*;
  *
  * @since 2.5
  */
-@DependsOn(AbstractMathTransformTest.class)
 public final strictfp class MolodenskyTransformTest extends TransformTestBase {
     /**
      * Tolerance factor.
@@ -225,11 +224,13 @@ public final strictfp class MolodenskyTransformTest extends TransformTestBase {
         do {
             tolerance = abridged ? 0.08 : 0.015;
             transform = MolodenskyTransform.create(abridged, a, b, true, ta, tb, true, dx, dy, dz);
+            final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
+            derivativeDeltas = new double[] {delta, delta};
             assertInstanceOf("Expected Molodensky.", MolodenskyTransform.class, transform);
             assertFalse(transform.isIdentity());
             validate();
             verifyTransform(source, target);
-            stress(CoordinateDomain.GEOGRAPHIC, 208129394);
+            verifyInDomain(CoordinateDomain.GEOGRAPHIC, 208129394);
         } while ((abridged = !abridged) == true);
     }
 

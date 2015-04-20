@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import java.util.Objects;
 import javax.measure.unit.SI;
 import net.jcip.annotations.Immutable;
 
@@ -28,11 +29,13 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.referencing.operation.OperationMethod;
 
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.GeocentricTransform;
-import org.geotoolkit.internal.referencing.MathTransformDecorator;
 
 import static org.geotoolkit.parameter.Parameters.*;
 
@@ -62,7 +65,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * <!-- END OF PARAMETERS -->
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.20
+ * @version 4.0
  *
  * @see GeocentricTransform
  * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
@@ -162,7 +165,7 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
      * Constructs a provider with default parameters.
      */
     public GeocentricToEllipsoid() {
-        super(3, 3, PARAMETERS);
+        super(PARAMETERS); // TODO: (3, 3)
         complement = new GeocentricToEllipsoid(this);
     }
 
@@ -192,7 +195,7 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
      * @throws ParameterNotFoundException if a required parameter was not found.
      */
     @Override
-    public MathTransform createMathTransform(final ParameterValueGroup values)
+    public MathTransform createMathTransform(MathTransformFactory factory, final ParameterValueGroup values)
             throws ParameterNotFoundException
     {
         final double semiMajor = doubleValue(SEMI_MAJOR, values);
@@ -204,9 +207,20 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
         } catch (NoninvertibleTransformException e) {
             throw new AssertionError(e); // Should never happen in Geotk implementation.
         }
-        if (dimension != getTargetDimensions()) {
-            transform = new MathTransformDecorator(transform, complement);
-        }
         return transform;
+    }
+
+    /**
+     * Returns the same operation method, but for different dimensions.
+     *
+     * @param  sourceDimensions The desired number of input dimensions.
+     * @param  targetDimensions The desired number of output dimensions.
+     * @return The redimensioned operation method, or {@code this} if no change is needed.
+     */
+    @Override
+    public OperationMethod redimension(final int sourceDimensions, final int targetDimensions) {
+        ArgumentChecks.ensureBetween("sourceDimensions", 3, 3, sourceDimensions);
+        ArgumentChecks.ensureBetween("targetDimensions", 2, 3, targetDimensions);
+        return (Objects.equals(targetDimensions, getTargetDimensions())) ? this : complement;
     }
 }

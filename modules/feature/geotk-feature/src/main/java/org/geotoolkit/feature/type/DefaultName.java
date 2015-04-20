@@ -24,6 +24,7 @@ import org.apache.sis.util.iso.DefaultTypeName;
 import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.util.iso.Names;
 import org.opengis.util.GenericName;
+import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
 
 
@@ -103,8 +104,8 @@ public class DefaultName extends DefaultTypeName implements Name {
 
         // WARNING: DefaultFactories.NAMES is not a public API and may change in any future SIS version.
 
-        super(namespace == null ? null : DefaultFactories.NAMES.createNameSpace(
-                DefaultFactories.NAMES.createGenericName(null, namespace),
+        super(namespace == null ? null : DefaultFactories.forBuildin(NameFactory.class).createNameSpace(
+                DefaultFactories.forBuildin(NameFactory.class).createGenericName(null, namespace),
                 Collections.singletonMap("separator.head", separator)), local != null ? local : "unnamed");
         this.namespace = namespace;
         this.separator = separator;

@@ -16,17 +16,18 @@
  */
 package org.geotoolkit.process.coverage.resample;
 
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
+import org.apache.sis.referencing.operation.transform.AbstractMathTransform2D;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 
+
 /**
  * MathTransform wrapping a TransformGrid.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
-public class GridMathTransform extends AbstractMathTransform2D{
-    
+public class GridMathTransform extends AbstractMathTransform2D {
+
     private final TransformGrid grid;
     private final int lineLength;
 
@@ -34,14 +35,14 @@ public class GridMathTransform extends AbstractMathTransform2D{
         this.grid = grid;
         lineLength = (grid.xNumCells+1)*2;
     }
-    
+
     @Override
     public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate) throws TransformException {
         Matrix derivative = null;
         if (derivate) {
             //TODO
         }
-        
+
         final int x = (int)srcPts[srcOff];
         final int y = (int)srcPts[srcOff+1];
         final int index = ((y/grid.yStep) * (grid.xNumCells+1) + (x/grid.xStep))*2;

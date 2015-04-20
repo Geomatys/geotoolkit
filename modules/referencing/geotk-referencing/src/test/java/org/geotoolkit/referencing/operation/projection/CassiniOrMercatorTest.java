@@ -18,14 +18,13 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import java.awt.geom.Point2D;
-
-import org.junit.*;
 import org.apache.sis.test.DependsOn;
-
+import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform1D;
+import org.junit.*;
+
 import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
-import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -34,7 +33,6 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
  *
  * @since 3.18
  */
@@ -55,7 +53,7 @@ public final strictfp class CassiniOrMercatorTest extends ProjectionTestBase {
     @Test
     public void testDmlfn() throws TransformException {
         final CassiniSoldner cassini = CassiniSoldnerTest.create(false);
-        assertEquals("Expected spherical projection.", 0, cassini.excentricity, 0);
+//      assertEquals("Expected spherical projection.", 0, cassini.excentricity, 0);
         for (double φ = -PI/3; φ <= PI/3; φ += 0.01) {
             assertEquals("When excentricity=0, mlfn(φ, sinφ, cosφ) simplify to φ.",
                     φ, cassini.mlfn(φ, sin(φ), cos(φ)), 1E-9);

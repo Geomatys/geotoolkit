@@ -22,12 +22,14 @@ import net.jcip.annotations.Immutable;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.Citations;
+import org.apache.sis.util.ArgumentChecks;
 
 
 /**
@@ -220,7 +222,11 @@ public class GeocentricTranslation extends PositionVector7Param {
      * Constructs the provider.
      */
     public GeocentricTranslation() {
-        super(PARAMETERS);
+        super(PARAMETERS); // TODO (3, 3)
+    }
+
+    private GeocentricTranslation(final int sourceDimensions, final int targetDimensions) {
+        super(sourceDimensions, targetDimensions, PARAMETERS);
     }
 
     /**
@@ -232,5 +238,19 @@ public class GeocentricTranslation extends PositionVector7Param {
         parameters.tX = Parameters.doubleValue(DX, values);
         parameters.tY = Parameters.doubleValue(DY, values);
         parameters.tZ = Parameters.doubleValue(DZ, values);
+    }
+
+    /**
+     * Returns the same operation method, but for different dimensions.
+     *
+     * @param  sourceDimensions The desired number of input dimensions.
+     * @param  targetDimensions The desired number of output dimensions.
+     * @return The redimensioned operation method, or {@code this} if no change is needed.
+     */
+    @Override
+    public OperationMethod redimension(final int sourceDimensions, final int targetDimensions) {
+        ArgumentChecks.ensureBetween("sourceDimensions", 2, 3, sourceDimensions);
+        ArgumentChecks.ensureBetween("targetDimensions", 2, 3, targetDimensions);
+        return new GeocentricTranslation(sourceDimensions, targetDimensions); // TODO: cache the instances.
     }
 }

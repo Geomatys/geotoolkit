@@ -45,7 +45,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.resources.IndexedResourceBundle;
-import org.apache.sis.internal.util.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.apache.sis.util.CharSequences;

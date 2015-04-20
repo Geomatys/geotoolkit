@@ -21,6 +21,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.Identifier;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.util.Deprecable;
 
 
 /**
@@ -33,7 +34,7 @@ import org.apache.sis.referencing.NamedIdentifier;
  * @module
  */
 @Immutable
-public final class DeprecatedName extends NamedIdentifier {
+public final class DeprecatedName extends NamedIdentifier implements Deprecable {
     /**
      * For cross-version compatibility.
      */

@@ -27,7 +27,6 @@ import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -357,7 +356,6 @@ public class ProjectionUtils {
             // now that we've got conversion, we can check for bounds.
             if (bounds != null) {
                 try {
-                    MathTransformFactory mtFactory = new DefaultMathTransformFactory();
                     MathTransform transform = CRS.findMathTransform(CRS_FACTORY.createProjectedCRS(crsIdentifiers, baseCRS, conversion, cs), baseCRS);
                     DirectPosition newLower = new DirectPosition2D(baseCRS);
                     DirectPosition newUpper = new DirectPosition2D(baseCRS);
