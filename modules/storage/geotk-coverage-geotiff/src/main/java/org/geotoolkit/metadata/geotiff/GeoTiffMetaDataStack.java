@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.util.ArgumentChecks;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,6 +33,7 @@ import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.util.DomUtilities.*;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.NullArgumentException;
 
 /**
  *
@@ -46,15 +48,18 @@ public final class GeoTiffMetaDataStack {
 
     //what needs to be written when flush is called
     private final List<KeyDirectoryEntry> entries = new ArrayList<KeyDirectoryEntry>();
-    private final StringBuilder asciiValues = new StringBuilder();
-    private final List<Double> doubleValues = new ArrayList<Double>();
-    private final List<TiePoint> tiePoints = new ArrayList<TiePoint>();
-    private Node nPixelScale = null;
-    private Node nTransform = null;
+    private final StringBuilder asciiValues       = new StringBuilder();
+    private final List<Double> doubleValues       = new ArrayList<Double>();
+    private final List<TiePoint> tiePoints        = new ArrayList<TiePoint>();
+    private Node nPixelScale                      = null;
+    private Node nTransform                       = null;
+    private List<Node> noDatas                    = new ArrayList<Node>();
+    private Node minSampleValue                   = null;
+    private Node maxSampleValue                   = null;
 
-    public GeoTiffMetaDataStack(final Node tiffTree) {
+    public GeoTiffMetaDataStack(Node tiffTree) {
         ensureNonNull("tiffTree", tiffTree);
-
+        
         Element tmpIfd = (Element) getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD);
         if (tmpIfd == null) {
             ifd = (Element) tiffTree.appendChild(createNode(TAG_GEOTIFF_IFD));
@@ -109,6 +114,45 @@ public final class GeoTiffMetaDataStack {
         nPixelScale.appendChild(createTiffDoubles(x,y,z));
     }
 
+    /**
+     * Set Nodata values into this {@link GeoTiffMetaDataStack} in aim of build or write metadata.
+     * 
+     * @param noDataValue expected setted nodata.
+     * @throws NullArgumentException if noDataValue is {@code null}.
+     * @throws IllegalArgumentException if noDataValue is empty.
+     */
+    void setNoData(final String noDataValue) {
+        ArgumentChecks.ensureNonNull("noDataValue", noDataValue);
+        if (noDataValue.isEmpty())
+            throw new IllegalArgumentException("GeotiffMetadataStack : you try to "
+                    + "set an empty Nodata Value (String) into metadata tree node.");
+        Node noData = createTiffField(GeoTiffConstants.GDAL_NODATA_KEY, "noData"); 
+        noData.appendChild(createTiffAsciis(noDataValue));
+        noDatas.add(noData);
+    }
+    
+    /**
+     * Set minimum sample values into this {@link GeoTiffMetaDataStack} in aim of build or write metadata.
+     * 
+     * @param minimumSampleValues minimum sample value for each image bands.
+     * @throws NullArgumentException if maximumSampleValues array is {@code null}.
+     */
+    void setMinSampleValue(final int ...minimumSampleValues) {
+        minSampleValue = createTiffField(GeoTiffConstants.MinSampleValue, "minSampleValue");
+        minSampleValue.appendChild(createTiffShorts(minimumSampleValues));
+    }
+    
+    /**
+     * Set maximum sample values into this {@link GeoTiffMetaDataStack} in aim of build or write metadata.
+     * 
+     * @param maximumSampleValue maximum sample value for each image bands.
+     * @throws NullArgumentException if maximumSampleValues array is {@code null}.
+     */
+    void setMaxSampleValue(final int ...maximumSampleValues) {
+        maxSampleValue = createTiffField(GeoTiffConstants.MaxSampleValue, "maxSampleValue"); 
+        maxSampleValue.appendChild(createTiffShorts(maximumSampleValues));
+    }
+    
     void addModelTiePoint(final TiePoint tp) {
         tiePoints.add(tp);
     }
@@ -116,16 +160,16 @@ public final class GeoTiffMetaDataStack {
     void setModelTransformation(final AffineTransform gridToCRS) {
         // See pag 28 of the spec for an explanation
         final double[] modelTransformation = new double[16];
-        modelTransformation[0] = gridToCRS.getScaleX();
-        modelTransformation[1] = gridToCRS.getShearX();
-        modelTransformation[2] = 0;
-        modelTransformation[3] = gridToCRS.getTranslateX();
-        modelTransformation[4] = gridToCRS.getShearY();
-        modelTransformation[5] = gridToCRS.getScaleY();
-        modelTransformation[6] = 0;
-        modelTransformation[7] = gridToCRS.getTranslateY();
-        modelTransformation[8] = 0;
-        modelTransformation[9] = 0;
+        modelTransformation[0]  = gridToCRS.getScaleX();
+        modelTransformation[1]  = gridToCRS.getShearX();
+        modelTransformation[2]  = 0;
+        modelTransformation[3]  = gridToCRS.getTranslateX();
+        modelTransformation[4]  = gridToCRS.getShearY();
+        modelTransformation[5]  = gridToCRS.getScaleY();
+        modelTransformation[6]  = 0;
+        modelTransformation[7]  = gridToCRS.getTranslateY();
+        modelTransformation[8]  = 0;
+        modelTransformation[9]  = 0;
         modelTransformation[10] = 0;
         modelTransformation[11] = 0;
         modelTransformation[12] = 0;
@@ -175,7 +219,7 @@ public final class GeoTiffMetaDataStack {
         values[1] = REVISION_MAJOR;
         values[2] = REVISION_MINOR;
         values[3] = entries.size();
-        for(int i=0,l=4,n=entries.size(); i<n; i++,l+=4){
+        for (int i = 0, l = 4, n = entries.size(); i < n; i++, l += 4) {
             final KeyDirectoryEntry entry = entries.get(i);
             values[l]   = entry.valueKey;
             values[l+1] = entry.valuelocation;
@@ -192,30 +236,33 @@ public final class GeoTiffMetaDataStack {
                 BaselineTIFFTagSet.class.getName() + ","
                 + GeoTIFFTagSet.class.getName());
 
-        if(nPixelScale != null){
-            ifd.appendChild(nPixelScale);
-        }
-
-        if(!tiePoints.isEmpty()){
+        if(nPixelScale != null) ifd.appendChild(nPixelScale);
+        
+        if (!tiePoints.isEmpty()) {
             ifd.appendChild(createModelTiePointsElement(tiePoints));
-        }else if(nTransform != null) {
+        } else if (nTransform != null) {
             ifd.appendChild(nTransform);
         }
-
-        if(!doubleValues.isEmpty()){
+        
+        if (minSampleValue != null) ifd.appendChild(minSampleValue);
+        
+        if (maxSampleValue != null) ifd.appendChild(maxSampleValue);
+        
+        if (!noDatas.isEmpty()) 
+            for (Node nd : noDatas) ifd.appendChild(nd);
+            
+        if (!doubleValues.isEmpty()) {
             final Node nDoubles = createTiffField(getGeoDoubleParamsTag());
             final Node nValues = createTiffDoubles(doubleValues);
             nDoubles.appendChild(nValues);
             ifd.appendChild(nDoubles);
         }
 
-        if(asciiValues.length() > 0){
+        if (asciiValues.length() > 0) {
             final Node nAsciis = createTiffField(getGeoAsciiParamsTag());
             final Node nValues = createTiffAsciis(asciiValues.toString());
             nAsciis.appendChild(nValues);
             ifd.appendChild(nAsciis);
         }
-
     }
-
 }

@@ -40,6 +40,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
@@ -60,6 +62,7 @@ import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
@@ -119,6 +122,11 @@ final class GeoTiffCRSReader {
      * objects.
      */
     private final static MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
+    
+    /**
+     * Logger to diffuse no blocking error message. 
+     */
+    private static final Logger LOGGER = Logging.getLogger(GeoTiffCRSReader.class);
 
     /** Default hints for axis order management */
     private static final Hints DEFAULT_HINTS = new Hints(
@@ -175,8 +183,9 @@ final class GeoTiffCRSReader {
 
         final Object type = entries.get(GTModelTypeGeoKey);
 
-        if(type == null){
-            throw new IOException("GTModelTypeGeoKey is not defined in tags.");
+        if (type == null) {
+            LOGGER.log(Level.FINE, "GTModelTypeGeoKey (Tiff CRS metadatas information) is not defined in tags.");
+            return;
         }
 
         switch( (Integer)type ){

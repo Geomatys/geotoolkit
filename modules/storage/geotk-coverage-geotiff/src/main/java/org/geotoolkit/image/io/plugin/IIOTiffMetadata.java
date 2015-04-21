@@ -30,7 +30,7 @@ import org.w3c.dom.Node;
  * @see TiffImageReader#createMetadata(int) use case
  * @see GeoTiffMetaDataReader#GeoTiffMetaDataReader(javax.imageio.metadata.IIOMetadata) GeoTiffMetaDataReader
  */
-final class IIOTiffMetadata extends IIOMetadata {
+public final class IIOTiffMetadata extends IIOMetadata {
 
     /**
      * Metadatas root Node.
@@ -42,7 +42,7 @@ final class IIOTiffMetadata extends IIOMetadata {
      * 
      * @param root parent {@link IIOMetadataNode} of all metadatas.
      */
-    IIOTiffMetadata (IIOMetadataNode root) {
+    public IIOTiffMetadata (IIOMetadataNode root) {
         this.root = root;
     }
     

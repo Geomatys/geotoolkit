@@ -85,6 +85,7 @@ import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.lang.SystemOverride;
 import org.geotoolkit.metadata.GeoTiffExtension;
 import org.geotoolkit.metadata.geotiff.GeoTiffCRSWriter;
+import org.geotoolkit.metadata.geotiff.GeoTiffConstants;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
 import org.geotoolkit.resources.Errors;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -322,6 +323,15 @@ public class TiffImageReader extends SpatialImageReader {
      * To avoid scanning then more then once.
      */
     private List<GeoTiffExtension> extensions = null;
+    
+    /**
+     * Attribut used to stipulate into internal {@link #headProperties} that represent noData tag.
+     * Each keys from {@link #headProperties} must be single, and in tiff specification 
+     * it exist only one tag value {@linkplain GeoTiffConstants#GDAL_NODATA_KEY 42113}, 
+     * to avoid this singularity we define an other temporary value which is out of tag space number.
+     * Moreover Tiff specification don't necessarily allow multiple nodata tag but do no ban it. 
+     */
+    private int noDataTemporaryKey = 1000000;
 
     /**
      * Creates a new reader.
@@ -386,7 +396,6 @@ public class TiffImageReader extends SpatialImageReader {
             selectLayer(layerIndex);
         }
         headProperties = metaHeads[layerIndex];
-        
         
         fillRootMetadataNode(layerIndex);
         
@@ -1074,6 +1083,7 @@ public class TiffImageReader extends SpatialImageReader {
                     headProperties  = metaHeads[layerIndex];
                     if (headProperties == null) {
                         headProperties = new HashMap<Integer, Map>();
+                        noDataTemporaryKey = 1000000; //-- init noDataTempKey for multiple noData 
                         final Collection<long[]> deferred = new ArrayList<>(4);
                         long position = positionIFD[layerIndex];
                         imageStream.seek(position);
@@ -1215,7 +1225,8 @@ public class TiffImageReader extends SpatialImageReader {
 
             final IIOMetadataNode tagBody = new IIOMetadataNode(TAG_GEOTIFF_FIELD);
             tagBody.setAttribute(ATT_NAME, name);
-            tagBody.setAttribute(ATT_NUMBER, Integer.toString(tag));
+            final int rTag = (tag >= 100000) ? GeoTiffConstants.GDAL_NODATA_KEY : tag;
+            tagBody.setAttribute(ATT_NUMBER, Integer.toString(rTag));
 
             switch (type) {
                 case TYPE_ASCII : {
@@ -1328,18 +1339,21 @@ public class TiffImageReader extends SpatialImageReader {
      * buffer position is undetermined after this method call.
      *
      * @throws IIOException If an error occurred while parsing an entry.
+     * @see #noDataTemporaryKey for particularity case multiple noData.
      */
     private void parseDirectoryEntries(final Collection<long[]> deferred) throws IOException {
         final int tag       = imageStream.readShort() & 0xFFFF;
         final short type    = imageStream.readShort();
         final long count    = readInt();
         final long datasize = count * TYPE_SIZE[type];
+        //-- to avoid singularity of TreeMap headProperty
+        final int rTag = (tag == GeoTiffConstants.GDAL_NODATA_KEY) ? noDataTemporaryKey++ : tag;
         if (datasize <= offsetSize) {
             //-- offset is the real value(s).
-            entryValue(tag, type, count);
+            entryValue(rTag, type, count);
         } else {
             //-- offset from file begin to data set.
-            deferred.add(new long[]{tag, type, count, readInt()});
+            deferred.add(new long[]{rTag, type, count, readInt()});
         }
     }
 
@@ -1597,7 +1611,7 @@ public class TiffImageReader extends SpatialImageReader {
         Arrays.sort(deferred, OFFSET_COMPARATOR);
 
         for (long[] defTab : deferred) {
-            final int tag      = (int) (defTab[0] & 0xFFFF);
+            final int tag      = (int) ((defTab[0] >= 1000000) ? defTab[0] : (defTab[0] & 0xFFFF));
             final short type   = (short) defTab[1];
             final int count    = (int) defTab[2];
             //-- in tiff spec offset or data are always unsigned

@@ -17,13 +17,10 @@
  */
 package org.geotoolkit.image.io.plugin;
 
-import com.sun.media.imageioimpl.plugins.tiff.TIFFImageMetadata;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferDouble;
@@ -68,6 +65,7 @@ import org.geotoolkit.image.io.SpatialImageWriteParam;
 import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.metadata.geotiff.GeoTiffConstants;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
@@ -340,7 +338,16 @@ public class TiffImageWriter extends SpatialImageWriter {
      * Map organize in ascending order by {@code Integer} tag value, and contain all tiff tag in attempt to be writen.
      */
     private TreeMap<Integer, Map> headProperties;
-
+    
+    /**
+     * Attribut used to stipulate into internal {@link #headProperties} that represent noData tag.
+     * Each keys from {@link #headProperties} must be single, and in tiff specification 
+     * it exist only one tag value {@linkplain GeoTiffConstants#GDAL_NODATA_KEY 42113}, 
+     * to avoid this singularity we define an other temporary value which is out of tag space number.
+     * Moreover Tiff specification don't necessarily allow multiple nodata tag but do no ban it. 
+     */
+    private int noDataTemporaryKey = 1000000;
+    
     /**
      * table of length 2 where ifdPosition[0] contain chanel position of current
      * image data beginning and ifdPosition[1] contain chanel position where to write the nextIFD offset.
@@ -474,7 +481,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                 LOGGER.log(Level.INFO, "Global metadata unreadable. Ignored.");
             }
             if (strMetadata != null) {
-                addMetadataProperties(strMetadata.getAsTree(strMetadata.getNativeMetadataFormatName()), headProperties);
+                addMetadataProperties(DomUtilities.getNodeByLocalName(strMetadata.getAsTree(strMetadata.getNativeMetadataFormatName()), TAG_GEOTIFF_IFD), headProperties);
             }
         }
 
@@ -485,7 +492,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         adaptMetadata(image, param);
         final IIOMetadata iioMeth = image.getMetadata();
         if (iioMeth != null) {
-            final Node iioNode    = iioMeth.getAsTree(iioMeth.getNativeMetadataFormatName());
+            final Node iioNode    = DomUtilities.getNodeByLocalName(iioMeth.getAsTree(SpatialMetadataFormat.GEOTK_FORMAT_NAME), TAG_GEOTIFF_IFD);
             addMetadataProperties(iioNode, headProperties);
         }
         write(img, headProperties, param, ifdPosition);
@@ -530,13 +537,15 @@ public class TiffImageWriter extends SpatialImageWriter {
             addMetadataProperties(iioNode, headProperties);
         }
         write(img, headProperties, null, ifdPosition);
-        for (BufferedImage buff : image.getThumbnails()) {
-            assert headProperties == null;
-            //-- a new distinct map for each layer --//
-            headProperties = new TreeMap<>();
-            //-- add thumbnails tiff tag --//
-            addProperty(NewSubfileType, TYPE_LONG, 1, new long[]{1}, headProperties);
-            write(buff, headProperties, null, ifdPosition);
+        if (image.getNumThumbnails() > 0) {
+            for (BufferedImage buff : image.getThumbnails()) {
+                assert headProperties == null;
+                //-- a new distinct map for each layer --//
+                headProperties = new TreeMap<>();
+                //-- add thumbnails tiff tag --//
+                addProperty(NewSubfileType, TYPE_LONG, 1, new long[]{1}, headProperties);
+                write(buff, headProperties, null, ifdPosition);
+            }
         }
     }
 
@@ -897,7 +906,7 @@ public class TiffImageWriter extends SpatialImageWriter {
 
         if (!(iioImgMetadata instanceof SpatialMetadata)) return;
 
-        final String tiffFormatName = getOriginatingProvider().getNativeImageMetadataFormatName();
+        final String tiffFormatName = getOriginatingProvider().getNativeImageMetadataFormatName(); 
 
         final String[] formatNames = iioImgMetadata.getMetadataFormatNames();
         if (!ArraysExt.contains(formatNames, tiffFormatName) &&
@@ -924,10 +933,8 @@ public class TiffImageWriter extends SpatialImageWriter {
         // Not a Geotk MD. It must be in tiff format already.
         if (!(metadata instanceof SpatialMetadata)) return metadata;
 
-        final String tiffFormatName = getOriginatingProvider().getNativeImageMetadataFormatName();
         final String[] formatNames = metadata.getMetadataFormatNames();
         Node tiffTree = null;
-
         if (ArraysExt.contains(formatNames, SpatialMetadataFormat.GEOTK_FORMAT_NAME)) {
             tiffTree = metadata.getAsTree(SpatialMetadataFormat.GEOTK_FORMAT_NAME);
         }
@@ -941,9 +948,9 @@ public class TiffImageWriter extends SpatialImageWriter {
             }
 
             //the tree changes are not stored in the model, imageio bug ?
-            //I didn't found a way to update the tree so I recreate the iiometadata.
-            metadata = new TIFFImageMetadata(
-                    TIFFImageMetadata.parseIFD(DomUtilities.getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD)));
+//            //I didn't found a way to update the tree so I recreate the iiometadata.
+//            metadata = new TIFFImageMetadata(
+//                    TIFFImageMetadata.parseIFD(DomUtilities.getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD)));
         }
 
         return metadata;
@@ -1056,6 +1063,11 @@ public class TiffImageWriter extends SpatialImageWriter {
             throw new IllegalStateException("Given node does not contains the Tiff root node : \""+TAG_GEOTIFF_IFD+"\"");
         }
 
+        /**
+         * Initialize attribut for particularity case multiple noData.
+         */
+        noDataTemporaryKey = 1000000;
+        
         final NodeList iioNodeList = tmpIfd.getChildNodes();
         final int iioLength        = iioNodeList.getLength();
         for (int i = 0; i < iioLength; i++) {
@@ -1078,9 +1090,9 @@ public class TiffImageWriter extends SpatialImageWriter {
         final NamedNodeMap tagNamesMap = tagBody.getAttributes();
         //-- tag value --//
         final int tagnumber = Integer.decode(tagNamesMap.getNamedItem(ATT_NUMBER).getNodeValue());
-        short type   = -1;
-        int count    = -1;
-        Object value = null;
+        short type          = -1;
+        int count           = -1;
+        Object value        = null;
         final NodeList iioNodeList = tagBody.getChildNodes();
         //-- one node per value --//
         final int iioLength = iioNodeList.getLength();
@@ -1088,10 +1100,10 @@ public class TiffImageWriter extends SpatialImageWriter {
 
         for (int i = 0; i < iioLength; i++) {
 
-            final Node iioChild = iioNodeList.item(i);
-            final String iioNodeName = iioChild.getLocalName();
+            final Node iioChild         = iioNodeList.item(i);
+            final String iioNodeName    = iioChild.getLocalName();
             final NodeList iioChildList = iioChild.getChildNodes();
-            final int length = iioChildList.getLength();
+            final int length            = iioChildList.getLength();
 
             if (iioNodeName.equalsIgnoreCase(TAG_GEOTIFF_ASCIIS)) {
                 final byte[] asciiValue;
@@ -1163,7 +1175,9 @@ public class TiffImageWriter extends SpatialImageWriter {
             }
         }
         if (count > 0) { // -- to avoid unknown tag writing --//
-            addProperty(tagnumber, type, count, value, properties);
+            addProperty((tagnumber == GeoTiffConstants.GDAL_NODATA_KEY) 
+                        ? noDataTemporaryKey++ 
+                        : tagnumber, type, count, value, properties);
         }
     }
 
@@ -2469,30 +2483,31 @@ public class TiffImageWriter extends SpatialImageWriter {
         long deferredTagPos  = endTagPos;
         //-- write tags without offsets --//
         for (int tag : properties.keySet()) {
-            Map tagAttribute    = properties.get(tag);
+            Map tagAttribute   = properties.get(tag);
             short type         = (short) tagAttribute.get(ATT_TYPE);
             int count          = (int) tagAttribute.get(ATT_COUNT);
             Object offOrVal    = tagAttribute.get(ATT_VALUE);
             final int dataSize = count * TYPE_SIZE[type];
-
+            final int wTag     = (tag >= 1000000) ? GeoTiffConstants.GDAL_NODATA_KEY : tag;
             /*
              * Write tags in destination file if its possible.
              * Some tags needs to write image before, to have enough information
              * and will be written later.
              */
-            if (tag == TileByteCounts || tag == StripByteCounts || tag == TileOffsets || tag == StripOffsets) {
-                writeDefferedTag((short)tag, type, count, 0);
+            if (wTag == TileByteCounts || wTag == StripByteCounts || wTag == TileOffsets || wTag == StripOffsets) {
+                writeDefferedTag((short)wTag, type, count, 0);
             } else {
                 if (dataSize <= offsetSize) {
-                    writeTag((short)tag, type, count, offOrVal);
+                    writeTag((short)wTag, type, count, offOrVal);
                 } else {
-                    defferedMap.put(tag, tagAttribute);
-                    writeDefferedTag((short)tag, type, count, deferredTagPos);
+                    //-- put tag and no wTag to avoid TreeMap singularity for particularity multiple noData
+                    defferedMap.put(tag, tagAttribute);//-- 
+                    writeDefferedTag((short)wTag, type, count, deferredTagPos);
                     deferredTagPos += getAttributeLength(tagAttribute);
                 }
             }
         }
-
+        
         //-- write next IFD file position --//
         //-- if 0 means no next IFD. --//
         ifdPosition[1] = channel.getStreamPosition();
@@ -2500,7 +2515,8 @@ public class TiffImageWriter extends SpatialImageWriter {
         if (isBigTIFF) channel.writeLong(0);
         else           channel.writeInt(0);
 
-        assert (channel.getStreamPosition()) == endTagPos : "chanel and buffer position = "+((channel.getStreamPosition()))+" end tag position = "+endTagPos;
+        assert (channel.getStreamPosition()) == endTagPos 
+            : "channel and buffer position = "+((channel.getStreamPosition()))+" end tag position = "+endTagPos;
 
         for (final int tag : defferedMap.keySet()) {
             final Map tagAttribute = defferedMap.get(tag);

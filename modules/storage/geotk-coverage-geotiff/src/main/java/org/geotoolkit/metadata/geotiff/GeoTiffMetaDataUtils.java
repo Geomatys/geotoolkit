@@ -64,9 +64,9 @@ public final class GeoTiffMetaDataUtils {
     static Node getNodeByAttributeName(final Node parent, final String name) {
         final NodeList lst = parent.getChildNodes();
 
-        for(int i=0,n=lst.getLength();i<n;i++){
+        for(int i = 0, n = lst.getLength(); i < n; i++) {
             final Node child = lst.item(i);
-            if(name.equalsIgnoreCase(getAttributeValue(child, ATT_NAME))){
+            if (name.equalsIgnoreCase(getAttributeValue(child, ATT_NAME))) {
                 return child;
             }
         }
@@ -281,7 +281,7 @@ public final class GeoTiffMetaDataUtils {
     static Node createTiffAscii(final String ascii) {
         final Element ele = createNode(TAG_GEOTIFF_ASCII);
         ele.setAttribute(ATT_VALUE, ascii);
-        return ele;
+         return ele;
     }
 
     /**
@@ -332,5 +332,4 @@ public final class GeoTiffMetaDataUtils {
     public static TIFFTag getModelTransformationTag() {
         return GeoTIFFTagSet.getInstance().getTag(TAG_MODEL_TRANSFORMATION);
     }
-
 }

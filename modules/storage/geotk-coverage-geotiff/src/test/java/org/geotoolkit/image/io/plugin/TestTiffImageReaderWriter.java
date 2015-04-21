@@ -550,9 +550,9 @@ public strictfp abstract class TestTiffImageReaderWriter {
     /**
      * Compare two {@link RenderedImage} and throw an assertion exception if comparison criterion are not respected.
      * 
-     * @param message  in case of error first part of error message.
+     * @param message     in case of error first part of error message.
      * @param sourceImage source image
-     * @param tested   image which will be compare than source.
+     * @param testedImage image which will be compare than source.
      */
     protected void checkImage(final String message, final RenderedImage sourceImage, final RenderedImage testedImage) {
         checkImages(message, sourceImage, null, 1, 0, 1, 0, null, testedImage);
@@ -765,7 +765,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
      */
     protected WritableRenderedImage createImageTest(final int width, final int height, final int sampleBitsSize, 
             final int numBand, final short photometricInterpretation, final short sampleFormat) throws UnsupportedImageFormatException {
-        
+       
         final ImageTypeSpecifier imgType = buildImageTypeSpecifier(sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
         
         final BufferedImage buffImg = imgType.createBufferedImage(width, height);

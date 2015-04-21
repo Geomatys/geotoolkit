@@ -24,8 +24,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.metadata.IIOMetadata;
@@ -35,6 +37,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
@@ -68,35 +71,48 @@ import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_NODATA_KEY;
  */
 public strictfp class ThirdPartyMetaDataReader {
 
+    /**
+     * Logger to diffuse no blocking error message. 
+     */
     private static final Logger LOGGER = Logging.getLogger(ThirdPartyMetaDataReader.class);
 
+    /**
+     * Root {@link Node} from analysed {@link SpatialMetadata}.
+     * 
+     * @see ThirdPartyMetaDataReader#ThirdPartyMetaDataReader(javax.imageio.metadata.IIOMetadata) 
+     */
     private final Node root;
     
-    public ThirdPartyMetaDataReader(final IIOMetadata imageMetadata) throws IOException{
+    /**
+     * 
+     * @param imageMetadata
+     * @throws IOException 
+     */
+    public ThirdPartyMetaDataReader(final IIOMetadata imageMetadata) throws IOException {
         root = imageMetadata.getAsTree(imageMetadata.getNativeMetadataFormatName());
-        if(root == null) throw new IOException("No image metadatas");
+        if (root == null) throw new IOException("No image metadatas");
     }
     
     /**
      * Fill the given Spatial Metadatas with additional informations.
      */
     public void fillSpatialMetaData(SpatialMetadata metadata) throws IOException {
-        Double realFillValue = null;
+        final TreeSet<Double> noDatas = new TreeSet<Double>();
         
-        int samplePerPixels = -1;
-        int bitsPerSamples = -1;
-        int sampleFormat = -1;
+        int samplePerPixels          = -1;
+        int bitsPerSamples           = -1;
+        int sampleFormat             = -1;
         
-        long[] minSampleValues = null;
-        long[] maxSampleValues = null;
-        double[] gDalMinSampleValue = null;
-        double[] gDalMaxSampleValue = null;
+        long[] minSampleValues       = null;
+        long[] maxSampleValues       = null;
+        double[] gDalMinSampleValue  = null;
+        double[] gDalMaxSampleValue  = null;
         
         double[] modelTransformation = null;
-        double[] modelPixelScale = null;
-        double scaleZ  = 1;
-        double offsetZ = 0;
-        boolean scaleFound = false;
+        double[] modelPixelScale     = null;
+        double scaleZ                = 1;
+        double offsetZ               = 0;
+        boolean scaleFound           = false;
         
         //-- get sample per pixel and scale / offset
         final NodeList children = root.getChildNodes();
@@ -196,7 +212,7 @@ public strictfp class ThirdPartyMetaDataReader {
                         str = strs[0] +"."+ strs[1];
                     }
                     try {
-                        realFillValue = (str.trim().equalsIgnoreCase("nan")) ? Double.NaN : Double.valueOf(str).doubleValue();
+                        noDatas.add((str.trim().equalsIgnoreCase("nan")) ? Double.NaN : Double.valueOf(str).doubleValue());
                     } catch (NumberFormatException e) {
                         LOGGER.log(Level.INFO, "No data value cannot be read.", e);
                     }
@@ -212,22 +228,22 @@ public strictfp class ThirdPartyMetaDataReader {
                     }
                     break;
                 }
-                case 258 : { //-- bits per sample
+                case GeoTiffConstants.BitsPerSample : { //-- bits per sample
                     final Node bpsNode = child.getChildNodes().item(0);
                     bitsPerSamples = (int) GeoTiffMetaDataUtils.readTiffLongs(bpsNode)[0];
                     break;
                 }
-                case 339 : { //-- sample format 
+                case GeoTiffConstants.SampleFormat : { //-- sample format 
                     final Node sfNode = child.getChildNodes().item(0);
                     sampleFormat = (int) GeoTiffMetaDataUtils.readTiffLongs(sfNode)[0];
                     break;
                 }
-                case 280 : { //-- min sample Value
+                case GeoTiffConstants.MinSampleValue : { //-- min sample Value
                     final Node sppNode = child.getChildNodes().item(0);
                     minSampleValues =  GeoTiffMetaDataUtils.readTiffLongs(sppNode);
                     break;
                 }
-                case 281 : { //-- max sample value
+                case GeoTiffConstants.MaxSampleValue : { //-- max sample value
                     final Node sfNode = child.getChildNodes().item(0);
                     maxSampleValues = GeoTiffMetaDataUtils.readTiffLongs(sfNode);
                     break;
@@ -253,11 +269,11 @@ public strictfp class ThirdPartyMetaDataReader {
         
         //add another dimension when a date information is available.
         String date = null;
-        if(datetime!=null) date = datetime;
-        else if(datetimeOriginal!=null) date = datetimeOriginal;
-        else if(datetimeDigitized!=null) date = datetimeDigitized;
-        if(date != null){
-            try{
+        if (datetime != null) date = datetime;
+        else if (datetimeOriginal  != null) date = datetimeOriginal;
+        else if (datetimeDigitized != null) date = datetimeDigitized;
+        if (date != null) {
+            try {
                 final Date dd = TemporalUtilities.parseDate(date.trim());
                 GeoTiffExtension.setOrCreateSliceDimension(metadata, CommonCRS.Temporal.JAVA.crs(), dd.getTime());
             } catch (FactoryException | ParseException ex) {
@@ -296,50 +312,50 @@ public strictfp class ThirdPartyMetaDataReader {
             * that min and max interval is with exclusives terminal because in lot of case 
             * the "No category Data" has often a value at interval terminals.
             */
-                double min;
-                double max;
-                switch (bitsPerSamples) {
-                    case Byte.SIZE : {
-                        min = 0;
-                        max = 255;
-                        typeClass = Integer.class;
-                        break;
-                    }
-                    case Short.SIZE : {
-                        if (sampleFormat == 2) {
-                            min = -32768;
-                            max = 32767;
-                        } else {
-                            min = 0;
-                            max = 0xFFFF;
-                        }
-                        typeClass = Integer.class;
-                        break;
-                    }
-                    case Integer.SIZE : {
-                        if (sampleFormat == 3) {
-                            //-- Float
-                            min = Float.MIN_VALUE;
-                            max = Float.MAX_VALUE;
-                            typeClass = Float.class;
-                        } else {
-                            //-- integer
-                            min = Integer.MIN_VALUE;
-                            max = Integer.MAX_VALUE;
-                            typeClass = Integer.class;
-                        }
-                        break;
-                    }
-                    case Double.SIZE : {
-                        min = Double.MIN_VALUE;
-                        max = Double.MAX_VALUE;
-                        typeClass = Double.class;
-                        break;
-                    }
-                    default : throw new IllegalStateException("Unknow sample type");
+            double min;
+            double max;
+            switch (bitsPerSamples) {
+                case Byte.SIZE : {
+                    min = 0;
+                    max = 255;
+                    typeClass = Integer.class;
+                    break;
                 }
-                Arrays.fill(minSV, min);
-                Arrays.fill(maxSV, max);
+                case Short.SIZE : {
+                    if (sampleFormat == 2) {
+                        min = -32768;
+                        max = 32767;
+                    } else {
+                        min = 0;
+                        max = 0xFFFF;
+                    }
+                    typeClass = Integer.class;
+                    break;
+                }
+                case Integer.SIZE : {
+                    if (sampleFormat == 3) {
+                        //-- Float
+                        min = Float.MIN_VALUE;
+                        max = Float.MAX_VALUE;
+                        typeClass = Float.class;
+                    } else {
+                        //-- integer
+                        min = Integer.MIN_VALUE;
+                        max = Integer.MAX_VALUE;
+                        typeClass = Integer.class;
+                    }
+                    break;
+                }
+                case Double.SIZE : {
+                    min = Double.MIN_VALUE;
+                    max = Double.MAX_VALUE;
+                    typeClass = Double.class;
+                    break;
+                }
+                default : throw new IllegalStateException("Unknow sample type");
+            }
+            Arrays.fill(minSV, min);
+            Arrays.fill(maxSV, max);
         } 
         
         //-- in case where min and max sample values are define in tiff metadata.
@@ -370,37 +386,73 @@ public strictfp class ThirdPartyMetaDataReader {
                 accessor.selectChild(accessor.appendChild());
             }
             
-            final List<Category> categories = new ArrayList<>();
-            if (realFillValue != null) {
-                categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), 
-                                       getTypedRangeNumber(typeClass, realFillValue, true, realFillValue, true)));
-
-                if (minSV[b] < realFillValue && realFillValue < maxSV[b]) {
-
-                    categories.add(new Category("data", null, 
-                            getTypedRangeNumber(typeClass, minSV[b], true, realFillValue, false), scaleZ, offsetZ));
-                    categories.add(new Category("data", null, 
-                            getTypedRangeNumber(typeClass, realFillValue, false, maxSV[b], true), scaleZ, offsetZ));
-
-                } else {
-
-                    categories.add(new Category("data", null, 
-                        getTypedRangeNumber(typeClass, 
-                                            minSV[b], !(minSV[b] == realFillValue), 
-                                            maxSV[b], !(maxSV[b] == realFillValue)), scaleZ, offsetZ));
-                }
-            } else {
-
-                categories.add(new Category("data", null, 
-                        getTypedRangeNumber(typeClass, minSV[b], true, maxSV[b], true), scaleZ, offsetZ));
-
-            }
+            final List<Category> categories = buildCategories(minSV[b], maxSV[b], scaleZ, offsetZ, typeClass, noDatas);
             final GridSampleDimension dim = new GridSampleDimension(""+b, categories.toArray(new Category[categories.size()]), null);
             accessor.setDimension(dim, Locale.ENGLISH);
-            
-            if (realFillValue != null) 
-                accessor.setAttribute("realFillValue", realFillValue);
         }
+    }
+    
+    /**
+     * Build {@linkplain Category categories} {@link List} from sample and noData values from band. 
+     * 
+     * @param sampleValues map which contain all nodata for current band and min and max sample values.
+     * @param typeClass data type of 
+     * @param scaleZ scale use to convert sample values into geophysic values. 
+     * @param offsetZ offset use to convert sample values into geophysic values.
+     * @return {@link Category} list for current band.
+     */
+    private static List<Category> buildCategories(final double minSampleValue, final double maxSampleValue, 
+                                                  final double scaleZ,         final double offsetZ,
+                                                  final Class typeClass,       final TreeSet<Double> nodataValues) {
+        ArgumentChecks.ensureNonNull("noDataValues", nodataValues);
+        ArgumentChecks.ensureNonNull("typeClass",    typeClass);
+        final List<Category> categories = new ArrayList<>();
+        if (nodataValues.isEmpty()) {
+            categories.add(new Category("data", null, 
+                        getTypedRangeNumber(typeClass, 
+                                            minSampleValue, true, 
+                                            maxSampleValue, true), scaleZ, offsetZ));
+            return categories;
+        }
+        
+        double currentMinSV  = minSampleValue;
+        double currentMaxSV  = maxSampleValue;
+        boolean isMinInclude = true;
+        boolean isMaxInclude = true;
+        
+        final Iterator<Double> itNoData = nodataValues.iterator();
+        while (itNoData.hasNext()) {
+            final double currentNoData = itNoData.next();
+            categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), 
+                                       getTypedRangeNumber(typeClass, currentNoData, true, currentNoData, true)));
+            if (currentNoData == currentMinSV) {
+                isMinInclude = false;
+            } else if (currentNoData == currentMaxSV) {
+                isMaxInclude = false;
+            } else if (currentMinSV < currentNoData && currentNoData < currentMaxSV) {//-- intersection
+                categories.add(new Category("data", null, 
+                        getTypedRangeNumber(typeClass, 
+                                            currentMinSV, isMinInclude, 
+                                            currentNoData, false), scaleZ, offsetZ));
+                isMinInclude = false;
+                currentMinSV = currentNoData;
+            } else {
+                //-- volontary do nothing with no intersection
+            }
+        }
+        
+        assert currentMaxSV == maxSampleValue : "buildCategories : last category : currentMaxSample "
+                + "value should be equals to maxSampleValues. Expected : "+maxSampleValue+". Found : "+currentMaxSV;
+        
+        //-- add the last category
+        //-- it is the last category to insert in case with intersection between sample values intervals
+        //-- else if no intersection it just will be sample interval.
+        categories.add(new Category("data", null, 
+                        getTypedRangeNumber(typeClass, 
+                                            currentMinSV, isMinInclude, 
+                                            currentMaxSV, isMaxInclude), scaleZ, offsetZ));
+        
+        return categories;
     }
     
     /**
