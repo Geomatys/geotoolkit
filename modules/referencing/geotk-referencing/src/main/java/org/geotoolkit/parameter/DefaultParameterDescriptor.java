@@ -179,29 +179,11 @@ public class DefaultParameterDescriptor<T> extends org.apache.sis.parameter.Defa
                                       final Unit<?>       unit,
                                       final boolean       required)
     {
-        super(properties, valueClass,
+        super(properties, required ? 1 : 0, 1, valueClass,
                 (unit != null) ? new MeasurementRange((Class) (valueClass.isArray() ?
                         Numbers.primitiveToWrapper(valueClass.getComponentType()) : valueClass), (Number) minimum, true, (Number) maximum, true, unit) :
                 (minimum != null || maximum != null) ? new Range(valueClass, minimum, true, maximum, true) : null,
-                validValues, defaultValue, required);
-    }
-
-    /**
-     * Constructs a descriptor for a mandatory parameter in a range of integer values.
-     *
-     * @param  name         The parameter name.
-     * @param  defaultValue The default value for the parameter.
-     * @param  minimum      The minimum parameter value, or {@link Integer#MIN_VALUE} if none.
-     * @param  maximum      The maximum parameter value, or {@link Integer#MAX_VALUE} if none.
-     * @return The parameter descriptor for the given range of values.
-     *
-     * @since 2.5
-     */
-    public static DefaultParameterDescriptor<Integer> create(final String name,
-            final int defaultValue, final int minimum, final int maximum)
-    {
-        return create(Collections.singletonMap(NAME_KEY, name),
-                defaultValue, minimum, maximum, true);
+                validValues, defaultValue);
     }
 
     /**
@@ -223,27 +205,6 @@ public class DefaultParameterDescriptor<T> extends org.apache.sis.parameter.Defa
                  Integer.class, null, Integer.valueOf(defaultValue),
                  (minimum == Integer.MIN_VALUE) ? null : Integer.valueOf(minimum),
                  (maximum == Integer.MAX_VALUE) ? null : Integer.valueOf(maximum), null, required);
-    }
-
-    /**
-     * Constructs a descriptor for a mandatory parameter in a range of floating point values.
-     *
-     * @param  name         The parameter name.
-     * @param  defaultValue The default value for the parameter, or {@link Double#NaN} if none.
-     * @param  minimum      The minimum parameter value, or {@link Double#NEGATIVE_INFINITY} if none.
-     * @param  maximum      The maximum parameter value, or {@link Double#POSITIVE_INFINITY} if none.
-     * @param  unit         The unit for default, minimum and maximum values.
-     * @return The parameter descriptor for the given range of values.
-     *
-     * @since 2.5
-     */
-    public static DefaultParameterDescriptor<Double> create(final String name,
-            final double defaultValue, final double minimum, final double maximum, final Unit<?> unit)
-    {
-        return new DefaultParameterDescriptor<>(Collections.singletonMap(NAME_KEY, name), Double.class, null,
-                Double.isNaN(defaultValue)          ? null : Double.valueOf(defaultValue),
-                minimum == Double.NEGATIVE_INFINITY ? null : Double.valueOf(minimum),
-                maximum == Double.POSITIVE_INFINITY ? null : Double.valueOf(maximum), unit, true);
     }
 
     /**

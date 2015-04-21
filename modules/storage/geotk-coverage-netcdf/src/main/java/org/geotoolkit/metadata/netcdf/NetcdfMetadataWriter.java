@@ -50,13 +50,13 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.util.InternationalString;
 import org.opengis.util.Enumerated;
 
-import org.apache.sis.util.CharSequences;
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.io.WarningProducer;
 import org.apache.sis.util.iso.Types;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Strings;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.util.ArraysExt;
 
@@ -633,7 +633,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
                 if (credits.size() >= 2) {
                     credits = new LinkedHashSet<>(credits); // Avoid duplicated values.
                 }
-                setAttribute(CharSequences.toString(credits, "\n"));
+                setAttribute(Strings.toString(credits, "\n"));
             }
             int undefined = 0;
             if (!isDefined(DATE_CREATED))  undefined |= 1;
@@ -825,7 +825,7 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
          * This is okay because we accumulated the keywords in a class field, so the previous
          * attribute values are not lost. Similar argument applies to the legal information.
          */
-        if (setAttribute(KEYWORDS, CharSequences.toString(keywords, ", "))) {
+        if (setAttribute(KEYWORDS, Strings.toString(keywords, ", "))) {
             setAttribute(VOCABULARY, vocabulary); // Must be consistent with the keywords.
         }
         if (!isDefined(PROCESSING_LEVEL)) {
@@ -865,8 +865,8 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
          * Unconditionally write the legal information. This is okay because we accumulated
          * those information in class fields, so the previous attribute values are not lost.
          */
-        setAttribute(LICENSE, CharSequences.toString(licenses, "\n"));
-        setAttribute(ACCESS_CONSTRAINT, CharSequences.toString(restrictions, ", "));
+        setAttribute(LICENSE, Strings.toString(licenses, "\n"));
+        setAttribute(ACCESS_CONSTRAINT, Strings.toString(restrictions, ", "));
         /*
          * Write history-related information last.
          */

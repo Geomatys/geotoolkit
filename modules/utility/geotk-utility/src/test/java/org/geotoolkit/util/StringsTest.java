@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.util;
 
+import java.util.Arrays;
 import org.junit.*;
+
 import static org.junit.Assert.*;
 
 
@@ -38,5 +40,15 @@ public final strictfp class StringsTest {
     public void testIsJavaIdentifier() {
         assertTrue (Strings.isJavaIdentifier("T1"));
         assertFalse(Strings.isJavaIdentifier("1T"));
+    }
+
+    /**
+     * Tests the {@link Strings#toString(Iterable, String)} method.
+     */
+    @Test
+    public void testToString() {
+        assertEquals("4, 8, 12, 9", Strings.toString(Arrays.asList(4, 8, 12, 9), ", "));
+        assertSame  ("singleton",   Strings.toString(Arrays.asList("singleton"), ", "));
+        assertNull  (               Strings.toString(null, ", "));
     }
 }

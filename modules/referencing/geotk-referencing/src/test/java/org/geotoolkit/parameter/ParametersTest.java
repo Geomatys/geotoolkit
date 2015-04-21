@@ -17,12 +17,15 @@
  */
 package org.geotoolkit.parameter;
 
+import java.util.Collections;
 import java.util.Properties;
 import org.opengis.parameter.*;
 import org.opengis.metadata.quality.ConformanceResult;
+import javax.measure.unit.Unit;
 import org.junit.*;
 
 import static org.junit.Assert.*;
+import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 
 /**
@@ -35,6 +38,43 @@ import static org.junit.Assert.*;
  */
 public final strictfp class ParametersTest {
     /**
+     * Constructs a descriptor for a mandatory parameter in a range of integer values.
+     *
+     * @param  name         The parameter name.
+     * @param  defaultValue The default value for the parameter.
+     * @param  minimum      The minimum parameter value, or {@link Integer#MIN_VALUE} if none.
+     * @param  maximum      The maximum parameter value, or {@link Integer#MAX_VALUE} if none.
+     * @return The parameter descriptor for the given range of values.
+     */
+    private static DefaultParameterDescriptor<Integer> create(final String name,
+            final int defaultValue, final int minimum, final int maximum)
+    {
+        return DefaultParameterDescriptor.create(Collections.singletonMap(NAME_KEY, name),
+                defaultValue, minimum, maximum, true);
+    }
+
+    /**
+     * Constructs a descriptor for a mandatory parameter in a range of floating point values.
+     *
+     * @param  name         The parameter name.
+     * @param  defaultValue The default value for the parameter, or {@link Double#NaN} if none.
+     * @param  minimum      The minimum parameter value, or {@link Double#NEGATIVE_INFINITY} if none.
+     * @param  maximum      The maximum parameter value, or {@link Double#POSITIVE_INFINITY} if none.
+     * @param  unit         The unit for default, minimum and maximum values.
+     * @return The parameter descriptor for the given range of values.
+     *
+     * @since 2.5
+     */
+    private static DefaultParameterDescriptor<Double> create(final String name,
+            final double defaultValue, final double minimum, final double maximum, final Unit<?> unit)
+    {
+        return new DefaultParameterDescriptor<>(Collections.singletonMap(NAME_KEY, name), Double.class, null,
+                Double.isNaN(defaultValue)          ? null : Double.valueOf(defaultValue),
+                minimum == Double.NEGATIVE_INFINITY ? null : Double.valueOf(minimum),
+                maximum == Double.POSITIVE_INFINITY ? null : Double.valueOf(maximum), unit, true);
+    }
+
+    /**
      * Tests the {@link Parameters#isValid(GeneralParameterValue, GeneralParameterDescriptor)}
      * method.
      */
@@ -42,7 +82,7 @@ public final strictfp class ParametersTest {
     public void testIsValid() {
         final ParameterDescriptorGroup group = new DefaultParameterDescriptorGroup("Group",
                 // A mandatory parameter with values in the [5 ... 15] range.
-                DefaultParameterDescriptor.create("Test1", 10, 5, 15),
+                create("Test1", 10, 5, 15),
                 // A mandatory parameter with values in the {1, 4, 8} set.
                 new DefaultParameterDescriptor<>("Test2", Integer.class, new Integer[] {1, 4, 8}, 4));
         /*
@@ -50,8 +90,8 @@ public final strictfp class ParametersTest {
          * This is needed in order to allow us to create invalide parameters.
          */
         ParameterDescriptorGroup lenient = new DefaultParameterDescriptorGroup("Lenient",
-                DefaultParameterDescriptor.create("Test1", 10, 0, 100),
-                DefaultParameterDescriptor.create("Test2",  8, 0, 100));
+                create("Test1", 10, 0, 100),
+                create("Test2",  8, 0, 100));
         /*
          * Now test the values, starting with the default values (which are expected to pass).
          */
@@ -76,7 +116,7 @@ public final strictfp class ParametersTest {
          * Create a group with a missing parameter.
          */
         lenient = new DefaultParameterDescriptorGroup("Lenient",
-                DefaultParameterDescriptor.create("Test2",  8, 0, 100));
+                create("Test2",  8, 0, 100));
         values = lenient.createValue();
         result = Parameters.isValid(values, group);
         assertFalse(result.pass());
@@ -86,9 +126,9 @@ public final strictfp class ParametersTest {
          * Create a group with an extra parameter.
          */
         lenient = new DefaultParameterDescriptorGroup("Lenient",
-                DefaultParameterDescriptor.create("Test1", 10, 0, 100),
-                DefaultParameterDescriptor.create("Test2",  8, 0, 100),
-                DefaultParameterDescriptor.create("Test3",  0, 0, 100));
+                create("Test1", 10, 0, 100),
+                create("Test2",  8, 0, 100),
+                create("Test3",  0, 0, 100));
         values = lenient.createValue();
         result = Parameters.isValid(values, group);
         assertFalse(result.pass());
@@ -102,12 +142,12 @@ public final strictfp class ParametersTest {
     @Test
     public void testCopyToMap() {
         final ParameterDescriptorGroup group = new DefaultParameterDescriptorGroup("Group",
-            DefaultParameterDescriptor.create("anInteger", 10, 5, 15),
-            DefaultParameterDescriptor.create("aRealNumber", 0.25, 0.1, 0.5, null),
+            create("anInteger", 10, 5, 15),
+            create("aRealNumber", 0.25, 0.1, 0.5, null),
             new DefaultParameterDescriptorGroup("SubGroup",
-                DefaultParameterDescriptor.create("anInteger", 2, 1, 4),
-                DefaultParameterDescriptor.create("aRealNumber", 1.25, 0.1, 1.4, null)),
-            DefaultParameterDescriptor.create("anOtherRealNumber", 0.125, 0.1, 0.4, null));
+                create("anInteger", 2, 1, 4),
+                create("aRealNumber", 1.25, 0.1, 1.4, null)),
+            create("anOtherRealNumber", 0.125, 0.1, 0.4, null));
 
         final ParameterValueGroup values = group.createValue();
         final Properties properties = new Properties();
@@ -123,12 +163,12 @@ public final strictfp class ParametersTest {
     @Test
     public void parameterMapSwitchTest() {
             final ParameterDescriptorGroup group = new DefaultParameterDescriptorGroup("Group",
-                    DefaultParameterDescriptor.create("anInteger", 10, 5, 15),
-                    DefaultParameterDescriptor.create("aRealNumber", 0.25, 0.1, 0.5, null),
+                    create("anInteger", 10, 5, 15),
+                    create("aRealNumber", 0.25, 0.1, 0.5, null),
                     new DefaultParameterDescriptorGroup("SubGroup",
-                            DefaultParameterDescriptor.create("anInteger", 2, 1, 4),
-                            DefaultParameterDescriptor.create("aRealNumber", 1.25, 0.1, 1.4, null)),
-                    DefaultParameterDescriptor.create("anOtherRealNumber", 0.125, 0.1, 0.4, null));
+                            create("anInteger", 2, 1, 4),
+                            create("aRealNumber", 1.25, 0.1, 1.4, null)),
+                    create("anOtherRealNumber", 0.125, 0.1, 0.4, null));
 
         final ParameterValueGroup values = group.createValue();
         final ParameterValueGroup outputParam = Parameters.toParameter(Parameters.toMap(values), group);
