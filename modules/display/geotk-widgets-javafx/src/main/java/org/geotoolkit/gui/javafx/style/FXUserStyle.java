@@ -17,7 +17,6 @@
 
 package org.geotoolkit.gui.javafx.style;
 
-import com.sun.javafx.property.PropertyReference;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -47,7 +46,6 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTablePosition;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
-import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.WindowEvent;
@@ -396,7 +394,7 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
     class CollapseAction extends ActionMenuItem{
 
         CollapseAction() {
-            super("Collapse sub nodes.",null);
+            super(GeotkFX.getString(FXUserStyle.class, "collapse"),null);
         }
 
         @Override
@@ -411,7 +409,7 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
     class ExpandAction extends ActionMenuItem{
 
         ExpandAction() {
-            super("Expand sub nodes.",null);
+            super(GeotkFX.getString(FXUserStyle.class, "expand"),null);
         }
 
         @Override
@@ -425,7 +423,7 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
     class NewFTSAction extends ActionMenuItem{
 
         NewFTSAction() {
-            super("new FTS",GeotkFX.ICON_NEW);
+            super(GeotkFX.getString(FXUserStyle.class, "newfts"),GeotkFX.ICON_NEW);
         }
 
         @Override
@@ -446,7 +444,7 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
     class NewRuleAction extends ActionMenuItem{
 
         NewRuleAction() {
-            super("new Rule",GeotkFX.ICON_NEW);
+            super(GeotkFX.getString(FXUserStyle.class, "newrule"),GeotkFX.ICON_NEW);
         }
 
         @Override
@@ -468,7 +466,7 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
         private final FXStyleElementController editor;
 
         NewSymbolizerAction(final FXStyleElementController editor) {
-            super(editor.getEditedClass().getSimpleName(),GeotkFX.ICON_NEW);
+            super(getSymbolizerName(editor.getEditedClass().getSimpleName()),GeotkFX.ICON_NEW);
             this.editor = editor;
         }
 
@@ -489,7 +487,7 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
     class DuplicateAction extends ActionMenuItem {
 
         DuplicateAction() {
-            super("Duplicate", GeotkFX.ICON_DUPLICATE);
+            super(GeotkFX.getString(FXUserStyle.class, "duplicate"), GeotkFX.ICON_DUPLICATE);
         }
 
         @Override
@@ -529,7 +527,7 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
     class DeleteAction extends ActionMenuItem {
 
         DeleteAction() {
-            super("Delete",GeotkFX.ICON_DELETE);
+            super(GeotkFX.getString(FXUserStyle.class, "delete"),GeotkFX.ICON_DELETE);
         }
 
         @Override
@@ -559,5 +557,12 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
         }
     }
 
+    private static String getSymbolizerName(String name){
+        String str = GeotkFX.getString(FXUserStyle.class, name);
+        if(str.startsWith("Missing")){
+            str = name.replace("Symbolizer", "");
+        }
+        return str;
+    }
     
 }

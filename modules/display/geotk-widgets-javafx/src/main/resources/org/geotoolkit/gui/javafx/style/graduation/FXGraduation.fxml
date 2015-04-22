@@ -12,7 +12,7 @@
          <columnConstraints>
             <ColumnConstraints hgrow="NEVER" />
             <ColumnConstraints hgrow="NEVER" />
-            <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="2.0" />
+            <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="2.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints />

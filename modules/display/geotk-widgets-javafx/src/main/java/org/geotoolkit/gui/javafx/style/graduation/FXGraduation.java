@@ -21,8 +21,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import static javafx.scene.layout.GridPane.setHalignment;
 import org.geotoolkit.gui.javafx.style.FXFont;
 import org.geotoolkit.gui.javafx.style.FXListExpression;
 import org.geotoolkit.gui.javafx.style.FXMode;
@@ -109,7 +111,8 @@ public class FXGraduation extends FXStyleElementController<GraduationSymbolizer.
                 );
 
         final FXMode mode = new FXMode();
-        uiGrid.add(mode, 2, 0);
+        uiGrid.add(mode, 1, 0, 2, 1);
+        setHalignment(mode, HPos.RIGHT);
     }
     
     @Override
