@@ -21,8 +21,11 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
 import org.geotoolkit.gui.javafx.style.FXFont;
 import org.geotoolkit.gui.javafx.style.FXListExpression;
+import org.geotoolkit.gui.javafx.style.FXMode;
 import org.geotoolkit.gui.javafx.style.FXNumberExpression;
 import org.geotoolkit.gui.javafx.style.FXStroke;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
@@ -33,27 +36,22 @@ import org.geotoolkit.gui.javafx.style.FXTextExpression;
  * @author Johann Sorel (Geomatys)
  */
 public class FXGraduation extends FXStyleElementController<GraduationSymbolizer.Graduation> {
-    
-    @FXML
-    private FXNumberExpression uiSize;
-    @FXML
-    private FXNumberExpression uiStart;
-    @FXML
-    private FXNumberExpression uiOffset;
-    @FXML
-    private FXNumberExpression uiStep;
-    @FXML
-    private FXListExpression uiReverse;
-    @FXML
-    private FXListExpression uiSide;
-    @FXML
-    private FXTextExpression uiUnit;
-    @FXML
-    private FXTextExpression uiFormat;
-    @FXML
-    private FXStroke uiStroke;
-    @FXML
-    private FXFont uiFont;
+
+    @FXML private GridPane uiGrid;
+    @FXML private FXNumberExpression uiSize;
+    @FXML private FXNumberExpression uiStart;
+    @FXML private FXNumberExpression uiOffset;
+    @FXML private Label uiOffsetLbl;
+    @FXML private FXNumberExpression uiStep;
+    @FXML private FXListExpression uiReverse;
+    @FXML private Label uiReverseLbl;
+    @FXML private FXListExpression uiSide;
+    @FXML private Label uiSideLbl;
+    @FXML private FXTextExpression uiUnit;
+    @FXML private FXTextExpression uiFormat;
+    @FXML private Label uiFormatLbl;
+    @FXML private FXStroke uiStroke;
+    @FXML private FXFont uiFont;
     
     @Override
     public Class<GraduationSymbolizer.Graduation> getEditedClass() {
@@ -102,6 +100,16 @@ public class FXGraduation extends FXStyleElementController<GraduationSymbolizer.
         uiFormat.valueProperty().addListener(changeListener);
         uiStroke.valueProperty().addListener(changeListener);
         uiFont.valueProperty().addListener(changeListener);
+
+        FXStyleElementController.configureAdvancedProperty(
+                uiFormat,uiFormatLbl,
+                uiSide,uiSideLbl,
+                uiReverse,uiReverseLbl,
+                uiOffset,uiOffsetLbl
+                );
+
+        final FXMode mode = new FXMode();
+        uiGrid.add(mode, 2, 0);
     }
     
     @Override

@@ -148,6 +148,9 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
         uiTable.getColumns().add(new FXDeleteTableColumn(false));
         uiTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         uiTable.setTableMenuButtonVisible(false);
+
+
+        FXStyleElementController.configureAdvancedProperty(uiAnchor);
     }
 
     @Override

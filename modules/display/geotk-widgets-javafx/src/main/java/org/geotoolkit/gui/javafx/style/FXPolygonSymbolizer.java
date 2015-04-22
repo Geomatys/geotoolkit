@@ -20,6 +20,7 @@ package org.geotoolkit.gui.javafx.style;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javax.measure.unit.Unit;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.map.MapLayer;
@@ -34,16 +35,12 @@ import org.opengis.style.PolygonSymbolizer;
  */
 public class FXPolygonSymbolizer extends FXStyleElementController<PolygonSymbolizer> {
 
-    @FXML
-    private FXSymbolizerInfo uiInfo;
-    @FXML
-    protected FXFill uiFill;    
-    @FXML
-    protected FXStroke uiStroke;
-    @FXML
-    protected FXDisplacement uiDisplacement;
-    @FXML
-    private FXNumberExpression uiOffset;
+    @FXML private FXSymbolizerInfo uiInfo;
+    @FXML protected FXFill uiFill;    
+    @FXML protected FXStroke uiStroke;
+    @FXML protected FXDisplacement uiDisplacement;
+    @FXML private Label uiOffsetLbl;
+    @FXML private FXNumberExpression uiOffset;
 
     
     @Override
@@ -77,6 +74,9 @@ public class FXPolygonSymbolizer extends FXStyleElementController<PolygonSymboli
         uiInfo.valueProperty().addListener(changeListener);
         uiOffset.valueProperty().addListener(changeListener);
         uiDisplacement.valueProperty().addListener(changeListener);
+
+        FXStyleElementController.configureAdvancedProperty(
+                uiOffset,uiOffsetLbl);
     }
     
     @Override

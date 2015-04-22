@@ -24,6 +24,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
@@ -49,8 +50,13 @@ public class FXSymbolizerInfo extends GridPane{
 
     private final SimpleBooleanProperty value = new SimpleBooleanProperty();
 
+    @FXML private Label uiNameLbl;
+    @FXML private Label uiTitleLbl;
+    @FXML private Label uiAbstractLbl;
+    @FXML private Label uiUnitLbl;
+    @FXML private Label uiGeomLbl;
     @FXML private TextField uiName;
-    @FXML private TextField uititle;
+    @FXML private TextField uiTitle;
     @FXML private TextField uiAbstract;
     @FXML private ChoiceBox<Unit> uiUnit;
     @FXML private FXTextExpression uiGeom;
@@ -58,6 +64,15 @@ public class FXSymbolizerInfo extends GridPane{
 
     public FXSymbolizerInfo() {
         GeotkFX.loadJRXML(this,FXSymbolizerInfo.class);
+
+        FXStyleElementController.configureAdvancedProperty(
+                uiTitle,uiTitleLbl,
+                uiAbstract,uiAbstractLbl,
+                uiUnit,uiUnitLbl,
+                uiGeom,uiGeomLbl);
+        final FXMode mode = new FXMode();
+        add(mode, 2, 0);
+
     }
 
     /**
@@ -73,7 +88,7 @@ public class FXSymbolizerInfo extends GridPane{
     }
 
     public Description getDescription(){
-        return GO2Utilities.STYLE_FACTORY.description(uititle.getText(), uiAbstract.getText());
+        return GO2Utilities.STYLE_FACTORY.description(uiTitle.getText(), uiAbstract.getText());
     }
 
     public Unit getUnit(){
@@ -116,7 +131,7 @@ public class FXSymbolizerInfo extends GridPane{
             value.setValue(!value.get());
         };
         uiName.setOnAction(eventHandler);
-        uititle.setOnAction(eventHandler);
+        uiTitle.setOnAction(eventHandler);
         uiAbstract.setOnAction(eventHandler);
 
         final ChangeListener changeListener = new ChangeListener() {
@@ -147,10 +162,10 @@ public class FXSymbolizerInfo extends GridPane{
         uiName.setText(notNull(styleElement.getName()));
         final Description desc = styleElement.getDescription();
         if(desc!=null){
-            uititle.setText(notNull(desc.getTitle()));
+            uiTitle.setText(notNull(desc.getTitle()));
             uiAbstract.setText(notNull(desc.getAbstract()));
         }else{
-            uititle.setText("");
+            uiTitle.setText("");
             uiAbstract.setText("");
         }
         final Unit<Length> uom = styleElement.getUnitOfMeasure();

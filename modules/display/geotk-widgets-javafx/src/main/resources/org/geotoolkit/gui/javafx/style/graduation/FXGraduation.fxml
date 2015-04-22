@@ -6,14 +6,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@StyleEditor.css" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@StyleEditor.css" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
+      <GridPane fx:id="uiGrid" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
          <columnConstraints>
             <ColumnConstraints hgrow="NEVER" />
             <ColumnConstraints hgrow="NEVER" />
-            <ColumnConstraints hgrow="ALWAYS" />
-            <ColumnConstraints />
+            <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="2.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints />
@@ -24,16 +23,16 @@
             <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
+            <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
          </rowConstraints>
          <children>
-            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.graduation.FXGraduation.reverse" GridPane.rowIndex="3" />
-            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.graduation.FXGraduation.side" GridPane.columnSpan="3" GridPane.rowIndex="4" />
-            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.graduation.FXGraduation.offset" GridPane.rowIndex="5" />
+            <Label fx:id="uiReverseLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.graduation.FXGraduation.reverse" GridPane.rowIndex="3" />
+            <Label fx:id="uiSideLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.graduation.FXGraduation.side" GridPane.columnSpan="3" GridPane.rowIndex="4" />
+            <Label fx:id="uiOffsetLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.graduation.FXGraduation.offset" GridPane.rowIndex="5" />
             <FXStroke fx:id="uiStroke" GridPane.columnSpan="2" GridPane.rowIndex="10" />
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.graduation.FXGraduation.step" GridPane.rowIndex="6" />
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.graduation.FXGraduation.unit" GridPane.rowIndex="7" />
@@ -50,7 +49,7 @@
             <FXNumberExpression fx:id="uiSize" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.graduation.FXGraduation.size" GridPane.rowIndex="1" />
             <FXTextExpression fx:id="uiFormat" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.graduation.FXGraduation.format" GridPane.rowIndex="8" />
+            <Label fx:id="uiFormatLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.graduation.FXGraduation.format" GridPane.rowIndex="8" />
             <FXListExpression fx:id="uiReverse" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>

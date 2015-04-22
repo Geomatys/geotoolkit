@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@StyleEditor.css" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@StyleEditor.css" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
          <columnConstraints>
@@ -29,9 +29,9 @@
             <FXFill fx:id="uiFill" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="2" />
             <FXSymbolizerInfo fx:id="uiInfo" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.hgrow="NEVER">
                <children>
-                  <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXPolygonSymbolizer.offset" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                  <Label fx:id="uiOffsetLbl" styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXPolygonSymbolizer.offset" GridPane.columnIndex="0" GridPane.rowIndex="6" />
                   <FXNumberExpression fx:id="uiOffset" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                  <FXDisplacement fx:id="uiDisplacement" GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+                  <FXDisplacement fx:id="uiDisplacement" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="7" />
                </children>
                <rowConstraints>
                   <RowConstraints />

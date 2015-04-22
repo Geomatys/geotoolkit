@@ -31,12 +31,9 @@ import org.opengis.style.PointPlacement;
  */
 public class FXPointPlacement extends FXStyleElementController<PointPlacement>{
 
-    @FXML
-    protected FXNumberExpression uiRotation;    
-    @FXML
-    protected FXAnchorPoint uiAnchor;
-    @FXML
-    protected FXDisplacement uiDisplacement;
+    @FXML protected FXNumberExpression uiRotation;    
+    @FXML protected FXAnchorPoint uiAnchor;
+    @FXML protected FXDisplacement uiDisplacement;
         
     @Override
     public Class<PointPlacement> getEditedClass() {
@@ -62,6 +59,8 @@ public class FXPointPlacement extends FXStyleElementController<PointPlacement>{
         uiAnchor.valueProperty().addListener(changeListener);
         uiDisplacement.valueProperty().addListener(changeListener);
         uiRotation.valueProperty().addListener(changeListener);
+        
+        FXStyleElementController.configureAdvancedProperty(uiAnchor);
     }
     
     @Override

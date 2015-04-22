@@ -21,6 +21,7 @@ import java.awt.Color;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javax.measure.unit.Unit;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.map.MapLayer;
@@ -35,18 +36,13 @@ import org.opengis.style.TextSymbolizer;
  */
 public class FXTextSymbolizer extends FXStyleElementController<TextSymbolizer>{
 
-    @FXML
-    private FXSymbolizerInfo uiInfo;
-    @FXML
-    protected FXTextExpression uiText;    
-    @FXML
-    protected FXFont uiFont;    
-    @FXML
-    protected FXFill uiFill;    
-    @FXML
-    protected FXHalo uiHalo;
-    @FXML
-    protected FXLabelPlacement uiPlacement;
+    @FXML protected Label uiHaloTitle;
+    @FXML private FXSymbolizerInfo uiInfo;
+    @FXML protected FXTextExpression uiText;    
+    @FXML protected FXFont uiFont;    
+    @FXML protected FXFill uiFill;    
+    @FXML protected FXHalo uiHalo;
+    @FXML protected FXLabelPlacement uiPlacement;
         
     @Override
     public Class<TextSymbolizer> getEditedClass() {
@@ -89,6 +85,9 @@ public class FXTextSymbolizer extends FXStyleElementController<TextSymbolizer>{
         uiText.valueProperty().addListener(changeListener);
         uiInfo.valueProperty().addListener(changeListener);
         uiPlacement.valueProperty().addListener(changeListener);
+
+        FXStyleElementController.configureAdvancedProperty(
+                uiHalo,uiHaloTitle);
     }
     
     @Override

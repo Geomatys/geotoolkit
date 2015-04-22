@@ -11,7 +11,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@StyleEditor.css" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@StyleEditor.css" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <columnConstraints>
@@ -44,7 +44,7 @@
             <FXFont fx:id="uiFont" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
             <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXTextSymbolizer.fill" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5" />
             <FXFill fx:id="uiFill" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="6" />
-            <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXTextSymbolizer.halo" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7" />
+            <Label fx:id="uiHaloTitle" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXTextSymbolizer.halo" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7" />
             <FXHalo fx:id="uiHalo" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="8" />
             <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXTextSymbolizer.placement" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="9" />
             <FXLabelPlacement fx:id="uiPlacement" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="10" />

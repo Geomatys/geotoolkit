@@ -17,10 +17,13 @@
 
 package org.geotoolkit.gui.javafx.style;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
@@ -33,7 +36,9 @@ import org.opengis.filter.FilterFactory2;
  * @param <T>
  */
 public abstract class FXStyleElementController<T> extends BorderPane {
-    
+
+    protected static final BooleanProperty ADVANCED_MODE = new SimpleBooleanProperty(false);
+
     protected final SimpleObjectProperty<T> value = new SimpleObjectProperty<T>(){
         @Override
         public void set(T newValue) {
@@ -92,6 +97,33 @@ public abstract class FXStyleElementController<T> extends BorderPane {
     }
     
     /**
+     * Panels may have 2 modes, simple or advanced.
+     * All properties are not important, we divide them between simple and advanced.
+     * This a static property used by all javafx panels.
+     *
+     * @return true if in advanced mode
+     */
+    public BooleanProperty advancedModeProperty(){
+        return ADVANCED_MODE;
+    }
+
+    /**
+     *
+     * @param advanced true to display advanced properties
+     */
+    public void setAdvancedMode(boolean advanced){
+        ADVANCED_MODE.set(advanced);
+    }
+
+    /**
+     *
+     * @return true if in advanced mode
+     */
+    public boolean isAdvancedMode(){
+        return ADVANCED_MODE.get();
+    }
+
+    /**
      * Create a value object editable by this controller.
      * @return 
      */
@@ -110,5 +142,12 @@ public abstract class FXStyleElementController<T> extends BorderPane {
     protected synchronized static MutableStyleFactory getStyleFactory(){
         return GeotkFX.getStyleFactory();
     }
-    
+
+    public static void configureAdvancedProperty(Node ... nodes){
+        for(Node n : nodes){
+            n.visibleProperty().bind(ADVANCED_MODE);
+            n.managedProperty().bind(ADVANCED_MODE);
+        }
+    }
+
 }
