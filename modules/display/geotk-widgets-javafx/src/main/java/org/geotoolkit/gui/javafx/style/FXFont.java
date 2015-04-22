@@ -37,14 +37,10 @@ import org.opengis.style.Font;
  */
 public class FXFont extends FXStyleElementController<Font>{
 
-    @FXML
-    protected FXNumberExpression uiSize;
-    @FXML
-    protected FXListExpression uiWeight;
-    @FXML
-    protected FXListExpression uiStyle;
-    @FXML
-    protected FXListExpression uiFamily;
+    @FXML protected FXNumberExpression uiSize;
+    @FXML protected FXFontWeigthExpression uiWeight;
+    @FXML protected FXFontStyleExpression uiStyle;
+    @FXML protected FXListExpression uiFamily;
         
     @Override
     public Class<Font> getEditedClass() {
@@ -61,12 +57,7 @@ public class FXFont extends FXStyleElementController<Font>{
         super.initialize();        
                 
         uiSize.getEditor().minValueProperty().set(0);
-        
-        uiWeight.getEditor().setItems(FXCollections.observableArrayList(
-                StyleConstants.FONT_WEIGHT_NORMAL,StyleConstants.FONT_WEIGHT_BOLD));
-        uiStyle.getEditor().setItems(FXCollections.observableArrayList(
-                StyleConstants.FONT_STYLE_NORMAL,StyleConstants.FONT_STYLE_ITALIC,StyleConstants.FONT_STYLE_OBLIQUE));
-        
+                
         //Initialize family font list with available font family
         final GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final String[] fontNames = environment.getAvailableFontFamilyNames();
