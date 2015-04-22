@@ -61,6 +61,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 @XmlRootElement(name="CoverageReference")
 public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
 
+    private static final String CURRENT_VERSION = "1.0";
+
     @XmlTransient
     private static MarshallerPool POOL;
     private static synchronized MarshallerPool getPoolInstance() throws JAXBException{
@@ -71,6 +73,9 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     }
 
     private static final Name DEFAULT_NAME = new DefaultName("default");
+
+    @XmlElement(name="Version")
+    private String version = CURRENT_VERSION;
 
     @XmlElement(name="PyramidSet")
     private XMLPyramidSet set;
@@ -183,6 +188,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     }
 
     public void copy(XMLCoverageReference ref){
+        this.version          = ref.version;
         this.id               = ref.id;
         this.mainfile         = ref.mainfile;
         this.set              = ref.set;
@@ -210,6 +216,15 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         for (XMLPyramid pyramid : set.pyramids()) {
             pyramid.initialize(set);
         }
+    }
+
+    public String getVersion() {
+        if(version==null) version = CURRENT_VERSION;
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
     
     public String getId() {
