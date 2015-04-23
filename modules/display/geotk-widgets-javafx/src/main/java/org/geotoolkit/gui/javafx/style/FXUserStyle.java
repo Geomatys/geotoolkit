@@ -17,27 +17,18 @@
 
 package org.geotoolkit.gui.javafx.style;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
@@ -45,31 +36,12 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTablePosition;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.control.cell.TextFieldTreeTableCell;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.WindowEvent;
-import javafx.util.Callback;
-import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
-import org.geotoolkit.gui.javafx.contexttree.menu.ActionMenuItem;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
-import org.geotoolkit.internal.GeotkFX;
-import org.geotoolkit.style.FeatureTypeStyleListener;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.style.RandomStyleBuilder;
-import org.geotoolkit.style.RuleListener;
-import org.geotoolkit.style.StyleListener;
-import org.geotoolkit.style.StyleUtilities;
-import org.geotoolkit.util.collection.CollectionChangeEvent;
-import org.opengis.style.FeatureTypeStyle;
-import org.opengis.style.Rule;
-import org.opengis.style.SemanticType;
-import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
-import org.opengis.util.GenericName;
 
 /**
  *
@@ -92,8 +64,6 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
     //current style element editor
     private TreeItem editorPath;
     private FXStyleElementController editor = null;
-    //used to dissociate selection and apply
-    private volatile boolean applying = false;
 
     public FXUserStyle() {
     }
@@ -103,18 +73,18 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
         super.initialize();
         
         menuItems = FXCollections.observableArrayList();
-        menuItems.add(new NewFTSAction());
-        menuItems.add(new NewRuleAction());
+        menuItems.add(new FXStyleTree.NewFTSAction());
+        menuItems.add(new FXStyleTree.NewRuleAction());
         final List<FXStyleElementController> editors = FXStyleElementEditor.findEditorsForType(Symbolizer.class);
         for(FXStyleElementController editor : editors){
-            menuItems.add(new NewSymbolizerAction(editor));
+            menuItems.add(new FXStyleTree.NewSymbolizerAction(editor));
         }
         menuItems.add(new SeparatorMenuItem());
-        menuItems.add(new DuplicateAction());
-        menuItems.add(new DeleteAction());
+        menuItems.add(new FXStyleTree.DuplicateAction());
+        menuItems.add(new FXStyleTree.DeleteAction());
         menuItems.add(new SeparatorMenuItem());
-        menuItems.add(new ExpandAction());
-        menuItems.add(new CollapseAction());
+        menuItems.add(new FXStyleTree.ExpandAction());
+        menuItems.add(new FXStyleTree.CollapseAction());
 
         FXUtilities.hideTableHeader(tree);
     }
@@ -132,32 +102,12 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
     @Override
     protected void updateEditor(MutableStyle styleElement) {
         
-        tree.setRoot(new StyleTreeItem(styleElement));
+        tree.setRoot(new FXStyleTree.StyleTreeItem(styleElement));
         //this will cause the column width to fit the view area
         tree.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
-        
-        final TreeTableColumn<Object, String> col = new TreeTableColumn<>();
-        col.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Object, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Object, String> param) {
-                final Object obj = param.getValue().getValue();
-                if(obj instanceof Style){
-                    return FXUtilities.beanProperty(obj, "name", String.class);
-                }else if(obj instanceof FeatureTypeStyle){
-                    return FXUtilities.beanProperty(obj, "name", String.class);
-                }else if(obj instanceof Rule){
-                    return FXUtilities.beanProperty(obj, "name", String.class);
-                }else if(obj instanceof Symbolizer){
-                    return new SimpleObjectProperty<>(((Symbolizer)obj).getName());
-                }else{
-                    return new SimpleObjectProperty<>("");
-                }
-            }
-        });
-        col.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
-        col.setPrefWidth(200);
-        col.setMinWidth(120);
-        
+        tree.setPlaceholder(new Label(""));
+
+        final TreeTableColumn<Object, String> col = new FXStyleTree.NameColumn();
                 
         final ContextMenu menu = new ContextMenu();
         tree.setContextMenu(menu);
@@ -237,7 +187,7 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
                             editor.valueProperty().addListener(new ChangeListener() {
                                 @Override
                                 public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                                    applyEditor(editorPath);
+                                    FXStyleTree.applyTreeItemEditor(editor,editorPath);
                                 }
                             });
                             contentPane.setCenter(editor);
@@ -248,321 +198,6 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
         });
         
         FXUtilities.expandAll(tree.getRoot());
-    }
-    
-    private void applyEditor(final TreeItem oldPath){
-        if(editor == null) return;
-
-        //create implies a call to apply if a style element is present
-        final Object obj = editor.value.getValue();
-        
-        if(obj instanceof Symbolizer){
-            //in case of a symbolizer we must update it.
-            if(oldPath != null){
-                final Symbolizer symbol = (Symbolizer) oldPath.getValue();
-
-                if(!symbol.equals(obj) && oldPath.getParent()!=null){
-                    oldPath.setValue(obj);
-                
-                    //new symbol created is different, update in the rule
-                    final MutableRule rule = (MutableRule) oldPath.getParent().getValue();
-
-                    final int index = oldPath.getParent().getChildren().indexOf(oldPath);
-                    if(index >= 0){
-                        rule.symbolizers().set(index, (Symbolizer) obj);
-                    }
-                }
-            }
-        }
-    }
-    
-    private void hackClearSelection(){
-        //bug in javafx JDK 8u20 : https://javafx-jira.kenai.com/browse/RT-24055
-        //clear the selection rather then have an incorrect selection
-        //tree.getSelectionModel().clearSelection();
-    }
-    
-    private static class StyleTreeItem extends TreeItem<Object> implements StyleListener, FeatureTypeStyleListener, RuleListener{
-
-        public StyleTreeItem(Object val) {
-            valueProperty().addListener(new ChangeListener<Object>() {
-                @Override
-                public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
-                    updateNode(oldValue, newValue);
-                    updateChildren(null, CollectionChangeEvent.ITEM_ADDED);
-                }
-            });
-            setValue(val);
-        }
-        
-        private void updateNode(Object oldValue, Object newValue){
-            if (oldValue instanceof MutableStyle) {
-                final MutableStyle style = (MutableStyle) oldValue;
-                style.removeListener(StyleTreeItem.this);
-            } else if (oldValue instanceof MutableFeatureTypeStyle) {
-                final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) oldValue;
-                fts.removeListener(StyleTreeItem.this);
-            } else if (oldValue instanceof MutableRule) {
-                final MutableRule r = (MutableRule) oldValue;
-                r.removeListener(StyleTreeItem.this);
-            }
-
-            final ImageView img = new ImageView();
-            if (newValue instanceof MutableStyle) {
-                final MutableStyle style = (MutableStyle) newValue;
-                style.addListener(StyleTreeItem.this);
-                img.setImage(GeotkFX.ICON_STYLE);
-            } else if (newValue instanceof MutableFeatureTypeStyle) {
-                final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) newValue;
-                fts.addListener(StyleTreeItem.this);
-                img.setImage(GeotkFX.ICON_FTS);
-            } else if (newValue instanceof MutableRule) {
-                final MutableRule r = (MutableRule) newValue;
-                r.addListener(StyleTreeItem.this);
-                img.setImage(GeotkFX.ICON_RULE);
-            } else if (newValue instanceof Symbolizer) {
-                final Symbolizer symb = (Symbolizer) newValue;
-                final Dimension dim = DefaultGlyphService.glyphPreferredSize(symb, null, null);
-                final BufferedImage imge = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render(symb, new Rectangle(dim),imge.createGraphics(),null);
-                img.setImage(SwingFXUtils.toFXImage(imge, null));
-            }
-            //lbl.setTextAlignment(TextAlignment.CENTER);
-            //lbl.setContentDisplay(ContentDisplay.LEFT);
-            setGraphic(img);
-        }
-        
-        private void updateChildren(CollectionChangeEvent event, int type){
-            if(type != CollectionChangeEvent.ITEM_ADDED && type != CollectionChangeEvent.ITEM_REMOVED) return;
-//            if(type == CollectionChangeEvent.ITEM_CHANGED){
-//               if(event!=null && event.getChangeEvent()!=null) return;
-//            }
-
-            final Object item = getValue();
-
-            //rebuild structure
-            final Map<Object,StyleTreeItem> cache = new IdentityHashMap<>();
-            for(TreeItem ti : getChildren()){
-                cache.put(ti.getValue(), (StyleTreeItem)ti);
-            }
-
-            getChildren().clear();
-
-            List itemChildren = Collections.EMPTY_LIST;
-            if(item instanceof MutableStyle){
-                itemChildren = ((MutableStyle)item).featureTypeStyles();
-            }else if(item instanceof MutableFeatureTypeStyle){
-                itemChildren = ((MutableFeatureTypeStyle)item).rules();
-            }else if(item instanceof MutableRule){
-                itemChildren = ((MutableRule)item).symbolizers();
-            }
-            
-            for(Object child : itemChildren){
-                StyleTreeItem tmi = cache.get(child);
-                if(tmi==null) tmi = new StyleTreeItem(child);
-                getChildren().add(tmi);
-            }
-        }
-        
-        @Override
-        public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
-            updateChildren(event,event.getType());
-        }
-
-        @Override
-        public void ruleChange(CollectionChangeEvent<MutableRule> event) {
-            updateChildren(event,event.getType());
-        }
-
-        @Override
-        public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
-            updateChildren(event,event.getType());
-        }
-        
-        @Override
-        public void featureTypeNameChange(CollectionChangeEvent<GenericName> event) {}
-
-        @Override
-        public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {}
-        
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-        }
-
-    }
-    
-    class CollapseAction extends ActionMenuItem{
-
-        CollapseAction() {
-            super(GeotkFX.getString(FXUserStyle.class, "collapse"),null);
-        }
-
-        @Override
-        protected void handle(ActionEvent event) {
-            super.handle(event);
-            for(TreeItem ti : items){
-                ti.setExpanded(false);
-            }
-        }
-    }
-
-    class ExpandAction extends ActionMenuItem{
-
-        ExpandAction() {
-            super(GeotkFX.getString(FXUserStyle.class, "expand"),null);
-        }
-
-        @Override
-        protected void handle(ActionEvent event) {
-            for(TreeItem ti : items){
-                ti.setExpanded(true);
-            }
-        }
-    }
-
-    class NewFTSAction extends ActionMenuItem{
-
-        NewFTSAction() {
-            super(GeotkFX.getString(FXUserStyle.class, "newfts"),GeotkFX.ICON_NEW);
-        }
-
-        @Override
-        public MenuItem init(List<? extends TreeItem> selectedItems) {
-            super.init(selectedItems);
-            return uniqueAndType(selectedItems, MutableStyle.class) ? menuItem : null;
-        }
-
-        @Override
-        protected void handle(ActionEvent event) {
-            final MutableStyle style = (MutableStyle) items.get(0).getValue();
-            style.featureTypeStyles().add(getStyleFactory().featureTypeStyle(
-                    RandomStyleBuilder.createRandomPointSymbolizer()));
-            hackClearSelection();
-        }
-    }
-
-    class NewRuleAction extends ActionMenuItem{
-
-        NewRuleAction() {
-            super(GeotkFX.getString(FXUserStyle.class, "newrule"),GeotkFX.ICON_NEW);
-        }
-
-        @Override
-        public MenuItem init(List<? extends TreeItem> selectedItems) {
-            super.init(selectedItems);
-            return uniqueAndType(selectedItems, MutableFeatureTypeStyle.class) ? menuItem : null;
-        }
-        
-        @Override
-        protected void handle(ActionEvent event) {
-            final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) items.get(0).getValue();
-            fts.rules().add(getStyleFactory().rule(
-                    RandomStyleBuilder.createRandomPointSymbolizer()));
-            hackClearSelection();
-        }
-    }
-
-    class NewSymbolizerAction extends ActionMenuItem{
-        private final FXStyleElementController editor;
-
-        NewSymbolizerAction(final FXStyleElementController editor) {
-            super(getSymbolizerName(editor.getEditedClass().getSimpleName()),GeotkFX.ICON_NEW);
-            this.editor = editor;
-        }
-
-        @Override
-        public MenuItem init(List<? extends TreeItem> selectedItems) {
-            super.init(selectedItems);
-            return uniqueAndType(selectedItems, MutableRule.class) ? menuItem : null;
-        }
-        
-        @Override
-        protected void handle(ActionEvent event) {
-            final MutableRule rule = (MutableRule) items.get(0).getValue();
-            rule.symbolizers().add((Symbolizer)editor.newValue());
-            hackClearSelection();
-        }
-    }
-
-    class DuplicateAction extends ActionMenuItem {
-
-        DuplicateAction() {
-            super(GeotkFX.getString(FXUserStyle.class, "duplicate"), GeotkFX.ICON_DUPLICATE);
-        }
-
-        @Override
-        public MenuItem init(List<? extends TreeItem> selectedItems) {
-            super.init(selectedItems);
-            return uniqueAndType(selectedItems, Object.class) ? menuItem : null;
-        }
-        
-        @Override
-        protected void handle(ActionEvent event) {
-            
-            for(TreeItem ti : items){
-                if(ti.getParent()==null) continue;
-                
-                final Object child = ti.getValue();
-                final Object parent = ti.getParent().getValue();
-                
-                if (child instanceof MutableFeatureTypeStyle) {
-                    final MutableFeatureTypeStyle fts = StyleUtilities.copy((MutableFeatureTypeStyle) child);
-                    final int index = ((MutableStyle)parent).featureTypeStyles().indexOf(child) + 1;
-                    ((MutableStyle) parent).featureTypeStyles().add(index, fts);
-                } else if (child instanceof MutableRule) {
-                    final MutableRule rule = StyleUtilities.copy((MutableRule) child);
-                    final int index = ((MutableFeatureTypeStyle)parent).rules().indexOf(child) + 1;
-                    ((MutableFeatureTypeStyle) parent).rules().add(index, rule);
-                } else if (child instanceof Symbolizer) {
-                    //no need to copy symbolizer, they are immutable
-                    final Symbolizer symbol = (Symbolizer) child;
-                    final int index = ((MutableRule)parent).symbolizers().indexOf(child) + 1;
-                    ((MutableRule) parent).symbolizers().add(index, symbol);
-                }
-            }
-            hackClearSelection();
-        }
-    }
-
-    class DeleteAction extends ActionMenuItem {
-
-        DeleteAction() {
-            super(GeotkFX.getString(FXUserStyle.class, "delete"),GeotkFX.ICON_DELETE);
-        }
-
-        @Override
-        public MenuItem init(List<? extends TreeItem> selectedItems) {
-            super.init(selectedItems);
-            if(selectedItems.isEmpty()) return null;
-            return menuItem;
-        }
-
-        @Override
-        protected void handle(ActionEvent event) {
-            for(TreeItem ti : items){
-                if(ti.getParent()==null) continue;
-                
-                final Object child = ti.getValue();
-                final Object parent = ti.getParent().getValue();
-                
-                if(parent instanceof MutableStyle){
-                    ((MutableStyle)parent).featureTypeStyles().remove(child);
-                }else if(parent instanceof MutableFeatureTypeStyle){
-                    ((MutableFeatureTypeStyle)parent).rules().remove(child);
-                }else if(parent instanceof MutableRule){
-                    ((MutableRule)parent).symbolizers().remove(child);
-                }
-            }
-            hackClearSelection();
-        }
-    }
-
-    private static String getSymbolizerName(String name){
-        String str = GeotkFX.getString(FXUserStyle.class, name);
-        if(str.startsWith("Missing")){
-            str = name.replace("Symbolizer", "");
-        }
-        return str;
     }
     
 }

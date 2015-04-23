@@ -20,9 +20,6 @@ package org.geotoolkit.gui.javafx.contexttree;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.WeakHashMap;
 import java.util.function.Function;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -37,18 +34,13 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
-import org.geotoolkit.gui.javafx.layer.FXLayerStylesPane;
 import org.geotoolkit.gui.javafx.layer.FXPropertiesPane;
-import org.geotoolkit.gui.javafx.layer.style.FXStyleAdvancedPane;
-import org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane;
-import org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane;
-import org.geotoolkit.gui.javafx.layer.style.FXStyleColorMapPane;
-import org.geotoolkit.gui.javafx.layer.style.FXStyleSimplePane;
-import org.geotoolkit.gui.javafx.layer.style.FXStyleXMLPane;
+import org.geotoolkit.gui.javafx.layer.style.FXStyleAggregatedPane;
 import org.geotoolkit.gui.javafx.util.ButtonTreeTableCell;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
@@ -85,22 +77,14 @@ public class MapItemGlyphColumn extends TreeTableColumn {
         setMaxWidth(34);
     }
 
-    protected FXPropertiesPane createEditor(MapLayer candidate) {
-        return new FXPropertiesPane(
-                    candidate,
-                    new FXLayerStylesPane(
-                            new FXStyleSimplePane(),
-                            new FXStyleColorMapPane(),
-                            new FXStyleClassifSinglePane(),
-                            new FXStyleClassifRangePane(),
-                            new FXStyleAdvancedPane(),
-                            new FXStyleXMLPane()
-                    )
-            );
+    protected Pane createEditor(MapLayer candidate) {
+        FXStyleAggregatedPane pane = new FXStyleAggregatedPane();
+        pane.init(candidate);
+        return pane;
     }
 
     private void openEditor(MapLayer candidate) {
-        final FXPropertiesPane panel = createEditor(candidate);
+        final Pane panel = createEditor(candidate);
         panel.setPrefSize(900, 700);
 
         final Stage dialog = new Stage();

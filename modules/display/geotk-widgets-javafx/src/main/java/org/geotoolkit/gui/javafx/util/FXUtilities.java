@@ -36,6 +36,8 @@ import javafx.beans.property.adapter.JavaBeanFloatPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanLongPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanObjectPropertyBuilder;
+import javafx.beans.property.adapter.JavaBeanProperty;
+import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -108,18 +110,20 @@ public final class FXUtilities {
     
     private FXUtilities() {}
     
-    public static <T> Property<T> beanProperty(Object candidate, String propertyName, Class<T> dataType){
+    public static <T> JavaBeanProperty<T> beanProperty(Object candidate, String propertyName, Class<T> dataType){
         try {
             if(Boolean.class.equals(dataType)){
-                return (Property<T>)JavaBeanBooleanPropertyBuilder.create().bean(candidate).name(propertyName).build();
+                return (JavaBeanProperty<T>)JavaBeanBooleanPropertyBuilder.create().bean(candidate).name(propertyName).build();
             }else if(Integer.class.equals(dataType)){
-                return (Property<T>)JavaBeanIntegerPropertyBuilder.create().bean(candidate).name(propertyName).build();
+                return (JavaBeanProperty<T>)JavaBeanIntegerPropertyBuilder.create().bean(candidate).name(propertyName).build();
             }else if(Long.class.equals(dataType)){
-                return (Property<T>)JavaBeanLongPropertyBuilder.create().bean(candidate).name(propertyName).build();
+                return (JavaBeanProperty<T>)JavaBeanLongPropertyBuilder.create().bean(candidate).name(propertyName).build();
             }else if(Float.class.equals(dataType)){
-                return (Property<T>)JavaBeanFloatPropertyBuilder.create().bean(candidate).name(propertyName).build();
+                return (JavaBeanProperty<T>)JavaBeanFloatPropertyBuilder.create().bean(candidate).name(propertyName).build();
             }else if(Double.class.equals(dataType)){
-                return (Property<T>)JavaBeanDoublePropertyBuilder.create().bean(candidate).name(propertyName).build();
+                return (JavaBeanProperty<T>)JavaBeanDoublePropertyBuilder.create().bean(candidate).name(propertyName).build();
+            }else if(String.class.equals(dataType)){
+                return (JavaBeanProperty<T>)JavaBeanStringPropertyBuilder.create().bean(candidate).name(propertyName).build();
             }else{
                 return JavaBeanObjectPropertyBuilder.create().bean(candidate).name(propertyName).build();
             }

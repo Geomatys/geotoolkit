@@ -6,12 +6,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="5.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="NEVER" />
-          <ColumnConstraints hgrow="ALWAYS" minWidth="-Infinity" />
+          <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="-Infinity" />
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="300.0" minWidth="2.0" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
@@ -30,7 +31,7 @@
             <CheckBox fx:id="uiDefault" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStyle.abstract" GridPane.rowIndex="3" />
             <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.style.FXStyle.default" GridPane.rowIndex="4" />
-            <Label maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXStyle.info" GridPane.columnSpan="2" />
+            <Label maxWidth="1.7976931348623157E308" styleClass="property-group-title" text="%org.geotoolkit.gui.javafx.style.FXStyle.info" GridPane.columnSpan="3" />
          </children>
          <padding>
             <Insets left="3.0" />

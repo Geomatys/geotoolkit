@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -21,4 +22,25 @@
             </items>
         </SplitPane>
     </center>
+   <top>
+      <GridPane hgap="10.0" vgap="10.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="NEVER" />
+          <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="NEVER" />
+            <ColumnConstraints hgrow="NEVER" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Button mnemonicParsing="false" onAction="#addGroup" styleClass="flatbutton" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleAggregatedPane.addgroup" />
+            <Button mnemonicParsing="false" onAction="#importStyle" styleClass="flatbutton" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleAggregatedPane.import" GridPane.columnIndex="2" />
+            <Button mnemonicParsing="false" onAction="#exportStyle" styleClass="flatbutton" text="%org.geotoolkit.gui.javafx.layer.style.FXStyleAggregatedPane.export" GridPane.columnIndex="3" />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+         </BorderPane.margin>
+      </GridPane>
+   </top>
 </fx:root>
