@@ -530,6 +530,7 @@ public class J2DLegendUtilities {
                 // else try a WMS getLegendGraphic request
                 if (image == null) {
                     final ParameterValue paramVal;
+                    if(covRef.getStore()==null) break testwms;
                     try {
                         paramVal = covRef.getStore().getConfiguration().parameter("url");
                     } catch (ParameterNotFoundException e) {

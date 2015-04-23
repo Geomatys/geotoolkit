@@ -77,6 +77,7 @@ import org.geotoolkit.gui.javafx.util.ButtonTableCell;
 import org.geotoolkit.gui.javafx.util.FXDeleteTableColumn;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -110,21 +111,19 @@ import org.opengis.style.Symbolizer;
 public class FXStyleClassifSinglePane extends FXLayerStylePane {
         
     private static final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
-    
-    @FXML
-    private ComboBox<PropertyName> uiProperty;
-    @FXML
-    private CheckBox uiOther;
-    @FXML
-    private TableView<MutableRule> uiTable;
-    @FXML
-    private ComboBox<Object> uiPalette;
-    @FXML
-    private SplitMenuButton uiTemplate;
+
+    @FXML private ComboBox<PropertyName> uiProperty;
+    @FXML private CheckBox uiOther;
+    @FXML private TableView<MutableRule> uiTable;
+    @FXML private ComboBox<Object> uiPalette;
+    @FXML private SplitMenuButton uiTemplate;
     
     private FeatureMapLayer layer;
     private final RandomPalette palette = new DefaultRandomPalette();
     private Symbolizer template;
+    //this is the target style element where we must generate the rules
+    //it can be a MutableStyle or a MutableFeatureTypeStyle
+    private Object targetStyleElement;
     
     
     public FXStyleClassifSinglePane() {
@@ -161,17 +160,23 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     private void apply(ActionEvent event) {
         if(layer==null) return;
 
-        final List<MutableFeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
-        MutableFeatureTypeStyle fts;
-        if(ftss.isEmpty()){
-            fts = GeotkFX.getStyleFactory().featureTypeStyle();
-            layer.getStyle().featureTypeStyles().add(fts);
-        }else{
-            fts = ftss.get(0);
+        if(targetStyleElement instanceof MutableStyle){
+            final List<MutableFeatureTypeStyle> ftss = ((MutableStyle)targetStyleElement).featureTypeStyles();
+            MutableFeatureTypeStyle fts;
+            if(ftss.isEmpty()){
+                fts = GeotkFX.getStyleFactory().featureTypeStyle();
+                layer.getStyle().featureTypeStyles().add(fts);
+            }else{
+                fts = ftss.get(0);
+            }
+            fts.rules().clear();
+            fts.rules().addAll(uiTable.getItems());
+        }else if(targetStyleElement instanceof MutableFeatureTypeStyle){
+            final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) targetStyleElement;
+            fts.rules().clear();
+            fts.rules().addAll(uiTable.getItems());
         }
 
-        fts.rules().clear();
-        fts.rules().addAll(uiTable.getItems());
     }
 
     @Override
@@ -239,11 +244,14 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     }
     
     @Override
-    public boolean init(Object candidate) {
+    public boolean init(MapLayer candidate, Object styleElement) {
         if(!(candidate instanceof FeatureMapLayer)) return false;    
-        
+
+        if(styleElement==null) styleElement = candidate.getStyle();
+        this.targetStyleElement = styleElement;
+
         this.layer = (FeatureMapLayer) candidate;
-        
+
         uiOther.setSelected(false);
         uiProperty.setItems(listProperties(layer));
         template = generateTemplate(layer);
@@ -252,7 +260,11 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         uiPalette.getSelectionModel().selectFirst();
         
         updateTemplateGlyph();
-        tryRebuildExisting(layer);
+        if(styleElement instanceof MutableStyle){
+            tryRebuildExisting((MutableStyle)styleElement);
+        }else if(styleElement instanceof MutableFeatureTypeStyle){
+            tryRebuildExisting((MutableFeatureTypeStyle)styleElement);
+        }
         
         return true;
     }
@@ -327,19 +339,30 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         return template;
     }
     
-    private void tryRebuildExisting(FeatureMapLayer layer){
+    private void tryRebuildExisting(MutableStyle style){
+                
+        //try to rebuild the previous analyze if it was one
+        final List<MutableFeatureTypeStyle> ftss = style.featureTypeStyles();
+
+        if(ftss.size() == 1){
+            tryRebuildExisting(ftss.get(0));
+        }else{
+            tryRebuildExisting((MutableFeatureTypeStyle)null);
+        }
         
+    }
+
+    private void tryRebuildExisting(MutableFeatureTypeStyle fts){
+
         final ObservableList<MutableRule> candidates = FXCollections.observableArrayList();
         boolean hasOther = false;
         PropertyName currentProperty = null;
-        
+
         //try to rebuild the previous analyze if it was one
-        final List<MutableFeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
         final Class<? extends Symbolizer> expectedType = getExpectedType();
         final List<PropertyName> properties = uiProperty.getItems();
 
-        if(ftss.size() == 1){
-            final MutableFeatureTypeStyle fts = ftss.get(0);
+        if(fts != null){
 
             //defensive copy avoid synchronization
             final List<MutableRule> candidateRules = new ArrayList<>(fts.rules());
@@ -397,11 +420,12 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
                 }
             }
         }
-        
+
         uiOther.setSelected(hasOther);
         uiProperty.getSelectionModel().select(currentProperty);
         uiTable.getItems().setAll(candidates);
     }
+
     
     private ObservableList<MutableRule> create(PropertyName property, boolean other){
         //search the different values

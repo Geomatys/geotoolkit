@@ -31,20 +31,29 @@ import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Modality;
 import javafx.util.Callback;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.contexttree.menu.ActionMenuItem;
+import org.geotoolkit.gui.javafx.contexttree.menu.LayerPropertiesItem;
+import org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane;
+import org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.FeatureTypeStyleListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -412,6 +421,120 @@ public class FXStyleTree {
             setMinWidth(120);
         }
 
+    }
+
+    public static class ShowClassifRangeAction extends ActionMenuItem {
+
+        private MapLayer mapLayer;
+
+        public ShowClassifRangeAction() {
+            super(GeotkFX.getString(FXStyleClassifRangePane.class,"title"), GeotkFX.ICON_DUPLICATE);
+        }
+
+        public MapLayer getMapLayer() {
+            return mapLayer;
+        }
+
+        public void setMapLayer(MapLayer mapLayer) {
+            this.mapLayer = mapLayer;
+        }
+        
+        @Override
+        public MenuItem init(List<? extends TreeItem> selectedItems) {
+            super.init(selectedItems);
+            if(!(mapLayer instanceof FeatureMapLayer)) return null;
+            return uniqueAndType(selectedItems, MutableFeatureTypeStyle.class) ? menuItem : null;
+        }
+
+        @Override
+        protected void handle(ActionEvent event) {
+
+            for(TreeItem ti : items){
+                if(ti.getParent()==null) continue;
+
+                final Object child = ti.getValue();
+                if (child instanceof MutableFeatureTypeStyle) {
+                    final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle)child;
+                    final FXStyleClassifRangePane stylePane = new FXStyleClassifRangePane();
+                    stylePane.init(mapLayer, fts);
+
+                    final DialogPane pane = new DialogPane();
+                    pane.setContent(stylePane);
+                    pane.getButtonTypes().addAll(ButtonType.CLOSE);
+
+                    final Dialog dialog = new Dialog();
+                    dialog.setTitle(stylePane.getTitle());
+                    dialog.initModality(Modality.WINDOW_MODAL);
+                    dialog.setResizable(true);
+                    dialog.setDialogPane(pane);
+                    dialog.resultProperty().addListener(new ChangeListener() {
+                        @Override
+                        public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                            dialog.close();
+                        }
+                    });
+                    dialog.show();
+                }
+            }
+            hackClearSelection();
+        }
+    }
+
+    public static class ShowClassifSingleAction extends ActionMenuItem {
+
+        private MapLayer mapLayer;
+
+        public ShowClassifSingleAction() {
+            super(GeotkFX.getString(FXStyleClassifSinglePane.class,"title"), GeotkFX.ICON_DUPLICATE);
+        }
+
+        public MapLayer getMapLayer() {
+            return mapLayer;
+        }
+
+        public void setMapLayer(MapLayer mapLayer) {
+            this.mapLayer = mapLayer;
+        }
+
+        @Override
+        public MenuItem init(List<? extends TreeItem> selectedItems) {
+            super.init(selectedItems);
+            if(!(mapLayer instanceof FeatureMapLayer)) return null;
+            return uniqueAndType(selectedItems, MutableFeatureTypeStyle.class) ? menuItem : null;
+        }
+
+        @Override
+        protected void handle(ActionEvent event) {
+
+            for(TreeItem ti : items){
+                if(ti.getParent()==null) continue;
+
+                final Object child = ti.getValue();
+                if (child instanceof MutableFeatureTypeStyle) {
+                    final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle)child;
+                    final FXStyleClassifSinglePane stylePane = new FXStyleClassifSinglePane();
+                    stylePane.init(mapLayer, fts);
+
+                    final DialogPane pane = new DialogPane();
+                    pane.setContent(stylePane);
+                    pane.getButtonTypes().addAll(ButtonType.CLOSE);
+
+                    final Dialog dialog = new Dialog();
+                    dialog.setTitle(stylePane.getTitle());
+                    dialog.initModality(Modality.WINDOW_MODAL);
+                    dialog.setResizable(true);
+                    dialog.setDialogPane(pane);
+                    dialog.resultProperty().addListener(new ChangeListener() {
+                        @Override
+                        public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                            dialog.close();
+                        }
+                    });
+                    dialog.show();
+                }
+            }
+            hackClearSelection();
+        }
     }
 
     private static ObservableValue<String> placeholderBinding(ObservableStringValue base, String placeholder){

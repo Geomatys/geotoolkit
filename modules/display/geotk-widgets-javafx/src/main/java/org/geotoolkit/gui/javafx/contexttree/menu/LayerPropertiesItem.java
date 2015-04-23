@@ -30,15 +30,9 @@ import javafx.stage.Modality;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.gui.javafx.layer.FXFeatureTable;
 import org.geotoolkit.gui.javafx.layer.FXLayerStructure;
-import org.geotoolkit.gui.javafx.layer.FXLayerStylesPane;
 import org.geotoolkit.gui.javafx.layer.FXPropertiesPane;
 import org.geotoolkit.gui.javafx.layer.FXPropertyPane;
-import org.geotoolkit.gui.javafx.layer.style.FXStyleAdvancedPane;
-import org.geotoolkit.gui.javafx.layer.style.FXStyleClassifRangePane;
-import org.geotoolkit.gui.javafx.layer.style.FXStyleClassifSinglePane;
-import org.geotoolkit.gui.javafx.layer.style.FXStyleColorMapPane;
-import org.geotoolkit.gui.javafx.layer.style.FXStyleSimplePane;
-import org.geotoolkit.gui.javafx.layer.style.FXStyleXMLPane;
+import org.geotoolkit.gui.javafx.layer.style.FXStyleAggregatedPane;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapLayer;
@@ -60,14 +54,7 @@ public class LayerPropertiesItem extends TreeMenuItem{
         this(map,
             new FXLayerStructure(),
             new FXFeatureTable(),
-            new FXLayerStylesPane(
-                    new FXStyleSimplePane(),
-                    new FXStyleColorMapPane(),
-                    new FXStyleClassifSinglePane(),
-                    new FXStyleClassifRangePane(),
-                    new FXStyleAdvancedPane(),
-                    new FXStyleXMLPane()
-            ));
+            new FXStyleAggregatedPane());
     }
 
     /**

@@ -190,7 +190,7 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
     }
 
     @Override
-    public boolean init(Object candidate) {
+    public boolean init(MapLayer candidate, Object StyleElement) {
         if(!(candidate instanceof MapLayer)) return false;
 
         if(this.layer!=null){
@@ -219,17 +219,17 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
         //check if the first rule changed
         final MutableStyle ms = this.layer.getStyle();
         if(ms.featureTypeStyles().isEmpty()){
-            init(this.layer);
+            init(this.layer,ms);
             return;
         }
         final MutableFeatureTypeStyle fts = ms.featureTypeStyles().get(0);
         if(fts.rules().isEmpty()){
-            init(this.layer);
+            init(this.layer,ms);
             return;
         }
         final MutableRule r = fts.rules().get(0);
         if(this.rule!=r){
-            init(this.layer);
+            init(this.layer,ms);
             return;
         }
     }
@@ -256,7 +256,7 @@ public class FXStyleSimplePane extends FXLayerStylePane implements LayerListener
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if(MapLayer.STYLE_PROPERTY.equals(evt.getPropertyName()) && evt.getOldValue()!=evt.getNewValue()){
-            init(this.layer);
+            init(this.layer,this.layer.getStyle());
         }
     }
     

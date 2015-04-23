@@ -17,18 +17,26 @@
 
 package org.geotoolkit.gui.javafx.layer;
 
+import javafx.scene.layout.BorderPane;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class FXLayerStylePane extends FXPropertyPane{
-    
+public abstract class FXLayerStylePane extends BorderPane{
+
+    public String getTitle() {
+        return "";
+    }
+
     public String getCategory(){
         return "";
     }
     
     public abstract MutableStyle getMutableStyle();
-    
+
+    public abstract boolean init(MapLayer layer, Object rootStyleElement);
+
 }

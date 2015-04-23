@@ -121,7 +121,7 @@ public class FXLayerStylesPane extends FXPropertyPane{
             boolean hasValues = false;
             final List<FXLayerStylePane> valids = new ArrayList<>();
             for(FXLayerStylePane editor : entry.getValue()){
-                if(editor.init(candidate)){
+                if(editor.init(this.candidate,this.candidate.getStyle())){
                     hasValues = true;
                     valids.add(editor);
                 }

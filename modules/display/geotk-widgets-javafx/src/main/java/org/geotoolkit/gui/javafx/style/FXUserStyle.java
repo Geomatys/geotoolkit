@@ -82,9 +82,6 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
         menuItems.add(new SeparatorMenuItem());
         menuItems.add(new FXStyleTree.DuplicateAction());
         menuItems.add(new FXStyleTree.DeleteAction());
-        menuItems.add(new SeparatorMenuItem());
-        menuItems.add(new FXStyleTree.ExpandAction());
-        menuItems.add(new FXStyleTree.CollapseAction());
 
         FXUtilities.hideTableHeader(tree);
     }

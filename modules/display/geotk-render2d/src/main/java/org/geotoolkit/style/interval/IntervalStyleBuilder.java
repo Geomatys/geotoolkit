@@ -180,10 +180,12 @@ public class IntervalStyleBuilder extends AbstractTableModel{
     }
 
     public boolean isIntervalStyle(final MutableStyle style){
-
         if(style.featureTypeStyles().size() != 1) return false;
+        final MutableFeatureTypeStyle fts = style.featureTypeStyles().get(0);
+        return isIntervalStyle(fts);
+    }
 
-        MutableFeatureTypeStyle fts = style.featureTypeStyles().get(0);
+    public boolean isIntervalStyle(final MutableFeatureTypeStyle fts){
 
         if(fts.rules().isEmpty()) return false;
 
@@ -269,6 +271,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
         return true;
     }
+
 
     public FeatureMapLayer getLayer() {
         return layer;

@@ -89,6 +89,8 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
     @FXML protected BorderPane contentPane;
 
     private ObservableList<Object> menuItems;
+    private FXStyleTree.ShowClassifRangeAction showClassifRangeItem = new FXStyleTree.ShowClassifRangeAction();
+    private FXStyleTree.ShowClassifSingleAction showClassifSingleItem = new FXStyleTree.ShowClassifSingleAction();
     
     //current style element editor
     private TreeItem editorPath;
@@ -108,6 +110,8 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
     public boolean init(Object candidate) {
         if(!(candidate instanceof MapLayer)) return false;
         this.layer = (MapLayer) candidate;
+        showClassifRangeItem.setMapLayer(layer);
+        showClassifSingleItem.setMapLayer(layer);
         tree.setRoot(new FXStyleTree.StyleTreeItem(this.layer.getStyle()));
         tree.setPlaceholder(new Label(""));
         tree.setShowRoot(false);
@@ -213,6 +217,9 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
 
     public void initialize() {
         menuItems = FXCollections.observableArrayList();
+        menuItems.add(showClassifRangeItem);
+        menuItems.add(showClassifSingleItem);
+        menuItems.add(new SeparatorMenuItem());
         menuItems.add(new FXStyleTree.NewFTSAction());
         menuItems.add(new FXStyleTree.NewRuleAction());
         final List<FXStyleElementController> editors = FXStyleElementEditor.findEditorsForType(Symbolizer.class);
@@ -222,9 +229,6 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
         menuItems.add(new SeparatorMenuItem());
         menuItems.add(new FXStyleTree.DuplicateAction());
         menuItems.add(new FXStyleTree.DeleteAction());
-        menuItems.add(new SeparatorMenuItem());
-        menuItems.add(new FXStyleTree.ExpandAction());
-        menuItems.add(new FXStyleTree.CollapseAction());
 
         FXUtilities.hideTableHeader(tree);
     }

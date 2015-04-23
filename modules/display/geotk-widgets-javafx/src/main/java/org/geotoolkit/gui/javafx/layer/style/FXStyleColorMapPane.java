@@ -28,6 +28,7 @@ import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.gui.javafx.style.FXColorMap;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -114,7 +115,7 @@ public class FXStyleColorMapPane extends FXLayerStylePane {
     }
     
     @Override
-    public boolean init(Object candidate) {
+    public boolean init(MapLayer candidate, Object StyleElement) {
         if(!(candidate instanceof CoverageMapLayer)) return false;       
         
         layer = (CoverageMapLayer)candidate;

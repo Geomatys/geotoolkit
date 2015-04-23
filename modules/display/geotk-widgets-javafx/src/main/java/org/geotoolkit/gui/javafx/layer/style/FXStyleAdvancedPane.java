@@ -46,7 +46,7 @@ public class FXStyleAdvancedPane extends FXLayerStylePane {
     }
     
     @Override
-    public boolean init(Object candidate) {
+    public boolean init(MapLayer candidate, Object StyleElement) {
         if(!(candidate instanceof MapLayer)) return false;
         
         final MapLayer layer = (MapLayer) candidate;
