@@ -31,9 +31,9 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
+import org.geotoolkit.gui.javafx.crs.FXCRSButton;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.internal.GeotkFX;
@@ -57,6 +57,8 @@ public final class FXZoomToAction extends FXMapAction {
             
             final Alert alert = new Alert(Alert.AlertType.NONE);
             
+            final FXCRSButton crsButton = new FXCRSButton();
+            
             final GridPane grid = new GridPane();
             grid.getColumnConstraints().add(new ColumnConstraints());
             grid.getColumnConstraints().add(new ColumnConstraints());
@@ -75,16 +77,19 @@ public final class FXZoomToAction extends FXMapAction {
             grid.add(lbly, 0, 1);
             grid.add(fieldx, 1, 0);
             grid.add(fieldy, 1, 1);
+            grid.add(crsButton, 0, 2, 2, 1);
             
             final DialogPane pane = new DialogPane();
             pane.setContent(grid);
             pane.getButtonTypes().addAll(ButtonType.OK,ButtonType.CANCEL);
             alert.setDialogPane(pane);
             alert.setTitle(GeotkFX.getString(FXZoomToAction.class,"zoom_at"));
+            
             final Optional<ButtonType> res = alert.showAndWait();
             if(ButtonType.OK.equals(res.get())){
                 try {
-                    final CoordinateReferenceSystem navCRS = CommonCRS.WGS84.normalizedGeographic();
+//                    final CoordinateReferenceSystem navCRS = CommonCRS.WGS84.normalizedGeographic();
+                    final CoordinateReferenceSystem navCRS = crsButton.crsProperty().get();
                     final GeneralDirectPosition pos = new GeneralDirectPosition(navCRS);
                     pos.setOrdinate(0, Double.valueOf(fieldx.getText()));
                     pos.setOrdinate(1, Double.valueOf(fieldy.getText()));

@@ -30,22 +30,26 @@ public class FXNavigationBar extends ToolBar {
         getStylesheets().add("/org/geotoolkit/gui/javafx/buttonbar.css");
         
         final Button butAll = new FXZoomAllAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
-        final Button butRepaint = new FXRepaintAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
-        final Button butPrevious = new FXZoomPreviousAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
-        final Button butNext = new FXZoomNextAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
-        butAll.getStyleClass().add(LEFT);
-        butRepaint.getStyleClass().add(CENTER);
-        butPrevious.getStyleClass().add(CENTER);
-        butNext.getStyleClass().add(RIGHT);        
         final ToggleButton butIn = new FXZoomInAction(map).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
         final ToggleButton butOut = new FXZoomOutAction(map).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
         final ToggleButton butPan = new FXPanAction(map,false).createToggleButton(ActionUtils.ActionTextBehavior.HIDE);
         final Button butAt = new FXZoomToAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
+        final Button butRepaint = new FXRepaintAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
+        final Button butPrevious = new FXZoomPreviousAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
+        final Button butNext = new FXZoomNextAction(map).createButton(ActionUtils.ActionTextBehavior.HIDE);
+        
+        butAll.getStyleClass().add(LEFT);    
         butIn.getStyleClass().add(CENTER);
         butOut.getStyleClass().add(CENTER);
-        butPan.getStyleClass().add(CENTER);
+        butPan.getStyleClass().add(CENTER);  
         butAt.getStyleClass().add(CENTER);
-        final HBox hboxHandler = new HBox(butAll,butIn,butOut,butPan,butAt,butRepaint,butPrevious,butNext);
+        butRepaint.getStyleClass().add(CENTER);
+        butPrevious.getStyleClass().add(CENTER);
+        butNext.getStyleClass().add(RIGHT); 
+        
+        final HBox hboxHandler = new HBox(
+                butAll, butIn, butOut, butPan, 
+                butAt, butRepaint, butPrevious, butNext);
         
         getItems().add(hboxHandler);
         
