@@ -36,6 +36,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.image.Image;
@@ -142,24 +143,23 @@ public class FXStyleTree {
                 final MutableStyle style = (MutableStyle) newValue;
                 style.addListener(StyleTreeItem.this);
                 img.setImage(GeotkFX.ICON_STYLE);
+                setGraphic(img);
             } else if (newValue instanceof MutableFeatureTypeStyle) {
                 final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) newValue;
                 fts.addListener(StyleTreeItem.this);
                 img.setImage(ICON_GROUP);
+                setGraphic(img);
             } else if (newValue instanceof MutableRule) {
                 final MutableRule r = (MutableRule) newValue;
                 r.addListener(StyleTreeItem.this);
                 img.setImage(GeotkFX.ICON_RULE);
+                setGraphic(img);
             } else if (newValue instanceof Symbolizer) {
-                final Symbolizer symb = (Symbolizer) newValue;
-                final Dimension dim = DefaultGlyphService.glyphPreferredSize(symb, null, null);
-                final BufferedImage imge = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render(symb, new Rectangle(dim),imge.createGraphics(),null);
-                img.setImage(SwingFXUtils.toFXImage(imge, null));
+                //do nothing, the name column handle the graphic and label
+                setGraphic(null);
             }
             //lbl.setTextAlignment(TextAlignment.CENTER);
             //lbl.setContentDisplay(ContentDisplay.LEFT);
-            setGraphic(img);
         }
 
         private void updateChildren(CollectionChangeEvent event, int type){
@@ -393,32 +393,56 @@ public class FXStyleTree {
         }
     }
 
-    public static class NameColumn extends TreeTableColumn{
+    public static class NameColumn extends TreeTableColumn<Object,Object>{
 
         public NameColumn() {
-            setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Object, String>, ObservableValue<String>>() {
+            setCellValueFactory(new Callback<CellDataFeatures<Object, Object>, ObservableValue<Object>>() {
                 @Override
-                public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Object, String> param) {
-                    final Object obj = param.getValue().getValue();
-                    if(obj instanceof Style){
-                        ObservableStringValue beanProperty = (ObservableStringValue)FXUtilities.beanProperty(obj, "name", String.class);
-                        return placeholderBinding(beanProperty, GeotkFX.getString(FXStyleTree.class, "defaultStyleName"));
-                    }else if(obj instanceof FeatureTypeStyle){
-                        ObservableStringValue beanProperty = (ObservableStringValue)FXUtilities.beanProperty(obj, "name", String.class);
-                        return placeholderBinding(beanProperty, GeotkFX.getString(FXStyleTree.class, "defaultFTSName"));
-                    }else if(obj instanceof Rule){
-                        ObservableStringValue beanProperty = (ObservableStringValue)FXUtilities.beanProperty(obj, "name", String.class);
-                        return placeholderBinding(beanProperty, GeotkFX.getString(FXStyleTree.class, "defaultRuleName"));
-                    }else if(obj instanceof Symbolizer){
-                        return new SimpleObjectProperty<>(((Symbolizer)obj).getName());
-                    }else{
-                        return new SimpleObjectProperty<>("");
-                    }
+                public ObservableValue<Object> call(CellDataFeatures<Object, Object> param) {
+                    return new SimpleObjectProperty<>(param.getValue());
                 }
             });
-            setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
+            setCellFactory((TreeTableColumn<Object, Object> param) -> new SymbolizerCell());
             setPrefWidth(200);
             setMinWidth(120);
+        }
+
+    }
+
+    private static class SymbolizerCell extends TreeTableCell<Object, Object>{
+
+        private final ImageView glyphView = new ImageView();
+
+        public SymbolizerCell() {
+        }
+
+        @Override
+        protected void updateItem(Object obj, boolean empty) {
+            super.updateItem(obj, empty);
+            textProperty().unbind();
+            setText("");
+            setGraphic(null);
+            if(obj instanceof TreeItem) obj = ((TreeItem)obj).getValue();
+            if(empty || obj==null) return;
+
+            if(obj instanceof Style){
+                ObservableStringValue beanProperty = (ObservableStringValue)FXUtilities.beanProperty(obj, "name", String.class);
+                textProperty().bind(placeholderBinding(beanProperty, GeotkFX.getString(FXStyleTree.class, "defaultStyleName")));
+            }else if(obj instanceof FeatureTypeStyle){
+                ObservableStringValue beanProperty = (ObservableStringValue)FXUtilities.beanProperty(obj, "name", String.class);
+                textProperty().bind(placeholderBinding(beanProperty, GeotkFX.getString(FXStyleTree.class, "defaultFTSName")));
+            }else if(obj instanceof Rule){
+                ObservableStringValue beanProperty = (ObservableStringValue)FXUtilities.beanProperty(obj, "name", String.class);
+                textProperty().bind(placeholderBinding(beanProperty, GeotkFX.getString(FXStyleTree.class, "defaultRuleName")));
+            }else if(obj instanceof Symbolizer){
+                final Symbolizer symb = (Symbolizer) obj;
+                final Dimension dim = DefaultGlyphService.glyphPreferredSize(symb, null, null);
+                final BufferedImage imge = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+                DefaultGlyphService.render(symb, new Rectangle(dim),imge.createGraphics(),null);
+                glyphView.setImage(SwingFXUtils.toFXImage(imge, null));
+                setGraphic(glyphView);
+                setText(symb.getName());
+            }
         }
 
     }

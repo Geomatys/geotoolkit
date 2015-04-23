@@ -104,7 +104,7 @@ public class FXUserStyle extends FXStyleElementController<MutableStyle>{
         tree.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
         tree.setPlaceholder(new Label(""));
 
-        final TreeTableColumn<Object, String> col = new FXStyleTree.NameColumn();
+        final TreeTableColumn col = new FXStyleTree.NameColumn();
                 
         final ContextMenu menu = new ContextMenu();
         tree.setContextMenu(menu);

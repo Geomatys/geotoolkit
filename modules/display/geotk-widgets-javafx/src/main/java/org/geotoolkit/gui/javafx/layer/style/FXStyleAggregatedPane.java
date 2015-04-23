@@ -119,7 +119,7 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
         //this will cause the column width to fit the view area
         tree.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
 
-        final TreeTableColumn<Object, String> col = new FXStyleTree.NameColumn();
+        final TreeTableColumn col = new FXStyleTree.NameColumn();
                 
         final ContextMenu menu = new ContextMenu();
         tree.setContextMenu(menu);
