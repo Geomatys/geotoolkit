@@ -132,6 +132,17 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      */
     private static final int COLOR_TOLERANCE = 13;
 
+    /**
+     * Palette of black colors samples computed with {@link #COLOR_TOLERANCE}.
+     * Used in {@linkplain #removeBlackBorder(java.awt.image.WritableRenderedImage)}.
+     */
+    private static final double[][] BLACK_COLORS;
+    static {
+        List<double[]> blackColorsList = new ArrayList<>();
+        fillColorToleranceTable(0, 2, blackColorsList, new double[]{0, 0, 0, 255}, COLOR_TOLERANCE);
+        BLACK_COLORS = blackColorsList.toArray(new double[0][]);
+    }
+
     public DefaultRasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){
         super(service,symbol,context);
     }
@@ -767,18 +778,20 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
     /**
      * Remove black border of an ARGB image to replace them with transparent pixels.
-     * @param toFilter Image to ermove black border from.
+     * @param toFilter Image to remove black border from.
      */
     private static void removeBlackBorder(final WritableRenderedImage toFilter) {
-        final ArrayList<double[]> blackColors = new ArrayList<>();
-        fillColorToleranceTable(0, 2, blackColors, new double[]{0, 0, 0, 255}, COLOR_TOLERANCE);
-        final double[][] oldColors = blackColors.toArray(new double[0][]);
-                FloodFill.fill(toFilter, oldColors, new double[]{0d, 0d, 0d, 0d},
-                new java.awt.Point(0, 0),
-                new java.awt.Point(toFilter.getWidth() - 1, 0),
-                new java.awt.Point(toFilter.getWidth() - 1, toFilter.getHeight() - 1),
-                new java.awt.Point(0, toFilter.getHeight() - 1)
-        );
+        // remove black border only on image larger than 1x1 pixels
+        if (toFilter.getHeight() > 1 && toFilter.getWidth() > 1) {
+            FloodFill.fill(toFilter, BLACK_COLORS, new double[]{0d, 0d, 0d, 0d},
+                    new java.awt.Point(0, 0),
+                    new java.awt.Point(toFilter.getWidth() - 1, 0),
+                    new java.awt.Point(toFilter.getWidth() - 1, toFilter.getHeight() - 1),
+                    new java.awt.Point(0, toFilter.getHeight() - 1)
+            );
+        } else {
+            LOGGER.log(Level.FINER, "Ignoring black border removal, because image is too small (image < 1x1)");
+        }
     }
 
     private static void fillColorToleranceTable(int index, int maxIndex, List<double[]> container, double[] baseColor, int tolerance) {
