@@ -19,6 +19,8 @@ package org.geotoolkit.gui.javafx.render2d.navigation;
 
 import java.util.Optional;
 import java.util.logging.Level;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
@@ -31,6 +33,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import org.apache.sis.geometry.GeneralDirectPosition;
+import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.crs.FXCRSButton;
@@ -58,26 +61,38 @@ public final class FXZoomToAction extends FXMapAction {
             final Alert alert = new Alert(Alert.AlertType.NONE);
             
             final FXCRSButton crsButton = new FXCRSButton();
+            crsButton.crsProperty().set(CommonCRS.WGS84.normalizedGeographic());
             
             final GridPane grid = new GridPane();
             grid.getColumnConstraints().add(new ColumnConstraints());
             grid.getColumnConstraints().add(new ColumnConstraints());
             grid.getRowConstraints().add(new RowConstraints());
             grid.getRowConstraints().add(new RowConstraints());
+            final ColumnConstraints rc = new ColumnConstraints();
             grid.setHgap(10);
             grid.setVgap(10);
             
-            final Label lblx = new Label(GeotkFX.getString(this, "lon"));
-            final Label lbly = new Label(GeotkFX.getString(this, "lat"));
+            final Label lblx = new Label(crsButton.crsProperty().get().getCoordinateSystem().getAxis(0).getAbbreviation());
+            final Label lbly = new Label(crsButton.crsProperty().get().getCoordinateSystem().getAxis(1).getAbbreviation());
+            final Label lcrs = new Label(GeotkFX.getString(this, "crs"));
+            
+            crsButton.crsProperty().addListener(new ChangeListener<CoordinateReferenceSystem>() {
+                @Override
+                public void changed(ObservableValue<? extends CoordinateReferenceSystem> observable, CoordinateReferenceSystem oldValue, CoordinateReferenceSystem newValue) {
+                    lblx.setText(newValue.getCoordinateSystem().getAxis(0).getAbbreviation());
+                    lbly.setText(newValue.getCoordinateSystem().getAxis(1).getAbbreviation());
+                }
+            });
             
             final TextField fieldx = new TextField("0");
             final TextField fieldy = new TextField("0");
                         
             grid.add(lblx, 0, 0);
-            grid.add(lbly, 0, 1);
             grid.add(fieldx, 1, 0);
+            grid.add(lbly, 0, 1);
             grid.add(fieldy, 1, 1);
-            grid.add(crsButton, 0, 2, 2, 1);
+            grid.add(lcrs, 0, 2);
+            grid.add(crsButton, 1, 2);
             
             final DialogPane pane = new DialogPane();
             pane.setContent(grid);
@@ -88,7 +103,6 @@ public final class FXZoomToAction extends FXMapAction {
             final Optional<ButtonType> res = alert.showAndWait();
             if(ButtonType.OK.equals(res.get())){
                 try {
-//                    final CoordinateReferenceSystem navCRS = CommonCRS.WGS84.normalizedGeographic();
                     final CoordinateReferenceSystem navCRS = crsButton.crsProperty().get();
                     final GeneralDirectPosition pos = new GeneralDirectPosition(navCRS);
                     pos.setOrdinate(0, Double.valueOf(fieldx.getText()));
