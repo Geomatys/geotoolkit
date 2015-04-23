@@ -88,9 +88,7 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
     @FXML protected TreeTableView tree;
     @FXML protected BorderPane contentPane;
 
-    private ObservableList<Object> menuItems;
-    private FXStyleTree.ShowClassifRangeAction showClassifRangeItem = new FXStyleTree.ShowClassifRangeAction();
-    private FXStyleTree.ShowClassifSingleAction showClassifSingleItem = new FXStyleTree.ShowClassifSingleAction();
+    protected final ObservableList<Object> menuItems = FXCollections.observableArrayList();;
     
     //current style element editor
     private TreeItem editorPath;
@@ -98,7 +96,7 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
     private MapLayer layer;
 
     public FXStyleAggregatedPane() {
-        GeotkFX.loadJRXML(this,this.getClass());
+        GeotkFX.loadJRXML(this,FXStyleAggregatedPane.class);
     }
 
     @Override
@@ -110,8 +108,6 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
     public boolean init(Object candidate) {
         if(!(candidate instanceof MapLayer)) return false;
         this.layer = (MapLayer) candidate;
-        showClassifRangeItem.setMapLayer(layer);
-        showClassifSingleItem.setMapLayer(layer);
         tree.setRoot(new FXStyleTree.StyleTreeItem(this.layer.getStyle()));
         tree.setPlaceholder(new Label(""));
         tree.setShowRoot(false);
@@ -143,6 +139,10 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
                 }
                 for(int i=0,n=menuItems.size();i<n;i++){
                     final Object candidate = menuItems.get(i);
+                    if(candidate instanceof FXStyleTree.ShowStylePaneAction){
+                        ((FXStyleTree.ShowStylePaneAction)candidate).setMapLayer(layer);
+                    }
+
                     if(candidate instanceof TreeMenuItem){
                         final MenuItem mc = ((TreeMenuItem)candidate).init(selection);
                         if(mc!=null) items.add(mc);
@@ -216,9 +216,8 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
     }
 
     public void initialize() {
-        menuItems = FXCollections.observableArrayList();
-        menuItems.add(showClassifRangeItem);
-        menuItems.add(showClassifSingleItem);
+        menuItems.add(new FXStyleTree.ShowStylePaneAction(new FXStyleClassifRangePane(),GeotkFX.getString(FXStyleClassifRangePane.class,"title")));
+        menuItems.add(new FXStyleTree.ShowStylePaneAction(new FXStyleClassifSinglePane(),GeotkFX.getString(FXStyleClassifSinglePane.class,"title")));
         menuItems.add(new SeparatorMenuItem());
         menuItems.add(new FXStyleTree.NewFTSAction());
         menuItems.add(new FXStyleTree.NewRuleAction());

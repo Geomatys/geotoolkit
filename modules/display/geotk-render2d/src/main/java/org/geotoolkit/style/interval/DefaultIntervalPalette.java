@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009 Geomatys
+ *    (C) 2009-2015 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -62,6 +62,10 @@ public class DefaultIntervalPalette implements IntervalPalette{
 
         this.fractions = fractions;
     }
+
+    public int[] getARGB() {
+        return ARGB;
+    }
     
     @Override
     public List<Entry<Double, Color>> getSteps() {
@@ -73,37 +77,47 @@ public class DefaultIntervalPalette implements IntervalPalette{
     }
 
     @Override
-    public void render(final Graphics2D g, final Rectangle rectangle) {
+    public void render(final Graphics2D g, final Rectangle rectangle, boolean interpolate) {
 
         final float[] fractions = new float[ARGB.length];
         final Color[] colors = new Color[ARGB.length];
-        final MultipleGradientPaint.CycleMethod cycleMethod = MultipleGradientPaint.CycleMethod.NO_CYCLE;
 
         for(int i=0;i<ARGB.length;i++){
             fractions[i] = (float)i/(ARGB.length-1);
             colors[i] = new Color(ARGB[i]);
         }
 
-        final LinearGradientPaint paint = new LinearGradientPaint(
-            new Point2D.Double(rectangle.getMinX(),rectangle.getMinY()),
-            new Point2D.Double(rectangle.getMaxX(),rectangle.getMinY()),
-            fractions,
-            colors,
-            cycleMethod
-        );
+        if(interpolate){
+            final MultipleGradientPaint.CycleMethod cycleMethod = MultipleGradientPaint.CycleMethod.NO_CYCLE;
+            final LinearGradientPaint paint = new LinearGradientPaint(
+                new Point2D.Double(rectangle.getMinX(),rectangle.getMinY()),
+                new Point2D.Double(rectangle.getMaxX(),rectangle.getMinY()),
+                fractions,
+                colors,
+                cycleMethod
+            );
 
-        g.setPaint(paint);
-        g.fill(rectangle);
-        
-        g.setColor(Color.WHITE);
-        final Font font = new Font("Dialog", Font.BOLD, 13);
-        final FontMetrics fm = g.getFontMetrics(font);
-        final String text = NumberFormat.getNumberInstance().format(this.fractions[0])
-                +"..."+NumberFormat.getNumberInstance().format(this.fractions[this.fractions.length-1]);
-        final Rectangle2D rect = fm.getStringBounds(text, g);
-        g.drawString(text, 
-                (float)( (rectangle.getWidth()-rect.getWidth())/2), 
-                (float)(rectangle.getHeight() - (rectangle.getHeight()-rect.getHeight())/2) );
+            g.setPaint(paint);
+            g.fill(rectangle);
+
+            g.setColor(Color.WHITE);
+            final Font font = new Font("Dialog", Font.BOLD, 13);
+            final FontMetrics fm = g.getFontMetrics(font);
+            final String text = NumberFormat.getNumberInstance().format(this.fractions[0])
+                    +"..."+NumberFormat.getNumberInstance().format(this.fractions[this.fractions.length-1]);
+            final Rectangle2D rect = fm.getStringBounds(text, g);
+            g.drawString(text,
+                    (float)( (rectangle.getWidth()-rect.getWidth())/2),
+                    (float)(rectangle.getHeight() - (rectangle.getHeight()-rect.getHeight())/2) );
+        }else{
+            double step = rectangle.getWidth()/colors.length;
+            double start = rectangle.getX();
+            for(int i=0;i<colors.length;i++){
+                g.setColor(colors[i]);
+                g.fill(new Rectangle2D.Double(start, rectangle.getY(), step, rectangle.getHeight()));
+                start += step;
+            }
+        }
         
     }
 

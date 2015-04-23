@@ -406,7 +406,7 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
                 Dimension d = PaletteRenderer.this.getSize();
                 Rectangle rect = new Rectangle(d);
                 rect.grow(-2, -2);
-                palette.render((Graphics2D) g, rect);
+                palette.render((Graphics2D) g, rect,false);
             }
 
         }

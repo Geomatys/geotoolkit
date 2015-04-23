@@ -72,7 +72,7 @@ public class PaletteCellRenderer extends DefaultListCellRenderer {
                 }
             } else if (paletteValue instanceof Palette) {
                 final Palette palette = (Palette) paletteValue;
-                palette.render((Graphics2D) g, rect);
+                palette.render((Graphics2D) g, rect,true);
             }
         }
     }

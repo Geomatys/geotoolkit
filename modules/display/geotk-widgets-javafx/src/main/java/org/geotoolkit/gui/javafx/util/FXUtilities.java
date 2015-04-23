@@ -220,28 +220,32 @@ public final class FXUtilities {
     }
     
     public static Image createPalettePreview(Object paletteValue, Dimension size){
+        return createPalettePreview(paletteValue, size, true);
+    }
+
+    public static Image createPalettePreview(Object paletteValue, Dimension size, boolean interpolate){
         final BufferedImage image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = image.createGraphics();
-        
+
         if (paletteValue != null) {
             final Rectangle rect = new Rectangle(size);
             rect.grow(-2, -2);
-            
+
             if (paletteValue instanceof String) {
                 try {
                     final String paletteName = String.valueOf(paletteValue);
                     final org.geotoolkit.image.io.Palette palette = PF.getPalette(paletteName, 10);
-                    final RenderedImage img = palette.getLegend(rect.getSize());
+                    final RenderedImage img = interpolate ? palette.getLegend(rect.getSize()) : palette.getImage(rect.getSize());
                     ((Graphics2D) g).drawRenderedImage(img, new AffineTransform(1,0,0,1,2,2));
                 } catch (IOException ex) {
                     Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
                 }
             } else if (paletteValue instanceof Palette) {
                 final Palette palette = (Palette) paletteValue;
-                palette.render((Graphics2D) g, rect);
+                palette.render((Graphics2D) g, rect, interpolate);
             }
         }
-        
+
         return SwingFXUtils.toFXImage(image, null);
     }
     

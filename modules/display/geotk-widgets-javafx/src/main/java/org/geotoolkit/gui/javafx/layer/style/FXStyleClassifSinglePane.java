@@ -26,12 +26,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.logging.Level;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -75,7 +77,9 @@ import org.geotoolkit.gui.javafx.layer.FXPropertyPane;
 import org.geotoolkit.gui.javafx.style.FXPaletteCell;
 import org.geotoolkit.gui.javafx.util.ButtonTableCell;
 import org.geotoolkit.gui.javafx.util.FXDeleteTableColumn;
+import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -83,8 +87,10 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.style.interval.DefaultIntervalPalette;
 import org.geotoolkit.style.interval.DefaultRandomPalette;
 import org.geotoolkit.style.interval.IntervalStyleBuilder;
+import org.geotoolkit.style.interval.Palette;
 import org.geotoolkit.style.interval.RandomPalette;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -111,15 +117,34 @@ import org.opengis.style.Symbolizer;
 public class FXStyleClassifSinglePane extends FXLayerStylePane {
         
     private static final Dimension GLYPH_DIMENSION = new Dimension(30, 20);
+    private static final RandomPalette RANDOM_PALETTE = new DefaultRandomPalette();
+    private static final PaletteFactory PF = PaletteFactory.getDefault();
+    private static final List<Palette> PALETTES;
+
+    static{
+        PALETTES = new ArrayList<>();
+        final Set<String> paletteNames = PF.getAvailableNames();
+
+        PALETTES.add(RANDOM_PALETTE);
+        for (String palName : paletteNames) {
+            try {
+                final Color[] colors = PF.getColors(palName);
+                if(colors.length>3){
+                    PALETTES.add(new DefaultIntervalPalette(colors));
+                }
+            } catch (IOException ex) {
+                Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+    }
 
     @FXML private ComboBox<PropertyName> uiProperty;
     @FXML private CheckBox uiOther;
     @FXML private TableView<MutableRule> uiTable;
-    @FXML private ComboBox<Object> uiPalette;
+    @FXML private ComboBox<Palette> uiPalette;
     @FXML private SplitMenuButton uiTemplate;
     
     private FeatureMapLayer layer;
-    private final RandomPalette palette = new DefaultRandomPalette();
     private Symbolizer template;
     //this is the target style element where we must generate the rules
     //it can be a MutableStyle or a MutableFeatureTypeStyle
@@ -147,7 +172,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         final Optional<String> str = Dialogs.create().message(GeotkFX.getString(FXStyleClassifSinglePane.class,"newvalue")).showTextInput();
         if(str.get()==null)return;
         final String val = str.get();
-        final MutableRule r = createRule(uiProperty.getSelectionModel().getSelectedItem(), val);
+        final MutableRule r = createRule(uiProperty.getSelectionModel().getSelectedItem(), val,uiTable.getItems().size());
         uiTable.getItems().add(r);
     }
 
@@ -205,9 +230,9 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
      * Called by FXMLLoader after creating controller.
      */
     public void initialize(){
-        uiPalette.setItems(FXCollections.observableArrayList((Object)palette));        
-        uiPalette.setCellFactory((ListView<Object> param) -> new FXPaletteCell());
-        uiPalette.setButtonCell((new FXPaletteCell()));
+        uiPalette.setItems(FXCollections.observableArrayList(PALETTES));
+        uiPalette.setCellFactory((ListView<Palette> param) -> new FXPaletteCell(false));
+        uiPalette.setButtonCell((new FXPaletteCell(false)));
         uiPalette.setEditable(false);
         uiProperty.setCellFactory((ListView<PropertyName> param) -> new FXPropertyCell());
         uiProperty.setButtonCell((new FXPropertyCell()));
@@ -455,13 +480,15 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         final MutableStyleFactory sf = GeotkFX.getStyleFactory();
         final ObservableList<MutableRule> rules = FXCollections.observableArrayList();
 
+        int idx = 0;
         for(Object obj : differentValues){
-            rules.add(createRule(property, obj));
+            rules.add(createRule(property, obj,idx));
+            idx++;
         }
 
         //generate the other rule if asked
         if(other){
-            MutableRule r = sf.rule(createSymbolizer());
+            MutableRule r = sf.rule(createSymbolizer(idx));
             r.setElseFilter(true);
             r.setDescription(sf.description("other", "other"));
             rules.add(r);
@@ -470,8 +497,15 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         return rules;
     }
     
-    protected Symbolizer createSymbolizer(){
-        return derivateSymbolizer(template, palette.next());
+    protected Symbolizer createSymbolizer(int idx){
+        final Palette palette = uiPalette.getValue();
+        if(palette instanceof DefaultIntervalPalette){
+            final DefaultIntervalPalette ip = (DefaultIntervalPalette) palette;
+            final int[] argb = ip.getARGB();
+            idx %= argb.length;
+            return derivateSymbolizer(template, new Color(argb[idx]));
+        }
+        return derivateSymbolizer(template, RANDOM_PALETTE.next());
     }
     
     /**
@@ -516,11 +550,11 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
      * @param obj
      * @return
      */
-    protected MutableRule createRule(final PropertyName property, final Object obj){
+    protected MutableRule createRule(final PropertyName property, final Object obj, int idx){
         final MutableStyleFactory sf = GeotkFX.getStyleFactory();
         final FilterFactory ff = GeotkFX.getFilterFactory();
         
-        final MutableRule r = sf.rule(createSymbolizer());
+        final MutableRule r = sf.rule(createSymbolizer(idx));
         r.setFilter(ff.equals(property, ff.literal(obj)));
         r.setDescription(sf.description(obj.toString(), obj.toString()));
         r.setName(obj.toString());

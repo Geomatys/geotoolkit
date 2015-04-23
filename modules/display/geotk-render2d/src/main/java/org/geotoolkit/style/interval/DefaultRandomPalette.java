@@ -38,45 +38,54 @@ import java.util.Map.Entry;
  */
 public class DefaultRandomPalette implements RandomPalette{
 
+    private static final float[] fractions = new float[32];
+    private static final Color[] colors = new Color[32];
+    static {
+        for(int i=0;i<colors.length;i++){
+            fractions[i] = (float)i / (colors.length-1);
+            colors[i] = new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f);
+        }
+    }
+
     @Override
     public Color next() {
         return new Color((float)Math.random(), (float)Math.random(), (float)Math.random(), 1f);
     }
 
     @Override
-    public void render(final Graphics2D g, final Rectangle rectangle) {
+    public void render(final Graphics2D g, final Rectangle rectangle, boolean interpolate) {
 
-        final float[] fractions = new float[3];
-        final Color[] colors = new Color[3];
-        final MultipleGradientPaint.CycleMethod cycleMethod = MultipleGradientPaint.CycleMethod.NO_CYCLE;
-        final MultipleGradientPaint.ColorSpaceType colorSpace = MultipleGradientPaint.ColorSpaceType.SRGB;
+        if(interpolate){
 
-        fractions[0] = 0.0f;
-        fractions[1] = 0.5f;
-        fractions[2] = 1f;
+            final MultipleGradientPaint.CycleMethod cycleMethod = MultipleGradientPaint.CycleMethod.NO_CYCLE;
+            final MultipleGradientPaint.ColorSpaceType colorSpace = MultipleGradientPaint.ColorSpaceType.SRGB;
 
-        colors[0] = Color.RED;
-        colors[1] = Color.GREEN;
-        colors[2] = Color.BLUE;
+            final LinearGradientPaint paint = new LinearGradientPaint(
+                new Point2D.Double(rectangle.getMinX(),rectangle.getMinY()),
+                new Point2D.Double(rectangle.getMaxX(),rectangle.getMinY()),
+                fractions,
+                colors,
+                cycleMethod
+            );
+            g.setPaint(paint);
+            g.fill(rectangle);
+        }else{
+            double step = rectangle.getWidth()/colors.length;
+            double start = rectangle.getX();
+            for(int i=0;i<colors.length;i++){
+                g.setColor(colors[i]);
+                g.fill(new Rectangle2D.Double(start, rectangle.getY(), step, rectangle.getHeight()));
+                start += step;
+            }
+        }
 
-        final LinearGradientPaint paint = new LinearGradientPaint(
-            new Point2D.Double(rectangle.getMinX(),rectangle.getMinY()),
-            new Point2D.Double(rectangle.getMaxX(),rectangle.getMinY()),
-            fractions,
-            colors,
-            cycleMethod
-        );
-        
-        g.setPaint(paint);
-        g.fill(rectangle);
-        
         g.setColor(Color.WHITE);
         final Font font = new Font("Dialog", Font.BOLD, 13);
         final FontMetrics fm = g.getFontMetrics(font);
         final String text = "Random";
         final Rectangle2D rect = fm.getStringBounds(text, g);
-        g.drawString(text, 
-                (float)( (rectangle.getWidth()-rect.getWidth())/2), 
+        g.drawString(text,
+                (float)( (rectangle.getWidth()-rect.getWidth())/2),
                 (float)(rectangle.getHeight() - (rectangle.getHeight()-rect.getHeight())/2) );
 
     }

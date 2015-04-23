@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.javafx.style;
 
 import java.awt.Dimension;
+import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.ImageView;
@@ -26,10 +27,18 @@ import org.geotoolkit.gui.javafx.util.FXUtilities;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXPaletteCell extends ListCell<Object>{
+public class FXPaletteCell extends ListCell{
+
+    private final boolean interpolate;
 
     public FXPaletteCell() {
+        this(true);
+    }
+
+    public FXPaletteCell(boolean interpolate) {
         setContentDisplay(ContentDisplay.CENTER);
+        setAlignment(Pos.CENTER);
+        this.interpolate = interpolate;
     }
     
     @Override
@@ -37,7 +46,7 @@ public class FXPaletteCell extends ListCell<Object>{
         super.updateItem(item, empty);
         setText(null);
         if(item!=null){
-            setGraphic(new ImageView(FXUtilities.createPalettePreview(item, new Dimension(200,20))));
+            setGraphic(new ImageView(FXUtilities.createPalettePreview(item, new Dimension(200,20),interpolate)));
         }else{
             setGraphic(null);
         }         
