@@ -19,6 +19,7 @@ package org.geotoolkit.gui.javafx.util;
 
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -39,12 +40,12 @@ import javafx.scene.layout.Border;
  */
 public class ButtonTableCell<S,T> extends TableCell<S,T> {
     
-    private final Function<T,Boolean> visiblePredicate;
+    private final Predicate<T> visiblePredicate;
     protected final Button button = new Button();
         
     public ButtonTableCell(final boolean decorated, 
             final Node graphic, 
-            final Function<T,Boolean> visiblePredicate, 
+            final Predicate<T> visiblePredicate, 
             final Function<T,T> onAction){
         
         this.visiblePredicate = visiblePredicate;
@@ -109,7 +110,7 @@ public class ButtonTableCell<S,T> extends TableCell<S,T> {
         super.updateItem(item, empty);
         button.setVisible(!empty);
         if(visiblePredicate!=null && !empty){
-            final boolean visible = visiblePredicate.apply(getItem());
+            final boolean visible = visiblePredicate.test(getItem());
             setVisible(visible);
         }
     }
