@@ -22,6 +22,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.ToggleGroup;
@@ -107,34 +108,32 @@ public class FXRasterSymbolizer extends FXStyleElementController<RasterSymbolize
 
     @FXML
     private void updateColorChoice(ActionEvent event) {
-        if(uiChoiceColorNone.isSelected()){
-            Platform.runLater(() -> {
-                uiColorPane.setCenter(null);
-                uiColorPane.autosize();
-                uiTabs.autosize();
-                if(updating) return;
-                value.set(create());
-                });
-        }else if(uiChoiceColorRGB.isSelected()){
-            Platform.runLater(() -> {
-                uiColorPane.setCenter(uiChannelSelection);
-                uiColorPane.autosize();
-                uiTabs.autosize();
-                if(updating) return;
-                value.set(create());
-                });
+        final Node center;
+        if(uiChoiceColorRGB.isSelected()){
+            center = uiChannelSelection;
+            if(uiChannelSelection.valueProperty().get()==null){
+                final boolean old = updating;
+                updating=true;
+                uiChannelSelection.valueProperty().set(uiChannelSelection.newValue());
+                updating=old;
+            }
         }else if(uiChoiceColorMap.isSelected()){
-            Platform.runLater(() -> {
-                uiColorPane.setCenter(uiColorMap);
-                if(uiColorMap.valueProperty().get()==null){
-                    uiColorMap.valueProperty().set(uiColorMap.newValue());
-                }
-                uiColorPane.autosize();
-                uiTabs.autosize();
-                if(updating) return;
-                value.set(create());
-                });
+            center = uiColorMap;
+            if(uiColorMap.valueProperty().get()==null){
+                final boolean old = updating;
+                updating=true;
+                uiColorMap.valueProperty().set(uiColorMap.newValue());
+                updating=old;
+            }
+        }else{
+            center = null;
         }
+
+        Platform.runLater(() -> {
+            uiColorPane.setCenter(center);
+            if(updating) return;
+            value.set(create());
+        });
     }
 
     @FXML
@@ -237,7 +236,7 @@ public class FXRasterSymbolizer extends FXStyleElementController<RasterSymbolize
         uiReliefShading.valueProperty().set(rs.getShadedRelief());
         uiContrast.valueProperty().set(rs.getContrastEnhancement());
 
-        if(rs.getColorMap()!=null && rs.getColorMap().getFunction()!=null){
+        if(rs.getColorMap()!=null){
             uiChoiceColorMap.setSelected(true);
             uiColorMap.valueProperty().set(rs.getColorMap());
         }else if(rs.getChannelSelection()!=null){

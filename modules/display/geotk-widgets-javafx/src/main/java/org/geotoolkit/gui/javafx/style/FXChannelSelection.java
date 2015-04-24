@@ -125,13 +125,16 @@ public class FXChannelSelection extends FXStyleElementController<ChannelSelectio
     protected void updateEditor(ChannelSelection styleElement) {
         
         if(styleElement == null || (styleElement.getGrayChannel()==null && styleElement.getRGBChannels()==null) ){
+            uiNone.setSelected(true);
             uiGray.valueProperty().set(null);
             uiRed.valueProperty().set(null);
             uiGreen.valueProperty().set(null);
             uiBlue.valueProperty().set(null);
         }else if(styleElement.getGrayChannel()!=null){
+            uiSingle.setSelected(true);
             uiGray.valueProperty().setValue(styleElement.getGrayChannel());
         }else if(styleElement.getRGBChannels()!=null){
+            uiRGB.setSelected(true);
             uiRed.valueProperty().setValue(styleElement.getRGBChannels()[0]);
             uiGreen.valueProperty().setValue(styleElement.getRGBChannels()[1]);
             uiBlue.valueProperty().setValue(styleElement.getRGBChannels()[2]);

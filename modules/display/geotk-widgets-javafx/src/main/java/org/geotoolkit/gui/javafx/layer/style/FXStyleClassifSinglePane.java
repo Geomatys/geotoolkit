@@ -127,11 +127,9 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
 
         PALETTES.add(RANDOM_PALETTE);
         for (String palName : paletteNames) {
+            if("pastel".equals(palName) || "bright".equals(palName) || "dark".equals(palName))
             try {
-                final Color[] colors = PF.getColors(palName);
-                if(colors.length>3){
-                    PALETTES.add(new DefaultIntervalPalette(colors));
-                }
+                PALETTES.add(new DefaultIntervalPalette(PF.getColors(palName)));
             } catch (IOException ex) {
                 Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
             }

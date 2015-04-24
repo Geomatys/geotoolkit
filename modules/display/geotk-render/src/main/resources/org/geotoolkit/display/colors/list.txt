@@ -1,0 +1,8 @@
+#
+# List of *.pal files, sorted in the order
+# to make them appear in GUI combo box.
+#
+
+pastel
+bright
+dark

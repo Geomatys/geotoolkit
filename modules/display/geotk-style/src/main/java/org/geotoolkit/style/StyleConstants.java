@@ -26,6 +26,10 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.style.function.DefaultInterpolate;
+import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.style.function.Method;
+import org.geotoolkit.style.function.Mode;
 
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
@@ -330,7 +334,7 @@ public final class StyleConstants {
         final SelectedChannelType gray = new DefaultSelectedChannelType("0", DEFAULT_CONTRAST_ENHANCEMENT);
         DEFAULT_RASTER_CHANNEL_GRAY = new DefaultChannelSelection(gray);
         DEFAULT_RASTER_OVERLAP = OverlapBehavior.LATEST_ON_TOP;
-        DEFAULT_RASTER_COLORMAP = new DefaultColorMap( null);
+        DEFAULT_RASTER_COLORMAP = new DefaultColorMap(new DefaultInterpolate(null, new ArrayList<InterpolationPoint>(), Method.COLOR, Mode.LINEAR, null));
         DEFAULT_RASTER_OUTLINE = null;
         
         DEFAULT_FALLBACK = SF.literal(Color.RED);
@@ -377,7 +381,7 @@ public final class StyleConstants {
                 DEFAULT_RASTER_OPACITY,
                 null,
                 DEFAULT_RASTER_OVERLAP,
-                DEFAULT_RASTER_COLORMAP,
+                null,
                 DEFAULT_CONTRAST_ENHANCEMENT,
                 DEFAULT_SHADED_RELIEF,
                 DEFAULT_RASTER_OUTLINE,
