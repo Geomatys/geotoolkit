@@ -26,8 +26,8 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 
 /**
@@ -65,7 +65,9 @@ public class GenericFilterFeatureIterator<R extends FeatureIterator> implements 
             next = null;
             return f;
         } else {
-            throw new NoSuchElementException("No such Feature exsists");
+            //if it's a writer, we switches to append mode
+            //otherwise the iterator will raise an error
+            return iterator.next();
         }
     }
 

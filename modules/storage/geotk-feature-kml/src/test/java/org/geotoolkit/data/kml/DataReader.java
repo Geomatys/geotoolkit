@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.kml;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ import org.apache.sis.util.logging.Logging;
  * @author Samuel Andrés
  * @module pending
  */
-public class DataReader extends StaxStreamReader implements KmlExtensionReader{
+public class DataReader extends StaxStreamReader implements KmlExtensionReader {
 
     private static final String URI_DATA = "http://www.sandres.com";
     public Map<String, List<String>> complexTable;
@@ -50,26 +49,11 @@ public class DataReader extends StaxStreamReader implements KmlExtensionReader{
 //        initSimpleTable();
     }
 
-    /**
-     * <p>Set input (use KML 2.2).</p>
-     *
-     * @param input
-     * @throws IOException
-     * @throws XMLStreamException
-     */
-    @Override
-    public void setInput(Object input)
-            throws IOException, XMLStreamException {
-        super.setInput(input);
-    }
-
-    public List<String> read(){
+    public List<String> read() {
         List<String> root = null;
         try {
-
             while (reader.hasNext()) {
                 switch (reader.next()) {
-
                     case XMLStreamConstants.START_ELEMENT:
                         final String eName = reader.getLocalName();
                         final String eUri = reader.getNamespaceURI();
@@ -88,21 +72,9 @@ public class DataReader extends StaxStreamReader implements KmlExtensionReader{
         return root;
     }
 
-    /**
-     *
-     * @return
-     * @throws XMLStreamException
-     * @throws KmlException
-     * @throws URISyntaxException
-     */
-    private List<String> readRacine()
-            throws XMLStreamException, KmlException, URISyntaxException {
-
-        List<String> elements = new ArrayList<String>();
-
-        boucle:
-        while (reader.hasNext()) {
-
+    private List<String> readRacine() throws XMLStreamException, KmlException, URISyntaxException {
+        List<String> elements = new ArrayList<>();
+boucle: while (reader.hasNext()) {
             switch (reader.next()) {
                 case XMLStreamConstants.START_ELEMENT:
                     final String eName = reader.getLocalName();
@@ -123,48 +95,38 @@ public class DataReader extends StaxStreamReader implements KmlExtensionReader{
                     break;
             }
         }
-
         return elements;
     }
 
-    /**
-     *
-     * @return
-     * @throws XMLStreamException
-     * @throws KmlException
-     * @throws URISyntaxException
-     */
-    public String readElement()
-            throws XMLStreamException, KmlException, URISyntaxException {
-
+    public String readElement() throws XMLStreamException, KmlException, URISyntaxException {
         return reader.getElementText();
-
     }
 
     @Override
     public boolean canHandleComplexExtension(String containingUri,
-            String containingTag, String contentsUri, String contentsTag) {
+            String containingTag, String contentsUri, String contentsTag)
+    {
         return false;
     }
 
     @Override
     public boolean canHandleSimpleExtension(String containingUri,
-            String containingTag, String contentsUri, String contentsTag) {
-        return (("racine".equals(contentsTag))
-                || ("element".equals(contentsTag)));
+            String containingTag, String contentsUri, String contentsTag)
+    {
+        return (("racine".equals(contentsTag)) || ("element".equals(contentsTag)));
     }
 
     @Override
     public Entry<Object, Names> readExtensionElement(String containingUri,
             String containingTag, String contentsUri, String contentsTag)
-            throws XMLStreamException, KmlException, URISyntaxException {
+            throws XMLStreamException, KmlException, URISyntaxException
+    {
         Object object = null;
-
-        if("racine".equals(contentsTag)){
-            object = this.readRacine();
+        if ("racine".equals(contentsTag)) {
+            object = readRacine();
         } else if ("element".equals(contentsTag)){
-            object = this.readElement();
+            object = readElement();
         }
-        return new SimpleEntry<Object, Names>(object, null);
+        return new SimpleEntry<>(object, null);
     }
 }

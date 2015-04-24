@@ -16,13 +16,12 @@
  */
 package org.geotoolkit.data.kml;
 
-import org.geotoolkit.feature.FeatureUtilities;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -44,9 +43,8 @@ import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -59,31 +57,23 @@ public class StyleTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/style.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public StyleTest() {
-    }
 
     @Test
     public void styleReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
+        final Feature document;
+        {
+            final KmlReader reader = new KmlReader();
+            reader.setInput(new File(pathToTestFile));
+            final Kml kmlObjects = reader.read();
+            reader.dispose();
+            document = kmlObjects.getAbstractFeature();
+        }
+        assertEquals(KmlModelConstants.TYPE_DOCUMENT, document.getType());
 
-        final KmlReader reader = new KmlReader();
-        reader.setInput(new File(pathToTestFile));
-        final Kml kmlObjects = reader.read();
-        reader.dispose();
-
-        final Feature document = kmlObjects.getAbstractFeature();
-        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
-
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).size());
-
-        Iterator i = document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
-
-        if (i.hasNext()) {
-            Object object = ((Property) i.next()).getValue();
-
-            assertTrue(object instanceof Style);
-            Style style = (Style) object;
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_STYLE_SELECTOR)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        {
+            Style style = (Style) i.next();
             assertEquals("myDefaultStyles", style.getIdAttributes().getId());
 
             IconStyle iconStyle = style.getIconStyle();
@@ -104,26 +94,23 @@ public class StyleTest extends org.geotoolkit.test.TestBase {
             assertEquals(new Color(170, 170, 127, 127), polyStyle.getColor());
             assertEquals(ColorMode.RANDOM, polyStyle.getColorMode());
         }
+        assertFalse("Expected exactly one element.", i.hasNext());
 
-        assertEquals(2, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
-
-        i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-
-        if (i.hasNext()) {
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark0 = (Feature) object;
-            assertEquals("Google Earth - New Polygon", placemark0.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            assertEquals("Here is some descriptive text", placemark0.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()).getValue());
-            assertEquals(new URI("#myDefaultStyles"), placemark0.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue());
+        i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        {
+            Feature placemark = (Feature) i.next();
+            assertEquals("Google Earth - New Polygon",    placemark.getPropertyValue(KmlConstants.TAG_NAME));
+            assertEquals("Here is some descriptive text", placemark.getPropertyValue(KmlConstants.TAG_DESCRIPTION));
+            assertEquals(new URI("#myDefaultStyles"),     placemark.getPropertyValue(KmlConstants.TAG_STYLE_URL));
         }
 
-        if (i.hasNext()) {
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark1 = (Feature) object;
-            assertEquals("Google Earth - New Path", placemark1.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            assertEquals(new URI("#myDefaultStyles"), placemark1.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue());
+        assertTrue("Expected at least 2 elements.", i.hasNext());
+        {
+            Feature placemark = (Feature) i.next();
+            assertEquals("Google Earth - New Path",     placemark.getPropertyValue(KmlConstants.TAG_NAME));
+            assertEquals(new URI("#myDefaultStyles"),   placemark.getPropertyValue(KmlConstants.TAG_STYLE_URL));
+            assertFalse("Expected exactly 2 elements.", i.hasNext());
         }
     }
 
@@ -132,16 +119,13 @@ public class StyleTest extends org.geotoolkit.test.TestBase {
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Feature placemark0 = kmlFactory.createPlacemark();
-        final Collection<Property> placemark0Properties = placemark0.getProperties();
-        placemark0Properties.add(FF.createAttribute("Google Earth - New Polygon", KmlModelConstants.ATT_NAME, null));
-        placemark0Properties.add(FF.createAttribute("Here is some descriptive text", KmlModelConstants.ATT_DESCRIPTION, null));
-        placemark0Properties.add(FF.createAttribute(new URI("#myDefaultStyles"), KmlModelConstants.ATT_STYLE_URL, null));
+        placemark0.setPropertyValue(KmlConstants.TAG_NAME, "Google Earth - New Polygon");
+        placemark0.setPropertyValue(KmlConstants.TAG_DESCRIPTION, "Here is some descriptive text");
+        placemark0.setPropertyValue(KmlConstants.TAG_STYLE_URL, new URI("#myDefaultStyles"));
 
         final Feature placemark1 = kmlFactory.createPlacemark();
-        final Collection<Property> placemark1Properties = placemark1.getProperties();
-        placemark1Properties.add(FF.createAttribute("Google Earth - New Path", KmlModelConstants.ATT_NAME, null));
-        placemark1Properties.add(FF.createAttribute(new URI("#myDefaultStyles"), KmlModelConstants.ATT_STYLE_URL, null));
-
+        placemark1.setPropertyValue(KmlConstants.TAG_NAME, "Google Earth - New Path");
+        placemark1.setPropertyValue(KmlConstants.TAG_STYLE_URL, new URI("#myDefaultStyles"));
 
         final IconStyle iconStyle = kmlFactory.createIconStyle();
         final BasicLink icon = kmlFactory.createBasicLink();
@@ -172,11 +156,8 @@ public class StyleTest extends org.geotoolkit.test.TestBase {
         style.setPolyStyle(polyStyle);
 
         final Feature document = kmlFactory.createDocument();
-        final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-
+        document.setPropertyValue(KmlConstants.TAG_STYLE_SELECTOR, style);
+        document.setPropertyValue(KmlConstants.TAG_FEATURES, Arrays.asList(placemark0,placemark1));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
@@ -188,8 +169,6 @@ public class StyleTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

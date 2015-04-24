@@ -31,7 +31,7 @@ import javax.measure.Unit;
 import java.awt.*;
 import java.util.regex.Pattern;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 
 /**
  * Class Description
@@ -102,9 +102,9 @@ public class Pen implements MIFSymbolizer, LineSymbolizer {
 
     @Override
     public Expression getGeometry() {
-        return FactoryFinder.getFilterFactory(null).property(getGeometryPropertyName());
+        return MIFUtils.FF.property(getGeometryPropertyName());
     }
-    
+
     @Override
     public Stroke getStroke() {
         return stroke;

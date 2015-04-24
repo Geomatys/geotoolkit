@@ -24,9 +24,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Symbol;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -34,6 +31,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
 
 /**
  * Create collection of points from MIF MultiPoint
@@ -45,10 +47,10 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
 
     public static final GenericName NAME = NamesExt.create("MULTIPOINT");
 
-    public static final AttributeDescriptor SYMBOL_DESCRIPTOR;
+    public static final AttributeType SYMBOL_DESCRIPTOR;
 
     static {
-        SYMBOL_DESCRIPTOR = new DefaultAttributeDescriptor(STRING_TYPE, Symbol.NAME, 1, 1, true, null);
+        SYMBOL_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", Symbol.NAME), String.class, 1, 1, null);
     }
 
     @Override
@@ -73,9 +75,9 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
                 seq = new PackedCoordinateSequence.Double(coords, 2);
             }
 
-            toFill.getDefaultGeometryProperty().setValue(GEOMETRY_FACTORY.createMultiPoint(seq));
+            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), GEOMETRY_FACTORY.createMultiPoint(seq));
 
-            if(scanner.hasNext(Symbol.SYMBOL_PATTERN) && toFill.getType().getDescriptors().contains(SYMBOL_DESCRIPTOR)) {
+            if(scanner.hasNext(Symbol.SYMBOL_PATTERN) && toFill.getType().getProperties(true).contains(SYMBOL_DESCRIPTOR)) {
                 String args = scanner.next()+scanner.nextLine();
                 String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
                         .replaceAll("[^\\d^,]+", "")
@@ -88,7 +90,7 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
                     final int pattern = Integer.decode(argsTab[1]);
                     final int color = Integer.decode(argsTab[2]);
                     Symbol symbol = new Symbol(width, pattern, color, null);
-                    toFill.getProperty(Symbol.NAME).setValue(symbol);
+                    toFill.setPropertyValue(Symbol.NAME.toString(),symbol);
                 }
             }
 
@@ -98,16 +100,16 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    public String toMIFSyntax(Feature geometry) throws DataStoreException {
-        super.toMIFSyntax(geometry);
+    public String toMIFSyntax(Feature feature) throws DataStoreException {
+        super.toMIFSyntax(feature);
 
         final StringBuilder builder = new StringBuilder(NAME.tip().toString());
-        final Object value = geometry.getDefaultGeometryProperty().getValue();
+        final Object value = MIFUtils.getGeometryValue(feature);
         final MultiPoint multiPt;
         if(value instanceof CoordinateSequence) {
             multiPt = GEOMETRY_FACTORY.createMultiPoint(((CoordinateSequence)value).toCoordinateArray());
         } else {
-            multiPt = (MultiPoint) geometry.getDefaultGeometryProperty().getValue();
+            multiPt = (MultiPoint) value;
         }
         builder.append(multiPt.getNumGeometries()).append('\n');
 
@@ -116,11 +118,9 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
             builder.append(pt.getX()).append(pt.getY()).append('\n');
         }
 
-        if(geometry.getProperty(Symbol.NAME) != null) {
-            Object sValue = geometry.getProperty(Symbol.NAME).getValue();
-            if(sValue != null && sValue instanceof Symbol) {
-                builder.append(sValue).append('\n');
-            }
+        final Object sValue = MIFUtils.getPropertySafe(feature, Symbol.NAME.toString());
+        if(sValue instanceof Symbol) {
+            builder.append(sValue).append('\n');
         }
 
         return builder.toString();
@@ -142,7 +142,7 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    protected List<AttributeDescriptor> getAttributes() {
+    protected List<AttributeType> getAttributes() {
         return Collections.singletonList(SYMBOL_DESCRIPTOR);
     }
 }

@@ -43,8 +43,8 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -58,89 +58,72 @@ public class StyleMapTest extends org.geotoolkit.test.TestBase {
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/styleMap.kml";
 
-    public StyleMapTest() {
-    }
-
     @Test
     public void styleMapReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
+        final Feature document;
+        {
+            final KmlReader reader = new KmlReader();
+            reader.setInput(new File(pathToTestFile));
+            final Kml kmlObjects = reader.read();
+            reader.dispose();
+            document = kmlObjects.getAbstractFeature();
+        }
+        assertEquals(KmlModelConstants.TYPE_DOCUMENT, document.getType());
+        assertEquals("StyleMap.kml", document.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(Boolean.TRUE, document.getPropertyValue(KmlConstants.TAG_OPEN));
 
-        final KmlReader reader = new KmlReader();
-        reader.setInput(new File(pathToTestFile));
-        final Kml kmlObjects = reader.read();
-        reader.dispose();
-
-        final Feature document = kmlObjects.getAbstractFeature();
-        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
-
-        assertEquals("StyleMap.kml", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
-
-        assertEquals(3, document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).size());
-
-        Iterator i = document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
-
-        if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
-            assertTrue(object instanceof Style);
-            Style style0 = (Style) object;
-            assertEquals("normalState", style0.getIdAttributes().getId());
-                IconStyle iconStyle0 = style0.getIconStyle();
-                BasicLink icon0 =  iconStyle0.getIcon();
-                assertEquals("http://maps.google.com/mapfiles/kml/pal3/icon55.png", icon0.getHref());
-            LabelStyle labelStyle0 = style0.getLabelStyle();
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_STYLE_SELECTOR)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        {
+            Style style = (Style) i.next();
+            assertEquals("normalState", style.getIdAttributes().getId());
+            IconStyle iconStyle0 = style.getIconStyle();
+            BasicLink icon0 =  iconStyle0.getIcon();
+            assertEquals("http://maps.google.com/mapfiles/kml/pal3/icon55.png", icon0.getHref());
         }
 
-        if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
-            assertTrue(object instanceof Style);
-            Style style1 = (Style) object;
-            assertEquals("highlightState", style1.getIdAttributes().getId());
-                IconStyle iconStyle1 = style1.getIconStyle();
-                assertEquals(1.1, iconStyle1.getScale(), DELTA);
-                BasicLink icon1 =  iconStyle1.getIcon();
-                assertEquals("http://maps.google.com/mapfiles/kml/pal3/icon60.png", icon1.getHref());
-            LabelStyle labelStyle1 = style1.getLabelStyle();
+        assertTrue("Expected at least 2 elements.", i.hasNext());
+        {
+            Style style = (Style) i.next();
+            assertEquals("highlightState", style.getIdAttributes().getId());
+            IconStyle iconStyle1 = style.getIconStyle();
+            assertEquals(1.1, iconStyle1.getScale(), DELTA);
+            BasicLink icon1 =  iconStyle1.getIcon();
+            assertEquals("http://maps.google.com/mapfiles/kml/pal3/icon60.png", icon1.getHref());
+            LabelStyle labelStyle1 = style.getLabelStyle();
             assertEquals(new Color(192, 0, 0, 255), labelStyle1.getColor());
             assertEquals(1.1, labelStyle1.getScale(), DELTA);
         }
 
-        if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
-            assertTrue(object instanceof StyleMap);
-            StyleMap style2 = (StyleMap) object;
-            assertEquals("styleMapExample", style2.getIdAttributes().getId());
-            assertEquals(2, style2.getPairs().size());
-                Pair pair0 = style2.getPairs().get(0);
-                assertEquals(new URI("#normalState"), pair0.getStyleUrl());
-            Pair pair1 = style2.getPairs().get(1);
+        assertTrue("Expected at least 3 elements.", i.hasNext());
+        {
+            StyleMap styleMap = (StyleMap) i.next();
+            assertEquals("styleMapExample", styleMap.getIdAttributes().getId());
+            assertEquals(2, styleMap.getPairs().size());
+            Pair pair0 = styleMap.getPairs().get(0);
+            assertEquals(new URI("#normalState"), pair0.getStyleUrl());
+            Pair pair1 = styleMap.getPairs().get(1);
             assertEquals(StyleState.HIGHLIGHT, pair1.getKey());
             assertEquals(new URI("#highlightState"), pair1.getStyleUrl());
         }
+        assertFalse("Expected exactly 3 elements.", i.hasNext());
 
-
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
-
-        i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-
-        if(i.hasNext()){
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark = (Feature) object;
-            assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-
-            assertEquals("StyleMap example", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            assertEquals(new URI("#styleMapExample"), placemark.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue());
-            assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-            Point point = (Point) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+        i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        {
+            Feature placemark = (Feature) i.next();
+            assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
+            assertEquals("StyleMap example", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+            assertEquals(new URI("#styleMapExample"), placemark.getPropertyValue(KmlConstants.TAG_STYLE_URL));
+            Point point = (Point) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
             CoordinateSequence coordinates = point.getCoordinateSequence();
             assertEquals(1, coordinates.size());
             Coordinate coordinate = coordinates.getCoordinate(0);
             assertEquals(-122.368987, coordinate.x, DELTA);
             assertEquals(37.817634, coordinate.y, DELTA);
             assertEquals(0, coordinate.z, DELTA);
-
         }
-
+        assertFalse("Expected exactly one element.", i.hasNext());
     }
 
     @Test
@@ -213,9 +196,6 @@ public class StyleMapTest extends org.geotoolkit.test.TestBase {
 //        writer.write(kml);
 //        writer.dispose();
 //
-//        DomCompare.compare(
-//                new File(pathToTestFile), temp);
-
+//        DomCompare.compare(new File(pathToTestFile), temp);
     }
-
 }

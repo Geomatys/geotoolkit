@@ -25,22 +25,25 @@ import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Font;
 import org.geotoolkit.data.mapinfo.mif.style.LabelLine;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
 
 /**
  * A class which manage MIF text geometry.
@@ -55,34 +58,16 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
     public static final GenericName JUSTIFY_NAME = NamesExt.create("JUSTIFY");
     public static final GenericName ANGLE_NAME = NamesExt.create("ANGLE");
 
-    public static final AttributeDescriptor TEXT_DESCRIPTOR;
-    public static final AttributeDescriptor FONT_DESCRIPTOR;
-    public static final AttributeDescriptor SPACING_DESCRIPTOR;
-    public static final AttributeDescriptor JUSTIFY_DESCRIPTOR;
-    public static final AttributeDescriptor ANGLE_DESCRIPTOR;
-    public static final AttributeDescriptor LABEL_DESCRIPTOR;
+    public static final AttributeType TEXT_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", TEXT_NAME), String.class, 1, 1, null);
+    public static final AttributeType FONT_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", Font.NAME), String.class, 1, 1, null);
+    public static final AttributeType SPACING_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", SPACING_NAME), Float.class, 1, 1, 1f);
+    public static final AttributeType JUSTIFY_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", JUSTIFY_NAME), String.class, 1, 1, "Left");
+    public static final AttributeType ANGLE_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", ANGLE_NAME), String.class, 1, 1, null);
+    public static final AttributeType LABEL_DESCRIPTOR = new DefaultAttributeType(Collections.singletonMap("name", LabelLine.NAME), Double.class, 1, 1, null);
 
     public static final Pattern SPACING_PATTERN = Pattern.compile(SPACING_NAME.tip().toString()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
     public static final Pattern JUSTIFY_PATTERN = Pattern.compile(JUSTIFY_NAME.tip().toString(), Pattern.CASE_INSENSITIVE);
     public static final Pattern ANGLE_PATTERN = Pattern.compile(ANGLE_NAME.tip().toString()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
-
-    static {
-        final DefaultAttributeType textType = new DefaultAttributeType(TEXT_NAME, String.class, true, false, null, null, null);
-        TEXT_DESCRIPTOR = new DefaultAttributeDescriptor(textType, TEXT_NAME, 1, 1, false, "No data");
-
-        FONT_DESCRIPTOR = new DefaultAttributeDescriptor(STRING_TYPE, Font.NAME, 1, 1, true, null);
-
-        final DefaultAttributeType spacingType = new DefaultAttributeType(SPACING_NAME, Float.class, true, false, null, null, null);
-        SPACING_DESCRIPTOR = new DefaultAttributeDescriptor(spacingType, SPACING_NAME, 1, 1, false, 1f);
-
-        final DefaultAttributeType justifyType = new DefaultAttributeType(JUSTIFY_NAME, String.class, true, false, null, null, null);
-        JUSTIFY_DESCRIPTOR = new DefaultAttributeDescriptor(justifyType, JUSTIFY_NAME, 1, 1, false, "Left");
-
-        final DefaultAttributeType angleType = new DefaultAttributeType(ANGLE_NAME, Double.class, true, false, null, null, null);
-        ANGLE_DESCRIPTOR = new DefaultAttributeDescriptor(angleType, ANGLE_NAME, 1, 1, true, null);
-
-        LABEL_DESCRIPTOR = new DefaultAttributeDescriptor(STRING_TYPE, LabelLine.NAME, 1, 1, true, null);
-    }
 
     /**
      * Build a feature describing a MIF point geometry. That assume that user gave a {@link Scanner} which is placed on
@@ -101,7 +86,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
             if (TEXT_NAME.tip().toString().equalsIgnoreCase(geomText)) {
                 geomText = scanner.next("\\w+");
             }
-            toFill.getProperty(TEXT_NAME).setValue(geomText);
+            toFill.setPropertyValue(TEXT_NAME.toString(),geomText);
 
             final double[] pts = new double[4];
 
@@ -123,7 +108,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
             }
             final Envelope env = new Envelope(seq.getCoordinate(0), seq.getCoordinate(1));
 
-            toFill.getDefaultGeometryProperty().setValue(env);
+            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), env);
         } catch (Exception e) {
             throw new DataStoreException("Unable to build envelope from given data", e);
         }
@@ -148,7 +133,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
                     final int background = Integer.decode(argsTab[3]);
                     font.setBackColorCode(background);
                 }
-                toFill.getProperty(Font.NAME).setValue(font);
+                toFill.setPropertyValue(Font.NAME.toString(),font);
             }
         }
 
@@ -156,20 +141,20 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
             String spacing = scanner.next(SPACING_PATTERN);
             Matcher match = ProjectionUtils.DOUBLE_PATTERN.matcher(spacing);
             if(match.find()) {
-                toFill.getProperty(SPACING_NAME).setValue(Double.parseDouble(match.group()));
+                toFill.setPropertyValue(SPACING_NAME.toString(),Double.parseDouble(match.group()));
             }
         }
 
         if (scanner.hasNext(JUSTIFY_PATTERN)) {
             String spacing = scanner.next(JUSTIFY_PATTERN);
-            toFill.getProperty(SPACING_NAME).setValue(scanner.next());
+            toFill.setPropertyValue(SPACING_NAME.toString(),scanner.next());
         }
 
         if (scanner.hasNext(ANGLE_PATTERN)) {
             String spacing = scanner.next(ANGLE_PATTERN);
             Matcher match = ProjectionUtils.DOUBLE_PATTERN.matcher(spacing);
             if(match.find()) {
-                toFill.getProperty(ANGLE_NAME).setValue(Double.parseDouble(match.group()));
+                toFill.setPropertyValue(ANGLE_NAME.toString(),Double.parseDouble(match.group()));
             }
         }
 
@@ -185,7 +170,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
                 y = Double.parseDouble(match.group());
             }
             LabelLine labelLine = new LabelLine(type, new Coordinate(x, y));
-            toFill.getProperty(LabelLine.NAME).setValue(labelLine);
+            toFill.setPropertyValue(LabelLine.NAME.toString(),labelLine);
         }
     }
 
@@ -193,17 +178,18 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
     @Override
     public String toMIFSyntax(Feature source) throws DataStoreException {
         ArgumentChecks.ensureNonNull("Source feature", source);
-        if(source.getDefaultGeometryProperty() == null) {
+        if(!FeatureExt.hasAGeometry(source.getType())) {
             throw new DataStoreException("Input feature does not contain any geometry.");
         }
 
-        if (source.getProperty(TEXT_NAME) == null) {
+        final Object text = MIFUtils.getPropertySafe(source, TEXT_NAME.toString());
+        if (text == null) {
             throw new DataStoreException("Not enough information to build an arc (missing text).");
         }
 
         StringBuilder builder = new StringBuilder(TEXT_NAME.tip().toString()).append(' ');
-        builder.append(' ').append(source.getProperty(TEXT_NAME).getValue()).append('\n');
-        Object value = source.getDefaultGeometryProperty().getValue();
+        builder.append(' ').append(text).append('\n');
+        Object value = MIFUtils.getGeometryValue(source);
         if(value instanceof Envelope) {
             Envelope env = (Envelope) value;
             builder.append(env.getMinX()).append(' ')
@@ -227,27 +213,28 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
         }
         builder.append('\n');
 
-        if(source.getProperty(Font.NAME) != null) {
-            Object ftValue = source.getProperty(Font.NAME).getValue();
-            if(ftValue != null && ftValue instanceof Font) {
-                builder.append(ftValue);
-            }
+        Object styleData = MIFUtils.getPropertySafe(source, Font.NAME.toString());
+        if (styleData instanceof Font)
+            builder.append(styleData);
+
+        styleData = MIFUtils.getPropertySafe(source, SPACING_NAME.toString());
+        if(styleData != null) {
+            builder.append("SPACING (").append(styleData).append(")\n");
         }
 
-        if(source.getProperty(SPACING_NAME) != null && source.getProperty(SPACING_NAME).getValue() != null) {
-            builder.append("SPACING ("+source.getProperty(SPACING_NAME).getValue()+")\n");
+        styleData = MIFUtils.getPropertySafe(source, JUSTIFY_NAME.toString());
+        if(styleData != null) {
+            builder.append("JUSTIFY (").append(styleData).append(")\n");
         }
 
-        if(source.getProperty(JUSTIFY_NAME) != null && source.getProperty(JUSTIFY_NAME).getValue() != null) {
-            builder.append("JUSTIFY ("+source.getProperty(JUSTIFY_NAME).getValue()+")\n");
+        styleData = MIFUtils.getPropertySafe(source, ANGLE_NAME.toString());
+        if(styleData != null) {
+            builder.append("ANGLE ").append(styleData).append('\n');
         }
 
-        if(source.getProperty(ANGLE_NAME) != null && source.getProperty(ANGLE_NAME).getValue() != null) {
-            builder.append("ANGLE "+source.getProperty(ANGLE_NAME).getValue()).append('\n');
-        }
-
-        if(source.getProperty(LabelLine.NAME) != null && source.getProperty(LabelLine.NAME).getValue() != null) {
-            builder.append(source.getProperty(LabelLine.NAME).getValue()).append('\n');
+        styleData = MIFUtils.getPropertySafe(source, LabelLine.NAME.toString());
+        if(styleData != null) {
+            builder.append(styleData).append('\n');
         }
 
         return builder.toString();
@@ -269,8 +256,8 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    protected List<AttributeDescriptor> getAttributes() {
-        final List<AttributeDescriptor> descList = new ArrayList<AttributeDescriptor>(5);
+    protected List<AttributeType> getAttributes() {
+        final List<AttributeType> descList = new ArrayList<AttributeType>(5);
         descList.add(TEXT_DESCRIPTOR);
         descList.add(FONT_DESCRIPTOR);
         descList.add(SPACING_DESCRIPTOR);

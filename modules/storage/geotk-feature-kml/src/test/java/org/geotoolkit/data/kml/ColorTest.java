@@ -18,8 +18,9 @@ package org.geotoolkit.data.kml;
 
 import java.awt.Color;
 import org.geotoolkit.data.kml.model.KmlException;
-import static org.junit.Assert.*;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -27,13 +28,8 @@ import org.junit.Test;
  * @module pending
  */
 public class ColorTest extends org.geotoolkit.test.TestBase {
-
-    public ColorTest() {
-    }
-
     @Test
     public void colorParsingTest() throws KmlException {
-
         String h;
         for (int i = 0; i<=255; i++){
             h = Integer.toHexString(i);
@@ -46,7 +42,6 @@ public class ColorTest extends org.geotoolkit.test.TestBase {
 
     @Test
     public void kmlColorTest() throws KmlException {
-
         String h;
         for (int i = 0; i<=255; i++){
             h = Integer.toHexString(i);
@@ -56,5 +51,4 @@ public class ColorTest extends org.geotoolkit.test.TestBase {
             assertEquals(color2, color1);
         }
     }
-
 }

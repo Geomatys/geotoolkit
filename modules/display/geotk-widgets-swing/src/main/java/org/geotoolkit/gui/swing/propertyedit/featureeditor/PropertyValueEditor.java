@@ -19,9 +19,8 @@ package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 import java.awt.LayoutManager;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.Map;
 import javax.swing.JPanel;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -42,9 +41,6 @@ public abstract class PropertyValueEditor extends JPanel implements FocusListene
 
     public abstract void setValue(final PropertyType type, Object value);
     
-    public void setValue(final PropertyType type, Object value, Map<Object, Object> userData){
-        setValue(type, value);
-    }
     public abstract Object getValue();
     
     @Override

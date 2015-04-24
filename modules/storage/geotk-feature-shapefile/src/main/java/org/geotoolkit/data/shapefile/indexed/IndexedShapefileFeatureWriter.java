@@ -34,9 +34,8 @@ import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
-import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.*;
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.nio.IOUtilities;
+import org.opengis.feature.Feature;
 
 /**
  * A FeatureWriter for ShapefileDataStore. Uses a write and annotate technique

@@ -19,6 +19,11 @@
 package org.geotoolkit.data.query;
 
 import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -27,19 +32,15 @@ import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.apache.sis.referencing.CommonCRS;
 
-import org.junit.Test;
-import org.geotoolkit.feature.ComplexAttribute;
-
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  * Test query builder.
@@ -54,7 +55,7 @@ public class QueryTest extends TestCase{
     private final MemoryFeatureStore store = new MemoryFeatureStore();
     private final GenericName name1;
     private final GenericName name2;
-    
+
     private final String fid_1_0;
     private final String fid_1_1;
     private final String fid_1_2;
@@ -68,96 +69,97 @@ public class QueryTest extends TestCase{
     private final String fid_2_5;
 
     public QueryTest() throws Exception {
-        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //----------------------------------------------------------------------
         name1 = NamesExt.create("http://type1.com", "Type1");
-        builder.reset();
         builder.setName(name1);
-        builder.add(NamesExt.create("http://type1.com", "att1"), String.class);
-        builder.add(NamesExt.create("http://type1.com", "att2"), Integer.class);
-        final FeatureType sft1 = builder.buildFeatureType();
-        store.createFeatureType(name1,sft1);
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(String.class).setName("http://type1.com", "att1");
+        builder.addAttribute(Integer.class).setName("http://type1.com", "att2");
+        final FeatureType sft1 = builder.build();
+        store.createFeatureType(sft1);
 
-        FeatureWriter fw = store.getFeatureWriterAppend(name1);
+        FeatureWriter fw = store.getFeatureWriter(QueryBuilder.filtered(name1.toString(),Filter.EXCLUDE));
         Feature sf = fw.next();
         sf.setPropertyValue("att1", "str1");
         sf.setPropertyValue("att2", 1);
         fw.write();
-        fid_1_0 = sf.getIdentifier().getID();
-        
+        fid_1_0 = FeatureExt.getId(sf).getID();
+
         sf = fw.next();
         sf.setPropertyValue("att1", "str2");
         sf.setPropertyValue("att2", 2);
         fw.write();
-        fid_1_1 = sf.getIdentifier().getID();
-        
+        fid_1_1 = FeatureExt.getId(sf).getID();
+
         sf = fw.next();
         sf.setPropertyValue("att1", "str3");
         sf.setPropertyValue("att2", 3);
         fw.write();
-        fid_1_2 = sf.getIdentifier().getID();
-        
+        fid_1_2 = FeatureExt.getId(sf).getID();
+
         sf = fw.next();
         sf.setPropertyValue("att1", "str50");
         sf.setPropertyValue("att2", 50);
         fw.write();
-        fid_1_3 = sf.getIdentifier().getID();
-        
+        fid_1_3 = FeatureExt.getId(sf).getID();
+
         sf = fw.next();
         sf.setPropertyValue("att1", "str51");
         sf.setPropertyValue("att2", 51);
         fw.write();
-        fid_1_4 = sf.getIdentifier().getID();
+        fid_1_4 = FeatureExt.getId(sf).getID();
 
         fw.close();
 
 
         //----------------------------------------------------------------------
         name2 = NamesExt.create("http://type2.com", "Type2");
-        builder.reset();
+        builder = new FeatureTypeBuilder();
         builder.setName(name2);
-        builder.add(NamesExt.create("http://type2.com", "att3"), Integer.class);
-        builder.add(NamesExt.create("http://type2.com", "att4"), Double.class);
-        final FeatureType sft2 = builder.buildFeatureType();
-        store.createFeatureType(name2,sft2);
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(Integer.class).setName("http://type2.com", "att3");
+        builder.addAttribute(Double.class).setName("http://type2.com", "att4");
+        final FeatureType sft2 = builder.build();
+        store.createFeatureType(sft2);
 
-        fw = store.getFeatureWriterAppend(name2);
+        fw = store.getFeatureWriter(QueryBuilder.filtered(name2.toString(),Filter.EXCLUDE));
         sf = fw.next();
         sf.setPropertyValue("att3", 1);
         sf.setPropertyValue("att4", 10d);
         fw.write();
-        fid_2_0 = sf.getIdentifier().getID();
-        
+        fid_2_0 = FeatureExt.getId(sf).getID();
+
         sf = fw.next();
         sf.setPropertyValue("att3", 2);
         sf.setPropertyValue("att4", 20d);
         fw.write();
-        fid_2_1 = sf.getIdentifier().getID();
-        
+        fid_2_1 = FeatureExt.getId(sf).getID();
+
         sf = fw.next();
         sf.setPropertyValue("att3", 2);
         sf.setPropertyValue("att4", 30d);
         fw.write();
-        fid_2_2 = sf.getIdentifier().getID();
-        
+        fid_2_2 = FeatureExt.getId(sf).getID();
+
         sf = fw.next();
         sf.setPropertyValue("att3", 3);
         sf.setPropertyValue("att4", 40d);
         fw.write();
-        fid_2_3 = sf.getIdentifier().getID();
-        
+        fid_2_3 = FeatureExt.getId(sf).getID();
+
         sf = fw.next();
         sf.setPropertyValue("att3", 60);
         sf.setPropertyValue("att4", 60d);
         fw.write();
-        fid_2_4 = sf.getIdentifier().getID();
-        
+        fid_2_4 = FeatureExt.getId(sf).getID();
+
         sf = fw.next();
         sf.setPropertyValue("att3", 61);
         sf.setPropertyValue("att4", 61d);
         fw.write();
-        fid_2_5 = sf.getIdentifier().getID();
+        fid_2_5 = FeatureExt.getId(sf).getID();
 
         fw.close();
 
@@ -205,7 +207,7 @@ public class QueryTest extends TestCase{
 
         //all-------------------------------------------------------------------
         query = QueryBuilder.all(name);
-        assertEquals(query.getTypeName(), name);
+        assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
@@ -215,20 +217,20 @@ public class QueryTest extends TestCase{
         assertEquals(query.getStartIndex(), 0);
 
         //only ids--------------------------------------------------------------
-        query = QueryBuilder.fids(name);
-        assertEquals(query.getTypeName(), name);
+        query = QueryBuilder.fids(name.toString());
+        assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
         assertNotNull(query.getPropertyNames()); //must be an empty array, not null
-        assertTrue(query.getPropertyNames().length == 0); //must be an empty array, not null
+        assertTrue(query.getPropertyNames().length == 1); //must have only one value
         assertEquals(query.getSortBy(), null);
         assertEquals(query.getStartIndex(), 0);
 
         //only filter-----------------------------------------------------------
-        query = QueryBuilder.filtered(name, Filter.EXCLUDE);
-        assertEquals(query.getTypeName(), name);
+        query = QueryBuilder.filtered(name.toString(), Filter.EXCLUDE);
+        assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
@@ -238,8 +240,8 @@ public class QueryTest extends TestCase{
         assertEquals(query.getStartIndex(), 0);
 
         //only sort by----------------------------------------------------------
-        query = QueryBuilder.sorted(name, new SortBy[]{FF.sort("att1", SortOrder.DESCENDING)});
-        assertEquals(query.getTypeName(), name);
+        query = QueryBuilder.sorted(name.toString(), new SortBy[]{FF.sort("att1", SortOrder.DESCENDING)});
+        assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
@@ -281,7 +283,7 @@ public class QueryTest extends TestCase{
         qb.setStartIndex(5);
         query = qb.buildQuery();
 
-        assertEquals(query.getTypeName(), name);
+        assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
         assertEquals(query.getResolution()[0], 45d);
         assertEquals(query.getResolution()[1], 31d);
@@ -299,7 +301,7 @@ public class QueryTest extends TestCase{
         qb.setTypeName(name);
         query = qb.buildQuery();
 
-        assertEquals(query.getTypeName(), name);
+        assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
@@ -312,7 +314,7 @@ public class QueryTest extends TestCase{
         qb.copy(query2);
         query = qb.buildQuery();
 
-        assertEquals(query.getTypeName(), name);
+        assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
         assertEquals(query.getResolution()[0], 45d);
         assertEquals(query.getResolution()[1], 31d);
@@ -327,7 +329,7 @@ public class QueryTest extends TestCase{
         qb = new QueryBuilder(query2);
         query = qb.buildQuery();
 
-        assertEquals(query.getTypeName(), name);
+        assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), CommonCRS.WGS84.normalizedGeographic());
         assertEquals(query.getResolution()[0], 45d);
         assertEquals(query.getResolution()[1], 31d);
@@ -339,10 +341,10 @@ public class QueryTest extends TestCase{
         assertEquals(query.getStartIndex(), 5);
 
         //test constructor with name--------------------------------------------
-        qb = new QueryBuilder(name);
+        qb = new QueryBuilder(name.toString());
         query = qb.buildQuery();
 
-        assertEquals(query.getTypeName(), name);
+        assertEquals(query.getTypeName(), name.toString());
         assertEquals(query.getCoordinateSystemReproject(), null);
         assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
@@ -362,8 +364,8 @@ public class QueryTest extends TestCase{
 
         final QueryBuilder qb = new QueryBuilder();
         final Join join = new DefaultJoin(
-                new DefaultSelector(session, name1, "s1"),
-                new DefaultSelector(session, name2, "s2"),
+                new DefaultSelector(session, name1.toString(), "s1"),
+                new DefaultSelector(session, name2.toString(), "s2"),
                 JoinType.INNER,
                 FF.equals(FF.property("att2"), FF.property("att3")));
         qb.setSource(join);
@@ -374,37 +376,37 @@ public class QueryTest extends TestCase{
 
         FeatureIterator ite = col.iterator();
         Feature f = null;
-        ComplexAttribute c1 = null;
-        ComplexAttribute c2 = null;
+        Feature c1 = null;
+        Feature c2 = null;
 
         int count = 0;
         while(ite.hasNext()){
             count++;
             f = ite.next();
-            if(f.getIdentifier().getID().equals(fid_1_0 +" "+fid_2_0)){
-                c1 = (ComplexAttribute) f.getProperty("s1");
-                c2 = (ComplexAttribute) f.getProperty("s2");
+            if(FeatureExt.getId(f).getID().equals(fid_1_0 +" "+fid_2_0)){
+                c1 = (Feature) f.getPropertyValue("s1");
+                c2 = (Feature) f.getPropertyValue("s2");
                 assertEquals("str1", c1.getProperty("att1").getValue());
                 assertEquals(1, c1.getProperty("att2").getValue());
                 assertEquals(1, c2.getProperty("att3").getValue());
                 assertEquals(10d, c2.getProperty("att4").getValue());
-            }else if(f.getIdentifier().getID().equals(fid_1_1 +" "+fid_2_1)){
-                c1 = (ComplexAttribute) f.getProperty("s1");
-                c2 = (ComplexAttribute) f.getProperty("s2");
+            }else if(FeatureExt.getId(f).getID().equals(fid_1_1 +" "+fid_2_1)){
+                c1 = (Feature) f.getPropertyValue("s1");
+                c2 = (Feature) f.getPropertyValue("s2");
                 assertEquals("str2", c1.getProperty("att1").getValue());
                 assertEquals(2, c1.getProperty("att2").getValue());
                 assertEquals(2, c2.getProperty("att3").getValue());
                 assertEquals(20d, c2.getProperty("att4").getValue());
-            }else if(f.getIdentifier().getID().equals(fid_1_1 +" "+fid_2_2)){
-                c1 = (ComplexAttribute) f.getProperty("s1");
-                c2 = (ComplexAttribute) f.getProperty("s2");
+            }else if(FeatureExt.getId(f).getID().equals(fid_1_1 +" "+fid_2_2)){
+                c1 = (Feature) f.getPropertyValue("s1");
+                c2 = (Feature) f.getPropertyValue("s2");
                 assertEquals("str2", c1.getProperty("att1").getValue());
                 assertEquals(2, c1.getProperty("att2").getValue());
                 assertEquals(2, c2.getProperty("att3").getValue());
                 assertEquals(30d, c2.getProperty("att4").getValue());
-            }else if(f.getIdentifier().getID().equals(fid_1_2 +" "+fid_2_3)){
-                c1 = (ComplexAttribute) f.getProperty("s1");
-                c2 = (ComplexAttribute) f.getProperty("s2");
+            }else if(FeatureExt.getId(f).getID().equals(fid_1_2 +" "+fid_2_3)){
+                c1 = (Feature) f.getPropertyValue("s1");
+                c2 = (Feature) f.getPropertyValue("s2");
                 assertEquals("str3", c1.getProperty("att1").getValue());
                 assertEquals(3, c1.getProperty("att2").getValue());
                 assertEquals(3, c2.getProperty("att3").getValue());
@@ -413,7 +415,7 @@ public class QueryTest extends TestCase{
                 fail("unexpected feature");
             }
         }
-        
+
         assertEquals("Was expecting 4 features.",4, count);
         ite.close();
     }
@@ -427,8 +429,8 @@ public class QueryTest extends TestCase{
 
         final QueryBuilder qb = new QueryBuilder();
         final Join join = new DefaultJoin(
-                new DefaultSelector(session, name1, "s1"),
-                new DefaultSelector(session, name2, "s2"),
+                new DefaultSelector(session, name1.toString(), "s1"),
+                new DefaultSelector(session, name2.toString(), "s2"),
                 JoinType.LEFT_OUTER,
                 FF.equals(FF.property("att2"), FF.property("att3")));
         qb.setSource(join);
@@ -448,8 +450,8 @@ public class QueryTest extends TestCase{
         int count = 0;
         while(ite.hasNext()){
             final Feature f = ite.next();
-            final ComplexAttribute c1 = (ComplexAttribute) f.getProperty("s1");
-            final ComplexAttribute c2 = (ComplexAttribute) f.getProperty("s2");
+            final Feature c1 = (Feature) f.getPropertyValue("s1");
+            final Feature c2 = (Feature) f.getPropertyValue("s2");
             final String att1 = c1.getProperty("att1").getValue().toString();
 
             if(att1.equals("str1")){
@@ -503,8 +505,8 @@ public class QueryTest extends TestCase{
 
         final QueryBuilder qb = new QueryBuilder();
         final Join join = new DefaultJoin(
-                new DefaultSelector(session, name1, "s1"),
-                new DefaultSelector(session, name2, "s2"),
+                new DefaultSelector(session, name1.toString(), "s1"),
+                new DefaultSelector(session, name2.toString(), "s2"),
                 JoinType.RIGHT_OUTER,
                 FF.equals(FF.property("att2"), FF.property("att3")));
         qb.setSource(join);
@@ -524,8 +526,8 @@ public class QueryTest extends TestCase{
         int count = 0;
         while(ite.hasNext()){
             final Feature f = ite.next();
-            final ComplexAttribute c1 = (ComplexAttribute) f.getProperty("s1");
-            final ComplexAttribute c2 = (ComplexAttribute) f.getProperty("s2");
+            final Feature c1 = (Feature) f.getPropertyValue("s1");
+            final Feature c2 = (Feature) f.getPropertyValue("s2");
 
             if(c1 != null){
                 final Object att1 = c1.getProperty("att1").getValue();
@@ -571,7 +573,7 @@ public class QueryTest extends TestCase{
         assertTrue(foundStr60);
         assertTrue(foundStr61);
         assertEquals(6, count);
-        
+
     }
 
 }

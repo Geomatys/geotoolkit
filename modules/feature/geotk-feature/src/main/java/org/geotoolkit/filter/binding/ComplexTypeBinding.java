@@ -18,17 +18,18 @@ package org.geotoolkit.filter.binding;
 
 import java.util.regex.Pattern;
 import static org.geotoolkit.filter.binding.AttributeBinding.stripPrefix;
-import org.geotoolkit.feature.type.ComplexType;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ComplexTypeBinding extends AbstractBinding<ComplexType>{
+public class ComplexTypeBinding extends AbstractBinding<FeatureType>{
     private static final Pattern PROPERTY_PATTERN = Pattern.compile("(\\w+:)?(.+)");
 
     public ComplexTypeBinding() {
-        super(ComplexType.class, 10);
+        super(FeatureType.class, 10);
     }
 
     @Override
@@ -37,14 +38,18 @@ public class ComplexTypeBinding extends AbstractBinding<ComplexType>{
     }
 
     @Override
-    public <T> T get(ComplexType candidate, String xpath, Class<T> target) throws IllegalArgumentException {
+    public <T> T get(FeatureType candidate, String xpath, Class<T> target) throws IllegalArgumentException {
         if(candidate==null) return null;
         xpath = stripPrefix(xpath);
-        return (T) candidate.getDescriptor(xpath);
+        try{
+            return (T) candidate.getProperty(xpath);
+        }catch(PropertyNotFoundException ex){
+            return null;
+        }
     }
 
     @Override
-    public void set(ComplexType candidate, String xpath, Object value) throws IllegalArgumentException {
+    public void set(FeatureType candidate, String xpath, Object value) throws IllegalArgumentException {
         throw new IllegalArgumentException("Types are immutable");
     }
 

@@ -19,7 +19,7 @@ package org.geotoolkit.data.shapefile.indexed;
 import java.io.IOException;
 import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 
 /**
  * Reader that returns FeatureIds in a quick fashion.

@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -30,7 +29,6 @@ import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
-import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.Link;
 import org.geotoolkit.data.kml.model.Location;
 import org.geotoolkit.data.kml.model.Model;
@@ -44,9 +42,8 @@ import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -59,11 +56,6 @@ public class ModelTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/model.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-
-    public ModelTest() {
-    }
 
     @Test
     public void modelReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
@@ -74,10 +66,9 @@ public class ModelTest extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         final Feature placemark = kmlObjects.getAbstractFeature();
-        assertEquals("Colorado", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Model);
+        assertEquals("Colorado", placemark.getPropertyValue(KmlConstants.TAG_NAME));
 
-        final Model model = (Model) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+        final Model model = (Model) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
         assertEquals("khModel543", model.getIdAttributes().getId());
         assertEquals(EnumAltitudeMode.RELATIVE_TO_GROUND, model.getAltitudeMode());
 
@@ -165,10 +156,8 @@ public class ModelTest extends org.geotoolkit.test.TestBase {
         model.setRessourceMap(resourceMap);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        final Collection<Property> placemarkProperties = placemark.getProperties();
-        placemarkProperties.add(FF.createAttribute("Colorado", KmlModelConstants.ATT_NAME, null));
-        placemarkProperties.add(FF.createAttribute(model, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
-
+        placemark.setPropertyValue(KmlConstants.TAG_NAME, "Colorado");
+        placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, model);
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
@@ -180,9 +169,6 @@ public class ModelTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                 new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
-
 }

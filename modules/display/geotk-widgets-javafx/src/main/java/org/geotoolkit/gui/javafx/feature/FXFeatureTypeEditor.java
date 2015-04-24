@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.gui.javafx.feature;
 
+import com.vividsolutions.jts.geom.Geometry;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -27,17 +30,16 @@ import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.BorderPane;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.DefaultPropertyDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.geotoolkit.feature.type.PropertyType;
+import org.apache.sis.feature.DefaultAssociationRole;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.gui.javafx.crs.FXCRSButton;
 import org.geotoolkit.internal.GeotkFX;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -92,74 +94,72 @@ public class FXFeatureTypeEditor extends BorderPane{
 
     private void update(FeatureType type){
 
-        final PropertyDescriptor desc = new DefaultPropertyDescriptor(type, type.getName(), 1, 1, true);
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        adb.copy(desc);
-        final Node item = new Node(adb);
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder(type);
+        final FTNode item = new FTNode(builder);
         tree.setRoot(item);
     }
 
     private void changed(){
-        final Node node = (Node) tree.getRoot();
-        typeProperty.set((FeatureType)node.build().getType());
+        final FTNode node = (FTNode) tree.getRoot();
+        typeProperty.set(node.build());
     }
 
-    private class PropertyNameColumn extends TreeTableColumn<AttributeDescriptorBuilder,String>{
+    private class PropertyNameColumn extends TreeTableColumn<SingleAttributeTypeBuilder,String>{
 
         public PropertyNameColumn() {
             super(GeotkFX.getString(FXFeatureTypeEditor.class, "name"));
-            setCellValueFactory((CellDataFeatures<AttributeDescriptorBuilder, String> param) ->
+            setCellValueFactory((CellDataFeatures<SingleAttributeTypeBuilder, String> param) ->
                     new SimpleObjectProperty<>(param.getValue().getValue().getName().tip().toString()));
             setEditable(false);
         }
 
     }
 
-    private class PropertyTypeColumn extends TreeTableColumn<AttributeDescriptorBuilder,String>{
+    private class PropertyTypeColumn extends TreeTableColumn<SingleAttributeTypeBuilder,String>{
 
         private PropertyTypeColumn(){
             super(GeotkFX.getString(FXFeatureTypeEditor.class, "type"));
-            setCellValueFactory((CellDataFeatures<AttributeDescriptorBuilder, String> param) ->
-                    new SimpleObjectProperty<>(param.getValue().getValue().getType().getBinding().getSimpleName()));
+            setCellValueFactory((CellDataFeatures<SingleAttributeTypeBuilder, String> param) ->
+                    new SimpleObjectProperty<>(param.getValue().getValue().getValueClass().getSimpleName()));
             setEditable(false);
         }
 
     }
 
-    private class PropertyMinOccColumn extends TreeTableColumn<AttributeDescriptorBuilder,Integer>{
+    private class PropertyMinOccColumn extends TreeTableColumn<SingleAttributeTypeBuilder,Integer>{
 
         private PropertyMinOccColumn(){
             super(GeotkFX.getString(FXFeatureTypeEditor.class, "minimum"));
-            setCellValueFactory((CellDataFeatures<AttributeDescriptorBuilder, Integer> param) ->
-                    new SimpleObjectProperty<>(param.getValue().getValue().getMinOccurs()));
+            setCellValueFactory((CellDataFeatures<SingleAttributeTypeBuilder, Integer> param) ->
+                    new SimpleObjectProperty<>(param.getValue().getValue().getMinimumOccurs()));
             setEditable(false);
         }
 
     }
 
-    private class PropertyMaxOccColumn extends TreeTableColumn<AttributeDescriptorBuilder,Integer>{
+    private class PropertyMaxOccColumn extends TreeTableColumn<SingleAttributeTypeBuilder,Integer>{
 
         private PropertyMaxOccColumn(){
             super(GeotkFX.getString(FXFeatureTypeEditor.class, "maximum"));
-            setCellValueFactory((CellDataFeatures<AttributeDescriptorBuilder, Integer> param) ->
-                    new SimpleObjectProperty<>(param.getValue().getValue().getMaxOccurs()));
+            setCellValueFactory((CellDataFeatures<SingleAttributeTypeBuilder, Integer> param) ->
+                    new SimpleObjectProperty<>(param.getValue().getValue().getMaximumOccurs()));
             setEditable(false);
         }
 
     }
 
-    private class PropertyCrsColumn extends TreeTableColumn<AttributeDescriptorBuilder,AttributeDescriptorBuilder>{
+    private class PropertyCrsColumn extends TreeTableColumn<SingleAttributeTypeBuilder,SingleAttributeTypeBuilder>{
 
         private PropertyCrsColumn(){
             super(GeotkFX.getString(FXFeatureTypeEditor.class, "crs"));
             setEditable(true);
-            setCellValueFactory((CellDataFeatures<AttributeDescriptorBuilder, AttributeDescriptorBuilder> param) -> param.getValue().valueProperty());
-            setCellFactory((TreeTableColumn<AttributeDescriptorBuilder, AttributeDescriptorBuilder> param) -> new AttCrsCell());
+            setCellValueFactory((CellDataFeatures<SingleAttributeTypeBuilder, SingleAttributeTypeBuilder> param) -> param.getValue().valueProperty());
+            setCellFactory((TreeTableColumn<SingleAttributeTypeBuilder, SingleAttributeTypeBuilder> param) -> new AttCrsCell());
         }
 
     }
 
-    private class AttCrsCell extends TreeTableCell<AttributeDescriptorBuilder, AttributeDescriptorBuilder>{
+    private class AttCrsCell extends TreeTableCell<SingleAttributeTypeBuilder, SingleAttributeTypeBuilder>{
 
         private final FXCRSButton button = new FXCRSButton();
 
@@ -170,67 +170,65 @@ public class FXFeatureTypeEditor extends BorderPane{
         }
 
         private void changed(ObservableValue<? extends CoordinateReferenceSystem> observable, CoordinateReferenceSystem oldValue, CoordinateReferenceSystem newValue){
-            final AttributeDescriptorBuilder adb = getItem();
+            final SingleAttributeTypeBuilder adb = getItem();
             if(adb==null) return;
 
-            final GeometryType gt = (GeometryType) adb.getType();
-            if(Objects.equals(gt.getCoordinateReferenceSystem(),newValue)) return;
-
-            final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-            atb.copy(gt);
-            atb.setCRS(newValue);
-            adb.setType(atb.buildGeometryType());
+            adb.setCRS(newValue);
             FXFeatureTypeEditor.this.changed();
         }
 
         @Override
-        protected void updateItem(AttributeDescriptorBuilder item, boolean empty) {
+        protected void updateItem(SingleAttributeTypeBuilder item, boolean empty) {
             super.updateItem(item, empty);
 
             setGraphic(null);
-            if(item!=null && item.getType() instanceof GeometryType){
-                final GeometryType gt = (GeometryType) item.getType();
-                button.crsProperty().set(gt.getCoordinateReferenceSystem());
+            if(item!=null && Geometry.class.isAssignableFrom(item.getValueClass())){
+                //TODO getCRS
+                //button.crsProperty().set(gt.getCoordinateReferenceSystem());
                 setGraphic(button);
             }
         }
 
     }
 
-    private static class Node extends TreeItem<AttributeDescriptorBuilder>{
+    private static class FTNode extends TreeItem{
 
-        private Node(AttributeDescriptorBuilder value){
+        private FTNode(FeatureTypeBuilder value){
             super(value);
 
-            final PropertyType type = value.getType();
-            if(type instanceof ComplexType){
-                final ComplexType ct = (ComplexType) type;
-
-                for(PropertyDescriptor pd : ct.getDescriptors()){
-                    final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                    adb.copy(pd);
+            final FeatureType type = value.build();
+            for(PropertyType pd : type.getProperties(true)){
+                if(pd instanceof AttributeType){
+                    final SingleAttributeTypeBuilder adb = new SingleAttributeTypeBuilder();
+                    adb.copy((AttributeType)pd);
                     getChildren().add(new Node(adb));
                 }
             }
         }
 
-        public PropertyDescriptor build(){
-            final AttributeDescriptorBuilder adb = getValue();
+        public FeatureType build(){
+            final FeatureTypeBuilder builder = (FeatureTypeBuilder) getValue();
+            builder.properties().clear();
 
-            final PropertyType type = adb.getType();
-            if(type instanceof ComplexType){
-                final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-                ftb.copy((ComplexType) type);
-                ftb.getProperties().clear();
-
-                for(TreeItem ti : getChildren()){
-                    final Node n = (Node) ti;
-                    ftb.getProperties().add(n.build());
-                }
-
-                adb.setType(ftb.buildFeatureType());
+            for(TreeItem ti : (List<TreeItem>)getChildren()){
+                final Node n = (Node) ti;
+                builder.addAttribute(n.build());
             }
-            return adb.buildDescriptor();
+
+            return builder.build();
+        }
+
+    }
+
+    private static class Node extends TreeItem<SingleAttributeTypeBuilder>{
+
+        private Node(SingleAttributeTypeBuilder value){
+            super(value);
+        }
+
+        public AttributeType build(){
+            final SingleAttributeTypeBuilder adb = getValue();
+            return adb.build();
         }
 
     }

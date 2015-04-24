@@ -23,8 +23,6 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.util.Numbers;
 import org.apache.sis.util.ObjectConverters;
 

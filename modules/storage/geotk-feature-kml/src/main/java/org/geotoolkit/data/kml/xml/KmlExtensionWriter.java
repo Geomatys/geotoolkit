@@ -22,9 +22,10 @@ import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 
 /**
- * <p>This interface provides methods an StaxStreamWriter needs to implement
+ * Provides methods an StaxStreamWriter needs to implement
  * to be added as an extension writer to Kml main writer with method
- * <span style="font-style: italic;">addExtensionWriter()</span></p>
+ * {@code addExtensionWriter()}.
+ *
  * <p>Here is an example of use:</p>
  *
  * <pre>
@@ -66,51 +67,25 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
  * @module pending
  */
 public interface KmlExtensionWriter {
-
     /**
-     * <p>This method indicats if KmlExtentionWriter can write given element
-     * contained in given extension</p>
-     *
-     * @param kmlVersionUri
-     * @param ext
-     * @param contentObject
-     * @return
+     * Indicates if KmlExtentionWriter can write given element contained in given extension.
      */
     boolean canHandleComplex(String kmlVersionUri, Extensions.Names ext, Object contentObject);
 
     /**
-     * <p>This method indicats if KmlExtentionWriter can write given element
-     * contained in given extension</p>
-     *
-     * @param kmlVersionUri
-     * @param ext
-     * @param elementTag
-     * @return
+     * Indicates if KmlExtentionWriter can write given element contained in given extension.
      */
     boolean canHandleSimple(String kmlVersionUri, Extensions.Names ext, String elementTag);
 
     /**
-     * <p>This method writes a complex extension element.</p>
-     *
-     * @param kmlVersionUri
-     * @param ext
-     * @param contentElement
-     * @throws XMLStreamException
-     * @throws KmlException
+     * Writes a complex extension element.
      */
     void writeComplexExtensionElement(String kmlVersionUri, Extensions.Names ext, Object contentElement)
             throws XMLStreamException, KmlException;
 
     /**
-     * <p>This method writes a simple extension element.</p>
-     *
-     * @param kmlVersionUri
-     * @param ext
-     * @param contentElement
-     * @throws XMLStreamException
-     * @throws KmlException
+     * Writes a simple extension element.
      */
     void writeSimpleExtensionElement(String kmlVersionUri, Extensions.Names ext, SimpleTypeContainer contentElement)
             throws XMLStreamException, KmlException;
-
 }

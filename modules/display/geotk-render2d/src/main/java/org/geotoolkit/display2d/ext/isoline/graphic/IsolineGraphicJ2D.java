@@ -24,6 +24,7 @@ import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
@@ -50,13 +51,13 @@ import org.geotoolkit.processing.ProcessListenerAdapter;
 import org.geotoolkit.processing.coverage.kriging.KrigingDescriptor;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.feature.Feature;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.geometry.Envelopes;
+import org.opengis.feature.Feature;
 
 /**
  *
@@ -173,7 +174,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 return;
             }
 
-            final CoordinateReferenceSystem crs = collection.getFeatureType().getCoordinateReferenceSystem();
+            final CoordinateReferenceSystem crs = FeatureExt.getCRS(collection.getFeatureType());
 
             final GeneralEnvelope env = new GeneralEnvelope(crs);
             env.setRange(0, minx, maxx);

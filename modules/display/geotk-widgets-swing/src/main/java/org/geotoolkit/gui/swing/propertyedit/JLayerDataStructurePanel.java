@@ -34,7 +34,7 @@ import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.io.X364;
 import org.apache.sis.io.wkt.Colors;

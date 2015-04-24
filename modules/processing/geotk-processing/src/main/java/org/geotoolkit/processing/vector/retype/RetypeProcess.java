@@ -16,10 +16,11 @@
  */
 package org.geotoolkit.processing.vector.retype;
 
+import org.apache.sis.feature.ViewFeatureType;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
+import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
 import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -46,9 +47,13 @@ public class RetypeProcess extends AbstractProcess {
     protected void execute() {
         final FeatureCollection inputFeatureList = value(VectorDescriptor.FEATURE_IN, inputParameters);
         final FeatureType mask = value(RetypeDescriptor.MASK_IN, inputParameters);
+        final FeatureCollection resultFeatureList;
+        if(mask instanceof ViewFeatureType){
+            resultFeatureList = GenericDecoratedFeatureIterator.wrap(inputFeatureList, (ViewFeatureType) mask);
+        }else{
+            resultFeatureList = inputFeatureList;
+        }
 
-        final FeatureCollection resultFeatureList = GenericRetypeFeatureIterator.wrap(inputFeatureList, mask);
-        
         getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 }

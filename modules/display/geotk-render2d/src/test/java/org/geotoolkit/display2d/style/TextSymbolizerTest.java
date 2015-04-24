@@ -35,6 +35,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.util.Arrays;
 import javax.measure.Unit;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.display2d.GO2Hints;
@@ -43,8 +45,6 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -53,13 +53,13 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.Test;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.style.Description;
 
 import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import static org.geotoolkit.style.StyleConstants.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * Test that text symbolizer are properly rendered.
@@ -81,11 +81,10 @@ public class TextSymbolizerTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", Point.class, CommonCRS.defaultGeographic());
-        ftb.setDefaultGeometry("geom");
-        final FeatureType type = ftb.buildFeatureType();
-        final Feature feature = FeatureUtilities.defaultFeature(type, "1");
-        feature.getProperty("geom").setValue(GF.createPoint(new Coordinate(0, 0)));
+        ftb.addAttribute(Point.class).setName("geom").setCRS(CommonCRS.defaultGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType type = ftb.build();
+        final Feature feature = type.newInstance();
+        feature.setPropertyValue("geom",GF.createPoint(new Coordinate(0, 0)));
 
         final FeatureCollection collection = FeatureStoreUtilities.collection(feature);
 

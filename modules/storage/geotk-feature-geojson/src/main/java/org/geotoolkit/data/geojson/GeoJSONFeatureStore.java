@@ -30,11 +30,7 @@ import org.geotoolkit.data.geojson.utils.GeoJSONUtils;
 import org.geotoolkit.data.query.*;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.*;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
@@ -55,7 +51,14 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.storage.DataStores;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  *
@@ -129,7 +132,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public boolean isWritable(final GenericName typeName) throws DataStoreException {
+    public boolean isWritable(final String typeName) throws DataStoreException {
         return isLocal && Files.isWritable(descFile) && Files.isWritable(jsonFile);
     }
 
@@ -174,7 +177,6 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
                 final String name = GeoJSONUtils.getNameWithoutExt(jsonFile);
 
                 final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-                final AttributeDescriptorBuilder atb = new AttributeDescriptorBuilder();
                 ftb.setName(name);
 
                 // build FeatureType from the first Feature of JSON file.
@@ -197,20 +199,26 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
                         // with the same bindings ?
 
                         GeoJSONFeature jsonFeature = jsonFeatureCollection.next();
-                        fillTypeFromFeature(ftb, atb, crs, jsonFeature, false);
+                        fillTypeFromFeature(ftb, crs, jsonFeature, false);
                     }
 
                 } else if (obj instanceof GeoJSONFeature) {
                     GeoJSONFeature jsonFeature = (GeoJSONFeature) obj;
-                    fillTypeFromFeature(ftb, atb, crs, jsonFeature, true);
+                    fillTypeFromFeature(ftb, crs, jsonFeature, true);
                 } else if (obj instanceof GeoJSONGeometry) {
                     HashMap<Object, Object> userData = new HashMap<>();
                     userData.put(HintsPending.PROPERTY_IS_IDENTIFIER,Boolean.TRUE);
-                    ftb.add(atb.create(NamesExt.create("fid"), String.class, 1, 1, true, userData));
-                    ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, findBinding((GeoJSONGeometry) obj), crs);
+                    ftb.addAttribute(String.class).setName("fid").addRole(AttributeRole.IDENTIFIER_COMPONENT);
+                    ftb.addAttribute(findBinding((GeoJSONGeometry) obj)).setName("geometry").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
                 }
 
-                return ftb.buildFeatureType();
+                try{
+                    ftb.build().getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+                }catch(PropertyNotFoundException ex){
+                    ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+                }
+
+                return ftb.build();
             } else {
                 throw new DataStoreException("Can't create FeatureType from empty/not found Json file "+jsonFile.getFileName().toString());
             }
@@ -218,28 +226,21 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     }
 
 
-    private void fillTypeFromFeature(FeatureTypeBuilder ftb, AttributeDescriptorBuilder atb, CoordinateReferenceSystem crs,
-                                     GeoJSONFeature jsonFeature,
-                                     boolean analyseGeometry) {
+    private void fillTypeFromFeature(FeatureTypeBuilder ftb, CoordinateReferenceSystem crs,
+                                     GeoJSONFeature jsonFeature, boolean analyseGeometry) {
         if (analyseGeometry) {
-            ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, findBinding(jsonFeature.getGeometry()), crs);
+            ftb.addAttribute(findBinding(jsonFeature.getGeometry())).setName("geometry").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
         } else {
-            ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, Geometry.class, crs);
+            ftb.addAttribute(Geometry.class).setName("geometry").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
         }
         for (Map.Entry<String, Object> property : jsonFeature.getProperties().entrySet()) {
-            Object value = property.getValue();
-            Class binding = value != null ? value.getClass() : String.class;
-
-            GenericName name = NamesExt.create(property.getKey());
-            HashMap<Object, Object> userData = null;
+            final Object value = property.getValue();
+            final Class binding = value != null ? value.getClass() : String.class;
+            final GenericName name = NamesExt.create(property.getKey());
+            final AttributeTypeBuilder atb = ftb.addAttribute(binding).setName(name);
             if ("id".equals(property.getKey()) || "fid".equals(property.getKey())) {
-                userData = new HashMap<>();
-                userData.put(HintsPending.PROPERTY_IS_IDENTIFIER,Boolean.TRUE);
-                name = NamesExt.create("fid");
+                atb.addRole(AttributeRole.IDENTIFIER_COMPONENT);
             }
-
-            final PropertyDescriptor propDesc = atb.create(name, binding, 1, 1, true, userData);
-            ftb.add(propDesc);
         }
     }
 
@@ -357,12 +358,11 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter, final Hints hints) throws DataStoreException {
-        typeCheck(typeName);
-
+    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
+        typeCheck(query.getTypeName());
         final FeatureWriter fw = new GeoJSONFileWriter(jsonFile, featureType, rwLock, tmpLock,
                 GeoJSONFeatureStoreFactory.ENCODING, coordAccuracy);
-        return handleRemaining(fw, filter);
+        return handleRemaining(fw, query.getFilter());
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -373,7 +373,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final String typeName) throws DataStoreException {
         checkTypeExist();
         if (featureType == null) {
             throw  new DataStoreException("No FeatureType found for type name : "+typeName);
@@ -383,11 +383,12 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final FeatureType featureType) throws DataStoreException {
         if (!isLocal) {
             throw new DataStoreException("Cannot create FeatureType on remote GeoJSON");
         }
 
+        GenericName typeName = featureType.getName();
         if(typeName == null){
             throw new DataStoreException("Type name can not be null.");
         }
@@ -415,19 +416,17 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
-        deleteFeatureType(typeName);
-        createFeatureType(typeName, featureType);
+    public void updateFeatureType(final FeatureType featureType) throws DataStoreException {
+        deleteFeatureType(featureType.getName().toString());
+        createFeatureType(featureType);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
-        if (!getNames().contains(typeName)) {
-            throw new DataStoreException("Type name doesn't exist in FeatureStore.");
-        }
+    public void deleteFeatureType(final String typeName) throws DataStoreException {
+        typeCheck(typeName);
 
         if (!isLocal) {
             throw new DataStoreException("Cannot create FeatureType on remote GeoJSON");
@@ -437,7 +436,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
             throw new DataStoreException("Type name can not be null.");
         }
 
-        if (!typeName.tip().toString().equals(GeoJSONUtils.getNameWithoutExt(jsonFile))) {
+        if (!typeName.equals(GeoJSONUtils.getNameWithoutExt(jsonFile))) {
             throw new DataStoreException("New type name should be equals to file name.");
         }
 
@@ -461,7 +460,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures,
+    public List<FeatureId> addFeatures(final String groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
@@ -470,7 +469,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final String groupName, final Filter filter, final Map<String, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
@@ -478,7 +477,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final String groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 

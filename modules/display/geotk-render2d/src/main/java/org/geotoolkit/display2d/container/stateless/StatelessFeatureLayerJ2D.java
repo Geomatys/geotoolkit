@@ -26,6 +26,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.FeatureTypeExt;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
@@ -63,10 +65,6 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.DefaultPropertyName;
@@ -94,8 +92,12 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.Utilities;
-import org.geotoolkit.referencing.ReferencingUtilities;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 
 /**
  * Single object to represent a complete feature map layer.
@@ -243,7 +245,13 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
                 if(monitor.stopRequested()) return;
                 final ProjectedObject projectedCandidate = statefullIterator.next();
                 final Feature feature = (Feature) projectedCandidate.getCandidate();
-                final List<Symbolizer> symbolizers = (List<Symbolizer>) feature.getUserData().get(MapLayer.USERKEY_STYLED_FEATURE);
+
+                final List<Symbolizer> symbolizers;
+                try{
+                    symbolizers = (List<Symbolizer>) feature.getPropertyValue(FeatureExt.ATTRIBUTE_SYMBOLIZERS.toString());
+                }catch(PropertyNotFoundException ex){
+                    continue;
+                }
                 if(symbolizers==null) continue;
                 for(Symbolizer symbolizer : symbolizers){
                     final SymbolizerRendererService srs = GO2Utilities.findRenderer(symbolizer.getClass());
@@ -291,7 +299,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
     @Override
     protected FeatureId id(Object candidate) {
-        return ((Feature)candidate).getIdentifier();
+        return FeatureExt.getId((Feature)candidate);
     }
 
     @Override
@@ -342,6 +350,12 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         final Query query;
         try {
             final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
+            //add identifier property
+            final FeatureType type = getUserObject().getCollection().getFeatureType();
+            try{
+                type.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+                attributs.add(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            }catch(PropertyNotFoundException ex){}
             query = prepareQuery(renderingContext, layer, attributs, null, symbolsMargin);
         } catch (PortrayalException ex) {
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
@@ -429,12 +443,15 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     protected static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer,
             final Set<String> styleRequieredAtts, final List<Rule> rules, double symbolsMargin) throws PortrayalException{
 
-        final FeatureCollection fs            = layer.getCollection();
-        final FeatureType schema                                 = fs.getFeatureType();
-        final GeometryDescriptor geomDesc                        = schema.getGeometryDescriptor();
-        final BoundingBox bbox                                   = optimizeBBox(renderingContext, layer, symbolsMargin);
-        final CoordinateReferenceSystem layerCRS                 = schema.getCoordinateReferenceSystem();
-        final RenderingHints hints                               = renderingContext.getRenderingHints();
+        final FeatureCollection fs               = layer.getCollection();
+        final FeatureType schema                 = fs.getFeatureType();
+        PropertyType geomDesc              = null;
+        try {
+            geomDesc = schema.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+        } catch(PropertyNotFoundException ex){};
+        final BoundingBox bbox                   = optimizeBBox(renderingContext, layer, symbolsMargin);
+        final CoordinateReferenceSystem layerCRS = FeatureExt.getCRS(schema);
+        final RenderingHints hints               = renderingContext.getRenderingHints();
 
         //search used geometries
         boolean allDefined = true;
@@ -454,7 +471,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             allDefined = false;
         }
         if(geomDesc!=null && !allDefined){
-            geomProperties.add(geomDesc.getLocalName());
+            geomProperties.add(geomDesc.getName().toString());
         }
 
         Filter filter;
@@ -584,7 +601,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             }
 
             try {
-                expected = FeatureTypeUtilities.createSubType(schema, atts);
+                expected = FeatureTypeExt.createSubType(schema, atts);
             } catch (MismatchedFeatureException ex) {
                 throw new PortrayalException(ex);
             }
@@ -688,13 +705,13 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     protected static Query prepareQuery(final RenderingContext2D renderingContext,
             final FeatureMapLayer layer, double symbolsMargin) throws PortrayalException{
 
-        final FeatureCollection fs            = layer.getCollection();
-        final FeatureType schema                                 = fs.getFeatureType();
-        final GeometryDescriptor geomDesc                        = schema.getGeometryDescriptor();
-        final BoundingBox bbox                                   = optimizeBBox(renderingContext,layer,symbolsMargin);
-        final CoordinateReferenceSystem layerCRS                 = schema.getCoordinateReferenceSystem();
-        final String geomAttName                                 = (geomDesc!=null)? geomDesc.getLocalName() : null;
-        final RenderingHints hints                               = renderingContext.getRenderingHints();
+        final FeatureCollection fs               = layer.getCollection();
+        final FeatureType schema                 = fs.getFeatureType();
+        final PropertyType geomDesc              = FeatureExt.getDefaultGeometryAttribute(schema);
+        final BoundingBox bbox                   = optimizeBBox(renderingContext,layer,symbolsMargin);
+        final CoordinateReferenceSystem layerCRS = FeatureExt.getCRS(schema);
+        final String geomAttName                 = (geomDesc!=null)? geomDesc.getName().toString() : null;
+        final RenderingHints hints               = renderingContext.getRenderingHints();
 
         Filter filter;
 
@@ -709,9 +726,9 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         //make a bbox filter
         if(geomAttName != null){
             if (layerCRS != null) {
-                filter = new UnreprojectedLooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<BoundingBox>(bbox));
+                filter = new UnreprojectedLooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox));
             } else {
-                filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<BoundingBox>(bbox));
+                filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<>(bbox));
             }
         }else{
             filter = Filter.EXCLUDE;
@@ -795,7 +812,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds2D();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
         final CanvasMonitor monitor                              = renderingContext.getMonitor();
-        final CoordinateReferenceSystem layerCRS                 = layer.getCollection().getFeatureType().getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem layerCRS                 = FeatureExt.getCRS(layer.getCollection().getFeatureType());
 
         //expand the search area by the maximum symbol size
         if(symbolsMargin>0){

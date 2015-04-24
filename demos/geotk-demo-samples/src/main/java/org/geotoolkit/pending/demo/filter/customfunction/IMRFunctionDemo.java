@@ -8,14 +8,13 @@ import com.vividsolutions.jts.geom.Point;
 import java.util.Date;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.filter.customaccessor.Pojo;
 import org.apache.sis.referencing.CommonCRS;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 
@@ -51,15 +50,15 @@ public class IMRFunctionDemo {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("marine-life");
-        ftb.add("family", String.class);
-        ftb.add("depth", Integer.class);
-        ftb.add("localisation", Point.class, CommonCRS.WGS84.normalizedGeographic());
-        final FeatureType type = ftb.buildFeatureType();
+        ftb.addAttribute(String.class).setName("family");
+        ftb.addAttribute(Integer.class).setName("depth");
+        ftb.addAttribute(Point.class).setName("localisation").setCRS(CommonCRS.WGS84.normalizedGeographic());
+        final FeatureType type = ftb.build();
 
-        final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-1");
-        feature1.getProperty("family").setValue("seashell");
-        feature1.getProperty("depth").setValue(1200);
-        feature1.getProperty("localisation").setValue(gf.createPoint(new Coordinate(5, 2)));
+        final Feature feature1 = type.newInstance();
+        feature1.setPropertyValue("family","seashell");
+        feature1.setPropertyValue("depth",1200);
+        feature1.setPropertyValue("localisation",gf.createPoint(new Coordinate(5, 2)));
 
         return feature1;
     }

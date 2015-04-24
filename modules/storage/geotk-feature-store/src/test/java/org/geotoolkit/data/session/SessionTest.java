@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.data.FeatureIterator;
@@ -35,18 +37,12 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.apache.sis.referencing.CommonCRS;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
@@ -56,6 +52,9 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  *
@@ -82,17 +81,17 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
 
         //create the schema
         final GenericName name = NamesExt.create("http://test.com", "TestSchema1");
-        builder.reset();
         builder.setName(name);
-        builder.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
-        builder.add("string", String.class);
-        builder.add("double", Double.class);
-        builder.add("date", Date.class);
-        final FeatureType type = builder.buildFeatureType();
-        store.createFeatureType(name,type);
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(Point.class).setName("geom").setCRS(CommonCRS.WGS84.normalizedGeographic());
+        builder.addAttribute(String.class).setName("string");
+        builder.addAttribute(Double.class).setName("double");
+        builder.addAttribute(Date.class).setName("date");
+        final FeatureType type = builder.build();
+        store.createFeatureType(type);
 
         //create a few features
-        FeatureWriter writer = store.getFeatureWriterAppend(name);
+        FeatureWriter writer = store.getFeatureWriter(QueryBuilder.all(name.toString()));
         try{
             Feature f = writer.next();
             f.setPropertyValue("geom", GF.createPoint(new Coordinate(3, 30)));
@@ -120,7 +119,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         }
 
         //quick count check
-        FeatureReader reader = store.getFeatureReader(QueryBuilder.all(name));
+        FeatureReader reader = store.getFeatureReader(QueryBuilder.all(name.toString()));
         int count = 0;
         try{
             while(reader.hasNext()){
@@ -131,11 +130,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
             reader.close();
         }
         assertEquals(count, 3);
-        assertEquals(store.getCount(QueryBuilder.all(name)), 3);
-    }
-
-    @After
-    public void tearDown() {
+        assertEquals(store.getCount(QueryBuilder.all(name.toString())), 3);
     }
 
     @Test
@@ -157,7 +152,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         assertFalse(session.hasPendingChanges());
 
         //test an iterator------------------------------------------------------
-        FeatureIterator reader = session.getFeatureIterator(QueryBuilder.sorted(name, new SortBy[]{FF.sort("string", SortOrder.ASCENDING)}));
+        FeatureIterator reader = session.getFeatureIterator(QueryBuilder.sorted(name.toString(), new SortBy[]{FF.sort("string", SortOrder.ASCENDING)}));
         try{
             Feature sf;
             reader.hasNext();
@@ -178,12 +173,13 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         //----------------------------------------------------------------------
         //test adding new features----------------------------------------------
         //----------------------------------------------------------------------
-        final Feature sfb = FeatureUtilities.defaultFeature(store.getFeatureType(name),"temporary");
+        final Feature sfb = store.getFeatureType(name.toString()).newInstance();
+        sfb.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "temporary");
         sfb.setPropertyValue("string", "hop4");
         sfb.setPropertyValue("double", 2.5d);
         sfb.setPropertyValue("date", new Date(100L));
 
-        session.addFeatures(name, Collections.singletonList(sfb));
+        session.addFeatures(name.toString(), Collections.singletonList(sfb));
 
         //check that he new feature is available in the session but not in the datastore
         qb.reset();
@@ -194,7 +190,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         assertEquals(session.getCount(query),4);
         assertTrue(session.hasPendingChanges());
 
-        reader = session.getFeatureIterator(QueryBuilder.filtered(name, FF.equals(FF.literal("hop4"), FF.property("string"))));
+        reader = session.getFeatureIterator(QueryBuilder.filtered(name.toString(), FF.equals(FF.literal("hop4"), FF.property("string"))));
         try{
             Feature sf;
             reader.hasNext();
@@ -210,7 +206,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
 
         //check that the sorting order has been preserve within the session
 
-        reader = session.getFeatureIterator(QueryBuilder.sorted(name,new SortBy[]{FF.sort("double", SortOrder.ASCENDING)}));
+        reader = session.getFeatureIterator(QueryBuilder.sorted(name.toString(),new SortBy[]{FF.sort("double", SortOrder.ASCENDING)}));
         try{
             Feature sf;
             reader.hasNext();
@@ -243,7 +239,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         assertFalse(session.hasPendingChanges());
 
         //make a more deep test to find our feature
-        reader = session.getFeatureIterator(QueryBuilder.filtered(name, FF.equals(FF.literal("hop4"), FF.property("string"))));
+        reader = session.getFeatureIterator(QueryBuilder.filtered(name.toString(), FF.equals(FF.literal("hop4"), FF.property("string"))));
         try{
             Feature sf;
             reader.hasNext();
@@ -257,7 +253,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
             reader.close();
         }
 
-        reader = store.getFeatureReader(QueryBuilder.filtered(name, FF.equals(FF.literal("hop4"), FF.property("string"))));
+        reader = store.getFeatureReader(QueryBuilder.filtered(name.toString(), FF.equals(FF.literal("hop4"), FF.property("string"))));
         try{
             Feature sf;
             reader.hasNext();
@@ -287,7 +283,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         //----------------------------------------------------------------------
 
         //check that the feature exist
-        FeatureIterator reader = session.getFeatureIterator(QueryBuilder.filtered(name, FF.equals(FF.literal("hop3"), FF.property("string"))));
+        FeatureIterator reader = session.getFeatureIterator(QueryBuilder.filtered(name.toString(), FF.equals(FF.literal("hop3"), FF.property("string"))));
         try{
             Feature sf;
             reader.hasNext();
@@ -304,7 +300,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         assertFalse(session.hasPendingChanges());
 
         //remove the feature
-        session.removeFeatures(name, FF.equals(FF.literal("hop3"), FF.property("string")));
+        session.removeFeatures(name.toString(), FF.equals(FF.literal("hop3"), FF.property("string")));
 
         //check that the feature is removed in the session but not in the datastore
         qb.reset();
@@ -353,11 +349,11 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         //test modifying feature------------------------------------------------
         //----------------------------------------------------------------------
         Point newPt = GF.createPoint(new Coordinate(5, 50));
-        Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
-        values.put((AttributeDescriptor) (store.getFeatureType(name)).getDescriptor("double"), 15d);
-        values.put((AttributeDescriptor) (store.getFeatureType(name)).getDescriptor("geom"), newPt);
+        Map<String,Object> values = new HashMap<>();
+        values.put("double", 15d);
+        values.put("geom", newPt);
 
-        session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(2d)), values);
+        session.updateFeatures(name.toString(), FF.equals(FF.property("double"), FF.literal(2d)), values);
 
         //check we have a modification -----------------------------------------
         qb.reset();
@@ -375,7 +371,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
             Feature f = ite.next();
             if(f.getProperty("double").getValue().equals(15d)){
                 found = true;
-                assertTrue(newPt.getCoordinate().equals2D( ((Point)f.getDefaultGeometryProperty().getValue()).getCoordinate() ));
+                assertTrue(newPt.getCoordinate().equals2D( ((Point)f.getPropertyValue("geom")).getCoordinate() ));
             }
         }
         ite.close();
@@ -400,7 +396,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
             Feature f = ite.next();
             if(f.getProperty("double").getValue().equals(15d)){
                 found = true;
-                Point pt = ((Point)f.getDefaultGeometryProperty().getValue());
+                Point pt = (Point)f.getPropertyValue("geom");
                 assertEquals(50d, pt.getCoordinate().x, TOLERANCE);
                 assertEquals(5d, pt.getCoordinate().y, TOLERANCE);
             }
@@ -413,8 +409,8 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         //make a second change on the same feature -----------------------------
         newPt = GF.createPoint(new Coordinate(9, 90));
         values = new HashMap<>();
-        values.put((AttributeDescriptor) store.getFeatureType(name).getDescriptor("geom"), newPt);
-        session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(15d)), values);
+        values.put("geom", newPt);
+        session.updateFeatures(name.toString(), FF.equals(FF.property("double"), FF.literal(15d)), values);
 
         qb.reset();
         qb.setCRS(CommonCRS.WGS84.geographic());
@@ -428,7 +424,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
             Feature f = ite.next();
             if(f.getProperty("double").getValue().equals(15d)){
                 found = true;
-                Point pt = ((Point)f.getDefaultGeometryProperty().getValue());
+                Point pt = (Point)f.getPropertyValue("geom");
                 assertEquals(90d, pt.getCoordinate().x, TOLERANCE);
                 assertEquals(9d, pt.getCoordinate().y, TOLERANCE);
             }
@@ -451,15 +447,15 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         qb.reset();
         qb.setTypeName(name);
         query = qb.buildQuery();
-        AttributeDescriptor desc = (AttributeDescriptor) store.getFeatureType(name).getDescriptor("double");
+        String desc = "double";
 
         ite = session.getFeatureIterator(query);
-        FeatureId id1 = ite.next().getIdentifier();
-        FeatureId id2 = ite.next().getIdentifier();
+        FeatureId id1 = FeatureExt.getId(ite.next());
+        FeatureId id2 = FeatureExt.getId(ite.next());
         ite.close();
 
-        session.updateFeatures(name, FF.id(Collections.singleton(id1)), desc, 50d);
-        session.updateFeatures(name, FF.id(Collections.singleton(id2)), desc, 100d);
+        session.updateFeatures(name.toString(), FF.id(Collections.singleton(id1)), Collections.singletonMap(desc, 50d));
+        session.updateFeatures(name.toString(), FF.id(Collections.singleton(id2)), Collections.singletonMap(desc, 100d));
 
         qb.reset();
         qb.setTypeName(name);
@@ -470,8 +466,8 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         int count = 0;
         while(ite.hasNext()){
             Feature f = ite.next();
-            assertTrue(f.getIdentifier().equals(id1));
-            assertTrue(f.getProperty("double").getValue().equals(50d));
+            assertEquals(id1,FeatureExt.getId(f));
+            assertEquals(50d, f.getPropertyValue("double"));
             count++;
         }
         ite.close();
@@ -488,8 +484,8 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         count = 0;
         while(ite.hasNext()){
             Feature f = ite.next();
-            assertTrue(f.getIdentifier().equals(id2));
-            assertTrue(f.getProperty("double").getValue().equals(100d));
+            assertEquals(id2,FeatureExt.getId(f));
+            assertEquals(100d, f.getPropertyValue("double"));
             count++;
         }
         ite.close();
@@ -532,10 +528,10 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
         //create an asynchrone session
         final Session session = store.createSession(true);
         final Point newPt = GF.createPoint(new Coordinate(50, 1));
-        final Map<AttributeDescriptor,Object> values = new HashMap<>();
-        values.put((AttributeDescriptor) store.getFeatureType(name).getDescriptor("geom"), newPt);
+        final Map<String,Object> values = new HashMap<>();
+        values.put("geom", newPt);
 
-        session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(2d)), values);
+        session.updateFeatures(name.toString(), FF.equals(FF.property("double"), FF.literal(2d)), values);
 
         //check we have a modification in data crs -----------------------------
         DefaultBoundingBox bbox = new DefaultBoundingBox(CommonCRS.WGS84.normalizedGeographic());
@@ -557,7 +553,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
             Feature f = ite.next();
             if(f.getProperty("double").getValue().equals(2d)){
                 found = true;
-                final Point pt = ((Point)f.getDefaultGeometryProperty().getValue());
+                final Point pt = (Point)f.getPropertyValue("geom");
                 //we expect axes the same way
                 assertEquals(newPt.getCoordinate().x, pt.getCoordinate().x,TOLERANCE);
                 assertEquals(newPt.getCoordinate().y, pt.getCoordinate().y,TOLERANCE);
@@ -585,7 +581,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
             Feature f = ite.next();
             if(f.getProperty("double").getValue().equals(2d)){
                 found = true;
-                final Point pt = ((Point)f.getDefaultGeometryProperty().getValue());
+                final Point pt = (Point)f.getPropertyValue("geom");
                 //we expect axes the same way
                 assertEquals(newPt.getCoordinate().x, pt.getCoordinate().x, TOLERANCE);
                 assertEquals(newPt.getCoordinate().y, pt.getCoordinate().y, TOLERANCE);
@@ -605,7 +601,7 @@ public class SessionTest extends org.geotoolkit.test.TestBase {
             Feature f = ite.next();
             if(f.getProperty("double").getValue().equals(2d)){
                 found = true;
-                final Point pt = ((Point)f.getDefaultGeometryProperty().getValue());
+                final Point pt = (Point)f.getPropertyValue("geom");
                 //we expect axes the same way
                 assertEquals(newPt.getCoordinate().x, pt.getCoordinate().x, TOLERANCE);
                 assertEquals(newPt.getCoordinate().y, pt.getCoordinate().y, TOLERANCE);

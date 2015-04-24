@@ -23,22 +23,24 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.AttributeType;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.geometry.Envelope2D;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
 
 /**
  * Class Description
@@ -52,18 +54,10 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
     public static final GenericName BEGIN_ANGLE_NAME = NamesExt.create("BEGIN_ANGLE");
     public static final GenericName END_ANGLE_NAME = NamesExt.create("END_ANGLE");
 
-    public static final AttributeDescriptor BEGIN_ANGLE;
-    public static final AttributeDescriptor END_ANGLE;
-    private static final AttributeDescriptor PEN;
+    public static final AttributeType BEGIN_ANGLE = new DefaultAttributeType(Collections.singletonMap("name", BEGIN_ANGLE_NAME), Double.class, 1, 1, null);
+    public static final AttributeType END_ANGLE = new DefaultAttributeType(Collections.singletonMap("name", END_ANGLE_NAME), Double.class, 1, 1, null);
+    private static final AttributeType PEN = new DefaultAttributeType(Collections.singletonMap("name", Pen.NAME), String.class, 1, 1, null);
 
-    static {
-        final AttributeType angleType = new DefaultAttributeType(NamesExt.create("ANGLE"), Double.class,false, false, null, null, null);
-
-        BEGIN_ANGLE = new DefaultAttributeDescriptor(angleType, BEGIN_ANGLE_NAME, 1, 1, false, null);
-        END_ANGLE = new DefaultAttributeDescriptor(angleType, END_ANGLE_NAME, 1, 1, false, null);
-
-        PEN = new DefaultAttributeDescriptor(STRING_TYPE, Pen.NAME, 1, 1, true, null);
-    }
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {
@@ -87,18 +81,18 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
                 seq = new PackedCoordinateSequence.Double(linePts, 2);
             }
             final Envelope line = new Envelope(seq.getCoordinate(0), seq.getCoordinate(1));
-            toFill.getDefaultGeometryProperty().setValue(line);
+            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), line);
 
             // Get arc angles
             Double beginAngle = Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN));
             Double endAngle   = Double.parseDouble(scanner.next(ProjectionUtils.DOUBLE_PATTERN));
-            toFill.getProperty(BEGIN_ANGLE_NAME).setValue(beginAngle);
-            toFill.getProperty(END_ANGLE_NAME).setValue(endAngle);
+            toFill.setPropertyValue(BEGIN_ANGLE_NAME.toString(),beginAngle);
+            toFill.setPropertyValue(END_ANGLE_NAME.toString(),endAngle);
         } catch (InputMismatchException ex) {
             throw new DataStoreException("Arc is not properly defined : not enough points found.", ex);
         }
 
-        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {
+        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getProperties(true).contains(PEN)) {
             String args = scanner.nextLine();
             String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
                     .replaceAll("[^\\d^,]+", "")
@@ -111,7 +105,7 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
                 final int pattern = Integer.decode(argsTab[1]);
                 final int color = Integer.decode(argsTab[2]);
                 Pen pen = new Pen(width, pattern, color);
-                toFill.getProperty(Pen.NAME).setValue(pen);
+                toFill.setPropertyValue(Pen.NAME.toString(),pen);
             }
         }
     }
@@ -119,16 +113,18 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
     @Override
     public String toMIFSyntax(Feature source) throws DataStoreException {
         ArgumentChecks.ensureNonNull("Source feature", source);
-        if(source.getDefaultGeometryProperty() == null) {
+        if(FeatureExt.hasAGeometry(source.getType())) {
             throw new DataStoreException("Input feature does not contain any geometry.");
         }
 
-        if (source.getProperty(BEGIN_ANGLE_NAME) == null || source.getProperty(END_ANGLE_NAME) == null) {
+        final Object beginAngle = MIFUtils.getPropertySafe(source, BEGIN_ANGLE_NAME.toString());
+        final Object endAngle = MIFUtils.getPropertySafe(source, END_ANGLE_NAME.toString());
+        if (beginAngle == null || endAngle == null) {
             throw new DataStoreException("Not enough information to build an arc (missing angle).");
         }
 
         StringBuilder builder = new StringBuilder(NAME.tip().toString()).append(' ');
-        Object value = source.getDefaultGeometryProperty().getValue();
+        Object value = MIFUtils.getGeometryValue(source);
         if(value instanceof Envelope) {
             Envelope env = (Envelope) value;
             builder.append(env.getMinX()).append(' ')
@@ -152,14 +148,12 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
         }
         builder.append('\n');
 
-        builder.append(source.getProperty(BEGIN_ANGLE_NAME).getValue()).append(' ')
-                .append(source.getProperty(BEGIN_ANGLE_NAME).getValue()).append('\n');
+        builder.append(beginAngle).append(' ')
+                .append(endAngle).append('\n');
 
-        if(source.getProperty(Pen.NAME) != null) {
-            Object penValue = source.getProperty(Pen.NAME).getValue();
-            if(penValue != null && penValue instanceof Pen) {
-                builder.append(penValue).append('\n');
-            }
+        final Object pen = MIFUtils.getPropertySafe(source, Pen.NAME.toString());
+        if (pen instanceof Pen) {
+            builder.append(pen).append('\n');
         }
 
         return builder.toString();
@@ -180,8 +174,8 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    protected List<AttributeDescriptor> getAttributes() {
-        List<AttributeDescriptor> descList = new ArrayList<AttributeDescriptor>(3);
+    protected List<AttributeType> getAttributes() {
+        List<AttributeType> descList = new ArrayList<AttributeType>(3);
         descList.add(BEGIN_ANGLE);
         descList.add(END_ANGLE);
         descList.add(PEN);

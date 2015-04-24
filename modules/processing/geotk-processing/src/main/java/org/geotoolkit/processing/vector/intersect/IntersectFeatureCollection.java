@@ -19,8 +19,6 @@ package org.geotoolkit.processing.vector.intersect;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -31,22 +29,22 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
+import org.apache.sis.internal.feature.AttributeConvention;
+
 
 /**
  * FeatureCollection for Intersect process
+ *
  * @author Quentin Boileau
- * @module pending
  */
 public class IntersectFeatureCollection extends WrapFeatureCollection {
 
-    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
-            new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
     private final FeatureType newFeatureType;
     private final Geometry interGeom;
 
@@ -59,7 +57,6 @@ public class IntersectFeatureCollection extends WrapFeatureCollection {
         super(originalFC);
         this.interGeom = interGeom;
         this.newFeatureType = super.getFeatureType();
-
     }
 
     /**
@@ -96,19 +93,13 @@ public class IntersectFeatureCollection extends WrapFeatureCollection {
      * @return the intersect filter
      */
     private Filter createFilter() {
-
         final List<Filter> filterList = new ArrayList<Filter>();
-        final Collection<PropertyDescriptor> descList = this.newFeatureType.getDescriptors();
-        final Iterator<PropertyDescriptor> descIter = descList.iterator();
-
-        while (descIter.hasNext()) {
-            final PropertyDescriptor property = descIter.next();
-            if (property instanceof GeometryDescriptor) {
-
+        for (final PropertyType property : newFeatureType.getProperties(true)) {
+            if (AttributeConvention.isGeometryAttribute(property)) {
                 final Filter filter = FF.intersects(FF.property(property.getName()), FF.literal(interGeom));
                 filterList.add(filter);
             }
         }
-        return  FF.or(filterList);
+        return FF.or(filterList);
     }
 }

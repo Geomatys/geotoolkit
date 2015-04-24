@@ -21,10 +21,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.feature.FeatureUtilities;
 
 /**
  * Describe a table primary key.
@@ -67,7 +67,7 @@ public class PrimaryKey {
         
         if (size == 0) {
             // generate a random id
-            return FeatureUtilities.createDefaultFeatureId();
+            return FeatureExt.createDefaultFeatureId();
         }else if (size == 1) {
             // single value compose the id, use it directly
             return escapeDot(rs.getString(columns.get(0).getName()));
@@ -96,15 +96,14 @@ public class PrimaryKey {
         final String[] parts;
         //handle empty Strings
         if (fid.isEmpty()){
-            parts = new String[]{"",""};
+            parts = new String[]{""};
         } else {
             parts = fid.split("\\.");
         }
-        final Object[] values = new Object[parts.length-1];
+        final Object[] values = new Object[parts.length];
         
-        //ignore the first part which is the featuretype name
-        for(int i=1;i<parts.length;i++){
-            values[i-1] = ObjectConverters.convert(parts[i], columns.get(i-1).getJavaType());
+        for(int i=0;i<parts.length;i++){
+            values[i] = ObjectConverters.convert(parts[i], columns.get(i).getJavaType());
         }
         
         return values;

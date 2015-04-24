@@ -23,11 +23,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.type.BasicFeatureTypes;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.AttributeType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -94,20 +92,14 @@ public class ShapefileHeader {
      * @param namespace
      * @return AttributeDescriptor mapping this header definition
      */
-    public GeometryDescriptor createDescriptor(final String namespace, final CoordinateReferenceSystem crs){        
-        final AttributeTypeBuilder buildAtt = new AttributeTypeBuilder();
-        final AttributeDescriptorBuilder buildDesc = new AttributeDescriptorBuilder();
-        
+    public AttributeType createDescriptor(final String namespace, final CoordinateReferenceSystem crs){
+        final SingleAttributeTypeBuilder buildAtt = new SingleAttributeTypeBuilder();        
         final Class<?> geometryClass = getShapeType().bestJTSClass();
         buildAtt.setName(namespace, Classes.getShortName(geometryClass));
         buildAtt.setCRS(crs);
-        buildAtt.setBinding(geometryClass);
-
-        buildDesc.setNillable(true);
-        buildDesc.setName(namespace, BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
-        buildDesc.setType(buildAtt.buildGeometryType());
-
-        return (GeometryDescriptor) buildDesc.buildDescriptor();
+        buildAtt.setValueClass(geometryClass);
+        buildAtt.setName(namespace, "the_geom");
+        return buildAtt.build();
     }
     
     @Override

@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -44,15 +42,10 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -65,33 +58,9 @@ public class LatLonQuadTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/latLonQuad.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public LatLonQuadTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
-    public void latLonQuadReadTest()
-            throws IOException, XMLStreamException, URISyntaxException, KmlException {
-
-        Iterator i;
-
+    public void latLonQuadReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
         final KmlReader reader = new KmlReader();
         final GxReader gxReader = new GxReader(reader);
         reader.setInput(new File(pathToTestFile));
@@ -100,21 +69,17 @@ public class LatLonQuadTest extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         final Feature groundOverlay = kmlObjects.getAbstractFeature();
-        assertTrue(groundOverlay.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY));
-        assertEquals("gx:LatLonQuad Example", groundOverlay.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertEquals(KmlModelConstants.TYPE_GROUND_OVERLAY, groundOverlay.getType());
+        assertEquals("gx:LatLonQuad Example", groundOverlay.getPropertyValue(KmlConstants.TAG_NAME));
 
-        assertTrue(groundOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue() instanceof Icon);
-        final Icon icon = (Icon) groundOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue();
+        final Icon icon = (Icon) groundOverlay.getPropertyValue(KmlConstants.TAG_ICON);
         assertEquals("http://code.google.com/apis/kml/documentation/Images/rectangle.gif", icon.getHref());
         assertEquals(0.75, icon.getViewBoundScale(), DELTA);
 
-        final Extensions extensions = (Extensions) groundOverlay.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue();
+        final Extensions extensions = (Extensions) groundOverlay.getProperty(KmlConstants.TAG_EXTENSIONS).getValue();
 
         assertEquals(1, extensions.complexes(Extensions.Names.GROUND_OVERLAY).size());
-        assertTrue(extensions.complexes(Extensions.Names.GROUND_OVERLAY).get(0) instanceof LatLonQuad);
         final LatLonQuad latLonQuad = (LatLonQuad) extensions.complexes(Extensions.Names.GROUND_OVERLAY).get(0);
-        assertTrue(latLonQuad.getCoordinates() instanceof CoordinateSequence);
-
         final CoordinateSequence coordinates = latLonQuad.getCoordinates();
 
         assertEquals(4, coordinates.size());
@@ -138,7 +103,6 @@ public class LatLonQuadTest extends org.geotoolkit.test.TestBase {
         assertEquals(81.509322,coordinate3.x, DELTA);
         assertEquals(44.321015,coordinate3.y, DELTA);
         assertEquals(Double.NaN,coordinate3.z, DELTA);
-
     }
 
     @Test
@@ -163,10 +127,9 @@ public class LatLonQuadTest extends org.geotoolkit.test.TestBase {
         final Icon icon = kmlFactory.createIcon(link);
 
         final Feature groundOverlay = kmlFactory.createGroundOverlay();
-        Collection<Property> groundOverlayProperties = groundOverlay.getProperties();
-        groundOverlayProperties.add(FF.createAttribute("gx:LatLonQuad Example",KmlModelConstants.ATT_NAME ,null));
-        groundOverlayProperties.add(FF.createAttribute(icon, KmlModelConstants.ATT_OVERLAY_ICON, null));
-        ((Extensions) groundOverlay.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue()).
+        groundOverlay.setPropertyValue(KmlConstants.TAG_NAME, "gx:LatLonQuad Example");
+        groundOverlay.setPropertyValue(KmlConstants.TAG_ICON, icon);
+        ((Extensions) groundOverlay.getProperty(KmlConstants.TAG_EXTENSIONS).getValue()).
                 complexes(Extensions.Names.GROUND_OVERLAY).add(latLonQuad);
 
         final Kml kml = kmlFactory.createKml(null, groundOverlay, null, null);
@@ -182,8 +145,6 @@ public class LatLonQuadTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
-
 }

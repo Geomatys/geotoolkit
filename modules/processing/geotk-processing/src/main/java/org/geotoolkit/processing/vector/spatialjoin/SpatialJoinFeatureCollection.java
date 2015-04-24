@@ -19,8 +19,8 @@ package org.geotoolkit.processing.vector.spatialjoin;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * FeatureCollection for SpatialJoin process

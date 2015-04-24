@@ -30,9 +30,10 @@ import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
 import org.geotoolkit.filter.binding.Bindings;
+import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  * Map a Collection as a Jasper report data source.
@@ -100,18 +101,22 @@ public class CollectionDataSource implements JRDataSource {
         final String name = jrf.getName();
 
         if(candidate instanceof Feature){
-            final Property prop = ((Feature)candidate).getProperty(name);
-            if(prop != null){
-                //just in case the type is not rigourously the same.
-                final Class clazz = jrf.getValueClass();
-                try {
-                    return ObjectConverters.convert(prop.getValue(), clazz);
-                } catch (UnconvertibleObjectException e) {
-                    Logging.recoverableException(null, CollectionDataSource.class, "getFieldValue", e);
-                    // TODO - do we really want to ignore?
+            try{
+                final Property prop = ((Feature)candidate).getProperty(name);
+                if(prop != null){
+                    //just in case the type is not rigourously the same.
+                    final Class clazz = jrf.getValueClass();
+                    try {
+                        return ObjectConverters.convert(prop.getValue(), clazz);
+                    } catch (UnconvertibleObjectException e) {
+                        Logging.recoverableException(null, CollectionDataSource.class, "getFieldValue", e);
+                        // TODO - do we really want to ignore?
+                    }
                 }
+            }catch(PropertyNotFoundException ex){
+                return null;
             }
-
+            
             //No field that match this name, looks like the feature type
             //used is not the exact one returned by the JasperReportservice.
             //This is not necessarly an error if for exemple someone ignore

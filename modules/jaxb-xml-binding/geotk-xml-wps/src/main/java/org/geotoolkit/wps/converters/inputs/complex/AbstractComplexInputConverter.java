@@ -23,14 +23,13 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
-import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import static org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
 import org.geotoolkit.wps.xml.ComplexDataType;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 
 /**
  *
@@ -69,7 +68,7 @@ public abstract class AbstractComplexInputConverter<T> extends WPSDefaultConvert
 
         JAXPStreamFeatureReader featureReader = new JAXPStreamFeatureReader();
         try {
-            final XmlFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();
+            final JAXBFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();
             final String schema = source.getSchema();
 
             if (schema != null) {

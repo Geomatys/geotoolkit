@@ -234,6 +234,7 @@ import org.opengis.style.TextSymbolizer;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 import org.apache.sis.measure.Units;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  *
@@ -625,7 +626,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
             //so here we make a small tric to change an id filter in a serie of propertyequal filter
             //this is not really legal but we dont have the choice here
             //we should propose an evolution of ogc filter do consider id filter as a comparison filter
-            final PropertyName n = FF.property("@id");
+            final PropertyName n = FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString());
             final List<Filter> lst = new ArrayList<Filter>();
 
             for (Identifier ident : ((Id) filter).getIdentifiers()) {

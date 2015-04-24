@@ -18,7 +18,7 @@
 package org.geotoolkit.data;
 
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 
 /**
  *

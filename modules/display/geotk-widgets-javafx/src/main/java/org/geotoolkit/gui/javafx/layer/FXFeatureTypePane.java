@@ -29,10 +29,10 @@ import javafx.scene.layout.RowConstraints;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Selector;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.gui.javafx.feature.FXFeatureTypeEditor;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.opengis.feature.FeatureType;
 
 
 /**
@@ -76,7 +76,7 @@ public class FXFeatureTypePane extends FXPropertyPane {
         final Selector source = (Selector) layer.getCollection().getSource();
         final FeatureStore store = source.getSession().getFeatureStore();
         try {
-            store.updateFeatureType(ft.getName(), ft);
+            store.updateFeatureType(ft);
         } catch (DataStoreException ex) {
             ex.printStackTrace();
         }

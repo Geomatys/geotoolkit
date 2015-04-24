@@ -19,13 +19,14 @@ package org.geotoolkit.gui.swing.render2d.control.edition;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 
 /**
  *
@@ -49,20 +50,19 @@ public class GeometryNodeTool extends AbstractEditionTool {
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
         final FeatureType ft = layer.getCollection().getFeatureType();
-
-        final GeometryDescriptor desc = ft.getGeometryDescriptor();
+        final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(ft);
 
         if(desc == null){
             return false;
         }
 
-        if(Point.class.isAssignableFrom(desc.getType().getBinding())){
+        if(Point.class.isAssignableFrom(desc.getValueClass())){
             //moving node on a Point type is the same as moving full geometry.
             //avoid duplicating the same purpose tool.
             return false;
         }
         
-        return Geometry.class.isAssignableFrom(desc.getType().getBinding());
+        return Geometry.class.isAssignableFrom(desc.getValueClass());
     }
 
     @Override

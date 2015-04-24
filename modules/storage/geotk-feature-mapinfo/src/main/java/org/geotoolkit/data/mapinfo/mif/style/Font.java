@@ -24,7 +24,7 @@ import org.opengis.style.StyleVisitor;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import java.util.regex.Pattern;
-import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.opengis.filter.expression.Expression;
 
 /**
@@ -106,7 +106,7 @@ public class Font implements MIFSymbolizer {
 
     @Override
     public Expression getGeometry() {
-        return FactoryFinder.getFilterFactory(null).property(getGeometryPropertyName());
+        return MIFUtils.FF.property(getGeometryPropertyName());
     }
 
     @Override

@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.iharder.Base64;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.Version;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.JDBCFeatureStore;
@@ -36,9 +38,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
@@ -97,6 +96,9 @@ import org.opengis.filter.temporal.TOverlaps;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.db.DefaultJDBCFeatureStore;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 
 
 /**
@@ -107,11 +109,11 @@ public class MySQLFilterToSQL implements FilterToSQL {
 
     private final MySQLDialect dialect;
     private final Version msVersion;
-    private final ComplexType featureType;
+    private final FeatureType featureType;
     private final PrimaryKey pkey;
     private Integer currentsrid;
 
-    public MySQLFilterToSQL(MySQLDialect dialect,ComplexType featureType, PrimaryKey pkey, Version msVersion) {
+    public MySQLFilterToSQL(MySQLDialect dialect,FeatureType featureType, PrimaryKey pkey, Version msVersion) {
         this.dialect = dialect;
         this.featureType = featureType;
         this.pkey = pkey;
@@ -834,9 +836,9 @@ public class MySQLFilterToSQL implements FilterToSQL {
             //requiered when encoding geometry
             currentsrid = -1;
             if (featureType != null) {
-                final AttributeDescriptor descriptor = (AttributeDescriptor) property.evaluate(featureType);
-                if (descriptor instanceof GeometryDescriptor) {
-                    currentsrid = (Integer) descriptor.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_SRID);
+                final AttributeType descriptor = (AttributeType) property.evaluate(featureType);
+                if (AttributeConvention.isGeometryAttribute(descriptor)) {
+                    currentsrid = (Integer)FeatureExt.getCharacteristicValue(descriptor,DefaultJDBCFeatureStore.JDBC_PROPERTY_SRID.getName().toString(),null);
                 }
             }
 

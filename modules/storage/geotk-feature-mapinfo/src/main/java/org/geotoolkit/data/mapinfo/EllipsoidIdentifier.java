@@ -17,8 +17,6 @@
 package org.geotoolkit.data.mapinfo;
 
 import java.util.Collections;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.datum.Ellipsoid;
@@ -27,9 +25,12 @@ import org.opengis.util.FactoryException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.measure.Units;
+import org.apache.sis.referencing.CRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.ArgumentChecks;
 
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 /**
  * A class to identify mapInfo ellipsoïds defined by MapInfo. We give them an EPSG equivalent, or just register it's
@@ -40,14 +41,11 @@ import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
  */
 public class EllipsoidIdentifier {
 
-    /** A datum authority factory to build ellipsoïd from their EPSG code. */
-    private static final DatumAuthorityFactory DATUM_AUTHORITY_FACTORY = AuthorityFactoryFinder.getDatumAuthorityFactory("EPSG", null);
-
     /** A table to map MapInfo ellipsoïd codes with their EPSG equivalent. */
-    private static final Map<Integer, Integer> ELLIPSOID_TABLE = new HashMap<Integer, Integer>();
+    private static final Map<Integer, Integer> ELLIPSOID_TABLE = new HashMap<>();
 
     /** A map to bind MapInfo ellipsoïd codes with built ellipsoïds. It only defines ellipsoïds which don't get EPSG codes */
-    private static final Map<Integer, Ellipsoid> CUSTOM_ELLIPSOIDS = new HashMap<Integer, Ellipsoid>();
+    private static final Map<Integer, Ellipsoid> CUSTOM_ELLIPSOIDS = new HashMap<>();
 
     /**
      * Return the {@link Ellipsoid} pointed by given MapInfo code.
@@ -60,7 +58,11 @@ public class EllipsoidIdentifier {
         ArgumentChecks.ensureNonNull("MapInfo Ellipsoïd Code", mapinfoCode);
         Integer epsgCode = ELLIPSOID_TABLE.get(mapinfoCode);
         if(epsgCode != null) {
-            result = DATUM_AUTHORITY_FACTORY.createEllipsoid(epsgCode.toString());
+            final CRSAuthorityFactory datumFactory = CRS.getAuthorityFactory("EPSG");
+            if (datumFactory instanceof DatumAuthorityFactory)
+                result = ((DatumAuthorityFactory)datumFactory).createEllipsoid(epsgCode.toString());
+            else
+                throw new FactoryException("No datum factory available.");
         } else {
             result = CUSTOM_ELLIPSOIDS.get(mapinfoCode);
         }
@@ -88,7 +90,7 @@ public class EllipsoidIdentifier {
      * @return the MIF code which match the given ellipsoid.
      */
     public static int getMIFCode(Ellipsoid source) throws FactoryException {
-        int mifCode = getMIFCodeFromEPSG(IdentifiedObjects.lookupEpsgCode(source, false));
+        int mifCode = getMIFCodeFromEPSG(IdentifiedObjects.lookupEPSG(source));
 
         if (mifCode < 0) {
             for (Map.Entry<Integer, Ellipsoid> ellipsoid : CUSTOM_ELLIPSOIDS.entrySet()) {

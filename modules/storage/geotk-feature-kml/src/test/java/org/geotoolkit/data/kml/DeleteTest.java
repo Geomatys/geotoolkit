@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -33,16 +32,16 @@ import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.NetworkLinkControl;
 import org.geotoolkit.data.kml.model.Update;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
-import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -51,16 +50,10 @@ import org.xml.sax.SAXException;
  */
 public class DeleteTest extends org.geotoolkit.test.TestBase {
 
-    private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/delete.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public DeleteTest() {
-    }
 
     @Test
     public void deleteReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
@@ -72,14 +65,12 @@ public class DeleteTest extends org.geotoolkit.test.TestBase {
         assertEquals("http://www.foo.com/Point.kml", targetHref.toString());
 
         assertEquals(1, update.getUpdates().size());
-        assertTrue(update.getUpdates().get(0) instanceof Delete);
         final Delete delete = (Delete) update.getUpdates().get(0);
 
         assertEquals(1, delete.getFeatures().size());
-        assertTrue(((Feature) delete.getFeatures().get(0)).getType().equals(KmlModelConstants.TYPE_PLACEMARK));
+        assertEquals(KmlModelConstants.TYPE_PLACEMARK, delete.getFeatures().get(0).getType());
         final Feature placemark = delete.getFeatures().get(0);
-        assertEquals("pa3556", ((IdAttributes) placemark.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()).getValue()).getTargetId());
-
+        assertEquals("pa3556", ((IdAttributes) placemark.getPropertyValue(KmlConstants.ATT_ID)).getTargetId());
     }
 
     @Test
@@ -87,9 +78,8 @@ public class DeleteTest extends org.geotoolkit.test.TestBase {
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Feature placemark = kmlFactory.createPlacemark();
-        final Collection<Property> placemarkProperties = placemark.getProperties();
         final IdAttributes placemarkIdAttributes = kmlFactory.createIdAttributes(null, "pa3556");
-        placemarkProperties.add(FF.createAttribute(placemarkIdAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
+        placemark.setPropertyValue(KmlConstants.ATT_ID, placemarkIdAttributes);
 
         final Delete delete = kmlFactory.createDelete();
         delete.setFeatures(Arrays.asList(placemark));
@@ -103,7 +93,6 @@ public class DeleteTest extends org.geotoolkit.test.TestBase {
         final NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
         networkLinkControl.setUpdate(update);
 
-
         final Kml kml = kmlFactory.createKml(networkLinkControl, null, null, null);
 
         final File temp = File.createTempFile("testDelete", ".kml");
@@ -114,8 +103,6 @@ public class DeleteTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

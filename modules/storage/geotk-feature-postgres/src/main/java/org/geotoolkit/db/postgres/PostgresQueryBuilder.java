@@ -25,7 +25,7 @@ import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.version.VersioningException;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
@@ -52,7 +52,7 @@ public class PostgresQueryBuilder extends SQLQueryBuilder{
         //search version date
         final PostgresVersionControl versionControl;
         try{
-            versionControl = (PostgresVersionControl) store.getVersioning(featureType.getName());
+            versionControl = (PostgresVersionControl) store.getVersioning(featureType.getName().toString());
             if(vlabel!=null){
                 vdate = versionControl.getVersion(vlabel).getDate();
             }
@@ -63,7 +63,7 @@ public class PostgresQueryBuilder extends SQLQueryBuilder{
         
         final StringBuilder sql = new StringBuilder("SELECT ");
 
-        final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(featureType.getName());
+        final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(featureType.getName().toString());
 
         // column names        
         encodeSelectColumnNames(sql, featureType, query.getHints());

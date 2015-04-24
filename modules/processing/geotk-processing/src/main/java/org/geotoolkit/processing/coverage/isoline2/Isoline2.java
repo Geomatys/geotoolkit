@@ -34,6 +34,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -44,9 +46,6 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.iterator.PixelIterator;
@@ -57,11 +56,8 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import static org.geotoolkit.parameter.Parameters.*;
-import static org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2.*;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.referencing.CRS;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.geotoolkit.storage.coverage.*;
 import org.opengis.geometry.MismatchedDimensionException;
 
@@ -70,13 +66,16 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
+import org.apache.sis.internal.feature.AttributeConvention;
+
+import static org.geotoolkit.parameter.Parameters.*;
+import static org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2.*;
+
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
- * @module pending
  */
 public class Isoline2 extends AbstractProcess {
 
@@ -102,11 +101,11 @@ public class Isoline2 extends AbstractProcess {
         final String featureTypeName = value(FEATURE_NAME, inputParameters);
         intervals = value(INTERVALS, inputParameters);
 
-        if(featureStore==null){
+        if (featureStore == null) {
             featureStore = new MemoryFeatureStore();
         }
 
-        try{
+        try {
             final int imgIndex = coverageRef.getImageIndex();
             final GridCoverageReader reader  = coverageRef.acquireReader();
             final GeneralGridGeometry gridgeom = reader.getGridGeometry(imgIndex);
@@ -149,10 +148,9 @@ public class Isoline2 extends AbstractProcess {
             }
             coverageRef.recycle(reader);
 
-        }catch(Exception ex){
+        } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-
         outputParameters.parameter("outFeatureCollection").setValue(col);
     }
 
@@ -186,9 +184,9 @@ public class Isoline2 extends AbstractProcess {
                                 gridtoCRS = PixelTranslation.translate(gridtoCRS, PixelInCell.CELL_CORNER, PixelInCell.CELL_CENTER);
                                 final Object obj = ref.getInput();
                                 final RenderedImage image;
-                                if(obj instanceof RenderedImage){
-                                    image = (RenderedImage)obj;
-                                }else{
+                                if (obj instanceof RenderedImage) {
+                                    image = (RenderedImage) obj;
+                                } else {
                                     //final RenderedImage image = new LargeRenderedImage(imgReader, imgIndex);
                                     //final PixelIterator ite = PixelIteratorFactory.createDefaultIterator(image);
                                     final ImageReader imgReader = ref.getImageReader();
@@ -203,29 +201,26 @@ public class Isoline2 extends AbstractProcess {
                                 final int height = image.getHeight();
                                 final BlockRunnable runnable = new BlockRunnable(gridtoCRS, ite, width, height, 0);
                                 exec.submit(runnable);
-                            }catch(IOException ex){
+                            } catch(IOException ex) {
                                 throw new ProcessException(ex.getMessage(), this, ex);
                             }
                         }
                     }
                 }
             }
-
         }
-
         exec.shutdown();
         exec.awaitTermination(1, TimeUnit.DAYS);
     }
 
-
     private static Coordinate interpolate(double candidate, Coordinate start, Coordinate end){
-        if(start.z<candidate && candidate<end.z){
+        if (start.z < candidate && candidate < end.z){
             double ratio = (candidate-start.z) / (end.z-start.z);
             return new Coordinate(
                     start.x + (end.x-start.x)*ratio,
                     start.y + (end.y-start.y)*ratio,
                     candidate);
-        }else if(start.z>candidate && candidate>end.z){
+        } else if (start.z > candidate && candidate > end.z){
             double ratio = (candidate-end.z) / (start.z-end.z);
             return new Coordinate(
                     end.x + (start.x-end.x)*ratio,
@@ -236,26 +231,21 @@ public class Isoline2 extends AbstractProcess {
     }
 
     private static FeatureType getOrCreateIsoType(FeatureStore featureStore, String featureTypeName, CoordinateReferenceSystem crs) throws DataStoreException {
-
         FeatureType type = buildIsolineFeatureType(featureTypeName,crs);
 
         //create FeatureType in FeatureStore if not exist
         boolean createSchema = false;
         try {
-            if (featureStore.getFeatureType(type.getName()) == null) {
+            if (featureStore.getFeatureType(type.getName().toString()) == null) {
                 createSchema = true;
             }
         } catch (DataStoreException ex) {
             createSchema = true;
         }
-
         if (createSchema) {
-            featureStore.createFeatureType(type.getName(), type);
+            featureStore.createFeatureType(type);
         }
-
-        type = featureStore.getFeatureType(type.getName());
-
-        return type;
+        return featureStore.getFeatureType(type.getName().toString());
     }
 
     /**
@@ -268,11 +258,11 @@ public class Isoline2 extends AbstractProcess {
         //FeatureType with scale
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(featureTypeName != null ? featureTypeName : "isolines");
-        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, LineString.class, crs);
-        ftb.add("scale", Double.class);
-        ftb.add("value", Double.class);
-        ftb.setDefaultGeometry(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
-        return ftb.buildFeatureType();
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(LineString.class).setName(AttributeConvention.GEOMETRY_PROPERTY).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Double.class).setName("scale");
+        ftb.addAttribute(Double.class).setName("value");
+        return ftb.build();
     }
 
     private class BlockRunnable implements Runnable {
@@ -320,20 +310,20 @@ public class Isoline2 extends AbstractProcess {
                 double[] line0 = new double[width];
                 double[] line1 = new double[width];
 
-                for(int y=0;y<height;y++){
-                    for(int x=0;x<width;x++){
+                for (int y=0; y<height; y++) {
+                    for (int x=0; x<width; x++) {
                         ite.next();
                         line1[x] = ite.getSampleDouble();
 
                         //calculate lines
-                        if(y>0 && x>0){
+                        if (y>0 && x>0) {
                             //set the 4 corner values
                             UL.x = x-1;  UL.y = y-1;  UL.z = line0[x-1];
                             UR.x = x  ;  UR.y = y-1;  UR.z = line0[x  ];
                             BL.x = x-1;  BL.y = y  ;  BL.z = line1[x-1];
                             BR.x = x  ;  BR.y = y  ;  BR.z = line1[x  ];
 
-                            for(int k=0;k<intervals.length;k++){
+                            for (int k=0; k < intervals.length; k++){
                                 final double level = intervals[k];
                                 final Boundary nb = buildTriangles(k,level,line0TopNeighbor[k][x], leftNeighbor[k]);
                                 //the created boundary is the left boundary of next pixel
@@ -348,9 +338,9 @@ public class Isoline2 extends AbstractProcess {
                         //filter the constructions which are not used
                         final Set<Construction> oldinconstructions = new HashSet<>();
                         final Set<Construction> newinconstructions = new HashSet<>();
-                        for(int x=1;x<width;x++){
-                            for(int k=0;k<intervals.length;k++){
-                                if(line0TopNeighbor[k][x] != null){
+                        for (int x=1; x<width; x++) {
+                            for (int k=0; k < intervals.length; k++) {
+                                if (line0TopNeighbor[k][x] != null) {
                                     line0TopNeighbor[k][x].getConstructions(oldinconstructions);
                                 }
                                 line1TopNeighbor[k][x].getConstructions(newinconstructions);
@@ -359,7 +349,7 @@ public class Isoline2 extends AbstractProcess {
                         oldinconstructions.removeAll(newinconstructions);
 
                         //push in the feature collection geometries which are not used anymore
-                        for(final Construction str : oldinconstructions){
+                        for (final Construction str : oldinconstructions) {
                             pushGeometry(str.toGeometry(), str.getLevel());
                         }
                     }
@@ -378,16 +368,15 @@ public class Isoline2 extends AbstractProcess {
 
                 //loop on the last line to push the remaining geometries
                 final Set<Construction> oldinconstructions = new HashSet<>();
-                for(int x=1;x<width;x++){
-                    for(int k=0;k<intervals.length;k++){
+                for (int x=1; x<width; x++) {
+                    for (int k=0; k < intervals.length; k++){
                         line0TopNeighbor[k][x].getConstructions(oldinconstructions);
                     }
                 }
-                for(final Construction str : oldinconstructions){
+                for (final Construction str : oldinconstructions) {
                     pushGeometry(str.toGeometry(), str.getLevel());
                 }
-
-            }catch(Exception ex){
+            } catch (Exception ex) {
                 throw new ProcessException(ex.getMessage(), Isoline2.this, ex);
             }
         }
@@ -989,17 +978,15 @@ public class Isoline2 extends AbstractProcess {
         }
 
         private void pushGeometry(Geometry geom, double level) throws MismatchedDimensionException, TransformException{
-            if(geom==null) return;
-            final Feature f = FeatureUtilities.defaultFeature(type, "0");
+            if (geom == null) return;
+            final Feature f = type.newInstance();
+            f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "0");
             geom = JTS.transform(geom, gridtoCRS);
             JTS.setCRS(geom, crs);
-            f.getProperty(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME).setValue(geom);
-            f.getProperty("scale").setValue(scale);
-            f.getProperty("value").setValue(level);
+            f.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(), geom);
+            f.setPropertyValue("scale", scale);
+            f.setPropertyValue("value", level);
             col.add(f);
         }
-
     }
-
-
 }

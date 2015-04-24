@@ -28,6 +28,8 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.data.FeatureStoreUtilities;
 
 import org.geotoolkit.data.FeatureCollection;
@@ -36,8 +38,6 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.feature.FeatureBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -45,7 +45,6 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 
@@ -55,6 +54,8 @@ import org.junit.Test;
 
 import org.opengis.filter.identity.FeatureId;
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  *
@@ -85,12 +86,12 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("testingIntersect");
-        sftb.add("geom", Polygon.class, CommonCRS.WGS84.normalizedGeographic());
-        sftb.setDefaultGeometry("geom");
-        final FeatureType sft = sftb.buildFeatureType();
+        sftb.addAttribute(String.class).setName("id").addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        sftb.addAttribute(Polygon.class).setName("geom").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType sft = sftb.build();
 
         final FeatureCollection collection = FeatureStoreUtilities.collection("id", sft);
-        final FeatureBuilder sfb = new FeatureBuilder(sft);
+        final Feature f = sft.newInstance();
 
         final GeometryFactory gf = new GeometryFactory();
         LinearRing ring = gf.createLinearRing(new Coordinate[]{
@@ -100,9 +101,10 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
                     new Coordinate(10, 20),
                     new Coordinate(10, 10),});
         Polygon pol = gf.createPolygon(ring, new LinearRing[0]);
-        sfb.setPropertyValue("geom", pol);
+        f.setPropertyValue("id", "id-0");
+        f.setPropertyValue("geom", pol);
 
-        collection.add(sfb.buildFeature(""));
+        collection.add(f);
 
         assertTrue(collection.size() == 1);
 
@@ -125,7 +127,7 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
         DefaultPortrayalService.visit(context, env, dim, true, null, shparea, visitor);
 
         assertEquals(1, visitor.features.size());
-        assertEquals("testingIntersect.0", visitor.features.get(0).getID());
+        assertEquals("id-0", visitor.features.get(0).getID());
 
         shparea = new Rectangle(30, 12, 2, 2); //starting at top left corner
         visitor = new ListVisitor();
@@ -176,8 +178,8 @@ public class VisitorTest extends org.geotoolkit.test.TestBase {
 
     private static class ListVisitor extends AbstractGraphicVisitor {
 
-        public List<FeatureId> features = new ArrayList<FeatureId>();
-        public List<ProjectedCoverage> coverages = new ArrayList<ProjectedCoverage>();
+        public List<FeatureId> features = new ArrayList<>();
+        public List<ProjectedCoverage> coverages = new ArrayList<>();
 
         @Override
         public void visit(final ProjectedFeature feature, final RenderingContext2D context, final SearchAreaJ2D queryArea) {

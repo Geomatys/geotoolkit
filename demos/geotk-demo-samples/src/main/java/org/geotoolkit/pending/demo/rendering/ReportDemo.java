@@ -36,8 +36,7 @@ import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
@@ -59,17 +58,16 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
 import org.apache.sis.geometry.Envelopes;
+import org.opengis.filter.Filter;
 
 public class ReportDemo {
 
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
     private static final MutableStyleFactory SF = (MutableStyleFactory)FactoryFinder.getStyleFactory(
                  new Hints(Hints.STYLE_FACTORY,MutableStyleFactory.class));
     private static final FilterFactory FIF = FactoryFinder.getFilterFactory(null);
@@ -112,7 +110,7 @@ public class ReportDemo {
 
             @Override
             public Feature transform(Feature feature) {
-                final Feature modified = FeatureUtilities.defaultFeature(type, "id");
+                final Feature modified = type.newInstance();
 
                 //create the main map with a single feature ------------------
                 final FeatureCollection col = FeatureStoreUtilities.collection(feature);
@@ -150,47 +148,47 @@ public class ReportDemo {
                     final SceneDef sceneDef = new SceneDef(context,null,ext);
                     final ViewDef viewDef = new ViewDef(Envelopes.transform(context.getBounds(), CRS.forCode("EPSG:3395")), 0);
                     final MapDef mapdef = new MapDef(canvasDef,sceneDef,viewDef,null);
-                    modified.getProperty("map3").setValue(mapdef);
+                    modified.setPropertyValue("map3",mapdef);
                 }catch(Exception ex){
                     ex.printStackTrace();
                 }
 
 
                 //casual attributs -------------------
-                modified.getProperty("CNTRY_NAME").setValue(feature.getProperty("CNTRY_NAME").getValue());
-                modified.getProperty("POP_CNTRY").setValue(feature.getProperty("POP_CNTRY").getValue());
+                modified.setPropertyValue("CNTRY_NAME",feature.getProperty("CNTRY_NAME").getValue());
+                modified.setPropertyValue("POP_CNTRY",feature.getProperty("POP_CNTRY").getValue());
 
                 //chart -------------------------
                 final DefaultPieDataset pds = new DefaultPieDataset();
                 pds.setValue((Comparable)feature.getProperty("SOVEREIGN").getValue(), Math.random());
                 pds.setValue((Comparable)feature.getProperty("ISO_3DIGIT").getValue(), Math.random());
                 final JFreeChart chart = ChartFactory.createPieChart("Info", pds, true, true, Locale.FRENCH);
-                modified.getProperty("chart4").setValue(new ChartDef(chart));
+                modified.setPropertyValue("chart4",new ChartDef(chart));
 
                 //legend --------------------------
-                modified.getProperty("legend5").setValue(new LegendDef());
+                modified.setPropertyValue("legend5",new LegendDef());
 
                 //scale bar -------------------
-                modified.getProperty("scalebar6").setValue(new ScaleBarDef());
+                modified.setPropertyValue("scalebar6",new ScaleBarDef());
 
                 //north arow -------------------
-                modified.getProperty("northarrow7").setValue(new NorthArrowDef());
+                modified.setPropertyValue("northarrow7",new NorthArrowDef());
 
                 //subtable --------------
                 final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
                 ftb.setName("subdata");
-                ftb.add("men", Integer.class);
-                ftb.add("women",Integer.class);
-                ftb.add("desc", String.class);
-                final FeatureType subType = ftb.buildFeatureType();
+                ftb.addAttribute(Integer.class).setName("men");
+                ftb.addAttribute(Integer.class).setName("women");
+                ftb.addAttribute(String.class).setName("desc");
+                final FeatureType subType = ftb.build();
                 final FeatureCollection subcol = FeatureStoreUtilities.collection("sub", subType);
                 try {
-                    FeatureWriter fw = subcol.getSession().getFeatureStore().getFeatureWriterAppend(subType.getName());
+                    FeatureWriter fw = subcol.getSession().getFeatureStore().getFeatureWriter(QueryBuilder.filtered(subType.getName().toString(),Filter.EXCLUDE));
                     for(int i=0,n=new Random().nextInt(20);i<n;i++){
                         Feature f =fw.next();
-                        f.getProperty("men").setValue(new Random().nextInt());
-                        f.getProperty("women").setValue(new Random().nextInt());
-                        f.getProperty("desc").setValue("some text from attribut");
+                        f.setPropertyValue("men",new Random().nextInt());
+                        f.setPropertyValue("women",new Random().nextInt());
+                        f.setPropertyValue("desc","some text from attribut");
                         fw.write();
                     }
                     fw.close();
@@ -198,7 +196,7 @@ public class ReportDemo {
                 } catch (DataStoreException ex) {
                     ex.printStackTrace();
                 }
-                modified.getProperty("table8").setValue(new CollectionDataSource(subcol));
+                modified.setPropertyValue("table8",new CollectionDataSource(subcol));
 
                 return modified;
             }

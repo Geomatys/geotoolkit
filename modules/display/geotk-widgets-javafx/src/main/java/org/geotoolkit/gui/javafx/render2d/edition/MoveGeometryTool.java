@@ -17,7 +17,6 @@
 package org.geotoolkit.gui.javafx.render2d.edition;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -27,14 +26,15 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.apache.sis.feature.FeatureExt;
+import org.opengis.feature.Feature;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXPanMouseListen;
 import org.geotoolkit.gui.javafx.render2d.shape.FXGeometryLayer;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.opengis.feature.AttributeType;
 
 /**
  *
@@ -57,7 +57,7 @@ public class MoveGeometryTool extends AbstractEditionTool{
                 final FeatureMapLayer fml = (FeatureMapLayer) candidate;
                 if(!fml.getCollection().isWritable()) return false;
 
-                final GeometryDescriptor desc = fml.getCollection().getFeatureType().getGeometryDescriptor();
+                final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(fml.getCollection().getFeatureType());
                 return desc != null;
             }
             return false;

@@ -17,13 +17,13 @@
 
 package org.geotoolkit.filter;
 
-import org.geotoolkit.feature.type.ComplexType;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.PropertyName;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.filter.binding.Binding;
 import org.geotoolkit.filter.binding.Bindings;
+import org.opengis.feature.FeatureType;
 
 /**
  *
@@ -35,43 +35,12 @@ class CachedPropertyName extends AbstractExpression implements PropertyName{
 
     private final Binding accessor;
 
-    CachedPropertyName(final String property, final Class clazz, final ComplexType expectedType) {
+    CachedPropertyName(final String property, final Class clazz, final FeatureType expectedType) {
         ensureNonNull("property name", property);
         this.property = property;
                 
         final Binding fallacc = Bindings.getBinding(clazz,property);
-        
-        //try to create a faster accessor
-//        if(Property.class.isAssignableFrom(clazz) && expectedType instanceof SimpleFeatureType ){
-//            final SimpleFeatureType sft = (SimpleFeatureType) expectedType;
-//            final int index = sft.indexOf(property);
-//            this.accessor = new PropertyAccessor() {
-//                @Override
-//                public boolean canHandle(Class object, String xpath, Class target) {
-//                    return true;
-//                }
-//                @Override
-//                public Object get(Object object, String xpath, Class target) throws IllegalArgumentException {
-//                    if(object instanceof SimpleFeature){
-//                        return ((SimpleFeature)object).getAttribute(index);
-//                    }else{
-//                        return fallacc.get(object, xpath, target);
-//                    }
-//                }
-//                @Override
-//                public void set(Object object, String xpath, Object value, Class target) throws IllegalArgumentException {
-//                    if(object instanceof SimpleFeature){
-//                        ((SimpleFeature)object).setAttribute(index,value);
-//                    }else{
-//                        fallacc.set(object,xpath,value,target);
-//                    }
-//                    
-//                }
-//            };
-//        }else{
-            this.accessor = fallacc;
-//        }
-        
+        this.accessor = fallacc;
     }
 
     /**

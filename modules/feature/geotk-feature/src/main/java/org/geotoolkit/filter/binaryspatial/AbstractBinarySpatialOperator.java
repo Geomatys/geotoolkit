@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.filter.binaryspatial;
 
-import org.geotoolkit.feature.Feature;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.io.Serializable;
@@ -43,12 +42,13 @@ import org.opengis.referencing.operation.TransformException;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.GeometryAttribute;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.coverage.Coverage;
 import org.apache.sis.util.Utilities;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  * Immutable abstract binary spatial operator.
@@ -240,30 +240,29 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
 
     }
 
-    private static Object findFirstGeometry(ComplexAttribute ca){
+    private static Object findFirstGeometry(Feature ca){
         //search for a default geometry
-        if(ca instanceof Feature){
-            final Feature feature = (Feature) ca;
-            final GeometryDescriptor geomDesc = feature.getType().getGeometryDescriptor();
-            if(geomDesc!=null){
-                final GeometryAttribute geomAtt = feature.getDefaultGeometryProperty();
-                return (geomAtt==null) ? null : geomAtt.getValue();
-            }
-        }
+        try{
+            return ca.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+        }catch(PropertyNotFoundException ex){}
 
         //search normal properties
-        for(Property p : ca.getProperties()){
-            if(p instanceof GeometryAttribute){
-                Object val = p.getValue();
+        for(PropertyType pt : ca.getType().getProperties(true)){
+            if(AttributeConvention.isGeometryAttribute(pt)){
+                Object val = ca.getPropertyValue(pt.getName().toString());
                 if(val!=null) return val;
             }
         }
 
+
         //search complex properties
-        for(Property p : ca.getProperties()){
-            if(p instanceof ComplexAttribute){
-                Object val = findFirstGeometry((ComplexAttribute) p);
-                if(val!=null) return val;
+        for(PropertyType pt : ca.getType().getProperties(true)){
+            if(pt instanceof FeatureAssociationRole){
+                Feature f = (Feature) ca.getPropertyValue(pt.getName().toString());
+                if(f!=null){
+                    Object val = findFirstGeometry(f);
+                    if(val!=null) return val;
+                }
             }
         }
 

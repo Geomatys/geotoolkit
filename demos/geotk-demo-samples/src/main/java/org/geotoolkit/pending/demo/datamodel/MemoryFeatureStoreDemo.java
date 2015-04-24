@@ -6,11 +6,11 @@ import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 
 public class MemoryFeatureStoreDemo {
 
@@ -24,10 +24,10 @@ public class MemoryFeatureStoreDemo {
         //add a schema in the datastore
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("http://geomatys.com", "test");
-        ftb.add("type", String.class);
-        ftb.add("the_geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
-        final FeatureType type = ftb.buildFeatureType();
-        store.createFeatureType(type.getName(), type);
+        ftb.addAttribute(String.class).setName("type");
+        ftb.addAttribute(Point.class).setName("the_geom").setCRS(CommonCRS.WGS84.normalizedGeographic());
+        final FeatureType type = ftb.build();
+        store.createFeatureType(type);
 
 
         //query the featurestore like any other

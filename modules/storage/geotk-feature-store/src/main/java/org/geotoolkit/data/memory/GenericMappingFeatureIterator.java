@@ -25,9 +25,9 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.data.memory.mapping.FeatureMapper;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 /**
  * Basic support for a FeatureIterator that moves attributs to a new type definition
@@ -43,8 +43,8 @@ public class GenericMappingFeatureIterator implements FeatureIterator{
 
     public GenericMappingFeatureIterator(final FeatureIterator ite,
             final FeatureType originalType, final FeatureType newType,
-            final Map<PropertyDescriptor,List<PropertyDescriptor>> mapping,
-            final Map<PropertyDescriptor,Object> defaults){
+            final Map<PropertyType,List<PropertyType>> mapping,
+            final Map<PropertyType,Object> defaults){
         this(ite,new DefaultFeatureMapper(originalType,newType,mapping,defaults));
     }
 

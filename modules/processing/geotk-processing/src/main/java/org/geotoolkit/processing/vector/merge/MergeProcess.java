@@ -22,33 +22,35 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opengis.feature.AttributeType;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.geometry.jts.JTSMapping;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.processing.AbstractProcess;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.ObjectConverter;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.PropertyType;
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.feature.util.converter.SimpleConverter;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
+
 import static org.geotoolkit.processing.vector.merge.MergeDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+
 
 /**
  * Merge many FeatureCollection in one. The fist FeatureCollection found in the input Collection
  * have his FeatureType preserved. The others will be adapted to this one.
+ *
  * @author Quentin Boileau
- * @module pending
  */
 public class MergeProcess extends AbstractProcess {
-
     /**
      * Default constructor
      */
@@ -77,22 +79,23 @@ public class MergeProcess extends AbstractProcess {
     * @return a feature
     * @throws UnconvertibleObjectException
     */
-    static Feature mergeFeature(final Feature feature,final FeatureType newFeatureType, final Map<GenericName, ObjectConverter> conversionMap)
-            throws UnconvertibleObjectException {
-
-        if(conversionMap == null) {
+    static Feature mergeFeature(final Feature feature, final FeatureType newFeatureType, final Map<GenericName, ObjectConverter> conversionMap)
+            throws UnconvertibleObjectException
+    {
+        if (conversionMap == null) {
             return feature;
         }
 
-        final Feature mergedFeature = FeatureUtilities.defaultFeature(newFeatureType, feature.getIdentifier().getID());
+        final Feature mergedFeature = newFeatureType.newInstance();
+        FeatureExt.setId(mergedFeature, FeatureExt.getId(feature));
 
         for (final Map.Entry<GenericName,ObjectConverter> entry : conversionMap.entrySet()) {
+            final String key = entry.getKey().toString();
             if(entry.getValue() == null) {
-                mergedFeature.getProperty(entry.getKey()).setValue(feature.getProperty(entry.getKey()).getValue());
+                mergedFeature.setPropertyValue(key, feature.getPropertyValue(key));
             }else{
-                mergedFeature.getProperty(entry.getKey()).setValue(entry.getValue().apply(feature.getProperty(entry.getKey()).getValue()));
+                mergedFeature.setPropertyValue(key, entry.getValue().apply(feature.getPropertyValue(key)));
             }
-
         }
         return mergedFeature;
     }
@@ -107,29 +110,30 @@ public class MergeProcess extends AbstractProcess {
     * @return map<Name, ObjectConverter>. Return null if input FeatureType are equals
     * @throws UnconvertibleObjectException
     */
-    static Map<GenericName, ObjectConverter> createConversionMap (final FeatureType input, final FeatureType toConvert) throws UnconvertibleObjectException{
+    static Map<GenericName, ObjectConverter> createConversionMap (final FeatureType input, final FeatureType toConvert) throws UnconvertibleObjectException {
 
         if(input.equals(toConvert)) {
             return null;
         }
         final Map<GenericName, ObjectConverter> map = new HashMap<GenericName, ObjectConverter>();
 
-        for (final PropertyDescriptor toConvertDesc : toConvert.getDescriptors()) {
-            for(final PropertyDescriptor inputDesc : input.getDescriptors()) {
+        for (final PropertyType toConvertDesc : toConvert.getProperties(true)) {
+            for(final PropertyType inputDesc : input.getProperties(true)) {
 
                 //same property name
-                if(toConvertDesc.getName().equals(inputDesc.getName())) {
-
-                    final Class inputClass = inputDesc.getType().getBinding();
-                    final Class toConvertClass = toConvertDesc.getType().getBinding();
+                if (toConvertDesc.getName().equals(inputDesc.getName()) &&
+                        inputDesc instanceof AttributeType<?> && toConvertDesc instanceof AttributeType<?>)
+                {
+                    final Class<?> inputClass = ((AttributeType<?>) inputDesc).getValueClass();
+                    final Class<?> toConvertClass = ((AttributeType<?>) toConvertDesc).getValueClass();
                     if(toConvertClass.equals(inputClass)) {
                         //same name and same type
                         map.put(toConvertDesc.getName(), null);
                     }else{
                         //same name but different type
-                        if(toConvertDesc instanceof GeometryDescriptor) {
-                           map.put(toConvertDesc.getName(), new GeomConverter(toConvertClass, inputClass));
-                        }else{
+                        if (AttributeConvention.isGeometryAttribute(toConvertDesc)) {
+                            map.put(toConvertDesc.getName(), new GeomConverter(toConvertClass, inputClass));
+                        } else {
                             map.put(toConvertDesc.getName(), ObjectConverters.find(toConvertClass, inputClass));
                         }
                     }

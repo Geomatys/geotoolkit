@@ -17,12 +17,12 @@
 
 package org.geotoolkit.data.iterator;
 
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureReader;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * Wrap a feature Iterator and check that it is properly close.

@@ -41,9 +41,9 @@ import org.geotoolkit.wps.converters.WPSObjectConverterAdapter;
 import org.geotoolkit.wps.xml.ComplexDataType;
 import org.geotoolkit.wps.xml.DataType;
 import org.opengis.coverage.Coverage;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.wps.xml.Reference;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;

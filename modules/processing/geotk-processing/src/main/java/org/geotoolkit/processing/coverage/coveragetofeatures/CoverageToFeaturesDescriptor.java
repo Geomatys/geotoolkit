@@ -24,7 +24,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -62,7 +62,7 @@ public final class CoverageToFeaturesDescriptor extends AbstractProcessDescripto
             .setRemarks("Outpute Feature")
             .setRequired(true)
             .create(Collection.class, null);
-    
+
     /**Process name : coveragetofeatures */
     public static final String NAME = "coveragetofeatures";
 
@@ -73,7 +73,7 @@ public final class CoverageToFeaturesDescriptor extends AbstractProcessDescripto
     /**Output parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
-    
+
     /**Instance */
     public static final ProcessDescriptor INSTANCE = new CoverageToFeaturesDescriptor();
 

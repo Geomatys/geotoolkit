@@ -18,6 +18,7 @@
 package org.geotoolkit.data.shapefile.indexed;
 
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -27,6 +28,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
+import org.apache.sis.feature.AbstractOperation;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
@@ -49,7 +54,6 @@ import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.filter.visitor.ExtractBoundsFilterVisitor;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
@@ -62,13 +66,11 @@ import org.geotoolkit.index.quadtree.*;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.util.NullProgressListener;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.feature.MismatchedFeatureException;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
@@ -191,81 +193,71 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      * file.
      */
     @Override
-    public FeatureReader getFeatureReader(final Query query)
-            throws DataStoreException {
-        final FeatureType originalSchema = getFeatureType();
-        final GenericName              queryTypeName = query.getTypeName();
-        final GenericName[]            queryPropertyNames = query.getPropertyNames();
-        final Hints             queryHints = query.getHints();
-        final double[]          queryRes = query.getResolution();
-        Filter                  queryFilter = query.getFilter();
+    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
+
+        final FeatureType   baseType = getFeatureType();
+        final String        queryTypeName = query.getTypeName();
+        final GenericName[] queryPropertyNames = query.getPropertyNames();
+        final Hints         queryHints = query.getHints();
+        final double[]      queryRes = query.getResolution();
+        Filter              queryFilter = query.getFilter();
 
         //check if we must read the 3d values
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
         final boolean read3D = (reproject==null || CRS.getVerticalComponent(reproject, true) != null);
 
-        if (queryFilter == Filter.EXCLUDE){
-            return GenericEmptyFeatureIterator.createReader(originalSchema);
-        }
 
         //find the properties we will read and return --------------------------
-        List<PropertyDescriptor> readProperties;
-        List<PropertyDescriptor> returnedProperties;
+        final AttributeType idAttribute = (AttributeType) baseType.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+        Set<AttributeType> readProperties;
+        Set<PropertyType> returnedProperties;
 
         if(queryPropertyNames == null){
             //return all properties
-            readProperties = new ArrayList<>(originalSchema.getDescriptors());
-            returnedProperties = readProperties;
+            readProperties = new HashSet<>(getAttributes(baseType,true));
+            returnedProperties = new HashSet<>((Collection)baseType.getProperties(true));
         }else{
             //return only a subset of properties
-            returnedProperties = new ArrayList<>(queryPropertyNames.length);
+            readProperties = new HashSet<>(queryPropertyNames.length);
+            returnedProperties = new HashSet<>(queryPropertyNames.length);
             for(GenericName n : queryPropertyNames){
-                final AttributeDescriptor property = (AttributeDescriptor) originalSchema.getDescriptor(n);
-                if(property == null){
-                    throw new DataStoreException("Query requieres property : "+ n +
-                        " which is not present in feature type :\n"+ originalSchema);
+                final PropertyType cdt = baseType.getProperty(n.toString());
+                if (cdt instanceof AttributeType) {
+                    readProperties.add((AttributeType) cdt);
+                } else if (cdt instanceof AbstractOperation) {
+                    final Set<String> deps = ((AbstractOperation)cdt).getDependencies();
+                    for (String dep : deps) readProperties.add((AttributeType) baseType.getProperty(dep));
                 }
-                returnedProperties.add(property);
+                returnedProperties.add(cdt);
             }
 
+            //add filter properties
             final FilterAttributeExtractor fae = new FilterAttributeExtractor();
             queryFilter.accept(fae, null);
             final Set<GenericName> filterPropertyNames = fae.getAttributeNameSet();
-            if (filterPropertyNames.isEmpty()) {
-                //filter do not requiere attributs
-                readProperties = returnedProperties;
-            } else {
-                final Set<GenericName> attributes = new LinkedHashSet<>(filterPropertyNames);
-                attributes.addAll(Arrays.asList(queryPropertyNames));
-                readProperties = new ArrayList<>(attributes.size());
-                for (GenericName n : attributes) {
-                    final AttributeDescriptor property = (AttributeDescriptor) originalSchema.getDescriptor(n);
-                    if (property == null) {
-                        throw new DataStoreException("Query filter requieres property : " + n
-                                + " which is not present in feature type :\n" + originalSchema);
-                    }
-                    if (!readProperties.contains(property)) {
-                        readProperties.add(property);
-                    }
+            for (GenericName n : filterPropertyNames) {
+                final PropertyType cdt = baseType.getProperty(n.toString());
+                if (cdt instanceof AttributeType) {
+                    readProperties.add((AttributeType) cdt);
+                } else if (cdt instanceof AbstractOperation) {
+                    final Set<String> deps = ((AbstractOperation)cdt).getDependencies();
+                    for (String dep : deps) readProperties.add((AttributeType) baseType.getProperty(dep));
                 }
-                //check if we read the same properties in different order
-                if (readProperties.size() == returnedProperties.size() && readProperties.containsAll(returnedProperties)) {
-                    //we avoid a useless retype iterator
-                    readProperties = returnedProperties;
-                }
-
             }
         }
+        final Set<PropertyType> allProperties = new HashSet<>(returnedProperties);
+        allProperties.addAll(readProperties);
 
         //create a reader ------------------------------------------------------
-        final SimpleFeatureType readSchema;
+        final FeatureType readType;
         final FeatureReader reader;
         try {
-            final GenericName[] readPropertyNames = new GenericName[readProperties.size()];
-            for(int i=0;i<readPropertyNames.length;i++){
-                readPropertyNames[i] = readProperties.get(i).getName();
+            final GenericName[] readPropertyNames = new GenericName[allProperties.size()];
+            int i=0;
+            for(PropertyType prop : allProperties){
+                readPropertyNames[i++] = prop.getName();
             }
-            readSchema = (SimpleFeatureType)FeatureTypeUtilities.createSubType(originalSchema,readPropertyNames);
+            readType = FeatureTypeExt.createSubType(baseType,readPropertyNames);
 
             if(queryFilter instanceof BBOX){
                 //in case we have a BBOX filter only, which is very commun, we can speed
@@ -274,18 +266,22 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
                         ExtractBoundsFilterVisitor.BOUNDS_VISITOR, new JTSEnvelope2D());
                 final boolean loose = (queryFilter instanceof LooseBBox);
                 queryFilter = Filter.INCLUDE;
+                final List<AttributeType> attsProperties = new ArrayList<>(readProperties);
+                attsProperties.remove(idAttribute);
                 reader = createFeatureReader(
-                        getBBoxAttributesReader(readProperties, bbox, loose, queryHints,read3D,queryRes),
-                        readSchema, queryHints);
+                        getBBoxAttributesReader(attsProperties, bbox, loose, queryHints,read3D,queryRes),
+                        readType, queryHints);
 
             }else if(queryFilter instanceof Id && ((Id)queryFilter).getIdentifiers().isEmpty()){
                 //in case we have an empty id set
                 return GenericEmptyFeatureIterator.createReader(getFeatureType());
 
             }else{
+                final List<AttributeType> attsProperties = new ArrayList<>(readProperties);
+                attsProperties.remove(idAttribute);
                 reader = createFeatureReader(
-                    getAttributesReader(readProperties, queryFilter,read3D,queryRes),
-                    readSchema, queryHints);
+                    getAttributesReader(attsProperties, queryFilter,read3D,queryRes),
+                    readType, queryHints);
             }
         } catch (IOException ex) {
             throw new DataStoreException(ex);
@@ -293,7 +289,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
         //handle remaining query parameters ------------------------------------
         final QueryBuilder qb = new QueryBuilder(queryTypeName);
-        if(readProperties != returnedProperties){
+        if(readProperties.equals(returnedProperties)){
             qb.setProperties(queryPropertyNames);
         }
         qb.setFilter(queryFilter);
@@ -306,7 +302,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
     }
 
     protected FeatureReader createFeatureReader(
-            final IndexedShapefileAttributeReader r, final SimpleFeatureType featureType, final Hints hints)
+            final IndexedShapefileAttributeReader r, final FeatureType featureType, final Hints hints)
             throws MismatchedFeatureException, IOException,DataStoreException {
 
         final FeatureIDReader fidReader;
@@ -319,7 +315,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         return ShapefileFeatureReader.create(r, fidReader, featureType, hints);
     }
 
-    private IndexedShapefileAttributeReader getAttributesReader(final List<? extends PropertyDescriptor> properties,
+    private IndexedShapefileAttributeReader getAttributesReader(final List<? extends AttributeType> properties,
             final Filter filter, final boolean read3D, final double[] resample) throws DataStoreException{
 
         final AccessManager locker = shpFiles.createLocker();
@@ -328,7 +324,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         if (filter instanceof Id && shpFiles.isWritable() && shpFiles.exists(FIX)) {
             final Id fidFilter = (Id) filter;
 
-            final TreeSet<Identifier> idsSet = new TreeSet<Identifier>(IDENTIFIER_COMPARATOR);
+            final TreeSet<Identifier> idsSet = new TreeSet<>(IDENTIFIER_COMPARATOR);
             idsSet.addAll(fidFilter.getIdentifiers());
             try {
                 goodRecs = queryFidIndex(idsSet);
@@ -364,8 +360,8 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
             }
         }
 
-        final boolean readDBF = !(properties.size()==1 && properties.get(0) instanceof GeometryDescriptor);
-        final PropertyDescriptor[] atts = properties.toArray(new PropertyDescriptor[properties.size()]);
+        final boolean readDBF = !(properties.size()==1 && Geometry.class.isAssignableFrom(properties.get(0).getValueClass()));
+        final AttributeType[] atts = properties.toArray(new AttributeType[properties.size()]);
         try {
             return new IndexedShapefileAttributeReader(locker,atts,
                     read3D, useMemoryMappedBuffer,resample,
@@ -377,7 +373,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
     }
 
 
-    protected IndexedShapefileAttributeReader getBBoxAttributesReader(final List<PropertyDescriptor> properties,
+    protected IndexedShapefileAttributeReader getBBoxAttributesReader(final List<AttributeType> properties,
             final Envelope bbox, final boolean loose, final Hints hints, final boolean read3D, final double[] res) throws DataStoreException {
 
         final AccessManager locker = shpFiles.createLocker();
@@ -405,8 +401,8 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         final LazyTyleSearchIterator.Buffered<ShpData> ite = (col!=null) ? col.bboxIterator() : null;
 
         //check if we need to open the dbf reader, no need when only geometry
-        final boolean readDBF = !(properties.size()==1 && properties.get(0) instanceof GeometryDescriptor);
-        final PropertyDescriptor[] atts = properties.toArray(new PropertyDescriptor[properties.size()]);
+        final boolean readDBF = !(properties.size()==1 && Geometry.class.isAssignableFrom(properties.get(0).getValueClass()));
+        final AttributeType[] atts = properties.toArray(new AttributeType[properties.size()]);
         try {
             return new IndexedBBoxShapefileAttributeReader(locker,atts,
                     read3D, useMemoryMappedBuffer,res,readDBF, dbfCharset,
@@ -561,26 +557,25 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
     /**
      * Create a FeatureWriter for the given type name.
      *
-     * @param typeName The typeName of the FeatureType to write
+     * @param query The typeName of the FeatureType to write
      * @return A new FeatureWriter.
-     * @throws IOException If the typeName is not available or some other error occurs.
+     * @throws DataStoreException If the typeName is not available or some other error occurs.
      */
     @Override
-    public FeatureWriter getFeatureWriter(final GenericName typeName,
-            final Filter filter, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
 
         //will raise an error if it does not exist
-        final SimpleFeatureType schema = (SimpleFeatureType) getFeatureType(typeName);
+        final FeatureType schema = getFeatureType(query.getTypeName());
 
         //we read all properties
         final IndexedShapefileAttributeReader attReader = getAttributesReader(
-                schema.getAttributeDescriptors(),Filter.INCLUDE,true,null);
+                getAttributes(schema,false),Filter.INCLUDE,true,null);
 
         try{
             final FeatureReader reader = createFeatureReader(attReader, schema, null);
             FeatureWriter writer = new IndexedShapefileFeatureWriter(
-                    typeName.tip().toString(), shpFiles, attReader, reader, this, dbfCharset);
-            return handleRemaining(writer, filter);
+                    schema.getName().tip().toString(), shpFiles, attReader, reader, this, dbfCharset);
+            return handleRemaining(writer, query.getFilter());
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
@@ -597,7 +592,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         }
 
         final Set<Identifier> fids = (Set<Identifier>) filter.accept(
-                IdCollectorFilterVisitor.IDENTIFIER_COLLECTOR, new TreeSet<Identifier>(IDENTIFIER_COMPARATOR));
+                IdCollectorFilterVisitor.IDENTIFIER_COLLECTOR, new TreeSet<>(IDENTIFIER_COMPARATOR));
 
         final Set records = new HashSet();
         if (!fids.isEmpty()) {
@@ -620,7 +615,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         try {
             reader = locker.getSHPReader(false, false, false, null);
 
-            final JTSEnvelope2D ret = new JTSEnvelope2D(getFeatureType(getNames().iterator().next()).getCoordinateReferenceSystem());
+            final JTSEnvelope2D ret = new JTSEnvelope2D(FeatureExt.getCRS(getFeatureType(getNames().iterator().next().toString())));
             for(final Iterator iter = records.iterator(); iter.hasNext();) {
                 final Data data = (Data) iter.next();
                 reader.goTo(((Long) data.getValue(1)).intValue());
@@ -675,8 +670,8 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
     }
 
     @Override
-    public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
-        super.createFeatureType(typeName, featureType);
+    public void createFeatureType(FeatureType featureType) throws DataStoreException {
+        super.createFeatureType(featureType);
 
         //generate proper indexes
         try {

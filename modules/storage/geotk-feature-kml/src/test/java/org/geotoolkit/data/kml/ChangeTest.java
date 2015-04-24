@@ -35,15 +35,11 @@ import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
+import org.xml.sax.SAXException;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -55,28 +51,8 @@ public class ChangeTest extends org.geotoolkit.test.TestBase {
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/change.kml";
 
-    public ChangeTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
     @Test
     public void changeReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
@@ -88,12 +64,9 @@ public class ChangeTest extends org.geotoolkit.test.TestBase {
         assertEquals("http://www/~sam/January14Data/Point.kml", targetHref.toString());
 
         assertEquals(1, update.getUpdates().size());
-        assertTrue(update.getUpdates().get(0) instanceof Change);
         Change change = (Change) update.getUpdates().get(0);
 
         assertEquals(1, change.getObjects().size());
-        assertTrue(change.getObjects().get(0) instanceof Point);
-
         Point point = (Point) change.getObjects().get(0);
         point.getIdAttributes();
         assertEquals("point123", point.getIdAttributes().getTargetId());
@@ -104,7 +77,6 @@ public class ChangeTest extends org.geotoolkit.test.TestBase {
         assertEquals(-95.48, coordinate.x, DELTA);
         assertEquals(40.43, coordinate.y, DELTA);
         assertEquals(0, coordinate.z, DELTA);
-
     }
 
     @Test
@@ -137,8 +109,6 @@ public class ChangeTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

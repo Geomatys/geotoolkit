@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011-2014, Geomatys
+ *    (C) 2011-2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,26 +16,31 @@
  */
 package org.geotoolkit.db;
 
+import com.vividsolutions.jts.geom.Geometry;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import static org.geotoolkit.db.JDBCFeatureStoreUtilities.*;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.simple.DefaultSimpleFeature;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.db.dialect.SQLDialect;
+import org.geotoolkit.geometry.jts.JTS;
+import org.opengis.coverage.Coverage;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.opengis.filter.identity.FeatureId;
 
 /**
  * JDBC Feature reader, both simple and complexe features.
@@ -49,11 +54,10 @@ public class JDBCFeatureReader implements FeatureReader {
     protected final DefaultJDBCFeatureStore store;
     protected final PrimaryKey pkey;
     protected final String sql;
-    protected final String fidBase;
     protected final Hints hints;
     
     //array of properties for faster access when simple type
-    protected final PropertyDescriptor[] properties;
+    protected final PropertyType[] properties;
     protected final Object[] values;
     
     /**
@@ -72,13 +76,12 @@ public class JDBCFeatureReader implements FeatureReader {
         ArgumentChecks.ensureNonNull("Connection", cnx);
         final GenericName typeName = type.getName();
         final String name = typeName.tip().toString();
-        this.fidBase = name + ".";
         
         this.type = type;
         this.store = store;
-        PrimaryKey pk = store.getDatabaseModel().getPrimaryKey(typeName);
+        PrimaryKey pk = store.getDatabaseModel().getPrimaryKey(typeName.toString());
         this.pkey = (pk==null)? new PrimaryKey("qom") : pk;
-        this.properties = this.type.getDescriptors().toArray(new PropertyDescriptor[0]);
+        this.properties = this.type.getProperties(true).toArray(new PropertyType[0]);
         this.values = new Object[this.properties.length];
         
         this.sql = sql;        
@@ -98,8 +101,7 @@ public class JDBCFeatureReader implements FeatureReader {
         this.type = other.type;
         this.store = other.store;
         this.pkey = other.pkey;
-        this.sql = other.sql;        
-        this.fidBase = other.fidBase;
+        this.sql = other.sql;
         this.hints = other.hints;
         this.st = other.st;
         this.rs = other.rs;
@@ -143,16 +145,21 @@ public class JDBCFeatureReader implements FeatureReader {
     }
     
     protected Feature toFeature(ResultSet rs) throws SQLException, DataStoreException{
-        final FeatureId fid = new DefaultFeatureId(fidBase + pkey.encodeFID(rs));
-        if(type instanceof SimpleFeatureType){
-            for(int i=0;i<values.length;i++){
-                final PropertyDescriptor pdesc = properties[i];
-                values[i] = JDBCComplexFeature.readSimpleValue(store.getDialect(), rs, i+1, pdesc);
+        final Feature feature = type.newInstance();
+        
+        int k=0;
+        for(final PropertyType ptype : type.getProperties(true)){
+            if(ptype instanceof Operation){
+                //do nothing
+            }else if(ptype instanceof AttributeType){
+                //single value attribut
+                final Object value = readSimpleValue(store.getDialect(), rs, k+1, ptype);
+                feature.setPropertyValue(ptype.getName().toString(), value);
+                k++;
             }
-            return new DefaultSimpleFeature((SimpleFeatureType)type, fid, values.clone(), false);
-        }else{
-            return new JDBCComplexFeature(store, rs, type, fid);
         }
+
+        return feature;
     }
     
     @Override
@@ -175,6 +182,39 @@ public class JDBCFeatureReader implements FeatureReader {
         super.finalize();
     }
     
-    
+
+    public static Object readSimpleValue(final SQLDialect dialect, final ResultSet rs, int index, PropertyType desc) throws SQLException{
+        if(AttributeConvention.isGeometryAttribute(desc)){
+            final AttributeType gatt = (AttributeType) desc;
+            final Class valueClass = gatt.getValueClass();
+            if(Coverage.class.isAssignableFrom(valueClass)){
+                //raster type
+                final Coverage coverage;
+                try {
+                    coverage = dialect.decodeCoverageValue(gatt, rs, index);
+                } catch (IOException e) {
+                    throw new SQLException(e);
+                }
+                return coverage;
+            }else{
+                //vector type
+                final Geometry geom;
+                try {
+                    geom = dialect.decodeGeometryValue(gatt, rs, index);
+                } catch (IOException e) {
+                    throw new SQLException(e);
+                }
+
+                if(geom != null && geom.getUserData() == null){
+                    //set crs is not set
+                    JTS.setCRS(geom, FeatureExt.getCRS(gatt));
+                }
+                return geom;
+            }
+
+        }else{
+            return dialect.decodeAttributeValue((AttributeType)desc, rs, index);
+        }
+    }
     
 }

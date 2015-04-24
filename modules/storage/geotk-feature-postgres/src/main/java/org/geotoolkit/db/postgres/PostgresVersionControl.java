@@ -27,14 +27,17 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.version.AbstractVersionControl;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersioningException;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 /**
  * Manage versioning for a given feature type.
@@ -71,7 +74,7 @@ public class PostgresVersionControl extends AbstractVersionControl{
         featureStore.installHSFunctions();
         
         final String schemaName = featureStore.getDatabaseSchema();
-        final Set<ComplexType> visited = new HashSet<ComplexType>();
+        final Set<FeatureType> visited = new HashSet<>();
         createVersioningTable(schemaName, featureType, visited);
                 
         //clear cache
@@ -86,7 +89,7 @@ public class PostgresVersionControl extends AbstractVersionControl{
      * @param visited set of already visited types, there might be recursion 
      *                or multiple properties with the same type. 
      */
-    private void createVersioningTable(final String schemaName, final ComplexType type, final Set<ComplexType> visited) throws VersioningException{
+    private void createVersioningTable(final String schemaName, final FeatureType type, final Set<FeatureType> visited) throws VersioningException{
         
         if(visited.contains(type)) return;
         visited.add(type);
@@ -102,12 +105,14 @@ public class PostgresVersionControl extends AbstractVersionControl{
         sb.append('\'');
         sb.append(',');
 
-        final List<String> hsColumnNames = new ArrayList<String>();
-        for(PropertyDescriptor desc : type.getDescriptors()){
-            if(desc.getType() instanceof ComplexType){
+        final List<String> hsColumnNames = new ArrayList<>();
+        for(PropertyType desc : type.getProperties(true)){
+            if(AttributeConvention.contains(desc.getName())) continue;
+            if(desc instanceof FeatureAssociationRole){
                 //complex type, create sub table history
-                createVersioningTable(schemaName, (ComplexType)desc.getType(), visited);
-            }else{
+                FeatureAssociationRole far = (FeatureAssociationRole) desc;
+                createVersioningTable(schemaName, far.getValueType(), visited);
+            }else if(desc instanceof AttributeType) {
                 hsColumnNames.add("'"+desc.getName().tip().toString()+"'");
             }
         }
@@ -144,24 +149,25 @@ public class PostgresVersionControl extends AbstractVersionControl{
         //install history functions, won't do anything if already present
         featureStore.installHSFunctions();
         final String schemaName = featureStore.getDatabaseSchema();
-        final Set<ComplexType> visited = new HashSet<ComplexType>();
+        final Set<FeatureType> visited = new HashSet<>();
         dropVersioning(schemaName, featureType, visited);
         
         //clear cache
         isVersioned = null;
     }
     
-    private void dropVersioning(final String schemaName, final ComplexType type, final Set<ComplexType> visited) throws VersioningException{
+    private void dropVersioning(final String schemaName, final FeatureType type, final Set<FeatureType> visited) throws VersioningException{
         if(visited.contains(type)) return;
         visited.add(type);
         
         final String tableName = type.getName().tip().toString();
         
         //drop complex properties versioning
-        for(PropertyDescriptor desc : type.getDescriptors()){
-            if(desc.getType() instanceof ComplexType){
+        for(PropertyType desc : type.getProperties(true)){
+            if(desc instanceof FeatureAssociationRole){
                 //complex type, drop sub table history
-                dropVersioning(schemaName, (ComplexType)desc.getType(),visited);
+                FeatureAssociationRole far = (FeatureAssociationRole) desc;
+                dropVersioning(schemaName, far.getValueType(),visited);
             }
         }
         
@@ -200,21 +206,22 @@ public class PostgresVersionControl extends AbstractVersionControl{
         }
         
         final String schemaName = featureStore.getDatabaseSchema();
-        final Set<ComplexType> visited = new HashSet<ComplexType>();
+        final Set<FeatureType> visited = new HashSet<>();
         trim(schemaName, featureType, date, visited);
     }
     
-    private void trim(final String schemaName, final ComplexType type, final Date date, final Set<ComplexType> visited) throws VersioningException{
+    private void trim(final String schemaName, final FeatureType type, final Date date, final Set<FeatureType> visited) throws VersioningException{
         if(visited.contains(type)) return;
         visited.add(type);
         
         final String tableName  = type.getName().tip().toString();
         
         //trim complex properties versioning
-        for(PropertyDescriptor desc : type.getDescriptors()){
-            if(desc.getType() instanceof ComplexType){
+        for(PropertyType desc : type.getProperties(true)){
+            if(desc instanceof FeatureAssociationRole){
                 //complex type, trim sub table history
-                trim(schemaName, (ComplexType)desc.getType(), date, visited);
+                FeatureAssociationRole far = (FeatureAssociationRole) desc;
+                trim(schemaName, far.getValueType(), date, visited);
             }
         }
         
@@ -256,21 +263,22 @@ public class PostgresVersionControl extends AbstractVersionControl{
         }
         
         final String schemaName = featureStore.getDatabaseSchema();
-        final Set<ComplexType> visited = new HashSet<ComplexType>();
+        final Set<FeatureType> visited = new HashSet<>();
         revert(schemaName, featureType, date, visited);
     }
     
-    private void revert(final String schemaName, final ComplexType type, final Date date, final Set<ComplexType> visited) throws VersioningException{
+    private void revert(final String schemaName, final FeatureType type, final Date date, final Set<FeatureType> visited) throws VersioningException{
         if(visited.contains(type)) return;
         visited.add(type);
         
         final String tableName  = type.getName().tip().toString();
         
         //revert complex properties versioning
-        for(PropertyDescriptor desc : type.getDescriptors()){
-            if(desc.getType() instanceof ComplexType){
+        for(PropertyType desc : type.getProperties(true)){
+            if(desc instanceof FeatureAssociationRole){
                 //complex type, revert sub table history
-                revert(schemaName, (ComplexType)desc.getType(), date, visited);
+                FeatureAssociationRole far = (FeatureAssociationRole) desc;
+                revert(schemaName, far.getValueType(), date, visited);
             }
         }
         

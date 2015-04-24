@@ -22,6 +22,7 @@ import java.awt.Paint;
 import java.util.logging.Level;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.display2d.style.CachedLineSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.CachedStrokeGraphic;
@@ -66,7 +67,7 @@ public class FXLineSymbolizer extends Group {
     private void updateGraphic(){
         
         final LineSymbolizer base = symbolizer.getSource();
-        final Geometry geom = transform((Geometry)feature.feature.getDefaultGeometryProperty().getValue());
+        final Geometry geom = transform((Geometry)FeatureExt.getDefaultGeometryAttributeValue(feature.feature));
         if(geom==null){
             getChildren().clear();
             return;

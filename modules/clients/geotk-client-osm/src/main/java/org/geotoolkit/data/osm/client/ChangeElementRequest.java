@@ -18,7 +18,7 @@
 package org.geotoolkit.data.osm.client;
 
 import org.geotoolkit.client.Request;
-import org.geotoolkit.data.osm.model.IdentifiedElement;
+import org.opengis.feature.Feature;
 
 /**
  * Request to create a new element.
@@ -43,11 +43,11 @@ public interface ChangeElementRequest extends Request{
     /**
      * @param element : Node/Way/Relation to create
      */
-    void setElement(IdentifiedElement element);
+    void setElement(Feature element);
 
     /**
      * @return IdentifiedElement : Node/Way/Relation to create
      */
-    IdentifiedElement getElement();
+    Feature getElement();
 
 }

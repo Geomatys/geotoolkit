@@ -16,11 +16,8 @@
  */
 package org.geotoolkit.db.reverse;
 
-import java.util.Collection;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.HintsPending;
-import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.PropertyName;
@@ -35,6 +32,7 @@ public class RelationMetaModel {
     
     public static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
+    private final String relationName;
     private final String currentColumn;
     private final String foreignSchema;
     private final String foreignTable;
@@ -45,9 +43,14 @@ public class RelationMetaModel {
     //for filter
     private final PropertyName property;
 
-    public RelationMetaModel(final String currentColumn, final String foreignSchema,
+    public RelationMetaModel(final String relationName,final String currentColumn, final String foreignSchema,
             final String foreignTable, final String foreignColumn, 
             boolean imported, boolean deleteCascade) {
+        ArgumentChecks.ensureNonNull("relation name", relationName);
+        ArgumentChecks.ensureNonNull("current column", currentColumn);
+        ArgumentChecks.ensureNonNull("foreign table", foreignTable);
+        ArgumentChecks.ensureNonNull("foreign column", foreignColumn);
+        this.relationName = relationName;
         this.currentColumn = currentColumn;
         this.foreignSchema = foreignSchema;
         this.foreignTable = foreignTable;
@@ -57,6 +60,10 @@ public class RelationMetaModel {
         this.property = FF.property(foreignColumn);
     }
 
+    public String getRelationName() {
+        return relationName;
+    }
+    
     public String getCurrentColumn() {
         return currentColumn;
     }
@@ -87,25 +94,11 @@ public class RelationMetaModel {
     public boolean isDeleteCascade(){
         return deleteCascade;
     }
-    
+
     public Filter toFilter(final Object value){
         return FF.equals(property, FF.literal(value));
     }
-    
-    public String[] getSubTypeFields(DataBaseModel model) throws DataStoreException{
-        final TableMetaModel table = model.getSchemaMetaModel(foreignSchema).getTable(foreignTable);
-        final Collection<PropertyDescriptor> descs = table.getType(TableMetaModel.View.COMPLEX_FEATURE_TYPE).getDescriptors();
-        String[] fields = new String[descs.size()-table.key.getColumns().size()];
-        int i=0;
-        for(PropertyDescriptor desc : descs){
-            if(!Boolean.TRUE.equals(desc.getUserData().get(HintsPending.PROPERTY_IS_IDENTIFIER))){
-                fields[i] = desc.getName().tip().toString();
-                i++;
-            }
-        }
-        return fields;
-    }
-    
+        
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(currentColumn);

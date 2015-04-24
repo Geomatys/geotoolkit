@@ -24,15 +24,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import static org.junit.Assert.assertNotNull;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -45,8 +43,8 @@ import org.opengis.util.FactoryException;
 public class DBFReadingTest extends AbstractReadingTests{
 
     private final DbaseFileFeatureStore store;
-    private final Set<GenericName> names = new HashSet<GenericName>();
-    private final List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
+    private final Set<GenericName> names = new HashSet<>();
+    private final List<ExpectedResult> expecteds = new ArrayList<>();
 
     public DBFReadingTest() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, IOException{
 
@@ -55,50 +53,18 @@ public class DBFReadingTest extends AbstractReadingTests{
         store = new DbaseFileFeatureStore(file.toPath(), ns);
 
         for(GenericName n : store.getNames()){
-            FeatureType ft = store.getFeatureType(n);
+            FeatureType ft = store.getFeatureType(n.toString());
             assertNotNull(ft);
         }
 
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-
-        final AttributeTypeBuilder buildAtt = new AttributeTypeBuilder();
-        final AttributeDescriptorBuilder buildDesc = new AttributeDescriptorBuilder();
         
-        GenericName name = NamesExt.create("http://test.com", "sample");
-        builder.reset();
+        final GenericName name = NamesExt.create(ns, "sample");
         builder.setName(name);
-        
-        buildAtt.reset();
-        buildAtt.setName(ns, "N1");
-        buildAtt.setBinding(Double.class);
-        buildAtt.setLength(5);
-        buildDesc.reset();
-        buildDesc.setName(ns, "N1");
-        buildDesc.setNillable(true);
-        buildDesc.setType(buildAtt.buildType());
-        builder.add(buildDesc.buildDescriptor());
-        
-        buildAtt.reset();
-        buildAtt.setName(ns, "N2");
-        buildAtt.setBinding(Double.class);
-        buildAtt.setLength(5);
-        buildDesc.reset();
-        buildDesc.setName(ns, "N2");
-        buildDesc.setNillable(true);
-        buildDesc.setType(buildAtt.buildType());
-        builder.add(buildDesc.buildDescriptor());
-        
-        buildAtt.reset();
-        buildAtt.setName(ns, "N3");
-        buildAtt.setBinding(String.class);
-        buildAtt.setLength(6);
-        buildDesc.reset();
-        buildDesc.setName(ns, "N3");
-        buildDesc.setNillable(true);
-        buildDesc.setType(buildAtt.buildType());
-        builder.add(buildDesc.buildDescriptor());
-        
-        final FeatureType type3 = builder.buildFeatureType();
+        builder.addAttribute(Double.class).setName(NamesExt.create(ns,"N1")).setMaximalLength(5);
+        builder.addAttribute(Double.class).setName(NamesExt.create(ns,"N2")).setMaximalLength(5);
+        builder.addAttribute(String.class).setName(NamesExt.create(ns,"N3")).setMaximalLength(6);
+        final FeatureType type3 = builder.build();
         
         names.add(name);
         expecteds.add(new ExpectedResult(name,type3,3,null));

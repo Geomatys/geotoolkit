@@ -35,7 +35,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Rule;
 

@@ -19,7 +19,6 @@ package org.geotoolkit.data;
 
 import java.util.AbstractCollection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,15 +27,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.feature.ReprojectFeatureType;
+import org.apache.sis.feature.TransformFeatureType;
+import org.apache.sis.feature.ViewFeatureType;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
-import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
-import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
-import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Selector;
@@ -46,19 +47,20 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.util.collection.CloseableIterator;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
+import org.opengis.feature.PropertyType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -238,24 +240,16 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
     @Override
     public void update(Feature feature) throws DataStoreException {
         if(feature == null) return;
-        final Filter filter = FactoryFinder.getFilterFactory(null).id(Collections.singleton(feature.getIdentifier()));
+        FeatureId fid = FeatureExt.getId(feature);
+        final Filter filter = FactoryFinder.getFilterFactory(null).id(Collections.singleton(fid));
 
-        final Map<AttributeDescriptor,Object> map = new HashMap<AttributeDescriptor, Object>();
-        for(Property p : feature.getProperties()){
-            if(p.getDescriptor() instanceof AttributeDescriptor){
-                map.put((AttributeDescriptor)p.getDescriptor(), p.getValue());
+        final Map<String,Object> map = new HashMap<>();
+        for(PropertyType pt : feature.getType().getProperties(true)){
+            if(pt instanceof AttributeType){
+                map.put(pt.getName().toString(), feature.getPropertyValue(pt.getName().toString()));
             }
         }
-
         update(filter, map);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void update(final Filter filter, final AttributeDescriptor desc, final Object value) throws DataStoreException {
-        update(filter, Collections.singletonMap(desc, value));
     }
 
     @Override
@@ -312,38 +306,30 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
             }
         }
 
-        //wrap properties, remove primary keys if necessary --------------------
-        final Boolean hide = (Boolean) hints.get(HintsPending.FEATURE_HIDE_ID_PROPERTY);
+        //wrap properties --------------------
         final FeatureType original = result.getFeatureType();
         FeatureType mask = original;
         if(properties != null){
             try {
-                mask = FeatureTypeUtilities.createSubType(mask, properties);
+                mask = FeatureTypeExt.createSubType(mask, properties);
             } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }
         }
-        if(hide != null && hide){
-            try {
-                //remove primary key properties
-                mask = FeatureTypeUtilities.excludePrimaryKeyFields(mask);
-            } catch (MismatchedFeatureException ex) {
-                throw new DataStoreException(ex);
-            }
-        }
-        if(mask != original){
-            result = GenericRetypeFeatureIterator.wrap(result, mask);
+        if(mask instanceof ViewFeatureType){
+            result = GenericDecoratedFeatureIterator.wrap(result, (ViewFeatureType) mask);
         }
 
         //wrap resampling ------------------------------------------------------
         if(resampling != null){
-            result = GenericTransformFeatureIterator.wrap(result,
-                    new GeometryScaleTransformer(resampling[0], resampling[1]));
+            final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);
+            final TransformFeatureType ttype = new TransformFeatureType(result.getFeatureType(), trs);
+            result = GenericDecoratedFeatureIterator.wrap(result, ttype);
         }
 
         //wrap reprojection ----------------------------------------------------
         if(crs != null){
-            result = GenericReprojectFeatureIterator.wrap(result, crs);
+            result = GenericDecoratedFeatureIterator.wrap(result, new ReprojectFeatureType(result.getFeatureType(), crs));
         }
 
         return result;

@@ -27,6 +27,7 @@ import org.geotoolkit.filter.binding.Bindings;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  * Immutable id filter.
@@ -38,7 +39,7 @@ import org.opengis.filter.identity.Identifier;
  */
 public class DefaultId implements Id,Serializable{
 
-    private static final String XPATH_ID = "@id";
+    private static final String XPATH_ID = AttributeConvention.IDENTIFIER_PROPERTY.toString();
 
     private final DualKeyMap keys = new DualKeyMap();
 

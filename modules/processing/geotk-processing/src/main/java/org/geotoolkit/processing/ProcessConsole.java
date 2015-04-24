@@ -38,7 +38,6 @@ import org.geotoolkit.processing.util.converter.StringToSortByConverter;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.lang.Setup;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.processing.util.converter.StringToFeatureTypeConverter;
 import org.geotoolkit.processing.util.converter.StringToGeometryConverter;
 import org.apache.sis.util.collection.Containers;
 import org.apache.sis.util.Classes;
@@ -69,7 +68,6 @@ public final class ProcessConsole {
     private static final List LIST_CONVERTERS = Containers.unmodifiableList(
                 StringToFeatureCollectionConverter.getInstance(),
                 StringToGeometryConverter.getInstance(),
-                StringToFeatureTypeConverter.getInstance(),
                 StringToAffineTransformConverter.getInstance(),
                 StringToSortByConverter.getInstance(),
                 StringToMapConverter.getInstance());
@@ -245,7 +243,7 @@ public final class ProcessConsole {
      */
     private static void printList() {
         final Iterator<ProcessingRegistry> ite = ProcessFinder.getProcessFactories();
-        while(ite.hasNext()){
+        while (ite.hasNext()) {
             final ProcessingRegistry registry = ite.next();
             for(final Identifier id : registry.getIdentification().getCitation().getIdentifiers()){
                 print(BOLD,id.getCode()," ",RESET);
@@ -444,7 +442,7 @@ public final class ProcessConsole {
 
     /**
      * Print in the console the given objects.
-     * X364 object are automaticly removed if the console does not handle them.
+     * X364 object are automatically removed if the console does not handle them.
      */
     private static void print(final Object ... texts){
         final String text;

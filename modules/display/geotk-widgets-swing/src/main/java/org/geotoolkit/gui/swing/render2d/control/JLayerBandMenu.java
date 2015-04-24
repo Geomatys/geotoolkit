@@ -36,6 +36,7 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 
 import javax.swing.SwingConstants;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.container.ContextContainer2D;
@@ -147,7 +148,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                     }
                 }else if(ml instanceof FeatureMapLayer){
                     final FeatureMapLayer fml = (FeatureMapLayer) ml;
-                    crs = fml.getCollection().getFeatureType().getCoordinateReferenceSystem();
+                    crs = FeatureExt.getCRS(fml.getCollection().getFeatureType());
                 }
                 if(crs != null){
                     final TemporalCRS tc = CRS.getTemporalComponent(ml.getBounds().getCoordinateReferenceSystem());

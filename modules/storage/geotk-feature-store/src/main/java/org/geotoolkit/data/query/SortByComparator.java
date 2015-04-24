@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;

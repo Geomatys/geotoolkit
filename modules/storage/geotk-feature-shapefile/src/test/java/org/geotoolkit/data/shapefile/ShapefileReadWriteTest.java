@@ -34,13 +34,13 @@ import java.util.Map;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.test.TestData;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 /**
  * 
@@ -186,8 +186,8 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
                 TestData.url(AbstractTestCaseSupport.class, f).toURI(), null, false, charset);
         GenericName typeName = s.getNames().iterator().next();
         Session session = s.createSession(true);
-        FeatureType type = s.getFeatureType(typeName);
-        FeatureCollection one = session.getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureType type = s.getFeatureType(typeName.toString());
+        FeatureCollection one = session.getFeatureCollection(QueryBuilder.all(typeName.toString()));
         File tmp = getTempFile();
 
         ShapefileFeatureStoreFactory maker = new ShapefileFeatureStoreFactory();
@@ -211,22 +211,22 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
         shapefile = (ShapefileFeatureStore) maker.open(params);
 
-        shapefile.createFeatureType(typeName,type);
+        shapefile.createFeatureType(type);
 
         Session session = shapefile.createSession(true);
-        session.addFeatures(typeName, original);
+        session.addFeatures(typeName.toString(), original);
         session.commit();
 
         assertFalse(session.hasPendingChanges());
         
-        FeatureCollection copy = session.getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection copy = session.getFeatureCollection(QueryBuilder.all(typeName.toString()));
         compare(original, copy);
 
         if (true) {
             // review open
             ShapefileFeatureStore review = new ShapefileFeatureStore(tmp.toURI(), tmp.toString(), memorymapped, charset);
             typeName = review.getNames().iterator().next();
-            FeatureCollection again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+            FeatureCollection again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
 
             compare(copy, again);
             compare(original, again);
@@ -267,12 +267,12 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
     }
 
     static void compare(final Feature f1, final Feature f2) throws Exception {
-        Collection<PropertyDescriptor> descs = f1.getType().getDescriptors();
-        if (descs.size() != f2.getType().getDescriptors().size()) {
+        Collection<? extends PropertyType> descs = f1.getType().getProperties(true);
+        if (descs.size() != f2.getType().getProperties(true).size()) {
             throw new Exception("Unequal number of attributes");
         }
 
-        for(PropertyDescriptor desc : descs){
+        for(PropertyType desc : descs){
             final String name = desc.getName().tip().toString();
             Object att1 = f1.getPropertyValue(name);
             Object att2 = f2.getPropertyValue(name);

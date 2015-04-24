@@ -25,8 +25,8 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.io.Serializable;
 import java.util.Map;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.storage.AbstractDataStoreFactory;
@@ -111,7 +111,7 @@ public abstract class AbstractFeatureStoreFactory extends AbstractDataStoreFacto
     public DataStore open(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
-        final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = FeatureExt.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return null;
         }
@@ -129,7 +129,7 @@ public abstract class AbstractFeatureStoreFactory extends AbstractDataStoreFacto
     public DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
 
-        final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = FeatureExt.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return null;
         }
@@ -162,7 +162,7 @@ public abstract class AbstractFeatureStoreFactory extends AbstractDataStoreFacto
 
 
 
-        final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
+        final ParameterValueGroup prm = FeatureExt.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return false;
         }

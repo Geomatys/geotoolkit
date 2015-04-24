@@ -43,16 +43,11 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -63,11 +58,15 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 /**
  * TODO : For features, compute statistics only if input symbolizer needs
@@ -131,7 +130,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
 
         FeatureType baseType = null;
-        SimpleFeatureType cellType = null;
+        FeatureType cellType = null;
         String[] numericProperties = null;
         Statistics[][][] stats = null;
 
@@ -145,12 +144,12 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                     cellType = CellSymbolizer.buildCellType(baseType,crs);
 
                     final List<String> props = new ArrayList<>();
-                    for(PropertyDescriptor desc : baseType.getDescriptors()){
-                        if(desc instanceof AttributeDescriptor){
-                            final AttributeDescriptor att = (AttributeDescriptor) desc;
-                            final Class binding = att.getType().getBinding();
+                    for(PropertyType desc : baseType.getProperties(true)){
+                        if(desc instanceof AttributeType){
+                            final AttributeType att = (AttributeType) desc;
+                            final Class binding = att.getValueClass();
                             if(Number.class.isAssignableFrom(binding) || String.class.isAssignableFrom(binding)){
-                                props.add(att.getLocalName());
+                                props.add(att.getName().toString());
                             }
                         }
                     }
@@ -212,7 +211,8 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
 
         //render the cell features
         final Object[] values = new Object[2+7*numericProperties.length];
-        final Feature feature = new DefaultSimpleFeature(cellType, new DefaultFeatureId("cell-n"), values, false);
+        final Feature feature = cellType.newInstance();
+        feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "cell-n");
         final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(), null);
         params.update(renderingContext);
         final ProjectedFeature pf = new ProjectedFeature(params,feature);
@@ -325,9 +325,9 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         }
 
         //prepare the cell feature type
-        final SimpleFeatureType cellType = CellSymbolizer.buildCellType(coverage);
+        final FeatureType cellType = CellSymbolizer.buildCellType(coverage);
         final Object[] values = new Object[1+7*nbBand];
-        final Feature feature = new DefaultSimpleFeature(cellType, new DefaultFeatureId("cell-n"), values, false);
+        final Feature feature = cellType.newInstance();
         final StatelessContextParams params = new StatelessContextParams(renderingContext.getCanvas(), null);
         params.update(renderingContext);
         params.objectiveJTSEnvelope = new com.vividsolutions.jts.geom.Envelope(

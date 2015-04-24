@@ -23,15 +23,15 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.Reference;
+import org.opengis.feature.Feature;
 
 /**
  *
@@ -64,12 +64,12 @@ public class ReferenceToGeometryArrayConverter extends AbstractReferenceInputCon
 
                 try (final FeatureIterator iterator = featureCollection.iterator()) {
                     final Feature feature = iterator.next();
-                    final GeometryAttribute defaultGeometry = feature.getDefaultGeometryProperty();
+                    final Geometry defaultGeometry = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
 
-                    if (!(defaultGeometry.getValue() instanceof GeometryCollection))
+                    if (!(defaultGeometry instanceof GeometryCollection))
                         throw new UnconvertibleObjectException("No geometry collection found.");
 
-                    final GeometryCollection geometryCollection = (GeometryCollection) defaultGeometry.getValue();
+                    final GeometryCollection geometryCollection = (GeometryCollection) defaultGeometry;
                     final Geometry[] geometryArray = new Geometry[geometryCollection.getNumGeometries()];
                     for (int index = 0; index < geometryArray.length; index++)
                         geometryArray[index] = geometryCollection.getGeometryN(index);

@@ -226,7 +226,7 @@ public class NMEASerialPortReader implements ProviderListener<NMEABuilder.Featur
     public void providerUpdate(NMEABuilder.FeatureEvent evt) {
         if (store.get() != null && evt != null && evt.getData() != null) {
             try {
-                store.get().addFeatures(TYPE_NAME, Collections.singleton(evt.getData()));
+                store.get().addFeatures(TYPE_NAME.toString(), Collections.singleton(evt.getData()));
             } catch (DataStoreException ex) {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }

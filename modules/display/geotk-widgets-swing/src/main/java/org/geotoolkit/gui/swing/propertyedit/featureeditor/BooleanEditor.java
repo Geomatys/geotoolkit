@@ -17,12 +17,11 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -42,8 +41,12 @@ public class BooleanEditor extends PropertyValueEditor implements ChangeListener
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return Boolean.class.equals(candidate.getBinding()) ||
-                boolean.class.equals(candidate.getBinding());
+        if(!(candidate instanceof AttributeType)){
+            return false;
+        }
+        final Class c = ((AttributeType)candidate).getValueClass();
+        return Boolean.class.equals(c) ||
+                boolean.class.equals(c);
     }
 
     @Override

@@ -27,8 +27,8 @@ import org.geotoolkit.factory.Hints;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.ObjectConverter;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 
 /**
@@ -71,7 +71,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
     }
 
     /**
-     * 
+     *
      * @param feature
      * @param map
      * @return result feature
@@ -93,7 +93,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
         }
     }
 
-    
+
     /**
      * Implementation of FeatureIterator which iterate from many FeatureCollection
      * @author Quentin Boileau
@@ -104,7 +104,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
         private final FeatureCollection[] fcList;
         private int fcIter;
         private int nbFC; /* Number of FeatureCollection*/
-        
+
         private FeatureCollection nextFC;
         private FeatureIterator ite;
 
@@ -120,7 +120,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
             this.fcList = fcListIter;
             this.fcIter = 0;
             this.nbFC = fcList.length;
-            
+
             if(nbFC > 0){
                 nextFC = fcList[0];
                 ite = nextFC.iterator();
@@ -175,7 +175,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
         }
 
         /**
-         * Find the next feature 
+         * Find the next feature
          */
         private void findNext() {
             if (nextFeature != null) {
@@ -199,7 +199,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
                             ite = nextFC.iterator();
                             conversionMap = MergeProcess.createConversionMap(newFeatureType, nextFC.getFeatureType());
 
-                            
+
                         } catch (UnconvertibleObjectException ex) {
                            throw new FeatureStoreRuntimeException(ex);
                         }

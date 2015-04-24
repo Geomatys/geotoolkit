@@ -59,6 +59,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.controlsfx.dialog.Dialogs;
@@ -70,10 +71,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Feature;
 import org.geotoolkit.gui.javafx.filter.FXCQLEditor;
 import org.geotoolkit.gui.javafx.layer.FXLayerStylePane;
 import org.geotoolkit.gui.javafx.layer.FXPropertyPane;
@@ -95,6 +93,9 @@ import org.geotoolkit.style.interval.DefaultRandomPalette;
 import org.geotoolkit.style.interval.IntervalStyleBuilder;
 import org.geotoolkit.style.interval.Palette;
 import org.geotoolkit.style.interval.RandomPalette;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -338,10 +339,12 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         
         if(layer != null){
             final FeatureType schema = layer.getCollection().getFeatureType();
-            for(PropertyDescriptor desc : schema.getDescriptors()){
-                final Class<?> type = desc.getType().getBinding();
-                if(!Geometry.class.isAssignableFrom(type)){
-                    properties.add(GeotkFX.getFilterFactory().property(desc.getName().tip().toString()));
+            for(PropertyType desc : schema.getProperties(true)){
+                if(desc instanceof AttributeType){
+                    final Class<?> type = ((AttributeType)desc).getValueClass();
+                    if(!Geometry.class.isAssignableFrom(type)){
+                        properties.add(GeotkFX.getFilterFactory().property(desc.getName().tip().toString()));
+                    }
                 }
             }
         }
@@ -356,8 +359,8 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
             final FeatureType schema = layer.getCollection().getFeatureType();
 
             //find the geometry class for template
-            final GeometryDescriptor geo = schema.getGeometryDescriptor();
-            final Class<?> geoClass = (geo!=null)?geo.getType().getBinding():null;
+            final AttributeType<?> geo = FeatureExt.getDefaultGeometryAttribute(schema);
+            final Class<?> geoClass = (geo!=null)?geo.getValueClass():null;
             
             final MutableStyleFactory sf = GeotkFX.getStyleFactory();
             final FilterFactory ff = GeotkFX.getFilterFactory();

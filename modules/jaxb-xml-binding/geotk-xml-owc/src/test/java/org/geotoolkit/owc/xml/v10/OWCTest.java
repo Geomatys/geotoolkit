@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.owc.xml.v10;
 
+import java.io.IOException;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.georss.xml.v100.WhereType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
@@ -29,6 +30,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.StringWriter;
 import java.util.List;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.sis.test.XMLComparator;
+import org.xml.sax.SAXException;
 
 public class OWCTest extends org.geotoolkit.test.TestBase {
     private static final org.w3._2005.atom.ObjectFactory OBJ_ATOM_FACT = new org.w3._2005.atom.ObjectFactory();
@@ -59,7 +63,7 @@ public class OWCTest extends org.geotoolkit.test.TestBase {
             "</ns2:feed>\n";
 
     @Test
-    public void owcMarshallTest() throws JAXBException {
+    public void owcMarshallTest() throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
         final FeedType feed = new FeedType();
         final List<Object> entriesToSet = feed.getAuthorOrCategoryOrContributor();
@@ -129,7 +133,8 @@ public class OWCTest extends org.geotoolkit.test.TestBase {
         final StringWriter sw = new StringWriter();
         marsh.marshal(feed, sw);
         pool.recycle(marsh);
-        assertEquals(EXP_RESULT, sw.toString());
+        XMLComparator comparator = new XMLComparator(EXP_RESULT, sw.toString());
+        comparator.compare();
     }
 }
 

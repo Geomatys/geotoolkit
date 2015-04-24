@@ -24,8 +24,8 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
 
 import org.opengis.coverage.grid.GridEnvelope;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.referencing.operation.TransformException;
 
 /**

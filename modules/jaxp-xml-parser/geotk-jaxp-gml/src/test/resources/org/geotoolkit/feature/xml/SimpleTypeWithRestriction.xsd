@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema elementFormDefault="qualified" 
+    targetNamespace="http://www.opengis.net/gml"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:wfs="http://www.opengis.net/wfs">
+
+    <xsd:import schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" namespace="http://www.opengis.net/gml"/>
+    <xsd:element name="TestSimple" type="gml:TestSimpleType" substitutionGroup="gml:_Feature"/>
+    <xsd:complexType name="TestSimpleType">
+        <xsd:complexContent>
+            <xsd:extension base="gml:AbstractFeatureType" >
+                <xsd:sequence>
+                    <xsd:element name="attString"           maxOccurs="1" minOccurs="1" nillable="true">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="3"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+</xsd:schema>

@@ -21,9 +21,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.geotoolkit.util.NamesExt;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.expression.PropertyName;
 
@@ -42,7 +42,7 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
     /**
      * feature type to evaluate against
      */
-    private final ComplexType featureType;
+    private final FeatureType featureType;
 
     /**
      * Just extract the property names; don't check against a feature type.
@@ -57,7 +57,7 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
      *
      * @param featureType
      */
-    public FilterAttributeExtractor(final ComplexType featureType) {
+    public FilterAttributeExtractor(final FeatureType featureType) {
         this.featureType = featureType;
     }
 
@@ -92,7 +92,7 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
             //evaluate against the feature type instead of using straight name
             // since the path from the property name may be an xpath or a
             // namespace prefixed string
-            AttributeDescriptor type = (AttributeDescriptor) expression.evaluate(featureType);
+            PropertyType type = (PropertyType) expression.evaluate(featureType);
             if(type != null) {
                attributeNames.add( type.getName() );
             }else{

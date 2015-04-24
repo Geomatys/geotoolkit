@@ -30,10 +30,10 @@ import org.opengis.util.GenericName;
 public final class DefaultSelector implements Selector{
 
     private final Session session;
-    private final GenericName typeName;
+    private final String typeName;
     private final String name;
 
-    public DefaultSelector(final Session session, final GenericName typeName, final String selectorName) {
+    public DefaultSelector(final Session session, final String typeName, final String selectorName) {
         ensureNonNull("selector feature type name", typeName);
         ensureNonNull("selector name", selectorName);
         this.session = session;
@@ -53,7 +53,7 @@ public final class DefaultSelector implements Selector{
      * {@inheritDoc }
      */
     @Override
-    public GenericName getFeatureTypeName() {
+    public String getFeatureTypeName() {
         return typeName;
     }
 

@@ -18,6 +18,8 @@ package org.geotoolkit.display2d.primitive;
 
 import java.util.Collections;
 import java.util.logging.Level;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.FeatureCollection;
@@ -30,10 +32,10 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import static org.geotoolkit.display2d.primitive.DefaultProjectedObject.DEFAULT_GEOM;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
@@ -100,23 +102,23 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
         if(proj == null){
 
             final FeatureType featuretype = candidate.getType();
-            final PropertyDescriptor prop;
+            PropertyType prop = null;
 
             if(!isNullorEmpty(geomExp)) {
                 if(geomExp instanceof PropertyName){
-                    prop = featuretype.getDescriptor(((PropertyName)geomExp).getPropertyName());
+                    prop = featuretype.getProperty(((PropertyName)geomExp).getPropertyName());
                 }else{
                     //calculated geometry
-                    prop = null;
                 }
             }else if(featuretype != null){
-                prop = featuretype.getGeometryDescriptor();
-            }else{
-                prop = null;
+                try{
+                    prop = featuretype.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+                }catch(PropertyNotFoundException ex){
+                }
             }
 
             if(prop != null){
-                dataCRS = ((GeometryDescriptor)prop).getCoordinateReferenceSystem();
+                dataCRS = FeatureExt.getCRS(prop);
             }
 
             proj = new ProjectedGeometry(params);
@@ -160,7 +162,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
      * @return FeatureId
      */
     public FeatureId getFeatureId() {
-        return candidate.getIdentifier();
+        return FeatureExt.getId(candidate);
     }
 
     private Feature getCompleteFeature(final FeatureId id)throws DataStoreException{
@@ -172,7 +174,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
 
             final FeatureCollection collection =
                     fml.getCollection().subCollection(
-                    QueryBuilder.filtered(fml.getCollection().getFeatureType().getName(), filter));
+                    QueryBuilder.filtered(fml.getCollection().getFeatureType().getName().toString(), filter));
 
             if(!collection.isEmpty()){
                 final FeatureIterator ite = collection.iterator();

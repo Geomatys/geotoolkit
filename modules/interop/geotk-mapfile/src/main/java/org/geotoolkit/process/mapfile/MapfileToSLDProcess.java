@@ -61,10 +61,6 @@ import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Stroke;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.Symbolizer;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Property;
 import org.opengis.filter.expression.Literal;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.measure.Units;
@@ -73,6 +69,7 @@ import static org.geotoolkit.process.mapfile.MapfileToSLDDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.process.mapfile.MapfileTypes.*;
 import static org.geotoolkit.style.StyleConstants.*;
+import org.opengis.feature.Feature;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -120,15 +117,14 @@ public class MapfileToSLDProcess extends AbstractProcess{
 
     private void convert(final MutableStyledLayerDescriptor sld, final Feature feature) throws ProcessException{
 
-        final Collection<Property> layers = feature.getProperties(MAP_LAYER.getName());
+        final Collection<Feature> layers = (Collection<Feature>) feature.getPropertyValue(MAP_LAYER.toString());
 
-        for(final Property p : layers){
+        for(final Feature mflayer : layers){
             //create an sld layer
-            final ComplexAttribute mflayer = (ComplexAttribute) p;
             final MutableNamedLayer sldLayer = SLDF.createNamedLayer();
             sld.layers().add(sldLayer);
 
-            final String name = String.valueOf(mflayer.getProperty(LAYER_NAME.getName()).getValue());
+            final String name = String.valueOf(mflayer.getPropertyValue(LAYER_NAME.toString()));
             sldLayer.setName(name);
             sldLayer.setDescription(SF.description(name, name));
 
@@ -138,12 +134,11 @@ public class MapfileToSLDProcess extends AbstractProcess{
             final MutableFeatureTypeStyle fts = SF.featureTypeStyle();
             sldStyle.featureTypeStyles().add(fts);
 
-            final Double minscale = getValue(mflayer,LAYER_MINSCALEDENOM,Double.class);
-            final Double maxscale = getValue(mflayer,LAYER_MAXSCALEDENOM,Double.class);
-            final Collection<Property> classes = mflayer.getProperties(LAYER_CLASS.getName());
+            final Double minscale = (Double)mflayer.getPropertyValue(LAYER_MINSCALEDENOM.toString());
+            final Double maxscale = (Double)mflayer.getPropertyValue(LAYER_MAXSCALEDENOM.toString());
+            final Collection<Feature> classes = (Collection<Feature>) mflayer.getPropertyValue(LAYER_CLASS.toString());
 
-            for(final Property pp : classes){
-                final ComplexAttribute clazz = (ComplexAttribute) pp;
+            for(final Feature clazz : classes){
                 final MutableRule rule = createRule(mflayer, minscale, maxscale, clazz);
                 fts.rules().add(rule);
             }
@@ -152,19 +147,12 @@ public class MapfileToSLDProcess extends AbstractProcess{
 
     }
 
-    private <T> T getValue(final ComplexAttribute cpx, final PropertyDescriptor desc, final Class<T> clazz){
-        final Property prop = cpx.getProperty(desc.getName());
-        if(prop != null){
-            return (T)prop.getValue();
-        }
-        return null;
-    }
 
-    private MutableRule createRule(final ComplexAttribute mflayer,
-            final Double minScale, final Double maxscale, final ComplexAttribute clazz) throws ProcessException{
+    private MutableRule createRule(final Feature mflayer,
+            final Double minScale, final Double maxscale, final Feature clazz) throws ProcessException{
 
         //mapfile type is similar to se symbolizer type
-        final String type = getValue(mflayer,LAYER_TYPE,String.class);
+        final String type = (String) mflayer.getPropertyValue(LAYER_TYPE.toString());
         final MutableRule rule = SF.rule();
 
         final StringBuilder name = new StringBuilder("[");
@@ -188,8 +176,8 @@ public class MapfileToSLDProcess extends AbstractProcess{
 
         // Class can act as filter, the classItem is the propertyname on which the class
         // Expression is evaluated
-        final PropertyName classItem = getValue(mflayer,LAYER_CLASSITEM,PropertyName.class);
-        final String classExpression = getValue(clazz,CLASS_EXPRESSION,String.class);
+        final PropertyName classItem = (PropertyName) mflayer.getPropertyValue(LAYER_CLASSITEM.toString());
+        final String classExpression = (String) clazz.getPropertyValue(CLASS_EXPRESSION.toString());
         if(classExpression != null){
             // equivalant to OGC filter : PropertyEquals(name,value)
             final Filter filter = toFilter(classItem, classExpression);
@@ -200,16 +188,10 @@ public class MapfileToSLDProcess extends AbstractProcess{
             rule.setElseFilter(true);
         }
 
-        final Collection<Property> styles = clazz.getProperties(CLASS_STYLE.getName());
-        final Collection<Property> labels = clazz.getProperties(CLASS_LABEL.getName());
+        final Collection<Feature> styles = (Collection<Feature>) clazz.getPropertyValue(CLASS_STYLE.toString());
+        final Collection<Feature> labels = (Collection<Feature>) clazz.getPropertyValue(CLASS_LABEL.toString());
 
-        for(final Property pp : styles){
-            final ComplexAttribute style = (ComplexAttribute) pp;
-
-            if(style.getProperties().isEmpty()){
-                //empty style element, mapfile hack to organize symbol order
-                continue;
-            }
+        for(final Feature style : styles){
 
             if("POLYGON".equalsIgnoreCase(type)){
                 rule.symbolizers().addAll(createPolygonSymbolizer(style));
@@ -220,17 +202,11 @@ public class MapfileToSLDProcess extends AbstractProcess{
             }
         }
 
-        for(final Property pp : labels){
-            final ComplexAttribute label = (ComplexAttribute) pp;
-
-            if(label.getProperties().isEmpty()){
-                //empty style element, mapfile hack to organize symbol order
-                continue;
-            }
+        for(final Feature label : labels){
 
             //this property contain the label to place in the text symbolizer
-            Expression labelProp = getValue(mflayer,LAYER_LABELITEM,PropertyName.class);
-            Expression labelOverride = getValue(mflayer,CLASS_TEXT,Expression.class);
+            Expression labelProp = (Expression) mflayer.getPropertyValue(LAYER_LABELITEM.toString());
+            Expression labelOverride = (Expression) mflayer.getPropertyValue(CLASS_TEXT.toString());
             if(labelProp == null || labelOverride != null){
                 //Class Text take priority over label item
                 labelProp = labelOverride;
@@ -242,10 +218,10 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return rule;
     }
 
-    private List<Symbolizer> createPolygonSymbolizer(final ComplexAttribute style){
+    private List<Symbolizer> createPolygonSymbolizer(final Feature style){
 
-        Expression expColor = getValue(style, STYLE_COLOR, Expression.class);
-        Expression expOpacity = getValue(style, STYLE_OPACITY, Expression.class);
+        Expression expColor = (Expression) style.getPropertyValue(STYLE_COLOR.toString());
+        Expression expOpacity = (Expression) style.getPropertyValue(STYLE_OPACITY.toString());
 
         if(expOpacity == null){
             expOpacity = DEFAULT_FILL_OPACITY;
@@ -290,17 +266,17 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return symbolizers;
     }
 
-    private List<Symbolizer> createLineSymbolizer(final ComplexAttribute style){
+    private List<Symbolizer> createLineSymbolizer(final Feature style){
 
-        Expression expColor = getValue(style, STYLE_COLOR, Expression.class);
-        Expression expWidth = getValue(style, STYLE_WIDTH, Expression.class);
-        Expression expOpacity = getValue(style, STYLE_OPACITY, Expression.class);
-        float[] dashes = getValue(style, STYLE_PATTERN, float[].class);
-        Literal explinecap = getValue(style, STYLE_LINECAP, Literal.class);
-        Literal explinejoin = getValue(style, STYLE_LINEJOIN, Literal.class);
+        Expression expColor = (Expression) style.getPropertyValue(STYLE_COLOR.toString());
+        Expression expWidth = (Expression) style.getPropertyValue(STYLE_WIDTH.toString());
+        Expression expOpacity = (Expression) style.getPropertyValue(STYLE_OPACITY.toString());
+        float[] dashes = (float[]) style.getPropertyValue(STYLE_PATTERN.toString());
+        Literal explinecap = (Literal) style.getPropertyValue(STYLE_LINECAP.toString());
+        Literal explinejoin = (Literal) style.getPropertyValue(STYLE_LINEJOIN.toString());
 
-        Expression expOutlineColor = getValue(style, STYLE_OUTLINECOLOR, Expression.class);
-        Expression expOutlineWidth = getValue(style, STYLE_OUTLINEWIDTH, Expression.class);
+        Expression expOutlineColor = (Expression) style.getPropertyValue(STYLE_OUTLINECOLOR.toString());
+        Expression expOutlineWidth = (Expression) style.getPropertyValue(STYLE_OUTLINEWIDTH.toString());
 
         if(expOpacity == null){
             expOpacity = DEFAULT_STROKE_OPACITY;
@@ -330,7 +306,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         }
 
 
-        final List<Symbolizer> symbolizers = new ArrayList<Symbolizer>();
+        final List<Symbolizer> symbolizers = new ArrayList<>();
 
         //Check if it's an outline
         //Mapfile outline , is similar to line symbolizer placed under the main one
@@ -362,14 +338,14 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return symbolizers;
     }
 
-    private List<Symbolizer> createTextSymbolizer(final Expression label, final ComplexAttribute lblStyle){
+    private List<Symbolizer> createTextSymbolizer(final Expression label, final Feature lblStyle){
 
-        Expression expLabelColor = getValue(lblStyle, LABEL_COLOR, Expression.class);
-        Expression expLabelSize  = getValue(lblStyle, LABEL_SIZE, Expression.class);
+        Expression expLabelColor = (Expression) lblStyle.getPropertyValue(LABEL_COLOR.toString());
+        Expression expLabelSize  = (Expression) lblStyle.getPropertyValue(LABEL_SIZE.toString());
 
-        Expression expHaloColor = getValue(lblStyle, LABEL_OUTLINECOLOR, Expression.class);
-        Integer valHaloWidth = getValue(lblStyle, LABEL_OUTLINEWIDTH, Integer.class);
-        String valAngle = getValue(lblStyle, LABEL_ANGLE, String.class);
+        Expression expHaloColor = (Expression) lblStyle.getPropertyValue(LABEL_OUTLINECOLOR.toString());
+        Integer valHaloWidth = (Integer) lblStyle.getPropertyValue(LABEL_OUTLINEWIDTH.toString());
+        String valAngle = (String) lblStyle.getPropertyValue(LABEL_ANGLE.toString());
 
         if(expLabelColor == null){
             expLabelColor = SF.literal(Color.BLACK);
@@ -399,7 +375,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
                 final boolean aligned = false;
                 final boolean generalize = false;
 
-                Integer minDistance = getValue(lblStyle, LABEL_MINDISTANCE, Integer.class);
+                Integer minDistance = (Integer) lblStyle.getPropertyValue(LABEL_MINDISTANCE.toString());
                 if(minDistance != null){
                     repeated = true;
                     gap = FF.literal(minDistance);
@@ -439,14 +415,14 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return symbolizers;
     }
 
-    private List<Symbolizer> createPointSymbolizer(final ComplexAttribute style){
+    private List<Symbolizer> createPointSymbolizer(final Feature style){
 
-        final String symbolName = getValue(style, STYLE_SYMBOL, String.class);
-        Expression expSize = getValue(style, STYLE_SIZE, Expression.class);
-        Expression expOpacity = getValue(style, STYLE_OPACITY, Expression.class);
-        Expression expFillColor = getValue(style, STYLE_COLOR, Expression.class);
-        Expression expStrokeColor = getValue(style, STYLE_OUTLINECOLOR, Expression.class);
-        Expression expStrokeWidth = getValue(style, STYLE_WIDTH, Expression.class);
+        final String symbolName = (String) style.getPropertyValue(STYLE_SYMBOL.toString());
+        Expression expSize = (Expression) style.getPropertyValue(STYLE_SIZE.toString());
+        Expression expOpacity = (Expression) style.getPropertyValue(STYLE_OPACITY.toString());
+        Expression expFillColor = (Expression) style.getPropertyValue(STYLE_COLOR.toString());
+        Expression expStrokeColor = (Expression) style.getPropertyValue(STYLE_OUTLINECOLOR.toString());
+        Expression expStrokeWidth = (Expression) style.getPropertyValue(STYLE_WIDTH.toString());
 
         if(expFillColor == null){
             expFillColor = DEFAULT_FILL_COLOR;
@@ -466,7 +442,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
 
         final List<Symbolizer> symbolizers = new ArrayList<Symbolizer>();
 
-        final ComplexAttribute symbol = getSymbol(symbolName);
+        final Feature symbol = getSymbol(symbolName);
         if(symbol == null){
             //no symbol found for this name
             return symbolizers;
@@ -475,7 +451,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         final Stroke stroke = SF.stroke(expStrokeColor, expStrokeWidth);
         final Fill fill = SF.fill(expFillColor);
 
-        final String symbolTypeName = getValue(symbol, SYMBOL_TYPE, String.class);
+        final String symbolTypeName = (String) symbol.getPropertyValue(SYMBOL_TYPE.toString());
 
         final Mark mark;
         if("ellipse".equals(symbolTypeName)){
@@ -528,17 +504,16 @@ public class MapfileToSLDProcess extends AbstractProcess{
      * @param name : symbol name
      * @return the symbol which has the given name
      */
-    private ComplexAttribute getSymbol(final String name){
+    private Feature getSymbol(final String name){
 
         if(name == null){
             return null;
         }
 
-        final Collection<Property> symbols = mapfileFeature.getProperties(MAP_SYMBOL.getName());
+        final Collection<Feature> symbols = (Collection<Feature>) mapfileFeature.getPropertyValue(MAP_SYMBOL.toString());
 
-        for(final Property p : symbols){
-            final ComplexAttribute ca = (ComplexAttribute) p;
-            if(name.equals(ca.getProperty(SYMBOL_NAME.getName()).getValue())){
+        for(final Feature ca : symbols){
+            if(name.equals(ca.getPropertyValue(SYMBOL_NAME.toString()))){
                 return ca;
             }
         }

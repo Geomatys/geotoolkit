@@ -24,25 +24,28 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.vecmath.Point3d;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
-import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import static org.geotoolkit.processing.coverage.isoline.IsolineDescriptor.*;
 import org.geotoolkit.processing.coverage.kriging.IsolineCreator;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.internal.feature.AttributeConvention;
+
+import static org.geotoolkit.parameter.Parameters.*;
+import static org.geotoolkit.processing.coverage.isoline.IsolineDescriptor.*;
+
 
 /**
  *
@@ -69,10 +72,9 @@ public class Isoline extends AbstractProcess {
         final GeometryFactory GF = new GeometryFactory();
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("isoline");
-        ftb.add("geometry", LineString.class, crs);
-        ftb.add("value", Double.class);
-        ftb.setDefaultGeometry("geometry");
-        final FeatureType type = ftb.buildFeatureType();
+        ftb.addAttribute(LineString.class).setName("geometry").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Double.class).setName("value");
+        final FeatureType type = ftb.build();
 
         final FeatureCollection col = FeatureStoreUtilities.collection("id", type);
         int inc = 0;
@@ -88,20 +90,17 @@ public class Isoline extends AbstractProcess {
             LineString geometry = GF.createLineString(cshps.toArray(new Coordinate[cshps.size()]));
             try {
                 geometry = (LineString) JTS.transform(geometry, trs);
-            } catch (MismatchedDimensionException ex) {
-                throw new ProcessException(ex.getMessage(), this, ex);
-            } catch (TransformException ex) {
+            } catch (MismatchedDimensionException | TransformException ex) {
                 throw new ProcessException(ex.getMessage(), this, ex);
             }
             final double value = p.z;
 
-            final Feature f = FeatureUtilities.defaultFeature(type, String.valueOf(inc++));
-            f.getProperty("geometry").setValue(geometry);
-            f.getProperty("value").setValue(value);
+            final Feature f = type.newInstance();
+            f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), String.valueOf(inc++));
+            f.setPropertyValue("geometry", geometry);
+            f.setPropertyValue("value", value);
             col.add(f);
         }
-
         getOrCreate(FCOLL, outputParameters).setValue(col);
     }
-
 }

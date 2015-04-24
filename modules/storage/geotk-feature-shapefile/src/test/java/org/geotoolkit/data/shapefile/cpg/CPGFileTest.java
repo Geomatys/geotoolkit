@@ -23,9 +23,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
-import org.geotoolkit.feature.Feature;
 import org.junit.Assert;
 import org.junit.Test;
+import org.opengis.feature.Feature;
 
 /**
  *

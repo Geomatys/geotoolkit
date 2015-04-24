@@ -31,6 +31,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -38,8 +40,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.GeometricUtilities;
 import org.geotoolkit.geometry.jts.JTS;
@@ -52,8 +52,8 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.junit.Assert;
 import org.junit.Test;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.datum.PixelInCell;
@@ -565,12 +565,12 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", geomClass, CommonCRS.WGS84.normalizedGeographic());
-        final FeatureType type = ftb.buildFeatureType();
+        ftb.addAttribute(geomClass).setName("geom").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType type = ftb.build();
 
-        final Feature feature = FeatureUtilities.defaultFeature(type, "0");
+        final Feature feature = type.newInstance();
         JTS.setCRS(geometry, CommonCRS.WGS84.normalizedGeographic());
-        feature.getProperty("geom").setValue(geometry);
+        feature.setPropertyValue("geom",geometry);
         final FeatureCollection col = FeatureStoreUtilities.collection(feature);
 
         final PolygonSymbolizer symbol = SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0), SF.fill(Color.RED), null);
@@ -586,15 +586,15 @@ public class MeridianTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", MultiPoint.class, CommonCRS.WGS84.normalizedGeographic());
-        final FeatureType type = ftb.buildFeatureType();
+        ftb.addAttribute(MultiPoint.class).setName("geom").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType type = ftb.build();
 
-        final Feature feature = FeatureUtilities.defaultFeature(type, "0");
+        final Feature feature = type.newInstance();
         JTS.setCRS(geometry, CommonCRS.WGS84.normalizedGeographic());
-        feature.getProperty("geom").setValue(geometry);
+        feature.setPropertyValue("geom",geometry);
         final FeatureCollection col = FeatureStoreUtilities.collection(feature);
 
-        final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
+        final List<GraphicalSymbol> symbols = new ArrayList<>();
         symbols.add(SF.mark(StyleConstants.MARK_SQUARE, SF.fill(Color.RED), SF.stroke(Color.BLACK, 0)));
         final Graphic graphic = SF.graphic(symbols, StyleConstants.LITERAL_ONE_FLOAT, FF.literal(2), StyleConstants.LITERAL_ZERO_FLOAT, null, null);
         final PointSymbolizer ps = SF.pointSymbolizer(graphic, null);

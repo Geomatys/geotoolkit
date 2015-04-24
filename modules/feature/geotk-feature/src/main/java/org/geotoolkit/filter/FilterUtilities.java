@@ -24,7 +24,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.PrepareFilterVisitor;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.feature.type.ComplexType;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Not;
@@ -50,7 +50,7 @@ public final class FilterUtilities extends Static {
      * @param objectClazz : target class against which to optimize
      * @return optimized filter
      */
-    public static Filter prepare(final Filter filter, final Class objectClazz,final ComplexType expectedType){
+    public static Filter prepare(final Filter filter, final Class objectClazz,final FeatureType expectedType){
         if(filter == null) return null;
         final PrepareFilterVisitor visitor = new PrepareFilterVisitor(objectClazz,expectedType);
         return (Filter) filter.accept(visitor, null);
@@ -66,7 +66,7 @@ public final class FilterUtilities extends Static {
      *      will be used.
      * @return prepared property name expression.
      */
-    public static PropertyName prepare(final PropertyName exp, final Class objectClazz, final ComplexType expectedType){
+    public static PropertyName prepare(final PropertyName exp, final Class objectClazz, final FeatureType expectedType){
         return new CachedPropertyName(exp.getPropertyName(), objectClazz,expectedType);
     }
 

@@ -37,25 +37,24 @@ import org.geotoolkit.data.shapefile.shp.JTSUtilities;
 import org.geotoolkit.data.shapefile.shp.ShapeHandler;
 import org.geotoolkit.data.shapefile.shp.ShapeType;
 import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-
-import org.geotoolkit.feature.type.GeometryDescriptor;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreContentEvent;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.Identifier;
 
@@ -82,16 +81,16 @@ public class ShapefileFeatureWriter implements FeatureWriter {
     protected final ShapefileAttributeReader attReader;
 
     // the current Feature
-    protected SimpleFeature currentFeature;
+    protected Feature currentFeature;
     
     /** Initial value for current feature */
     protected Feature originalFeature;
     
     // the FeatureType we are representing
-    protected final SimpleFeatureType featureType;
+    protected final FeatureType featureType;
 
     // an array for reuse in Feature creation
-    protected final Object[] emptyAtts;
+    //protected final Object[] emptyAtts;
 
     // an array for reuse in writing to dbf.
     protected final Object[] transferCache;
@@ -140,16 +139,21 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         storageFiles.put(SHX, getLocker().getStorageFile(SHX));
         storageFiles.put(DBF, getLocker().getStorageFile(DBF));
 
-        this.featureType = (SimpleFeatureType) featureReader.getFeatureType();
+        this.featureType = featureReader.getFeatureType();
+        try {
+            this.featureType.getProperty(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+        } catch(PropertyNotFoundException ex) {
+            throw new DataStoreException("Missing identifier property in feature type");
+        }
 
         // set up buffers and write flags
-        emptyAtts = new Object[featureType.getDescriptors().size()];
-        writeFlags = new byte[emptyAtts.length];
+        List<AttributeType> attributes = parent.getAttributes(featureType,false);
+        writeFlags = new byte[attributes.size()];
 
         int cnt = 0;
-        for (int i=0, n=emptyAtts.length; i<n; i++) {
+        for (int i=0, n=attributes.size(); i<n; i++) {
             // if its a geometry, we don't want to write it to the dbf...
-            if (!(featureType.getDescriptor(i) instanceof GeometryDescriptor)) {
+            if (!( Geometry.class.isAssignableFrom(attributes.get(i).getValueClass()))) {
                 cnt++;
                 writeFlags[i] = (byte) 1;
             }
@@ -192,9 +196,9 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         // but if records > 0 and shapeType is null there's probably
         // another problem.
         if ((records <= 0) && (shapeType == null)) {
-            final GeometryDescriptor geometryAttributeType = featureType.getGeometryDescriptor();
+            final AttributeType geometryAttributeType = FeatureExt.getDefaultGeometryAttribute(featureType);
             if(geometryAttributeType != null){
-                final Class gat = geometryAttributeType.getType().getBinding();
+                final Class gat = geometryAttributeType.getValueClass();
                 shapeType = ShapeType.findBestGeometryType(gat);
                 if (shapeType == ShapeType.UNDEFINED) {
                     throw new IOException("Cannot handle geometry class : "+ (gat == null ? "null" : gat.getName()));
@@ -376,8 +380,8 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         // is there another? If so, return it
         if (featureReader.hasNext()) {
             try {
-                currentFeature = (SimpleFeature) featureReader.next();
-                originalFeature = FeatureUtilities.copy(currentFeature);
+                currentFeature = featureReader.next();
+                originalFeature = FeatureExt.copy(currentFeature);
                 return currentFeature;
             } catch (IllegalArgumentException iae) {
                 throw new FeatureStoreRuntimeException("Error in reading", iae);
@@ -389,7 +393,9 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         try {
             final String featureID = getFeatureType().getName().tip().toString()+"."+(records+1);
             originalFeature = null;
-            return currentFeature = (SimpleFeature) FeatureTypeUtilities.template(getFeatureType(),featureID,emptyAtts);
+            currentFeature = getFeatureType().newInstance();
+            currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), featureID);
+            return currentFeature;
         } catch (IllegalArgumentException iae) {
             throw new FeatureStoreRuntimeException("Error creating empty Feature", iae);
         }
@@ -417,7 +423,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
             throw new FeatureStoreRuntimeException("Current feature is null");
         }
 
-        deletedIds.add(currentFeature.getIdentifier());
+        deletedIds.add(FeatureExt.getId(currentFeature));
         // mark the current feature as null, this will result in it not
         // being rewritten to the stream
         currentFeature = null;
@@ -437,7 +443,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         }
 
         // writing of Geometry
-        Geometry g = (Geometry) currentFeature.getDefaultGeometry();
+        Geometry g = (Geometry) currentFeature.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
         
         // if this is the first Geometry, find the shapeType and handler
         if (shapeType == null) {
@@ -480,10 +486,11 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         // writing of attributes
         int idx = 0;
 
-        for (int i = 0, ii = featureType.getAttributeCount(); i < ii; i++) {
+        List<AttributeType> attributes = parent.getAttributes(featureType,false);
+        for (int i = 0, ii = attributes.size(); i < ii; i++) {
             // skip geometries
             if (writeFlags[i] > 0) {
-                transferCache[idx++] = currentFeature.getAttribute(i);
+                transferCache[idx++] = currentFeature.getPropertyValue(attributes.get(i).getName().toString());
             }
         }
 
@@ -499,9 +506,9 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         records++;
 
         if (originalFeature == null) {
-            addedIds.add(currentFeature.getIdentifier());
+            addedIds.add(FeatureExt.getId(currentFeature));
         } else if (!originalFeature.equals(currentFeature)) {
-            updatedIds.add(currentFeature.getIdentifier());
+            updatedIds.add(FeatureExt.getId(currentFeature));
         }
         // clear the currentFeature
         currentFeature = null;

@@ -3,23 +3,21 @@ package org.geotoolkit.data.geojson.utils;
 import com.vividsolutions.jts.geom.Polygon;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.junit.Test;
-import org.geotoolkit.feature.type.*;
 import org.opengis.util.FactoryException;
 import org.apache.sis.measure.Units;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
-import org.apache.sis.util.Utilities;
 import static org.junit.Assert.*;
+import org.opengis.feature.FeatureType;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -39,34 +37,29 @@ public class FeatureTypeUtilsTest extends org.geotoolkit.test.TestBase {
         FeatureType readFeatureType = FeatureTypeUtils.readFeatureType(featureTypeFile);
 
         assertNotNull(readFeatureType);
-        assertNotNull(readFeatureType.getGeometryDescriptor());
-        assertNotNull(readFeatureType.getCoordinateReferenceSystem());
+        assertTrue(FeatureExt.hasAGeometry(readFeatureType));
+        assertNotNull(FeatureExt.getCRS(readFeatureType));
 
         testFeatureTypes(featureType, readFeatureType);
     }
 
     private void testFeatureTypes(FeatureType expected, FeatureType result) {
-
-        assertEquals(expected.getName(), result.getName());
-        assertEquals(expected.getUserData(), result.getUserData());
-        assertEquals(expected.getDescription(), result.getDescription());
-        testDescriptors(expected.getDescriptors(), result.getDescriptors());
-
+        assertEquals(expected, result);
     }
 
-    private void testDescriptors(Collection<PropertyDescriptor> expected, Collection<PropertyDescriptor> result) {
-
-        for (PropertyDescriptor exp : expected) {
-            for (PropertyDescriptor res : result) {
-                if (exp.getName().equals(res.getName())) {
-                    assertEquals(exp.getMaxOccurs(), res.getMaxOccurs());
-                    assertEquals(exp.getMinOccurs(), res.getMinOccurs());
-                    testUserMap(exp.getUserData(), res.getUserData());
-                    testType(exp.getType(), res.getType());
-                }
-            }
-        }
-    }
+//    private void testDescriptors(Collection<PropertyDescriptor> expected, Collection<PropertyDescriptor> result) {
+//
+//        for (PropertyDescriptor exp : expected) {
+//            for (PropertyDescriptor res : result) {
+//                if (exp.getName().equals(res.getName())) {
+//                    assertEquals(exp.getMaxOccurs(), res.getMaxOccurs());
+//                    assertEquals(exp.getMinOccurs(), res.getMinOccurs());
+//                    testUserMap(exp.getUserData(), res.getUserData());
+//                    testType(exp.getType(), res.getType());
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Test toString value of maps entries key/value.
@@ -85,50 +78,44 @@ public class FeatureTypeUtilsTest extends org.geotoolkit.test.TestBase {
         }
     }
 
-    private void testType(PropertyType expType, PropertyType resType) {
-        if (expType instanceof ComplexType) {
-            testDescriptors(((ComplexType) expType).getDescriptors(), ((ComplexType) resType).getDescriptors());
-        } else if (expType instanceof AttributeType) {
-            assertTrue(((AttributeType) resType).getBinding().isAssignableFrom(((AttributeType) expType).getBinding()));
-            if (expType instanceof GeometryType) {
-                assertTrue(Utilities.equalsIgnoreMetadata(((GeometryType) expType).getCoordinateReferenceSystem(),
-                        ((GeometryType) resType).getCoordinateReferenceSystem()));
-            }
-        }
-    }
+//    private void testType(PropertyType expType, PropertyType resType) {
+//        if (expType instanceof ComplexType) {
+//            testDescriptors(((ComplexType) expType).getDescriptors(), ((ComplexType) resType).getDescriptors());
+//        } else if (expType instanceof AttributeType) {
+//            assertTrue(((AttributeType) resType).getBinding().isAssignableFrom(((AttributeType) expType).getBinding()));
+//            if (expType instanceof GeometryType) {
+//                assertTrue(Utilities.equalsIgnoreMetadata(((GeometryType) expType).getCoordinateReferenceSystem(),
+//                        ((GeometryType) resType).getCoordinateReferenceSystem()));
+//            }
+//        }
+//    }
 
     public static FeatureType createComplexType() throws FactoryException {
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
 
         ftb.setName("complexAtt1");
-        ftb.add("longProp2", Long.class);
-        ftb.add("stringProp2", String.class);
-        final ComplexType complexAtt1 = ftb.buildType();
+        ftb.addAttribute(Long.class).setName("longProp2");
+        ftb.addAttribute(String.class).setName("stringProp2");
+        final FeatureType complexAtt1 = ftb.build();
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName("complexAtt2");
-        ftb.add("longProp2", Long.class);
-        ftb.add("dateProp", Date.class);
-        final ComplexType complexAtt2 = ftb.buildType();
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
-        userMap.put("date", new Date());
-        userMap.put("unit", Units.KILOMETRE);
+        ftb.addAttribute(Long.class).setName("longProp2");
+        ftb.addAttribute(Date.class).setName("dateProp");
+        final FeatureType complexAtt2 = ftb.build();
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName("complexFT");
-        ftb.add("longProp", Long.class);
-        ftb.add("stringProp", String.class);
-        ftb.add("integerProp", Integer.class);
-        ftb.add("booleanProp", Boolean.class);
-        ftb.add("dateProp", Date.class);
+        ftb.addAttribute(Polygon.class).setName("geometry").setCRS(CommonCRS.WGS84.geographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Long.class).setName("longProp");
+        ftb.addAttribute(String.class).setName("stringProp");
+        ftb.addAttribute(Integer.class).setName("integerProp");
+        ftb.addAttribute(Boolean.class).setName("booleanProp");
+        ftb.addAttribute(Date.class).setName("dateProp");
 
-        AttributeDescriptor complexAtt1Desc = adb.create(complexAtt1, NamesExt.valueOf("complexAtt1"),1,1,false,null);
-        AttributeDescriptor complexAtt2Desc = adb.create(complexAtt2, NamesExt.valueOf("complexAtt2"),0,Integer.MAX_VALUE,false,userMap);
-        ftb.add(complexAtt1Desc);
-        ftb.add(complexAtt2Desc);
-        ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, Polygon.class, CommonCRS.WGS84.geographic());
+        ftb.addAssociation(complexAtt1).setName("complexAtt1");
+        ftb.addAssociation(complexAtt2).setName("complexAtt2").setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE);
         ftb.setDescription(new SimpleInternationalString("Description"));
-        return ftb.buildFeatureType();
+        return ftb.build();
     }
 }

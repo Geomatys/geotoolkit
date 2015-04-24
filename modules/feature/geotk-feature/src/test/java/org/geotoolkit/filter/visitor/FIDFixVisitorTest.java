@@ -19,8 +19,7 @@ package org.geotoolkit.filter.visitor;
 import org.opengis.filter.Filter;
 import org.junit.Test;
 import org.opengis.filter.Id;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.expression.Expression;
+import org.apache.sis.internal.feature.AttributeConvention;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
@@ -34,7 +33,7 @@ public class FIDFixVisitorTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testReplacement1(){
 
-        Filter filter = FF.equals(FF.property("@id"),FF.literal("river.1"));
+        Filter filter = FF.equals(FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString()),FF.literal("river.1"));
 
         FIDFixVisitor visitor = new FIDFixVisitor();
         filter = (Filter) filter.accept(visitor, null);
@@ -52,7 +51,7 @@ public class FIDFixVisitorTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testReplacement2(){
 
-        Filter filter = FF.equals(FF.literal("river.1"),FF.property("@id"));
+        Filter filter = FF.equals(FF.literal("river.1"),FF.property(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
 
         FIDFixVisitor visitor = new FIDFixVisitor();
         filter = (Filter) filter.accept(visitor, null);

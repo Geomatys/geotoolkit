@@ -21,7 +21,6 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.filter.DefaultLiteral;
 
-import org.geotoolkit.feature.Feature;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.BoundingBox;
 

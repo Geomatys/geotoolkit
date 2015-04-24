@@ -25,6 +25,7 @@ import javafx.scene.Node;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.opengis.feature.AttributeType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -106,29 +107,29 @@ public abstract class FXValueEditor {
      * @return list of restricted values, or null if none
      */
     protected static List<Object> extractChoices(AttributeType at) {
-        if(!(at instanceof org.geotoolkit.feature.type.PropertyType)) return null;
+        if(!(at instanceof AttributeType)) return null;
         
-        final org.geotoolkit.feature.type.PropertyType candidate = (org.geotoolkit.feature.type.PropertyType) at;
+        final PropertyType candidate = at;
         
-        Class clazz = candidate.getBinding();
+        Class clazz = at.getValueClass();
         final List choices = new ArrayList();
-        final List<Filter> restrictions = candidate.getRestrictions();
-        for(Filter f : restrictions){
-            f.accept(new DefaultFilterVisitor() {
-                @Override
-                public Object visit(Function expression, Object data) {
-                    if(expression.getName().equalsIgnoreCase("in")){
-                        final List<Expression> values = expression.getParameters();
-                        for(int i=1,n=values.size();i<n;i++){
-                            //we expect values to be literals
-                            choices.add(values.get(i).evaluate(null));
-                        }
-                    }
-                    return data;
-                }
-
-            }, choices);
-        }
+//        final List<Filter> restrictions = candidate.getRestrictions();
+//        for(Filter f : restrictions){
+//            f.accept(new DefaultFilterVisitor() {
+//                @Override
+//                public Object visit(Function expression, Object data) {
+//                    if(expression.getName().equalsIgnoreCase("in")){
+//                        final List<Expression> values = expression.getParameters();
+//                        for(int i=1,n=values.size();i<n;i++){
+//                            //we expect values to be literals
+//                            choices.add(values.get(i).evaluate(null));
+//                        }
+//                    }
+//                    return data;
+//                }
+//
+//            }, choices);
+//        }
         
         if(choices.isEmpty()){
             return null;

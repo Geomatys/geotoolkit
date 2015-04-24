@@ -31,9 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
 import org.geotoolkit.gui.swing.propertyedit.JAttributeEditor;
 import org.geotoolkit.processing.chain.ConstantUtilities;
 import org.geotoolkit.processing.chain.model.ChainDataTypes;
@@ -46,9 +44,8 @@ import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Widget;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.AttributeType;
 
 /**
  *
@@ -136,18 +133,14 @@ public class WConstant extends Widget implements WPositionable {
                 final String value = wc.getObject().getValue();
                 final Class type = (Class)guiType.getSelectedItem();
 
-                final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+                final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
                 atb.setName("");
-                atb.setBinding(type);
-                final AttributeType at = atb.buildType();
-                final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                adb.setType(at);
-                adb.setName("");
-                adb.setMinOccurs(1);
-                adb.setMaxOccurs(1);
-                final PropertyDescriptor adesc = adb.buildDescriptor();
+                atb.setValueClass(type);
+                atb.setMinimumOccurs(1);
+                atb.setMaximumOccurs(1);
+                final AttributeType adesc = atb.build();
 
-                final Property property = FeatureUtilities.defaultProperty(adesc);
+                final Attribute property = adesc.newInstance();
                 if(value!=null && !value.isEmpty()){
                     try{
                         property.setValue(ConstantUtilities.stringToValue(value, type));

@@ -69,6 +69,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
 
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
@@ -81,9 +82,6 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
@@ -146,6 +144,7 @@ import org.opengis.style.ShadedRelief;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.measure.Units;
+import org.opengis.feature.AttributeType;
 
 /**
  * Style editor which handle Raster colormap edition.
@@ -203,7 +202,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
     private final String tooltip;
 
     private final PropertyValueEditor noDataEditor = new ArrayEditor();
-    private final PropertyDescriptor nodataDesc;
+    private final AttributeType nodataDesc;
     private final Property noDataProp;
 
     private ColorMapModel model = new InterpolateColorModel(Collections.EMPTY_LIST);
@@ -227,9 +226,9 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         initComponents();
 
         //for noData
-        nodataDesc = new FeatureTypeBuilder().add("noData", double[].class);
-        noDataProp = FeatureUtilities.defaultProperty(nodataDesc);
-        noDataEditor.setValue(nodataDesc.getType(), new double[0]);
+        nodataDesc = new SingleAttributeTypeBuilder().setName("noData").setValueClass(double[].class).build();
+        noDataProp = nodataDesc.newInstance();
+        noDataEditor.setValue(nodataDesc, new double[0]);
         noDataContainer.add(noDataEditor, BorderLayout.CENTER);
 
         setPalettes(PALETTES);
@@ -237,7 +236,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         guiPalette.setSelectedIndex(0);
         guiTable.setShowGrid(false, false);
 
-        final List<Class> methods = new ArrayList<Class>();
+        final List<Class> methods = new ArrayList<>();
         methods.add(Interpolate.class);
         methods.add(Categorize.class);
         methods.add(Jenks.class);
@@ -393,7 +392,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             }else if(fct instanceof Jenks){
                 final Jenks jenks = (Jenks) fct;
                 double[] vals = (jenks.getNoData() != null) ? jenks.getNoData() : new double[0];
-                noDataEditor.setValue(nodataDesc.getType(), vals);
+                noDataEditor.setValue(nodataDesc, vals);
                 Literal palette = jenks.getPalette();
                 Literal classNumber = jenks.getClassNumber();
                 String paletteName = palette.evaluate(null, String.class);

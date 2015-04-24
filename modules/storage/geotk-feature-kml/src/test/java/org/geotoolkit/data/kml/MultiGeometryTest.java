@@ -24,14 +24,12 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
-import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.LineString;
 import org.geotoolkit.data.kml.model.MultiGeometry;
 import org.geotoolkit.data.kml.xml.KmlWriter;
@@ -39,11 +37,12 @@ import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
-import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.*;
+
 
 /**
  *
@@ -54,28 +53,20 @@ public class MultiGeometryTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/multiGeometry.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public MultiGeometryTest() {
-    }
 
     @Test
     public void multiGeometryReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
         final Feature placemark = kmlObjects.getAbstractFeature();
-        assertEquals("SF Marina Harbor Master", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertFalse((Boolean) placemark.getProperty(KmlModelConstants.ATT_VISIBILITY.getName()).getValue());
+        assertEquals("SF Marina Harbor Master", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(Boolean.FALSE, placemark.getPropertyValue(KmlConstants.TAG_VISIBILITY));
 
-        assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof MultiGeometry);
-        final MultiGeometry multiGeometry = (MultiGeometry) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+        final MultiGeometry multiGeometry = (MultiGeometry) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
         assertEquals(2, multiGeometry.getGeometries().size());
-        assertTrue(multiGeometry.getGeometries().get(0) instanceof LineString);
-        assertTrue(multiGeometry.getGeometries().get(1) instanceof LineString);
         LineString lineString0 = (LineString) multiGeometry.getGeometries().get(0);
         LineString lineString1 = (LineString) multiGeometry.getGeometries().get(1);
 
@@ -104,7 +95,6 @@ public class MultiGeometryTest extends org.geotoolkit.test.TestBase {
         assertEquals(-122.4428340530617, coordinate11.x, DELTA);
         assertEquals(37.8065999493009, coordinate11.y, DELTA);
         assertEquals(0, coordinate11.z, DELTA);
-
     }
 
     @Test
@@ -127,10 +117,9 @@ public class MultiGeometryTest extends org.geotoolkit.test.TestBase {
         multiGeometry.setGeometries(Arrays.asList((AbstractGeometry) lineString0, (AbstractGeometry) lineString1));
 
         final Feature placemark = kmlFactory.createPlacemark();
-        final Collection<Property> placemarkProperties = placemark.getProperties();
-        placemarkProperties.add(FF.createAttribute("SF Marina Harbor Master", KmlModelConstants.ATT_NAME, null));
-        placemark.getProperty(KmlModelConstants.ATT_VISIBILITY.getName()).setValue(Boolean.FALSE);
-        placemarkProperties.add(FF.createAttribute(multiGeometry, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark.setPropertyValue(KmlConstants.TAG_NAME, "SF Marina Harbor Master");
+        placemark.setPropertyValue(KmlConstants.TAG_VISIBILITY, Boolean.FALSE);
+        placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, multiGeometry);
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
@@ -142,8 +131,6 @@ public class MultiGeometryTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

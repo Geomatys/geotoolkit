@@ -81,10 +81,10 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
@@ -137,9 +137,9 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
             final FeatureCollectionModel model = (FeatureCollectionModel) tab_data.getModel();
             final int modelindex = tab_data.getColumnModel().getColumn(column).getModelIndex();
 
-            final PropertyDescriptor desc = model.getColumnDesc(modelindex);
+            final PropertyType desc = model.getColumnDesc(modelindex);
             if(desc != null){
-                final PropertyValueEditor edit = JAttributeEditor.getEditor(editors,desc.getType());
+                final PropertyValueEditor edit = JAttributeEditor.getEditor(editors, (AttributeType) desc);
                 if(edit != null){
                     return new TableCellEditorRenderer.Editor(edit);
                 }
@@ -494,7 +494,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
             panCenter.removeAll();
 
             Filter f = guiCQL.getFilter();
-            final QueryBuilder qb = new QueryBuilder(layer.getCollection().getFeatureType().getName());
+            final QueryBuilder qb = new QueryBuilder(layer.getCollection().getFeatureType().getName().toString());
             qb.setFilter(f);
             if(guiVersions.getSelectedItem()!=null && !(guiVersions.getSelectedItem() instanceof String)){
                 final Date d = ((Version)guiVersions.getSelectedItem()).getDate();
@@ -556,7 +556,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
 
             final FeatureType type = source.getFeatureType();
 
-            if(FeatureTypeUtilities.isSimple(type)){
+            if(type.isSimple()){
                 //use table view
                 final FeatureCollectionModel m = new FeatureCollectionModel(tab_data, layer, guiShowId.isSelected());
                 tab_data.setModel(m);
@@ -581,7 +581,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
                 final FeatureStore store = s.getSession().getFeatureStore();
                 if(store.getQueryCapabilities().handleVersioning()){
                     try {
-                        final VersionHistory history = store.getVersioning(source.getFeatureType().getName());
+                        final VersionHistory history = store.getVersioning(source.getFeatureType().getName().toString());
                         lst.addAll(history.list());
                     } catch (VersioningException ex) {
                         Exceptions.printStackTrace(ex);

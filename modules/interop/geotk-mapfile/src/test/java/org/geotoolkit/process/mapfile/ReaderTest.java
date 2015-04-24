@@ -16,23 +16,19 @@
  */
 package org.geotoolkit.process.mapfile;
 
-import org.geotoolkit.process.mapfile.MapfileReader;
-import org.geotoolkit.process.mapfile.MapfileTypes;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.filter.FilterFactory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.feature.Property;
 import java.util.Collection;
 import java.awt.Color;
 import java.io.IOException;
-import org.geotoolkit.feature.Feature;
 import java.net.URL;
 import java.util.Iterator;
 import org.junit.Test;
 
-import org.geotoolkit.feature.ComplexAttribute;
 import static org.geotoolkit.test.Assert.*;
+import org.opengis.feature.Feature;
 
 /**
  * Test mapfile reader
@@ -71,7 +67,7 @@ public class ReaderTest extends org.geotoolkit.test.TestBase {
 //║   ├─{http://mapserver.org}FONTSET                  │ fonts.lst                                                ║
 //║   ├─{http://mapserver.org}IMAGECOLOR               │ java.awt.Color[r=150,g=180,b=200]                        ║
 //║   ├─{http://mapserver.org}IMAGETYPE                │ png                                                      ║
-        assertEquals("MS_ERRORFILE\" \"stderr",         feature.getProperty("CONFIG").getValue());
+        assertEquals("PROJ_LIB\" \"/opt/mapserver/mapserver-utils-imposm-branch",  feature.getProperty("CONFIG").getValue());
         assertEquals("1",                               feature.getProperty("DEBUG").getValue());
         assertEquals("-100 100 -50 50",                 feature.getProperty("EXTENT").getValue());
         assertEquals("fonts.lst",                       feature.getProperty("FONTSET").getValue());
@@ -91,12 +87,11 @@ public class ReaderTest extends org.geotoolkit.test.TestBase {
 //║   │   ├─{http://mapserver.org}PROJECTION           │ null"+init=epsg:4326"                                    ║
 //║   │   ├─{http://mapserver.org}STATUS               │ ON                                                       ║
 //║   │   └─{http://mapserver.org}TYPE                 │ LINE                                                     ║
-        final Collection<Property> layers = feature.getProperties("LAYER");
+        final Collection<Feature> layers = (Collection<Feature>) feature.getPropertyValue("LAYER");
         assertEquals(2, layers.size());
 
-        ComplexAttribute layer = (ComplexAttribute) layers.iterator().next();
+        Feature layer = (Feature) layers.iterator().next();
         assertEquals(MapfileTypes.LAYER,                layer.getType());
-        assertEquals(9,                                 layer.getProperties().size());
         assertEquals("data/boundaries.shp",             layer.getProperty("DATA").getValue());
         assertEquals("default",                         layer.getProperty("GROUP").getValue());
         assertEquals(9.9999999999E10d ,                 layer.getProperty("MAXSCALEDENOM").getValue());
@@ -106,13 +101,11 @@ public class ReaderTest extends org.geotoolkit.test.TestBase {
         assertEquals("ON",                              layer.getProperty("STATUS").getValue());
         assertEquals("LINE",                            layer.getProperty("TYPE").getValue());
 
-        ComplexAttribute clazz = (ComplexAttribute) layer.getProperty("CLASS");
+        Feature clazz = ((Collection<Feature>) layer.getPropertyValue("CLASS")).iterator().next();
         assertEquals(MapfileTypes.CLASS,                clazz.getType());
-        assertEquals(1,                                 clazz.getProperties().size());
 
-        ComplexAttribute style = (ComplexAttribute) clazz.getProperty("STYLE");
+        Feature style = (Feature) clazz.getPropertyValue("STYLE");
         assertEquals(MapfileTypes.STYLE,                style.getType());
-        assertEquals(2,                                 style.getProperties().size());
         assertEquals(FF.literal("#CDCBC6"),             style.getProperty("COLOR").getValue());
         assertEquals(FF.literal(0.5),                   style.getProperty("WIDTH").getValue());
 
@@ -146,9 +139,8 @@ public class ReaderTest extends org.geotoolkit.test.TestBase {
 //║   │   └─{http://mapserver.org}TYPE                 │ ANNOTATION                                               ║
         final Iterator ite = layers.iterator();
         ite.next();
-        layer = (ComplexAttribute) ite.next();
+        layer = (Feature) ite.next();
         assertEquals(MapfileTypes.LAYER,                layer.getType());
-        assertEquals(12,                                layer.getProperties().size());
         assertEquals(FF.property("type"),               layer.getProperty("CLASSITEM").getValue());
         assertEquals("host=server dbname=osm user=me password=secret port=5432",layer.getProperty("CONNECTION").getValue());
         assertEquals("postgis",                         layer.getProperty("CONNECTIONTYPE").getValue());
@@ -161,14 +153,12 @@ public class ReaderTest extends org.geotoolkit.test.TestBase {
         assertEquals("ON",                              layer.getProperty("STATUS").getValue());
         assertEquals("ANNOTATION",                      layer.getProperty("TYPE").getValue());
 
-        clazz = (ComplexAttribute) layer.getProperty("CLASS");
+        clazz = ((Collection<Feature>) layer.getPropertyValue("CLASS")).iterator().next();
         assertEquals(MapfileTypes.CLASS,                clazz.getType());
-        assertEquals(2,                                 clazz.getProperties().size());
         assertEquals("continents",                      clazz.getProperty("EXPRESSION").getValue());
 
-        ComplexAttribute label = (ComplexAttribute) clazz.getProperty("LABEL");
+        Feature label = (Feature) clazz.getPropertyValue("LABEL");
         assertEquals(MapfileTypes.LABEL,                label.getType());
-        assertEquals(10,                                label.getProperties().size());
         assertEquals(4,                                 label.getProperty("BUFFER").getValue());
         assertEquals(SF.literal(new Color(100,100,100)),label.getProperty("COLOR").getValue());
         assertEquals("utf-8",                           label.getProperty("ENCODING").getValue());
@@ -197,9 +187,8 @@ public class ReaderTest extends org.geotoolkit.test.TestBase {
 //║   │   ├─{http://mapserver.org}IMAGEURL             │ /tmp                                                     ║
 //║   │   └─{http://mapserver.org}METADATA             │ null"ows_enable_request" "*"                             ║
 //╚════════════════════════════════════════════════════╧══════════════════════════════════════════════════════════╝
-        ComplexAttribute web = (ComplexAttribute) feature.getProperty("WEB");
+        Feature web = (Feature) feature.getPropertyValue("WEB");
         assertEquals(MapfileTypes.WEB,                  web.getType());
-        assertEquals(3,                                 web.getProperties().size());
         assertEquals("/opt/mapserver/htdocs/tmp/",      web.getProperty("IMAGEPATH").getValue());
         assertEquals("/tmp",                            web.getProperty("IMAGEURL").getValue());
         assertEquals("null\"ows_enable_request\" \"*\"",web.getProperty("METADATA").getValue());

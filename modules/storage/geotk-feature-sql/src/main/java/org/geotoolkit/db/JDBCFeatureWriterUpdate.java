@@ -23,19 +23,20 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyType;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AssociationDescriptor;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
@@ -64,7 +65,7 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements Featur
         }
         
         final Filter filter = store.getFilterFactory().id(
-                Collections.singleton(last.getIdentifier()));
+                Collections.singleton(FeatureExt.getId(last)));
         try {
             store.delete(type, filter, st.getConnection());
         } catch (SQLException e) {
@@ -82,26 +83,23 @@ public class JDBCFeatureWriterUpdate extends JDBCFeatureReader implements Featur
         
         try {
             //figure out what the fid is
-            final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(type.getName());
-            final String fid = fidBase + key.encodeFID(rs);
+            final PrimaryKey key = store.getDatabaseModel().getPrimaryKey(type.getName().toString());
+            final String fid = key.encodeFID(rs);
 
             final FilterFactory ff = store.getFilterFactory();
             final Id filter = ff.id(Collections.singleton(ff.featureId(fid)));
 
             //figure out which attributes changed
-            final Map<AttributeDescriptor,Object> changes = new HashMap<AttributeDescriptor, Object>();
+            final Map<String,Object> changes = new HashMap<>();
 
-            for (final PropertyDescriptor att : type.getDescriptors()) {
-                if(att instanceof AssociationDescriptor){
-                    //we can't update associations yet
-                    continue;
-                }
-                if(Boolean.TRUE.equals(att.getUserData().get(HintsPending.PROPERTY_IS_IDENTIFIER))){
-                    //ignore id fields
+            for (final PropertyType att : type.getProperties(true)) {
+                if (att instanceof FeatureAssociationRole || att instanceof Operation
+                        || AttributeConvention.contains(att.getName())) {
+                    //not a writable property
                     continue;
                 }
                 
-                changes.put((AttributeDescriptor)att, last.getProperty(att.getName()).getValue());
+                changes.put(att.getName().tip().toString(), last.getPropertyValue(att.getName().toString()));
             }
 
             //do the write

@@ -50,6 +50,7 @@ import org.geotoolkit.gui.javafx.render2d.FXMapDecoration;
 import org.geotoolkit.gui.javafx.render2d.edition.EditionHelper;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.CoordinateOperation;
 
 /**
  *
@@ -159,7 +160,8 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
                 if(dispCrs==null || geomcrs==null || Utilities.equalsIgnoreMetadata(geomcrs, dispCrs)){
                     //do nothing
                 }else{
-                    candidate = JTS.transform(editGeom.geometry.get(), CRS.findOperation(geomcrs, dispCrs, null).getMathTransform());
+                    CoordinateOperation op = CRS.findOperation(geomcrs, dispCrs, null);
+                    candidate = JTS.transform(editGeom.geometry.get(), op.getMathTransform());
                 }
             }catch(Exception ex){
                 Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);

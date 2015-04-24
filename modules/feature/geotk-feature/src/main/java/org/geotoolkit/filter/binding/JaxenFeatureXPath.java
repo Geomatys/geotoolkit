@@ -52,7 +52,7 @@ final class JaxenFeatureXPath implements XPath {
     private static final JaxenFeatureNavigator NAVIGATOR = new JaxenFeatureNavigator();
 
     public static JaxenFeatureXPath create(String path) throws JaxenException{
-        final Map<String,String> prefixes = new HashMap<String, String>();
+        final Map<String,String> prefixes = new HashMap<>();
         path = replaceNamespaces(path, prefixes);
 
         final NamespaceContext nsc = new SimpleNamespaceContext(prefixes);

@@ -23,7 +23,7 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
 
 import org.opengis.coverage.grid.GridEnvelope;
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 
 /**
  *  FeatureCollection for raster process
@@ -54,7 +54,7 @@ public abstract class RasterFeatureCollection extends AbstractCollection<Feature
     }
 
     /**
-     * Return the feature create by the process in 
+     * Return the feature create by the process in
      * cell (x,y)
      *
      * @param x

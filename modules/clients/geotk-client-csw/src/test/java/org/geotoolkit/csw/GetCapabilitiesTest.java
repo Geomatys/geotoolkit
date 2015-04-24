@@ -19,6 +19,7 @@ package org.geotoolkit.csw;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.geotoolkit.csw.v202.GetCapabilities202;
+import org.geotoolkit.test.URLComparator;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -46,6 +47,6 @@ public class GetCapabilitiesTest extends org.geotoolkit.test.TestBase {
             return;
         }
         final String expectedURL = "http://test.com?VERSION=2.0.2&SERVICE=CSW&REQUEST=GetCapabilities";
-        assertEquals(expectedURL, url.toString());
+        new URLComparator(expectedURL, url).compare();
     }
 }

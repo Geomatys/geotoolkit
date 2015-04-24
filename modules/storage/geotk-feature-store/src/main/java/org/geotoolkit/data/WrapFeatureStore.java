@@ -20,12 +20,11 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 import java.util.Collection;
 import java.util.List;
@@ -58,22 +57,22 @@ public class WrapFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
-        featureStore.createFeatureType(typeName, featureType);
+    public void createFeatureType(FeatureType featureType) throws DataStoreException {
+        featureStore.createFeatureType(featureType);
     }
 
     @Override
-    public void updateFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
-        featureStore.updateFeatureType(typeName, featureType);
+    public void updateFeatureType(FeatureType featureType) throws DataStoreException {
+        featureStore.updateFeatureType(featureType);
     }
 
     @Override
-    public void deleteFeatureType(GenericName typeName) throws DataStoreException {
+    public void deleteFeatureType(String typeName) throws DataStoreException {
         featureStore.deleteFeatureType(typeName);
     }
 
     @Override
-    public FeatureType getFeatureType(GenericName typeName) throws DataStoreException {
+    public FeatureType getFeatureType(String typeName) throws DataStoreException {
         return featureStore.getFeatureType(typeName);
     }
 
@@ -83,17 +82,17 @@ public class WrapFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         return addFeatures(groupName, newFeatures, hints);
     }
 
     @Override
-    public void updateFeatures(GenericName groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(String groupName, Filter filter, Map<String, ?> values) throws DataStoreException {
         featureStore.updateFeatures(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
         featureStore.removeFeatures(groupName, filter);
     }
 
@@ -103,12 +102,12 @@ public class WrapFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
-        return featureStore.getFeatureWriter(typeName, filter, hints);
+    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
+        return featureStore.getFeatureWriter(query);
     }
 
     @Override
-    public void refreshMetaModel() {
+    public void refreshMetaModel() throws DataStoreException {
         featureStore.refreshMetaModel();
     }
 }

@@ -20,20 +20,16 @@ package org.geotoolkit.report.graphic.scalebar;
 
 
 import net.sf.jasperreports.engine.JRField;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
 
-import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.report.JRFieldRenderer;
 import org.geotoolkit.report.graphic.EmptyRenderable;
 import org.geotoolkit.report.graphic.map.CanvasRenderer;
 import org.geotoolkit.report.graphic.map.MapDef;
-import org.opengis.display.canvas.Canvas;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
 
 /**
  *
@@ -41,16 +37,6 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
  * @module pending
  */
 public class ScaleBarFieldRenderer implements JRFieldRenderer{
-
-    private static final AttributeType TYPE;
-    static{
-        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-        atb.setName(ScaleBarDef.class.getSimpleName());
-        atb.setAbstract(false);
-        atb.setBinding(ScaleBarDef.class);
-        atb.setIdentifiable(false);
-        TYPE = atb.buildType();
-    }
 
     private static final String MAP_ATTRIBUTE = "map";
 
@@ -60,7 +46,7 @@ public class ScaleBarFieldRenderer implements JRFieldRenderer{
     }
 
     @Override
-    public PropertyDescriptor createDescriptor(final JRField field) throws IllegalArgumentException{
+    public AttributeType createDescriptor(final JRField field) throws IllegalArgumentException{
         final String name = field.getName();
 
         final String relatedMap = field.getPropertiesMap().getProperty(MAP_ATTRIBUTE);
@@ -68,22 +54,24 @@ public class ScaleBarFieldRenderer implements JRFieldRenderer{
             throw new IllegalArgumentException("Missing parameter 'map' in field properties.");
         }
 
-        final DefaultAttributeDescriptor attDesc = new DefaultAttributeDescriptor(
-                  TYPE, NamesExt.valueOf(name), 1, 1, true, null);
-        attDesc.getUserData().put(MAP_ATTRIBUTE, relatedMap);
-        return attDesc;
+        final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
+        atb.setName(name);
+        atb.setValueClass(ScaleBarDef.class);
+        atb.addCharacteristic(MAP_ATTRIBUTE, String.class, 1, 1, relatedMap);
+        return atb.build();
     }
 
     @Override
     public Object createValue(final JRField field, final Feature feature) {
         final String name = field.getName();
-        final Property prop = feature.getProperty(name);
+        final Attribute prop = (Attribute) feature.getProperty(name);
         final ScaleBarDef sb = (ScaleBarDef) prop.getValue();
 
         if(sb != null && sb.getDelegate() == null){
             //only create delegate if not yet assigned
             final ScaleBarRenderer renderable = new ScaleBarRenderer();
-            final Property mapProp = feature.getProperty(prop.getDescriptor().getUserData().get(MAP_ATTRIBUTE).toString());
+            final Attribute mapChar = (Attribute) prop.characteristics().get(MAP_ATTRIBUTE);
+            final Attribute mapProp = (Attribute) feature.getProperty((String)mapChar.getValue());
             if(mapProp != null && mapProp.getValue() instanceof MapDef){
                 final MapDef md = (MapDef) mapProp.getValue();
                 renderable.setCanvas((CanvasRenderer)md.getDelegate());

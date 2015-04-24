@@ -29,8 +29,8 @@ import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.data.osm.model.ChangeSet;
-import org.geotoolkit.data.osm.model.Tag;
 import org.geotoolkit.data.osm.xml.OSMXMLWriter;
+import org.opengis.feature.Feature;
 
 /**
  * Abstract implementation of {@link UpdateChangeSetRequest}, which defines the
@@ -42,7 +42,7 @@ import org.geotoolkit.data.osm.xml.OSMXMLWriter;
 public abstract class AbstractUpdateChangeSet extends AbstractRequest implements UpdateChangeSetRequest{
 
     protected int id = -1;
-    protected final List<Tag> tags = new ArrayList<Tag>();
+    protected final List<Feature> tags = new ArrayList<Feature>();
 
     public AbstractUpdateChangeSet(final OpenStreetMapClient server, final String subPath){
         super(server, subPath);
@@ -59,7 +59,7 @@ public abstract class AbstractUpdateChangeSet extends AbstractRequest implements
     }
 
     @Override
-    public List<Tag> tags() {
+    public List<Feature> tags() {
         return tags;
     }
 

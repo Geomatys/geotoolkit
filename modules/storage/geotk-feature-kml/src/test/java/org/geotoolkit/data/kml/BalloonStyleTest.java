@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.kml;
 
-import org.geotoolkit.feature.FeatureUtilities;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
@@ -26,7 +25,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -44,15 +42,10 @@ import org.geotoolkit.data.kml.xsd.Cdata;
 import org.geotoolkit.data.kml.xsd.DefaultCdata;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -65,80 +58,54 @@ public class BalloonStyleTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/balloonStyle.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public BalloonStyleTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void balloonStyleReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
-
-        Iterator i;
-
-        final KmlReader reader = new KmlReader();
-        reader.setInput(new File(pathToTestFile));
-        final Kml kmlObjects = reader.read();
-        reader.dispose();
-
-        final Feature document = kmlObjects.getAbstractFeature();
-        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
-        assertEquals("BalloonStyle.kml", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).size());
-        i = document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
-        if (i.hasNext()) {
-            Object styleSelector = ((Property) i.next()).getValue();
-            assertTrue(styleSelector instanceof Style);
-            final Style style = (Style) styleSelector;
-            assertEquals("exampleBalloonStyle", style.getIdAttributes().getId());
-            final BalloonStyle balloonStyle = style.getBalloonStyle();
-            assertEquals(new Color(187, 255, 255, 255), balloonStyle.getBgColor());
-            final Cdata text = new DefaultCdata("\n      <b><font color=\"#CC0000\" size=\"+3\">$[name]</font></b>\n"+
-"      <br/><br/>\n"+
-"      <font face=\"Courier\">$[description]</font>\n"+
-"      <br/><br/>\n"+
-"      Extra text that will appear in the description balloon\n"+
-"      <br/><br/>\n"+
-"      $[geDirections]\n"+
-"      ");
-            assertEquals(text, balloonStyle.getText());
+        final Feature document;
+        {
+            final KmlReader reader = new KmlReader();
+            reader.setInput(new File(pathToTestFile));
+            final Kml kmlObjects = reader.read();
+            reader.dispose();
+            document = kmlObjects.getAbstractFeature();
         }
+        assertEquals(KmlModelConstants.TYPE_DOCUMENT, document.getType());
+        assertEquals("BalloonStyle.kml", document.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(Boolean.TRUE, document.getPropertyValue(KmlConstants.TAG_OPEN));
 
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
-        i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-        if (i.hasNext()){
-            final Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark = (Feature) object;
-            assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-            assertEquals("BalloonStyle", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            assertEquals("An example of BalloonStyle", placemark.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()).getValue());
-            assertEquals(new URI("#exampleBalloonStyle"),placemark.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue());
-            assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-            final Point point = (Point) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-            final CoordinateSequence coordinates = point.getCoordinateSequence();
-            assertEquals(1, coordinates.size());
-            final Coordinate coordinate = coordinates.getCoordinate(0);
-            assertEquals(-122.370533, coordinate.x, DELTA);
-            assertEquals(37.823842, coordinate.y, DELTA);
-            assertEquals(0, coordinate.z, DELTA);
-        }
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_STYLE_SELECTOR)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        final Style style = (Style) i.next();
+        assertEquals("exampleBalloonStyle", style.getIdAttributes().getId());
+        final BalloonStyle balloonStyle = style.getBalloonStyle();
+        assertEquals(new Color(187, 255, 255, 255), balloonStyle.getBgColor());
+        final Cdata text = new DefaultCdata("\n" +
+                "      <b><font color=\"#CC0000\" size=\"+3\">$[name]</font></b>\n"+
+                "      <br/><br/>\n"+
+                "      <font face=\"Courier\">$[description]</font>\n"+
+                "      <br/><br/>\n"+
+                "      Extra text that will appear in the description balloon\n"+
+                "      <br/><br/>\n"+
+                "      $[geDirections]\n"+
+                "      ");
+        assertEquals(text, balloonStyle.getText());
+        assertFalse("Expected exactly one element.", i.hasNext());
+
+        i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        Feature placemark = (Feature) i.next();
+        assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
+        assertEquals("BalloonStyle", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals("An example of BalloonStyle", placemark.getPropertyValue(KmlConstants.TAG_DESCRIPTION));
+        assertEquals(new URI("#exampleBalloonStyle"),placemark.getPropertyValue(KmlConstants.TAG_STYLE_URL));
+        final Point point = (Point) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
+        final CoordinateSequence coordinates = point.getCoordinateSequence();
+        assertEquals(1, coordinates.size());
+        final Coordinate coordinate = coordinates.getCoordinate(0);
+        assertEquals(-122.370533, coordinate.x, DELTA);
+        assertEquals(37.823842, coordinate.y, DELTA);
+        assertEquals(0, coordinate.z, DELTA);
+        assertFalse("Expected exactly one element.", i.hasNext());
     }
 
     @Test
@@ -150,21 +117,21 @@ public class BalloonStyleTest extends org.geotoolkit.test.TestBase {
         final Point point = kmlFactory.createPoint(coordinates);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        final Collection<Property> placemarkProperties = placemark.getProperties();
-        placemarkProperties.add(FF.createAttribute("BalloonStyle", KmlModelConstants.ATT_NAME, null));
-        placemarkProperties.add(FF.createAttribute("An example of BalloonStyle", KmlModelConstants.ATT_DESCRIPTION, null));
-        placemarkProperties.add(FF.createAttribute(new URI("#exampleBalloonStyle"), KmlModelConstants.ATT_STYLE_URL, null));
-        placemarkProperties.add(FF.createAttribute(point, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark.setPropertyValue(KmlConstants.TAG_NAME, "BalloonStyle");
+        placemark.setPropertyValue(KmlConstants.TAG_DESCRIPTION, "An example of BalloonStyle");
+        placemark.setPropertyValue(KmlConstants.TAG_STYLE_URL, new URI("#exampleBalloonStyle"));
+        placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, point);
 
         final BalloonStyle balloonStyle = kmlFactory.createBalloonStyle();
-        final Cdata text = new DefaultCdata("\n      <b><font color=\"#CC0000\" size=\"+3\">$[name]</font></b>\n"+
-"      <br/><br/>\n"+
-"      <font face=\"Courier\">$[description]</font>\n"+
-"      <br/><br/>\n"+
-"      Extra text that will appear in the description balloon\n"+
-"      <br/><br/>\n"+
-"      $[geDirections]\n"+
-"      ");
+        final Cdata text = new DefaultCdata(
+                "\n      <b><font color=\"#CC0000\" size=\"+3\">$[name]</font></b>\n"+
+                "      <br/><br/>\n"+
+                "      <font face=\"Courier\">$[description]</font>\n"+
+                "      <br/><br/>\n"+
+                "      Extra text that will appear in the description balloon\n"+
+                "      <br/><br/>\n"+
+                "      $[geDirections]\n"+
+                "      ");
         balloonStyle.setText(text);
         balloonStyle.setBgColor(new Color(187, 255, 255, 255));
 
@@ -175,11 +142,10 @@ public class BalloonStyleTest extends org.geotoolkit.test.TestBase {
         style.setBalloonStyle(balloonStyle);
 
         final Feature document = kmlFactory.createDocument();
-        final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FF.createAttribute("BalloonStyle.kml", KmlModelConstants.ATT_NAME, null));
-        document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        document.setPropertyValue(KmlConstants.TAG_NAME, "BalloonStyle.kml");
+        document.setPropertyValue(KmlConstants.TAG_OPEN, Boolean.TRUE);
+        document.setPropertyValue(KmlConstants.TAG_STYLE_SELECTOR, style);
+        document.setPropertyValue(KmlConstants.TAG_FEATURES, placemark);
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
         final File temp = File.createTempFile("testBalloonStyle", ".kml");
@@ -190,7 +156,6 @@ public class BalloonStyleTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

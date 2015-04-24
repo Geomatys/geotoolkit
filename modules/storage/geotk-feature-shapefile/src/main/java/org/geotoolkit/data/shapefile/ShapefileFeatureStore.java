@@ -18,6 +18,7 @@
 
 package org.geotoolkit.data.shapefile;
 
+import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
@@ -42,6 +43,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.metadata.iso.citation.Citations;
@@ -64,8 +71,6 @@ import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
@@ -76,12 +81,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.data.shapefile.cpg.CpgFiles;
 
 import org.geotoolkit.storage.DataFileStore;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
@@ -89,7 +89,12 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import org.geotoolkit.storage.DataStores;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -206,7 +211,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public boolean isWritable(final GenericName typeName) throws DataStoreException {
+    public boolean isWritable(final String typeName) throws DataStoreException {
         return shpFiles.isWritable();
     }
 
@@ -240,7 +245,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final String typeName) throws DataStoreException {
         typeCheck(typeName);
         return schema;
     }
@@ -285,7 +290,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
                             header.minX(), header.maxX(), header.minY(), header.maxY());
 
                     if (schema != null) {
-                        return new JTSEnvelope2D(env, schema.getCoordinateReferenceSystem());
+                        return new JTSEnvelope2D(env, FeatureExt.getCRS(schema));
                     }else{
                         return new JTSEnvelope2D(env, null);
                     }
@@ -316,12 +321,13 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        typeCheck(query.getTypeName());
+        final FeatureType type = getFeatureType(query.getTypeName());
 
         final Hints hints = query.getHints();
-        final String typeName = query.getTypeName().tip().toString();
+        final String typeName = type.getName().tip().toString();
         final GenericName[] propertyNames = query.getPropertyNames();
-        final GenericName defaultGeomName = schema.getGeometryDescriptor().getName();
+        final AttributeType geomAtt = FeatureExt.getDefaultGeometryAttribute(schema);
+        final GenericName defaultGeomName = geomAtt.getName();
         final double[] resample = query.getResolution();
 
         //check if we must read the 3d values
@@ -343,7 +349,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             && (filterAttnames.length == 0 || (filterAttnames.length == 1 && filterAttnames[0].tip().toString()
                         .equals(defaultGeomName.tip().toString())))) {
             try {
-                final FeatureType newSchema = FeatureTypeUtilities.createSubType(schema, propertyNames);
+                final FeatureType newSchema = FeatureTypeExt.createSubType(schema, propertyNames);
 
                 final ShapefileAttributeReader attReader = getAttributesReader(false,read3D,resample);
                 final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName);
@@ -366,7 +372,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
              try {
                 final FeatureType newSchema;
                 if (propertyNames != null) {
-                    newSchema = FeatureTypeUtilities.createSubType(schema, propertyNames);
+                    newSchema = FeatureTypeExt.createSubType(schema, propertyNames);
                 } else {
                     newSchema = schema;
                 }
@@ -397,19 +403,19 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter, final Hints hints) throws DataStoreException {
-        typeCheck(typeName);
+    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
+        FeatureType type = getFeatureType(query.getTypeName());
 
         final ShapefileAttributeReader attReader = getAttributesReader(true,true,null);
-        final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName.tip().toString());
+        final FeatureIDReader idReader = new DefaultFeatureIDReader(type.getName().tip().toString());
         FeatureReader featureReader;
         try {
-            featureReader = ShapefileFeatureReader.create(attReader,idReader, schema, hints);
+            featureReader = ShapefileFeatureReader.create(attReader,idReader, schema, query.getHints());
         } catch (Exception e) {
             featureReader = GenericEmptyFeatureIterator.createReader(schema);
         }
         try {
-            return handleRemaining(new ShapefileFeatureWriter(this,typeName.tip().toString(), shpFiles, attReader, featureReader, dbfCharset),filter);
+            return handleRemaining(new ShapefileFeatureWriter(this,type.getName().tip().toString(), shpFiles, attReader, featureReader, dbfCharset),query.getFilter());
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
@@ -431,11 +437,11 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * @todo must synchronize this properly
      */
     @Override
-    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
-        if (!isWritable(typeName)) {
+    public void createFeatureType(final FeatureType featureType) throws DataStoreException {
+        final GenericName typeName = featureType.getName();
+        if (!isWritable(typeName.toString())) {
             throw new DataStoreException("Read-only acces prevent type creation.");
         }
-
         if(typeName == null){
             throw new DataStoreException("Type name can not be null.");
         }
@@ -462,14 +468,22 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         name = typeName;
         schema = featureType;
 
-        final GeometryDescriptor desc = featureType.getGeometryDescriptor();
+        AttributeType desc = FeatureExt.getDefaultGeometryAttribute(featureType);
+        if (desc == null) {
+            //search for the first geometry property
+            for (PropertyType pt : featureType.getProperties(true)) {
+                if (AttributeConvention.isGeometryAttribute(pt) && pt instanceof AttributeType) {
+                    desc = (AttributeType) pt;
+                }
+            }
+        }
         CoordinateReferenceSystem crs = null;
         final Class<?> geomType;
         final ShapeType shapeType;
         if(desc != null){
-            crs = desc.getCoordinateReferenceSystem();
-            geomType = desc.getType().getBinding();
-            shapeType =ShapeType.findBestGeometryType(geomType);
+            crs = FeatureExt.getCRS(desc);
+            geomType = desc.getValueClass();
+            shapeType = ShapeType.findBestGeometryType(geomType);
         }else{
             geomType = null;
             shapeType = ShapeType.NULL;
@@ -550,13 +564,41 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         }catch(IOException ex){
             throw new DataStoreException(ex);
         }
+        
+        //force reading it again since the file type may be a little different
+        name = null;
+        schema = null;
+        //we still preserve the original type name and attribute classes which may be more restricted
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(getFeatureType());
+        ftb.setName(typeName);
+        final AttributeTypeBuilder gtb = (AttributeTypeBuilder)ftb.getProperty("the_geom");
+        if (Geometry.class.equals(gtb.getValueClass())) {
+            gtb.setValueClass(shapeType.bestJTSClass());
+        }
+        gtb.setName(desc.getName());
+        
+        for (PropertyType pt : featureType.getProperties(true)) {
+            if (pt instanceof AttributeType) {
+                final AttributeType at = (AttributeType) pt;
+                if(!Geometry.class.isAssignableFrom(at.getValueClass())) {
+                    try {
+                    ((AttributeTypeBuilder)ftb.getProperty(at.getName().tip().toString()))
+                        .setValueClass(at.getValueClass())
+                        .setName(at.getName());
+                    }catch(PropertyNotFoundException ex){}
+                }
+            }
+        }
+
+        schema = ftb.build();
+        name = schema.getName();
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Can not update shapefile schema.");
     }
 
@@ -564,7 +606,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
+    public void deleteFeatureType(final String typeName) throws DataStoreException {
         throw new DataStoreException("Can not delete shapefile schema.");
     }
 
@@ -580,6 +622,12 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * @throws IOException If a type by the requested name is not present.
      */
     private synchronized FeatureType buildSchema(final String namespace) throws DataStoreException {
+
+        //add an identifier field
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        builder.setName(namespace,shpFiles.getTypeName());
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+
 
         //read all attributes///////////////////////////////////////////////////
         final AccessManager locker = shpFiles.createLocker();
@@ -607,32 +655,26 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             }
         }
 
-        final GeometryDescriptor geomDescriptor;
-        final List<AttributeDescriptor> attributes = new ArrayList<>();
+        final AttributeType geomDescriptor;
 
         try {
             //get the descriptor from shp
             geomDescriptor = shp.getHeader().createDescriptor(namespace, crs);
-            attributes.add(geomDescriptor);
+            builder.addAttribute(geomDescriptor).addRole(AttributeRole.DEFAULT_GEOMETRY);
 
             //get dbf attributes if exist
             if (dbf != null) {
                 final DbaseFileHeader header = dbf.getHeader();
-                attributes.addAll(header.createDescriptors(namespace));
+                for(AttributeType at : header.createDescriptors(namespace)){
+                    builder.addAttribute(at);
+                }
             }
         } finally {
             //we have finish readring what we want, dispose everything
             locker.disposeReaderAndWriters();
         }
 
-        //create the feature type //////////////////////////////////////////////
-        final FeatureTypeBuilder builder = new FeatureTypeBuilder(null,false);
-        builder.setName(namespace,shpFiles.getTypeName());
-        builder.setAbstract(false);
-        builder.addAll(attributes);
-        builder.setDefaultGeometry(geomDescriptor.getLocalName());
-
-        return builder.buildSimpleFeatureType();
+        return builder.build();
     }
 
     /**
@@ -651,12 +693,12 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         final AccessManager locker = shpFiles.createLocker();
         final FeatureType schema = getFeatureType();
 
-        final PropertyDescriptor[] descs;
+        final AttributeType[] descs;
         if(readDbf){
-            descs =  schema.getDescriptors().toArray(new PropertyDescriptor[0]);
+            descs =  getAttributes(schema,false).toArray(new AttributeType[0]);
         }else{
             getLogger().fine("The DBF file won't be opened since no attributes will be read from it");
-            descs = new PropertyDescriptor[]{schema.getGeometryDescriptor()};
+            descs = new AttributeType[]{FeatureExt.getDefaultGeometryAttribute(schema)};
         }
         try {
             return new ShapefileAttributeReader(locker, descs, read3D,
@@ -678,6 +720,29 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         return files.toArray(new Path[files.size()]);
     }
 
+    protected List<AttributeType> getAttributes(FeatureType type, boolean includeIdentifier){
+        final Collection<? extends PropertyType> properties = type.getProperties(true);
+        final List<AttributeType> atts = new ArrayList<>();
+        for(PropertyType p : properties){
+            if(!includeIdentifier && p.getName().equals(AttributeConvention.IDENTIFIER_PROPERTY)) continue;
+            if(p instanceof AttributeType){
+                atts.add((AttributeType) p);
+            }
+        }
+        return atts;
+    }
+
+    protected static List<AttributeType> getAttributes(Collection<PropertyType> properties){
+        final List<AttributeType> atts = new ArrayList<>();
+        for(PropertyType p : properties){
+            if(p.getName().equals(AttributeConvention.IDENTIFIER_PROPERTY)) continue;
+            if(p instanceof AttributeType){
+                atts.add((AttributeType) p);
+            }
+        }
+        return atts;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     //Fallback on iterative reader and writer //////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -686,7 +751,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures,
+    public List<FeatureId> addFeatures(final String groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         final List<FeatureId> ids = handleAddWithFeatureWriter(groupName, newFeatures, hints);
         return ids;
@@ -696,7 +761,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final String groupName, final Filter filter, final Map<String, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
@@ -704,7 +769,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final String groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 

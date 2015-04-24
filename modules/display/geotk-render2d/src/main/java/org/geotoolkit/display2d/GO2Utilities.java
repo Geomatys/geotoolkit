@@ -54,6 +54,7 @@ import java.util.logging.Logger;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
@@ -100,14 +101,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.GeometryAttribute;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.GeometryType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.renderer.style.WKMMarkFactory;
 import org.opengis.filter.FilterFactory2;
@@ -137,8 +131,13 @@ import org.opengis.style.Style;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.Utilities;
 import org.apache.sis.measure.Units;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -975,17 +974,17 @@ public final class GO2Utilities {
     }
 
     public static Class getGeometryClass(final FeatureType featuretype, final String geomName){
-        final PropertyDescriptor prop;
+        final PropertyType prop;
         if (geomName != null && !geomName.trim().isEmpty()) {
-            prop = featuretype.getDescriptor(geomName);
+            prop = featuretype.getProperty(geomName);
         }else if(featuretype != null){
-            prop = featuretype.getGeometryDescriptor();
+            prop = featuretype.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
         }else{
             prop = null;
         }
 
-        if(prop != null){
-            return prop.getType().getBinding();
+        if(prop instanceof AttributeType){
+            return ((AttributeType)prop).getValueClass();
         }else{
             return Geometry.class;
         }
@@ -993,8 +992,8 @@ public final class GO2Utilities {
 
     public static Geometry getGeometry(final Feature feature, final Expression geomExp){
         if(isNullorEmpty(geomExp)){
-            final GeometryAttribute att = feature.getDefaultGeometryProperty();
-            return (Geometry) (att==null ? null : att.getValue());
+            final Object att = feature.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            return (Geometry) att;
         }else{
             return geomExp.evaluate(feature, Geometry.class);
         }
@@ -1085,7 +1084,7 @@ public final class GO2Utilities {
 
     public static Set<String> propertiesNames(final Collection<? extends Rule> rules){
         org.geotoolkit.style.visitor.ListingPropertyVisitor visitor = new org.geotoolkit.style.visitor.ListingPropertyVisitor();
-        final Set<String> names = new HashSet<String>();
+        final Set<String> names = new HashSet<>();
         for(Rule r : rules){
             visitor.visit(r, names);
         }
@@ -1093,7 +1092,7 @@ public final class GO2Utilities {
     }
 
     public static Set<String> propertiesCachedNames(final Collection<CachedRule> rules){
-        final Set<String> atts = new HashSet<String>();
+        final Set<String> atts = new HashSet<>();
         for(final CachedRule r : rules){
             r.getRequieredAttributsName(atts);
         }
@@ -1101,7 +1100,7 @@ public final class GO2Utilities {
     }
 
     public static Set<String> propertiesCachedNames(final CachedRule[] rules){
-        final Set<String> atts = new HashSet<String>();
+        final Set<String> atts = new HashSet<>();
         for(final CachedRule r : rules){
             r.getRequieredAttributsName(atts);
         }
@@ -1140,13 +1139,12 @@ public final class GO2Utilities {
             if(type != null){
                 final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
                 if(!semantics.isEmpty()){
-                    final GeometryDescriptor gdesc = type.getGeometryDescriptor();
+                    final AttributeType<?> gtype = FeatureExt.getDefaultGeometryAttribute(type);
                     final Class ctype;
-                    if(gdesc == null){
+                    if(gtype == null){
                         ctype = null;
                     }else{
-                        final GeometryType gtype = type.getGeometryDescriptor().getType();
-                        ctype = gtype.getBinding();
+                        ctype = gtype.getValueClass();
                     }
 
                     boolean valid = false;
@@ -1215,8 +1213,8 @@ public final class GO2Utilities {
             if(type != null){
                 final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
                 if(!semantics.isEmpty()){
-                    final GeometryType gtype = type.getGeometryDescriptor().getType();
-                    final Class ctype = gtype.getBinding();
+                    final AttributeType<?> gtype = FeatureExt.getDefaultGeometryAttribute(type);
+                    final Class ctype = gtype.getValueClass();
 
                     boolean valid = false;
 
@@ -1269,8 +1267,8 @@ public final class GO2Utilities {
         return validRules.toArray(new CachedRule[validRules.size()]);
     }
 
-    public static CachedRule[] getValidCachedRules(final Style style, final double scale, final GenericName type, final ComplexType expected) {
-        final List<CachedRule> validRules = new ArrayList<CachedRule>();
+    public static CachedRule[] getValidCachedRules(final Style style, final double scale, final GenericName type, final FeatureType expected) {
+        final List<CachedRule> validRules = new ArrayList<>();
 
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
         for(final FeatureTypeStyle fts : ftss){
@@ -1378,11 +1376,11 @@ public final class GO2Utilities {
     // SYMBOLIZER CACHES ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static CachedRule getCached(final Rule rule,final ComplexType expected){
+    public static CachedRule getCached(final Rule rule,final FeatureType expected){
         return new CachedRule(rule,expected);
     }
 
-    public static CachedSymbolizer getCached(Symbolizer symbol,final ComplexType expected){
+    public static CachedSymbolizer getCached(Symbolizer symbol,final FeatureType expected){
         CachedSymbolizer value;
 
         if(expected != null){

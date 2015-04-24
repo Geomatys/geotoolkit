@@ -27,24 +27,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.coveragetovector.CoverageToVectorDescriptor;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  *
@@ -128,16 +128,14 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         final FeatureTypeBuilder sftBuilder = new FeatureTypeBuilder();
         final String geometryField = "geometry";
         sftBuilder.setName("DynamicFeature");
-        sftBuilder.add(geometryField, Geometry.class, coverage.getCoordinateReferenceSystem());
-        sftBuilder.setDefaultGeometry(geometryField);
-        final FeatureType sft = sftBuilder.buildFeatureType();
+        sftBuilder.addAttribute(Geometry.class).setName(geometryField).setCRS(coverage.getCoordinateReferenceSystem()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType sft = sftBuilder.build();
 
-        final FeatureBuilder sfBuilder = new FeatureBuilder(sft);
         int id = 0;
         for(Geometry entry : polygons){
-            sfBuilder.reset();
-            sfBuilder.setPropertyValue(geometryField, entry);
-            final Feature sf = sfBuilder.buildFeature(String.valueOf(id++));
+            final Feature sf = sft.newInstance();
+            sf.setPropertyValue(geometryField, entry);
+            sf.setPropertyValue("@id", id++);
 
             features.put(sf, styles.get(entry.getUserData()));
         }

@@ -19,15 +19,10 @@ package org.geotoolkit.data.mapinfo.mif;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.CharSequences;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.nio.IOUtilities;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,9 +32,14 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 /**
  * MIF reader which is designed to browse data AND ONLY data, it's to say geometry data from MIF file, and all data from
@@ -90,21 +90,21 @@ public class MIFFeatureReader implements FeatureReader {
 
     final MIFManager master;
     final FeatureType readType;
-    final PropertyDescriptor[] baseTypeAtts;
+    final PropertyType[] baseTypeAtts;
 
     final MIFUtils.GeometryType geometryType;
     final String geometryId;
     final Pattern geometryPattern;
 
-    public MIFFeatureReader(MIFManager parent, GenericName typeName) throws DataStoreException {
+    public MIFFeatureReader(MIFManager parent, String typeName) throws DataStoreException {
         ArgumentChecks.ensureNonNull("Parent reader", parent);
         master = parent;
         readType = master.getType(typeName);
-        if(readType.equals(master.getBaseType()) || readType.getSuper().equals(master.getBaseType())) {
+        if(readType.equals(master.getBaseType()) || readType.getSuperTypes().contains(master.getBaseType())) {
             readMid = true;
         }
 
-        if(readType.getGeometryDescriptor() != null) {
+        if(FeatureExt.hasAGeometry(readType)) {
             readMif = true;
             geometryType = MIFUtils.identifyFeature(readType);
             geometryId = geometryType.name();
@@ -115,7 +115,7 @@ public class MIFFeatureReader implements FeatureReader {
             geometryPattern = null;
         }
 
-        baseTypeAtts = master.getBaseType().getDescriptors().toArray(new PropertyDescriptor[0]);
+        baseTypeAtts = master.getBaseType().getProperties(true).toArray(new PropertyType[0]);
     }
 
     /**
@@ -138,8 +138,7 @@ public class MIFFeatureReader implements FeatureReader {
         try {
             checkScanners();
 
-            String name = (readMif)? "mif"+mifCounter : "mid"+midCounter;
-            resFeature = FeatureUtilities.defaultFeature(readType, name);
+            resFeature = readType.newInstance();
 
             // We check the MIF file first, because it will define the feature count to reach the next good typed data.
             if(readMif) {
@@ -174,7 +173,7 @@ public class MIFFeatureReader implements FeatureReader {
                     //AttributeType att = baseType.getType(i);
                     AttributeType att = null;
                     try{
-                        att = (AttributeType)baseTypeAtts[i].getType();
+                        att = (AttributeType)baseTypeAtts[i];
                     }catch(Exception ex){
                         LOGGER.finer(ex.getMessage());
                     }
@@ -183,7 +182,7 @@ public class MIFFeatureReader implements FeatureReader {
                     try{
                         if (split[i].length() != 0) {
                             // We don't use geotoolkit to parse date, because we have to use a specific date pattern.
-                            if(Date.class.isAssignableFrom(att.getBinding())) {
+                            if(Date.class.isAssignableFrom(att.getValueClass())) {
                                 SimpleDateFormat format = new SimpleDateFormat();
                                 if(split[i].length() > 14) {
                                     format.applyPattern("yyyyMMddHHmmss.SSS");
@@ -194,14 +193,14 @@ public class MIFFeatureReader implements FeatureReader {
                                 }
                                 value = format.parse(split[i].toString());
                             } else try {
-                                value = ObjectConverters.convert(split[i], att.getBinding());
+                                value = ObjectConverters.convert(split[i], att.getValueClass());
                             } catch (UnconvertibleObjectException e) {
                                 Logging.recoverableException(LOGGER, MIFFeatureReader.class, "next", e);
                                 value = null;
                                 // TODO - do we really want to ignore the problem?
                             }
                         }
-                        resFeature.getProperty(att.getName()).setValue(value);
+                        resFeature.setPropertyValue(att.getName().toString(),value);
                     }catch(Exception ex){
                         LOGGER.finer(ex.getMessage());
                     }

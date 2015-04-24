@@ -30,7 +30,7 @@ import org.geotoolkit.client.AbstractRequest;
  */
 public abstract class AbstractReadElements extends AbstractRequest implements ReadElementsRequest{
 
-    protected Class type = null;
+    protected OSMType type = null;
     protected List<Long> ids = Collections.EMPTY_LIST;
 
     /**
@@ -46,7 +46,7 @@ public abstract class AbstractReadElements extends AbstractRequest implements Re
      * {@inheritDoc }
      */
     @Override
-    public Class<?> getElementType() {
+    public OSMType getElementType() {
         return type;
     }
 
@@ -54,7 +54,7 @@ public abstract class AbstractReadElements extends AbstractRequest implements Re
      * {@inheritDoc }
      */
     @Override
-    public void setElementType(final Class<?> clazz) {
+    public void setElementType(final OSMType clazz) {
         this.type = clazz;
     }
 

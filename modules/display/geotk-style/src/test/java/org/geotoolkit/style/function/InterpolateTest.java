@@ -23,19 +23,18 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.FeatureBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.Test;
-import org.geotoolkit.feature.Feature;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 
 import static org.junit.Assert.*;
 import static java.awt.Color.*;
-import org.geotoolkit.feature.type.FeatureType;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  *
@@ -55,21 +54,20 @@ public class InterpolateTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");
-        sftb.add(attribut, Double.class);
-        final FeatureType sft = sftb.buildFeatureType();
+        sftb.addAttribute(Double.class).setName(attribut);
+        final FeatureType sft = sftb.build();
 
-        final FeatureBuilder sfb = new FeatureBuilder(sft);
-        sfb.setPropertyValue(attribut, 0d);
-        final Feature f1 = sfb.buildFeature("id1");
-        sfb.setPropertyValue(attribut, 5d);
-        final Feature f2 = sfb.buildFeature("id2");
-        sfb.setPropertyValue(attribut, 10d);
-        final Feature f3 = sfb.buildFeature("id3");
-        sfb.setPropertyValue(attribut, 15d);
-        final Feature f4 = sfb.buildFeature("id4");
+        final Feature f1 = sft.newInstance();
+        f1.setPropertyValue(attribut, 0d);
+        final Feature f2 = sft.newInstance();
+        f2.setPropertyValue(attribut, 5d);
+        final Feature f3 = sft.newInstance();
+        f3.setPropertyValue(attribut, 10d);
+        final Feature f4 = sft.newInstance();
+        f4.setPropertyValue(attribut, 15d);
 
         final Expression Lookup = ff.property(attribut);
-        final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
+        final List<InterpolationPoint> values = new ArrayList<>();
 
 
         //test color interpolation ---------------------------------------------

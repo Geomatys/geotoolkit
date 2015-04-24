@@ -28,6 +28,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.io.File;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
@@ -36,17 +37,18 @@ import org.geotoolkit.data.mapinfo.mif.MIFFeatureStoreFactory;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.apache.sis.referencing.CommonCRS;
 import org.junit.After;
 import org.junit.Test;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.storage.DataStores;
 import static org.junit.Assert.*;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
+import org.opengis.filter.Filter;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -93,7 +95,7 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
         final FeatureStoreFactory ff = (FeatureStoreFactory) DataStores.getFactoryById("MIF-MID");
         final ParameterValueGroup params = ff.getParametersDescriptor().createValue();
         ParametersExt.getOrCreateValue(params, MIFFeatureStoreFactory.PATH.getName().getCode()).setValue(f.toURI());
-        
+
         //create new store from scratch
         final FeatureStore ds = (FeatureStore) ff.create(params);
         assertNotNull(ds);
@@ -101,74 +103,63 @@ public class MIFFeatureStoreTest extends org.geotoolkit.test.TestBase {
         //create a feature type
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("integerProp", Integer.class);
-        ftb.add("doubleProp", Double.class);
-        ftb.add("stringProp", String.class);
-        ftb.add("geometryProp", Point.class, CommonCRS.WGS84.normalizedGeographic());
-        final FeatureType featureType = ftb.buildFeatureType();
+        ftb.addAttribute(Integer.class).setName("integerProp");
+        ftb.addAttribute(Double.class).setName("doubleProp");
+        ftb.addAttribute(String.class).setName("stringProp");
+        ftb.addAttribute(Point.class).setName("geometryProp").setCRS(CommonCRS.WGS84.normalizedGeographic());
+        final FeatureType featureType = ftb.build();
 
-        ds.createFeatureType(featureType.getName(), featureType);
+        ds.createFeatureType(featureType);
         assertEquals(1, ds.getNames().size());
 
         GenericName name = ds.getNames().iterator().next();
 
 
         for(GenericName n : ds.getNames()){
-            FeatureType ft = ds.getFeatureType(n);
-            for(PropertyDescriptor desc : featureType.getDescriptors()){
-                PropertyDescriptor td = ft.getDescriptor(desc.getName().tip().toString());
+            FeatureType ft = ds.getFeatureType(n.toString());
+            for(PropertyType desc : featureType.getProperties(true)){
+                PropertyType td = ft.getProperty(desc.getName().tip().toString());
                 assertNotNull(td);
-                assertEquals(td.getType().getBinding(), desc.getType().getBinding());
+                assertEquals(((AttributeType)td).getValueClass(), ((AttributeType)desc).getValueClass());
             }
         }
 
-        FeatureWriter fw = ds.getFeatureWriterAppend(name);
-        try{
+        try (final FeatureWriter fw = ds.getFeatureWriter(QueryBuilder.filtered(name.toString(),Filter.EXCLUDE))) {
             Feature feature = fw.next();
-            feature.getProperty("integerProp").setValue(8);
-            feature.getProperty("doubleProp").setValue(3.12);
-            feature.getProperty("stringProp").setValue("hello");
-            feature.getProperty("geometryProp").setValue(GF.createPoint(new Coordinate(10.3, 15.7)));
+            feature.setPropertyValue("integerProp",8);
+            feature.setPropertyValue("doubleProp",3.12);
+            feature.setPropertyValue("stringProp","hello");
+            feature.setPropertyValue("geometryProp",GF.createPoint(new Coordinate(10.3, 15.7)));
             fw.write();
             feature = fw.next();
-            feature.getProperty("integerProp").setValue(-15);
-            feature.getProperty("doubleProp").setValue(-7.1);
-            feature.getProperty("stringProp").setValue("world");
-            feature.getProperty("geometryProp").setValue(GF.createPoint(new Coordinate(-1.6, -5.4)));
+            feature.setPropertyValue("integerProp",-15);
+            feature.setPropertyValue("doubleProp",-7.1);
+            feature.setPropertyValue("stringProp","world");
+            feature.setPropertyValue("geometryProp",GF.createPoint(new Coordinate(-1.6, -5.4)));
             fw.write();
-        }finally{
-            fw.close();
         }
 
-        FeatureReader reader = ds.getFeatureReader(QueryBuilder.all(name));
         int number = 0;
-        try{
+        try (final FeatureReader reader = ds.getFeatureReader(QueryBuilder.all(name.toString()))) {
             while(reader.hasNext()){
                 number++;
                 reader.next();
             }
-        }finally{
-            reader.close();
         }
 
         assertEquals(2, number);
 
         //test with hint
-        QueryBuilder qb = new QueryBuilder(name);
+        QueryBuilder qb = new QueryBuilder(name.toString());
         qb.setHints(new Hints(HintsPending.FEATURE_DETACHED, Boolean.FALSE));
-        reader = ds.getFeatureReader(qb.buildQuery());
         number = 0;
-        try{
+        try (final FeatureReader reader = ds.getFeatureReader(qb.buildQuery())) {
             while(reader.hasNext()){
                 number++;
                 reader.next();
             }
-        }finally{
-            reader.close();
         }
 
         assertEquals(2, number);
-
     }
-
 }

@@ -27,11 +27,8 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.AbstractFeature;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * Feature writer for insertion only.
@@ -44,7 +41,7 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
     private Collection<Feature> toAdd;
     
     //private String id;
-    private AbstractFeature last;
+    private Feature last;
 
     public JDBCFeatureWriterInsert(final DefaultJDBCFeatureStore store, final String sql, 
             final FeatureType type, Connection cnx, boolean release, final Hints hints)
@@ -59,13 +56,7 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
     }
     
     private void init(){
-        last = (AbstractFeature)FeatureUtilities.defaultFeature(type, "-1");
-//        last = new AbstractFeature<Collection<Property>>(type, (FeatureId)null) {
-//            @Override
-//            public FeatureId getIdentifier() {
-//                return new DefaultFeatureId(JDBCFeatureWriterInsert.this.id);
-//            }
-//        };
+        last = type.newInstance();
         if(hints != null){
             batchInsert = Boolean.FALSE.equals(hints.get(HintsPending.UPDATE_ID_ON_INSERT));
         }else{
@@ -81,7 +72,7 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
 
     @Override
     public Feature next() throws FeatureStoreRuntimeException {
-        FeatureUtilities.resetProperty(last);
+        last = type.newInstance();
         return last;
     }
 
@@ -95,7 +86,7 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
         
         if(batchInsert){
             toAdd.add(last);
-            last = (AbstractFeature)FeatureUtilities.defaultFeature(type, "-1");
+            last = type.newInstance();
             if(toAdd.size() > 1000){
                 try {
                     store.insert(toAdd, type, cx);
@@ -108,10 +99,11 @@ public class JDBCFeatureWriterInsert extends JDBCFeatureReader implements Featur
             try {
                 store.insert(last, type, cx);
                 //the featurestore sets as userData, grab it and update the fid
-                final String id = (String) last.getUserData().get("fid");
-                if (id != null) {
-                    last.setIdentifier(new DefaultFeatureId(id));
-                }
+                //TODO
+//                final String id = (String) last.getUserData().get("fid");
+//                if (id != null) {
+//                    last.setIdentifier(new DefaultFeatureId(id));
+//                }
             } catch (DataStoreException e) {
                 throw new FeatureStoreRuntimeException(e);
             }

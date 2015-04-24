@@ -26,6 +26,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -39,13 +40,10 @@ import org.geotoolkit.xml.StaxStreamWriter;
 import org.geotoolkit.gml.xml.v321.ObjectFactory;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.xml.MarshallerPool;
-import org.apache.sis.xml.Namespaces;
-import org.geotoolkit.feature.Attribute;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryType;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.util.FactoryException;
 
@@ -169,7 +167,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
 
             AbstractGeometry gmlGeometry = null;
             try {
-                gmlGeometry = JTStoGeometry.toGML("3.2.1", (com.vividsolutions.jts.geom.Geometry) valueA,  type.getCoordinateReferenceSystem());
+                gmlGeometry = JTStoGeometry.toGML("3.2.1", (com.vividsolutions.jts.geom.Geometry) valueA,  FeatureExt.getCRS(type));
             } catch (FactoryException ex) {
                 LOGGER.log(Level.WARNING, "Factory exception when transforming JTS geometry to GML binding", ex);
             }
@@ -199,7 +197,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
     }
 
     private void writeValue(final Object value) throws XMLStreamException {
-        if (value instanceof ComplexAttribute) {
+        if (value instanceof Feature) {
             final JAXPStreamFeatureWriter featureWriter = new JAXPStreamFeatureWriter("3.2.1", "2.0.0", null);
             try {
                 featureWriter.write(value, getWriter());

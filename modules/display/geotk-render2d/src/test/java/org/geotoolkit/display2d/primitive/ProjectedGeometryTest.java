@@ -33,13 +33,12 @@ import static java.awt.geom.PathIterator.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapBuilder;
@@ -50,8 +49,8 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -241,12 +240,12 @@ public class ProjectedGeometryTest extends org.geotoolkit.test.TestBase {
         //build a maplayer
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", Geometry.class, CommonCRS.WGS84.normalizedGeographic());
-        final FeatureType type = ftb.buildFeatureType();
+        ftb.addAttribute(Geometry.class).setName("geom").setCRS(CommonCRS.WGS84.normalizedGeographic());
+        final FeatureType type = ftb.build();
 
-        final Feature feature = FeatureUtilities.defaultFeature(type, "0");
+        final Feature feature = type.newInstance();
         JTS.setCRS(geometry, CommonCRS.WGS84.normalizedGeographic());
-        feature.getProperty("geom").setValue(geometry);
+        feature.setPropertyValue("geom",geometry);
         final FeatureCollection col = FeatureStoreUtilities.collection(feature);
 
         final List<GraphicalSymbol> symbols = new ArrayList<>();

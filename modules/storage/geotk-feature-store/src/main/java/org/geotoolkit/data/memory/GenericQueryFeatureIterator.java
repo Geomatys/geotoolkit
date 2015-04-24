@@ -19,6 +19,10 @@ package org.geotoolkit.data.memory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.feature.ReprojectFeatureType;
+import org.apache.sis.feature.TransformFeatureType;
+import org.apache.sis.feature.ViewFeatureType;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
@@ -26,12 +30,10 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
+import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
@@ -100,12 +102,11 @@ public class GenericQueryFeatureIterator {
             }
         }
 
-        //wrap properties, remove primary keys if necessary --------------------
-        final Boolean hide = (Boolean) hints.get(HintsPending.FEATURE_HIDE_ID_PROPERTY);
+        //wrap properties  -----------------------------------------------------
         final FeatureType original = reader.getFeatureType();
-        FeatureType mask = original;
+        FeatureType mask = null;
         if(properties != null){
-            final List<GenericName> names = new ArrayList<GenericName>();
+            final List<GenericName> names = new ArrayList<>();
             loop:
             for(GenericName n : properties){
                 for(GenericName dn : names){
@@ -115,35 +116,26 @@ public class GenericQueryFeatureIterator {
             }
             
             try {
-                mask = FeatureTypeUtilities.createSubType(mask, names.toArray(new GenericName[0]));
+                mask = FeatureTypeExt.createSubType(original, names.toArray(new GenericName[0]));
             } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }
         }
-        if(hide != null && hide){
-            try {
-                //remove primary key properties
-                mask = FeatureTypeUtilities.excludePrimaryKeyFields(mask);
-            } catch (MismatchedFeatureException ex) {
-                throw new DataStoreException(ex);
-            }
-        }
-        if(mask != original){
-            reader = GenericRetypeFeatureIterator.wrap(reader, mask, hints);
+        if(mask instanceof ViewFeatureType){
+            reader = GenericDecoratedFeatureIterator.wrap(reader, (ViewFeatureType) mask, hints);
         }
 
         //wrap resampling ------------------------------------------------------
         if(resampling != null){
-            reader = GenericTransformFeatureIterator.wrap(reader, 
-                    new GeometryScaleTransformer(resampling[0], resampling[1]),hints);
+            final GeometryScaleTransformer trs = new GeometryScaleTransformer(resampling[0], resampling[1]);
+            final TransformFeatureType ttype = new TransformFeatureType(reader.getFeatureType(), trs);
+            reader = GenericDecoratedFeatureIterator.wrap(reader, ttype, hints);
         }
 
         //wrap reprojection ----------------------------------------------------
         if(crs != null){
             try {
-                reader = GenericReprojectFeatureIterator.wrap(reader, crs, hints);
-            } catch (FactoryException ex) {
-                throw new DataStoreException(ex);
+                reader = GenericDecoratedFeatureIterator.wrap(reader, new ReprojectFeatureType(reader.getFeatureType(), crs), hints);
             } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }

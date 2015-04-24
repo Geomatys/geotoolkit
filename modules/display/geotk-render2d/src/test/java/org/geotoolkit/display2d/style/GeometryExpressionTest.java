@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.apache.sis.measure.Units;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.data.FeatureStoreUtilities;
@@ -34,10 +36,6 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -49,6 +47,8 @@ import static org.geotoolkit.style.StyleConstants.*;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -75,13 +75,13 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", Point.class, crs);
-        final FeatureType type = ftb.buildFeatureType();
+        ftb.addAttribute(Point.class).setName("geom").setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType type = ftb.build();
 
 
         final Point point = GO2Utilities.JTS_FACTORY.createPoint(new Coordinate(0, 0));
         JTS.setCRS(point, crs);
-        final Feature feature = FeatureUtilities.defaultFeature(type, "id-0");
+        final Feature feature = type.newInstance();
         feature.setPropertyValue("geom", point);
 
         final Expression geomExp = FF.function("buffer", FF.property("geom"),FF.literal(10));
@@ -135,13 +135,13 @@ public class GeometryExpressionTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", Point.class, crs2154);
-        final FeatureType type = ftb.buildFeatureType();
+        ftb.addAttribute(Point.class).setName("geom").setCRS(crs2154);
+        final FeatureType type = ftb.build();
 
 
         final Point point = GO2Utilities.JTS_FACTORY.createPoint(new Coordinate(0, 0));
         JTS.setCRS(point, crs2154);
-        final Feature feature = FeatureUtilities.defaultFeature(type, "id-0");
+        final Feature feature = type.newInstance();
         feature.setPropertyValue("geom", point);
 
         final Expression geomExp = FF.function("bufferGeo", FF.property("geom"), FF.literal(100), FF.literal("m"));

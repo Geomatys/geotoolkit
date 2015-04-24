@@ -21,7 +21,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -62,7 +62,7 @@ public final class RetypeDescriptor extends VectorDescriptor {
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
-    
+
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new RetypeDescriptor();
 

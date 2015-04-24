@@ -33,13 +33,13 @@ import java.util.Collection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.test.TestData;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 /**
  * @version $Id: ShapefileRTreeReadWriteTest.java 27228 2007-09-29 20:24:08Z
@@ -101,15 +101,15 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         IndexedShapefileFeatureStore s;
         s = new IndexedShapefileFeatureStore(tmp.toURI(), memorymapped, true);
 
-        s.createFeatureType(type.getName(),type);
+        s.createFeatureType(type);
 
         Session session = s.createSession(true);
-        session.addFeatures(type.getName(),one);
-        session.addFeatures(type.getName(),one);
+        session.addFeatures(type.getName().toString(),one);
+        session.addFeatures(type.getName().toString(),one);
         session.commit();
 
         s = new IndexedShapefileFeatureStore(tmp.toURI());
-        assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getName())));
+        assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getName().toString())));
         
         s.close();
     }
@@ -133,10 +133,10 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         s = (IndexedShapefileFeatureStore) new IndexedShapefileFeatureStore(tmp.toURI(),
                 memorymapped, true);
 
-        s.createFeatureType(type.getName(),type);
+        s.createFeatureType(type);
 
         Session session = s.createSession(true);
-        session.addFeatures(s.getName(),one);
+        session.addFeatures(s.getName().toString(),one);
         session.commit();
         
         s.close();
@@ -144,7 +144,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         s = new IndexedShapefileFeatureStore(tmp.toURI());
         typeName = s.getName();
 
-        FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
 
         //copy values, order is not tested here.
         Collection<Feature> cone = new ArrayList<>();
@@ -173,12 +173,12 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
     }
 
     public static void compare(final Feature f1, final Feature f2) throws Exception {
-        Collection<PropertyDescriptor> descs = f1.getType().getDescriptors();
-        if (descs.size() != f2.getType().getDescriptors().size()) {
+        Collection<? extends PropertyType> descs = f1.getType().getProperties(true);
+        if (descs.size() != f2.getType().getProperties(true).size()) {
             throw new Exception("Unequal number of attributes");
         }
 
-        for(PropertyDescriptor desc : descs){
+        for(PropertyType desc : descs){
             final String name = desc.getName().tip().toString();
             Object att1 = f1.getPropertyValue(name);
             Object att2 = f2.getPropertyValue(name);

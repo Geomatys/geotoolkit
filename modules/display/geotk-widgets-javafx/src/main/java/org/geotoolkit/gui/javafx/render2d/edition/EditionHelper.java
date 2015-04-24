@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.render2d.edition;
 
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -47,6 +46,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import org.apache.sis.feature.FeatureExt;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -54,17 +54,16 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.geometry.Envelopes;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.logging.Logging;
 
-import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
@@ -78,6 +77,8 @@ import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.internal.Loggers;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 
 /**
  *
@@ -416,7 +417,7 @@ public class EditionHelper {
                 flt = FF.and(flt, dimFilter);
             }
 
-            QueryBuilder qb = new QueryBuilder(editedLayer.getCollection().getFeatureType().getName());
+            QueryBuilder qb = new QueryBuilder(editedLayer.getCollection().getFeatureType().getName().toString());
             //we filter in the map CRS
             qb.setCRS(map.getCanvas().getObjectiveCRS2D());
             editgeoms = (FeatureCollection) editedLayer.getCollection().subCollection(qb.buildQuery());
@@ -429,7 +430,7 @@ public class EditionHelper {
                 Feature sf = fi.next();
 
                 //get the original, in it's data crs
-                flt = FF.id(Collections.singleton(sf.getIdentifier()));
+                flt = FF.id(Collections.singleton(FeatureExt.getId(sf)));
                 sf = null;
                 fi.close();
 
@@ -1036,7 +1037,7 @@ public class EditionHelper {
 
 
     public Geometry toObjectiveCRS(final Feature sf){
-        final Object obj = sf.getDefaultGeometryProperty().getValue();
+        final Object obj = FeatureExt.getDefaultGeometryAttributeValue(sf);
 
         if (obj instanceof Geometry) {
             return toObjectiveCRS((Geometry)obj);
@@ -1047,7 +1048,7 @@ public class EditionHelper {
     public Geometry toObjectiveCRS(Geometry geom){
         try{
             final MathTransform trs = CRS.findOperation(
-                    editedLayer.getCollection().getFeatureType().getCoordinateReferenceSystem(),
+                    FeatureExt.getCRS(editedLayer.getCollection().getFeatureType()),
                     map.getCanvas().getObjectiveCRS2D(), null).getMathTransform();
 
             geom = JTS.transform(geom, trs);
@@ -1069,7 +1070,8 @@ public class EditionHelper {
      */
     public Filter toFilter(final Geometry poly, final FeatureMapLayer fl) throws MismatchedDimensionException {
 
-        final String geoStr = fl.getCollection().getFeatureType().getGeometryDescriptor().getLocalName();
+        final AttributeType desc = FeatureExt.getDefaultGeometryAttribute(fl.getCollection().getFeatureType());
+        final String geoStr = desc.getName().tip().toString();
         final Expression geomField = FF.property(geoStr);
 
         final Geometry dataPoly = poly;
@@ -1089,8 +1091,8 @@ public class EditionHelper {
         if (editedLayer != null && geom != null) {
 
             final FeatureType featureType = (FeatureType) editedLayer.getCollection().getFeatureType();
-            final CoordinateReferenceSystem dataCrs = featureType.getCoordinateReferenceSystem();
-            final Feature feature = FeatureUtilities.defaultFeature(featureType, UUID.randomUUID().toString());
+            final CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(featureType);
+            final Feature feature = featureType.newInstance();
 
             try {
                 geom = JTS.transform(geom, CRS.findOperation(map.getCanvas().getObjectiveCRS2D(), dataCrs, null).getMathTransform());
@@ -1098,7 +1100,7 @@ public class EditionHelper {
                 LOGGER.log(Level.WARNING, null, ex);
             }
 
-            feature.getDefaultGeometryProperty().setValue(geom);
+            feature.setPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString(),geom);
 
             if(editedLayer.getCollection().isWritable()){
                 try {
@@ -1124,7 +1126,7 @@ public class EditionHelper {
             return;
         }
 
-        final String ID = feature.getIdentifier().getID();
+        final String ID = FeatureExt.getId(feature).getID();
 
         ensureNonNull("geometry", geo);
         ensureNonNull("id", ID);
@@ -1133,8 +1135,8 @@ public class EditionHelper {
 
             final Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
             final FeatureType featureType = editedLayer.getCollection().getFeatureType();
-            final AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
-            final CoordinateReferenceSystem dataCrs = featureType.getCoordinateReferenceSystem();
+            final AttributeType geomAttribut = FeatureExt.getDefaultGeometryAttribute(featureType);
+            final CoordinateReferenceSystem dataCrs = FeatureExt.getCRS(geomAttribut);
 
             try {
                 final Geometry geom;
@@ -1146,7 +1148,7 @@ public class EditionHelper {
                     geom = geo;
                 }
 
-                editedLayer.getCollection().update(filter, geomAttribut,geom);
+                editedLayer.getCollection().update(filter, Collections.singletonMap(geomAttribut.getName().toString(), geom));
             } catch (final Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             } finally {
@@ -1158,7 +1160,7 @@ public class EditionHelper {
     }
 
     public void sourceRemoveFeature(final Feature feature){
-        sourceRemoveFeature(feature.getIdentifier().getID());
+        sourceRemoveFeature(FeatureExt.getId(feature).getID());
     }
 
     public void sourceRemoveFeature(final String ID) {

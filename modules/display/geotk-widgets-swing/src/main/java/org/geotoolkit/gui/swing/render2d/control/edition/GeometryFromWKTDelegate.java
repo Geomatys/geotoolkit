@@ -27,13 +27,14 @@ import java.util.Collection;
 import java.util.Collections;
 import javax.swing.JInternalFrame;
 import javax.swing.JLayeredPane;
+import org.apache.sis.feature.FeatureExt;
 
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.render2d.decoration.JPanelMapDecoration;
 import org.geotoolkit.gui.swing.render2d.decoration.MapDecoration;
 import org.geotoolkit.gui.swing.render2d.decoration.MapDecorationStack;
+import org.opengis.feature.Feature;
 
 
 /**
@@ -68,7 +69,7 @@ public class GeometryFromWKTDelegate extends AbstractFeatureEditionDelegate {
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
         if(feature != null){            
-            final Geometry geom = (Geometry) feature.getDefaultGeometryProperty().getValue();
+            final Geometry geom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
             decoration.setGeometries(Collections.singleton(helper.toObjectiveCRS(geom)));
             dialogDecoration.wktPanel.setGeometry(geom);
         }else{
@@ -86,7 +87,7 @@ public class GeometryFromWKTDelegate extends AbstractFeatureEditionDelegate {
                 setCurrentFeature(helper.grabFeature(e.getX(), e.getY(), false));
             }
         }else if(button == MouseEvent.BUTTON3 && feature != null){
-            final Geometry oldgeom = (Geometry) feature.getDefaultGeometryProperty().getValue();
+            final Geometry oldgeom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
             final Geometry newGeom = dialogDecoration.wktPanel.getGeometry();
             if(!oldgeom.equals(newGeom)){
                 helper.sourceModifyFeature(feature, newGeom, false);

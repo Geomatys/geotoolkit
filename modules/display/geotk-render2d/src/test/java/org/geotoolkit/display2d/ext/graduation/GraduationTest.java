@@ -22,6 +22,9 @@ import com.vividsolutions.jts.geom.LineString;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -29,10 +32,6 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -40,6 +39,8 @@ import org.apache.sis.referencing.CRS;
 import org.geotoolkit.style.MutableStyle;
 import org.junit.Assert;
 import org.junit.Test;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -65,10 +66,12 @@ public class GraduationTest extends org.geotoolkit.test.TestBase {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("geom", LineString.class,crs);
-        final FeatureType type = ftb.buildFeatureType();
+        ftb.addAttribute(String.class).setName("id").addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        ftb.addAttribute(LineString.class).setName("geom").setCRS(crs);
+        final FeatureType type = ftb.build();
 
-        final Feature f = FeatureUtilities.defaultFeature(type, "id");
+        final Feature f = type.newInstance();
+        f.setPropertyValue("id", "id-0");
         f.setPropertyValue("geom", new GeometryFactory().createLineString(new Coordinate[]{new Coordinate(0, 0), new Coordinate(100, 0)}));
 
 

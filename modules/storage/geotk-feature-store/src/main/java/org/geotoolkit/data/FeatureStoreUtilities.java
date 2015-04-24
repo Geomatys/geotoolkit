@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
@@ -34,6 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.logging.Logger;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.feature.builder.PropertyTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.Query;
@@ -41,9 +45,6 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.apache.sis.geometry.GeneralEnvelope;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CloseableIterator;
@@ -51,18 +52,14 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.memory.GenericMappingFeatureCollection;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.AbstractFeature;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.opengis.util.GenericName;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
-import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.GenericName;
@@ -102,16 +99,16 @@ public class FeatureStoreUtilities {
         if(type == null){
             //a collection with no defined type, make a generic abstract type
             //that is possible since feature collection may not always have a type.
-            FeatureTypeBuilder sftb = new FeatureTypeBuilder();
-            sftb.setName("null");
-            sftb.setAbstract(true);
-            type = sftb.buildSimpleFeatureType();
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            ftb.setName("null");
+            ftb.setAbstract(true);
+            type = ftb.build();
         }
 
         final MemoryFeatureStore ds = new MemoryFeatureStore(type, true);
         final Session session = ds.createSession(false);
 
-        FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(type.getName()));
+        FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(type.getName().toString()));
         ((AbstractFeatureCollection)col).setId(id);
 
         return col;
@@ -155,7 +152,7 @@ public class FeatureStoreUtilities {
      * Write the features from the given collection and return the list of generated FeatureID
      * send by the writer.
      *
-     * @param writer
+     * @param writer, writer will not be closed
      * @param collection
      * @return List of generated FeatureId
      * @throws FeatureStoreRuntimeException
@@ -169,18 +166,9 @@ public class FeatureStoreUtilities {
             while(ite.hasNext()){
                 final Feature f = ite.next();
                 final Feature candidate = writer.next();
-                FeatureType type = candidate.getType();
-                if( !(type instanceof SimpleFeatureType) && candidate.getType().equals(f.getType())){
-                    candidate.getProperties().clear();
-                    candidate.getProperties().addAll(f.getProperties());
-                }else{
-                    FeatureUtilities.copy(f,candidate,false);
-                }
-                if(candidate instanceof AbstractFeature){
-                    ((AbstractFeature)candidate).setIdentifier(f.getIdentifier());
-                }
+                FeatureExt.copy(f, candidate, false);
                 writer.write();
-                ids.add(candidate.getIdentifier());
+                ids.add(FeatureExt.getId(candidate));
             }
         }finally{
 
@@ -195,8 +183,6 @@ public class FeatureStoreUtilities {
                     e = new FeatureStoreRuntimeException(ex);
                 }
             }
-
-            writer.close();
 
             if(e != null){
                 throw e;
@@ -232,26 +218,17 @@ public class FeatureStoreUtilities {
     public static Envelope calculateEnvelope(final FeatureIterator iterator) throws FeatureStoreRuntimeException{
         ensureNonNull("iterator", iterator);
 
-        BoundingBox env = null;
+        GeneralEnvelope env = null;
 
         try{
             while(iterator.hasNext()){
                 final Feature f = iterator.next();
-                final BoundingBox bbox = DefaultBoundingBox.castOrCopy(f.getBounds());
+                final Envelope bbox = FeatureExt.getEnvelope(f);
                 if(bbox != null){
                     if(env != null){
-                        env.include(bbox);
+                        env.add(bbox);
                     }else{
-                        CoordinateReferenceSystem crs = bbox.getCoordinateReferenceSystem();
-                        if(crs == null){
-                            crs = f.getType().getCoordinateReferenceSystem();
-                        }
-                        if(crs == null){
-                            //what should we do ?
-                            //we choose to continue, assuming it is normal and the
-                            //features are in cartesian space. or it's a temporary work collection.
-                        }
-                        env = new DefaultBoundingBox(bbox, crs);
+                        env = new GeneralEnvelope(bbox);
                     }
                 }
             }
@@ -323,7 +300,7 @@ public class FeatureStoreUtilities {
      * @return splitted collections
      */
     public static FeatureCollection[] decomposeByGeometryType(FeatureCollection col, Class ... geomClasses) throws DataStoreException{
-        return decomposeByGeometryType(col, col.getFeatureType().getGeometryDescriptor().getName(), true, geomClasses);
+        return decomposeByGeometryType(col, FeatureExt.getDefaultGeometryAttribute(col.getFeatureType()).getName(), true, geomClasses);
     }
 
     /**
@@ -349,7 +326,7 @@ public class FeatureStoreUtilities {
         final FilterFactory FF = FactoryFinder.getFilterFactory(null);
         final FeatureType baseType = col.getFeatureType();
         final GenericName name = baseType.getName();
-        final GeometryDescriptor geomDesc = (GeometryDescriptor) baseType.getDescriptor(geomPropName);
+        final AttributeType geomDesc = (AttributeType) baseType.getProperty(geomPropName.toString());
 
         final List<Class> lstClasses = Arrays.asList(geomClasses);
 
@@ -383,17 +360,19 @@ public class FeatureStoreUtilities {
                 }
             }
 
-            cols[i] = col.subCollection( QueryBuilder.filtered(name, filter) );
+            cols[i] = col.subCollection( QueryBuilder.filtered(name.toString(), filter) );
 
             //retype the collection
-            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.copy(baseType);
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder(baseType);
             ftb.setName(NamesExt.create(NamesExt.getNamespace(name), name.tip().toString()+"_"+geomClass.getSimpleName()));
-            ftb.remove(geomPropName.tip().toString());
-            ftb.add(geomPropName, geomClasses[i], geomDesc.getCoordinateReferenceSystem());
-            ftb.setDefaultGeometry(geomPropName);
+            for(PropertyTypeBuilder ptb : ftb.properties()){
+                if(ptb.getName().equals(geomPropName)){
+                    final AttributeTypeBuilder atb = (AttributeTypeBuilder) ptb;
+                    atb.setValueClass(geomClasses[i]).setCRS(FeatureExt.getCRS(geomDesc)).addRole(AttributeRole.DEFAULT_GEOMETRY);
+                }
+            }
 
-            cols[i] = new GenericMappingFeatureCollection(cols[i],new DefaultFeatureMapper(baseType, ftb.buildFeatureType()));
+            cols[i] = new GenericMappingFeatureCollection(cols[i],new DefaultFeatureMapper(baseType, ftb.build()));
         }
 
         return cols;

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,42 +20,32 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
+import org.apache.sis.feature.AbstractFeature;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.feature.AbstractFeature;
-import org.geotoolkit.feature.AbstractProperty;
-import org.geotoolkit.feature.Attribute;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.GeometryAttribute;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.Identifier;
-import org.opengis.geometry.BoundingBox;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
-import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.InvalidPropertyValueException;
+import org.opengis.feature.Property;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
+import org.opengis.util.GenericName;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class BeanFeature extends AbstractFeature<Collection<Property>>{
+public class BeanFeature extends AbstractFeature{
 
     public static final String KEY_BEAN = "bean";
 
@@ -63,22 +53,40 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
     private final Mapping mapping;
 
     public BeanFeature(Object bean, Mapping mapping){
-        super(mapping.featureType, mapping.buildId(bean));
+        super(mapping.featureType);
         this.bean = bean;
         this.mapping = mapping;
+    }
+    
+    public Object getBean(){
+        return bean;
+    }
 
-        value = new ArrayList<>();
-        for(PropertyDescriptor desc : mapping.featureType.getDescriptors()){
-            final Property property;
-            if(desc instanceof GeometryDescriptor){
-                property = new BeanGeometryProperty((GeometryDescriptor) desc);
-            }else{
-                property = new BeanAttributeProperty((AttributeDescriptor) desc);
-            }
-            value.add(property);
+    @Override
+    public Property getProperty(String string) throws PropertyNotFoundException {
+        final PropertyType pt = mapping.featureType.getProperty(string);
+        return new BeanAttributeProperty((AttributeType) pt);
+    }
+
+    @Override
+    public void setProperty(Property prprt) throws IllegalArgumentException {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
+    @Override
+    public Object getPropertyValue(String string) throws PropertyNotFoundException {
+        return getProperty(string).getValue();
+    }
+
+    @Override
+    public void setPropertyValue(String string, Object o) throws IllegalArgumentException {
+        Property property = getProperty(string);
+        if(property instanceof Attribute){
+            ((Attribute)property).setValue(o);
+        }else{
+            throw new IllegalArgumentException("Property "+string+" can not be set.");
         }
-
-        getUserData().put(KEY_BEAN, bean);
+        
     }
 
     public static class Mapping {
@@ -117,18 +125,20 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
 
                     final Class propClazz = readMethod.getReturnType();
                     if(Geometry.class.isAssignableFrom(propClazz)){
-                        ftb.add(propName, propClazz, crs);
-                        if(defaultGeom==null)ftb.setDefaultGeometry(propName);
+                        final AttributeTypeBuilder atb = ftb.addAttribute(propClazz).setName(propName).setCRS(crs);
+                        if(defaultGeom==null || defaultGeom.equals(atb.getName().tip().toString())){
+                            defaultGeom = atb.getName().tip().toString();
+                            atb.addRole(AttributeRole.DEFAULT_GEOMETRY);
+                        }
                     }else{
-                        ftb.add(propName, propClazz);
+                        ftb.addAttribute(propClazz).setName(propName);
                     }
                     accessors.put(propName, pd);
                 }
             } catch (IntrospectionException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
-            if(defaultGeom!=null) ftb.setDefaultGeometry(defaultGeom);
-            featureType = ftb.buildFeatureType();
+            featureType = ftb.build();
         }
 
         public FeatureId buildId(Object bean){
@@ -141,11 +151,11 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
 
     }
 
-    private class BeanAttributeProperty extends AbstractProperty implements Attribute{
+    private class BeanAttributeProperty implements Attribute{
 
-        private final AttributeDescriptor desc;
+        private final AttributeType desc;
 
-        public BeanAttributeProperty(AttributeDescriptor desc){
+        public BeanAttributeProperty(AttributeType desc){
             this.desc = desc;
         }
 
@@ -172,27 +182,13 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
         }
 
         @Override
+        public GenericName getName() {
+            return getType().getName();
+        }
+        
+        @Override
         public AttributeType getType() {
-            return getDescriptor().getType();
-        }
-
-        @Override
-        public AttributeDescriptor getDescriptor() {
             return desc;
-        }
-
-        @Override
-        public Map<Object, Object> getUserData() {
-            return Collections.EMPTY_MAP;
-        }
-
-        @Override
-        public Identifier getIdentifier() {
-            return null;
-        }
-
-        @Override
-        public void validate() {
         }
 
         @Override
@@ -201,79 +197,14 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
         }
 
         @Override
-        public void setValues(Collection<? extends Object> clctn) throws IllegalArgumentException {
-            setValue(clctn.iterator().next());
-        }
-
-    }
-
-    private final class BeanGeometryProperty extends BeanAttributeProperty implements GeometryAttribute{
-
-        protected BoundingBox bounds;
-
-        public BeanGeometryProperty(GeometryDescriptor desc){
-            super(desc);
+        public void setValues(Collection clctn) throws InvalidPropertyValueException {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
-        public GeometryType getType() {
-            return (GeometryType)super.getType();
+        public Map characteristics() {
+            return Collections.EMPTY_MAP;
         }
-
-        @Override
-        public GeometryDescriptor getDescriptor() {
-            return (GeometryDescriptor)super.getDescriptor();
-        }
-
-        /**
-        * Set the bounds for the contained geometry.
-        */
-       @Override
-       public synchronized void setBounds(final Envelope bbox) {
-           bounds = DefaultBoundingBox.castOrCopy(bbox);
-       }
-
-       /**
-        * Returns the non null envelope of this attribute. If the attribute's
-        * geometry is <code>null</code> the returned Envelope
-        * <code>isNull()</code> is true.
-        *
-        * @return Bounds of the geometry
-        */
-       @Override
-       public synchronized BoundingBox getBounds() {
-           final Object val = getValue();
-           if(bounds == null){
-               //we explicitly use the getValue method, since subclass can override it
-
-               //get the type crs if defined
-               CoordinateReferenceSystem crs = getType().getCoordinateReferenceSystem();
-
-               if(crs == null){
-                   //the type does not define the crs, then the object value might define it
-                   if(val instanceof com.vividsolutions.jts.geom.Geometry){
-                       try {
-                           crs = JTS.findCoordinateReferenceSystem((com.vividsolutions.jts.geom.Geometry) val);
-                       } catch (FactoryException ex) {
-                           Logging.getLogger("org.geotoolkit.feature").log(Level.WARNING, null, ex);
-                       }
-                   }else if(val instanceof org.opengis.geometry.Geometry){
-                       crs = ((org.opengis.geometry.Geometry)val).getCoordinateReferenceSystem();
-                   }
-               }
-
-               bounds = new JTSEnvelope2D(crs);
-           }
-
-           if (val instanceof com.vividsolutions.jts.geom.Geometry) {
-               ((JTSEnvelope2D)bounds).init(((com.vividsolutions.jts.geom.Geometry)val).getEnvelopeInternal());
-           } else {
-               ((JTSEnvelope2D)bounds).setToNull();
-           }
-
-           return bounds;
-       }
-
 
     }
 

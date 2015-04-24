@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2016, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -33,31 +33,26 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureCollection;
-import static org.geotoolkit.data.AbstractFeatureStore.GML_311_NAMESPACE;
 import static org.geotoolkit.data.AbstractFeatureStore.GML_32_NAMESPACE;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.Attribute;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.FeatureBuilder;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.geometry.jts.JTS;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.referencing.CommonCRS;
+import static org.geotoolkit.feature.xml.GMLConvention.*;
 
 /**
  *
@@ -67,23 +62,27 @@ public class XmlTestData {
 
     public static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
-    public static FeatureType simpleTypeBasic;
-    public static FeatureType simpleTypeFull;
-    public static FeatureType typeWithAtts;
-    public static FeatureType typeWithObject;
-    public static FeatureType typeEmpty;
-    public static FeatureType typeEmpty2;
-    public static FeatureType typeWithNil;
-    public static Feature simpleFeatureFull;
-    public static Feature simpleFeature1;
-    public static Feature simpleFeature2;
-    public static Feature simpleFeature3;
+    public static final FeatureType ABSTRACTGMLTYPE_31;
+    public static final FeatureType ABSTRACTGMLTYPE_32;
+    public static final FeatureType ABSTRACTFEATURETYPE_31;
+    public static final FeatureType ABSTRACTFEATURETYPE_32;
+    public static final FeatureType simpleTypeBasic;
+    public static final FeatureType simpleTypeFull;
+    public static final FeatureType typeWithAtts;
+    public static final FeatureType typeWithObject;
+    public static final FeatureType typeEmpty;
+    public static final FeatureType typeEmpty2;
+    public static final FeatureType typeWithNil;
+    public static final Feature simpleFeatureFull;
+    public static final Feature simpleFeature1;
+    public static final Feature simpleFeature2;
+    public static final Feature simpleFeature3;
     public static FeatureCollection collectionSimple;
-    public static Feature featureComplex;
-    public static Feature featureWithAttributes;
-    public static Feature featureWithObject;
-    public static Feature featureEmpty;
-    public static Feature featureNil;
+    public static final Feature featureComplex;
+    public static final Feature featureWithAttributes;
+    public static final Feature featureWithObject;
+    public static final Feature featureEmpty;
+    public static final Feature featureNil;
 
     public static FeatureType multiGeomType;
 
@@ -98,134 +97,161 @@ public class XmlTestData {
         // TYPES ///////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
 
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+
+        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(GML_311_NAMESPACE,"AbstractGMLType");
+        ftb.addAttribute(String.class).setName(GML_311_NAMESPACE,"@id").setMinimumOccurs(0).setMaximumOccurs(1).addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        ABSTRACTGMLTYPE_31 = ftb.build();
+
+        ftb = new FeatureTypeBuilder();
+        ftb.setName(GML_32_NAMESPACE,"AbstractGMLType");
+        AttributeTypeBuilder<String> atb = ftb.addAttribute(String.class).setName(GML_32_NAMESPACE,"@id").setMinimumOccurs(1).setMaximumOccurs(1);
+        atb.addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        ABSTRACTGMLTYPE_32 = ftb.build();
+
+        ftb = new FeatureTypeBuilder();
+        ftb.setName(GML_311_NAMESPACE,"AbstractFeatureType");
+        ftb.setSuperTypes(ABSTRACTGMLTYPE_31);
+        ABSTRACTFEATURETYPE_31 = ftb.build();
+
+        ftb = new FeatureTypeBuilder();
+        ftb.setName(GML_32_NAMESPACE,"AbstractFeatureType");
+        ftb.setSuperTypes(ABSTRACTGMLTYPE_32);
+        ABSTRACTFEATURETYPE_32 = ftb.build();
+
+        //NOTE : store the xsd simple type name using characteristic : Utils.SIMPLETYPE_NAME_CHARACTERISTIC
+
+        ftb = new FeatureTypeBuilder();
         ftb.setName(GML_311_NAMESPACE,"TestSimple");
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_311_NAMESPACE, "ID"),         null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "attString"),  null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","short",                Short.class, NamesExt.create(GML_311_NAMESPACE, "attShort"),   null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_311_NAMESPACE, "attInteger"), null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","long",                 Long.class, NamesExt.create(GML_311_NAMESPACE, "attLong"),    null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","double",               Double.class, NamesExt.create(GML_311_NAMESPACE, "attDouble"),  null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","decimal",              BigDecimal.class, NamesExt.create(GML_311_NAMESPACE, "attDecimal"), null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","date",                 Date.class, NamesExt.create(GML_311_NAMESPACE, "attDate"),    null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","dateTime",             Timestamp.class, NamesExt.create(GML_311_NAMESPACE, "attDateTime"),null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","boolean",              Boolean.class, NamesExt.create(GML_311_NAMESPACE, "attBoolean"), null, 1,1,true,null);
-        ftb.add(GML_311_NAMESPACE, "Point",           Point.class, NamesExt.create(GML_311_NAMESPACE, "geomPoint"), null, 1, 1, true, null);
-        ftb.add(GML_311_NAMESPACE, "MultiPoint",      MultiPoint.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiPoint"), null, 1, 1, true, null);
-        ftb.add(GML_311_NAMESPACE, "Curve",           LineString.class, NamesExt.create(GML_311_NAMESPACE, "geomLine"), null, 1, 1, true, null);
-        ftb.add(GML_311_NAMESPACE, "CompositeCurve",  MultiLineString.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiLine"), null, 1, 1, true, null);
-        ftb.add(GML_311_NAMESPACE, "Polygon",         Polygon.class, NamesExt.create(GML_311_NAMESPACE, "geomPolygon"), null, 1, 1, true, null);
-        //multipolygon does not exist in gml
-        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiPolygon"), null, 1, 1, true, null);
-        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiGeometry"), null, 1, 1, true, null);
-        ftb.add(GML_311_NAMESPACE, "GeometryPropertyType",Geometry.class, NamesExt.create(GML_311_NAMESPACE, "geomAnyGeometry"), null, 1, 1, true, null);
-        simpleTypeFull = ftb.buildSimpleFeatureType();
+        ftb.setSuperTypes(ABSTRACTFEATURETYPE_31);
+        ftb.addAttribute(Integer.class)           .setName(GML_311_NAMESPACE,"ID")               .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(String.class)            .setName(GML_311_NAMESPACE,"attString")        .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Short.class)             .setName(GML_311_NAMESPACE,"attShort")         .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Integer.class)           .setName(GML_311_NAMESPACE,"attInteger")       .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Long.class)              .setName(GML_311_NAMESPACE,"attLong")          .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Double.class)            .setName(GML_311_NAMESPACE,"attDouble")        .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(BigDecimal.class)        .setName(GML_311_NAMESPACE,"attDecimal")       .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Date.class)              .setName(GML_311_NAMESPACE,"attDate")          .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Timestamp.class)         .setName(GML_311_NAMESPACE,"attDateTime")      .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Boolean.class)           .setName(GML_311_NAMESPACE,"attBoolean")       .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Point.class)             .setName(GML_311_NAMESPACE,"geomPoint")        .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(MultiPoint.class)        .setName(GML_311_NAMESPACE,"geomMultiPoint")   .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(LineString.class)        .setName(GML_311_NAMESPACE,"geomLine")         .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(MultiLineString.class)   .setName(GML_311_NAMESPACE,"geomMultiLine")    .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Polygon.class)           .setName(GML_311_NAMESPACE,"geomPolygon")      .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(GeometryCollection.class).setName(GML_311_NAMESPACE,"geomMultiPolygon") .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(GeometryCollection.class).setName(GML_311_NAMESPACE,"geomMultiGeometry").setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Geometry.class)          .setName(GML_311_NAMESPACE,"geomAnyGeometry")  .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        simpleTypeFull = ftb.build();
 
-        ftb.reset();
+
+        ftb = new FeatureTypeBuilder();
         ftb.setName(GML_311_NAMESPACE,"TestMultiGeom");
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_311_NAMESPACE, "ID"),         null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "attString"),  null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","short",                Short.class, NamesExt.create(GML_311_NAMESPACE, "attShort"),   null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_311_NAMESPACE, "attInteger"), null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","long",                 Long.class, NamesExt.create(GML_311_NAMESPACE, "attLong"),    null, 0,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","double",               Double.class, NamesExt.create(GML_311_NAMESPACE, "attDouble"),  null, 0,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","decimal",              BigDecimal.class, NamesExt.create(GML_311_NAMESPACE, "attDecimal"), null, 0,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","date",                 Date.class, NamesExt.create(GML_311_NAMESPACE, "attDate"),    null, 1,Integer.MAX_VALUE,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","dateTime",             Timestamp.class, NamesExt.create(GML_311_NAMESPACE, "attDateTime"),null, 1,Integer.MAX_VALUE,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","boolean",              Boolean.class, NamesExt.create(GML_311_NAMESPACE, "attBoolean"), null, 1,Integer.MAX_VALUE,true,null);
-        ftb.add(GML_311_NAMESPACE, "Point",           Point.class, NamesExt.create(GML_311_NAMESPACE, "geomPoint"), null, 0, Integer.MAX_VALUE, true, null);
-        ftb.add(GML_311_NAMESPACE, "MultiPoint",      MultiPoint.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiPoint"), null, 0, Integer.MAX_VALUE, true, null);
-        ftb.add(GML_311_NAMESPACE, "Curve",           LineString.class, NamesExt.create(GML_311_NAMESPACE, "geomLine"), null, 0, Integer.MAX_VALUE, true, null);
-        ftb.add(GML_311_NAMESPACE, "CompositeCurve",  MultiLineString.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiLine"), null, 1, Integer.MAX_VALUE, true, null);
-        ftb.add(GML_311_NAMESPACE, "Polygon",         Polygon.class, NamesExt.create(GML_311_NAMESPACE, "geomPolygon"), null, 1, Integer.MAX_VALUE, true, null);
-        //multipolygon does not exist in gml
-        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiPolygon"), null, 1, Integer.MAX_VALUE, true, null);
-        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiGeometry"), null, 1, Integer.MAX_VALUE, true, null);
-        ftb.add(GML_311_NAMESPACE, "GeometryPropertyType",Geometry.class, NamesExt.create(GML_311_NAMESPACE, "geomAnyGeometry"), null, 1, Integer.MAX_VALUE, true, null);
-        multiGeomType = ftb.buildFeatureType();
+        ftb.setSuperTypes(ABSTRACTFEATURETYPE_31);
+        ftb.addAttribute(Integer.class)           .setName(GML_311_NAMESPACE,"ID")               .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(String.class)            .setName(GML_311_NAMESPACE,"attString")        .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Short.class)             .setName(GML_311_NAMESPACE,"attShort")         .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Integer.class)           .setName(GML_311_NAMESPACE,"attInteger")       .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Long.class)              .setName(GML_311_NAMESPACE,"attLong")          .setMinimumOccurs(0).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Double.class)            .setName(GML_311_NAMESPACE,"attDouble")        .setMinimumOccurs(0).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(BigDecimal.class)        .setName(GML_311_NAMESPACE,"attDecimal")       .setMinimumOccurs(0).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Date.class)              .setName(GML_311_NAMESPACE,"attDate")          .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Timestamp.class)         .setName(GML_311_NAMESPACE,"attDateTime")      .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Boolean.class)           .setName(GML_311_NAMESPACE,"attBoolean")       .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Point.class)             .setName(GML_311_NAMESPACE,"geomPoint")        .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(MultiPoint.class)        .setName(GML_311_NAMESPACE,"geomMultiPoint")   .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(LineString.class)        .setName(GML_311_NAMESPACE,"geomLine")         .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(MultiLineString.class)   .setName(GML_311_NAMESPACE,"geomMultiLine")    .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Polygon.class)           .setName(GML_311_NAMESPACE,"geomPolygon")      .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(GeometryCollection.class).setName(GML_311_NAMESPACE,"geomMultiPolygon") .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(GeometryCollection.class).setName(GML_311_NAMESPACE,"geomMultiGeometry").setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Geometry.class)          .setName(GML_311_NAMESPACE,"geomAnyGeometry")  .setMinimumOccurs(1).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        multiGeomType = ftb.build();
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName(GML_311_NAMESPACE,"TestSimpleBasic");
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "attString"),  null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","double",               Double.class, NamesExt.create(GML_311_NAMESPACE, "attDouble"),  null, 1,1,true,null);
-        simpleTypeBasic = ftb.buildSimpleFeatureType();
+        ftb.setSuperTypes(ABSTRACTFEATURETYPE_31);
+        ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"attString")        .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Double.class)           .setName(GML_311_NAMESPACE,"attDouble")        .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        simpleTypeBasic = ftb.build();
 
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName(GML_311_NAMESPACE,"AddressType");
-        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, NamesExt.create(GML_311_NAMESPACE, "streetName"),           null,            1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, NamesExt.create(GML_311_NAMESPACE, "streetNumber"),         null,            1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, NamesExt.create(GML_311_NAMESPACE, "city"),                 null,            1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, NamesExt.create(GML_311_NAMESPACE, "province"),             null,            1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, NamesExt.create(GML_311_NAMESPACE, "postalCode"),           null,            1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, NamesExt.create(GML_311_NAMESPACE, "country"),              null,            0,1,true,null);
-        final ComplexType adress = ftb.buildType();
+        ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"streetName")   .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"streetNumber") .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"city")         .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"province")     .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"postalCode")   .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"country")      .setMinimumOccurs(0).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        final FeatureType adress = ftb.build();
 
-        ftb.reset();
-        ftb.setName(GML_311_NAMESPACE,"AddressPropertyType");
-        ftb.add(adress, NamesExt.create(GML_311_NAMESPACE, "Address"),  null,                    1,1,false,null);
-        final ComplexType mailadress = ftb.buildType();
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName(GML_311_NAMESPACE,"Person");
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_311_NAMESPACE, "insuranceNumber"),      null,           1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "lastName"),             null,           1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "firstName"),            null,           1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_311_NAMESPACE, "age"),                  null,           1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "sex"),                  null,           1,1,true,null);
-        //ftb.add(new DefaultName(GML_NAMESPACE,"spouse"),               Person.class,            0,1,true,null);
-        ftb.add(GML_311_NAMESPACE, "Point",                                Point.class, NamesExt.create(GML_311_NAMESPACE, "position"),             null,           0,1,true,null);
-        ftb.add(mailadress, NamesExt.create(GML_311_NAMESPACE, "mailAddress"),  null,                    0,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "phone"),                null,           0,Integer.MAX_VALUE,true,null);
+        ftb.setSuperTypes(ABSTRACTFEATURETYPE_31);
+        ftb.addAttribute(Integer.class)          .setName(GML_311_NAMESPACE,"insuranceNumber")  .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"lastName")         .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"firstName")        .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Integer.class)          .setName(GML_311_NAMESPACE,"age")              .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(String.class)           .setName(GML_311_NAMESPACE,"sex")              .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Point .class)           .setName(GML_311_NAMESPACE,"position")         .setMinimumOccurs(0).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAssociation(adress).setName(NamesExt.create(GML_311_NAMESPACE, "mailAddress"))   .setMinimumOccurs(0).setMaximumOccurs(1);
+        ftb.addAttribute(String .class)          .setName(GML_311_NAMESPACE,"phone")            .setMinimumOccurs(0).setMaximumOccurs(Integer.MAX_VALUE).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        complexType = ftb.build();
 
-        complexType = ftb.buildFeatureType();
-
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
-        ftb.add(null, "@attString", String.class, NamesExt.create(GML_32_NAMESPACE, "@attString"), null, 0,1,false,"hello",null);
-        ftb.add(null, "@attInteger", Integer.class, NamesExt.create(GML_32_NAMESPACE, "@attInteger"), null ,0,1,false,23,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_32_NAMESPACE, "ID"),  null, 1,1,true, null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_32_NAMESPACE, "eleString"),  null, 1,1,true, null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_32_NAMESPACE, "eleInteger"),  null, 1,1,true, null);
-        typeWithAtts = ftb.buildFeatureType();
+        ftb.setSuperTypes(ABSTRACTFEATURETYPE_32);
+        ftb.addAttribute(String.class)          .setName(GML_32_NAMESPACE,"@attString")  .setMinimumOccurs(0).setMaximumOccurs(1).setDefaultValue("hello");
+        ftb.addAttribute(Integer.class)         .setName(GML_32_NAMESPACE,"@attInteger") .setMinimumOccurs(0).setMaximumOccurs(1).setDefaultValue(23);
+        ftb.addAttribute(Integer.class)         .setName(GML_32_NAMESPACE,"ID")          .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(String.class)          .setName(GML_32_NAMESPACE,"eleString")   .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(Integer.class)         .setName(GML_32_NAMESPACE,"eleInteger")  .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        typeWithAtts = ftb.build();
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
-        ftb.add(NamesExt.create(GML_32_NAMESPACE, "value"),                Object.class);
-        typeWithObject = ftb.buildFeatureType();
+        ftb.setSuperTypes(ABSTRACTFEATURETYPE_31);
+        ftb.addAttribute(Object.class).setName(NamesExt.create(GML_32_NAMESPACE, "value"));
+        typeWithObject = ftb.build();
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
-        typeEmpty = ftb.buildFeatureType();
+        ftb.setSuperTypes(ABSTRACTFEATURETYPE_32);
+        typeEmpty = ftb.build();
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName(GML_32_NAMESPACE,"identifier");
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_32_NAMESPACE, Utils.VALUE_PROPERTY_NAME),  null, 1,1,true, null);
-        ftb.add(NamesExt.create(GML_32_NAMESPACE, "@codeBase"), String.class,1,1,true,null);
-        final ComplexType identifierType = ftb.buildType();
+        ftb.setSuperTypes(ABSTRACTFEATURETYPE_32);
+        ftb.addAttribute(String.class)         .setName(GML_32_NAMESPACE,Utils.VALUE_PROPERTY_NAME)  .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(true);
+        ftb.addAttribute(String.class).setName(NamesExt.create(GML_32_NAMESPACE, "@codeBase")).setMinimumOccurs(1).setMaximumOccurs(1);
+        final FeatureType identifierType = ftb.build();
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
-        ftb.add(identifierType, NamesExt.create(GML_32_NAMESPACE, "identifier"), null, 0, 1, true, null);
-        typeEmpty2 = ftb.buildFeatureType();
+        ftb.setSuperTypes(ABSTRACTFEATURETYPE_31);
+        ftb.addAttribute(String.class).setName(GML_311_NAMESPACE,"@id").addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        ftb.addAssociation(identifierType).setName(NamesExt.create(GML_32_NAMESPACE, "identifier")).setMinimumOccurs(0).setMaximumOccurs(1);
+        typeEmpty2 = ftb.build();
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName(GML_32_NAMESPACE,"SubRecordType");
-        ftb.add(NamesExt.create("@nilReason"),                             String.class,0,1,false,null,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_32_NAMESPACE, "attString"),  null, 1,1,false, null);
-        final ComplexType subRecordType = ftb.buildType();
+        ftb.addAttribute(String.class).setName(NamesExt.create("@nilReason")).setMinimumOccurs(0).setMaximumOccurs(1);
+        ftb.addAttribute(String.class).setName(GML_32_NAMESPACE,"attString")  .setMinimumOccurs(1).setMaximumOccurs(1).addCharacteristic(NILLABLE_CHARACTERISTIC).setDefaultValue(false);
+        final FeatureType subRecordType = ftb.build();
 
-        ftb.reset();
+        ftb = new FeatureTypeBuilder();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
-        ftb.add(subRecordType, NamesExt.create(GML_32_NAMESPACE, "record"), null, 0, 1, true, null);
-        typeWithNil = ftb.buildFeatureType();
+        ftb.setSuperTypes(ABSTRACTFEATURETYPE_32);
+        ftb.addAssociation(subRecordType).setName(NamesExt.create(GML_32_NAMESPACE, "record")).setMinimumOccurs(0).setMaximumOccurs(1);
+        typeWithNil = ftb.build();
 
         ////////////////////////////////////////////////////////////////////////
         // FEATURES ////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
 
         final GeometryFactory GF = new GeometryFactory();
-        FeatureBuilder sfb = new FeatureBuilder(simpleTypeFull);
 
         final Point pt = GF.createPoint(new Coordinate(5, 10));
         JTS.setCRS(pt, crs);
@@ -268,38 +294,41 @@ public class XmlTestData {
         calendar2.set(Calendar.SECOND, 12);
         calendar2.set(Calendar.MILLISECOND, 52);
 
-        int i=0;
-        sfb.reset();
-        sfb.setPropertyValue(i++, 36);
-        sfb.setPropertyValue(i++, "stringValue");
-        sfb.setPropertyValue(i++, 12);
-        sfb.setPropertyValue(i++, 24);
-        sfb.setPropertyValue(i++, 48);
-        sfb.setPropertyValue(i++, 96.12);
-        sfb.setPropertyValue(i++, new BigDecimal(456789));
-        sfb.setPropertyValue(i++, calendar1.getTime());
-        sfb.setPropertyValue(i++, new Timestamp(calendar2.getTimeInMillis()));
-        sfb.setPropertyValue(i++, Boolean.TRUE);
-        sfb.setPropertyValue(i++, pt);
-        sfb.setPropertyValue(i++, mpt);
-        sfb.setPropertyValue(i++, line1);
-        sfb.setPropertyValue(i++, mline);
-        sfb.setPropertyValue(i++, poly1);
-        sfb.setPropertyValue(i++, mpoly);
-        sfb.setPropertyValue(i++, mpt);
-        sfb.setPropertyValue(i++, pt);
-        simpleFeatureFull = sfb.buildFeature("id-156");
+        simpleFeatureFull = simpleTypeFull.newInstance();
+        simpleFeatureFull.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-156");
+        simpleFeatureFull.setPropertyValue("ID", 36);
+        simpleFeatureFull.setPropertyValue("attString", "stringValue");
+        simpleFeatureFull.setPropertyValue("attShort", (short)12);
+        simpleFeatureFull.setPropertyValue("attInteger", 24);
+        simpleFeatureFull.setPropertyValue("attLong", 48l);
+        simpleFeatureFull.setPropertyValue("attDouble", 96.12);
+        simpleFeatureFull.setPropertyValue("attDecimal", new BigDecimal(456789));
+        simpleFeatureFull.setPropertyValue("attDate", calendar1.getTime());
+        simpleFeatureFull.setPropertyValue("attDateTime", new Timestamp(calendar2.getTimeInMillis()));
+        simpleFeatureFull.setPropertyValue("attBoolean", Boolean.TRUE);
+        simpleFeatureFull.setPropertyValue("geomPoint", pt);
+        simpleFeatureFull.setPropertyValue("geomMultiPoint", mpt);
+        simpleFeatureFull.setPropertyValue("geomLine", line1);
+        simpleFeatureFull.setPropertyValue("geomMultiLine", mline);
+        simpleFeatureFull.setPropertyValue("geomPolygon", poly1);
+        simpleFeatureFull.setPropertyValue("geomMultiPolygon", mpoly);
+        simpleFeatureFull.setPropertyValue("geomMultiGeometry", mpt);
+        simpleFeatureFull.setPropertyValue("geomAnyGeometry", pt);
 
-        sfb = new FeatureBuilder(simpleTypeBasic);
-        sfb.setPropertyValue(0,"some text with words.");
-        sfb.setPropertyValue(1,56.14d);
-        simpleFeature1 = sfb.buildFeature("id-89");
-        sfb.setPropertyValue(0,"some words assembled in a text.");
-        sfb.setPropertyValue(1,39.45d);
-        simpleFeature2 = sfb.buildFeature("id-36");
-        sfb.setPropertyValue(0,"a text composed of words.");
-        sfb.setPropertyValue(1,12.31d);
-        simpleFeature3 = sfb.buildFeature("id-412");
+        simpleFeature1 = simpleTypeBasic.newInstance();
+        simpleFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id-89");
+        simpleFeature1.setPropertyValue("attString","some text with words.");
+        simpleFeature1.setPropertyValue("attDouble",56.14d);
+
+        simpleFeature2 = simpleTypeBasic.newInstance();
+        simpleFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id-36");
+        simpleFeature2.setPropertyValue("attString","some words assembled in a text.");
+        simpleFeature2.setPropertyValue("attDouble",39.45d);
+
+        simpleFeature3 = simpleTypeBasic.newInstance();
+        simpleFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(),"id-412");
+        simpleFeature3.setPropertyValue("attString","a text composed of words.");
+        simpleFeature3.setPropertyValue("attDouble",12.31d);
 
         collectionSimple = FeatureStoreUtilities.collection("one of a kind ID", simpleTypeBasic);
         collectionSimple.add(simpleFeature1);
@@ -307,7 +336,7 @@ public class XmlTestData {
         collectionSimple.add(simpleFeature3);
         try {
             collectionSimple = collectionSimple.subCollection(
-                    QueryBuilder.sorted(collectionSimple.getFeatureType().getName(), FF.sort("attDouble", SortOrder.ASCENDING)));
+                    QueryBuilder.sorted(collectionSimple.getFeatureType().getName().toString(), FF.sort("attDouble", SortOrder.ASCENDING)));
         } catch (DataStoreException ex) {
             throw new RuntimeException(ex.getMessage(),ex);
         }
@@ -315,51 +344,39 @@ public class XmlTestData {
         ((AbstractFeatureCollection)collectionSimple).setId("one of a kind ID");
 
 
-        featureComplex = FeatureUtilities.defaultFeature(complexType, "id-0");
-        featureComplex.getProperty("insuranceNumber").setValue(new Integer(345678345));
-        featureComplex.getProperty("lastName").setValue("Smith");
-        featureComplex.getProperty("firstName").setValue("John");
+        featureComplex = complexType.newInstance();
+        featureComplex.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-0");
+        featureComplex.setPropertyValue("insuranceNumber",new Integer(345678345));
+        featureComplex.setPropertyValue("lastName","Smith");
+        featureComplex.setPropertyValue("firstName","John");
 
         //final Property age = FeatureUtilities.defaultProperty(complexType.getDescriptor("age"));
         //age.setValue(new Integer(35));
-        featureComplex.getProperty("age").setValue(new Integer(35));
-        featureComplex.getProperty("sex").setValue("male");
+        featureComplex.setPropertyValue("age",new Integer(35));
+        featureComplex.setPropertyValue("sex","male");
 
-        final Property location = FeatureUtilities.defaultProperty(complexType.getDescriptor("position"));
-        Point pt2 = GF.createPoint(new Coordinate(10, 10));
+        final Point pt2 = GF.createPoint(new Coordinate(10, 10));
         JTS.setCRS(pt2, crs);
-        location.setValue(pt2);
-        featureComplex.getProperties().add(location);
+        featureComplex.setPropertyValue("position", pt2);
 
 
-        final ComplexAttribute address = (ComplexAttribute) FeatureUtilities.defaultProperty(
-                mailadress.getDescriptor("Address"));
-        address.getProperty("streetName").setValue("Main");
-        address.getProperty("streetNumber").setValue("10");
-        address.getProperty("city").setValue("SomeTown");
-        address.getProperty("province").setValue("Ontario");
-        address.getProperty("postalCode").setValue("M1R1K9");
-        final Property country = FeatureUtilities.defaultProperty(adress.getDescriptor("country"));
-        country.setValue("Canada");
-        address.getProperties().add(country);
+        final Feature address = adress.newInstance();
+        address.setPropertyValue("streetName","Main");
+        address.setPropertyValue("streetNumber","10");
+        address.setPropertyValue("city","SomeTown");
+        address.setPropertyValue("province","Ontario");
+        address.setPropertyValue("postalCode","M1R1K9");
+        address.setPropertyValue("country","Canada");
 
-
-        final ComplexAttribute mailAddress = (ComplexAttribute) FeatureUtilities.defaultProperty(
-                complexType.getDescriptor("mailAddress"));
-        mailAddress.getProperties().clear();
-        mailAddress.getProperties().add(address);
-
-        featureComplex.getProperties().add(mailAddress);
-
-        final Property phone = FeatureUtilities.defaultProperty(complexType.getDescriptor("phone"));
-        phone.setValue(Arrays.asList("4161234567", "4168901234"));
-        featureComplex.getProperties().add(phone);
+        featureComplex.setPropertyValue("mailAddress", address);
+        featureComplex.setPropertyValue("phone", Arrays.asList("4161234567","4168901234"));
 
         EPSG_VERSION = org.geotoolkit.referencing.CRS.getVersion("EPSG").toString();
 
 
         //feature with attributes
-        featureWithAttributes = FeatureUtilities.defaultFeature(typeWithAtts, "id-156");
+        featureWithAttributes = typeWithAtts.newInstance();
+        featureWithAttributes.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-156");
         featureWithAttributes.setPropertyValue("ID", 36);
         featureWithAttributes.setPropertyValue("eleString", "stringValue");
         featureWithAttributes.setPropertyValue("eleInteger", 23);
@@ -369,32 +386,36 @@ public class XmlTestData {
         //feature with object
         final FeatureTypeBuilder ctb = new FeatureTypeBuilder();
         ctb.setName("http://www.opengis.net/gml/3.2","quantityType");
-        ctb.add(NamesExt.create("http://www.opengis.net/gml/3.2", "scale"), double.class);
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final AttributeDescriptor adesc = adb.create(ctb.buildType(), NamesExt.create("http://www.opengis.net/gml/3.2", "quantity"), 1, 1, true, null);
+        ctb.addAttribute(Double.class).setName(NamesExt.create("http://www.opengis.net/gml/3.2", "scale"));
+        final FeatureType qtType = ctb.build();
+        //final AttributeDescriptor adesc = adb.create(qtType, NamesExt.create("http://www.opengis.net/gml/3.2", "quantity"), 1, 1, true, null);
 
-        final ComplexAttribute propQuantity = (ComplexAttribute) FeatureUtilities.defaultProperty(adesc);
-        propQuantity.getProperty("scale").setValue(3.14);
-        featureWithObject = FeatureUtilities.defaultFeature(typeWithObject, "id-156");
+        final Feature propQuantity = qtType.newInstance();
+        propQuantity.setPropertyValue("scale",3.14);
+        featureWithObject = typeWithObject.newInstance();
+        featureWithObject.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-156");
         featureWithObject.setPropertyValue("value", propQuantity);
 
 
         //feature with gml identifier property
-        featureEmpty = FeatureUtilities.defaultFeature(typeEmpty2, "id-156");
-        final ComplexAttribute prop = (ComplexAttribute) FeatureUtilities.defaultProperty(typeEmpty2.getDescriptor("identifier"));
-        prop.getProperty(Utils.VALUE_PROPERTY_NAME).setValue("some text");
-        prop.getProperty("@codeBase").setValue("something");
-        featureEmpty.getProperties().add(prop);
+        featureEmpty = typeEmpty2.newInstance();
+        featureEmpty.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-156");
+        final Feature prop = identifierType.newInstance();
+        prop.setPropertyValue(Utils.VALUE_PROPERTY_NAME,"some text");
+        prop.setPropertyValue("@codeBase","something");
+        featureEmpty.setPropertyValue("identifier", prop);
 
         //feature with a nil complex property
-        featureNil = FeatureUtilities.defaultFeature(typeWithNil, "id-156");
-        final ComplexAttribute propnil = (ComplexAttribute) FeatureUtilities.defaultProperty(typeWithNil.getDescriptor("record"));
-        final Attribute att = (Attribute) FeatureUtilities.defaultProperty(propnil.getType().getDescriptor("@nilReason"));
-        att.setValue("unknown");
-        propnil.getProperties().add(att);
-        featureNil.getProperties().add(propnil);
+        featureNil = typeWithNil.newInstance();
+        featureNil.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-156");
+        final Feature propnil = subRecordType.newInstance();
+        propnil.setPropertyValue("@nilReason", "unknown");
+        featureNil.setPropertyValue("record",propnil);
 
+    }
 
+    private static Object addRole(AttributeRole attributeRole) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

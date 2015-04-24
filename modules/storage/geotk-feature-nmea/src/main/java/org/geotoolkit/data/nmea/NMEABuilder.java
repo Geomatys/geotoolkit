@@ -46,8 +46,7 @@ import net.sf.marineapi.nmea.util.Time;
 import net.sf.marineapi.provider.event.ProviderEvent;
 import net.sf.marineapi.provider.event.ProviderListener;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureUtilities;
+import org.opengis.feature.Feature;
 
 /**
  * Create features of type {@link NMEAFeatureStore#NMEA_TYPE} from
@@ -177,7 +176,7 @@ public class NMEABuilder implements SentenceListener {
         }
 
         if (position != null) {
-            next = FeatureUtilities.defaultFeature(NMEAFeatureStore.NMEA_TYPE, FeatureUtilities.createDefaultFeatureId());
+            next = NMEAFeatureStore.NMEA_TYPE.newInstance();
             final Point geom = GFACTORY.createPoint(new Coordinate(position.getLongitude(), position.getLatitude(), position.getAltitude()));
             next.setPropertyValue(GEOM_NAME.toString(), geom);
             next.setPropertyValue(ALT_NAME.toString(), position.getAltitude());

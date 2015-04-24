@@ -11,16 +11,15 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.db.postgres.PostgresFeatureStore;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.opengis.coverage.Coverage;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.apache.sis.referencing.CommonCRS;
@@ -42,10 +41,10 @@ public class PostgisRasterDemo {
         //create a feature type with a coverage attribute type
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("SpotImages");
-        ftb.add("name", String.class);
-        ftb.add("image", Coverage.class, crs);
-        FeatureType type = ftb.buildFeatureType();
-        store.createFeatureType(type.getName(), type);
+        ftb.addAttribute(String.class).setName("name");
+        ftb.addAttribute(Coverage.class).setName("image").setCRS(crs);
+        FeatureType type = ftb.build();
+        store.createFeatureType(type);
         //type migh be a little different after insertion
         type = store.getFeatureType("SpotImages");
 
@@ -70,12 +69,12 @@ public class PostgisRasterDemo {
         final GridCoverage2D coverage = gcb.getGridCoverage2D();
 
         //Create a feature
-        final Feature feature = FeatureUtilities.defaultFeature(type, "id-0");
-        feature.getProperty("name").setValue("world");
-        feature.getProperty("image").setValue(coverage);
+        final Feature feature = type.newInstance();
+        feature.setPropertyValue("name","world");
+        feature.setPropertyValue("image",coverage);
 
         //Save the feature
-        store.addFeatures(type.getName(), Collections.singletonList(feature));
+        store.addFeatures(type.getName().toString(), Collections.singletonList(feature));
 
         //Display it
         final FeatureCollection col = store.createSession(false).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));

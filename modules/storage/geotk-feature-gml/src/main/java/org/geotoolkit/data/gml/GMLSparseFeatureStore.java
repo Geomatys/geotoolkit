@@ -26,9 +26,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
@@ -38,21 +39,17 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.nio.PosixDirectoryFilter;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.storage.DataStores;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
@@ -160,13 +157,13 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public FeatureType getFeatureType(GenericName typeName) throws DataStoreException {
+    public FeatureType getFeatureType(String typeName) throws DataStoreException {
         typeCheck(typeName);
         return featureType;
     }
 
     @Override
-    public List<ComplexType> getFeatureTypeHierarchy(GenericName typeName) throws DataStoreException {
+    public List<FeatureType> getFeatureTypeHierarchy(String typeName) throws DataStoreException {
         return super.getFeatureTypeHierarchy(typeName);
     }
 
@@ -185,7 +182,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public boolean isWritable(GenericName typeName) throws DataStoreException {
+    public boolean isWritable(String typeName) throws DataStoreException {
         typeCheck(typeName);
         return true;
     }
@@ -198,41 +195,41 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
-        typeCheck(typeName);
+    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
+        typeCheck(query.getTypeName());
         final WriterIterator ite = new WriterIterator(featureType, file);
-        return handleRemaining(ite, filter);
+        return handleRemaining(ite, query.getFilter());
     }
 
     @Override
-    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
 
     @Override
-    public void updateFeatures(GenericName groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(String groupName, Filter filter, Map<String, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
     // TYPE CREATE/UPDATE NOT SUPPORTED ////////////////////////////////////////
 
     @Override
-    public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 
     @Override
-    public void updateFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 
     @Override
-    public void deleteFeatureType(GenericName typeName) throws DataStoreException {
+    public void deleteFeatureType(String typeName) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 
@@ -351,7 +348,8 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
                 return super.next();
             }else{
                 //append mode
-                currentFeature = FeatureFactory.LENIENT.createFeature(new ArrayList(), type, FeatureUtilities.createDefaultFeatureId());
+                currentFeature = type.newInstance();
+                currentFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), FeatureExt.createDefaultFeatureId());
                 currentFile = null;
                 return currentFeature;
             }
@@ -377,7 +375,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
 
             if(currentFile==null){
                 //append mode
-                currentFile = file.resolve(currentFeature.getIdentifier().getID()+".gml");
+                currentFile = file.resolve(FeatureExt.getId(currentFeature).getID()+".gml");
             }
 
             //write feature

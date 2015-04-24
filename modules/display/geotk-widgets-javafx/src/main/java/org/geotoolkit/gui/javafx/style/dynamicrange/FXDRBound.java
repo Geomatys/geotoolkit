@@ -23,11 +23,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
-import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
 import org.geotoolkit.gui.javafx.style.FXTextExpression;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
+import org.opengis.feature.FeatureType;
 
 /**
  *

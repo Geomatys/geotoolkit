@@ -24,7 +24,7 @@ import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.CachedTextSymbolizer;
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 import org.opengis.style.Symbolizer;
 
 /**

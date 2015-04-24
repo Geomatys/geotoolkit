@@ -35,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureStore;
@@ -56,8 +57,8 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 
 /**
@@ -123,7 +124,7 @@ public class JLayerChooser extends javax.swing.JPanel {
                 if(source instanceof FeatureStore){
                     final FeatureStore store = (FeatureStore) source;
                     final Session session = store.createSession(true);
-                    final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
+                    final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name.toString()));
                     final MutableStyle style = RandomStyleBuilder.createRandomVectorStyle(collection.getFeatureType());
                     final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
                     layer.setDescription(styleFactory.description(name.tip().toString(), name.toString()));
@@ -152,8 +153,9 @@ public class JLayerChooser extends javax.swing.JPanel {
         if(source instanceof FeatureStore){
             final FeatureStore store = (FeatureStore) source;
             for(GenericName name : store.getNames()){
-                final FeatureType ft = store.getFeatureType(name);
-                if(ft.getGeometryDescriptor() != null){
+                final FeatureType ft = store.getFeatureType(name.toString());
+                final AttributeType<?> geomAtt = FeatureExt.getDefaultGeometryAttribute(ft);
+                if(geomAtt != null){
                     firstCandidates.add(ft);
                 }else{
                     secondCandidates.add(ft);
@@ -251,10 +253,10 @@ public class JLayerChooser extends javax.swing.JPanel {
                 final FeatureType ft = (FeatureType) value;
                 final FeatureStore store = (FeatureStore) getSource();
 
-                final GeometryDescriptor desc = ft.getGeometryDescriptor();
+                final AttributeType<?> desc = FeatureExt.getDefaultGeometryAttribute(ft);
                 if(desc != null){
                     ImageIcon icon;
-                    final Class binding = desc.getType().getBinding();
+                    final Class binding = desc.getValueClass();
                     if(Point.class.isAssignableFrom(binding)){
                         icon = IconBundle.getIcon("16_single_point");
                     }else if(MultiPoint.class.isAssignableFrom(binding)){
@@ -273,7 +275,7 @@ public class JLayerChooser extends javax.swing.JPanel {
 
                     boolean editable = false;
                     try {
-                        if(store.isWritable(ft.getName())){
+                        if(store.isWritable(ft.getName().toString())){
                             editable = true;
                         }
                     } catch (DataStoreException ex) {}

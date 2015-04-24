@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.kml;
 
-import org.geotoolkit.feature.FeatureUtilities;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
@@ -24,12 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
-import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.Boundary;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -44,9 +41,8 @@ import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -59,38 +55,26 @@ public class FolderTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/folder.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public FolderTest() {
-    }
 
     @Test
     public void folderReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
         final Feature folder = kmlObjects.getAbstractFeature();
-        assertEquals("Folder.kml", folder.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertEquals("\n    A folder is a container that can hold multiple other objects\n  ", folder.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()).getValue());
-        assertTrue((Boolean) folder.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
+        assertEquals("Folder.kml", folder.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals("\n    A folder is a container that can hold multiple other objects\n  ", folder.getPropertyValue(KmlConstants.TAG_DESCRIPTION));
+        assertEquals(Boolean.TRUE, folder.getPropertyValue(KmlConstants.TAG_OPEN));
 
-        assertEquals(3, folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).size());
-
-        Iterator i = folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
-
-        if (i.hasNext()){
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark0 = (Feature) object;
-            assertTrue(placemark0.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-
-            assertEquals("Folder object 1 (Placemark)", placemark0.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            AbstractGeometry abstractGeometry0 = (AbstractGeometry) placemark0.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-            assertTrue(abstractGeometry0 instanceof Point);
-            Point point = (Point) abstractGeometry0;
+        Iterator<?> i = ((Iterable<?>) folder.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        {
+            Feature placemark = (Feature) i.next();
+            assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
+            assertEquals("Folder object 1 (Placemark)", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+            Point point = (Point) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
             CoordinateSequence coordinates0 = point.getCoordinateSequence();
             assertEquals(1, coordinates0.size());
             Coordinate coordinate00 = coordinates0.getCoordinate(0);
@@ -99,17 +83,13 @@ public class FolderTest extends org.geotoolkit.test.TestBase {
             assertEquals(0, coordinate00.z, DELTA);
         }
 
-        if (i.hasNext()){
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark1 = (Feature) object;
-            assertTrue(placemark1.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-
-            assertEquals("Folder object 2 (Polygon)", placemark1.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            AbstractGeometry abstractGeometry1 = (AbstractGeometry) placemark1.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-            assertTrue(abstractGeometry1 instanceof Polygon);
-            Polygon polygon = (Polygon) abstractGeometry1;
-            Boundary outerBoundaryIs = (Boundary) polygon.getOuterBoundary();
+        assertTrue("Expected at least 2 elements.", i.hasNext());
+        {
+            Feature placemark = (Feature) i.next();
+            assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
+            assertEquals("Folder object 2 (Polygon)", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+            Polygon polygon = (Polygon) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
+            Boundary outerBoundaryIs = polygon.getOuterBoundary();
             LinearRing linearRing = outerBoundaryIs.getLinearRing();
             CoordinateSequence coordinates1 = linearRing.getCoordinateSequence();
             assertEquals(4, coordinates1.size());
@@ -131,16 +111,12 @@ public class FolderTest extends org.geotoolkit.test.TestBase {
             assertEquals(0, coordinate13.z, DELTA);
         }
 
-        if (i.hasNext()){
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark2 = (Feature) object;
-            assertTrue(placemark2.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-
-            assertEquals("Folder object 3 (Path)", placemark2.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            AbstractGeometry abstractGeometry2 = (AbstractGeometry) placemark2.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-            assertTrue(abstractGeometry2 instanceof LineString);
-            LineString lineString = (LineString) abstractGeometry2;
+        assertTrue("Expected at least 3 elements.", i.hasNext());
+        {
+            Feature placemark = (Feature) i.next();
+            assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
+            assertEquals("Folder object 3 (Path)", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+            LineString lineString = (LineString) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
             assertTrue(lineString.getTessellate());
             CoordinateSequence coordinates2 = lineString.getCoordinateSequence();
             assertEquals(2, coordinates2.size());
@@ -166,9 +142,8 @@ public class FolderTest extends org.geotoolkit.test.TestBase {
         final Coordinate coordinate00 = kmlFactory.createCoordinate(longitude00, latitude00, altitude00);
         final CoordinateSequence coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00));
         final Point point = kmlFactory.createPoint(coordinates0);
-        final Collection<Property> placemark0Properties = placemark0.getProperties();
-        placemark0Properties.add(FF.createAttribute(point, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
-        placemark0Properties.add(FF.createAttribute("Folder object 1 (Placemark)", KmlModelConstants.ATT_NAME, null));
+        placemark0.setPropertyValue(KmlConstants.TAG_GEOMETRY, point);
+        placemark0.setPropertyValue(KmlConstants.TAG_NAME, "Folder object 1 (Placemark)");
 
         final Feature placemark1 = kmlFactory.createPlacemark();
         final double longitude10 = -122.377830;
@@ -192,9 +167,8 @@ public class FolderTest extends org.geotoolkit.test.TestBase {
         final Boundary outerBoundaryIs = kmlFactory.createBoundary();
         outerBoundaryIs.setLinearRing(linearRing);
         final Polygon polygon = kmlFactory.createPolygon(outerBoundaryIs, null);
-        final Collection<Property> placemark1Properties = placemark1.getProperties();
-        placemark1Properties.add(FF.createAttribute(polygon, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
-        placemark1Properties.add(FF.createAttribute("Folder object 2 (Polygon)", KmlModelConstants.ATT_NAME, null));
+        placemark1.setPropertyValue(KmlConstants.TAG_GEOMETRY, polygon);
+        placemark1.setPropertyValue(KmlConstants.TAG_NAME, "Folder object 2 (Polygon)");
 
         final Feature placemark2 = kmlFactory.createPlacemark();
         final double longitude20 = -122.378009;
@@ -208,18 +182,14 @@ public class FolderTest extends org.geotoolkit.test.TestBase {
         final CoordinateSequence coordinates2 = kmlFactory.createCoordinates(Arrays.asList(coordinate20, coordinate21));
         final LineString lineString = kmlFactory.createLineString(coordinates2);
         lineString.setTessellate(true);
-        final Collection<Property> placemark2Properties = placemark2.getProperties();
-        placemark2Properties.add(FF.createAttribute(lineString, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
-        placemark2Properties.add(FF.createAttribute("Folder object 3 (Path)", KmlModelConstants.ATT_NAME, null));
+        placemark2.setPropertyValue(KmlConstants.TAG_GEOMETRY, lineString);
+        placemark2.setPropertyValue(KmlConstants.TAG_NAME, "Folder object 3 (Path)");
 
         final Feature folder = kmlFactory.createFolder();
-        final Collection<Property> folderProperties = folder.getProperties();
-        folderProperties.add(FF.createAttribute("Folder.kml", KmlModelConstants.ATT_NAME, null));
-        folder.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        folderProperties.add(FF.createAttribute("\n    A folder is a container that can hold multiple other objects\n  ", KmlModelConstants.ATT_DESCRIPTION, null));
-        folderProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_FOLDER_FEATURES));
-        folderProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_FOLDER_FEATURES));
-        folderProperties.add(FeatureUtilities.wrapProperty(placemark2, KmlModelConstants.ATT_FOLDER_FEATURES));
+        folder.setPropertyValue(KmlConstants.TAG_NAME, "Folder.kml");
+        folder.setPropertyValue(KmlConstants.TAG_OPEN, Boolean.TRUE);
+        folder.setPropertyValue(KmlConstants.TAG_DESCRIPTION, "\n    A folder is a container that can hold multiple other objects\n  ");
+        folder.setPropertyValue(KmlConstants.TAG_FEATURES, Arrays.asList(placemark0,placemark1,placemark2));
 
         final Kml kml = kmlFactory.createKml(null, folder, null, null);
 
@@ -231,7 +201,6 @@ public class FolderTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                 new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

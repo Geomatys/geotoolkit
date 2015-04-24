@@ -36,8 +36,7 @@ import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
+import org.opengis.feature.Feature;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 
@@ -49,14 +48,9 @@ import org.xml.sax.SAXException;
 public class ReplaceTest extends org.geotoolkit.test.TestBase {
 
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/replace.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public ReplaceTest() {
-    }
 
     @Test
     public void replaceReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
@@ -68,37 +62,32 @@ public class ReplaceTest extends org.geotoolkit.test.TestBase {
         assertEquals("http://chezmoi.com/tests.kml", targetHref.toString());
 
         assertEquals(2, update.getUpdates().size());
-        assertTrue(update.getUpdates().get(0) instanceof Feature);
         Feature placemark = (Feature) update.getUpdates().get(0);
-        assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-        assertEquals("Replace placemark", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
+        assertEquals("Replace placemark", placemark.getPropertyValue(KmlConstants.TAG_NAME));
 
-        assertTrue(update.getUpdates().get(1) instanceof Feature);
         Feature groundOverlay = (Feature) update.getUpdates().get(1);
-        assertTrue(groundOverlay.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY));
-        assertEquals("Replace overlay", groundOverlay.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-
+        assertEquals(KmlModelConstants.TYPE_GROUND_OVERLAY, groundOverlay.getType());
+        assertEquals("Replace overlay", groundOverlay.getPropertyValue(KmlConstants.TAG_NAME));
     }
 
     @Test
-    public void replaceWriteTest()
-            throws KmlException, IOException,
-            XMLStreamException, ParserConfigurationException,
-            SAXException, URISyntaxException {
-
+    public void replaceWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException,
+            SAXException, URISyntaxException
+    {
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Feature placemark = kmlFactory.createPlacemark();
-        placemark.getProperties().add(FF.createAttribute("Replace placemark", KmlModelConstants.ATT_NAME, null));
+        placemark.setPropertyValue(KmlConstants.TAG_NAME, "Replace placemark");
 
         final Feature groundOverlay = kmlFactory.createGroundOverlay();
-        groundOverlay.getProperties().add(FF.createAttribute("Replace overlay", KmlModelConstants.ATT_NAME, null));
+        groundOverlay.setPropertyValue(KmlConstants.TAG_NAME, "Replace overlay");
 
         final URI targetHref = new URI("http://chezmoi.com/tests.kml");
 
         final Update update = kmlFactory.createUpdate();
         update.setTargetHref(targetHref);
-        update.setUpdates(Arrays.asList((Object) placemark, (Object) groundOverlay));
+        update.setUpdates(Arrays.<Object>asList(placemark, groundOverlay));
 
         final NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
         networkLinkControl.setUpdate(update);
@@ -115,7 +104,6 @@ public class ReplaceTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

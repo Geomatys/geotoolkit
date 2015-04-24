@@ -34,6 +34,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.measure.Units;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.storage.coverage.CoverageReference;
@@ -43,17 +46,13 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.se.xml.v110.RuleType;
 import org.geotoolkit.se.xml.v110.SymbolizerType;
 import org.geotoolkit.sld.xml.StyleXmlIO;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.ExtensionSymbolizer;
@@ -203,18 +202,18 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         }
     }
 
-    public static SimpleFeatureType buildCellType(CoverageMapLayer layer) throws DataStoreException{
+    public static FeatureType buildCellType(CoverageMapLayer layer) throws DataStoreException{
         return buildCellType(layer.getCoverageReference());
     }
 
-    public static SimpleFeatureType buildCellType(CoverageReference ref) throws DataStoreException{
+    public static FeatureType buildCellType(CoverageReference ref) throws DataStoreException{
         final GridCoverageReader reader = ref.acquireReader();
-        final SimpleFeatureType sft = buildCellType(reader, ref.getImageIndex());
+        final FeatureType sft = buildCellType(reader, ref.getImageIndex());
         ref.recycle(reader);
         return sft;
     }
 
-    public static SimpleFeatureType buildCellType(GridCoverageReader reader, int imageIndex) throws DataStoreException{
+    public static FeatureType buildCellType(GridCoverageReader reader, int imageIndex) throws DataStoreException{
         final List<GridSampleDimension> lst = reader.getSampleDimensions(imageIndex);
         final GeneralGridGeometry gg = reader.getGridGeometry(imageIndex);
         final CoordinateReferenceSystem crs = gg.getCoordinateReferenceSystem();
@@ -234,7 +233,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         }
     }
 
-    public static SimpleFeatureType buildCellType(GridCoverage2D coverage){
+    public static FeatureType buildCellType(GridCoverage2D coverage){
         final int nbBand = coverage.getNumSampleDimensions();
         final GridSampleDimension[] dims = coverage.getSampleDimensions();
         final String[] names = new String[dims.length];
@@ -244,106 +243,54 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         return buildCellType(nbBand, names, coverage.getCoordinateReferenceSystem2D());
     }
 
-    public static SimpleFeatureType buildCellType(int nbBand, String[] bandnames, CoordinateReferenceSystem crs){
+    public static FeatureType buildCellType(int nbBand, String[] bandnames, CoordinateReferenceSystem crs){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-        atb.setBinding(double.class);
 
         ftb.setName("cell");
-        ftb.add(PROPERY_GEOM_CENTER, Point.class,crs);
-        ftb.add(PROPERY_GEOM_CONTOUR, Polygon.class,crs);
-        ftb.setDefaultGeometry(PROPERY_GEOM_CENTER);
+        ftb.addAttribute(Point.class).setName(PROPERY_GEOM_CENTER).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Polygon.class).setName(PROPERY_GEOM_CONTOUR).setCRS(crs);
 
         for(int b=0,n=nbBand;b<n;b++){
             final String name = "band_"+b;
             final String bandName = (bandnames!=null) ? bandnames[b] : "";
-            atb.setDescription(bandName);
-
-            adb.setName(name+PROPERY_SUFFIX_COUNT);
-            adb.setType(atb.buildType());
-            ftb.add(adb.buildDescriptor());
-
-            adb.setName(name+PROPERY_SUFFIX_MIN);
-            adb.setType(atb.buildType());
-            ftb.add(adb.buildDescriptor());
-
-            adb.setName(name+PROPERY_SUFFIX_MEAN);
-            adb.setType(atb.buildType());
-            ftb.add(adb.buildDescriptor());
-
-            adb.setName(name+PROPERY_SUFFIX_MAX);
-            adb.setType(atb.buildType());
-            ftb.add(adb.buildDescriptor());
-
-            adb.setName(name+PROPERY_SUFFIX_RANGE);
-            adb.setType(atb.buildType());
-            ftb.add(adb.buildDescriptor());
-
-            adb.setName(name+PROPERY_SUFFIX_RMS);
-            adb.setType(atb.buildType());
-            ftb.add(adb.buildDescriptor());
-
-            adb.setName(name+PROPERY_SUFFIX_SUM);
-            adb.setType(atb.buildType());
-            ftb.add(adb.buildDescriptor());
+            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_COUNT);
+            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_MIN);
+            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_MEAN);
+            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_MAX);
+            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_RANGE);
+            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_RMS);
+            ftb.addAttribute(double.class).setDescription(bandName).setName(name+PROPERY_SUFFIX_SUM);
         }
-        return ftb.buildSimpleFeatureType();
+        return ftb.build();
     }
 
-    public static SimpleFeatureType buildCellType(final FeatureType basetype, CoordinateReferenceSystem crs){
-        crs = (crs==null)? basetype.getCoordinateReferenceSystem() : crs;
+    public static FeatureType buildCellType(final FeatureType basetype, CoordinateReferenceSystem crs){
+        crs = (crs==null)? FeatureExt.getCRS(basetype) : crs;
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-        atb.setBinding(double.class);
 
         ftb.setName("cell");
-        ftb.add(PROPERY_GEOM_CENTER, Point.class,crs);
-        ftb.add(PROPERY_GEOM_CONTOUR, Polygon.class,crs);
-        ftb.setDefaultGeometry(PROPERY_GEOM_CENTER);
+        ftb.addAttribute(Point.class).setName(PROPERY_GEOM_CENTER).setCRS(crs).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Polygon.class).setName(PROPERY_GEOM_CONTOUR).setCRS(crs);
 
         //loop on all properties, extract numeric fields only
-        for(PropertyDescriptor desc : basetype.getDescriptors()){
-            if(desc instanceof AttributeDescriptor){
-                final AttributeDescriptor att = (AttributeDescriptor) desc;
-                final Class binding = att.getType().getBinding();
+        for(PropertyType desc : basetype.getProperties(true)){
+            if(desc instanceof AttributeType){
+                final AttributeType att = (AttributeType) desc;
+                final Class binding = att.getValueClass();
                 if(Number.class.isAssignableFrom(binding) || String.class.isAssignableFrom(binding)){
-                    final String name = att.getLocalName();
-                    atb.setDescription(name);
-
-                    adb.setName(name+PROPERY_SUFFIX_COUNT);
-                    adb.setType(atb.buildType());
-                    ftb.add(adb.buildDescriptor());
-
-                    adb.setName(name+PROPERY_SUFFIX_MIN);
-                    adb.setType(atb.buildType());
-                    ftb.add(adb.buildDescriptor());
-
-                    adb.setName(name+PROPERY_SUFFIX_MEAN);
-                    adb.setType(atb.buildType());
-                    ftb.add(adb.buildDescriptor());
-
-                    adb.setName(name+PROPERY_SUFFIX_MAX);
-                    adb.setType(atb.buildType());
-                    ftb.add(adb.buildDescriptor());
-
-                    adb.setName(name+PROPERY_SUFFIX_RANGE);
-                    adb.setType(atb.buildType());
-                    ftb.add(adb.buildDescriptor());
-
-                    adb.setName(name+PROPERY_SUFFIX_RMS);
-                    adb.setType(atb.buildType());
-                    ftb.add(adb.buildDescriptor());
-
-                    adb.setName(name+PROPERY_SUFFIX_SUM);
-                    adb.setType(atb.buildType());
-                    ftb.add(adb.buildDescriptor());
+                    final String name = att.getName().toString();
+                    ftb.addAttribute(double.class).setDescription(name).setName(name+PROPERY_SUFFIX_COUNT);
+                    ftb.addAttribute(double.class).setDescription(name).setName(name+PROPERY_SUFFIX_MIN);
+                    ftb.addAttribute(double.class).setDescription(name).setName(name+PROPERY_SUFFIX_MEAN);
+                    ftb.addAttribute(double.class).setDescription(name).setName(name+PROPERY_SUFFIX_MAX);
+                    ftb.addAttribute(double.class).setDescription(name).setName(name+PROPERY_SUFFIX_RANGE);
+                    ftb.addAttribute(double.class).setDescription(name).setName(name+PROPERY_SUFFIX_RMS);
+                    ftb.addAttribute(double.class).setDescription(name).setName(name+PROPERY_SUFFIX_SUM);
                 }
             }
         }
 
-        return ftb.buildSimpleFeatureType();
+        return ftb.build();
     }
 
     @Override

@@ -31,5 +31,4 @@ public interface SimpleTypeContainer {
     String getTagName();
 
     Object getValue();
-
 }

@@ -16,12 +16,11 @@
  */
 package org.geotoolkit.data.gx;
 
-import org.geotoolkit.feature.FeatureUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -43,15 +42,10 @@ import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -64,71 +58,38 @@ public class TimePrimitivesTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/timePrimitives.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
     private final ISODateParser du = new ISODateParser();
 
-    public TimePrimitivesTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
     @Test
-    public void timePrimitivesReadTest()
-            throws IOException, XMLStreamException, URISyntaxException, KmlException {
+    public void timePrimitivesReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
+        final Feature document;
+        {
+            final KmlReader reader = new KmlReader();
+            final GxReader gxReader = new GxReader(reader);
+            reader.setInput(new File(pathToTestFile));
+            reader.addExtensionReader(gxReader);
+            final Kml kmlObjects = reader.read();
+            reader.dispose();
+            document = kmlObjects.getAbstractFeature();
+        }
+        assertEquals(KmlModelConstants.TYPE_DOCUMENT, document.getType());
+        assertEquals("Views with Time", document.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(Boolean.TRUE, document.getPropertyValue(KmlConstants.TAG_OPEN));
+        assertEquals("\n" +
+                     "      In Google Earth, enable historical imagery and sunlight,\n"+
+                     "      then click on each placemark to fly to that point in time.\n"+
+                     "    ", document.getPropertyValue(KmlConstants.TAG_DESCRIPTION));
 
-        Iterator i;
-
-        final KmlReader reader = new KmlReader();
-        final GxReader gxReader = new GxReader(reader);
-        reader.setInput(new File(pathToTestFile));
-        reader.addExtensionReader(gxReader);
-        final Kml kmlObjects = reader.read();
-        reader.dispose();
-
-        final Feature document = kmlObjects.getAbstractFeature();
-        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
-        assertEquals("Views with Time", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
-        String description = "\n      In Google Earth, enable historical imagery and sunlight,\n"+
-                "      then click on each placemark to fly to that point in time.\n"+
-                "    ";
-        assertEquals(description, document.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()).getValue());
-
-        assertEquals(2, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
-
-        i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-
-        if(i.hasNext()){
-            final Object object = i.next();
-            assertTrue(object instanceof Feature);
-            final Feature placemark0 = (Feature) object;
-
-            assertEquals("Sutro Baths in 1946", placemark0.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-
-            assertTrue(placemark0.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue() instanceof Camera);
-
-            final Camera camera0 = (Camera) placemark0.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue();
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        {
+            final Feature placemark = (Feature) i.next();
+            assertEquals("Sutro Baths in 1946", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+            final Camera camera0 = (Camera) placemark.getPropertyValue(KmlConstants.TAG_VIEW);
             assertEquals(1, camera0.extensions().complexes(Names.VIEW).size());
-            assertTrue(camera0.extensions().complexes(Names.VIEW).get(0) instanceof TimeStamp);
-
             final TimeStamp timeStamp = (TimeStamp) camera0.extensions().complexes(Names.VIEW).get(0);
             final String when = "1946-07-29T05:00:00-08:00";
             final Calendar calendarWhen = (Calendar) du.getCalendar(when).clone();
-
             assertEquals(calendarWhen, timeStamp.getWhen());
 
             assertEquals(-122.518172,camera0.getLongitude(), DELTA);
@@ -138,31 +99,25 @@ public class TimePrimitivesTest extends org.geotoolkit.test.TestBase {
             assertEquals(75.0,camera0.getTilt(), DELTA);
         }
 
-        if(i.hasNext()){
-            final Object object = i.next();
-            assertTrue(object instanceof Feature);
-            final Feature placemark1 = (Feature) object;
+        assertTrue("Expected at least 2 elements.", i.hasNext());
+        {
+            final Feature placemark = (Feature) i.next();
+            assertEquals("Palace of Fine Arts in 2002", placemark.getPropertyValue(KmlConstants.TAG_NAME));
 
-            assertEquals("Palace of Fine Arts in 2002", placemark1.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-
-            assertTrue(placemark1.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue() instanceof Camera);
-
-            final Camera camera1 = (Camera) placemark1.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue();
-            assertEquals(1, camera1.extensions().complexes(Names.VIEW).size());
-            assertTrue(camera1.extensions().complexes(Names.VIEW).get(0) instanceof TimeSpan);
-
-            final TimeSpan timeSpan = (TimeSpan) camera1.extensions().complexes(Names.VIEW).get(0);
+            final Camera camera = (Camera) placemark.getPropertyValue(KmlConstants.TAG_VIEW);
+            assertEquals(1, camera.extensions().complexes(Names.VIEW).size());
+            final TimeSpan timeSpan = (TimeSpan) camera.extensions().complexes(Names.VIEW).get(0);
             final String begin = "2002-07-09T19:00:00-08:00";
             final Calendar calendarBegin = (Calendar) du.getCalendar(begin).clone();
-
             assertEquals(calendarBegin, timeSpan.getBegin());
 
-            assertEquals(-122.444633,camera1.getLongitude(), DELTA);
-            assertEquals(37.801899,camera1.getLatitude(), DELTA);
-            assertEquals(139.629438,camera1.getAltitude(), DELTA);
-            assertEquals(-70.0,camera1.getHeading(), DELTA);
-            assertEquals(75.0,camera1.getTilt(), DELTA);
+            assertEquals(-122.444633,camera.getLongitude(), DELTA);
+            assertEquals(37.801899,camera.getLatitude(), DELTA);
+            assertEquals(139.629438,camera.getAltitude(), DELTA);
+            assertEquals(-70.0,camera.getHeading(), DELTA);
+            assertEquals(75.0,camera.getTilt(), DELTA);
         }
+        assertFalse("Expected exactly 2 elements.", i.hasNext());
     }
 
     @Test
@@ -184,10 +139,8 @@ public class TimePrimitivesTest extends org.geotoolkit.test.TestBase {
         camera0.extensions().complexes(Names.VIEW).add(timeStamp);
 
         final Feature placemark0 = kmlFactory.createPlacemark();
-        Collection<Property> placemark0Properties = placemark0.getProperties();
-        placemark0Properties.add(FF.createAttribute("Sutro Baths in 1946",KmlModelConstants.ATT_NAME, null));
-        placemark0Properties.add(FF.createAttribute(camera0,KmlModelConstants.ATT_VIEW, null));
-
+        placemark0.setPropertyValue(KmlConstants.TAG_NAME, "Sutro Baths in 1946");
+        placemark0.setPropertyValue(KmlConstants.TAG_VIEW, camera0);
 
         final Camera camera1 = kmlFactory.createCamera();
         camera1.setLongitude(-122.444633);
@@ -204,21 +157,17 @@ public class TimePrimitivesTest extends org.geotoolkit.test.TestBase {
         camera1.extensions().complexes(Names.VIEW).add(timeSpan);
 
         final Feature placemark1 = kmlFactory.createPlacemark();
-        Collection<Property> placemark1Properties = placemark1.getProperties();
-        placemark1Properties.add(FF.createAttribute("Palace of Fine Arts in 2002",KmlModelConstants.ATT_NAME, null));
-        placemark1Properties.add(FF.createAttribute(camera1,KmlModelConstants.ATT_VIEW, null));
-
+        placemark1.setPropertyValue(KmlConstants.TAG_NAME, "Palace of Fine Arts in 2002");
+        placemark1.setPropertyValue(KmlConstants.TAG_VIEW, camera1);
 
         final Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FF.createAttribute("Views with Time", KmlModelConstants.ATT_NAME, null));
+        document.setPropertyValue(KmlConstants.TAG_NAME, "Views with Time");
         final String description = "\n      In Google Earth, enable historical imagery and sunlight,\n"+
                 "      then click on each placemark to fly to that point in time.\n"+
                 "    ";
-        documentProperties.add(FF.createAttribute(description, KmlModelConstants.ATT_DESCRIPTION, null));
-        document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        document.setPropertyValue(KmlConstants.TAG_DESCRIPTION, description);
+        document.setPropertyValue(KmlConstants.TAG_OPEN, Boolean.TRUE);
+        document.setPropertyValue(KmlConstants.TAG_FEATURES, Arrays.asList(placemark0,placemark1));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
@@ -233,8 +182,6 @@ public class TimePrimitivesTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
-
 }

@@ -27,7 +27,6 @@ import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
-import org.geotoolkit.feature.FeatureFactory;
 import org.xml.sax.SAXException;
 
 /**
@@ -37,30 +36,22 @@ import org.xml.sax.SAXException;
  */
 public class DataRWTest extends org.geotoolkit.test.TestBase {
 
-    private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/dataRW.xml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public DataRWTest() {
-    }
 
     @Test
     public void cameraReadTest() throws IOException, XMLStreamException {
-
         final DataReader reader = new DataReader();
         reader.setInput(new File(pathToTestFile));
         final List<String> racine = reader.read();
         reader.dispose();
-
-        for (String element : racine){
-            System.out.println(element);
+        for (String element : racine) {
+//          System.out.println(element);
         }
-
     }
 
     @Test
     public void cameraWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final List<String> racine = new ArrayList<String>();
+        final List<String> racine = new ArrayList<>();
         racine.add("Je suis un element.");
         racine.add("J'en suis un autre.");
 
@@ -72,8 +63,6 @@ public class DataRWTest extends org.geotoolkit.test.TestBase {
         writer.write(racine);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

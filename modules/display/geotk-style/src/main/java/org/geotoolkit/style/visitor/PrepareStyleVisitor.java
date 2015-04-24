@@ -19,8 +19,7 @@ package org.geotoolkit.style.visitor;
 import org.geotoolkit.filter.visitor.PrepareFilterVisitor;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.style.AbstractSymbolizer;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -67,7 +66,7 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
     
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
             
-    public PrepareStyleVisitor(final Class clazz,final ComplexType expectedType){
+    public PrepareStyleVisitor(final Class clazz,final FeatureType expectedType){
         super(clazz, expectedType);
     }
 

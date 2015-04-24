@@ -20,12 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
-import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
 import org.geotoolkit.data.gx.model.EnumFlyToMode;
 import org.geotoolkit.data.gx.model.EnumPlayMode;
 import org.geotoolkit.data.gx.model.FlyTo;
@@ -47,15 +45,10 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -68,32 +61,9 @@ public class Tour2Test extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/tour2.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public Tour2Test() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void tour2ReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
-
-        Iterator i;
-
         final KmlReader reader = new KmlReader();
         final GxReader gxReader = new GxReader(reader);
         reader.setInput(new File(pathToTestFile));
@@ -102,16 +72,13 @@ public class Tour2Test extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         final Feature tour = kmlObjects.getAbstractFeature();
-        assertTrue(tour.getType().equals(GxModelConstants.TYPE_TOUR));
-        assertTrue(tour.getProperty(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).getValue() instanceof PlayList);
-        final PlayList playList = (PlayList) tour.getProperty(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).getValue();
+        assertEquals(GxModelConstants.TYPE_TOUR, tour.getType());
+        final PlayList playList = (PlayList) ((List)tour.getPropertyValue(KmlConstants.ATT_PLAYLIST)).get(0);
         assertEquals(4, playList.getTourPrimitives().size());
 
-        assertTrue(playList.getTourPrimitives().get(0) instanceof FlyTo);
         final FlyTo flyTo = (FlyTo) playList.getTourPrimitives().get(0);
         assertEquals(5, flyTo.getDuration(), DELTA);
         assertEquals(EnumFlyToMode.SMOOTH, flyTo.getFlyToMode());
-        assertTrue(flyTo.getView() instanceof LookAt);
         final LookAt lookAt = (LookAt) flyTo.getView();
         assertEquals(-79.387, lookAt.getLongitude(), DELTA);
         assertEquals(43.643, lookAt.getLatitude(), DELTA);
@@ -121,18 +88,14 @@ public class Tour2Test extends org.geotoolkit.test.TestBase {
         assertEquals(1200, lookAt.getRange(), DELTA);
         assertEquals(EnumAltitudeMode.RELATIVE_TO_GROUND, lookAt.getAltitudeMode());
 
-        assertTrue(playList.getTourPrimitives().get(1) instanceof TourControl);
         final TourControl tourControl = (TourControl) playList.getTourPrimitives().get(1);
         assertEquals(EnumPlayMode.PAUSE, tourControl.getPlayMode());
 
-        assertTrue(playList.getTourPrimitives().get(2) instanceof SoundCue);
         final SoundCue soundCue = (SoundCue) playList.getTourPrimitives().get(2);
         assertEquals("http://dev.keyhole.com/codesite/cntowerfacts.mp3", soundCue.getHref());
 
-        assertTrue(playList.getTourPrimitives().get(3) instanceof Wait);
         final Wait wait = (Wait) playList.getTourPrimitives().get(3);
         assertEquals(10, wait.getDuration(), DELTA);
-
     }
 
     @Test
@@ -162,13 +125,11 @@ public class Tour2Test extends org.geotoolkit.test.TestBase {
         final Wait wait = gxFactory.createWait();
         wait.setDuration(10);
 
-
         final PlayList playList = gxFactory.createPlayList();
-        playList.setTourPrimitives(Arrays.asList((AbstractTourPrimitive) flyTo, tourControl, soundCue, wait));
+        playList.setTourPrimitives(Arrays.asList(flyTo, tourControl, soundCue, wait));
 
         final Feature tour = gxFactory.createTour();
-        Collection<Property> tourProperties = tour.getProperties();
-        tourProperties.add(FF.createAttribute(playList, GxModelConstants.ATT_TOUR_PLAY_LIST, null));
+        tour.setPropertyValue(KmlConstants.ATT_PLAYLIST, playList);
 
         final Kml kml = kmlFactory.createKml(null, tour, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
@@ -183,7 +144,6 @@ public class Tour2Test extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

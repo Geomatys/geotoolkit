@@ -25,9 +25,8 @@ import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.StorageListener;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 
@@ -142,12 +141,6 @@ public interface FeatureCollection extends Collection<Feature> {
     void update(Feature feature) throws DataStoreException;
 
     /**
-     * Convinient method to update a single attribut.
-     * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
-     */
-    void update(Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException;
-
-    /**
      * Update all featurss that matchthe given filter and update there attributs values
      * with the values from the given map.
      *
@@ -155,7 +148,7 @@ public interface FeatureCollection extends Collection<Feature> {
      * @param values : new attributs values
      * @throws DataStoreException
      */
-    void update(Filter filter, Map< ? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException;
+    void update(Filter filter, Map<String, ?> values) throws DataStoreException;
 
     /**
      * Remove all features from this collection that match the given filter.

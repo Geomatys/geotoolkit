@@ -31,12 +31,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.sql.DataSource;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.feature.ReprojectFeatureType;
+import org.apache.sis.feature.ViewFeatureType;
+import org.apache.sis.feature.builder.AttributeTypeBuilder;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Version;
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
-import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
-import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -52,29 +57,15 @@ import org.geotoolkit.db.reverse.*;
 import org.geotoolkit.db.session.JDBCSession;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.filter.visitor.CRSAdaptorVisitor;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.geotoolkit.feature.type.AssociationType;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureType;
+import org.apache.sis.storage.IllegalNameException;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.geotoolkit.feature.type.PropertyType;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
@@ -84,8 +75,13 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
 import org.apache.sis.util.Utilities;
+import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociationRole;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -143,7 +139,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     @Override
-    public boolean isWritable(final GenericName typeName) throws DataStoreException {
+    public boolean isWritable(final String typeName) throws DataStoreException {
         final PrimaryKey key = dbmodel.getPrimaryKey(typeName);
         return key != null && !(key.isNull());
     }
@@ -238,8 +234,8 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     @Override
-    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
-        ensureOpen();
+    public FeatureType getFeatureType(final String typeName) throws DataStoreException {
+        typeCheck(typeName);
         return dbmodel.getFeatureType(typeName);
     }
 
@@ -255,7 +251,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                 cnx = getDataSource().getConnection();
                 stmt = cnx.createStatement();
                 rs = stmt.executeQuery(sql);
-                return getDatabaseModel().analyzeResult(rs, query.getTypeName().tip().toString());
+                return getDatabaseModel().analyzeResult(rs, query.getTypeName());
             } catch (SQLException ex) {
                 throw new DataStoreException(ex);
             }finally{
@@ -289,7 +285,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
         //take care of potential hints, like removing primary keys
         final QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(NamesExt.create("remaining"));
+        qb.setTypeName("remaining");
         qb.setHints(query.getHints());
         return handleRemaining(reader, qb.buildQuery());
     }
@@ -307,7 +303,8 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         }
 
         final String dbSchemaName = getDatabaseSchema();
-        final String tableName = query.getTypeName().tip().toString();
+        final FeatureType type = dbmodel.getFeatureType(query.getTypeName());
+        final String tableName = type.getName().tip().toString();
         TableMetaModel tableMeta = null;
         if (dbSchemaName == null) {
             // Try to handle empty schema name given at configuration
@@ -326,7 +323,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             throw new DataStoreException("Unable to get table "+ tableName +" in the database.");
         }
 
-        final ComplexType tableType = tableMeta.getType(TableMetaModel.View.ALLCOMPLEX);
+        final FeatureType tableType = tableMeta.getType(TableMetaModel.View.ALLCOMPLEX).build();
         final PrimaryKey pkey = dbmodel.getPrimaryKey(query.getTypeName());
 
 
@@ -360,11 +357,11 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             returnedFeatureType = queryFeatureType = (FeatureType) baseType;
         } else {
             //TODO BUG here, query with filter on a not returned geometry field crash
-            returnedFeatureType = (FeatureType) FeatureTypeBuilder.retype(tableType, query.getPropertyNames());
+            returnedFeatureType = (FeatureType) FeatureTypeExt.createSubType(tableType, query.getPropertyNames());
             final FilterAttributeExtractor extractor = new FilterAttributeExtractor(tableType);
             postFilter.accept(extractor, null);
             final GenericName[] extraAttributes = extractor.getAttributeNames();
-            final List<GenericName> allAttributes = new ArrayList<GenericName>(Arrays.asList(query.getPropertyNames()));
+            final List<GenericName> allAttributes = new ArrayList<>(Arrays.asList(query.getPropertyNames()));
             for (GenericName extraAttribute : extraAttributes) {
                 if(!allAttributes.contains(extraAttribute)) {
                     allAttributes.add(extraAttribute);
@@ -381,11 +378,11 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                      }
                  }
                 //add the pk attribut
-                allAttributes.add(baseType.getDescriptor(pkcName).getName());
+                allAttributes.add(baseType.getProperty(pkcName).getName());
              }
 
             final GenericName[] allAttributeArray = allAttributes.toArray(new GenericName[allAttributes.size()]);
-            queryFeatureType = (FeatureType) FeatureTypeBuilder.retype(tableType, allAttributeArray);
+            queryFeatureType = (FeatureType) FeatureTypeExt.createSubType(tableType, allAttributeArray);
         }
 
 
@@ -417,11 +414,9 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
         //if we need to reproject data
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
-        if(reproject != null && !Utilities.equalsIgnoreMetadata(reproject,((FeatureType)baseType).getCoordinateReferenceSystem())){
+        if(reproject != null && !Utilities.equalsIgnoreMetadata(reproject, FeatureExt.getCRS(baseType))){
             try {
-                reader = GenericReprojectFeatureIterator.wrap(reader, reproject,query.getHints());
-            } catch (FactoryException ex) {
-                throw new DataStoreException(ex);
+                reader = GenericDecoratedFeatureIterator.wrap(reader, new ReprojectFeatureType(reader.getFeatureType(), reproject),query.getHints());
             } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }
@@ -429,7 +424,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
         //if we need to constraint type
         if(!returnedFeatureType.equals(queryFeatureType)){
-            reader = GenericRetypeFeatureIterator.wrap(reader, returnedFeatureType, query.getHints());
+            reader = GenericDecoratedFeatureIterator.wrap(reader, (ViewFeatureType) returnedFeatureType, query.getHints());
         }
 
         return reader;
@@ -461,9 +456,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
             final JDBCFeatureReader reader = new JDBCFeatureReader(this, sql, ft, cnx, release, null);
             return reader;
-        } catch (MismatchedFeatureException ex) {
-            throw new DataStoreException(ex);
-        } catch (SQLException ex) {
+        } catch (MismatchedFeatureException | SQLException ex) {
             throw new DataStoreException(ex);
         }
     }
@@ -488,33 +481,24 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter, final Hints hints) throws DataStoreException {
-        return getFeatureWriter(typeName, filter, null, hints);
-    }
-
-    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter,
-            final Connection cnx, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
+        typeCheck(query.getTypeName());
+        final Filter filter = query.getFilter();
+        final Hints hints = query.getHints();
         try {
-            return getFeatureWriterInternal(typeName, filter, EditMode.UPDATE_AND_INSERT, cnx, hints);
+            if (Filter.EXCLUDE.equals(filter)) {
+               //append mode
+               return getFeatureWriterInternal(query.getTypeName(), Filter.EXCLUDE, EditMode.INSERT, null, hints);
+            } else {
+                //update mode
+                return getFeatureWriterInternal(query.getTypeName(), filter, EditMode.UPDATE_AND_INSERT, null, hints);
+            }
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
     }
 
-    @Override
-    public FeatureWriter getFeatureWriterAppend(final GenericName typeName, final Hints hints) throws DataStoreException {
-        return getFeatureWriterAppend(typeName, null, hints);
-    }
-
-    public FeatureWriter getFeatureWriterAppend(final GenericName typeName, final Connection cnx, final Hints hints) throws DataStoreException {
-        try {
-            return getFeatureWriterInternal(typeName, Filter.EXCLUDE, EditMode.INSERT, cnx, hints);
-        } catch (IOException ex) {
-            throw new DataStoreException(ex);
-        }
-    }
-
-    private FeatureWriter getFeatureWriterInternal(final GenericName typeName, Filter baseFilter,
+    private FeatureWriter getFeatureWriterInternal(final String typeName, Filter baseFilter,
             final EditMode mode, Connection cnx, final Hints hints) throws DataStoreException, IOException {
 
         if(!isWritable(typeName)){
@@ -587,8 +571,13 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
     /**
      * Updates an existing feature(s) in the database for a particular feature type / table.
+     * @param featureType
+     * @param changes
+     * @param filter
+     * @param cx
+     * @throws org.apache.sis.storage.DataStoreException
      */
-    protected void updateSingle(final FeatureType featureType, final Map<AttributeDescriptor,Object> changes,
+    protected void updateSingle(final FeatureType featureType, final Map<String,Object> changes,
             final Filter filter, final Connection cx) throws DataStoreException{
         if ((changes == null) || (changes.isEmpty())) {
             getLogger().warning("Update called with no attributes, doing nothing.");
@@ -613,7 +602,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     @Override
-    public void refreshMetaModel() {
+    public void refreshMetaModel() throws IllegalNameException {
         dbmodel.clearCache();
     }
 
@@ -630,15 +619,9 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * @throws DataStoreException
      */
     @Override
-    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final FeatureType featureType) throws DataStoreException {
         ensureOpen();
-
-        if(typeName == null){
-            throw new DataStoreException("Type name can not be null.");
-        }
-        if(!featureType.getName().equals(typeName)){
-            throw new DataStoreException("JDBC featurestore can only hold typename same as feature type name.");
-        }
+        final GenericName typeName = featureType.getName();
         if(getNames().contains(typeName)){
             throw new DataStoreException("Type name "+ typeName + " already exists.");
         }
@@ -646,14 +629,14 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         Connection cnx = null;
         Statement stmt = null;
         String sql = null;
+        final List<FeatureType> flatTypes = new ArrayList<>();
+        final List<TypeRelation> relations = new ArrayList<>();
         try {
             cnx = getDataSource().getConnection();
             cnx.setAutoCommit(false);
             stmt = cnx.createStatement();
 
             //we must first decompose the feature type in flat types, then recreate relations
-            final List<FeatureType> flatTypes = new ArrayList<FeatureType>();
-            final List<TypeRelation> relations = new ArrayList<TypeRelation>();
             decompose(featureType, flatTypes, relations);
 
             //rebuild flat types
@@ -669,56 +652,33 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                 dbmodel.clearCache();
 
                 for(TypeRelation relation : relations){
-                    final String baseTypeName = relation.type.tip().toString();
                     final String propertyName = relation.property.getName().tip().toString();
-                    final int minOccurs = relation.property.getMinOccurs();
-                    final int maxOccurs = relation.property.getMaxOccurs();
+                    FeatureAssociationRole result = (FeatureAssociationRole) relation.property;
+                    final int minOccurs = result.getMinimumOccurs();
+                    final int maxOccurs = result.getMaximumOccurs();
 
-                    if(relation.property.getType() instanceof AssociationType){
-                        final AssociationType assType = (AssociationType) relation.property.getType();
-                        final String targetTypeName = assType.getRelatedType().getName().tip().toString();
-                        throw new DataStoreException("Association property not supported");
-
-                    }else if(relation.property.getType() instanceof ComplexType){
-                        final String targetTypeName = relation.property.getType().getName().tip().toString();
-                        final PrimaryKey targetKey = dbmodel.getPrimaryKey(NamesExt.create(getDefaultNamespace(), targetTypeName));
-                        final PrimaryKey sourceKey = dbmodel.getPrimaryKey(relation.type);
-                        if(targetKey.getColumns().size() != 1 || sourceKey.getColumns().size() != 1){
-                            throw new DataStoreException("Multiple key column relations not supported.");
-                        }
-                        final ColumnMetaModel sourceColumnMeta = sourceKey.getColumns().get(0);
-                        final ColumnMetaModel targetColumnMeta = targetKey.getColumns().get(0);
-                        final FeatureType targetType = dbmodel.getFeatureType(NamesExt.create(getDefaultNamespace(), targetColumnMeta.getTable()));
-
-
-                        //we create an relation in the opposite direction
-                        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+                    if (maxOccurs<=1) {
+                        //place relation on the children with a unique constraint
+                        final AttributeTypeBuilder atb = new FeatureTypeBuilder().addAttribute(Integer.class);
                         atb.setName(propertyName);
-                        atb.setBinding(sourceColumnMeta.getJavaType());
-                        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                        adb.setName(propertyName);
-                        adb.setNillable(true);
-                        adb.setMinOccurs(0);
-                        adb.setMaxOccurs(1);
-                        adb.setType(atb.buildType());
-                        final PropertyDescriptor pdesc = adb.buildDescriptor();
-
-                        //create the property
-                        sql = getQueryBuilder().alterTableAddColumnSQL(targetType, pdesc, cnx);
-                        stmt.execute(sql);
-                        //add the foreign key relation
-                        sql = getQueryBuilder().alterTableAddForeignKey(
-                                targetType, propertyName, relation.type, sourceColumnMeta.getName(), true);
-                        stmt.execute(sql);
-
-                        if(maxOccurs==1){
-                            //we add a unique index, equivalent to a 0:1 relation
-                            sql = getQueryBuilder().alterTableAddIndex(targetType, propertyName);
-                            stmt.execute(sql);
-                        }
-
-                    }else{
-                        throw new DataStoreException("Unsupported relation type "+relation.property.getType().getClass());
+                        final SQLQueryBuilder b = getQueryBuilder();
+                        final String addColumn = b.alterTableAddColumnSQL(relation.child, atb.build(), cnx);
+                        stmt.execute(addColumn);
+                        final String addForeignKey = b.alterTableAddForeignKey(relation.child, propertyName,
+                                relation.parent.getName(), "fid", true);
+                        stmt.execute(addForeignKey);
+                        final String addUnique = b.alterTableAddIndex(relation.child,atb.getName().tip().toString());
+                        stmt.execute(addUnique);
+                    } else {
+                        //place relation on the children
+                        final AttributeTypeBuilder atb = new FeatureTypeBuilder().addAttribute(Integer.class);
+                        atb.setName(propertyName);
+                        final SQLQueryBuilder b = getQueryBuilder();
+                        final String addColumn = b.alterTableAddColumnSQL(relation.child, atb.build(), cnx);
+                        stmt.execute(addColumn);
+                        final String addForeignKey = b.alterTableAddForeignKey(relation.child, propertyName,
+                                relation.parent.getName(), "fid", true);
+                        stmt.execute(addForeignKey);
                     }
                 }
             }
@@ -739,28 +699,30 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 
         // reset the type name cache, will be recreated when needed.
         dbmodel.clearCache();
+
     }
 
     @Override
-    public void updateFeatureType(final GenericName typeName, final FeatureType newft) throws DataStoreException {
+    public void updateFeatureType(final FeatureType newft) throws DataStoreException {
+        GenericName typeName = newft.getName();
         ensureOpen();
-        final FeatureType oldft = getFeatureType(typeName);
+        final FeatureType oldft = getFeatureType(typeName.toString());
 
         //we only handle adding or removing columns
-        final List<PropertyDescriptor> toRemove = new ArrayList<PropertyDescriptor>();
-        final List<PropertyDescriptor> toAdd = new ArrayList<PropertyDescriptor>();
+        final List<PropertyType> toRemove = new ArrayList<>();
+        final List<PropertyType> toAdd = new ArrayList<>();
 
-        toRemove.addAll(oldft.getDescriptors());
-        toRemove.removeAll(newft.getDescriptors());
-        toAdd.addAll(newft.getDescriptors());
-        toAdd.removeAll(oldft.getDescriptors());
+        toRemove.addAll(oldft.getProperties(true));
+        toRemove.removeAll(newft.getProperties(true));
+        toAdd.addAll(newft.getProperties(true));
+        toAdd.removeAll(oldft.getProperties(true));
 
         //TODO : this is not perfect, we loose datas, we should update the column type when possible.
         Connection cnx = null;
         try{
             cnx = getDataSource().getConnection();
 
-            for(PropertyDescriptor remove : toRemove){
+            for(PropertyType remove : toRemove){
                 final String sql = getQueryBuilder().alterTableDropColumnSQL(oldft, remove, cnx);
                 final Statement stmt = cnx.createStatement();
                 try {
@@ -770,8 +732,8 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                 }
             }
 
-            for(PropertyDescriptor add : toAdd){
-                final String sql = getQueryBuilder().alterTableAddColumnSQL(oldft, add, cnx);
+            for(PropertyType add : toAdd){
+                final String sql = getQueryBuilder().alterTableAddColumnSQL(oldft, (AttributeType)add, cnx);
                 final Statement stmt = cnx.createStatement();
                 try {
                     stmt.execute(sql);
@@ -791,29 +753,27 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     @Override
-    public void deleteFeatureType(final GenericName typeName) throws DataStoreException{
+    public void deleteFeatureType(final String typeName) throws DataStoreException{
         ensureOpen();
         final FeatureType featureType = getFeatureType(typeName);
-        final Set<ComplexType> visited = new HashSet<ComplexType>();
+        final Set<FeatureType> visited = new HashSet<>();
         recursiveDelete(featureType,visited);
     }
 
-    private void recursiveDelete(ComplexType featureType, Set<ComplexType> visited) throws DataStoreException{
+    private void recursiveDelete(FeatureType featureType, Set<FeatureType> visited) throws DataStoreException{
 
         //search properties which are complex types
-        for(PropertyDescriptor desc : featureType.getDescriptors()){
-            final PropertyType pt = desc.getType();
-            if(pt instanceof AssociationType){
-                final RelationMetaModel relation = (RelationMetaModel)desc.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_RELATION);
+        for(PropertyType pt : featureType.getProperties(true)){
+            if(pt instanceof DBRelationOperation){
+                final RelationMetaModel relation = ((DBRelationOperation) pt).getRelation();
                 if(!relation.isImported()){
                     //a table point toward this one.
-                    final ComplexType refType = (ComplexType) ((AssociationType)pt).getRelatedType();
-                    recursiveDelete((ComplexType)refType,visited);
+                    final FeatureAssociationRole refType = (FeatureAssociationRole) (((DBRelationOperation)pt).getResult());
+                    recursiveDelete(refType.getValueType(), visited);
                 }
 
-
-            }else if(pt instanceof ComplexType){
-                recursiveDelete((ComplexType)pt,visited);
+            }else if(pt instanceof FeatureAssociationRole){
+                recursiveDelete( ((FeatureAssociationRole)pt).getValueType(),visited);
             }
         }
 
@@ -849,47 +809,38 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * @param relations
      * @throws DataStoreException
      */
-    private void decompose(ComplexType type, List<FeatureType> types, List<TypeRelation> relations) throws DataStoreException{
+    private void decompose(FeatureType type, List<FeatureType> types, List<TypeRelation> relations) throws DataStoreException{
 
         final GenericName dbName = NamesExt.create(getDefaultNamespace(), type.getName().tip().toString());
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(dbName);
-        for(PropertyDescriptor desc : type.getDescriptors()){
-            final PropertyType pt = desc.getType();
-            if(pt instanceof AssociationType){
-                final AssociationType assType = (AssociationType) pt;
-                final AttributeType attType = assType.getRelatedType();
-                if(!(attType instanceof ComplexType)){
-                    throw new DataStoreException("Only associations with complex type target are supported");
-                }
+        for(PropertyType pt : type.getProperties(true)){
+            if (pt instanceof FeatureAssociationRole) {
+                final FeatureAssociationRole asso = (FeatureAssociationRole) pt;
+                final FeatureType attType = asso.getValueType();
                 final TypeRelation relation = new TypeRelation();
-                relation.type = dbName;
-                relation.property = desc;
+                relation.property = asso;
+                relation.parent = type;
+                relation.child = attType;
                 relations.add(relation);
-                decompose(((ComplexType)attType), types, relations);
+                decompose(attType, types, relations);
 
-            }else if(pt instanceof ComplexType){
-                final ComplexType comType = (ComplexType) pt;
-                final TypeRelation relation = new TypeRelation();
-                relation.type = dbName;
-                relation.property = desc;
-                relations.add(relation);
-                decompose(comType, types, relations);
-            }else{
-                ftb.add(desc);
+            } else {
+                ftb.addProperty(pt);
             }
         }
 
-        final FeatureType flatType = ftb.buildFeatureType();
+        final FeatureType flatType = ftb.build();
         if(!types.contains(flatType)){
             types.add(flatType);
         }
     }
 
     private static class TypeRelation {
-        GenericName type;
-        PropertyDescriptor property;
+        FeatureAssociationRole property;
+        FeatureType parent;
+        FeatureType child;
     }
 
 
@@ -901,11 +852,11 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         return addFeatures(groupName, newFeatures, null, hints);
     }
 
-    public final List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures,
+    public final List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures,
             Connection cnx, Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures, cnx, hints);
     }
@@ -914,12 +865,12 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final String groupName, final Filter filter, final Map<String, ? extends Object> values) throws DataStoreException {
         updateFeatures(groupName, filter, values, null);
     }
 
-    public void updateFeatures(final GenericName groupName, final Filter filter,
-            final Map<? extends PropertyDescriptor, ? extends Object> values, Connection cnx) throws DataStoreException {
+    public void updateFeatures(final String groupName, final Filter filter,
+            final Map<String, ? extends Object> values, Connection cnx) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values, cnx);
     }
 
@@ -927,17 +878,17 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final String groupName, final Filter filter) throws DataStoreException {
         removeFeatures(groupName, filter, null);
     }
 
-    public void removeFeatures(final GenericName groupName, final Filter filter, Connection cnx) throws DataStoreException {
+    public void removeFeatures(final String groupName, final Filter filter, Connection cnx) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter, cnx);
     }
 
-    protected void insert(final Collection<? extends ComplexAttribute> features, final ComplexType featureType,
+    protected void insert(final Collection<? extends Feature> features, final FeatureType featureType,
             final Connection cx) throws DataStoreException {
-        final PrimaryKey key = dbmodel.getPrimaryKey(featureType.getName());
+        final PrimaryKey key = dbmodel.getPrimaryKey(featureType.getName().toString());
 
         // we do this in a synchronized block because we need to do two queries,
         // first to figure out what the id will be, then the insert statement
@@ -960,22 +911,19 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         }
     }
 
-    protected void insert(final ComplexAttribute feature, final ComplexType featureType,
+    protected void insert(final Feature feature, final FeatureType featureType,
             final Connection cx) throws DataStoreException {
 
-        if(featureType instanceof SimpleFeatureType){
-            insertFlat(feature, featureType, cx);
-        }else{
-            //decompose feature and make multiple inserts
-            final List<InsertRelation> flats = decompose(feature);
-            for(InsertRelation hierarchy : flats){
-                final ComplexAttribute parent = hierarchy.parent;
-                final ComplexAttribute flat = hierarchy.child;
-                final RelationMetaModel relation = hierarchy.relation;
-                //resolve parent id fields.
-                if(parent!=null && relation!=null){
-                    final Object parentValue = parent.getProperty(relation.getForeignColumn()).getValue();
-                    flat.getProperty(relation.getCurrentColumn()).setValue(parentValue);
+        //decompose feature and make multiple inserts
+        final List<InsertRelation> flats = decompose(feature);
+        for(InsertRelation hierarchy : flats){
+            final Feature parent = hierarchy.parent;
+            final Feature flat = hierarchy.child;
+            final RelationMetaModel relation = hierarchy.relation;
+            //resolve parent id fields.
+            if(parent!=null && relation!=null){
+                final Object parentValue = parent.getProperty(relation.getForeignColumn()).getValue();
+                flat.setPropertyValue(relation.getCurrentColumn(),parentValue);
 
 //                    for(Property prop : flat.getProperties()){
 //                        final RelationMetaModel relation = (RelationMetaModel) prop.getDescriptor().getUserData().get(JDBC_PROPERTY_RELATION);
@@ -983,21 +931,19 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
 //                        final Object parentValue = parent.getProperty(relation.getForeignColumn()).getValue();
 //                        flat.getProperty(relation.getCurrentColumn()).setValue(parentValue);
 //                    }
-                }
+            }
 
-                insertFlat(flat, flat.getType(), cx);
-                // we pass the fid to the root
-                if (flat.getType().getName().equals(feature.getType().getName())) {
-                    final String fid = (String) flat.getUserData().get("fid");
-                    feature.getUserData().put("fid", fid);
-                }
+            Object fid = insertFlat(flat, flat.getType(), cx);
+            // we pass the fid to the root
+            if (flat.getType().getName().equals(feature.getType().getName())) {
+                feature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), fid);
             }
         }
     }
 
-    private void insertFlat(final ComplexAttribute feature, final ComplexType featureType,
+    private Object insertFlat(final Feature feature, final FeatureType featureType,
             final Connection cx) throws DataStoreException {
-        final PrimaryKey key = dbmodel.getPrimaryKey(featureType.getName());
+        final PrimaryKey key = dbmodel.getPrimaryKey(featureType.getName().toString());
 
         // we do this in a synchronized block because we need to do two queries,
         // first to figure out what the id will be, then the insert statement
@@ -1021,18 +967,16 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                     final Object id = rs.getObject(1);
                     nextKeyValues[0] = id;
                     rs.close();
-                    feature.getProperty(key.getColumns().get(0).getName()).setValue(id);
+                    feature.setPropertyValue(key.getColumns().get(0).getName(),id);
                 }else{
                     stmt.execute(sql);
                 }
 
-                //report the feature id as user data since we cant set the fid
-                final String fid = featureType.getName().tip().toString() + "." + PrimaryKey.encodeFID(nextKeyValues);
-                feature.getUserData().put("fid", fid);
-
                 if (cx.getAutoCommit()) {
                     fireFeaturesAdded(featureType.getName(), null);
                 }
+
+                return nextKeyValues[0];
             //st.executeBatch();
             } catch (SQLException ex) {
                 throw new DataStoreException("Failed to intert features : "+ex.getMessage()+"\nSQL Query :"+sql, ex);
@@ -1047,24 +991,25 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      *
      * @param candidate
      */
-    private List<InsertRelation> decompose(ComplexAttribute candidate) throws DataStoreException{
+    private List<InsertRelation> decompose(Feature candidate) throws DataStoreException{
         final List<InsertRelation> flats = new ArrayList<InsertRelation>();
         decompose(null,candidate,null, flats);
         return flats;
     }
 
-    private void decompose(ComplexAttribute parent, ComplexAttribute candidate,
+    private void decompose(Feature parent, Feature candidate,
             RelationMetaModel relation, List<InsertRelation> flats) throws DataStoreException{
         //decompose main type
-        final ComplexType featuretype = candidate.getType();
+        final FeatureType featuretype = candidate.getType();
         final TableMetaModel table = dbmodel.getSchemaMetaModel(getDatabaseSchema()).getTable(featuretype.getName().tip().toString());
-        final ComplexType flatType = table.getType(TableMetaModel.View.SIMPLE_FEATURE_TYPE);
-        final ComplexAttribute flat = FeatureUtilities.defaultProperty(flatType);
-        FeatureUtilities.copy(candidate, flat, false);
+        final FeatureType flatType = table.getType(TableMetaModel.View.SIMPLE_FEATURE_TYPE).build();
+        final Feature flat = flatType.newInstance();
+        FeatureExt.copy(candidate, flat, false);
 
         //find the reverted relation
         if(relation!=null){
-            relation = (RelationMetaModel)flatType.getDescriptor(relation.getForeignColumn()).getUserData().get(JDBC_PROPERTY_RELATION);
+            final PropertyType property = flatType.getProperty(relation.getForeignColumn());
+            relation = FeatureExt.getCharacteristicValue(property, JDBC_PROPERTY_RELATION.getName().toString(), null);
         }
 
         final InsertRelation rt = new InsertRelation();
@@ -1074,15 +1019,15 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         flats.add(rt);
 
         //decompose sub complex types
-        for(Property prop : candidate.getProperties()){
-            if(prop instanceof ComplexAttribute){
-                final RelationMetaModel cr = (RelationMetaModel) prop.getDescriptor().getUserData().get(JDBC_PROPERTY_RELATION);
-                decompose(flat,(ComplexAttribute)prop, cr, flats);
-            }
-        }
+//        for(Property prop : candidate.getProperties()){
+//            if(prop instanceof ComplexAttribute){
+//                final RelationMetaModel cr = (RelationMetaModel) prop.getDescriptor().getUserData().get(JDBC_PROPERTY_RELATION);
+//                decompose(flat,(ComplexAttribute)prop, cr, flats);
+//            }
+//        }
     }
 
-    protected void update(final FeatureType featureType, final Map<AttributeDescriptor,Object> changes,
+    protected void update(final FeatureType featureType, final Map<String,? extends Object> changes,
             final Filter filter, final Connection cx) throws DataStoreException{
         if(changes==null || changes.isEmpty()){
             //do nothing
@@ -1137,14 +1082,16 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      *
      * @param groupName
      * @param newFeatures
+     * @param cnx
+     * @param hints
      * @return list of ids of the features added.
      * @throws DataStoreException
      */
-    protected List<FeatureId> handleAddWithFeatureWriter(final GenericName groupName, final Collection<? extends Feature> newFeatures,
+    protected List<FeatureId> handleAddWithFeatureWriter(final String groupName, final Collection<? extends Feature> newFeatures,
             Connection cnx, final Hints hints) throws DataStoreException{
-        try{
-            return FeatureStoreUtilities.write(getFeatureWriterAppend(groupName,cnx,hints), newFeatures);
-        }catch(FeatureStoreRuntimeException ex){
+        try(final FeatureWriter writer = getFeatureWriterInternal(groupName, Filter.EXCLUDE, EditMode.INSERT, cnx, hints)){
+            return FeatureStoreUtilities.write(writer, newFeatures);
+        }catch(FeatureStoreRuntimeException | IOException ex){
             throw new DataStoreException(ex);
         }
     }
@@ -1159,28 +1106,25 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * @param cnx
      * @throws DataStoreException
      */
-    protected void handleUpdateWithFeatureWriter(final GenericName groupName, final Filter filter,
-            final Map<? extends PropertyDescriptor, ? extends Object> values, Connection cnx) throws DataStoreException {
+    protected void handleUpdateWithFeatureWriter(final String groupName, final Filter filter,
+            final Map<String, ? extends Object> values, Connection cnx) throws DataStoreException {
 
-        final FeatureWriter writer = getFeatureWriter(groupName,filter,cnx,null);
+        try(FeatureWriter writer = getFeatureWriterInternal(groupName, filter, EditMode.UPDATE, cnx, null)) {
 
-        try{
             while(writer.hasNext()){
                 final Feature f = writer.next();
-                for(final Map.Entry<? extends PropertyDescriptor,? extends Object> entry : values.entrySet()){
-                    f.getProperty(entry.getKey().getName()).setValue(entry.getValue());
+                for(final Map.Entry<String,? extends Object> entry : values.entrySet()){
+                    f.setPropertyValue(entry.getKey(),entry.getValue());
                 }
                 writer.write();
             }
-        } catch(FeatureStoreRuntimeException ex){
+        } catch(FeatureStoreRuntimeException | IOException ex){
             throw new DataStoreException(ex);
-        } finally{
-            writer.close();
         }
     }
 
     /**
-     * Convinient method to handle adding features operation by using the
+     * Convenient method to handle adding features operation by using the
      * FeatureWriter.
      *
      * @param groupName
@@ -1188,18 +1132,16 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * @param cnx
      * @throws DataStoreException
      */
-    protected void handleRemoveWithFeatureWriter(final GenericName groupName, final Filter filter, Connection cnx) throws DataStoreException {
-        final FeatureWriter writer = getFeatureWriter(groupName,filter,cnx,null);
+    protected void handleRemoveWithFeatureWriter(final String groupName, final Filter filter, Connection cnx) throws DataStoreException {
+        
+        try(FeatureWriter writer = getFeatureWriterInternal(groupName,filter,EditMode.UPDATE,cnx,null)) {
 
-        try{
             while(writer.hasNext()){
                 writer.next();
                 writer.remove();
             }
-        } catch(FeatureStoreRuntimeException ex){
+        } catch(FeatureStoreRuntimeException | IOException ex){
             throw new DataStoreException(ex);
-        } finally{
-            writer.close();
         }
     }
 

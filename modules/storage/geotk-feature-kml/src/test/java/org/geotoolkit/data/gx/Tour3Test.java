@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -41,15 +41,10 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -60,35 +55,13 @@ import static org.junit.Assert.*;
  */
 public class Tour3Test extends org.geotoolkit.test.TestBase {
 
-    private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/tour3.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public Tour3Test() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     /*
      * Methode de test en lecture
      */
     @Test
-    public void tour3ReadTest()
-            throws IOException, XMLStreamException, URISyntaxException, KmlException {
+    public void tour3ReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
 
         // Instanciation du reader Kml
         final KmlReader reader = new KmlReader();
@@ -110,28 +83,22 @@ public class Tour3Test extends org.geotoolkit.test.TestBase {
         assertEquals(new URI("http://myserver.com/Bof.kml"), update.getTargetHref());
 
         assertEquals(1, update.getUpdates().size());
-        assertTrue(update.getUpdates().get(0) instanceof Delete);
-
         final Delete delete = (Delete) update.getUpdates().get(0);
         assertEquals(1, delete.getFeatures().size());
-        assertTrue(((Feature) delete.getFeatures().get(0)).getType()
-                .equals(GxModelConstants.TYPE_TOUR));
+        assertEquals(GxModelConstants.TYPE_TOUR, delete.getFeatures().get(0).getType());
 
-        final Feature tour = (Feature) delete.getFeatures().get(0);
-        final PlayList playlist = (PlayList) tour.getProperty(
-                GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).getValue();
+        final Feature tour = delete.getFeatures().get(0);
+        final PlayList playlist = (PlayList) ((List)tour.getPropertyValue(KmlConstants.ATT_PLAYLIST)).get(0);
         assertEquals(0, playlist.getTourPrimitives().size());
-
     }
 
     /*
      * Méthode de test en écriture
      */
     @Test
-    public void tour3WriteTest()
-            throws KmlException, IOException, XMLStreamException,
-            ParserConfigurationException, SAXException, URISyntaxException {
-
+    public void tour3WriteTest() throws KmlException, IOException, XMLStreamException,
+            ParserConfigurationException, SAXException, URISyntaxException
+    {
         // Récupération des instances de deux fabriques (Kml et extensions Gx)
         final GxFactory gxFactory = DefaultGxFactory.getInstance();
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
@@ -140,9 +107,7 @@ public class Tour3Test extends org.geotoolkit.test.TestBase {
         final PlayList playList = gxFactory.createPlayList();
 
         final Feature tour = gxFactory.createTour();
-        Collection<Property> tourProperties = tour.getProperties();
-        tourProperties.add(FF.createAttribute(
-                playList, GxModelConstants.ATT_TOUR_PLAY_LIST, null));
+        tour.setPropertyValue(KmlConstants.ATT_PLAYLIST, playList);
 
         final Delete delete = kmlFactory.createDelete();
         delete.setFeatures(Arrays.asList(tour));
@@ -178,7 +143,6 @@ public class Tour3Test extends org.geotoolkit.test.TestBase {
         writer.dispose();
 
         // Vérification du contenu écrit...
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

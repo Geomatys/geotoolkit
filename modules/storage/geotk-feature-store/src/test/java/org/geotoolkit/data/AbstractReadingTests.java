@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.FeatureTypeExt;
 import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.data.query.Query;
@@ -35,25 +37,26 @@ import org.geotoolkit.util.NamesExt;
 import org.apache.sis.referencing.CRS;
 import org.junit.After;
 import org.junit.Before;
-
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 import static org.junit.Assert.*;
-import org.opengis.metadata.Identifier;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.Utilities;
+import org.opengis.metadata.Identifier;
+import org.opengis.feature.Operation;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  * Generic reading tests for datastore.
@@ -137,22 +140,22 @@ public abstract class AbstractReadingTests{
 
         for(GenericName name : founds){
             assertNotNull(name);
-            assertNotNull(store.getFeatureType(name));
+            assertNotNull(store.getFeatureType(name.toString()));
         }
 
         //check type names------------------------------------------------------
-        final String[] typeNames = store.getTypeNames();
+        final Set<GenericName> typeNames = store.getNames();
 
         assertNotNull(typeNames);
-        assertTrue(typeNames.length == founds.size());
+        assertTrue(typeNames.size() == founds.size());
 
         check:
-        for(String typeName : typeNames){
+        for (GenericName typeName : typeNames) {
             for(GenericName n : founds){
-                if(n.tip().toString().equals(typeName)){
+                if(n.tip().toString().equals(typeName.tip().toString())){
                     assertNotNull(typeName);
-                    FeatureType type1 = store.getFeatureType(typeName);
-                    FeatureType type2 = store.getFeatureType(n);
+                    FeatureType type1 = store.getFeatureType(typeName.toString());
+                    FeatureType type2 = store.getFeatureType(n.toString());
                     assertNotNull(type1);
                     assertNotNull(type2);
                     assertTrue(type1.equals(type2));
@@ -164,7 +167,7 @@ public abstract class AbstractReadingTests{
 
         //check error on wrong type names---------------------------------------
         try{
-            store.getFeatureType(NamesExt.create("http://not", "exist"));
+            store.getFeatureType(NamesExt.create("http://not", "exist").toString());
             throw new Exception("Asking for a schema that doesnt exist should have raised a featurestore exception.");
         }catch(DataStoreException ex){
             //ok
@@ -192,9 +195,9 @@ public abstract class AbstractReadingTests{
 
         for(final ExpectedResult candidate : candidates){
             final GenericName name = candidate.name;
-            final FeatureType type = store.getFeatureType(name);
+            final FeatureType type = store.getFeatureType(name.toString());
             assertNotNull(type);
-            assertEquals(candidate.type, type);
+            assertTrue(FeatureTypeExt.equalsIgnoreConvention(candidate.type, type));
 
             testCounts(store, candidate);
             testReaders(store, candidate);
@@ -240,8 +243,8 @@ public abstract class AbstractReadingTests{
      * test different readers.
      */
     private void testReaders(final FeatureStore store, final ExpectedResult candidate) throws Exception{
-        final FeatureType type = store.getFeatureType(candidate.name);
-        final Collection<PropertyDescriptor> properties = type.getDescriptors();
+        final FeatureType type = store.getFeatureType(candidate.name.toString());
+        final Collection<? extends PropertyType> properties = type.getProperties(true);
         final QueryBuilder qb = new QueryBuilder();
         Query query = null;
 
@@ -270,9 +273,8 @@ public abstract class AbstractReadingTests{
 
 
         //crs ------------------------------------------------------------------
-        if(type.getGeometryDescriptor() != null){
-            final GeometryDescriptor desc = type.getGeometryDescriptor();
-            final CoordinateReferenceSystem originalCRS = desc.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem originalCRS = FeatureExt.getCRS(type);
+        if(originalCRS!= null){
             CoordinateReferenceSystem testCRS = CRS.forCode("EPSG:3395");
             if(Utilities.equalsIgnoreMetadata(originalCRS, testCRS)){
                 //change the test crs
@@ -285,8 +287,8 @@ public abstract class AbstractReadingTests{
             try{
                 while(ite.hasNext()){
                     final Feature f = ite.next();
-                    final FeatureId id = f.getIdentifier();
-                    final Object geom = f.getDefaultGeometryProperty().getValue();
+                    final FeatureId id = FeatureExt.getId(f);
+                    final Object geom = f.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
                     assertNotNull(id);
                     assertNotNull(geom);
                     inOriginal.put(id,geom);
@@ -304,9 +306,9 @@ public abstract class AbstractReadingTests{
             try{
                 while(ite.hasNext()){
                     final Feature f = ite.next();
-                    final FeatureId id = f.getIdentifier();
+                    final FeatureId id = FeatureExt.getId(f);
                     final Object original = inOriginal.get(id);
-                    final Object reprojected = f.getDefaultGeometryProperty().getValue();
+                    final Object reprojected = f.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
                     assertNotNull(id);
                     assertNotNull(original);
                     assertNotNull(reprojected);
@@ -321,22 +323,22 @@ public abstract class AbstractReadingTests{
         //property -------------------------------------------------------------
 
         //check only id query
-        query = QueryBuilder.fids(candidate.name);
+        query = QueryBuilder.fids(candidate.name.toString());
         FeatureReader ite = store.getFeatureReader(query);
         FeatureType limited = ite.getFeatureType();
         assertNotNull(limited);
-        assertTrue(limited.getDescriptors().size() == 0);
+        assertTrue(limited.getProperties(true).size() == 1);
         try{
             while(ite.hasNext()){
                 final Feature f = ite.next();
-                assertTrue(f.getProperties().size() == 0);
-                assertNotNull(f.getIdentifier());
+                assertNotNull(FeatureExt.getId(f));
             }
         }finally{
             ite.close();
         }
 
-        for(final PropertyDescriptor desc : properties){
+        for(final PropertyType desc : properties){
+            if(desc instanceof Operation) continue;
             qb.reset();
             qb.setTypeName(candidate.name);
             qb.setProperties(new String[]{desc.getName().tip().toString()});
@@ -345,13 +347,12 @@ public abstract class AbstractReadingTests{
             ite = store.getFeatureReader(query);
             limited = ite.getFeatureType();
             assertNotNull(limited);
-            assertTrue(limited.getDescriptors().size() == 1);
-            assertNotNull(limited.getDescriptor(desc.getName()));
+            assertTrue(limited.getProperties(true).size() == 1);
+            assertNotNull(limited.getProperty(desc.getName().toString()));
             try{
                 while(ite.hasNext()){
                     final Feature f = ite.next();
-                    assertTrue(f.getProperties().size() == 1);
-                    assertNotNull(f.getProperty(desc.getName()));
+                    assertNotNull(f.getProperty(desc.getName().toString()));
                 }
             }finally{
                 ite.close();
@@ -361,8 +362,18 @@ public abstract class AbstractReadingTests{
 
 
         //sort by --------------------------------------------------------------
-        for(final PropertyDescriptor desc : properties){
-            final Class clazz = desc.getType().getBinding();
+        for(final PropertyType desc : properties){
+            if(!(desc instanceof AttributeType)){
+                continue;
+            }
+
+            final AttributeType att = (AttributeType) desc;
+            if(att.getMaximumOccurs()>1){
+                //do not test sort by on multi occurence properties
+                continue;
+            }
+
+            final Class clazz = att.getValueClass();
 
             if(!Comparable.class.isAssignableFrom(clazz) || Geometry.class.isAssignableFrom(clazz)){
                 //can not make a sort by on this attribut.
@@ -382,7 +393,7 @@ public abstract class AbstractReadingTests{
                 Comparable last = null;
                 while(reader.hasNext()){
                     final Feature f = reader.next();
-                    Object obj = f.getProperty(desc.getName()).getValue();
+                    Object obj = f.getProperty(desc.getName().toString()).getValue();
                     if (obj instanceof Identifier) obj = ((Identifier) obj).getCode();
                     final Comparable current = (Comparable) obj;
 
@@ -414,7 +425,7 @@ public abstract class AbstractReadingTests{
                 Comparable last = null;
                 while(reader.hasNext()){
                     final Feature f = reader.next();
-                    Object obj = f.getProperty(desc.getName()).getValue();
+                    Object obj = f.getProperty(desc.getName().toString()).getValue();
                     if (obj instanceof Identifier) obj = ((Identifier) obj).getCode();
                     final Comparable current = (Comparable) obj;
 
@@ -445,7 +456,7 @@ public abstract class AbstractReadingTests{
             ite = store.getFeatureReader(query);
             try{
                 while(ite.hasNext()){
-                    ids.add(ite.next().getIdentifier());
+                    ids.add(FeatureExt.getId(ite.next()));
                 }
             }finally{
                 ite.close();
@@ -461,7 +472,7 @@ public abstract class AbstractReadingTests{
             try{
                 int i = 1;
                 while(ite.hasNext()){
-                    assertEquals(ite.next().getIdentifier(), ids.get(i));
+                    assertEquals(FeatureExt.getId(ite.next()), ids.get(i));
                     i++;
                 }
             }finally{
@@ -498,15 +509,15 @@ public abstract class AbstractReadingTests{
         //todo should we make more deep tests ?
 
 
-        Set<FeatureId> ids = new HashSet<FeatureId>();
-        ite = store.getFeatureReader(QueryBuilder.fids(candidate.name));
+        Set<FeatureId> ids = new HashSet<>();
+        ite = store.getFeatureReader(QueryBuilder.fids(candidate.name.toString()));
         try{
             //peek only one on two ids
             boolean oneOnTwo = true;
             while(ite.hasNext()){
                 final Feature feature = ite.next();
                 if(oneOnTwo){
-                    ids.add(feature.getIdentifier());
+                    ids.add(FeatureExt.getId(feature));
                 }
                 oneOnTwo = !oneOnTwo;
             }
@@ -515,12 +526,12 @@ public abstract class AbstractReadingTests{
         }
 
 
-        Set<FeatureId> remaining = new HashSet<FeatureId>(ids);
-        ite = store.getFeatureReader(QueryBuilder.filtered(candidate.name,FF.id(ids)));
+        Set<FeatureId> remaining = new HashSet<>(ids);
+        ite = store.getFeatureReader(QueryBuilder.filtered(candidate.name.toString(),FF.id(ids)));
 
         try{
             while(ite.hasNext()){
-                remaining.remove(ite.next().getIdentifier());
+                remaining.remove(FeatureExt.getId(ite.next()));
             }
         }finally{
             ite.close();

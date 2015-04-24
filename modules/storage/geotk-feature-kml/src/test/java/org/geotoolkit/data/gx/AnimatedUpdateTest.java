@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.gx;
 
-import org.geotoolkit.feature.FeatureUtilities;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
@@ -25,12 +24,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
-import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
 import org.geotoolkit.data.gx.model.AnimatedUpdate;
 import org.geotoolkit.data.gx.model.EnumFlyToMode;
 import org.geotoolkit.data.gx.model.FlyTo;
@@ -53,19 +50,14 @@ import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.model.Update;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
 
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
@@ -79,76 +71,43 @@ public class AnimatedUpdateTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/animatedUpdate.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public AnimatedUpdateTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
-    public void animatedUpdateReadTest()
-            throws IOException, XMLStreamException, URISyntaxException, KmlException {
+    public void animatedUpdateReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
+        final Feature document;
+        {
+            final KmlReader reader = new KmlReader();
+            final GxReader gxReader = new GxReader(reader);
+            reader.setInput(new File(pathToTestFile));
+            reader.addExtensionReader(gxReader);
+            final Kml kmlObjects = reader.read();
+            reader.dispose();
+            document = kmlObjects.getAbstractFeature();
+        }
+        assertEquals(KmlModelConstants.TYPE_DOCUMENT, document.getType());
+        assertEquals("gx:AnimatedUpdate example", document.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(Boolean.FALSE, document.getPropertyValue(KmlConstants.TAG_OPEN));
 
-        Iterator i;
-
-        final KmlReader reader = new KmlReader();
-        final GxReader gxReader = new GxReader(reader);
-        reader.setInput(new File(pathToTestFile));
-        reader.addExtensionReader(gxReader);
-        final Kml kmlObjects = reader.read();
-        reader.dispose();
-
-        final Feature document = kmlObjects.getAbstractFeature();
-        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
-        assertEquals("gx:AnimatedUpdate example", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertFalse((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
-
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).size());
-
-        i = document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
-
-        if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
-            assertTrue(object instanceof Style);
-            final Style style = (Style) object;
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_STYLE_SELECTOR)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        {
+            final Style style = (Style) i.next();
             assertEquals("pushpin", style.getIdAttributes().getId());
-
             assertEquals("mystyle", style.getIconStyle().getIdAttributes().getId());
             assertEquals("http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png",style.getIconStyle().getIcon().getHref());
             assertEquals(2.0, style.getIconStyle().getScale(), DELTA);
         }
+        assertFalse("Expected exactly one element.", i.hasNext());
 
-        assertEquals(2, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
-
-        i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-
-        if(i.hasNext()){
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark = (Feature) object;
+        i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        {
+            final Feature placemark = (Feature) i.next();
             assertEquals(placemark.getType(), KmlModelConstants.TYPE_PLACEMARK);
-            assertEquals("mountainpin1", ((IdAttributes) placemark.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()).getValue()).getId());
-            assertEquals("Pin on a mountaintop", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            assertEquals(new URI("#pushpin"), placemark.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue());
-
-            assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-
-            Point point = (Point) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+            assertEquals("mountainpin1", ((IdAttributes) placemark.getPropertyValue(KmlConstants.ATT_ID)).getId());
+            assertEquals("Pin on a mountaintop", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+            assertEquals(new URI("#pushpin"), placemark.getPropertyValue(KmlConstants.TAG_STYLE_URL));
+            Point point = (Point) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
             CoordinateSequence coordinates = point.getCoordinateSequence();
             assertEquals(1, coordinates.size());
             Coordinate coordinate = coordinates.getCoordinate(0);
@@ -157,59 +116,44 @@ public class AnimatedUpdateTest extends org.geotoolkit.test.TestBase {
             assertEquals(0, coordinate.z, DELTA);
         }
 
-        if (i.hasNext()){
-            Object obj = i.next();
-            assertTrue(obj instanceof Feature);
-            Feature tour = (Feature) obj;
-            assertTrue(tour.getType().equals(GxModelConstants.TYPE_TOUR));
+        assertTrue("Expected at least 2 elements.", i.hasNext());
+        final Feature tour = (Feature) i.next();
+        assertEquals(GxModelConstants.TYPE_TOUR, tour.getType());
+        assertEquals("Play me!", tour.getPropertyValue(KmlConstants.TAG_NAME));
+        assertFalse("Expected exactly 2 elements.", i.hasNext());
 
+        i = ((Iterable<?>) tour.getPropertyValue(KmlConstants.ATT_PLAYLIST)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        {
+            final PlayList playList = (PlayList) i.next();
+            assertEquals(3, playList.getTourPrimitives().size());
 
-            assertEquals("Play me!", tour.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            assertEquals(1,tour.getProperties(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).size());
+            final FlyTo flyTo = (FlyTo) playList.getTourPrimitives().get(0);
+            assertEquals(3, flyTo.getDuration(), DELTA);
+            assertEquals(EnumFlyToMode.SMOOTH, flyTo.getFlyToMode());
 
-            i = tour.getProperties(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).iterator();
+            final Camera camera = (Camera) flyTo.getView();
+            assertEquals(170.157, camera.getLongitude(), DELTA);
+            assertEquals(-43.671, camera.getLatitude(), DELTA);
+            assertEquals(9700, camera.getAltitude(), DELTA);
+            assertEquals(-6.333, camera.getHeading(), DELTA);
+            assertEquals(33.5, camera.getTilt(), DELTA);
 
-            if(i.hasNext()){
-                final Object object = ((Property) i.next()).getValue();
-                assertTrue(object instanceof PlayList);
-                final PlayList playList = (PlayList) object;
-                assertEquals(3, playList.getTourPrimitives().size());
+            final AnimatedUpdate animatedUpdate = (AnimatedUpdate) playList.getTourPrimitives().get(1);
+            assertEquals(5, animatedUpdate.getDuration(), DELTA);
+            final Update update = animatedUpdate.getUpdate();
+            assertEquals(new URI("http://moncoco.com"), update.getTargetHref());
+            assertEquals(1, update.getUpdates().size());
+            final Change change = (Change) update.getUpdates().get(0);
+            assertEquals(1, change.getObjects().size());
+            final IconStyle iconStyle = (IconStyle) change.getObjects().get(0);
+            assertEquals("mystyle", iconStyle.getIdAttributes().getTargetId());
+            assertEquals(10.0, iconStyle.getScale(), DELTA);
 
-                assertTrue(playList.getTourPrimitives().get(0) instanceof FlyTo);
-                final FlyTo flyTo = (FlyTo) playList.getTourPrimitives().get(0);
-                assertEquals(3, flyTo.getDuration(), DELTA);
-                assertEquals(EnumFlyToMode.SMOOTH, flyTo.getFlyToMode());
-
-                System.out.println(flyTo.getView().getClass());
-                assertTrue(flyTo.getView() instanceof Camera);
-                final Camera camera = (Camera) flyTo.getView();
-                assertEquals(170.157, camera.getLongitude(), DELTA);
-                assertEquals(-43.671, camera.getLatitude(), DELTA);
-                assertEquals(9700, camera.getAltitude(), DELTA);
-                assertEquals(-6.333, camera.getHeading(), DELTA);
-                assertEquals(33.5, camera.getTilt(), DELTA);
-
-
-                assertTrue(playList.getTourPrimitives().get(1) instanceof AnimatedUpdate);
-                final AnimatedUpdate animatedUpdate = (AnimatedUpdate) playList.getTourPrimitives().get(1);
-                assertEquals(5, animatedUpdate.getDuration(), DELTA);
-                assertTrue(animatedUpdate.getUpdate() instanceof Update);
-                final Update update = animatedUpdate.getUpdate();
-                assertEquals(new URI("http://moncoco.com"), update.getTargetHref());
-                assertEquals(1, update.getUpdates().size());
-                assertTrue(update.getUpdates().get(0) instanceof Change);
-                final Change change = (Change) update.getUpdates().get(0);
-                assertEquals(1, change.getObjects().size());
-                assertTrue(change.getObjects().get(0) instanceof IconStyle);
-                final IconStyle iconStyle = (IconStyle) change.getObjects().get(0);
-                assertEquals("mystyle", iconStyle.getIdAttributes().getTargetId());
-                assertEquals(10.0, iconStyle.getScale(), DELTA);
-
-                assertTrue(playList.getTourPrimitives().get(2) instanceof Wait);
-                final Wait wait = (Wait) playList.getTourPrimitives().get(2);
-                assertEquals(5, wait.getDuration(), DELTA);
-            }
+            final Wait wait = (Wait) playList.getTourPrimitives().get(2);
+            assertEquals(5, wait.getDuration(), DELTA);
         }
+        assertFalse("Expected exactly one element.", i.hasNext());
     }
 
     @Test
@@ -250,23 +194,21 @@ public class AnimatedUpdateTest extends org.geotoolkit.test.TestBase {
         wait.setDuration(5);
 
         final PlayList playList = gxFactory.createPlayList();
-        playList.setTourPrimitives(Arrays.asList((AbstractTourPrimitive) flyTo, animatedUpdate, wait));
+        playList.setTourPrimitives(Arrays.asList(flyTo, animatedUpdate, wait));
 
         final Feature tour = gxFactory.createTour();
-        Collection<Property> tourProperties = tour.getProperties();
-        tourProperties.add(FF.createAttribute("Play me!", KmlModelConstants.ATT_NAME, null));
-        tourProperties.add(FF.createAttribute(playList, GxModelConstants.ATT_TOUR_PLAY_LIST, null));
+        tour.setPropertyValue(KmlConstants.TAG_NAME, "Play me!");
+        tour.setPropertyValue(KmlConstants.ATT_PLAYLIST, playList);
 
         final Coordinate coordinate = kmlFactory.createCoordinate("170.1435558771009,-43.60505741890396,0.0");
         final CoordinateSequence coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
         final Point point = kmlFactory.createPoint(coordinates);
         final Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
         IdAttributes placemarkIdAttributes = kmlFactory.createIdAttributes("mountainpin1", null);
-        placemarkProperties.add(FF.createAttribute(placemarkIdAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        placemarkProperties.add(FF.createAttribute("Pin on a mountaintop", KmlModelConstants.ATT_NAME, null));
-        placemarkProperties.add(FF.createAttribute(new URI("#pushpin"), KmlModelConstants.ATT_STYLE_URL, null));
-        placemarkProperties.add(FF.createAttribute(point, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark.setPropertyValue(KmlConstants.ATT_ID, placemarkIdAttributes);
+        placemark.setPropertyValue(KmlConstants.TAG_NAME, "Pin on a mountaintop");
+        placemark.setPropertyValue(KmlConstants.TAG_STYLE_URL, new URI("#pushpin"));
+        placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, point);
 
         final BasicLink icon = kmlFactory.createBasicLink();
         icon.setHref("http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png");
@@ -284,12 +226,10 @@ public class AnimatedUpdateTest extends org.geotoolkit.test.TestBase {
 
 
         final Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FF.createAttribute("gx:AnimatedUpdate example", KmlModelConstants.ATT_NAME, null));
-        documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-        documentProperties.add(FeatureUtilities.wrapProperty(tour, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-        document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.FALSE);
+        document.setPropertyValue(KmlConstants.TAG_NAME, "gx:AnimatedUpdate example");
+        document.setPropertyValue(KmlConstants.TAG_STYLE_SELECTOR, style);
+        document.setPropertyValue(KmlConstants.TAG_FEATURES, Arrays.asList(placemark,tour));
+        document.setPropertyValue(KmlConstants.TAG_OPEN, Boolean.FALSE);
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
@@ -304,8 +244,6 @@ public class AnimatedUpdateTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
-
 }

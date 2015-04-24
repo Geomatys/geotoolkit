@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.processing.vector.affinetransform;
 
+import org.apache.sis.feature.TransformFeatureType;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
 import org.geotoolkit.processing.AbstractProcess;
 
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -45,9 +47,9 @@ public class AffineTransformProcess extends AbstractProcess {
     protected void execute() {
         final FeatureCollection inputFeatureList   = value(VectorDescriptor.FEATURE_IN, inputParameters);
         final java.awt.geom.AffineTransform transform       = value(AffineTransformDescriptor.TRANSFORM_IN, inputParameters);
-
-        final FeatureCollection resultFeatureList = new AffineTransformFeatureCollection(inputFeatureList, transform);
-        
+        final AffineTransformGeometryTransformer trs = new AffineTransformGeometryTransformer(transform);
+        final TransformFeatureType ttype = new TransformFeatureType(inputFeatureList.getFeatureType(), trs);
+        final FeatureCollection resultFeatureList = GenericDecoratedFeatureIterator.wrap(inputFeatureList,ttype);
         getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 }

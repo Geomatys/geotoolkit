@@ -19,7 +19,7 @@ package org.geotoolkit.data.osm.client;
 
 import java.util.List;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.data.osm.model.Tag;
+import org.opengis.feature.Feature;
 
 /**
  * Request to update a changeset.
@@ -42,6 +42,6 @@ public interface UpdateChangeSetRequest extends Request{
     /**
      * @return live list of tags to update.
      */
-    List<Tag> tags();
+    List<Feature> tags();
 
 }

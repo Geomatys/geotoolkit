@@ -20,23 +20,21 @@ import com.vividsolutions.jts.geom.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
-import org.geotoolkit.feature.type.DefaultFeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.feature.DefaultFeatureType;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * Build features representing MIF Collection geometries.
@@ -47,8 +45,10 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
 public class MIFCollectionBuilder extends MIFGeometryBuilder {
     public static final GenericName NAME = NamesExt.create("COLLECTION");
     public static final GenericName GEOM_NAME = NamesExt.create("GEOMETRY");
+    public static final FeatureType EMPTY_TYPE = new DefaultFeatureType(Collections.singletonMap("name", "abstract"), true, null);
 
     private CoordinateReferenceSystem collectionCRS = null;
+
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {
 
@@ -61,13 +61,12 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
 
         for(int geomCount=0 ; geomCount < numGeom ; geomCount++ ) {
             while(scanner.hasNextLine()) {
-                final String tmpWord = scanner.findInLine("\\w+");
-                final MIFUtils.GeometryType enumType = MIFUtils.getGeometryType(tmpWord);
+                final MIFUtils.GeometryType enumType = MIFUtils.getGeometryType(scanner.findInLine("\\w+"));
                 if (enumType != null) {
-                    final FeatureType type = enumType.getBinding(collectionCRS, null);
-                    final Feature currentFeature = FeatureUtilities.defaultFeature(type, tmpWord+geomCount);
+                    final FeatureType type = enumType.getBinding(collectionCRS, EMPTY_TYPE);
+                    final Feature currentFeature = type.newInstance();
                     enumType.readGeometry(scanner, toFill, toApply);
-                    toFill.getProperties(GEOM_NAME).add(currentFeature);
+                    ((Collection)toFill.getPropertyValue(GEOM_NAME.toString())).add(currentFeature);
                     break;
                 }
             }
@@ -76,31 +75,28 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
 
     @Override
     public FeatureType buildType(CoordinateReferenceSystem crs, FeatureType parent) {
-        AttributeType type = new DefaultAttributeType(NAME, Feature.class, false, false, null, null, null);
-        PropertyDescriptor desc = new DefaultAttributeDescriptor(type, NAME, 1, 3, false, null);
-
         collectionCRS = crs;
-
-        return new DefaultFeatureType(NAME, Collections.singletonList(desc), null, false, null, parent, null);
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName(NAME);
+        ftb.setSuperTypes(parent);
+        ftb.addAssociation(EMPTY_TYPE).setName(NAME).setMinimumOccurs(1).setMaximumOccurs(3);
+        return ftb.build();
     }
 
     @Override
-    public String toMIFSyntax(Feature geometry) throws DataStoreException {
-        super.toMIFSyntax(geometry);
+    public String toMIFSyntax(Feature feature) throws DataStoreException {
+        super.toMIFSyntax(feature);
 
         StringBuilder builder = new StringBuilder(NAME.tip().toString()).append(' ');
-        if(geometry.getProperty(GEOM_NAME) != null) {
-            Object value = geometry.getProperty(GEOM_NAME).getValue();
-            if(value instanceof Feature) {
-                featureToMIFCollection((Feature)value, builder);
-            } else if (value instanceof GeometryCollection) {
-                jtsToMIFCollection((GeometryCollection)value, builder);
-            }
-        } else if(geometry.getDefaultGeometryProperty().getValue() instanceof GeometryCollection) {
-            final GeometryCollection source = (GeometryCollection) geometry.getDefaultGeometryProperty().getValue();
-            jtsToMIFCollection(source, builder);
+        Object value = MIFUtils.getPropertySafe(feature, GEOM_NAME.toString());
+        if (value instanceof Feature) {
+            featureToMIFCollection((Feature) value, builder);
+        } else if (value instanceof GeometryCollection) {
+            jtsToMIFCollection((GeometryCollection) value, builder);
+        } else if ((value = MIFUtils.getGeometryValue(feature)) instanceof GeometryCollection) {
+            jtsToMIFCollection((GeometryCollection) value, builder);
         } else {
-             throw new DataStoreException("Incompatible geometry type.");
+            throw new DataStoreException("Incompatible geometry type.");
         }
 
         return builder.toString();
@@ -108,36 +104,36 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
 
 
     private void jtsToMIFCollection(GeometryCollection source, StringBuilder builder) throws DataStoreException {
-        final ArrayList<Polygon> polygons = new ArrayList<Polygon>();
-        final ArrayList<LineString> lines = new ArrayList<LineString>();
-        final ArrayList<Point> points = new ArrayList<Point>();
+        final ArrayList<Polygon> polygons = new ArrayList<>();
+        final ArrayList<LineString> lines = new ArrayList<>();
+        final ArrayList<Point> points = new ArrayList<>();
 
         sortGeometries(source, polygons, lines, points);
 
         int count = 0;
-        ArrayList<String> geomsStr = new ArrayList<String>();
+        ArrayList<String> geomsStr = new ArrayList<>();
         if(polygons.size() > 0) {
             count++;
             final MultiPolygon multiPolygon = GEOMETRY_FACTORY.createMultiPolygon(polygons.toArray(new Polygon[polygons.size()]));
             final FeatureType type = MIFUtils.GeometryType.REGION.getBinding(collectionCRS, null);
-            final Feature feature = FeatureUtilities.defaultFeature(type, "polygons");
-            feature.getDefaultGeometryProperty().setValue(multiPolygon);
+            final Feature feature = type.newInstance();
+            feature.setPropertyValue(MIFUtils.findGeometryProperty(feature.getType()).getName().tip().toString(), multiPolygon);
             geomsStr.add(MIFUtils.GeometryType.REGION.toMIFSyntax(feature));
         }
         if(lines.size() > 0) {
             count++;
             final MultiLineString multiLine = GEOMETRY_FACTORY.createMultiLineString(lines.toArray(new LineString[lines.size()]));
             final FeatureType type = MIFUtils.GeometryType.PLINE.getBinding(collectionCRS, null);
-            final Feature feature = FeatureUtilities.defaultFeature(type, "lines");
-            feature.getDefaultGeometryProperty().setValue(multiLine);
+            final Feature feature = type.newInstance();
+            feature.setPropertyValue(MIFUtils.findGeometryProperty(feature.getType()).getName().tip().toString(), multiLine);
             geomsStr.add(MIFUtils.GeometryType.PLINE.toMIFSyntax(feature));
         }
         if(points.size() > 0) {
             count++;
             final MultiPoint multiPoint = GEOMETRY_FACTORY.createMultiPoint(points.toArray(new Point[points.size()]));
             final FeatureType type = MIFUtils.GeometryType.PLINE.getBinding(collectionCRS, null);
-            final Feature feature = FeatureUtilities.defaultFeature(type, "points");
-            feature.getDefaultGeometryProperty().setValue(multiPoint);
+            final Feature feature = type.newInstance();
+            feature.setPropertyValue(MIFUtils.findGeometryProperty(feature.getType()).getName().tip().toString(), multiPoint);
             geomsStr.add(MIFUtils.GeometryType.PLINE.toMIFSyntax(feature));
         }
 
@@ -194,9 +190,8 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    protected List<AttributeDescriptor> getAttributes() {
-        AttributeType type = new DefaultAttributeType(NAME, Feature.class, false, false, null, null, null);
-        AttributeDescriptor desc = new DefaultAttributeDescriptor(type, NAME, 1, 3, false, null);
-        return Collections.singletonList(desc);
+    protected List<AttributeType> getAttributes() {
+        final AttributeType attType = new DefaultAttributeType(Collections.singletonMap("name", NAME), Feature.class, 1, 3, null);
+        return Collections.singletonList(attType);
     }
 }

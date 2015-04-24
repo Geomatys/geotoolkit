@@ -34,9 +34,9 @@ public class PostgisDemo {
         final MapContext context = MapBuilder.createContext();
         
         for(GenericName n : store.getNames()){
-            System.out.println(store.getFeatureType(n));
+            System.out.println(store.getFeatureType(n.toString()));
             
-            final FeatureCollection col = store.createSession(true).getFeatureCollection(QueryBuilder.all(n));
+            final FeatureCollection col = store.createSession(true).getFeatureCollection(QueryBuilder.all(n.toString()));
             context.layers().add(MapBuilder.createFeatureLayer(col, RandomStyleBuilder.createRandomVectorStyle(col.getFeatureType())));
         }
         

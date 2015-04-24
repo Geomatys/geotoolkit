@@ -18,8 +18,8 @@
 package org.geotoolkit.report;
 
 import net.sf.jasperreports.engine.JRField;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
 
 /**
  *
@@ -41,7 +41,7 @@ public interface JRFieldRenderer {
      *     if the field type match this renderer but some additional
      *     field parameters are missing
      */
-    PropertyDescriptor createDescriptor(JRField field) throws IllegalArgumentException;
+    AttributeType createDescriptor(JRField field) throws IllegalArgumentException;
 
     /**
      * Prepare the field value to be rendered.

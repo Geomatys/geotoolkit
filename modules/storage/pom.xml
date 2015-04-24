@@ -109,7 +109,6 @@
     <module>geotk-feature-shapefile</module>
     <module>geotk-feature-om</module>
     <module>geotk-feature-osm</module>
-    <module>geotk-feature-sensorml</module>
     <module>geotk-feature-geojson</module>
     <module>geotk-feature-sql</module>
     <module>geotk-feature-postgres</module>

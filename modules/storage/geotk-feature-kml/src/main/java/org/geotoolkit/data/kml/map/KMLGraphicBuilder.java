@@ -31,7 +31,6 @@ import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -83,7 +82,6 @@ import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
 import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.GraphicBuilder;
@@ -97,8 +95,7 @@ import org.geotoolkit.display.canvas.Canvas;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 
 import org.opengis.display.primitive.Graphic;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -106,6 +103,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+
 
 /**
  * Render KML layer in default geotoolkit rendering engine.
@@ -178,10 +176,10 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         final KmlCache cache = new KmlCache(kmllayer.kml);
 
         int width = 0, height = 0, y = 0;
-        final List<Image> images = new ArrayList<Image>();
+        final List<Image> images = new ArrayList<>();
 
         try {
-            images.add(legendAbstractFeature(kmllayer.kml.getAbstractFeature(),cache));
+            images.add(legendFeature(kmllayer.kml.getAbstractFeature(),cache));
         } catch (IOException ex) {
             throw new PortrayalException(ex);
         }
@@ -203,67 +201,38 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
     }
 
 
-    /**
-     *
-     * @param abstractFeature
-     * @return
-     * @throws IOException
-     */
-    private static Image legendAbstractFeature(Feature abstractFeature, KmlCache cache)
-            throws IOException {
-
+    private static Image legendFeature(Feature feature, KmlCache cache) throws IOException {
         Image image = null;
-        if (FeatureTypeUtilities.isDecendedFrom(
-                abstractFeature.getType(), KmlModelConstants.TYPE_CONTAINER)) {
-            image = legendAbstractContainer(abstractFeature,cache);
-        } else if (FeatureTypeUtilities.isDecendedFrom(
-                abstractFeature.getType(), KmlModelConstants.TYPE_OVERLAY)) {
-            image = legendAbstractOverlay(abstractFeature,cache);
-        } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_PLACEMARK)) {
-            image = legendPlacemark(abstractFeature,cache);
-        } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_NETWORK_LINK)) {
-            //return this.legendNetworkLink(abstractFeature);
+        if (KmlModelConstants.TYPE_CONTAINER.isAssignableFrom(feature.getType())) {
+            image = legendContainer(feature,cache);
+        } else if (KmlModelConstants.TYPE_OVERLAY.isAssignableFrom(feature.getType())) {
+            image = legendOverlay(feature,cache);
+        } else if (feature.getType().equals(KmlModelConstants.TYPE_PLACEMARK)) {
+            image = legendPlacemark(feature,cache);
+        } else if (feature.getType().equals(KmlModelConstants.TYPE_NETWORK_LINK)) {
+            //return legendNetworkLink(feature);
         }
         return image;
     }
 
-    /**
-     *
-     * @param abstractContainer
-     * @return
-     * @throws IOException
-     */
-    private static Image legendAbstractContainer(Feature abstractContainer, KmlCache cache)
-            throws IOException {
-
+    private static Image legendContainer(Feature container, KmlCache cache) throws IOException {
         Image image = null;
-        if (abstractContainer.getType().equals(KmlModelConstants.TYPE_FOLDER)) {
-            image = legendFolder(abstractContainer,cache);
-        } else if (abstractContainer.getType().equals(KmlModelConstants.TYPE_DOCUMENT)) {
-            image = legendDocument(abstractContainer,cache);
+        if (container.getType().equals(KmlModelConstants.TYPE_FOLDER)) {
+            image = legendFolder(container,cache);
+        } else if (container.getType().equals(KmlModelConstants.TYPE_DOCUMENT)) {
+            image = legendDocument(container,cache);
         }
         return image;
     }
 
-    /**
-     *
-     * @param placemark
-     * @return
-     * @throws IOException
-     */
-    private static Image legendPlacemark(Feature placemark, KmlCache cache)
-            throws IOException {
-
-        String featureName = null;
+    private static Image legendPlacemark(Feature placemark, KmlCache cache) throws IOException {
         int nameWidth = 0;
 
-        legendCommonAbstractFeature(placemark,cache);
+        legendCommonFeature(placemark,cache);
 
-        if (placemark.getProperty(KmlModelConstants.ATT_NAME.getName()) != null) {
-            featureName = (String) placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue();
-            if (featureName != null) {
-                nameWidth = FONT_METRICS.stringWidth(featureName);
-            }
+        final String featureName = (String) placemark.getPropertyValue(KmlConstants.TAG_NAME);
+        if (featureName != null) {
+            nameWidth = FONT_METRICS.stringWidth(featureName);
         }
 
         // Apply styles
@@ -275,9 +244,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         final Graphics2D graphic = (Graphics2D) image.getGraphics();
         graphic.setFont(FONT);
 
-        final AbstractGeometry geometry =
-                (AbstractGeometry) placemark.getProperty(
-                KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+        final AbstractGeometry geometry = (AbstractGeometry) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
 
         if (s != null && s.getIconStyle() != null) {
             final IconStyle iconStyle = s.getIconStyle();
@@ -298,67 +265,38 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         } else {
             graphic.drawImage(ICON_PLACEMARK, 0, 4, null);
         }
-
-
         if (featureName != null) {
             graphic.setColor(Color.BLACK);
             graphic.drawString(featureName, LEGEND_WIDTH_EXT, LEGEND_HEIGHT_INT);
         }
-
         return image;
     }
 
-    /**
-     *
-     * @param abstractFeature
-     */
-    private static void legendCommonAbstractFeature(Feature abstractFeature, KmlCache cache) {
-        Iterator i;
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName()) != null) {
-            i = abstractFeature.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
-            while (i.hasNext()) {
-                indexAbstractStyleSelector((AbstractStyleSelector) ((Property) i.next()).getValue(),cache);
-            }
+    private static void legendCommonFeature(Feature feature, KmlCache cache) {
+        for (final Object value : (Iterable<?>) feature.getPropertyValue(KmlConstants.TAG_STYLE_SELECTOR)) {
+            indexStyleSelector((AbstractStyleSelector) value, cache);
         }
     }
 
-    /**
-     *
-     * @param abstractContainer
-     */
-    private static void legendCommonAbstractContainer(Feature abstractContainer, KmlCache cache) {
-        legendCommonAbstractFeature(abstractContainer,cache);
+    private static void legendCommonContainer(Feature container, KmlCache cache) {
+        legendCommonFeature(container,cache);
     }
 
-    /**
-     *
-     * @param folder
-     * @return
-     * @throws IOException
-     */
-    private static Image legendFolder(Feature folder, KmlCache cache)
-            throws IOException {
-
+    private static Image legendFolder(Feature folder, KmlCache cache) throws IOException {
         int width = 0, height = ICON_FOLDER.getHeight(), y = ICON_FOLDER.getHeight();
-        final List<Image> images = new ArrayList<Image>();
-        Iterator i;
-        String featureName = null;
+        final List<Image> images = new ArrayList<>();
         int nameWidth = 0;
 
-        legendCommonAbstractContainer(folder,cache);
+        legendCommonContainer(folder,cache);
 
-        if (folder.getProperty(KmlModelConstants.ATT_NAME.getName()) != null) {
-            featureName = (String) folder.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue();
-            if (featureName != null) {
-                nameWidth = FONT_METRICS.stringWidth(featureName);
-            }
+        final String featureName = (String) folder.getPropertyValue(KmlConstants.TAG_NAME);
+        if (featureName != null) {
+            nameWidth = FONT_METRICS.stringWidth(featureName);
         }
 
-        if (folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()) != null) {
-            i = folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
-            while (i.hasNext()) {
-                images.add(legendAbstractFeature((Feature) ((Property) i.next()).getValue(),cache));
-            }
+        Iterator<?> i = ((Iterable<?>) folder.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        while (i.hasNext()) {
+            images.add(legendFeature((Feature) i.next(), cache));
         }
 
         for (Image img : images) {
@@ -386,26 +324,15 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         return image;
     }
 
-    /**
-     *
-     * @param document
-     * @return
-     * @throws IOException
-     */
-    private static Image legendDocument(Feature document, KmlCache cache)
-            throws IOException {
-
+    private static Image legendDocument(Feature document, KmlCache cache) throws IOException {
         int width = 0, height = 0, y = 0;
-        List<Image> images = new ArrayList<Image>();
-        Iterator i;
+        List<Image> images = new ArrayList<>();
 
-        legendCommonAbstractContainer(document,cache);
+        legendCommonContainer(document,cache);
 
-        if (document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()) != null) {
-            i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-            while (i.hasNext()) {
-                images.add(legendAbstractFeature((Feature) ((Property) i.next()).getValue(),cache));
-            }
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        while (i.hasNext()) {
+            images.add(legendFeature((Feature) i.next(), cache));
         }
 
         for (Image img : images) {
@@ -423,43 +350,24 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         return image;
     }
 
-    /**
-     *
-     * @param abstractOverlay
-     * @return
-     * @throws IOException
-     */
-    private static Image legendAbstractOverlay(Feature abstractOverlay, KmlCache cache)
-            throws IOException {
-
+    private static Image legendOverlay(Feature overlay, KmlCache cache) throws IOException {
         Image image = null;
-        if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY)) {
-            image = legendGroundOverlay(abstractOverlay,cache);
-        } else if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_SCREEN_OVERLAY)) {
-            image = legendScreenOverlay(abstractOverlay,cache);
-//        } else if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_PHOTO_OVERLAY)){
-//            this.portrayPhotoOverlay(abstractOverlay);
+        if (overlay.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY)) {
+            image = legendGroundOverlay(overlay,cache);
+        } else if (overlay.getType().equals(KmlModelConstants.TYPE_SCREEN_OVERLAY)) {
+            image = legendScreenOverlay(overlay,cache);
+//        } else if (overlay.getType().equals(KmlModelConstants.TYPE_PHOTO_OVERLAY)){
+//            portrayPhotoOverlay(overlay);
         }
         return image;
     }
 
-    /**
-     *
-     * @param groundOverlay
-     * @return
-     * @throws IOException
-     */
-    private static Image legendGroundOverlay(Feature groundOverlay, KmlCache cache)
-            throws IOException {
-
-        String featureName = null;
+    private static Image legendGroundOverlay(Feature groundOverlay, KmlCache cache) throws IOException {
         int nameWidth = 0;
 
-        if (groundOverlay.getProperty(KmlModelConstants.ATT_NAME.getName()) != null) {
-            featureName = (String) groundOverlay.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue();
-            if (featureName != null) {
-                nameWidth = FONT_METRICS.stringWidth(featureName);
-            }
+        final String featureName = (String) groundOverlay.getPropertyValue(KmlConstants.TAG_NAME);
+        if (featureName != null) {
+            nameWidth = FONT_METRICS.stringWidth(featureName);
         }
 
         final BufferedImage image = new BufferedImage(
@@ -476,25 +384,13 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         return image;
     }
 
-    /**
-     *
-     * @param screenOverlay
-     * @return
-     * @throws IOException
-     */
-    private static Image legendScreenOverlay(Feature screenOverlay, KmlCache cache)
-            throws IOException {
-
-        String featureName = null;
+    private static Image legendScreenOverlay(Feature screenOverlay, KmlCache cache) throws IOException {
         int nameWidth = 0;
 
-        if (screenOverlay.getProperty(KmlModelConstants.ATT_NAME.getName()) != null) {
-            featureName = (String) screenOverlay.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue();
-            if (featureName != null) {
-                nameWidth = FONT_METRICS.stringWidth(featureName);
-            }
+        final String featureName = (String) screenOverlay.getPropertyValue(KmlConstants.TAG_NAME);
+        if (featureName != null) {
+            nameWidth = FONT_METRICS.stringWidth(featureName);
         }
-
         final BufferedImage image = new BufferedImage(
                 LEGEND_WIDTH_EXT + nameWidth,
                 LEGEND_HEIGHT_EXT,
@@ -514,29 +410,23 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
      * RETRIEVE STYLES METHODS
      * -------------------------------------------------------------------------
      */
-    /**
-     *
-     * @param feature
-     * @return
-     */
     private static Style retrieveStyle(Feature feature, KmlCache cache) {
-
         Style styleSelector = null;
-
-        if (feature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName()) != null) {
-            if (feature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).getValue() instanceof Style) {
-                styleSelector = (Style) feature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).getValue();
-            } else if (styleSelector instanceof StyleMap) {
-                final StyleMap styleMap = (StyleMap) styleSelector;
-                styleSelector = retrieveStyle(styleMap, StyleState.NORMAL,cache);
+        final Iterator<?> i = ((Iterable<?>) feature.getPropertyValue(KmlConstants.TAG_STYLE_SELECTOR)).iterator();
+        if (i.hasNext()) {
+            final Object value = i.next();
+            if (value instanceof Style) {
+                styleSelector = (Style) value;
+            } else if (value instanceof StyleMap) {
+                styleSelector = retrieveStyle((StyleMap) styleSelector, StyleState.NORMAL,cache);
             }
-        } else if (feature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()) != null) {
-            if (feature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue() != null) {
-                styleSelector = cache.styles.get(((URI) feature.getProperty(
-                        KmlModelConstants.ATT_STYLE_URL.getName()).getValue()).toString());
+        } else {
+            final Object value = feature.getPropertyValue(KmlConstants.TAG_STYLE_URL);
+            if (value != null) {
+                final String uri = value.toString();
+                styleSelector = cache.styles.get(uri);
                 if (styleSelector == null) {
-                    final StyleMap styleMap = cache.styleMaps.get(((URI) feature.getProperty(
-                            KmlModelConstants.ATT_STYLE_URL.getName()).getValue()).toString());
+                    final StyleMap styleMap = cache.styleMaps.get(uri);
                     styleSelector = retrieveStyle(styleMap, StyleState.NORMAL,cache);
                 }
             }
@@ -544,12 +434,6 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         return styleSelector;
     }
 
-    /**
-     *
-     * @param styleMap
-     * @param styleState
-     * @return
-     */
     private static Style retrieveStyle(StyleMap styleMap, StyleState styleState, KmlCache cache) {
         Style s = null;
         if (styleMap != null) {
@@ -562,7 +446,6 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
                         s = (Style) styleSelector;
                         break;
                     }
-
                     if (s == null) {
                         s = cache.styles.get(pair.getStyleUrl().toString());
                         if (s == null
@@ -581,46 +464,30 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
      * INDEX STYLES METHODS
      * -------------------------------------------------------------------------
      */
-    /**
-     *
-     * @param abstractStyleSelector
-     */
-    private static void indexAbstractStyleSelector(AbstractStyleSelector abstractStyleSelector, KmlCache cache) {
-
-        if (abstractStyleSelector instanceof Style) {
-            indexStyle((Style) abstractStyleSelector, cache);
-        } else if (abstractStyleSelector instanceof StyleMap) {
-            indexStyleMap((StyleMap) abstractStyleSelector, cache);
+    private static void indexStyleSelector(AbstractStyleSelector styleSelector, KmlCache cache) {
+        if (styleSelector instanceof Style) {
+            indexStyle((Style) styleSelector, cache);
+        } else if (styleSelector instanceof StyleMap) {
+            indexStyleMap((StyleMap) styleSelector, cache);
         }
     }
 
-    /**
-     *
-     * @param style
-     */
     private static void indexStyle(Style style, KmlCache cache) {
-
         if (style.getIdAttributes().getId() != null) {
             cache.styles.put("#" + style.getIdAttributes().getId(), style);
         }
     }
 
-    /**
-     *
-     * @param styleMap
-     */
     private static void indexStyleMap(StyleMap styleMap, KmlCache cache) {
-
         if (styleMap.getIdAttributes().getId() != null) {
             cache.styleMaps.put("#" + styleMap.getIdAttributes().getId(), styleMap);
         }
     }
 
-
     private static class KmlCache{
         final Kml kml;
-        final Map<String, Style> styles = new HashMap<String, Style>();
-        final Map<String, StyleMap> styleMaps = new HashMap<String, StyleMap>();
+        final Map<String, Style> styles = new HashMap<>();
+        final Map<String, StyleMap> styleMaps = new HashMap<>();
 
         KmlCache(Kml kml){
             this.kml = kml;
@@ -628,7 +495,6 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
     }
 
     private static class KMLGraphic extends GraphicJ2D {
-
         private final KmlCache cache;
         private RenderingContext2D context2d;
 
@@ -642,14 +508,12 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             this.context2d = context2D;
             cache.styles.clear();
             cache.styleMaps.clear();
-
             try {
-                this.portrayKml(cache.kml);
+                portrayKml(cache.kml);
                 context2D.getLabelRenderer(true).portrayLabels();
             } catch (TransformException | IOException ex) {
                 Logging.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, null, ex);
             }
-
             cache.styles.clear();
             cache.styleMaps.clear();
         }
@@ -659,65 +523,31 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             return graphics;
         }
 
-        /**
-         *
-         * @param kml
-         * @throws IOException
-         */
-        private void portrayKml(Kml kml)
-                throws IOException {
-
+        private void portrayKml(Kml kml) throws IOException {
             if (kml.getAbstractFeature() != null) {
-                this.portrayAbstractFeature(kml.getAbstractFeature());
+                portrayFeature(kml.getAbstractFeature());
             }
         }
 
-        /**
-         *
-         * @param abstractFeature
-         * @throws IOException
-         */
-        private void portrayAbstractFeature(Feature abstractFeature)
-                throws IOException {
-
-            if (FeatureTypeUtilities.isDecendedFrom(
-                    abstractFeature.getType(), KmlModelConstants.TYPE_CONTAINER)) {
-                this.portrayAbstractContainer(abstractFeature);
-            } else if (FeatureTypeUtilities.isDecendedFrom(
-                    abstractFeature.getType(), KmlModelConstants.TYPE_OVERLAY)) {
-                this.portrayAbstractOverlay(abstractFeature);
-            } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_PLACEMARK)) {
-                this.portrayPlacemark(abstractFeature);
+        private void portrayFeature(Feature feature) throws IOException {
+            if (KmlModelConstants.TYPE_CONTAINER.isAssignableFrom(feature.getType())) {
+                portrayAbstractContainer(feature);
+            } else if (KmlModelConstants.TYPE_OVERLAY.isAssignableFrom(feature.getType())) {
+                portrayOverlay(feature);
+            } else if (feature.getType().equals(KmlModelConstants.TYPE_PLACEMARK)) {
+                portrayPlacemark(feature);
             }
         }
 
-        /**
-         *
-         * @param abstractFeature
-         */
-        private void portrayCommonAbstractFeature(Feature abstractFeature) {
-
-            Iterator i;
-            if (abstractFeature.getProperty(
-                    KmlModelConstants.ATT_STYLE_SELECTOR.getName()) != null) {
-                i = abstractFeature.getProperties(
-                        KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
-                while (i.hasNext()) {
-                    indexAbstractStyleSelector(
-                            (AbstractStyleSelector) ((Property) i.next()).getValue(),cache);
-                }
+        private void portrayCommonFeature(Feature feature) {
+            Iterator<?> i = ((Iterable<?>) feature.getPropertyValue(KmlConstants.TAG_STYLE_SELECTOR)).iterator();
+            while (i.hasNext()) {
+                indexStyleSelector((AbstractStyleSelector) i.next(), cache);
             }
         }
 
-        /**
-         *
-         * @param placemark
-         * @throws IOException
-         */
-        private void portrayPlacemark(Feature placemark)
-                throws IOException {
-
-            this.portrayCommonAbstractFeature(placemark);
+        private void portrayPlacemark(Feature placemark) throws IOException {
+            portrayCommonFeature(placemark);
 
             context2d.switchToObjectiveCRS();
 
@@ -726,16 +556,13 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             com.vividsolutions.jts.geom.Point centroid = null;
 
             // display geometries
-            if (placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()) != null) {
-                final AbstractGeometry geometry = (AbstractGeometry) placemark.getProperty(
-                        KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-                if (geometry != null) {
-                    this.portrayAbstractGeometry(geometry, s);
-                    if (geometry instanceof Geometry) {
-                        centroid = ((Geometry) geometry).getCentroid();
-                    } else if (geometry instanceof MultiGeometry) {
-                        centroid = ((MultiGeometry) geometry).getCentroid();
-                    }
+            final AbstractGeometry geometry = (AbstractGeometry) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
+            if (geometry != null) {
+                portrayGeometry(geometry, s);
+                if (geometry instanceof Geometry) {
+                    centroid = ((Geometry) geometry).getCentroid();
+                } else if (geometry instanceof MultiGeometry) {
+                    centroid = ((MultiGeometry) geometry).getCentroid();
                 }
             }
 
@@ -746,7 +573,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
                 x = centroid.getX();
                 y = centroid.getY();
             } else {
-                final Region region = ((Region) placemark.getProperty(KmlModelConstants.ATT_REGION.getName()).getValue());
+                final Region region = ((Region) placemark.getPropertyValue(KmlConstants.TAG_REGION));
                 if (region != null) {
                     final LatLonAltBox latLonAltBox = region.getLatLonAltBox();
                     x = (latLonAltBox.getEast() + latLonAltBox.getWest()) / 2;
@@ -757,119 +584,67 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             if (x != Double.NaN && y != Double.NaN) {
                 portrayBalloonStyle(x, y, s, false, placemark);
                 portrayLabelStyle(x, y, s,
-                        (String) placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue(),
+                        (String) placemark.getPropertyValue(KmlConstants.TAG_NAME),
                         centroid);
                 if (false) {
                     portrayFlag(x, y); // portray flag at Placemark center (set off)
                 }
             }
-
         }
 
-        /**
-         *
-         * @param abstractContainer
-         * @throws IOException
-         */
-        private void portrayAbstractContainer(Feature abstractContainer)
-                throws IOException {
-
-            if (abstractContainer.getType().equals(KmlModelConstants.TYPE_FOLDER)) {
-                this.portrayFolder(abstractContainer);
-            } else if (abstractContainer.getType().equals(KmlModelConstants.TYPE_DOCUMENT)) {
-                this.portrayDocument(abstractContainer);
+        private void portrayAbstractContainer(Feature container) throws IOException {
+            if (container.getType().equals(KmlModelConstants.TYPE_FOLDER)) {
+                portrayFolder(container);
+            } else if (container.getType().equals(KmlModelConstants.TYPE_DOCUMENT)) {
+                portrayDocument(container);
             }
         }
 
-        /**
-         *
-         * @param abstractContainer
-         */
-        private void portrayCommonAbstractContainer(Feature abstractContainer) {
-            this.portrayCommonAbstractFeature(abstractContainer);
+        private void portrayCommonContainer(Feature container) {
+            portrayCommonFeature(container);
         }
 
-        /**
-         *
-         * @param folder
-         * @throws IOException
-         */
-        private void portrayFolder(Feature folder)
-                throws IOException {
-
-            Iterator i;
-            this.portrayCommonAbstractContainer(folder);
-            if (folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()) != null) {
-                i = folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
-                while (i.hasNext()) {
-                    this.portrayAbstractFeature((Feature) ((Property) i.next()).getValue());
-                }
+        private void portrayFolder(Feature folder) throws IOException {
+            portrayCommonContainer(folder);
+            Iterator<?> i = ((Iterable<?>) folder.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+            while (i.hasNext()) {
+                portrayFeature((Feature) i.next());
             }
         }
 
-        /**
-         *
-         * @param document
-         * @throws IOException
-         */
-        private void portrayDocument(Feature document)
-                throws IOException {
-
-            Iterator i;
-            this.portrayCommonAbstractContainer(document);
-            if (document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()) != null) {
-                i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-                while (i.hasNext()) {
-                    this.portrayAbstractFeature((Feature) ((Property) i.next()).getValue());
-                }
+        private void portrayDocument(Feature document) throws IOException {
+            portrayCommonContainer(document);
+            Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+            while (i.hasNext()) {
+                portrayFeature((Feature) i.next());
             }
         }
 
-        /**
-         *
-         * @param abstractOverlay
-         * @throws IOException
-         */
-        private void portrayAbstractOverlay(Feature abstractOverlay)
-                throws IOException {
-
-            if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY)) {
-                this.portrayGroundOverlay(abstractOverlay);
-            } else if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_SCREEN_OVERLAY)) {
-                this.portrayScreenOverlay(abstractOverlay);
-//        } else if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_PHOTO_OVERLAY)){
-//            this.portrayPhotoOverlay(abstractOverlay);
+        private void portrayOverlay(Feature overlay) throws IOException {
+            if (overlay.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY)) {
+                portrayGroundOverlay(overlay);
+            } else if (overlay.getType().equals(KmlModelConstants.TYPE_SCREEN_OVERLAY)) {
+                portrayScreenOverlay(overlay);
+//        } else if (overlay.getType().equals(KmlModelConstants.TYPE_PHOTO_OVERLAY)){
+//            portrayPhotoOverlay(overlay);
             }
         }
 
-        /**
-         *
-         * @param abstractOverlay
-         */
-        private void portrayCommonAbstractOverlay(Feature abstractOverlay) {
-            this.portrayCommonAbstractFeature(abstractOverlay);
+        private void portrayCommonOverlay(Feature overlay) {
+            portrayCommonFeature(overlay);
         }
 
-        /**
-         *
-         * @param groundOverlay
-         * @throws IOException
-         */
-        private void portrayGroundOverlay(Feature groundOverlay)
-                throws IOException {
-
-            this.portrayCommonAbstractOverlay(groundOverlay);
+        private void portrayGroundOverlay(Feature groundOverlay) throws IOException {
+            portrayCommonOverlay(groundOverlay);
 
             context2d.switchToDisplayCRS();
             final Graphics2D graphic = context2d.getGraphics();
 
             // Display image
-            final Property iconProperty = groundOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName());
-            final Icon icon = (Icon) iconProperty.getValue();
+            final Icon icon = (Icon) groundOverlay.getPropertyValue(KmlConstants.TAG_ICON);
             final URL iconURL = new URL(icon.getHref());
             final BufferedImage image = ImageIO.read(iconURL);
-            final LatLonBox latLonBox = (LatLonBox) groundOverlay.getProperty(
-                    KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
+            final LatLonBox latLonBox = (LatLonBox) groundOverlay.getPropertyValue(KmlConstants.TAG_LAT_LON_BOX);
 
             final double north = latLonBox.getNorth();
             final double east = latLonBox.getEast();
@@ -898,28 +673,18 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             portrayBalloonStyle((east + west) / 2, (north + south) / 2, localStyle, false, groundOverlay);
         }
 
-        /**
-         *
-         * @param screenOverlay
-         * @throws IOException
-         */
-        private void portrayScreenOverlay(Feature screenOverlay)
-                throws IOException {
+        private void portrayScreenOverlay(Feature screenOverlay) throws IOException {
+            portrayCommonOverlay(screenOverlay);
 
-            this.portrayCommonAbstractOverlay(screenOverlay);
-
-            Icon icon = (Icon) screenOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue();
+            Icon icon = (Icon) screenOverlay.getPropertyValue(KmlConstants.TAG_ICON);
             final URL img = new URL(icon.getHref());
             context2d.switchToDisplayCRS();
 
             final BufferedImage image = ImageIO.read(img);
             final Graphics2D graphic = context2d.getGraphics();
-            final Vec2 overlayXY = (Vec2) screenOverlay.getProperty(
-                    KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY.getName()).getValue();
-            final Vec2 screenXY = (Vec2) screenOverlay.getProperty(
-                    KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY.getName()).getValue();
-            final Vec2 size = (Vec2) screenOverlay.getProperty(
-                    KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE.getName()).getValue();
+            final Vec2 overlayXY = (Vec2) screenOverlay.getPropertyValue(KmlConstants.TAG_OVERLAY_XY);
+            final Vec2 screenXY = (Vec2) screenOverlay.getPropertyValue(KmlConstants.TAG_SCREEN_XY);
+            final Vec2 size = (Vec2) screenOverlay.getPropertyValue(KmlConstants.TAG_SIZE);
 
             final int width = (int) size.getX();
             final int height = (int) size.getY();
@@ -936,33 +701,20 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             portrayBalloonStyle(x + width, y, localStyle, true, screenOverlay);
         }
 
-        /**
-         *
-         * @param abstractGeometry
-         * @param style
-         * @throws IOException
-         */
-        private void portrayAbstractGeometry(AbstractGeometry abstractGeometry, Style style)
-                throws IOException {
-
-            if (abstractGeometry instanceof MultiGeometry) {
-                this.portrayMultiGeometry((MultiGeometry) abstractGeometry, style);
-            } else if (abstractGeometry instanceof LineString) {
-                this.portrayLineString((LineString) abstractGeometry, style);
-            } else if (abstractGeometry instanceof Polygon) {
-                this.portrayPolygon((Polygon) abstractGeometry, style);
-            } else if (abstractGeometry instanceof Point) {
-                this.portrayPoint((Point) abstractGeometry, style);
-            } else if (abstractGeometry instanceof LinearRing) {
-                this.portrayLinearRing((LinearRing) abstractGeometry, style);
+        private void portrayGeometry(AbstractGeometry geometry, Style style) throws IOException {
+            if (geometry instanceof MultiGeometry) {
+                portrayMultiGeometry((MultiGeometry) geometry, style);
+            } else if (geometry instanceof LineString) {
+                portrayLineString((LineString) geometry, style);
+            } else if (geometry instanceof Polygon) {
+                portrayPolygon((Polygon) geometry, style);
+            } else if (geometry instanceof Point) {
+                portrayPoint((Point) geometry, style);
+            } else if (geometry instanceof LinearRing) {
+                portrayLinearRing((LinearRing) geometry, style);
             }
         }
 
-        /**
-         *
-         * @param lineString
-         * @param style
-         */
         private void portrayLineString(LineString lineString, Style style) {
 
             // MathTransform
@@ -995,25 +747,12 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             graphic.draw(shape);
         }
 
-        /**
-         *
-         * @param multiGeometry
-         * @param style
-         * @throws IOException
-         */
-        private void portrayMultiGeometry(MultiGeometry multiGeometry, Style style)
-                throws IOException {
-
-            for (AbstractGeometry abstractGeometry : multiGeometry.getGeometries()) {
-                this.portrayAbstractGeometry(abstractGeometry, style);
+        private void portrayMultiGeometry(MultiGeometry multiGeometry, Style style) throws IOException {
+            for (AbstractGeometry geometry : multiGeometry.getGeometries()) {
+                portrayGeometry(geometry, style);
             }
         }
 
-        /**
-         *
-         * @param polygon
-         * @param style
-         */
         private void portrayPolygon(Polygon polygon, Style style) {
 
             // MathTransform
@@ -1056,14 +795,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             }
         }
 
-        /**
-         *
-         * @param point
-         * @param style
-         * @throws IOException
-         */
-        private void portrayPoint(Point point, Style style)
-                throws IOException {
+        private void portrayPoint(Point point, Style style) throws IOException {
 
             // MathTransform
             MathTransform transform;
@@ -1098,11 +830,6 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             }
         }
 
-        /**
-         *
-         * @param linearRing
-         * @param style
-         */
         private void portrayLinearRing(LinearRing linearRing, Style style) {
 
             // MathTransform
@@ -1137,18 +864,9 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             graphic.draw(shape);
         }
 
-        /**
-         *
-         * @param x
-         * @param y
-         * @param style
-         * @param fixedToScreen
-         * @param informationResource
-         */
-        private void portrayBalloonStyle(
-                double x, double y, Style style,
-                boolean fixedToScreen, Feature informationResource) {
-
+        private void portrayBalloonStyle(double x, double y, Style style,
+                boolean fixedToScreen, Feature informationResource)
+        {
             // MathTransform
             MathTransform transform = null;
 
@@ -1205,8 +923,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
                     int left, right, top, bottom, vExc, hExc, coeff;
 
                     if (cdata) {
-                        String content = this.retrieveBalloonInformations(
-                                balloonStyle.getText().toString(), informationResource);
+                        String content = retrieveBalloonInformations(balloonStyle.getText().toString(), informationResource);
                         if ("<html>".equals(content.substring(0, 5))) {
                             jep = new JLabel(content);
                         } else {
@@ -1290,16 +1007,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             }
         }
 
-        /**
-         *
-         * @param x
-         * @param y
-         * @param style
-         * @param content
-         */
-        private void portrayLabelStyle(double x, double y,
-                Style style, String content, Geometry geom) {
-
+        private void portrayLabelStyle(double x, double y, Style style, String content, Geometry geom) {
             if (content == null) {
                 return;
             }
@@ -1350,26 +1058,15 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             }
         }
 
-        /**
-         *
-         * @param x
-         * @param y
-         * @param style
-         * @param content
-         */
-        private void portrayFlag(double x, double y)
-                throws IOException {
-
+        private void portrayFlag(double x, double y) throws IOException {
             MathTransform transform;
             final Graphics2D graphic = context2d.getGraphics();
-
             try {
                 transform = context2d.getMathTransform(CommonCRS.WGS84.normalizedGeographic(), context2d.getDisplayCRS());
             } catch (FactoryException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;
             }
-
             final BufferedImage image = ICON_PLACEMARK;
             double[] tab = new double[]{x, y};
             try {
@@ -1382,24 +1079,14 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
                     LEGEND_WIDTH_INT, LEGEND_HEIGHT_INT, null);
         }
 
-        /**
-         *
-         * @param toInspect
-         * @param informationResource
-         * @return
-         */
         private String retrieveBalloonInformations(String toInspect, Feature informationResource) {
-
-            Property property = informationResource.getProperty(KmlModelConstants.ATT_NAME.getName());
-            if (property != null && property.getValue() != null) {
-                toInspect = toInspect.replaceAll("\\$\\[" + KmlConstants.TAG_NAME + "\\]",
-                        property.getValue().toString());
+            Object value = informationResource.getPropertyValue(KmlConstants.TAG_NAME);
+            if (value != null) {
+                toInspect = toInspect.replaceAll("\\$\\[" + KmlConstants.TAG_NAME + "\\]", value.toString());
             }
-
-            property = informationResource.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName());
-            if (property != null && property.getValue() != null) {
-                toInspect = toInspect.replaceAll("\\$\\[" + KmlConstants.TAG_DESCRIPTION + "\\]",
-                        property.getValue().toString());
+            value = informationResource.getPropertyValue(KmlConstants.TAG_DESCRIPTION);
+            if (value != null) {
+                toInspect = toInspect.replaceAll("\\$\\[" + KmlConstants.TAG_DESCRIPTION + "\\]", value.toString());
             }
             return toInspect;
         }
@@ -1413,6 +1100,5 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         public Envelope getEnvelope() {
             return null;
         }
-
     }
 }

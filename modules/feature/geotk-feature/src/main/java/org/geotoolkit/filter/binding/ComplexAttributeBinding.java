@@ -16,24 +16,24 @@
  */
 package org.geotoolkit.filter.binding;
 
-import java.util.Collection;
 import java.util.regex.Pattern;
-import org.geotoolkit.feature.DefaultAssociation;
+import org.apache.sis.feature.FeatureExt;
 import static org.geotoolkit.filter.binding.AttributeBinding.stripPrefix;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
+import org.geotoolkit.util.NamesExt;
+import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ComplexAttributeBinding extends AbstractBinding<ComplexAttribute>{
+public class ComplexAttributeBinding extends AbstractBinding<Feature>{
     private static final Pattern ID_PATTERN       = Pattern.compile("@(\\w+:)?id");
     private static final Pattern PROPERTY_PATTERN = Pattern.compile("(\\w+:)?(.+)");
 
     public ComplexAttributeBinding() {
-        super(ComplexAttribute.class, 20);
+        super(Feature.class, 20);
     }
     
     @Override
@@ -44,41 +44,33 @@ public class ComplexAttributeBinding extends AbstractBinding<ComplexAttribute>{
     }
 
     @Override
-    public <T> T get(ComplexAttribute candidate, String xpath, Class<T> target) throws IllegalArgumentException {
+    public <T> T get(Feature candidate, String xpath, Class<T> target) throws IllegalArgumentException {
         if(candidate==null) return null;
         xpath = stripPrefix(xpath);
-        if(candidate instanceof Feature && ID_PATTERN.matcher(xpath).matches()){
-            return (T) ((Feature)candidate).getIdentifier().getID();
+        if(ID_PATTERN.matcher(xpath).matches()){
+            return (T) FeatureExt.getId(candidate).getID();
         }
 
         if(target != null){
             if(Property.class.isAssignableFrom(target)){
-                final Property prop = candidate.getProperty(xpath);
-                return (T) prop;
-            }else if(Collection.class.isAssignableFrom(target)){
-                final Collection<Property> props = candidate.getProperties(xpath);
-                return (T) props;
+                return (T) candidate.getPropertyValue(xpath);
             }
         }
 
-        final Property prop = candidate.getProperty(xpath);
-        if(prop == null){
-            return null;
-        }else if(prop instanceof DefaultAssociation){
-            return (T) ((DefaultAssociation)prop).getLink();
-        }else if(prop instanceof ComplexAttribute){
-            ComplexAttribute ca = (ComplexAttribute) prop;
-            if (ca.getType().getDescriptor("_value") != null) {
-                return (T) ca.getPropertyValue("_value");
-            }
-            return (T) prop.getValue();
-        }else{
-            return (T) prop.getValue();
+        if (!xpath.isEmpty() && xpath.charAt(0) == '{') {
+            xpath = NamesExt.valueOf(xpath).toString();
         }
+
+        try{
+            return (T) candidate.getPropertyValue(xpath);
+        }catch(PropertyNotFoundException ex){
+            return null;
+        }
+        
     }
 
     @Override
-    public void set(ComplexAttribute candidate, String xpath, Object value) throws IllegalArgumentException {
+    public void set(Feature candidate, String xpath, Object value) throws IllegalArgumentException {
         xpath = stripPrefix(xpath);
         candidate.setPropertyValue(xpath,value);
     }

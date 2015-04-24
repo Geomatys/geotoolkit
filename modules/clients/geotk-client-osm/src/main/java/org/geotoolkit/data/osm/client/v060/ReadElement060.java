@@ -18,10 +18,8 @@
 package org.geotoolkit.data.osm.client.v060;
 
 import org.geotoolkit.data.osm.client.AbstractReadElement;
+import org.geotoolkit.data.osm.client.OSMType;
 import org.geotoolkit.data.osm.client.OpenStreetMapClient;
-import org.geotoolkit.data.osm.model.Node;
-import org.geotoolkit.data.osm.model.Relation;
-import org.geotoolkit.data.osm.model.Way;
 
 /**
  *
@@ -43,11 +41,11 @@ public class ReadElement060 extends AbstractReadElement{
         final StringBuilder sb = new StringBuilder(super.getSubPath());
 
         final String strType;
-        if(Node.class.equals(type)){
+        if(OSMType.NODE.equals(type)){
             strType = "node";
-        }else if(Way.class.equals(type)){
+        }else if(OSMType.WAY.equals(type)){
             strType = "way";
-        }else if(Relation.class.equals(type)){
+        }else if(OSMType.RELATION.equals(type)){
             strType = "relation";
         }else{
             throw new IllegalArgumentException("Type expected can be : Node,Way,Relation, found = " + type);

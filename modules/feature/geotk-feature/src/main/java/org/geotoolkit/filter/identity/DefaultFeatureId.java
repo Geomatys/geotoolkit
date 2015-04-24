@@ -18,11 +18,11 @@
 package org.geotoolkit.filter.identity;
 
 import java.io.Serializable;
-import org.geotoolkit.feature.Attribute;
+import org.apache.sis.feature.FeatureExt;
 import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.Identifier;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.opengis.feature.Feature;
 
 /**
  * Immutable feature id.
@@ -52,8 +52,8 @@ public class DefaultFeatureId implements FeatureId,Serializable {
      */
     @Override
     public boolean matches(final Object object) {
-        if (object instanceof Attribute) {
-            final Identifier identifier = ((Attribute)object).getIdentifier();
+        if (object instanceof Feature) {
+            final FeatureId identifier = FeatureExt.getId((Feature) object);
             return identifier != null && id.equals(identifier.getID());
         }
         return false;

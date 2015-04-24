@@ -22,24 +22,27 @@ import java.util.HashSet;
 import java.util.Set;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.version.Version;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.internal.feature.AttributeConvention;
+
 
 /**
- * Query builder, convinient utility class to build queries.
+ * Query builder, convenient utility class to build queries.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public final class QueryBuilder {
 
-    private static final GenericName[] NO_PROPERTIES = new GenericName[0];
+    private static final GenericName[] ONLY_ID_PROPERTIES = new GenericName[]{
+        AttributeConvention.IDENTIFIER_PROPERTY
+    };
 
     private Source source = null;
-    private GenericName typeName = null;
+    private String typeName = null;
 
     private Filter filter = Filter.INCLUDE;
     private GenericName[] properties = null;
@@ -59,7 +62,7 @@ public final class QueryBuilder {
         copy(query);
     }
 
-    public QueryBuilder(final GenericName name){
+    public QueryBuilder(final String name){
         setTypeName(name);
     }
 
@@ -92,11 +95,16 @@ public final class QueryBuilder {
         this.language = query.getLanguage();
     }
 
-    public GenericName getTypeName() {
+    public String getTypeName() {
         return typeName;
     }
 
     public void setTypeName(final GenericName typeName) {
+        this.typeName = typeName.toString();
+        this.source = null;
+    }
+
+    public void setTypeName(final String typeName) {
         this.typeName = typeName;
         this.source = null;
     }
@@ -191,7 +199,7 @@ public final class QueryBuilder {
         }
         return null;
     }
-    
+
     public void setVersionDate(Date version) {
         this.version = version;
     }
@@ -251,12 +259,12 @@ public final class QueryBuilder {
 
     /**
      * Create a simple query with only a filter parameter.
-     * 
+     *
      * @param name
      * @param filter
      * @return Immutable query
      */
-    public static Query filtered(final GenericName name, final Filter filter){
+    public static Query filtered(final String name, final Filter filter){
         final QueryBuilder builder = new QueryBuilder();
         builder.setTypeName(name);
         builder.setFilter(filter);
@@ -270,7 +278,7 @@ public final class QueryBuilder {
      * @param filter
      * @return Immutable query
      */
-    public static Query sorted(final GenericName name, final SortBy ... sorts){
+    public static Query sorted(final String name, final SortBy ... sorts){
         final QueryBuilder builder = new QueryBuilder();
         builder.setTypeName(name);
         builder.setSortBy(sorts);
@@ -283,6 +291,15 @@ public final class QueryBuilder {
      * filtering, and the default featureType.
      */
     public static Query all(final GenericName name){
+        return new DefaultQuery(new DefaultSelector(null, name.toString(), "s1"));
+    }
+
+    /**
+     * Implements a query that will fetch all features from a source. This
+     * query should retrieve all properties, with no maxFeatures, no
+     * filtering, and the default featureType.
+     */
+    public static Query all(final String name){
         return new DefaultQuery(new DefaultSelector(null, name, "s1"));
     }
 
@@ -297,13 +314,13 @@ public final class QueryBuilder {
 
     /**
      * Create a query in the defined language.
-     * 
+     *
      * @param language
      * @param statement
-     * @param query name
+     * @param name
      * @return Query
      */
-    public static Query language(final String language, final String statement, final GenericName name){
+    public static Query language(final String language, final String statement, final String name){
         return new DefaultQuery(language, statement,name);
     }
 
@@ -312,8 +329,8 @@ public final class QueryBuilder {
      * This query should retrive no properties, with no maxFeatures, no
      * filtering, and the a featureType with no attributes.
      */
-    public static Query fids(final GenericName name){
-        return new DefaultQuery(new DefaultSelector(null, name, "s1"), NO_PROPERTIES);
+    public static Query fids(final String name){
+        return new DefaultQuery(new DefaultSelector(null, name, "s1"), ONLY_ID_PROPERTIES);
     }
 
     /**
@@ -323,7 +340,7 @@ public final class QueryBuilder {
      * @param filter
      * @return Immutable query
      */
-    public static Query reprojected(final GenericName name, final CoordinateReferenceSystem crs){
+    public static Query reprojected(final String name, final CoordinateReferenceSystem crs){
         final QueryBuilder builder = new QueryBuilder();
         builder.setTypeName(name);
         builder.setCRS(crs);
@@ -331,7 +348,7 @@ public final class QueryBuilder {
     }
 
     /**
-     * 
+     *
      * @param sortBy array or null
      * @return true is the given array of sort by operand is equal to natural sort by
      */
@@ -339,14 +356,14 @@ public final class QueryBuilder {
         if(sortBy == null || sortBy.length == 0){
             return true;
         }
-        
+
         for(SortBy sb : sortBy){
             if(sb != SortBy.NATURAL_ORDER){
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
 }

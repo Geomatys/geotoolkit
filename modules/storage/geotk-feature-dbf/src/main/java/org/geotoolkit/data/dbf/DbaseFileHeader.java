@@ -36,24 +36,26 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
+
 
 /**
- * Class to represent the header of a Dbase III file. Creation date: (5/15/2001
- * 5:15:30 PM)
- * 
+ * Class to represent the header of a Dbase III file.
+ *
+ * Creation date: (5/15/2001 5:15:30 PM)
+ *
  * @module pending
  */
 public class DbaseFileHeader {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
-    
+
     // Constant for the size of a record
     private static final int FILE_DESCRIPTOR_SIZE = 32;
 
@@ -95,7 +97,7 @@ public class DbaseFileHeader {
     /**
      * Determine the most appropriate Java Class for representing the data in
      * the field.
-     * 
+     *
      * <PRE>
      * All packages are java.lang unless otherwise specified.
      * C (Character) -&gt; String
@@ -105,7 +107,7 @@ public class DbaseFileHeader {
      * D (Date)      -&gt; java.util.Date
      * Unknown       -&gt; String
      * </PRE>
-     * 
+     *
      * @param i
      *                The index of the field, from 0 to
      *                <CODE>getNumFields() - 1</CODE> .
@@ -167,7 +169,7 @@ public class DbaseFileHeader {
      * applies to numbers(N), and floating point values (F), and refers to the
      * number of characters to reserve after the decimal point. <B>Don't expect
      * miracles from this...</B>
-     * 
+     *
      * <PRE>
      * Field Type MaxLength
      * ---------- ---------
@@ -176,7 +178,7 @@ public class DbaseFileHeader {
      * F          20
      * N          18
      * </PRE>
-     * 
+     *
      * @param inFieldName
      *                The name of the new field, must be less than 10 characters
      *                or it gets truncated.
@@ -305,7 +307,7 @@ public class DbaseFileHeader {
 
     /**
      * Remove a column from this DbaseFileHeader.
-     * 
+     *
      * @todo This is really ugly, don't know who wrote it, but it needs fixin...
      * @param inFieldName
      *                The name of the field, will ignore case and trim.
@@ -350,7 +352,7 @@ public class DbaseFileHeader {
 
     /**
      * Returns the field length in bytes.
-     * 
+     *
      * @param inIndex
      *                The field index.
      * @return The length in bytes.
@@ -362,7 +364,7 @@ public class DbaseFileHeader {
     /**
      * Get the decimal count of this field.
      * location of the decimal point within the field.
-     * 
+     *
      * @param inIndex
      *                The field index.
      * @return The decimal count.
@@ -373,7 +375,7 @@ public class DbaseFileHeader {
 
     /**
      * Get the field name.
-     * 
+     *
      * @param inIndex
      *                The field index.
      * @return The name of the field.
@@ -384,7 +386,7 @@ public class DbaseFileHeader {
 
     /**
      * Get the character class of the field.
-     * 
+     *
      * @param inIndex
      *                The field index.
      * @return The dbase character representing this field.
@@ -396,7 +398,7 @@ public class DbaseFileHeader {
     /**
      * Get the field offset from the record start position.
      * First field will start at 1, the first byte is for the deleted flag.
-     * 
+     *
      * @param inIndex
      *                The field index.
      * @return fild offset
@@ -408,10 +410,10 @@ public class DbaseFileHeader {
         }
         return offset;
     }
-    
+
     /**
      * Get the date this file was last updated.
-     * 
+     *
      * @return The Date last modified.
      */
     public Date getLastUpdateDate() {
@@ -420,7 +422,7 @@ public class DbaseFileHeader {
 
     /**
      * Return the number of fields in the records.
-     * 
+     *
      * @return The number of fields in this table.
      */
     public int getNumFields() {
@@ -429,7 +431,7 @@ public class DbaseFileHeader {
 
     /**
      * Return the number of records in the file
-     * 
+     *
      * @return The number of records in this table.
      */
     public int getNumRecords() {
@@ -438,7 +440,7 @@ public class DbaseFileHeader {
 
     /**
      * Get the length of the records in bytes.
-     * 
+     *
      * @return The number of bytes per record.
      */
     public int getRecordLength() {
@@ -447,7 +449,7 @@ public class DbaseFileHeader {
 
     /**
      * Get the length of the header
-     * 
+     *
      * @return The length of the header in bytes.
      */
     public int getHeaderLength() {
@@ -456,7 +458,7 @@ public class DbaseFileHeader {
 
     /**
      * Read the header data from the DBF file.
-     * 
+     *
      * @param channel
      *                A readable byte channel. If you have an InputStream you
      *                need to use, you can call
@@ -597,7 +599,7 @@ public class DbaseFileHeader {
 
     /**
      * Get the largest field size of this table.
-     * 
+     *
      * @return The largt field size in bytes.
      */
     public int getLargestFieldSize() {
@@ -606,7 +608,7 @@ public class DbaseFileHeader {
 
     /**
      * Set the number of records in the file
-     * 
+     *
      * @param inNumRecords
      *                The number of records.
      */
@@ -615,41 +617,35 @@ public class DbaseFileHeader {
     }
 
     /**
-     * Create the list of mathcing attribute descriptor from header informations.
-     * 
+     * Create the list of matching attribute descriptor from header informations.
+     *
      * @return List of AttributDescriptor
      */
-    public List<AttributeDescriptor> createDescriptors(final String namespace){
+    public List<AttributeType> createDescriptors(final String namespace){
         final int nbFields = getNumFields();
 
-        final AttributeTypeBuilder buildAtt = new AttributeTypeBuilder();
-        final AttributeDescriptorBuilder buildDesc = new AttributeDescriptorBuilder();
-        
-        final List<AttributeDescriptor> attributes = new ArrayList<AttributeDescriptor>(nbFields);
+        final SingleAttributeTypeBuilder atb = new SingleAttributeTypeBuilder();
+
+        final List<AttributeType> attributes = new ArrayList<>(nbFields);
         for(int i=0; i<nbFields; i++){
             final String name = getFieldName(i);
             final Class attributeClass = getFieldClass(i);
             final int length = getFieldLength(i);
-            
-            buildAtt.reset();
-            buildAtt.setName(namespace, name);
-            buildAtt.setBinding(attributeClass);
-            buildAtt.setLength(length);
 
-            buildDesc.reset();
-            buildDesc.setName(namespace, name);
-            buildDesc.setNillable(true);
-            buildDesc.setType(buildAtt.buildType());
+            atb.reset();
+            atb.setName(namespace, name);
+            atb.setValueClass(attributeClass);
+            atb.setLength(length);
 
-            attributes.add(buildDesc.buildDescriptor());
+            attributes.add(atb.build());
         }
-        
+
         return attributes;
     }
-    
+
     /**
      * Write the header data to the DBF file.
-     * 
+     *
      * @param out
      *                A channel to write to. If you have an OutputStream you can
      *                obtain the correct channel by using
@@ -733,7 +729,7 @@ public class DbaseFileHeader {
 
     /**
      * Get a simple representation of this header.
-     * 
+     *
      * @return A String representing the state of the header.
      */
     @Override
@@ -769,12 +765,14 @@ public class DbaseFileHeader {
 
         final DbaseFileHeader header = new DbaseFileHeader();
 
-        for(PropertyDescriptor type : featureType.getDescriptors()){
-            final Class<?> colType = type.getType().getBinding();
+        for(PropertyType type : featureType.getProperties(true)) {
+            //skip properties part of the convention
+            if(AttributeConvention.contains(type.getName())) continue;
+            final Class<?> colType = ((AttributeType) type).getValueClass();
             final String colName = type.getName().tip().toString();
 
-            int fieldLen = FeatureTypeUtilities.getFieldLength((AttributeDescriptor) type);
-            if (fieldLen == FeatureTypeUtilities.ANY_LENGTH)
+            Integer fieldLen = FeatureExt.getLengthCharacteristic((AttributeType)type);
+            if (fieldLen == null)
                 fieldLen = 255;
             if ((colType == Integer.class) || (colType == Short.class)
                     || (colType == Byte.class)) {

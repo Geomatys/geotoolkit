@@ -24,10 +24,13 @@ import java.util.logging.Level;
 import org.apache.sis.util.ObjectConverters;
 
 import org.jaxen.JaxenException;
-import org.geotoolkit.feature.ComplexAttribute;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.ComplexType;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.filter.binding.JaxenFeatureNavigator.Fake;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureAssociation;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.Property;
 
 
 /**
@@ -38,15 +41,15 @@ import org.apache.sis.util.logging.Logging;
  */
 public class XPathBinding<C> extends AbstractBinding<C> {
 
-    public static class CAXPath extends XPathBinding<ComplexAttribute>{
+    public static class CAXPath extends XPathBinding<Feature>{
         public CAXPath() {
-            super(ComplexAttribute.class, 19);
+            super(Feature.class, 19);
         }
     }
 
-    public static class CTXPath extends XPathBinding<ComplexType>{
+    public static class CTXPath extends XPathBinding<FeatureType>{
         public CTXPath() {
-            super(ComplexType.class, 9);
+            super(FeatureType.class, 9);
         }
     }
 
@@ -82,6 +85,11 @@ public class XPathBinding<C> extends AbstractBinding<C> {
         try {
             final JaxenFeatureXPath xpath = JaxenFeatureXPath.create(path);
             Object v = xpath.evaluate(candidate);
+            
+            if(v instanceof Fake){
+                v = ((Fake)v).value;
+            }
+            
             if(v instanceof Collection){
                 //several property for this path
                 final Collection properties = (Collection) v;
@@ -94,6 +102,10 @@ public class XPathBinding<C> extends AbstractBinding<C> {
                     }
                 }
             }
+            
+            if(v instanceof Fake && Property.class.isAssignableFrom(target)){
+                v = ((Fake)v).value;
+            }
 
             if(v instanceof Property){
                 //extract value from property if necessary
@@ -101,7 +113,13 @@ public class XPathBinding<C> extends AbstractBinding<C> {
                 if(target != null && target.isInstance(prop)){
                     return (T) prop;
                 }else{
-                    v = prop.getValue();
+                    if(prop instanceof Attribute && ((Attribute)prop).getType().getMaximumOccurs()>1){
+                        v = ((Attribute)prop).getValues();
+                    }else if(prop instanceof FeatureAssociation && ((FeatureAssociation)prop).getRole().getMaximumOccurs()>1){
+                        v = ((FeatureAssociation)prop).getValues();
+                    }else{
+                        v = prop.getValue();
+                    }
                 }
             }
 
@@ -121,9 +139,12 @@ public class XPathBinding<C> extends AbstractBinding<C> {
     public void set(final C candidate, final String xpath, final Object value) throws IllegalArgumentException {
         final Object obj = get(candidate,xpath,Property.class);
 
-        if(obj instanceof Property){
-            final Property prop = (Property)obj;
+        if(obj instanceof Attribute){
+            final Attribute prop = (Attribute)obj;
             prop.setValue(value);
+        }else if(obj instanceof FeatureAssociation){
+            final FeatureAssociation prop = (FeatureAssociation)obj;
+            prop.setValue((Feature)value);
         }else{
             throw new IllegalArgumentException("Can not set value for xpath : " + xpath);
         }

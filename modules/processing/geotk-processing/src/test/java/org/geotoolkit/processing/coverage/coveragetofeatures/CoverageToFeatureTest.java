@@ -32,6 +32,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -41,33 +44,32 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.process.Process;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.processing.coverage.AbstractProcessTest;
 
 import org.opengis.coverage.grid.GridCoverage;
-import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.referencing.datum.PixelInCell;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
+
 
 /**
  * Junit test for CoverageToFeature process
@@ -92,13 +94,13 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
 
         Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
 
-        PixelInCell pixPos = PixelInCell.CELL_CENTER;
-        GridCoverageReader reader = buildReader(pixPos);
+        final PixelInCell pixPos = PixelInCell.CELL_CENTER;
+        final GridCoverageReader reader = buildReader(pixPos);
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "coveragetofeatures");
-        ParameterValueGroup in = desc.getInputDescriptor().createValue();
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "coveragetofeatures");
+        final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("reader_in").setValue(reader);
-        org.geotoolkit.process.Process proc = desc.createProcess(in);
+        final Process proc = desc.createProcess(in);
 
         //Features out
         final Collection<Feature> featureListOut = (Collection<Feature>) proc.call().parameter("feature_out").getValue();
@@ -109,30 +111,22 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         assertEquals(featureListResult.get(0).getType(), featureListOut.iterator().next().getType());
         assertEquals(featureListOut.size(), featureListResult.size());
 
-        Iterator<Feature> iteratorOut = featureListOut.iterator();
-        Iterator<Feature> iteratorResult = featureListResult.iterator();
+        final Iterator<Feature> iteratorOut = featureListOut.iterator();
+        final Iterator<Feature> iteratorResult = featureListResult.iterator();
 
-        ArrayList<Geometry> geomsOut = new ArrayList<Geometry>();
+        final ArrayList<Geometry> geomsOut = new ArrayList<>();
         int itOut = 0;
         while (iteratorOut.hasNext()) {
             Feature featureOut = iteratorOut.next();
-
-            for (Property propertyOut : featureOut.getProperties()) {
-                if (propertyOut.getDescriptor() instanceof GeometryDescriptor) {
-                    geomsOut.add(itOut++, (Geometry) propertyOut.getValue());
-                }
-            }
+            geomsOut.add((Geometry) featureOut.getPropertyValue("cellgeom"));
+            geomsOut.add((Geometry) featureOut.getPropertyValue("position"));
         }
-        ArrayList<Geometry> geomsResult = new ArrayList<Geometry>();
+        final ArrayList<Geometry> geomsResult = new ArrayList<>();
         int itResult = 0;
         while (iteratorResult.hasNext()) {
             Feature featureResult = iteratorResult.next();
-
-            for (Property propertyResult : featureResult.getProperties()) {
-                if (propertyResult.getDescriptor() instanceof GeometryDescriptor) {
-                    geomsResult.add(itResult++, (Geometry) propertyResult.getValue());
-                }
-            }
+            geomsResult.add((Geometry) featureResult.getPropertyValue("cellgeom"));
+            geomsResult.add((Geometry) featureResult.getPropertyValue("position"));
         }
         assertEquals(geomsResult.size(), geomsOut.size());
         for (int i = 0; i < geomsResult.size(); i++) {
@@ -152,13 +146,13 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
 
         Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
 
-        PixelInCell pixPos = PixelInCell.CELL_CORNER;
-        GridCoverageReader reader = buildReader(pixPos);
+        final PixelInCell pixPos = PixelInCell.CELL_CORNER;
+        final GridCoverageReader reader = buildReader(pixPos);
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "coveragetofeatures");
-        ParameterValueGroup in = desc.getInputDescriptor().createValue();
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "coveragetofeatures");
+        final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("reader_in").setValue(reader);
-        org.geotoolkit.process.Process proc = desc.createProcess(in);
+        final Process proc = desc.createProcess(in);
 
         //Features out
         final Collection<Feature> featureListOut = (Collection<Feature>) proc.call().parameter("feature_out").getValue();
@@ -169,30 +163,22 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         assertEquals(featureListResult.get(0).getType(), featureListOut.iterator().next().getType());
         assertEquals(featureListOut.size(), featureListResult.size());
 
-        Iterator<Feature> iteratorOut = featureListOut.iterator();
-        Iterator<Feature> iteratorResult = featureListResult.iterator();
+        final Iterator<Feature> iteratorOut = featureListOut.iterator();
+        final Iterator<Feature> iteratorResult = featureListResult.iterator();
 
-        ArrayList<Geometry> geomsOut = new ArrayList<Geometry>();
+        final ArrayList<Geometry> geomsOut = new ArrayList<>();
         int itOut = 0;
         while (iteratorOut.hasNext()) {
             Feature featureOut = iteratorOut.next();
-
-            for (Property propertyOut : featureOut.getProperties()) {
-                if (propertyOut.getDescriptor() instanceof GeometryDescriptor) {
-                    geomsOut.add(itOut++, (Geometry) propertyOut.getValue());
-                }
-            }
+            geomsOut.add((Geometry) featureOut.getPropertyValue("cellgeom"));
+            geomsOut.add((Geometry) featureOut.getPropertyValue("position"));
         }
-        ArrayList<Geometry> geomsResult = new ArrayList<Geometry>();
+        final ArrayList<Geometry> geomsResult = new ArrayList<>();
         int itResult = 0;
         while (iteratorResult.hasNext()) {
             Feature featureResult = iteratorResult.next();
-
-            for (Property propertyResult : featureResult.getProperties()) {
-                if (propertyResult.getDescriptor() instanceof GeometryDescriptor) {
-                    geomsResult.add(itResult++, (Geometry) propertyResult.getValue());
-                }
-            }
+            geomsResult.add((Geometry) featureResult.getPropertyValue("cellgeom"));
+            geomsResult.add((Geometry) featureResult.getPropertyValue("position"));
         }
         assertEquals(geomsResult.size(), geomsOut.size());
         for (int i = 0; i < geomsResult.size(); i++) {
@@ -214,7 +200,7 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
         }
 
         final CoordinateReferenceSystem crs2d = CRS.forCode("EPSG:3395");
-        AffineTransform2D gridToCRS;
+        final AffineTransform2D gridToCRS;
         if (pixPos == PixelInCell.CELL_CENTER) {
             gridToCRS = new AffineTransform2D(1, 0, 0, 1, 0.5, 0.5);
         } else {
@@ -231,22 +217,22 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
 
         final FeatureTypeBuilder typeBuilder = new FeatureTypeBuilder();
         typeBuilder.setName("FeatureCoverage");
-        typeBuilder.add("position", Point.class, CRS.forCode("EPSG:3395"));
-        typeBuilder.add("cellgeom", Polygon.class, CRS.forCode("EPSG:3395"));
-        typeBuilder.add("orientation", String.class);
+        typeBuilder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        typeBuilder.addAttribute(Point.class).setName("position").setCRS(CRS.forCode("EPSG:3395")).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        typeBuilder.addAttribute(Polygon.class).setName("cellgeom").setCRS(CRS.forCode("EPSG:3395"));
+        typeBuilder.addAttribute(String.class).setName("orientation");
 
         for (int i = 0; i < 3; i++) {
-            typeBuilder.add("band-" + i, Integer.class);
+            typeBuilder.addAttribute(Double.class).setName("band-" + i);
         }
-        typeBuilder.setDefaultGeometry("position");
-        return typeBuilder.buildFeatureType();
+        return typeBuilder.build();
     }
 
     private List<Feature> buildFCResultPixelCenter() throws NoSuchAuthorityCodeException, FactoryException {
 
-        FeatureType type = buildFeatureType();
-        final List<Feature> featureList = new ArrayList<Feature>();
-        GeometryFactory geometryFactory = new GeometryFactory();
+        final FeatureType type = buildFeatureType();
+        final List<Feature> featureList = new ArrayList<>();
+        final GeometryFactory geometryFactory = new GeometryFactory();
 
         double buffX = 0;
         double buffY = 0;
@@ -263,13 +249,14 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
                             new Coordinate(buffX - 0.5, buffY + 0.5)
                         });
 
-                Feature myfeature = FeatureUtilities.defaultFeature(type, "id-" + x + "-" + y);
-                myfeature.getProperty("cellgeom").setValue(geometryFactory.createPolygon(line, null));
-                myfeature.getProperty("position").setValue(pos);
-                myfeature.getProperty("orientation").setValue(PixelInCell.CELL_CENTER.name());
-                myfeature.getProperty("band-0").setValue(0.0);
-                myfeature.getProperty("band-1").setValue((Integer) x);
-                myfeature.getProperty("band-2").setValue((Integer) y);
+                Feature myfeature = type.newInstance();
+                myfeature.setPropertyValue("@identifier", "id-" + x + "-" + y);
+                myfeature.setPropertyValue("cellgeom",geometryFactory.createPolygon(line, null));
+                myfeature.setPropertyValue("position",pos);
+                myfeature.setPropertyValue("orientation",PixelInCell.CELL_CENTER.name());
+                myfeature.setPropertyValue("band-0",0.0);
+                myfeature.setPropertyValue("band-1",(double)x);
+                myfeature.setPropertyValue("band-2",(double)y);
 
                 featureList.add((x + (y * max)), myfeature);
             }
@@ -279,9 +266,9 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
 
     private List<Feature> buildFCResultPixelCorner() throws NoSuchAuthorityCodeException, FactoryException {
 
-        FeatureType type = buildFeatureType();
+        final FeatureType type = buildFeatureType();
         final List<Feature> featureList = new ArrayList<Feature>();
-        GeometryFactory geometryFactory = new GeometryFactory();
+        final GeometryFactory geometryFactory = new GeometryFactory();
 
         double buffX = 0;
         double buffY = 0;
@@ -298,13 +285,14 @@ public class CoverageToFeatureTest extends AbstractProcessTest {
                             new Coordinate(buffX, buffY)
                         });
 
-                Feature myfeature = FeatureUtilities.defaultFeature(type, "id-" + x + "-" + y);
-                myfeature.getProperty("cellgeom").setValue(geometryFactory.createPolygon(line, null));
-                myfeature.getProperty("position").setValue(pos);
-                myfeature.getProperty("orientation").setValue(PixelInCell.CELL_CENTER.name());
-                myfeature.getProperty("band-0").setValue(0.0);
-                myfeature.getProperty("band-1").setValue((Integer) x);
-                myfeature.getProperty("band-2").setValue((Integer) y);
+                Feature myfeature = type.newInstance();
+                myfeature.setPropertyValue("@identifier", "id-" + x + "-" + y);
+                myfeature.setPropertyValue("cellgeom",geometryFactory.createPolygon(line, null));
+                myfeature.setPropertyValue("position",pos);
+                myfeature.setPropertyValue("orientation",PixelInCell.CELL_CENTER.name());
+                myfeature.setPropertyValue("band-0",0.0);
+                myfeature.setPropertyValue("band-1",(double)x);
+                myfeature.setPropertyValue("band-2",(double)y);
 
                 featureList.add((x + (y * max)), myfeature);
             }

@@ -19,26 +19,27 @@ package org.geotoolkit.processing.vector.differencegeometry;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.parameter.Parameters.*;
+import org.opengis.feature.AttributeType;
+
 
 /**
  * Process to clip the difference with a FeatureCollection using a geometry
+ *
  * @author Quentin Boileau
- * @module pending
  */
 public class DifferenceGeometryProcess extends AbstractProcess {
-
     /**
      * Default constructor
      */
@@ -51,41 +52,35 @@ public class DifferenceGeometryProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList   = value(VectorDescriptor.FEATURE_IN, inputParameters);
-        final Geometry inputDifferenceGeometry              = value(DifferenceGeometryDescriptor.DIFF_GEOMETRY_IN, inputParameters);
-
+        final FeatureCollection inputFeatureList  = value(VectorDescriptor.FEATURE_IN, inputParameters);
+        final Geometry inputDifferenceGeometry    = value(DifferenceGeometryDescriptor.DIFF_GEOMETRY_IN, inputParameters);
         final FeatureCollection resultFeatureList =
                 new DifferenceGeometryFeatureCollection(inputFeatureList,inputDifferenceGeometry);
-
         getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**
      * Clip difference the feature with the Geometry
-     * @param oldFeature Feature
+     *
      * @param newType the new FeatureType for the Feature
-     * @param geometry th geometry
-     * @return Feature
      */
     public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final Geometry geometry) {
-
-        final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
-
-
-        for (Property property : oldFeature.getProperties()) {
-            if (property.getDescriptor() instanceof GeometryDescriptor) {
-                final Geometry diffGeometry = VectorProcessUtils.geometryDifference((Geometry) property.getValue(), geometry);
-
-                if(diffGeometry != null) {
-                    resultFeature.getProperty(property.getName()).setValue(diffGeometry);
-                }else{
+        final Feature resultFeature = newType.newInstance();
+        FeatureExt.setId(resultFeature, FeatureExt.getId(oldFeature));
+        for (final PropertyType property : oldFeature.getType().getProperties(true)) {
+            final String name = property.getName().toString();
+            final Object value = oldFeature.getPropertyValue(name);
+            if (AttributeConvention.isGeometryAttribute(property)) {
+                final Geometry diffGeometry = VectorProcessUtils.geometryDifference((Geometry) value, geometry);
+                if (diffGeometry != null) {
+                    resultFeature.setPropertyValue(name, diffGeometry);
+                } else {
                     return null;
                 }
-            } else {
-                resultFeature.getProperty(property.getName()).setValue(property.getValue());
+            } else if(property instanceof AttributeType && !(AttributeConvention.contains(property.getName()))){
+                resultFeature.setPropertyValue(name, value);
             }
         }
-
         return resultFeature;
     }
 }

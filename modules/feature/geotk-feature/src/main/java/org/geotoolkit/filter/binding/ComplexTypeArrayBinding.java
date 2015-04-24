@@ -16,17 +16,18 @@
  */
 package org.geotoolkit.filter.binding;
 
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
+
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ComplexTypeArrayBinding extends AbstractBinding<ComplexType>{
+public class ComplexTypeArrayBinding extends AbstractBinding<FeatureType>{
 
     public ComplexTypeArrayBinding() {
-        super(ComplexType.class, 11);
+        super(FeatureType.class, 11);
     }
     
     private int toIndex(final String xpath){
@@ -45,11 +46,11 @@ public class ComplexTypeArrayBinding extends AbstractBinding<ComplexType>{
     }
 
     @Override
-    public <T> T get(ComplexType candidate, String xpath, Class<T> target) throws IllegalArgumentException {
+    public <T> T get(FeatureType candidate, String xpath, Class<T> target) throws IllegalArgumentException {
         if(candidate==null) return null;
         int index = toIndex(xpath);
         int i = 1;
-        for(PropertyDescriptor prop : candidate.getDescriptors()){
+        for(PropertyType prop : candidate.getProperties(true)){
             if(i == index){
                 return (T) prop;
             }
@@ -59,7 +60,7 @@ public class ComplexTypeArrayBinding extends AbstractBinding<ComplexType>{
     }
 
     @Override
-    public void set(ComplexType candidate, String xpath, Object value) throws IllegalArgumentException {
+    public void set(FeatureType candidate, String xpath, Object value) throws IllegalArgumentException {
         throw new IllegalArgumentException("Types are immutable");
     }
     

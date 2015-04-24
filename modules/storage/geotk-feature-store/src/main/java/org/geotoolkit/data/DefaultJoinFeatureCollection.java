@@ -17,9 +17,8 @@
 
 package org.geotoolkit.data;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Join;
 import org.geotoolkit.data.query.JoinType;
@@ -30,19 +29,15 @@ import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.PropertyName;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  * FeatureCollection that takes it'es source from a join query.
@@ -52,16 +47,16 @@ import org.opengis.filter.expression.PropertyName;
  */
 public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
 
-    private static final FeatureFactory FEATURE_FACTORY = FeatureFactory.LENIENT;
-
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     private final Query query;
     private final FeatureCollection leftCollection;
     private final FeatureCollection rightCollection;
     private FeatureType type = null;
-    private AttributeDescriptor leftDesc = null;
-    private AttributeDescriptor rightDesc = null;
+    private FeatureType leftType = null;
+    private FeatureType rightType = null;
+    private GenericName leftName = null;
+    private GenericName rightName = null;
 
     public DefaultJoinFeatureCollection(final String id, final Query query){
         super(id,query.getSource());
@@ -92,23 +87,21 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
     @Override
     public synchronized FeatureType getFeatureType() {
         if(type == null){
-            final FeatureType leftType = leftCollection.getFeatureType();
-            final FeatureType rightType = rightCollection.getFeatureType();
-            final GenericName leftAttName = (leftCollection.getSource() instanceof Selector) ?
+            leftType = leftCollection.getFeatureType();
+            rightType = rightCollection.getFeatureType();
+            leftName = (leftCollection.getSource() instanceof Selector) ?
                     NamesExt.valueOf(((Selector)leftCollection.getSource()).getSelectorName()) :
                     leftType.getName();
-            final GenericName rightAttName = (rightCollection.getSource() instanceof Selector) ?
+            rightName = (rightCollection.getSource() instanceof Selector) ?
                     NamesExt.valueOf(((Selector)rightCollection.getSource()).getSelectorName()) :
                     rightType.getName();
 
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-            leftDesc = adb.create(leftType,leftAttName,null,0,1,false,null);
-            rightDesc = adb.create(rightType,rightAttName,null,0,1,false,null);
-            ftb.setName(leftAttName.tip().toString()+'-'+rightAttName.tip().toString());
-            ftb.add(leftDesc);
-            ftb.add(rightDesc);
-            type = ftb.buildFeatureType();
+            ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY).setDefaultValue("");
+            ftb.addAssociation(leftType).setName(leftName).setMinimumOccurs(0).setMaximumOccurs(1);
+            ftb.addAssociation(rightType).setName(rightName).setMinimumOccurs(0).setMaximumOccurs(1);
+            ftb.setName(leftName.tip().toString()+'-'+rightName.tip().toString());
+            type = ftb.build();
         }
 
         return type;
@@ -123,23 +116,22 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
      */
     private Feature toFeature(final Feature left, final Feature right) throws DataStoreException{
         final FeatureType type = getFeatureType(); //force creating type.
+        final Feature f = type.newInstance();
 
-        final Collection<Property> properties = new ArrayList<Property>();
+        String id = "";
 
-        //create the id
-        final StringBuilder sb = new StringBuilder();
         if(left != null){
-            final String leftId = left.getIdentifier().getID();
-            sb.append(leftId).append(' ');
-            properties.add(FEATURE_FACTORY.createComplexAttribute(left.getProperties(), leftDesc, leftId));
+            id += left.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            f.setPropertyValue(leftName.toString(),left);
         }
         if(right != null){
-            final String rightId = right.getIdentifier().getID();
-            sb.append(rightId);
-            properties.add(FEATURE_FACTORY.createComplexAttribute(right.getProperties(), rightDesc, rightId));
+            if(left!=null) id += " ";
+            id += right.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
+            f.setPropertyValue(rightName.toString(),right);
         }
 
-        return FEATURE_FACTORY.createFeature(properties, type, sb.toString());
+        f.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), id);
+        return f;
     }
 
     @Override
@@ -169,7 +161,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
     }
 
     @Override
-    public void update(final Filter filter, final Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+    public void update(final Filter filter, final Map<String, ?> values) throws DataStoreException {
         if(isWritable()){
             throw new UnsupportedOperationException("Not supported yet.");
         }else{

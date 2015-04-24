@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data.osm.client;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,8 +28,9 @@ import java.net.URLConnection;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.data.osm.model.Node;
+import org.geotoolkit.data.osm.model.OSMModelConstants;
 import org.geotoolkit.data.osm.xml.OSMXMLWriter;
+import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -85,8 +88,10 @@ public abstract class AbstractExpandChangeSet extends AbstractRequest implements
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final Node node1 = new Node(env.getMinimum(1), env.getMinimum(0), -1, -1, -1, null, -1, null);
-        final Node node2 = new Node(env.getMaximum(1), env.getMaximum(0), -1, -1, -1, null, -1, null);
+        final Feature node1 = OSMModelConstants.TYPE_NODE.newInstance();
+        final Feature node2 = OSMModelConstants.TYPE_NODE.newInstance();
+        node1.setPropertyValue("point", new GeometryFactory().createPoint(new Coordinate(env.getMinimum(1), env.getMinimum(0))));
+        node2.setPropertyValue("point", new GeometryFactory().createPoint(new Coordinate(env.getMaximum(1), env.getMaximum(0))));
 
         OutputStream stream = conec.getOutputStream();
         stream = security.encrypt(stream);

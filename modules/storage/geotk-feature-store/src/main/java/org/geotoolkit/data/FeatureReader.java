@@ -16,7 +16,8 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.FeatureType;
+
 
 /**
  * A FeatureReader is a feature iterator supporting only reading.

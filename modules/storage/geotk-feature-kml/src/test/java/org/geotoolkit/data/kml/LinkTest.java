@@ -19,7 +19,6 @@ package org.geotoolkit.data.kml;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -35,9 +34,8 @@ import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -50,36 +48,29 @@ public class LinkTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/link.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public LinkTest() {
-    }
 
     @Test
     public void linkReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
         final Feature networkLink = kmlObjects.getAbstractFeature();
-        assertTrue(networkLink.getType().equals(KmlModelConstants.TYPE_NETWORK_LINK));
-        assertEquals("NE US Radar", networkLink.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertTrue((Boolean) networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW.getName()).getValue());
+        assertEquals(KmlModelConstants.TYPE_NETWORK_LINK, networkLink.getType());
+        assertEquals("NE US Radar", networkLink.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(Boolean.TRUE, networkLink.getPropertyValue(KmlConstants.TAG_FLY_TO_VIEW));
 
-        assertTrue(networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_LINK.getName()).getValue() instanceof Link);
-        Link link = (Link) networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_LINK.getName()).getValue();
+        Link link = (Link) networkLink.getPropertyValue(KmlConstants.TAG_LINK);
         assertEquals("http://www.example.com/geotiff/NE/MergedReflectivityQComposite.kml", link.getHref());
         assertEquals(RefreshMode.ON_INTERVAL, link.getRefreshMode());
         assertEquals(30, link.getRefreshInterval(), DELTA);
         assertEquals(ViewRefreshMode.ON_STOP, link.getViewRefreshMode());
         assertEquals(7, link.getViewRefreshTime(), DELTA);
         String text = "BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth];CAMERA=\\\n"+
-"      [lookatLon],[lookatLat],[lookatRange],[lookatTilt],[lookatHeading];VIEW=\\\n"+
-"      [horizFov],[vertFov],[horizPixels],[vertPixels],[terrainEnabled]";
+                      "      [lookatLon],[lookatLat],[lookatRange],[lookatTilt],[lookatHeading];VIEW=\\\n"+
+                      "      [horizFov],[vertFov],[horizPixels],[vertPixels],[terrainEnabled]";
         assertEquals(text, link.getViewFormat());
-
     }
 
     @Test
@@ -87,9 +78,8 @@ public class LinkTest extends org.geotoolkit.test.TestBase {
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Feature networkLink = kmlFactory.createNetworkLink();
-        final Collection<Property> networkLinkProperties = networkLink.getProperties();
-        networkLinkProperties.add(FF.createAttribute("NE US Radar", KmlModelConstants.ATT_NAME, null));
-        networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW.getName()).setValue(Boolean.TRUE);
+        networkLink.setPropertyValue(KmlConstants.TAG_NAME, "NE US Radar");
+        networkLink.setPropertyValue(KmlConstants.TAG_FLY_TO_VIEW, Boolean.TRUE);
 
         final Link link = kmlFactory.createLink();
         link.setHref("http://www.example.com/geotiff/NE/MergedReflectivityQComposite.kml");
@@ -98,10 +88,10 @@ public class LinkTest extends org.geotoolkit.test.TestBase {
         link.setViewRefreshMode(ViewRefreshMode.ON_STOP);
         link.setViewRefreshTime(7);
         final String text = "BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth];CAMERA=\\\n"+
-"      [lookatLon],[lookatLat],[lookatRange],[lookatTilt],[lookatHeading];VIEW=\\\n"+
-"      [horizFov],[vertFov],[horizPixels],[vertPixels],[terrainEnabled]";
+                            "      [lookatLon],[lookatLat],[lookatRange],[lookatTilt],[lookatHeading];VIEW=\\\n"+
+                            "      [horizFov],[vertFov],[horizPixels],[vertPixels],[terrainEnabled]";
         link.setViewFormat(text);
-        networkLinkProperties.add(FF.createAttribute(link, KmlModelConstants.ATT_NETWORK_LINK_LINK, null));
+        networkLink.setPropertyValue(KmlConstants.TAG_LINK, link);
 
         final Kml kml = kmlFactory.createKml(null, networkLink, null, null);
 
@@ -113,8 +103,6 @@ public class LinkTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                 new File(pathToTestFile), temp);
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
-
 }

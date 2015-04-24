@@ -23,11 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.storage.IllegalNameException;
 import org.geotoolkit.client.AbstractFeatureClient;
 import org.geotoolkit.client.Client;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
@@ -43,11 +46,10 @@ import org.geotoolkit.version.VersioningException;
 import org.geotoolkit.wfs.xml.WFSBindingUtilities;
 import org.geotoolkit.wfs.xml.WFSCapabilities;
 import org.geotoolkit.wfs.xml.WFSVersion;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.storage.DataStores;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -276,32 +278,22 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
     }
 
     @Override
-    public VersionControl getVersioning(GenericName typeName) throws VersioningException {
-        return store.getVersioning(typeName);
-    }
-
-    @Override
-    public String[] getTypeNames() throws DataStoreException {
-        return getStore().getTypeNames();
-    }
-
-    @Override
     public Set<GenericName> getNames() throws DataStoreException {
         return getStore().getNames();
     }
 
     @Override
-    public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
-        getStore().createFeatureType(typeName, featureType);
+    public void createFeatureType(FeatureType featureType) throws DataStoreException {
+        getStore().createFeatureType(featureType);
     }
 
     @Override
-    public void updateFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
-        getStore().updateFeatureType(typeName, featureType);
+    public void updateFeatureType(FeatureType featureType) throws DataStoreException {
+        getStore().updateFeatureType(featureType);
     }
 
     @Override
-    public void deleteFeatureType(GenericName typeName) throws DataStoreException {
+    public void deleteFeatureType(String typeName) throws DataStoreException {
         getStore().deleteFeatureType(typeName);
     }
 
@@ -311,23 +303,18 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
     }
 
     @Override
-    public FeatureType getFeatureType(GenericName typeName) throws DataStoreException {
-        return getStore().getFeatureType(typeName);
-    }
-
-    @Override
     public FeatureType getFeatureType(Query query) throws DataStoreException, MismatchedFeatureException {
         return getStore().getFeatureType(query);
     }
 
     @Override
-    public boolean isWritable(GenericName typeName) throws DataStoreException {
+    public boolean isWritable(String typeName) throws DataStoreException {
         return getStore().isWritable(typeName);
     }
 
     @Override
     public QueryCapabilities getQueryCapabilities() {
-        return getStore().getQueryCapabilities();
+            return getStore().getQueryCapabilities();
     }
 
     @Override
@@ -341,22 +328,17 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
     }
 
     @Override
-    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<FeatureId> addFeatures(String groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         return getStore().addFeatures(groupName, newFeatures, hints);
     }
 
     @Override
-    public void updateFeatures(GenericName groupName, Filter filter, PropertyDescriptor desc, Object value) throws DataStoreException {
-        getStore().updateFeatures(groupName, filter, desc, value);
-    }
-
-    @Override
-    public void updateFeatures(GenericName groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(String groupName, Filter filter, Map<String, ? extends Object> values) throws DataStoreException {
         getStore().updateFeatures(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(String groupName, Filter filter) throws DataStoreException {
         getStore().removeFeatures(groupName, filter);
     }
 
@@ -366,13 +348,8 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
-        return getStore().getFeatureWriter(typeName,filter,hints);
-    }
-
-    @Override
-    public FeatureWriter getFeatureWriterAppend(GenericName typeName, Hints hints) throws DataStoreException {
-        return getStore().getFeatureWriterAppend(typeName,hints);
+    public FeatureWriter getFeatureWriter(Query query) throws DataStoreException {
+        return getStore().getFeatureWriter(query);
     }
 
     @Override
@@ -391,7 +368,7 @@ public class WebFeatureClient extends AbstractFeatureClient implements Client {
     }
 
     @Override
-    public void refreshMetaModel() {
+    public void refreshMetaModel() throws DataStoreException {
         getStore().refreshMetaModel();
     }
 

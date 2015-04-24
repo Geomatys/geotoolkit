@@ -19,14 +19,13 @@ package org.geotoolkit.data.mapinfo.mif;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 
 import java.io.*;
 import java.util.UUID;
 import java.util.logging.Level;
 import org.apache.sis.util.ArgumentChecks;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * An iterator to write features into MIF/MID files.
@@ -97,11 +96,10 @@ public class MIFFeatureWriter implements FeatureWriter {
             }
         }
 
-        // reader has no more (no were are adding to the file)
-        // so return an empty feature
+        // reader has no more elements, switch to append mode.
         try {
-            final String featureID = getFeatureType().getName().tip().toString()+"."+(featureCount++);
-            return currentFeature = FeatureUtilities.defaultFeature(writeType, featureID);
+            currentFeature = writeType.newInstance();
+            return currentFeature;
         } catch (IllegalArgumentException iae) {
             throw new FeatureStoreRuntimeException("Error creating empty Feature", iae);
         }
@@ -148,7 +146,7 @@ public class MIFFeatureWriter implements FeatureWriter {
         }
 
         try {
-            if (master.getBaseType() != null && master.getBaseType().getDescriptors().size()> 0) {
+            if (master.getBaseType() != null && master.getBaseType().getProperties(true).size()> 0) {
                 final String midAttributes = master.buildMIDAttributes(currentFeature);
                 tmpMidWriter.write(midAttributes);
             }

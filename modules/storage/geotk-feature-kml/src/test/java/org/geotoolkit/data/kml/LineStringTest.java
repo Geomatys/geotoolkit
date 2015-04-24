@@ -24,7 +24,6 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -36,14 +35,12 @@ import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.LineString;
 import org.geotoolkit.data.kml.model.LookAt;
 import org.geotoolkit.data.kml.xml.KmlWriter;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 
@@ -57,28 +54,22 @@ public class LineStringTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/lineString.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public LineStringTest() {
-    }
 
     @Test
     public void lineStringReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
+        final Feature document;
+        {
+            final KmlReader reader = new KmlReader();
+            reader.setInput(new File(pathToTestFile));
+            final Kml kmlObjects = reader.read();
+            reader.dispose();
+            document = kmlObjects.getAbstractFeature();
+        }
+        assertEquals(KmlModelConstants.TYPE_DOCUMENT, document.getType());
+        assertEquals("LineString.kml", document.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals(Boolean.TRUE, document.getPropertyValue(KmlConstants.TAG_OPEN));
 
-        final KmlReader reader = new KmlReader();
-        reader.setInput(new File(pathToTestFile));
-        final Kml kmlObjects = reader.read();
-        reader.dispose();
-
-        final Feature document = kmlObjects.getAbstractFeature();
-        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
-
-        assertEquals("LineString.kml", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
-
-        assertTrue(document.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue() instanceof LookAt);
-        final LookAt lookAt = (LookAt) document.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue();
-
+        final LookAt lookAt = (LookAt) document.getPropertyValue(KmlConstants.TAG_VIEW);
         assertEquals(-122.36415, lookAt.getLongitude(), DELTA);
         assertEquals(37.824553, lookAt.getLatitude(), DELTA);
         assertEquals(1, lookAt.getAltitude(), DELTA);
@@ -86,66 +77,56 @@ public class LineStringTest extends org.geotoolkit.test.TestBase {
         assertEquals(50, lookAt.getTilt(), DELTA);
         assertEquals(150, lookAt.getRange(), DELTA);
 
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        {
+            Feature placemark0 = (Feature) i.next();
+            assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark0.getType());
 
-        assertEquals(2, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
+            assertEquals("unextruded", placemark0.getPropertyValue(KmlConstants.TAG_NAME));
+            final LineString lineString = (LineString) placemark0.getPropertyValue(KmlConstants.TAG_GEOMETRY);
+            assertTrue(lineString.getExtrude());
+            assertTrue(lineString.getTessellate());
 
-        Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
+            final CoordinateSequence coordinates = lineString.getCoordinateSequence();
+            assertEquals(2, coordinates.size());
 
-        if (i.hasNext()){
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark0 = (Feature) object;
-            assertTrue(placemark0.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
+            Coordinate coordinate = coordinates.getCoordinate(0);
+            assertEquals(-122.364383, coordinate.x, DELTA);
+            assertEquals(37.824664, coordinate.y, DELTA);
+            assertEquals(0, coordinate.z, DELTA);
 
-            assertEquals("unextruded", placemark0.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            assertTrue(placemark0.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof LineString);
-            final LineString lineString0 = (LineString) placemark0.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-            assertTrue(lineString0.getExtrude());
-            assertTrue(lineString0.getTessellate());
-
-            final CoordinateSequence coordinates0 = lineString0.getCoordinateSequence();
-            assertEquals(2, coordinates0.size());
-
-            final Coordinate coordinate00 = coordinates0.getCoordinate(0);
-            assertEquals(-122.364383, coordinate00.x, DELTA);
-            assertEquals(37.824664, coordinate00.y, DELTA);
-            assertEquals(0, coordinate00.z, DELTA);
-
-            final Coordinate coordinate01 = coordinates0.getCoordinate(1);
-            assertEquals(-122.364152, coordinate01.x, DELTA);
-            assertEquals(37.824322, coordinate01.y, DELTA);
-            assertEquals(0, coordinate01.z, DELTA);
+            coordinate = coordinates.getCoordinate(1);
+            assertEquals(-122.364152, coordinate.x, DELTA);
+            assertEquals(37.824322, coordinate.y, DELTA);
+            assertEquals(0, coordinate.z, DELTA);
         }
 
-        if (i.hasNext()){
-            Object object = i.next();
-            assertTrue(object instanceof Feature);
-            Feature placemark1 = (Feature) object;
-            assertTrue(placemark1.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
+        assertTrue("Expected at least 2 elements.", i.hasNext());
+        {
+            Feature placemark = (Feature) i.next();
+            assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
 
-            assertEquals("extruded", placemark1.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-            assertTrue(placemark1.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof LineString);
-            final LineString lineString1 = (LineString) placemark1.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+            assertEquals("extruded", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+            final LineString lineString1 = (LineString) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
             assertTrue(lineString1.getExtrude());
             assertTrue(lineString1.getTessellate());
             assertEquals(EnumAltitudeMode.RELATIVE_TO_GROUND, lineString1.getAltitudeMode());
 
-            final CoordinateSequence coordinates1 = lineString1.getCoordinateSequence();
-            assertEquals(2, coordinates1.size());
+            final CoordinateSequence coordinates = lineString1.getCoordinateSequence();
+            assertEquals(2, coordinates.size());
 
-            final Coordinate coordinate10 = coordinates1.getCoordinate(0);
-            assertEquals(-122.364167, coordinate10.x, DELTA);
-            assertEquals(37.824787, coordinate10.y, DELTA);
-            assertEquals(50, coordinate10.z, DELTA);
+            Coordinate coordinate = coordinates.getCoordinate(0);
+            assertEquals(-122.364167, coordinate.x, DELTA);
+            assertEquals(37.824787, coordinate.y, DELTA);
+            assertEquals(50, coordinate.z, DELTA);
 
-            final Coordinate coordinate11 = coordinates1.getCoordinate(1);
-            assertEquals(-122.363917, coordinate11.x, DELTA);
-            assertEquals(37.824423, coordinate11.y, DELTA);
-            assertEquals(50, coordinate11.z, DELTA);
+            coordinate = coordinates.getCoordinate(1);
+            assertEquals(-122.363917, coordinate.x, DELTA);
+            assertEquals(37.824423, coordinate.y, DELTA);
+            assertEquals(50, coordinate.z, DELTA);
         }
-
-
-
+        assertFalse("Expected exactly 2 elements.", i.hasNext());
     }
 
     @Test
@@ -170,14 +151,12 @@ public class LineStringTest extends org.geotoolkit.test.TestBase {
         lineString1.setAltitudeMode(EnumAltitudeMode.RELATIVE_TO_GROUND);
 
         final Feature placemark0 = kmlFactory.createPlacemark();
-        final Collection<Property> placemark0Properties = placemark0.getProperties();
-        placemark0Properties.add(FF.createAttribute("unextruded", KmlModelConstants.ATT_NAME, null));
-        placemark0Properties.add(FF.createAttribute(lineString0, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark0.setPropertyValue(KmlConstants.TAG_NAME, "unextruded");
+        placemark0.setPropertyValue(KmlConstants.TAG_GEOMETRY, lineString0);
 
         final Feature placemark1 = kmlFactory.createPlacemark();
-        final Collection<Property> placemark1Properties = placemark1.getProperties();
-        placemark1Properties.add(FF.createAttribute("extruded", KmlModelConstants.ATT_NAME, null));
-        placemark1Properties.add(FF.createAttribute(lineString1, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark1.setPropertyValue(KmlConstants.TAG_NAME, "extruded");
+        placemark1.setPropertyValue(KmlConstants.TAG_GEOMETRY, lineString1);
 
         final LookAt lookAt = kmlFactory.createLookAt();
         lookAt.setLongitude(-122.36415);
@@ -188,13 +167,10 @@ public class LineStringTest extends org.geotoolkit.test.TestBase {
         lookAt.setRange(150);
 
         final Feature document = kmlFactory.createDocument();
-        final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FF.createAttribute("LineString.kml", KmlModelConstants.ATT_NAME, null));
-        document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        documentProperties.add(FF.createAttribute(lookAt, KmlModelConstants.ATT_VIEW, null));
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES));
-
+        document.setPropertyValue(KmlConstants.TAG_NAME, "LineString.kml");
+        document.setPropertyValue(KmlConstants.TAG_OPEN, Boolean.TRUE);
+        document.setPropertyValue(KmlConstants.TAG_VIEW, lookAt);
+        document.setPropertyValue(KmlConstants.TAG_FEATURES, Arrays.asList(placemark0,placemark1));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
@@ -206,8 +182,6 @@ public class LineStringTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

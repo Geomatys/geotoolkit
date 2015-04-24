@@ -30,20 +30,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.junit.Test;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -51,12 +51,12 @@ import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
 import org.junit.Assume;
 import org.junit.BeforeClass;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.storage.DataStores;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
 import org.apache.sis.referencing.CommonCRS;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  *
@@ -71,11 +71,12 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
     static{
         FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("testTable");
-        ftb.add("boolean",  Boolean.class);
-        ftb.add("integer",  Integer.class);
-        ftb.add("point",    Point.class, CommonCRS.defaultGeographic());
-        ftb.add("string",   String.class);
-        FTYPE_SIMPLE = ftb.buildFeatureType();
+        ftb.addAttribute(String.class).setName("id").addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        ftb.addAttribute(Boolean.class).setName("boolean");
+        ftb.addAttribute(Integer.class).setName("integer");
+        ftb.addAttribute(Point.class).setName("point").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(String.class).setName("string");
+        FTYPE_SIMPLE = ftb.build();
 
     }
 
@@ -110,7 +111,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
-        params = FeatureUtilities.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
+        params = FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
     }
 
     private void reload(boolean simpleType) throws DataStoreException, VersioningException {
@@ -122,9 +123,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
         store = (PostgresFeatureStore) DataStores.open(params);
         for(GenericName n : store.getNames()){
-            VersionControl vc = store.getVersioning(n);
+            VersionControl vc = store.getVersioning(n.toString());
             vc.dropVersioning();
-            store.deleteFeatureType(n);
+            store.deleteFeatureType(n.toString());
         }
         assertTrue(store.getNames().isEmpty());
         store.close();
@@ -154,7 +155,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         //create table
         final FeatureType refType = FTYPE_SIMPLE;
-        store.createFeatureType(refType.getName(), refType);
+        store.createFeatureType(refType);
         assertEquals(1, store.getNames().size());
 
         assertNotNull(store.getQueryCapabilities());
@@ -162,7 +163,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
 
         //get version control
-        final VersionControl vc = store.getVersioning(refType.getName());
+        final VersionControl vc = store.getVersioning(refType.getName().toString());
         assertNotNull(vc);
         assertTrue(vc.isEditable());
         assertFalse(vc.isVersioned());
@@ -183,12 +184,13 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //make an insert ///////////////////////////////////////////////////////
         final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
-        feature = FeatureUtilities.defaultFeature(refType, "0");
-        feature.getProperty("boolean").setValue(Boolean.TRUE);
-        feature.getProperty("integer").setValue(14);
-        feature.getProperty("point").setValue(firstPoint);
-        feature.getProperty("string").setValue("someteststring");
-        store.addFeatures(refType.getName(), Collections.singleton(feature));
+        feature = refType.newInstance();
+        feature.setPropertyValue("id","0");
+        feature.setPropertyValue("boolean",Boolean.TRUE);
+        feature.setPropertyValue("integer",14);
+        feature.setPropertyValue("point",firstPoint);
+        feature.setPropertyValue("string","someteststring");
+        store.addFeatures(refType.getName().toString(), Collections.singleton(feature));
 
         //we should have one version
         versions = vc.list();
@@ -202,11 +204,11 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feature = ite.next();
-            assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
-            assertEquals(14,                feature.getProperty("integer").getValue());
-            assertEquals(firstPoint,        feature.getProperty("point").getValue());
-            assertEquals("someteststring",  feature.getProperty("string").getValue());
-            fid = feature.getIdentifier();
+            assertEquals(Boolean.TRUE,      feature.getPropertyValue("boolean"));
+            assertEquals(14,                feature.getPropertyValue("integer"));
+            assertEquals(firstPoint,        feature.getPropertyValue("point"));
+            assertEquals("someteststring",  feature.getPropertyValue("string"));
+            fid = FeatureExt.getId(feature);
         }finally{
             ite.close();
         }
@@ -218,10 +220,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feature = ite.next();
-            assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
-            assertEquals(14,                feature.getProperty("integer").getValue());
-            assertEquals(firstPoint,        feature.getProperty("point").getValue());
-            assertEquals("someteststring",  feature.getProperty("string").getValue());
+            assertEquals(Boolean.TRUE,      feature.getPropertyValue("boolean"));
+            assertEquals(14,                feature.getPropertyValue("integer"));
+            assertEquals(firstPoint,        feature.getPropertyValue("point"));
+            assertEquals("someteststring",  feature.getPropertyValue("string"));
         }finally{
             ite.close();
         }
@@ -237,13 +239,13 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //make an update ///////////////////////////////////////////////////////
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
-        final Map<PropertyDescriptor,Object> updates = new HashMap<PropertyDescriptor, Object>();
-        updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
-        updates.put(feature.getProperty("integer").getDescriptor(), -3);
-        updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
-        updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
+        final Map<String,Object> updates = new HashMap<>();
+        updates.put("boolean", Boolean.FALSE);
+        updates.put("integer", -3);
+        updates.put("point", secondPoint);
+        updates.put("string", "anothertextupdated");
 
-        store.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
+        store.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
 
         //we should have two versions
         versions = vc.list();
@@ -259,10 +261,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feature = ite.next();
-            assertEquals(Boolean.FALSE,      feature.getProperty("boolean").getValue());
-            assertEquals(-3,                feature.getProperty("integer").getValue());
-            assertEquals(secondPoint,             feature.getProperty("point").getValue());
-            assertEquals("anothertextupdated",feature.getProperty("string").getValue());
+            assertEquals(Boolean.FALSE,       feature.getPropertyValue("boolean"));
+            assertEquals(-3,                  feature.getPropertyValue("integer"));
+            assertEquals(secondPoint,         feature.getPropertyValue("point"));
+            assertEquals("anothertextupdated",feature.getPropertyValue("string"));
         }finally{
             ite.close();
         }
@@ -274,10 +276,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feature = ite.next();
-            assertEquals(Boolean.FALSE,      feature.getProperty("boolean").getValue());
-            assertEquals(-3,                feature.getProperty("integer").getValue());
-            assertEquals(secondPoint,             feature.getProperty("point").getValue());
-            assertEquals("anothertextupdated",feature.getProperty("string").getValue());
+            assertEquals(Boolean.FALSE,       feature.getPropertyValue("boolean"));
+            assertEquals(-3,                  feature.getPropertyValue("integer"));
+            assertEquals(secondPoint,         feature.getPropertyValue("point"));
+            assertEquals("anothertextupdated",feature.getPropertyValue("string"));
         }finally{
             ite.close();
         }
@@ -289,10 +291,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feature = ite.next();
-            assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
-            assertEquals(14,                feature.getProperty("integer").getValue());
-            assertEquals(firstPoint,        feature.getProperty("point").getValue());
-            assertEquals("someteststring",  feature.getProperty("string").getValue());
+            assertEquals(Boolean.TRUE,      feature.getPropertyValue("boolean"));
+            assertEquals(14,                feature.getPropertyValue("integer"));
+            assertEquals(firstPoint,        feature.getPropertyValue("point"));
+            assertEquals("someteststring",  feature.getPropertyValue("string"));
         }finally{
             ite.close();
         }
@@ -304,10 +306,10 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feature = ite.next();
-            assertEquals(Boolean.TRUE,      feature.getProperty("boolean").getValue());
-            assertEquals(14,                feature.getProperty("integer").getValue());
-            assertEquals(firstPoint,        feature.getProperty("point").getValue());
-            assertEquals("someteststring",  feature.getProperty("string").getValue());
+            assertEquals(Boolean.TRUE,      feature.getPropertyValue("boolean"));
+            assertEquals(14,                feature.getPropertyValue("integer"));
+            assertEquals(firstPoint,        feature.getPropertyValue("point"));
+            assertEquals("someteststring",  feature.getPropertyValue("string"));
         }finally{
             ite.close();
         }
@@ -315,7 +317,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //delete record ////////////////////////////////////////////////////////
 
-        store.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
+        store.removeFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)));
         qb.reset();
         qb.setTypeName(refType.getName());
         assertEquals(0, store.getCount(qb.buildQuery()));
@@ -410,8 +412,8 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         final QueryBuilder qb = new QueryBuilder();
 
         final FeatureType refType = FTYPE_SIMPLE;
-        store.createFeatureType(refType.getName(), refType);
-        final VersionControl vc = store.getVersioning(refType.getName());
+        store.createFeatureType(refType);
+        final VersionControl vc = store.getVersioning(refType.getName().toString());
 
         ////////////////////////////////////////////////////////////////////////
         //start versioning /////////////////////////////////////////////////////
@@ -424,12 +426,13 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //make an insert ///////////////////////////////////////////////////////
         final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
-        feature = FeatureUtilities.defaultFeature(refType, "0");
-        feature.getProperty("boolean").setValue(Boolean.TRUE);
-        feature.getProperty("integer").setValue(14);
-        feature.getProperty("point").setValue(firstPoint);
-        feature.getProperty("string").setValue("someteststring");
-        session.addFeatures(refType.getName(), Collections.singleton(feature));
+        feature = refType.newInstance();
+        feature.setPropertyValue("id","0");
+        feature.setPropertyValue("boolean",Boolean.TRUE);
+        feature.setPropertyValue("integer",14);
+        feature.setPropertyValue("point",firstPoint);
+        feature.setPropertyValue("string","someteststring");
+        session.addFeatures(refType.getName().toString(), Collections.singleton(feature));
 
         //we should have one version
         versions = vc.list();
@@ -439,11 +442,11 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         //ensure normal reading is correct without version----------------------
         qb.reset();
-        qb.setTypeName(refType.getName());
+        qb.setTypeName(refType.getName().toString());
         ite = session.getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feature = ite.next();
-            fid = feature.getIdentifier();
+            fid = FeatureExt.getId(feature);
         }finally{
             ite.close();
         }
@@ -459,12 +462,12 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //make an update 1 /////////////////////////////////////////////////////
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
-        Map updates = new HashMap<PropertyDescriptor, Object>();
-        updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
-        updates.put(feature.getProperty("integer").getDescriptor(), -3);
-        updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
-        updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
-        session.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
+        Map<String,Object> updates = new HashMap<>();
+        updates.put("boolean", Boolean.FALSE);
+        updates.put("integer", -3);
+        updates.put("point", secondPoint);
+        updates.put("string", "anothertextupdated");
+        session.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
 
         //we should have two versions
         versions = vc.list();
@@ -473,12 +476,12 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //make an update 2 /////////////////////////////////////////////////////
         final Point thirdPoint = GF.createPoint(new Coordinate(48, -51));
-        updates = new HashMap<PropertyDescriptor, Object>();
-        updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.TRUE);
-        updates.put(feature.getProperty("integer").getDescriptor(), -89);
-        updates.put(feature.getProperty("point").getDescriptor(), thirdPoint);
-        updates.put(feature.getProperty("string").getDescriptor(), "thridupdatetext");
-        session.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
+        updates = new HashMap<>();
+        updates.put("boolean", Boolean.TRUE);
+        updates.put("integer", -89);
+        updates.put("point", thirdPoint);
+        updates.put("string", "thridupdatetext");
+        session.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
 
         //we should have three versions
         versions = vc.list();
@@ -487,9 +490,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //delete record ////////////////////////////////////////////////////////
 
-        session.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
+        session.removeFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)));
         qb.reset();
-        qb.setTypeName(refType.getName());
+        qb.setTypeName(refType.getName().toString());
         assertEquals(0, session.getCount(qb.buildQuery()));
 
         //we should have four versions
@@ -499,12 +502,13 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //make an insert ///////////////////////////////////////////////////////
         Point fourthPoint = GF.createPoint(new Coordinate(66, 11));
-        feature = FeatureUtilities.defaultFeature(refType, "0");
-        feature.getProperty("boolean").setValue(Boolean.FALSE);
-        feature.getProperty("integer").setValue(22);
-        feature.getProperty("point").setValue(fourthPoint);
-        feature.getProperty("string").setValue("fourthupdateString");
-        session.addFeatures(refType.getName(), Collections.singleton(feature));
+        feature = refType.newInstance();
+        feature.setPropertyValue("id","0");
+        feature.setPropertyValue("boolean",Boolean.FALSE);
+        feature.setPropertyValue("integer",22);
+        feature.setPropertyValue("point",fourthPoint);
+        feature.setPropertyValue("string","fourthupdateString");
+        session.addFeatures(refType.getName().toString(), Collections.singleton(feature));
 
         //we should have five versions
         versions = vc.list();
@@ -530,8 +534,8 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         final QueryBuilder qb = new QueryBuilder();
 
         final FeatureType refType = FTYPE_SIMPLE;
-        store.createFeatureType(refType.getName(), refType);
-        final VersionControl vc = store.getVersioning(refType.getName());
+        store.createFeatureType(refType);
+        final VersionControl vc = store.getVersioning(refType.getName().toString());
 
         ////////////////////////////////////////////////////////////////////////
         //start versioning /////////////////////////////////////////////////////
@@ -544,12 +548,13 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //make an insert ///////////////////////////////////////////////////////
         final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
-        feature = FeatureUtilities.defaultFeature(refType, "0");
-        feature.getProperty("boolean").setValue(Boolean.TRUE);
-        feature.getProperty("integer").setValue(14);
-        feature.getProperty("point").setValue(firstPoint);
-        feature.getProperty("string").setValue("someteststring");
-        session.addFeatures(refType.getName(), Collections.singleton(feature));
+        feature = refType.newInstance();
+        feature.setPropertyValue("id","0");
+        feature.setPropertyValue("boolean",Boolean.TRUE);
+        feature.setPropertyValue("integer",14);
+        feature.setPropertyValue("point",firstPoint);
+        feature.setPropertyValue("string","someteststring");
+        session.addFeatures(refType.getName().toString(), Collections.singleton(feature));
 
         //we should have 0 version
         versions = vc.list();
@@ -565,11 +570,11 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         //ensure normal reading is correct without version----------------------
         qb.reset();
-        qb.setTypeName(refType.getName());
+        qb.setTypeName(refType.getName().toString());
         ite = session.getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feature = ite.next();
-            fid = feature.getIdentifier();
+            fid = FeatureExt.getId(feature);
         }finally{
             ite.close();
         }
@@ -585,24 +590,24 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //make 2 updates at the time ///////////////////////////////////////////
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
-        Map updates = new HashMap<PropertyDescriptor, Object>();
-        updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
-        updates.put(feature.getProperty("integer").getDescriptor(), -3);
-        updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
-        updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
-        session.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
+        Map<String,Object> updates = new HashMap<>();
+        updates.put("boolean", Boolean.FALSE);
+        updates.put("integer", -3);
+        updates.put("point", secondPoint);
+        updates.put("string", "anothertextupdated");
+        session.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
 
         //we should have 1 version
         versions = vc.list();
         assertEquals(1, versions.size());
 
         final Point thirdPoint = GF.createPoint(new Coordinate(48, -51));
-        updates = new HashMap<PropertyDescriptor, Object>();
-        updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.TRUE);
-        updates.put(feature.getProperty("integer").getDescriptor(), -89);
-        updates.put(feature.getProperty("point").getDescriptor(), thirdPoint);
-        updates.put(feature.getProperty("string").getDescriptor(), "thridupdatetext");
-        session.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
+        updates = new HashMap<>();
+        updates.put("boolean", Boolean.TRUE);
+        updates.put("integer", -89);
+        updates.put("point", thirdPoint);
+        updates.put("string", "thridupdatetext");
+        session.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
 
         //we should have 1 version
         versions = vc.list();
@@ -632,9 +637,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         // make delete + insert at the same time ///////////////////////////////
 
-        session.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
+        session.removeFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)));
         qb.reset();
-        qb.setTypeName(refType.getName());
+        qb.setTypeName(refType.getName().toString());
         assertEquals(0, session.getCount(qb.buildQuery()));
 
         //we should have two versions
@@ -644,9 +649,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ////////////////////////////////////////////////////////////////////////
         //delete record ////////////////////////////////////////////////////////
 
-        session.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
+        session.removeFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)));
         qb.reset();
-        qb.setTypeName(refType.getName());
+        qb.setTypeName(refType.getName().toString());
         assertEquals(0, session.getCount(qb.buildQuery()));
 
         //we should have two versions
@@ -654,12 +659,13 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, versions.size());
 
         Point fourthPoint = GF.createPoint(new Coordinate(66, 11));
-        feature = FeatureUtilities.defaultFeature(refType, "0");
-        feature.getProperty("boolean").setValue(Boolean.FALSE);
-        feature.getProperty("integer").setValue(22);
-        feature.getProperty("point").setValue(fourthPoint);
-        feature.getProperty("string").setValue("fourthupdateString");
-        session.addFeatures(refType.getName(), Collections.singleton(feature));
+        feature = refType.newInstance();
+        feature.setPropertyValue("id","0");
+        feature.setPropertyValue("boolean",Boolean.FALSE);
+        feature.setPropertyValue("integer",22);
+        feature.setPropertyValue("point",fourthPoint);
+        feature.setPropertyValue("string","fourthupdateString");
+        session.addFeatures(refType.getName().toString(), Collections.singleton(feature));
 
         //we should have two versions
         versions = vc.list();
@@ -673,7 +679,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         //ensure we read the latest --------------------------------------------
         qb.reset();
-        qb.setTypeName(refType.getName());
+        qb.setTypeName(refType.getName().toString());
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feature = ite.next();
@@ -701,11 +707,11 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         //create table
         final FeatureType refType = FTYPE_SIMPLE;
-        store.createFeatureType(refType.getName(), refType);
+        store.createFeatureType(refType);
         assertEquals(1, store.getNames().size());
 
         //get version control
-        final VersionControl vc = store.getVersioning(refType.getName());
+        final VersionControl vc = store.getVersioning(refType.getName().toString());
         assertNotNull(vc);
         assertTrue(vc.isEditable());
         assertFalse(vc.isVersioned());
@@ -718,12 +724,13 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         //make an insert ///////////////////////////////////////////////////////
         final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
-        feature = FeatureUtilities.defaultFeature(refType, "0");
-        feature.getProperty("boolean").setValue(Boolean.TRUE);
-        feature.getProperty("integer").setValue(14);
-        feature.getProperty("point").setValue(firstPoint);
-        feature.getProperty("string").setValue("someteststring");
-        store.addFeatures(refType.getName(), Collections.singleton(feature));
+        feature = refType.newInstance();
+        feature.setPropertyValue("id","0");
+        feature.setPropertyValue("boolean",Boolean.TRUE);
+        feature.setPropertyValue("integer",14);
+        feature.setPropertyValue("point",firstPoint);
+        feature.setPropertyValue("string","someteststring");
+        store.addFeatures(refType.getName().toString(), Collections.singleton(feature));
 
         //we should have one version
         versions = vc.list();
@@ -736,7 +743,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feature = ite.next();
-            fid = feature.getIdentifier();
+            fid = FeatureExt.getId(feature);
         }finally{
             ite.close();
         }
@@ -750,13 +757,13 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         //make an update ///////////////////////////////////////////////////////
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
-        final Map<PropertyDescriptor,Object> updates = new HashMap<PropertyDescriptor, Object>();
-        updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
-        updates.put(feature.getProperty("integer").getDescriptor(), -3);
-        updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
-        updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
+        final Map<String,Object> updates = new HashMap<>();
+        updates.put("boolean", Boolean.FALSE);
+        updates.put("integer", -3);
+        updates.put("point", secondPoint);
+        updates.put("string", "anothertextupdated");
 
-        store.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
+        store.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
 
         try {
             //wait a bit just to have some space between version dates
@@ -767,13 +774,13 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         //make a 2nd update ///////////////////////////////////////////////////////
         final Point thirdPoint = GF.createPoint(new Coordinate(145, -221));
-        final Map<PropertyDescriptor,Object> updates2 = new HashMap<PropertyDescriptor, Object>();
-        updates2.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
-        updates2.put(feature.getProperty("integer").getDescriptor(), 150);
-        updates2.put(feature.getProperty("point").getDescriptor(), thirdPoint);
-        updates2.put(feature.getProperty("string").getDescriptor(), "secondtextupdated");
+        final Map<String,Object> updates2 = new HashMap<>();
+        updates2.put("boolean", Boolean.FALSE);
+        updates2.put("integer", 150);
+        updates2.put("point", thirdPoint);
+        updates2.put("string", "secondtextupdated");
 
-        store.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates2);
+        store.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates2);
 
         //get all versions organized in increase dates order.
         versions = vc.list();
@@ -845,11 +852,11 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         //create table
         final FeatureType refType = FTYPE_SIMPLE;
-        store.createFeatureType(refType.getName(), refType);
+        store.createFeatureType(refType);
         assertEquals(1, store.getNames().size());
 
         //get version control
-        final VersionControl vc = store.getVersioning(refType.getName());
+        final VersionControl vc = store.getVersioning(refType.getName().toString());
         assertNotNull(vc);
         assertTrue(vc.isEditable());
         assertFalse(vc.isVersioned());
@@ -862,12 +869,13 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         //make an insert ///////////////////////////////////////////////////////
         final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
-        feature = FeatureUtilities.defaultFeature(refType, "0");
-        feature.getProperty("boolean").setValue(Boolean.TRUE);
-        feature.getProperty("integer").setValue(14);
-        feature.getProperty("point").setValue(firstPoint);
-        feature.getProperty("string").setValue("someteststring");
-        store.addFeatures(refType.getName(), Collections.singleton(feature));
+        feature = refType.newInstance();
+        feature.setPropertyValue("id","0");
+        feature.setPropertyValue("boolean",Boolean.TRUE);
+        feature.setPropertyValue("integer",14);
+        feature.setPropertyValue("point",firstPoint);
+        feature.setPropertyValue("string","someteststring");
+        store.addFeatures(refType.getName().toString(), Collections.singleton(feature));
 
         //we should have one version
         versions = vc.list();
@@ -880,7 +888,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feature = ite.next();
-            fid = feature.getIdentifier();
+            fid = FeatureExt.getId(feature);
         }finally{
             ite.close();
         }
@@ -894,13 +902,13 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         //make an update ///////////////////////////////////////////////////////
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
-        final Map<PropertyDescriptor,Object> updates = new HashMap<PropertyDescriptor, Object>();
-        updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
-        updates.put(feature.getProperty("integer").getDescriptor(), -3);
-        updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
-        updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
+        final Map<String,Object> updates = new HashMap<>();
+        updates.put("boolean", Boolean.FALSE);
+        updates.put("integer", -3);
+        updates.put("point", secondPoint);
+        updates.put("string", "anothertextupdated");
 
-        store.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
+        store.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
 
         try {
             //wait a bit just to have some space between version dates
@@ -910,7 +918,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
 
         //make a remove ///////////////////////////////////////////////////////
-        store.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
+        store.removeFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)));
 
         //ensure test table is empty
         qb.reset();
@@ -955,7 +963,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feat = ite.next();
-            fid = feature.getIdentifier();
+            fid = FeatureExt.getId(feature);
         }finally{
             ite.close();
         }
@@ -967,7 +975,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             featV1 = ite.next();
-            fid = feature.getIdentifier();
+            fid = FeatureExt.getId(feature);
         }finally{
             ite.close();
         }
@@ -1004,7 +1012,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feat = ite.next();
-            fid = feature.getIdentifier();
+            fid = FeatureExt.getId(feature);
         }finally{
             ite.close();
         }
@@ -1016,7 +1024,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             featV1 = ite.next();
-            fid = feature.getIdentifier();
+            fid = FeatureExt.getId(feature);
         }finally{
             ite.close();
         }
@@ -1056,9 +1064,9 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
 
         for(GenericName n : store2.getNames()) {
-            VersionControl vc = store2.getVersioning(n);
+            VersionControl vc = store2.getVersioning(n.toString());
             vc.dropVersioning();
-            store2.deleteFeatureType(n);
+            store2.deleteFeatureType(n.toString());
         }
         assertTrue(store2.getNames().isEmpty());
 
@@ -1068,12 +1076,12 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
 
         //-------------- create table in public schema --------------------
-        store.createFeatureType(refType.getName(), refType);
+        store.createFeatureType(refType);
         assertEquals(1, store.getNames().size());
         assertTrue(store2.getNames().isEmpty());
 
         //get version control
-        final VersionControl vcP1 = store.getVersioning(refType.getName());
+        final VersionControl vcP1 = store.getVersioning(refType.getName().toString());
         assertNotNull(vcP1);
         assertTrue(vcP1.isEditable());
         assertFalse(vcP1.isVersioned());
@@ -1085,11 +1093,11 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         assertTrue(versions.isEmpty());
 
         //--------------------- table creation in public2 schema ---------------
-        store2.createFeatureType(refType.getName(), refType);
+        store2.createFeatureType(refType);
         assertEquals(1, store2.getNames().size());
 
         //get version control
-        final VersionControl vcP2 = store2.getVersioning(refType.getName());
+        final VersionControl vcP2 = store2.getVersioning(refType.getName().toString());
         assertNotNull(vcP2);
         assertTrue(vcP2.isEditable());
         assertFalse(vcP2.isVersioned());
@@ -1105,12 +1113,13 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
 
         //make an insert ///////////////////////////////////////////////////////
         final Point firstPoint = GF.createPoint(new Coordinate(56, 45));
-        feature = FeatureUtilities.defaultFeature(refType, "0");
-        feature.getProperty("boolean").setValue(Boolean.TRUE);
-        feature.getProperty("integer").setValue(14);
-        feature.getProperty("point").setValue(firstPoint);
-        feature.getProperty("string").setValue("someteststring");
-        store.addFeatures(refType.getName(), Collections.singleton(feature));
+        feature = refType.newInstance();
+        feature.setPropertyValue("id","0");
+        feature.setPropertyValue("boolean",Boolean.TRUE);
+        feature.setPropertyValue("integer",14);
+        feature.setPropertyValue("point",firstPoint);
+        feature.setPropertyValue("string","someteststring");
+        store.addFeatures(refType.getName().toString(), Collections.singleton(feature));
 
         // ensure test table in public2 schema is empty
         qb.reset();
@@ -1129,7 +1138,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         ite = store.createSession(true).getFeatureCollection(qb.buildQuery()).iterator();
         try{
             feature = ite.next();
-            fid = feature.getIdentifier();
+            fid = FeatureExt.getId(feature);
         }finally{
             ite.close();
         }
@@ -1142,12 +1151,12 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         }
 
         final Point secondPoint = GF.createPoint(new Coordinate(-12, 21));
-        final Map<PropertyDescriptor,Object> updates = new HashMap<PropertyDescriptor, Object>();
-        updates.put(feature.getProperty("boolean").getDescriptor(), Boolean.FALSE);
-        updates.put(feature.getProperty("integer").getDescriptor(), -3);
-        updates.put(feature.getProperty("point").getDescriptor(), secondPoint);
-        updates.put(feature.getProperty("string").getDescriptor(), "anothertextupdated");
-        store.updateFeatures(refType.getName(), FF.id(Collections.singleton(fid)), updates);
+        final Map<String,Object> updates = new HashMap<>();
+        updates.put("boolean", Boolean.FALSE);
+        updates.put("integer", -3);
+        updates.put("point", secondPoint);
+        updates.put("string", "anothertextupdated");
+        store.updateFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)), updates);
 
         // ensure test table in public2 schema is empty
         qb.reset();
@@ -1158,7 +1167,7 @@ public class PostgresVersioningTest extends org.geotoolkit.test.TestBase {
         assertTrue(vcP2.list().isEmpty());
 
         //make a remove ///////////////////////////////////////////////////////
-        store.removeFeatures(refType.getName(), FF.id(Collections.singleton(fid)));
+        store.removeFeatures(refType.getName().toString(), FF.id(Collections.singleton(fid)));
 
         // ensure test table in public2 schema is empty
         qb.reset();

@@ -2,11 +2,10 @@
 package org.geotoolkit.pending.demo.swing;
 
 import java.util.Date;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * Demo showing how to use the generic feature editor widget.
@@ -17,20 +16,20 @@ public class FeatureEditionDemo {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
-        ftb.add("boolean", Boolean.class);
-        ftb.add("integer", Integer.class);
-        ftb.add("double", Double.class);
-        ftb.add("String", String.class);
-        ftb.add("Date", Date.class);
-        ftb.add("boolean[]", boolean[].class);
-        ftb.add("integer[]", int[].class);
-        ftb.add("double[]", double[].class);
-        ftb.add("Boolean[]", Boolean[].class);
-        ftb.add("Integer[]", Integer[].class);
-        ftb.add("Double[]", Double[].class);
-        ftb.add("String[]", String[].class);
-        final FeatureType type = ftb.buildFeatureType();
-        final Feature feature = FeatureUtilities.defaultFeature(type, "id-1");
+        ftb.addAttribute(Boolean.class).setName("boolean");
+        ftb.addAttribute(Integer.class).setName("integer");
+        ftb.addAttribute(Double.class).setName("double");
+        ftb.addAttribute(String.class).setName("String");
+        ftb.addAttribute(Date.class).setName("Date");
+        ftb.addAttribute(boolean[].class).setName("boolean[]");
+        ftb.addAttribute(int[].class).setName("integer[]");
+        ftb.addAttribute(double[].class).setName("double[]");
+        ftb.addAttribute(Boolean[].class).setName("Boolean[]");
+        ftb.addAttribute(Integer[].class).setName("Integer[]");
+        ftb.addAttribute(Double[].class).setName("Double[]");
+        ftb.addAttribute(String[].class).setName("String[]");
+        final FeatureType type = ftb.build();
+        final Feature feature = type.newInstance();
 
         JFeatureOutLine.show(null,feature,true);
 

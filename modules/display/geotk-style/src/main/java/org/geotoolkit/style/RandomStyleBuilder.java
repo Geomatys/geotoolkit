@@ -27,12 +27,15 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import javax.measure.Unit;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
@@ -136,14 +139,14 @@ public class RandomStyleBuilder extends Factory {
 
         final Symbolizer ps;
 
-        final AttributeDescriptor att = typ.getGeometryDescriptor();
-        // Can be null
-        if (att == null) {
+        final PropertyType defAtt;
+        try{
+            defAtt = typ.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+        }catch(PropertyNotFoundException ex){
             return SF.style();
         }
-        final AttributeType type = att.getType();
-
-        final Class cla = type.getBinding();
+        final AttributeType type = (AttributeType) ((Operation)defAtt).getResult();
+        final Class cla = type.getValueClass();
 
         if (cla.equals(Polygon.class) || cla.equals(MultiPolygon.class)) {
             ps =  SF.polygonSymbolizer();
@@ -158,18 +161,18 @@ public class RandomStyleBuilder extends Factory {
 
             final MutableRule rulePoint = SF.rule(StyleConstants.DEFAULT_POINT_SYMBOLIZER);
             rulePoint.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("Point")),
-                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("MultiPoint"))
+                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("Point")),
+                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiPoint"))
                                 ));
             final MutableRule ruleLine = SF.rule(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
             ruleLine.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("LineString")),
-                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("MultiLineString"))
+                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("LineString")),
+                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiLineString"))
                                 ));
             final MutableRule rulePolygon = SF.rule(StyleConstants.DEFAULT_POLYGON_SYMBOLIZER);
             rulePolygon.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("Polygon")),
-                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("MultiPolygon"))
+                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("Polygon")),
+                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiPolygon"))
                                 ));
 
             fts.rules().add(rulePoint);
@@ -187,13 +190,14 @@ public class RandomStyleBuilder extends Factory {
     public  static MutableStyle createRandomVectorStyle(final FeatureType typ) {
 
         final Symbolizer ps;
-        final AttributeDescriptor att = typ.getGeometryDescriptor();
-        // Can be null
-        if (att == null) {
+        final PropertyType defAtt;
+        try{
+            defAtt = typ.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+        }catch(PropertyNotFoundException ex){
             return SF.style();
         }
-        final AttributeType type = att.getType();
-        final Class cla = type.getBinding();
+        final AttributeType type = (AttributeType) ((Operation)defAtt).getResult();
+        final Class cla = type.getValueClass();
 
         if (cla.equals(Polygon.class) || cla.equals(MultiPolygon.class)) {
             ps = createRandomPolygonSymbolizer();
@@ -208,18 +212,18 @@ public class RandomStyleBuilder extends Factory {
 
             final MutableRule rulePoint = SF.rule(createRandomPointSymbolizer());
             rulePoint.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("Point")),
-                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("MultiPoint"))
+                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("Point")),
+                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiPoint"))
                                 ));
             final MutableRule ruleLine = SF.rule(createRandomLineSymbolizer());
             ruleLine.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("LineString")),
-                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("MultiLineString"))
+                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("LineString")),
+                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiLineString"))
                                 ));
             final MutableRule rulePolygon = SF.rule(createRandomPolygonSymbolizer());
             rulePolygon.setFilter(FF.or(
-                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("Polygon")),
-                                    FF.equals(FF.function("geometryType", FF.property(att.getLocalName())), FF.literal("MultiPolygon"))
+                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("Polygon")),
+                                    FF.equals(FF.function("geometryType", FF.property(type.getName().toString())), FF.literal("MultiPolygon"))
                                 ));
 
             fts.rules().add(rulePoint);

@@ -24,9 +24,10 @@ import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import java.awt.Color;
 import java.awt.Dimension;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -38,14 +39,16 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.filter.Filter;
 
 /**
  * Test that symbolizer renderer are properly called and only once.
@@ -73,13 +76,14 @@ public class MokSymbolizerTest extends org.geotoolkit.test.TestBase {
         // create the feature collection for tests -----------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("test");
-        sftb.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
-        sftb.add("att1", String.class);
-        sftb.add("att2", Double.class);
-        final FeatureType sft = sftb.buildSimpleFeatureType();
+        sftb.addAttribute(Point.class).setName("geom").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        sftb.addAttribute(String.class).setName("att1");
+        sftb.addAttribute(Double.class).setName("att2");
+        final FeatureType sft = sftb.build();
         FeatureCollection col = FeatureStoreUtilities.collection("id", sft);
 
-        final FeatureWriter writer = col.getSession().getFeatureStore().getFeatureWriterAppend(sft.getName());
+        final FeatureWriter writer = col.getSession().getFeatureStore().getFeatureWriter(
+                QueryBuilder.filtered(sft.getName().toString(),Filter.EXCLUDE));
         Feature sf = writer.next();
         sf.setPropertyValue("geom", GF.createPoint(new Coordinate(0, 0)));
         sf.setPropertyValue("att1", "value1");

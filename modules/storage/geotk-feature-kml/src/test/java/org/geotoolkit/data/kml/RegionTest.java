@@ -19,7 +19,6 @@ package org.geotoolkit.data.kml;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -35,9 +34,8 @@ import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -50,10 +48,6 @@ public class RegionTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/region.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public RegionTest() {
-    }
 
     @Test
     public void regionReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
@@ -64,9 +58,9 @@ public class RegionTest extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         final Feature placemark = kmlObjects.getAbstractFeature();
-        assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-        assertEquals("Colorado", placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        final Region region = (Region) placemark.getProperty(KmlModelConstants.ATT_REGION.getName()).getValue();
+        assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
+        assertEquals("Colorado", placemark.getPropertyValue(KmlConstants.TAG_NAME));
+        final Region region = (Region) placemark.getPropertyValue(KmlConstants.TAG_REGION);
         final LatLonAltBox latLonAltBox = region.getLatLonAltBox();
         assertEquals(50.625, latLonAltBox.getNorth(), DELTA);
         assertEquals(45, latLonAltBox.getSouth(), DELTA);
@@ -79,13 +73,12 @@ public class RegionTest extends org.geotoolkit.test.TestBase {
         assertEquals(1024, lod.getMaxLodPixels(), DELTA);
         assertEquals(128, lod.getMinFadeExtent(), DELTA);
         assertEquals(128, lod.getMaxFadeExtent(), DELTA);
-
     }
 
     @Test
-    public void regionWriteTest()
-            throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-
+    public void regionWriteTest() throws KmlException, IOException, XMLStreamException,
+            ParserConfigurationException, SAXException
+    {
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final LatLonAltBox latLonAltBox = kmlFactory.createLatLonAltBox();
@@ -105,9 +98,8 @@ public class RegionTest extends org.geotoolkit.test.TestBase {
         final Region region = kmlFactory.createRegion(null, null, latLonAltBox, lod, null, null);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
-        placemarkProperties.add(FF.createAttribute(region, KmlModelConstants.ATT_REGION, null));
-        placemarkProperties.add(FF.createAttribute("Colorado", KmlModelConstants.ATT_NAME, null));
+        placemark.setPropertyValue(KmlConstants.TAG_REGION, region);
+        placemark.setPropertyValue(KmlConstants.TAG_NAME, "Colorado");
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
@@ -119,8 +111,6 @@ public class RegionTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

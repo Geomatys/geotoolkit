@@ -33,9 +33,9 @@ import org.geotoolkit.ShapeTestData;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
-import org.geotoolkit.feature.Feature;
 
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
 
 /**
  * Base class for test suite. This class is not abstract for the purpose of

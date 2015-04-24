@@ -17,16 +17,16 @@
 package org.geotoolkit.filter.visitor;
 
 import java.util.Collections;
-import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
 import org.opengis.filter.Id;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  * Used to clean PropertyEqualsTo on identifiers.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -34,7 +34,7 @@ public class FIDFixVisitor extends DuplicatingFilterVisitor{
 
     @Override
     public Object visit(PropertyIsEqualTo filter, Object extraData) {
-        
+
         //check if it's an id filter
         Expression exp1 = filter.getExpression1();
         Expression exp2 = filter.getExpression2();
@@ -43,15 +43,15 @@ public class FIDFixVisitor extends DuplicatingFilterVisitor{
             exp1 = exp2;
             exp2 = exp;
         }
-        
-        if(exp1 instanceof PropertyName && exp2 instanceof Literal 
-                && ((PropertyName)exp1).getPropertyName().trim().equalsIgnoreCase("@id") ){
+
+        if(exp1 instanceof PropertyName && exp2 instanceof Literal
+                && ((PropertyName)exp1).getPropertyName().trim().equalsIgnoreCase(AttributeConvention.IDENTIFIER_PROPERTY.toString())) {
             //it's an id filter
             final Id idfilter = ff.id(Collections.singleton(ff.featureId( String.valueOf( ((Literal)exp2).getValue()))));
             return visit(idfilter,extraData);
         }
-        
+
         return super.visit(filter, extraData);
     }
-    
+
 }

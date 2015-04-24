@@ -22,27 +22,29 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+import org.apache.sis.feature.AbstractOperation;
+
+import org.apache.sis.feature.SingleAttributeTypeBuilder;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.processing.AbstractProcess;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 
 import static org.geotoolkit.processing.vector.regroup.RegroupDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+
 
 /**
  * Regroup features and there geometries on a specify attribute name. Each different values of this
@@ -51,7 +53,6 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @module pending
  */
 public class RegroupProcess extends AbstractProcess {
-
     /**
      * Default constructor
      */
@@ -64,175 +65,116 @@ public class RegroupProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
-        final String inputAttributeName                     = value(REGROUP_ATTRIBUTE, inputParameters);
-        final String inputGeometryName                      = value(GEOMETRY_NAME, inputParameters);
-
+        final FeatureCollection inputFeatureList  = value(FEATURE_IN, inputParameters);
+        final String inputAttributeName           = value(REGROUP_ATTRIBUTE, inputParameters);
+        final String inputGeometryName            = value(GEOMETRY_NAME, inputParameters);
         final FeatureCollection resultFeatureList = new RegroupFeatureCollection(inputFeatureList, inputAttributeName, inputGeometryName);
-
         getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**
      * Create a new FeatureType with only the attribute and the geometry specified in process input.
-     * @param oldFeatureType
-     * @param geometryName - if null we use the default Feature geometry
-     * @param regroupAttribute
-     * @return a FeatureType
+     *
+     * @param geometryName if null we use the default Feature geometry
      */
     static FeatureType regroupFeatureType(final FeatureType oldFeatureType, String geometryName, final String regroupAttribute) {
-
-        AttributeDescriptorBuilder descBuilder;
-        AttributeTypeBuilder typeBuilder;
-
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-
-        ftb.copy(oldFeatureType);
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(oldFeatureType);
 
         //if keepedGeometry is null we use the default Geometry
         if (geometryName == null) {
-            geometryName = oldFeatureType.getGeometryDescriptor().getName().tip().toString();
+            geometryName = AttributeConvention.GEOMETRY_PROPERTY.toString();
         }
 
-        final Collection<String> listToRemove = new ArrayList<String>();
-
-        final ListIterator<PropertyDescriptor> ite = ftb.getProperties().listIterator();
-        while (ite.hasNext()) {
-
-            final PropertyDescriptor desc = ite.next();
-            //geometry property
-            if (desc instanceof GeometryDescriptor) {
-
-                final GeometryType type = (GeometryType) desc.getType();
-
-                if (desc.getName().tip().toString().equals(geometryName)) {
-                    descBuilder = new AttributeDescriptorBuilder();
-                    typeBuilder = new AttributeTypeBuilder();
-                    descBuilder.copy((AttributeDescriptor) desc);
-                    typeBuilder.copy(type);
-                    typeBuilder.setBinding(Geometry.class);
-                    descBuilder.setType(typeBuilder.buildGeometryType());
-                    final PropertyDescriptor newDesc = descBuilder.buildDescriptor();
-                    ite.set(newDesc);
-                } else {
-                    listToRemove.add(desc.getName().tip().toString());
-                }
-            } else {//other properties
-
-                if(regroupAttribute != null) {
-                     //if it's a different property than we wanted
-                    if (!(desc.getName().tip().toString().equals(regroupAttribute))) {
-                        listToRemove.add(desc.getName().tip().toString());
-                    }
-
-                // If regroup attribut is null, we return a feature with only one geometry
-                }else{
-                    listToRemove.add(desc.getName().tip().toString());
-                }
+        PropertyType property = oldFeatureType.getProperty(geometryName);
+        if(property instanceof AbstractOperation){
+            final Set<String> deps = ((AbstractOperation)property).getDependencies();
+            if(deps.size()==1){
+                geometryName = deps.iterator().next();
             }
         }
 
-        ftb.setDefaultGeometry(geometryName);
-        for (final String delPropertyDesc : listToRemove) {
-            ftb.remove(delPropertyDesc);
+        ftb.properties().clear();
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+
+        for(PropertyType pt : oldFeatureType.getProperties(true)){
+            if(AttributeConvention.isGeometryAttribute(pt)){
+                if(pt.getName().toString().equals(geometryName)){
+                    ftb.addAttribute((AttributeType) pt).addRole(AttributeRole.DEFAULT_GEOMETRY);
+                }
+            }else if(pt.getName().toString().equals(regroupAttribute)){
+                ftb.addProperty(pt);
+            }
         }
-
-
-        return ftb.buildFeatureType();
-
+        return ftb.build();
     }
 
     /**
      * Create a Feature with one of attribute values and an union of all features geometry with the
      * same attribute value.
-     * @param regroupAttribute - attribute specified in process input
-     * @param attrubuteValue - one value of the specified attribute
-     * @param newFeatureType - the new FeatureTYpe
-     * @param geometryName - if null we use the default Feature geometry
-     * @param filtredList - the input FeatureCollection filtered on attribute value
-     * @return a Feature
+     *
+     * @param regroupAttribute attribute specified in process input
+     * @param attrubuteValue one value of the specified attribute
+     * @param newFeatureType the new FeatureTYpe
+     * @param geometryName if null we use the default Feature geometry
+     * @param filtredList the input FeatureCollection filtered on attribute value
      */
     static Feature regroupFeature(final String regroupAttribute, final Object attributeValue,
-            final FeatureType newFeatureType, String geometryName, final FeatureCollection filtredList) {
-
+            final FeatureType newFeatureType, String geometryName, final FeatureCollection filtredList)
+    {
         final List<Geometry> geoms = new ArrayList<>();
-        
-        final FeatureIterator featureIter = filtredList.iterator();
-        try {
+        try (final FeatureIterator featureIter = filtredList.iterator()) {
             while (featureIter.hasNext()) {
                 final Feature feature = featureIter.next();
                 if (geometryName == null) {
-                    geometryName = feature.getDefaultGeometryProperty().getName().tip().toString();
+                    geometryName = AttributeConvention.GEOMETRY_PROPERTY.toString();
                 }
-                for (final Property property : feature.getProperties()) {
+                for (final PropertyType property : feature.getType().getProperties(true)) {
                     //if property is a geometry
-                    if (property.getDescriptor() instanceof GeometryDescriptor) {
+                    if (AttributeConvention.isGeometryAttribute(property)) {
                         //if it's the property we needed
-                        if (property.getName().tip().toString().equals(geometryName)) {
-                            Geometry candidate = (Geometry) property.getValue();
+                        final String name = property.getName().tip().toString();
+                        if (name.equals(geometryName)) {
+                            Geometry candidate = (Geometry) feature.getPropertyValue(name);
                             geoms.add(candidate);
                         }
                     }
                 }
             }
-        } finally {
-            featureIter.close();
         }
-        
         Geometry regroupGeometry = new GeometryFactory().buildGeometry(geoms);
-        
-        Feature resultFeature = null;
+        Feature resultFeature;
         //In case
-        if(regroupAttribute == null && attributeValue == null) {
-            resultFeature = FeatureUtilities.defaultFeature(newFeatureType, "groupedGeometryFeature");
-            resultFeature.getProperty(geometryName).setValue(regroupGeometry);
-
-        }else{
+        if (regroupAttribute == null && attributeValue == null) {
+            resultFeature = newFeatureType.newInstance();
+            resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "groupedGeometryFeature");
+            resultFeature.setPropertyValue(geometryName, regroupGeometry);
+        } else {
             //result feature
-            resultFeature = FeatureUtilities.defaultFeature(newFeatureType, regroupAttribute + "-" + attributeValue);
-            resultFeature.getProperty(regroupAttribute).setValue(attributeValue);
-            resultFeature.getProperty(geometryName).setValue(regroupGeometry);
+            resultFeature = newFeatureType.newInstance();
+            resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), regroupAttribute + "-" + attributeValue);
+            resultFeature.setPropertyValue(regroupAttribute, attributeValue);
+            resultFeature.setPropertyValue(geometryName, regroupGeometry);
         }
-
         return resultFeature;
     }
 
     /**
      * Browse in input FeatureCollection all different values of the specified attribute
-     * If regroupAttribute is null, we return an empty Collection<Object>.
-     * @param regroupAttribute
-     * @param featureList
-     * @return a collection of Objects
+     * If regroupAttribute is null, we return an empty Collection.
      */
     static Collection<Object> getAttributeValues(final String regroupAttribute, final FeatureCollection featureList) {
-
-        final Collection<Object> values = new ArrayList<Object>();
-
-        if(regroupAttribute != null) {
-
-            final FeatureIterator featureIter = featureList.iterator();
-            try {
+        final Collection<Object> values = new ArrayList<>();
+        if (regroupAttribute != null) {
+            try (final FeatureIterator featureIter = featureList.iterator()) {
                 while (featureIter.hasNext()) {
                     final Feature feature = featureIter.next();
-
-                    for (final Property property : feature.getProperties()) {
-                        //if property is not a geometry
-                        if (!(property.getDescriptor() instanceof GeometryDescriptor)) {
-                            //it's the property we needed
-                            if (property.getName().tip().toString().equals(regroupAttribute)) {
-                                //if property value isn't already in our collection, we add it.
-                                if (!values.contains(property.getValue())) {
-                                    values.add(property.getValue());
-                                }
-                            }
-                        }
+                    final Object value = feature.getPropertyValue(regroupAttribute);
+                    if (!values.contains(value)) {
+                        values.add(value);
                     }
                 }
-            } finally {
-                featureIter.close();
             }
         }
-
         return values;
     }
 }

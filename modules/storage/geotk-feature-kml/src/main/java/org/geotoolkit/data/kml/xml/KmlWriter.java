@@ -23,9 +23,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import org.opengis.feature.Feature;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.xal.xml.XalWriter;
@@ -111,17 +113,13 @@ import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.xal.model.XalException;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.data.kml.xsd.Cdata;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.xml.StaxStreamWriter;
-
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
 
 import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
- * <p>This class provides a method to read KML files, version 2.2.</p>
+ * This class provides a method to read KML files, version 2.2.
  *
  * @author Samuel Andrés
  * @module pending
@@ -129,22 +127,18 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 public class KmlWriter extends StaxStreamWriter {
 
     private static String URI_KML;
-    private static final XalWriter XAL_WRITER = new XalWriter();
-    private static final AtomWriter ATOM_WRITER = new AtomWriter();
-    private final List<StaxStreamWriter> extensionWriters = new ArrayList<StaxStreamWriter>();
-    private final List<StaxStreamWriter> dataWriters = new ArrayList<StaxStreamWriter>();
+    private final XalWriter XAL_WRITER = new XalWriter();
+    private final AtomWriter ATOM_WRITER = new AtomWriter();
+    private final List<StaxStreamWriter> extensionWriters = new ArrayList<>();
+    private final List<StaxStreamWriter> dataWriters = new ArrayList<>();
 
     public KmlWriter() {
     }
 
     /**
-     * <p>Set output. This method doesn't indicate kml uri version whose detection
+     * Set output. This method doesn't indicate kml uri version whose detection
      * is automatic at kml root writing. In other cases, method with Kml version uri
-     * argument is necessary.</p>
-     *
-     * @param output
-     * @throws XMLStreamException
-     * @throws IOException
+     * argument is necessary.
      */
     @Override
     public void setOutput(Object output) throws XMLStreamException, IOException {
@@ -154,18 +148,11 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * <p>Set input. This method is necessary if Kml elements are read out of Kml document
-     * with kml root elements.</p>
-     *
-     * @param output
-     * @param KmlVersionUri
-     * @throws XMLStreamException
-     * @throws IOException
-     * @throws KmlException
+     * Set input. This method is necessary if Kml elements are read out of Kml document
+     * with kml root elements.
      */
-    public void setOutput(Object output, String KmlVersionUri)
-            throws XMLStreamException, IOException, KmlException {
-        this.setOutput(output);
+    public void setOutput(Object output, String KmlVersionUri) throws XMLStreamException, IOException, KmlException {
+        setOutput(output);
         if (URI_KML_2_2.equals(KmlVersionUri) || URI_KML_2_1.equals(KmlVersionUri)) {
             URI_KML = KmlVersionUri;
         } else {
@@ -174,18 +161,13 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * <p>This method adds a writer for given uri extensions.</p>
-     *
-     * @param uri
-     * @param writer
-     * @throws KmlException
-     * @throws IOException
-     * @throws XMLStreamException
+     * This method adds a writer for given uri extensions.
      */
     public void addExtensionWriter(String uri, StaxStreamWriter writer)
-            throws KmlException, IOException, XMLStreamException {
+            throws KmlException, IOException, XMLStreamException
+    {
         if (writer instanceof KmlExtensionWriter) {
-            this.extensionWriters.add(writer);
+            extensionWriters.add(writer);
             writer.setOutput(this.writer);
         } else {
             throw new KmlException("Extension writer must implements "
@@ -194,18 +176,13 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * <p>This method adds a customized writeds for data containers</p>
-     *
-     * @param uri
-     * @param writer
-     * @throws KmlException
-     * @throws IOException
-     * @throws XMLStreamException
+     * This method adds a customized writers for data containers.
      */
     public void addDataWriter(String uri, StaxStreamWriter writer)
-            throws KmlException, IOException, XMLStreamException {
+            throws KmlException, IOException, XMLStreamException
+    {
         if (writer instanceof KmlExtensionWriter) {
-            this.dataWriters.add(writer);
+            dataWriters.add(writer);
             writer.setOutput(this.writer);
         } else {
             throw new KmlException("Extension writer must implements "
@@ -214,12 +191,11 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * <p>This method writes a Kml 2.2 / 2.1 document into the file assigned to the KmlWriter.</p>
+     * This method writes a Kml 2.2 / 2.1 document into the file assigned to the KmlWriter.
      *
      * @param kml The Kml object to write.
      */
-    public void write(Kml kml)
-            throws XMLStreamException, KmlException {
+    public void write(Kml kml) throws XMLStreamException, KmlException {
 
         // FACULTATIF : INDENTATION DE LA SORTIE
         //streamWriter = new IndentingXMLStreamWriter(streamWriter);
@@ -236,7 +212,7 @@ public class KmlWriter extends StaxStreamWriter {
                 writer.setPrefix(kml.getExtensionsUris().get(uri), uri);
             }
         }
-        this.writeKml(kml);
+        writeKml(kml);
         writer.writeEndElement();
         writer.writeEndDocument();
         writer.flush();
@@ -245,2660 +221,964 @@ public class KmlWriter extends StaxStreamWriter {
     /**
      *
      * @param kml The Kml object to write.
-     * @throws XMLStreamException
      */
-    private void writeKml(Kml kml)
-            throws XMLStreamException, KmlException {
-
-        if (kml.getNetworkLinkControl() != null) {
-            this.writeNetworkLinkControl(kml.getNetworkLinkControl());
-        }
-        if (kml.getAbstractFeature() != null) {
-            this.writeAbstractFeature(kml.getAbstractFeature());
-        }
-        this.writeStandardExtensionLevel(
-                kml.extensions(), Names.KML);
+    private void writeKml(Kml kml) throws XMLStreamException, KmlException {
+        writeNetworkLinkControl(kml.getNetworkLinkControl());
+        writeAbstractFeature(kml.getAbstractFeature());
+        writeStandardExtensionLevel(kml.extensions(), Names.KML);
     }
 
-    /**
-     *
-     * @param networkLinkControl
-     * @throws XMLStreamException
-     */
-    private void writeNetworkLinkControl(NetworkLinkControl networkLinkControl)
-            throws XMLStreamException, KmlException {
+    private void writeNetworkLinkControl(NetworkLinkControl value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_NETWORK_LINK_CONTROL);
+            writeMinRefreshPeriod(value.getMinRefreshPeriod());
+            if (checkVersionSimple(URI_KML_2_2)) {
+                writeMaxSessionLength(value.getMaxSessionLength());
+            }
+            writeCookie         (value.getCookie());
+            writeMessage        (value.getMessage());
+            writeLinkName       (value.getLinkName());
+            writeLinkDescription(value.getLinkDescription());
+            writeLinkSnippet    (value.getLinkSnippet());
+            writeExpires        (value.getExpires());
+            writeUpdate         (value.getUpdate());
+            writeAbstractView   (value.getView());
+            writeStandardExtensionLevel(value.extensions(), Names.NETWORK_LINK_CONTROL);
+            writer.writeEndElement();
+        }
+    }
 
-        writer.writeStartElement(URI_KML, TAG_NETWORK_LINK_CONTROL);
-        if (KmlUtilities.isFiniteNumber(networkLinkControl.getMinRefreshPeriod())) {
-            this.writeMinRefreshPeriod(networkLinkControl.getMinRefreshPeriod());
+    public void writeUpdate(Update value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_UPDATE);
+            writeTargetHref(value.getTargetHref());
+            for (Object object : value.getUpdates()) {
+                if (object instanceof Create) {
+                    writeCreate((Create) object);
+                } else if (object instanceof Delete) {
+                    writeDelete((Delete) object);
+                } else if (object instanceof Change) {
+                    writeChange((Change) object);
+                } else if (object instanceof Feature) {
+                    checkVersion(URI_KML_2_1);
+                    writeReplace((Feature) object);
+                } else {
+                    throw new KmlException(object.getClass().getCanonicalName() + " instance is not allowed here");
+                }
+            }
+            writer.writeEndElement();
         }
-        if (KmlUtilities.isFiniteNumber(networkLinkControl.getMaxSessionLength())
-                && checkVersionSimple(URI_KML_2_2)) {
-            this.writeMaxSessionLength(networkLinkControl.getMaxSessionLength());
-        }
-        if (networkLinkControl.getCookie() != null) {
-            this.writeCookie(networkLinkControl.getCookie());
-        }
-        if (networkLinkControl.getMessage() != null) {
-            this.writeMessage(networkLinkControl.getMessage());
-        }
-        if (networkLinkControl.getLinkName() != null) {
-            this.writeLinkName(networkLinkControl.getLinkName());
-        }
-        if (networkLinkControl.getLinkDescription() != null) {
-            this.writeLinkDescription(networkLinkControl.getLinkDescription());
-        }
-        if (networkLinkControl.getLinkSnippet() != null) {
-            this.writeLinkSnippet(networkLinkControl.getLinkSnippet());
-        }
-        if (networkLinkControl.getExpires() != null) {
-            this.writeExpires(networkLinkControl.getExpires());
-        }
-        if (networkLinkControl.getUpdate() != null) {
-            this.writeUpdate(networkLinkControl.getUpdate());
-        }
-        if (networkLinkControl.getView() != null) {
-            this.writeAbstractView(networkLinkControl.getView());
-        }
-        this.writeStandardExtensionLevel(
-                networkLinkControl.extensions(), Names.NETWORK_LINK_CONTROL);
+    }
 
+    @Deprecated
+    private void writeReplace(Feature value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_REPLACE);
+        writeAbstractFeature(value);
         writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param update
-     * @throws XMLStreamException
-     */
-    public void writeUpdate(Update update)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_UPDATE);
-        if (update.getTargetHref() != null) {
-            this.writeTargetHref(update.getTargetHref());
+    private void writeCreate(Create value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_CREATE);
+        for (Feature container : value.getContainers()) {
+            writeAbstractContainer(container);
         }
-        for (Object object : update.getUpdates()) {
-            if (object instanceof Create) {
-                this.writeCreate((Create) object);
-            } else if (object instanceof Delete) {
-                this.writeDelete((Delete) object);
-            } else if (object instanceof Change) {
-                this.writeChange((Change) object);
-            } else if (object instanceof Feature) {
-                checkVersion(URI_KML_2_1);
-                this.writeReplace((Feature) object);
-            } else {
-                throw new KmlException(object.getClass().getCanonicalName()
-                        + " instance is not allowed here");
+        writer.writeEndElement();
+    }
+
+    private void writeDelete(Delete value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_DELETE);
+        for (Feature feature : value.getFeatures()) {
+            writeAbstractFeature(feature);
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeChange(Change value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_CHANGE);
+        for (Object object : value.getObjects()) {
+            writeObject(object);
+        }
+        writer.writeEndElement();
+    }
+
+    private void writeObject(Object value) throws XMLStreamException, KmlException {
+        if (value instanceof Region) {
+            writeRegion((Region) value);
+        } else if (value instanceof Lod) {
+            writeLod((Lod) value);
+        } else if (value instanceof Link) {
+            writeLink((Link) value);
+        } else if (value instanceof Icon) {
+            writeIcon((Icon) value);
+        } else if (value instanceof Location) {
+            writeLocation((Location) value);
+        } else if (value instanceof Orientation) {
+            writeOrientation((Orientation) value);
+        } else if (value instanceof ResourceMap) {
+            writeResourceMap((ResourceMap) value);
+        } else if (value instanceof SchemaData) {
+            writeSchemaData((SchemaData) value);
+        } else if (value instanceof Scale) {
+            writeScale((Scale) value);
+        } else if (value instanceof Alias) {
+            writeAlias((Alias) value);
+        } else if (value instanceof ViewVolume) {
+            writeViewVolume((ViewVolume) value);
+        } else if (value instanceof ImagePyramid) {
+            writeImagePyramid((ImagePyramid) value);
+        } else if (value instanceof Pair) {
+            writePair((Pair) value);
+        } else if (value instanceof ItemIcon) {
+            writeItemIcon((ItemIcon) value);
+        } else if (value instanceof Feature) {
+            writeAbstractFeature((Feature) value);
+        } else if (value instanceof AbstractGeometry) {
+            writeGeometry((AbstractGeometry) value);
+        } else if (value instanceof AbstractStyleSelector) {
+            writeStyleSelector((AbstractStyleSelector) value);
+        } else if (value instanceof AbstractSubStyle) {
+            writeSubStyle((AbstractSubStyle) value);
+        } else if (value instanceof AbstractView) {
+            writeAbstractView((AbstractView) value);
+        } else if (value instanceof AbstractTimePrimitive) {
+            writeTimePrimitive((AbstractTimePrimitive) value);
+        } else if (value instanceof AbstractLatLonBox) {
+            writeLatLonBox((AbstractLatLonBox) value);
+        }
+    }
+
+    private void writeLatLonBox(AbstractLatLonBox value) throws XMLStreamException, KmlException {
+        if (value instanceof LatLonAltBox) {
+            writeLatLonAltBox((LatLonAltBox) value);
+        } else if (value instanceof LatLonBox) {
+            writeLatLonBox((LatLonBox) value);
+        }
+    }
+
+    private void writeSubStyle(AbstractSubStyle value) throws XMLStreamException, KmlException {
+        if (value instanceof BalloonStyle) {
+            writeBalloonStyle((BalloonStyle) value);
+        } else if (value instanceof ListStyle) {
+            writeListStyle((ListStyle) value);
+        } else if (value instanceof AbstractColorStyle) {
+            writeColorStyle((AbstractColorStyle) value);
+        }
+    }
+
+    private void writeColorStyle(AbstractColorStyle value) throws XMLStreamException, KmlException {
+        if (value instanceof IconStyle) {
+            writeIconStyle((IconStyle) value);
+        } else if (value instanceof LabelStyle) {
+            writeLabelStyle((LabelStyle) value);
+        } else if (value instanceof PolyStyle) {
+            writePolyStyle((PolyStyle) value);
+        } else if (value instanceof LineStyle) {
+            writeLineStyle((LineStyle) value);
+        }
+    }
+
+    /**
+     * This method writes the common fields for instances of AbstractObject.
+     *
+     * @param value The AbstractObject to write.
+     */
+    public void writeCommonAbstractObject(AbstractObject value) throws XMLStreamException, KmlException {
+        writeIdAttributes(value.getIdAttributes());
+        writeSimpleExtensionsScheduler(Names.OBJECT, value.extensions().simples(Names.OBJECT));
+    }
+
+    /**
+     * This method writes identification attributes.
+     *
+     * @param value The IdAttributes to write.
+     */
+    private void writeIdAttributes(IdAttributes value) throws XMLStreamException {
+        if (value != null) {
+            if (value.getId() != null) {
+                writer.writeAttribute(ATT_ID, value.getId());
+            }
+            if (value.getTargetId() != null) {
+                writer.writeAttribute(ATT_TARGET_ID, value.getTargetId());
             }
         }
-        writer.writeEndElement();
     }
 
     /**
      *
-     * @param replace
-     * @throws XMLStreamException
-     * @deprecated
+     * @param value The AbstractFeature to write.
      */
-    @Deprecated
-    private void writeReplace(Feature replace)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_REPLACE);
-        this.writeAbstractFeature(replace);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param create
-     * @throws XMLStreamException
-     */
-    private void writeCreate(Create create)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_CREATE);
-        for (Feature container : create.getContainers()) {
-            this.writeAbstractContainer(container);
-        }
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param delete
-     * @throws XMLStreamException
-     */
-    private void writeDelete(Delete delete)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_DELETE);
-        for (Feature feature : delete.getFeatures()) {
-            this.writeAbstractFeature(feature);
-        }
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param change
-     * @throws XMLStreamException
-     */
-    private void writeChange(Change change)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_CHANGE);
-        for (Object object : change.getObjects()) {
-            this.writeAbstractObject(object);
-        }
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param object
-     * @throws XMLStreamException
-     */
-    private void writeAbstractObject(Object object)
-            throws XMLStreamException, KmlException {
-
-        if (object instanceof Region) {
-            this.writeRegion((Region) object);
-        } else if (object instanceof Lod) {
-            this.writeLod((Lod) object);
-        } else if (object instanceof Link) {
-            this.writeLink((Link) object);
-        } else if (object instanceof Icon) {
-            this.writeIcon((Icon) object);
-        } else if (object instanceof Location) {
-            this.writeLocation((Location) object);
-        } else if (object instanceof Orientation) {
-            this.writeOrientation((Orientation) object);
-        } else if (object instanceof ResourceMap) {
-            this.writeResourceMap((ResourceMap) object);
-        } else if (object instanceof SchemaData) {
-            this.writeSchemaData((SchemaData) object);
-        } else if (object instanceof Scale) {
-            this.writeScale((Scale) object);
-        } else if (object instanceof Alias) {
-            this.writeAlias((Alias) object);
-        } else if (object instanceof ViewVolume) {
-            this.writeViewVolume((ViewVolume) object);
-        } else if (object instanceof ImagePyramid) {
-            this.writeImagePyramid((ImagePyramid) object);
-        } else if (object instanceof Pair) {
-            this.writePair((Pair) object);
-        } else if (object instanceof ItemIcon) {
-            this.writeItemIcon((ItemIcon) object);
-        } else if (object instanceof Feature) {
-            this.writeAbstractFeature((Feature) object);
-        } else if (object instanceof AbstractGeometry) {
-            this.writeAbstractGeometry((AbstractGeometry) object);
-        } else if (object instanceof AbstractStyleSelector) {
-            this.writeAbstractStyleSelector((AbstractStyleSelector) object);
-        } else if (object instanceof AbstractSubStyle) {
-            this.writeAbstractSubStyle((AbstractSubStyle) object);
-        } else if (object instanceof AbstractView) {
-            this.writeAbstractView((AbstractView) object);
-        } else if (object instanceof AbstractTimePrimitive) {
-            this.writeAbstractTimePrimitive((AbstractTimePrimitive) object);
-        } else if (object instanceof AbstractLatLonBox) {
-            this.writeAbstractLatLonBox((AbstractLatLonBox) object);
-        }
-    }
-
-    /**
-     *
-     * @param abstractLatLonBox
-     * @throws XMLStreamException
-     */
-    private void writeAbstractLatLonBox(AbstractLatLonBox abstractLatLonBox)
-            throws XMLStreamException, KmlException {
-
-        if (abstractLatLonBox instanceof LatLonAltBox) {
-            this.writeLatLonAltBox((LatLonAltBox) abstractLatLonBox);
-        } else if (abstractLatLonBox instanceof LatLonBox) {
-            this.writeLatLonBox((LatLonBox) abstractLatLonBox);
-        }
-    }
-
-    /**
-     *
-     * @param subStyle
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeAbstractSubStyle(AbstractSubStyle subStyle)
-            throws XMLStreamException, KmlException {
-
-        if (subStyle instanceof BalloonStyle) {
-            this.writeBalloonStyle((BalloonStyle) subStyle);
-        } else if (subStyle instanceof ListStyle) {
-            this.writeListStyle((ListStyle) subStyle);
-        } else if (subStyle instanceof AbstractColorStyle) {
-            this.writeAbstractColorStyle((AbstractColorStyle) subStyle);
-        }
-    }
-
-    /**
-     *
-     * @param colorStyle
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeAbstractColorStyle(AbstractColorStyle colorStyle)
-            throws XMLStreamException, KmlException {
-
-        if (colorStyle instanceof IconStyle) {
-            this.writeIconStyle((IconStyle) colorStyle);
-        } else if (colorStyle instanceof LabelStyle) {
-            this.writeLabelStyle((LabelStyle) colorStyle);
-        } else if (colorStyle instanceof PolyStyle) {
-            this.writePolyStyle((PolyStyle) colorStyle);
-        } else if (colorStyle instanceof LineStyle) {
-            this.writeLineStyle((LineStyle) colorStyle);
-        }
-    }
-
-    /**
-     * <p>This method writes the common fields for
-     * instances of AbstractObject.</p>
-     *
-     * @param abstractObject The AbstractObject to write.
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    public void writeCommonAbstractObject(AbstractObject abstractObject)
-            throws XMLStreamException, KmlException {
-
-        if (abstractObject.getIdAttributes() != null) {
-            this.writeIdAttributes(abstractObject.getIdAttributes());
-        }
-        this.writeSimpleExtensionsScheduler(Names.OBJECT,
-                abstractObject.extensions().simples(Names.OBJECT));
-    }
-
-    /**
-     * <p>This method writes identification attributes.</p>
-     *
-     * @param idAttributes The IdAttributes to write.
-     * @throws XMLStreamException
-     */
-    private void writeIdAttributes(IdAttributes idAttributes)
-            throws XMLStreamException {
-
-        if (idAttributes.getId() != null) {
-            writer.writeAttribute(ATT_ID, idAttributes.getId());
-        }
-        if (idAttributes.getTargetId() != null) {
-            writer.writeAttribute(ATT_TARGET_ID, idAttributes.getTargetId());
-        }
-    }
-
-    /**
-     *
-     * @param abstractFeature The AbstractFeature to write.
-     * @throws XMLStreamException
-     */
-    private void writeAbstractFeature(Feature abstractFeature)
-            throws XMLStreamException, KmlException {
-
-        if (FeatureTypeUtilities.isDecendedFrom(
-                abstractFeature.getType(), KmlModelConstants.TYPE_CONTAINER)) {
-            this.writeAbstractContainer(abstractFeature);
-        } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_NETWORK_LINK)) {
-            this.writeNetworkLink(abstractFeature);
-        } else if (FeatureTypeUtilities.isDecendedFrom(
-                abstractFeature.getType(), KmlModelConstants.TYPE_OVERLAY)) {
-            this.writeAbstractOverlay(abstractFeature);
-        } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_PLACEMARK)) {
-            this.writePlacemark(abstractFeature);
-        } else { //FEATURE EXTENSIONS SUBSTITUTION
-            for (StaxStreamWriter candidate : this.extensionWriters) {
-                if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, abstractFeature)) {
-                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, abstractFeature);
+    private void writeAbstractFeature(Feature value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            if (KmlModelConstants.TYPE_CONTAINER.isAssignableFrom(value.getType())) {
+                writeAbstractContainer(value);
+            } else if (value.getType().equals(KmlModelConstants.TYPE_NETWORK_LINK)) {
+                writeNetworkLink(value);
+            } else if (KmlModelConstants.TYPE_OVERLAY.isAssignableFrom(value.getType())) {
+                writeAbstractOverlay(value);
+            } else if (value.getType().equals(KmlModelConstants.TYPE_PLACEMARK)) {
+                writePlacemark(value);
+            } else { //FEATURE EXTENSIONS SUBSTITUTION
+                for (StaxStreamWriter candidate : extensionWriters) {
+                    if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, value)) {
+                        ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, value);
+                    }
                 }
             }
         }
     }
 
-    /**
-     *
-     * @param networkLink
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeNetworkLink(Feature networkLink)
-            throws XMLStreamException, KmlException {
-
+    private void writeNetworkLink(Feature value) throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_KML, TAG_NETWORK_LINK);
-        this.writeCommonAbstractFeature(networkLink);
-        this.writeRefreshVisibility((Boolean) networkLink.getProperty(
-                KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY.getName()).getValue());
-        this.writeFlyToView((Boolean) networkLink.getProperty(
-                KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW.getName()).getValue());
+        writeCommonAbstractFeature(value);
+        writeRefreshVisibility((Boolean) value.getPropertyValue(KmlConstants.TAG_REFRESH_VISIBILITY));
+        writeFlyToView((Boolean) value.getPropertyValue(KmlConstants.TAG_FLY_TO_VIEW));
 
-        if (networkLink.getProperty(
-                KmlModelConstants.ATT_NETWORK_LINK_LINK.getName()) != null) {
-            Object link = networkLink.getProperty(
-                    KmlModelConstants.ATT_NETWORK_LINK_LINK.getName()).getValue();
-            if (link instanceof Url) {
-                this.writeUrl((Url) link);
-            } else if (link instanceof Link) {
-                this.writeLink((Link) link);
-            }
+        Object link = value.getPropertyValue(KmlConstants.TAG_LINK);
+        if (link instanceof Url) {
+            writeUrl((Url) link);
+        } else if (link instanceof Link) {
+            writeLink((Link) link);
         }
-        this.writeStandardExtensionLevel(
-                (Extensions) networkLink.getProperty(
-                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-                Names.NETWORK_LINK);
+        writeStandardExtensionLevel((Extensions) value.getPropertyValue(KmlConstants.TAG_EXTENSIONS), Names.NETWORK_LINK);
         writer.writeEndElement();
     }
 
     /**
-     * <p>This method writes the common fields for
-     * instances of AbstractFeature.</p>
+     * This method writes the common fields for instances of AbstractFeature.
      *
-     * @param abstractFeature The AbstractFeature to write.
-     * @throws XMLStreamException
+     * @param feature The AbstractFeature to write.
      */
-    public void writeCommonAbstractFeature(Feature abstractFeature)
-            throws XMLStreamException, KmlException {
+    public void writeCommonAbstractFeature(Feature feature) throws XMLStreamException, KmlException {
+        writeIdAttributes((IdAttributes) feature.getPropertyValue(KmlConstants.ATT_ID));
+        writeSimpleExtensionsScheduler(Names.OBJECT,
+                ((Extensions) feature.getPropertyValue(KmlConstants.TAG_EXTENSIONS)).simples(Names.OBJECT));
 
-        Iterator i;
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()) != null) {
-            IdAttributes idAttributes = (IdAttributes) abstractFeature.getProperty(
-                    KmlModelConstants.ATT_ID_ATTRIBUTES.getName()).getValue();
-            if (idAttributes != null) {
-                this.writeIdAttributes(idAttributes);
-            }
+        writeName               ((String)               feature.getPropertyValue(KmlConstants.TAG_NAME));
+        writeVisibility         ((Boolean)              feature.getPropertyValue(KmlConstants.TAG_VISIBILITY));
+        writeOpen               ((Boolean)              feature.getPropertyValue(KmlConstants.TAG_OPEN));
+        writeAtomPersonConstruct((AtomPersonConstruct)  feature.getPropertyValue(KmlConstants.TAG_ATOM_AUTHOR));
+        writeAtomLink           ((AtomLink)             feature.getPropertyValue(KmlConstants.TAG_ATOM_LINK));
+        writeAddress            ((String)               feature.getPropertyValue(KmlConstants.TAG_ADDRESS));
+        writeXalAddresDetails   ((AddressDetails)       feature.getPropertyValue(KmlConstants.TAG_XAL_ADDRESS_DETAILS));
+        writePhoneNumber        ((String)               feature.getPropertyValue(KmlConstants.TAG_PHONE_NUMBER));
+        writeSnippet            (                       feature.getPropertyValue(KmlConstants.TAG_SNIPPET));
+        writeDescription        (                       feature.getPropertyValue(KmlConstants.TAG_DESCRIPTION));
+        writeAbstractView       ((AbstractView)         feature.getPropertyValue(KmlConstants.TAG_VIEW));
+        writeTimePrimitive(     (AbstractTimePrimitive) feature.getPropertyValue(KmlConstants.TAG_TIME_PRIMITIVE));
+        writeStyleUrl           ((URI)                  feature.getPropertyValue(KmlConstants.TAG_STYLE_URL));
+        for (final Object value : (Iterable<?>) feature.getPropertyValue(KmlConstants.TAG_STYLE_SELECTOR)) {
+            writeStyleSelector((AbstractStyleSelector) value);
         }
-
-        this.writeSimpleExtensionsScheduler(Names.OBJECT,
-                ((Extensions) abstractFeature.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue()).simples(Names.OBJECT));
-
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_NAME.getName()) != null) {
-            String name = (String) abstractFeature.getProperty(
-                    KmlModelConstants.ATT_NAME.getName()).getValue();
-            if (name != null) {
-                this.writeName(name);
-            }
-        }
-
-        this.writeVisibility((Boolean) abstractFeature.getProperty(
-                KmlModelConstants.ATT_VISIBILITY.getName()).getValue());
-        this.writeOpen((Boolean) abstractFeature.getProperty(
-                KmlModelConstants.ATT_OPEN.getName()).getValue());
-
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_AUTHOR.getName()) != null) {
-            AtomPersonConstruct author = (AtomPersonConstruct) abstractFeature.getProperty(
-                    KmlModelConstants.ATT_AUTHOR.getName()).getValue();
-            if (author != null) {
-                this.writeAtomPersonConstruct(author);
-            }
-        }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_LINK.getName()) != null) {
-            AtomLink atomLink = (AtomLink) abstractFeature.getProperty(
-                    KmlModelConstants.ATT_LINK.getName()).getValue();
-            if (atomLink != null) {
-                this.writeAtomLink(atomLink);
-            }
-        }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_ADDRESS.getName()) != null) {
-            String address = (String) abstractFeature.getProperty(
-                    KmlModelConstants.ATT_ADDRESS.getName()).getValue();
-            if (address != null) {
-                this.writeAddress(address);
-            }
-        }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_ADDRESS_DETAILS.getName()) != null) {
-            AddressDetails addressDetails = (AddressDetails) abstractFeature.getProperty(
-                    KmlModelConstants.ATT_ADDRESS_DETAILS.getName()).getValue();
-            if (addressDetails != null) {
-                this.writeXalAddresDetails(addressDetails);
-            }
-        }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_PHONE_NUMBER.getName()) != null) {
-            String phoneNumber = (String) abstractFeature.getProperty(
-                    KmlModelConstants.ATT_PHONE_NUMBER.getName()).getValue();
-            if (phoneNumber != null) {
-                this.writePhoneNumber(phoneNumber);
-            }
-        }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_SNIPPET.getName()) != null) {
-            Object snippet = abstractFeature.getProperty(
-                    KmlModelConstants.ATT_SNIPPET.getName()).getValue();
-            if (snippet != null) {
-                this.writeSnippet(snippet);
-            }
-        }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()) != null) {
-            Object description = abstractFeature.getProperty(
-                    KmlModelConstants.ATT_DESCRIPTION.getName()).getValue();
-            if (description != null) {
-                this.writeDescription(description);
-            }
-        }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_VIEW.getName()) != null) {
-            AbstractView view = (AbstractView) abstractFeature.getProperty(
-                    KmlModelConstants.ATT_VIEW.getName()).getValue();
-            if (view != null) {
-                this.writeAbstractView(view);
-            }
-        }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_TIME_PRIMITIVE.getName()) != null) {
-            AbstractTimePrimitive timePrimitive = (AbstractTimePrimitive) abstractFeature.getProperty(
-                    KmlModelConstants.ATT_TIME_PRIMITIVE.getName()).getValue();
-            if (timePrimitive != null) {
-                this.writeAbstractTimePrimitive(timePrimitive);
-            }
-        }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()) != null) {
-            URI styleUrl = (URI) abstractFeature.getProperty(
-                    KmlModelConstants.ATT_STYLE_URL.getName()).getValue();
-            if (styleUrl != null) {
-                this.writeStyleUrl(styleUrl);
-            }
-        }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName()) != null) {
-            i = abstractFeature.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
-            while (i.hasNext()) {
-                this.writeAbstractStyleSelector(
-                        (AbstractStyleSelector) ((Property) i.next()).getValue());
-            }
-        }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_REGION.getName()) != null) {
-            Region region = (Region) abstractFeature.getProperty(
-                    KmlModelConstants.ATT_REGION.getName()).getValue();
-            if (region != null) {
-                this.writeRegion(region);
-            }
-        }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()) != null) {
-            Object extendedData = abstractFeature.getProperty(
-                    KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue();
-            if (extendedData != null) {
-                this.writeExtendedData(extendedData);
-            }
-        }
-        this.writeStandardExtensionLevel(
-                (Extensions) abstractFeature.getProperty(
-                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-                Names.FEATURE);
+        writeRegion((Region) feature.getPropertyValue(KmlConstants.TAG_REGION));
+        writeExtendedData(feature.getPropertyValue(KmlConstants.TAG_EXTENDED_DATA));
+        writeStandardExtensionLevel((Extensions) feature.getPropertyValue(KmlConstants.TAG_EXTENSIONS), Names.FEATURE);
     }
 
-    /**
-     *
-     * @param dataContainer
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeExtendedData(Object dataContainer)
-            throws XMLStreamException, KmlException {
-
-        if (dataContainer instanceof ExtendedData) {
-            this.writeExtendedData((ExtendedData) dataContainer);
-        } else if (dataContainer instanceof Metadata) {
-            this.writeMetaData((Metadata) dataContainer);
+    private void writeExtendedData(Object value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            if (value instanceof Collection) {
+                for (Object ex : (Collection)value) {
+                    if (ex instanceof ExtendedData) {
+                        writeExtendedData((ExtendedData) ex);
+                    } else if (ex instanceof Metadata) {
+                        writeMetaData((Metadata) ex);
+                    }
+                }
+            } else if (value instanceof ExtendedData) {
+                writeExtendedData((ExtendedData) value);
+            } else if (value instanceof Metadata) {
+                writeMetaData((Metadata) value);
+            }
         }
     }
 
-    /**
-     *
-     * @param extendedData
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    public void writeExtendedData(ExtendedData extendedData)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_EXTENDED_DATA);
-        for (Data data : extendedData.getDatas()) {
-            this.writeData(data);
+    public void writeExtendedData(ExtendedData value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_EXTENDED_DATA);
+            for (Data data : value.getDatas()) {
+                writeData(data);
+            }
+            for (SchemaData schemaData : value.getSchemaData()) {
+                writeSchemaData(schemaData);
+            }
+            writeDataScheduler(value.getAnyOtherElements());
+            writer.writeEndElement();
         }
-        for (SchemaData schemaData : extendedData.getSchemaData()) {
-            this.writeSchemaData(schemaData);
-        }
-        if (extendedData.getAnyOtherElements() != null) {
-            this.writeDataScheduler(extendedData.getAnyOtherElements());
-        }
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param metadata
-     * @throws XMLStreamException
-     * @throws KmlException
-     * @deprecated
-     */
     @Deprecated
-    private void writeMetaData(Metadata metadata)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_META_DATA);
-        this.writeDataScheduler(metadata.getContent());
-        writer.writeEndElement();
+    private void writeMetaData(Metadata value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_META_DATA);
+            writeDataScheduler(value.getContent());
+            writer.writeEndElement();
+        }
     }
 
-    /**
-     *
-     * @param schemaData
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeSchemaData(SchemaData schemaData)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_SCHEMA_DATA);
-        writer.writeAttribute(ATT_SCHEMA_URL, schemaData.getSchemaURL().toString());
-        this.writeCommonAbstractObject(schemaData);
-        for (SimpleData simpleData : schemaData.getSimpleDatas()) {
-            this.writeSimpleData(simpleData);
+    private void writeSchemaData(SchemaData value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_SCHEMA_DATA);
+            writer.writeAttribute(ATT_SCHEMA_URL, value.getSchemaURL().toString());
+            writeCommonAbstractObject(value);
+            for (SimpleData simpleData : value.getSimpleDatas()) {
+                writeSimpleData(simpleData);
+            }
+            writer.writeEndElement();
         }
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param simpleData
-     * @throws XMLStreamException
-     */
-    private void writeSimpleData(SimpleData simpleData) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_SIMPLE_DATA);
-        writer.writeAttribute(ATT_NAME, simpleData.getName());
-        writer.writeCharacters(simpleData.getContent());
-        writer.writeEndElement();
+    private void writeSimpleData(SimpleData value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_SIMPLE_DATA);
+            writer.writeAttribute(ATT_NAME, value.getName());
+            writer.writeCharacters(value.getContent());
+            writer.writeEndElement();
+        }
     }
 
-    /**
-     *
-     * @param data
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeData(Data data)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_DATA);
-        writer.writeAttribute(ATT_NAME, data.getName());
-        this.writeCommonAbstractObject(data);
-        if (data.getDisplayName() != null) {
-            this.writeDisplayName(data.getDisplayName());
+    private void writeData(Data value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_DATA);
+            writer.writeAttribute(ATT_NAME, value.getName());
+            writeCommonAbstractObject(value);
+            writeDisplayName(value.getDisplayName());
+            writeValue(value.getValue());
+            if (value.getDataExtensions() != null) {
+                // TODO
+            }
+            writer.writeEndElement();
         }
-        if (data.getValue() != null) {
-            this.writeValue(data.getValue());
-        }
-        if (data.getDataExtensions() != null) {
-        }
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param region
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeRegion(Region region)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_REGION);
-        this.writeCommonAbstractObject(region);
-        if (region.getLatLonAltBox() != null) {
-            this.writeLatLonAltBox(region.getLatLonAltBox());
+    private void writeRegion(Region value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_REGION);
+            writeCommonAbstractObject(value);
+            writeLatLonAltBox(value.getLatLonAltBox());
+            if (value.getLod() != null) {
+                writeLod(value.getLod());
+            }
+            writeStandardExtensionLevel(value.extensions(), Names.REGION);
+            writer.writeEndElement();
         }
-        if (region.getLod() != null) {
-            this.writeLod(region.getLod());
-        }
-        this.writeStandardExtensionLevel(
-                region.extensions(),
-                Names.REGION);
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param lod
-     * @throws XMLStreamException
-     */
-    private void writeLod(Lod lod)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_LOD);
-        this.writeCommonAbstractObject(lod);
-        if (KmlUtilities.isFiniteNumber(lod.getMinLodPixels())) {
-            this.writeMinLodPixels(lod.getMinLodPixels());
+    private void writeLod(Lod value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_LOD);
+            writeCommonAbstractObject(value);
+            writeMinLodPixels (value.getMinLodPixels());
+            writeMaxLodPixels (value.getMaxLodPixels());
+            writeMinFadeExtent(value.getMinFadeExtent());
+            writeMaxFadeExtent(value.getMaxFadeExtent());
+            writeStandardExtensionLevel(value.extensions(), Names.LOD);
+            writer.writeEndElement();
         }
-        if (KmlUtilities.isFiniteNumber(lod.getMaxLodPixels())) {
-            this.writeMaxLodPixels(lod.getMaxLodPixels());
-        }
-        if (KmlUtilities.isFiniteNumber(lod.getMinFadeExtent())) {
-            this.writeMinFadeExtent(lod.getMinFadeExtent());
-        }
-        if (KmlUtilities.isFiniteNumber(lod.getMaxFadeExtent())) {
-            this.writeMaxFadeExtent(lod.getMaxFadeExtent());
-        }
-        this.writeStandardExtensionLevel(
-                lod.extensions(),
-                Names.LOD);
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param latLonAltBox
-     * @throws XMLStreamException
-     */
-    private void writeLatLonAltBox(LatLonAltBox latLonAltBox)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_LAT_LON_ALT_BOX);
-        this.writeCommonAbstractLatLonBox(latLonAltBox);
-        if (KmlUtilities.isFiniteNumber(latLonAltBox.getMinAltitude())) {
-            this.writeMinAltitude(latLonAltBox.getMinAltitude());
+    private void writeLatLonAltBox(LatLonAltBox value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_LAT_LON_ALT_BOX);
+            writeCommonLatLonBox(value);
+            writeMinAltitude (value.getMinAltitude());
+            writeMaxAltitude (value.getMaxAltitude());
+            writeAltitudeMode(value.getAltitudeMode());
+            writeStandardExtensionLevel(value.extensions(), Names.LAT_LON_ALT_BOX);
+            writer.writeEndElement();
         }
-        if (KmlUtilities.isFiniteNumber(latLonAltBox.getMaxAltitude())) {
-            this.writeMaxAltitude(latLonAltBox.getMaxAltitude());
-        }
-        if (latLonAltBox.getAltitudeMode() != null) {
-            this.writeAltitudeMode(latLonAltBox.getAltitudeMode());
-        }
-        this.writeStandardExtensionLevel(
-                latLonAltBox.extensions(),
-                Names.LAT_LON_ALT_BOX);
-        writer.writeEndElement();
     }
 
-    private void writeAtomPersonConstruct(AtomPersonConstruct person)
-            throws XMLStreamException {
-
-        ATOM_WRITER.writeAuthor(person);
-    }
-
-    private void writeAtomLink(AtomLink link)
-            throws XMLStreamException {
-
-        ATOM_WRITER.writeLink(link);
-    }
-
-    /**
-     *
-     * @param details
-     */
-    private void writeXalAddresDetails(AddressDetails details)
-            throws XMLStreamException {
-
-        XAL_WRITER.setWriter(writer);
-        try {
-            XAL_WRITER.writeAddressDetails(details);
-        } catch (XalException ex) {
-            Logging.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, null, ex);
+    private void writeAtomPersonConstruct(AtomPersonConstruct value) throws XMLStreamException {
+        if (value != null) {
+            ATOM_WRITER.writeAuthor(value);
         }
-        this.writer = XAL_WRITER.getWriter();
     }
 
-    /**
-     *
-     * @param abstractTimePrimitive The AbstractTimePrimitive to write.
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeAbstractTimePrimitive(AbstractTimePrimitive abstractTimePrimitive)
-            throws XMLStreamException, KmlException {
+    private void writeAtomLink(AtomLink value) throws XMLStreamException {
+        if (value != null) {
+            ATOM_WRITER.writeLink(value);
+        }
+    }
 
-        if (abstractTimePrimitive instanceof TimeSpan) {
-            this.writeTimeSpan((TimeSpan) abstractTimePrimitive);
-        } else if (abstractTimePrimitive instanceof TimeStamp) {
-            this.writeTimeStamp((TimeStamp) abstractTimePrimitive);
+    private void writeXalAddresDetails(AddressDetails value) throws XMLStreamException {
+        if (value != null) {
+            try {
+                XAL_WRITER.writeAddressDetails(value);
+            } catch (XalException ex) {
+                Logging.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, null, ex);
+            }
         }
     }
 
     /**
      *
-     * @param timeSpan
-     * @throws XMLStreamException
-     * @throws KmlException
+     * @param value The AbstractTimePrimitive to write.
      */
-    private void writeTimeSpan(TimeSpan timeSpan)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_TIME_SPAN);
-        this.writeCommonAbstractTimePrimitive(timeSpan);
-        if (timeSpan.getBegin() != null) {
-            this.writeBegin(timeSpan.getBegin());
+    private void writeTimePrimitive(AbstractTimePrimitive value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            if (value instanceof TimeSpan) {
+                writeTimeSpan((TimeSpan) value);
+            } else if (value instanceof TimeStamp) {
+                writeTimeStamp((TimeStamp) value);
+            }
         }
-        if (timeSpan.getEnd() != null) {
-            this.writeEnd(timeSpan.getEnd());
-        }
-        this.writeStandardExtensionLevel(
-                timeSpan.extensions(),
-                Names.TIME_SPAN);
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param timeStamp
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeTimeStamp(TimeStamp timeStamp)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_TIME_STAMP);
-        this.writeCommonAbstractTimePrimitive(timeStamp);
-        if (timeStamp.getWhen() != null) {
-            this.writeWhen(timeStamp.getWhen());
+    private void writeTimeSpan(TimeSpan value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_TIME_SPAN);
+            writeCommonAbstractTimePrimitive(value);
+            writeBegin(value.getBegin());
+            writeEnd(value.getEnd());
+            writeStandardExtensionLevel(value.extensions(), Names.TIME_SPAN);
+            writer.writeEndElement();
         }
-        this.writeStandardExtensionLevel(
-                timeStamp.extensions(),
-                Names.TIME_STAMP);
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param abstractView The AbstractView to write.
-     * @throws XMLStreamException
-     */
-    public void writeAbstractView(AbstractView abstractView)
-            throws XMLStreamException, KmlException {
-
-        if (abstractView instanceof LookAt) {
-            this.writeLookAt((LookAt) abstractView);
-        } else if (abstractView instanceof Camera) {
-            this.writeCamera((Camera) abstractView);
+    private void writeTimeStamp(TimeStamp value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_TIME_STAMP);
+            writeCommonAbstractTimePrimitive(value);
+            writeWhen(value.getWhen());
+            writeStandardExtensionLevel(value.extensions(), Names.TIME_STAMP);
+            writer.writeEndElement();
         }
     }
 
     /**
      *
-     * @param lookAt
-     * @throws XMLStreamException
+     * @param value The AbstractView to write.
      */
-    private void writeLookAt(LookAt lookAt)
-            throws XMLStreamException, KmlException {
+    public void writeAbstractView(AbstractView value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            if (value instanceof LookAt) {
+                writeLookAt((LookAt) value);
+            } else if (value instanceof Camera) {
+                writeCamera((Camera) value);
+            }
+        }
+    }
 
+    private void writeLookAt(LookAt value) throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_KML, TAG_LOOK_AT);
-        this.writeCommonAbstractView(lookAt);
-        if (KmlUtilities.isFiniteNumber(lookAt.getLongitude())) {
-            this.writeLongitude(lookAt.getLongitude());
-        }
-        if (KmlUtilities.isFiniteNumber(lookAt.getLatitude())) {
-            this.writeLatitude(lookAt.getLatitude());
-        }
-        if (KmlUtilities.isFiniteNumber(lookAt.getAltitude())) {
-            this.writeAltitude(lookAt.getAltitude());
-        }
-        if (KmlUtilities.isFiniteNumber(lookAt.getHeading())) {
-            this.writeHeading(lookAt.getHeading());
-        }
-        if (KmlUtilities.isFiniteNumber(lookAt.getTilt())) {
-            this.writeTilt(lookAt.getTilt());
-        }
-        if (KmlUtilities.isFiniteNumber(lookAt.getRange())) {
-            this.writeRange(lookAt.getRange());
-        }
-        if (lookAt.getAltitudeMode() != null) {
-            this.writeAltitudeMode(lookAt.getAltitudeMode());
-        }
-        this.writeStandardExtensionLevel(
-                lookAt.extensions(),
-                Names.LOOK_AT);
+        writeCommonView  (value);
+        writeLongitude   (value.getLongitude());
+        writeLatitude    (value.getLatitude());
+        writeAltitude    (value.getAltitude());
+        writeHeading     (value.getHeading());
+        writeTilt        (value.getTilt());
+        writeRange       (value.getRange());
+        writeAltitudeMode(value.getAltitudeMode());
+        writeStandardExtensionLevel(value.extensions(), Names.LOOK_AT);
         writer.writeEndElement();
     }
 
-    private void writeCamera(Camera camera)
-            throws XMLStreamException, KmlException {
-
+    private void writeCamera(Camera value) throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_KML, TAG_CAMERA);
-        this.writeCommonAbstractView(camera);
-        if (KmlUtilities.isFiniteNumber(camera.getLongitude())) {
-            this.writeLongitude(camera.getLongitude());
-        }
-        if (KmlUtilities.isFiniteNumber(camera.getLatitude())) {
-            this.writeLatitude(camera.getLatitude());
-        }
-        if (KmlUtilities.isFiniteNumber(camera.getAltitude())) {
-            this.writeAltitude(camera.getAltitude());
-        }
-        if (KmlUtilities.isFiniteNumber(camera.getHeading())) {
-            this.writeHeading(camera.getHeading());
-        }
-        if (KmlUtilities.isFiniteNumber(camera.getTilt())) {
-            this.writeTilt(camera.getTilt());
-        }
-        if (KmlUtilities.isFiniteNumber(camera.getRoll())) {
-            this.writeRoll(camera.getRoll());
-        }
-        if (camera.getAltitudeMode() != null) {
-            this.writeAltitudeMode(camera.getAltitudeMode());
-        }
-        this.writeStandardExtensionLevel(
-                camera.extensions(),
-                Names.CAMERA);
+        writeCommonView  (value);
+        writeLongitude   (value.getLongitude());
+        writeLatitude    (value.getLatitude());
+        writeAltitude    (value.getAltitude());
+        writeHeading     (value.getHeading());
+        writeTilt        (value.getTilt());
+        writeRoll        (value.getRoll());
+        writeAltitudeMode(value.getAltitudeMode());
+        writeStandardExtensionLevel(value.extensions(), Names.CAMERA);
         writer.writeEndElement();
     }
 
     /**
-     * <p>This method writes the common fields for
-     * AbstractView instances.</p>
+     * This method writes the common fields for AbstractView instances.
      *
-     * @param abstractView The AbstractView to write.
-     * @throws XMLStreamException
+     * @param value The AbstractView to write.
      */
-    private void writeCommonAbstractView(AbstractView abstractView)
-            throws XMLStreamException, KmlException {
-
-        this.writeCommonAbstractObject(abstractView);
-        this.writeStandardExtensionLevel(
-                abstractView.extensions(),
-                Names.VIEW);
+    private void writeCommonView(AbstractView value) throws XMLStreamException, KmlException {
+        writeCommonAbstractObject(value);
+        writeStandardExtensionLevel(value.extensions(), Names.VIEW);
     }
 
     /**
-     * <p>This method writes the common fields for
-     * AbstractTimePrimitive instances.</p>
+     * This method writes the common fields for AbstractTimePrimitive instances.
      *
-     * @param abstractTimePrimitive The AbstractTimePrimitive to write.
-     * @throws XMLStreamException
+     * @param value The AbstractTimePrimitive to write.
      */
-    public void writeCommonAbstractTimePrimitive(AbstractTimePrimitive abstractTimePrimitive)
-            throws XMLStreamException, KmlException {
-
-        this.writeCommonAbstractObject(abstractTimePrimitive);
-        this.writeStandardExtensionLevel(
-                abstractTimePrimitive.extensions(),
-                Names.TIME_PRIMITIVE);
+    public void writeCommonAbstractTimePrimitive(AbstractTimePrimitive value)
+            throws XMLStreamException, KmlException
+    {
+        writeCommonAbstractObject(value);
+        writeStandardExtensionLevel(value.extensions(), Names.TIME_PRIMITIVE);
     }
 
     /**
      *
-     * @param abstractStyleSelector The AbstractStyleSelector to write.
-     * @throws XMLStreamException
-     * @throws KmlException
+     * @param value The AbstractStyleSelector to write.
      */
-    private void writeAbstractStyleSelector(AbstractStyleSelector abstractStyleSelector)
-            throws XMLStreamException, KmlException {
-
-        if (abstractStyleSelector instanceof Style) {
-            this.writeStyle((Style) abstractStyleSelector);
-        } else if (abstractStyleSelector instanceof StyleMap) {
-            this.writeStyleMap((StyleMap) abstractStyleSelector);
+    private void writeStyleSelector(AbstractStyleSelector value)
+            throws XMLStreamException, KmlException
+    {
+        if (value instanceof Style) {
+            writeStyle((Style) value);
+        } else if (value instanceof StyleMap) {
+            writeStyleMap((StyleMap) value);
         }
     }
 
     /**
-     * <p>This method writes the common fields for
-     * AbstractStyleSelector instances.</p>
-     *
-     * @param abstractStyleSelector
-     * @throws XMLStreamException
-     * @throws KmlException
+     * This method writes the common fields for AbstractStyleSelector instances.
      */
-    private void writeCommonAbstractStyleSelector(AbstractStyleSelector abstractStyleSelector)
-            throws XMLStreamException, KmlException {
-
-        this.writeCommonAbstractObject(abstractStyleSelector);
-        this.writeStandardExtensionLevel(
-                abstractStyleSelector.extensions(),
-                Names.STYLE_SELECTOR);
+    private void writeCommonStyleSelector(AbstractStyleSelector value) throws XMLStreamException, KmlException {
+        writeCommonAbstractObject(value);
+        writeStandardExtensionLevel(value.extensions(), Names.STYLE_SELECTOR);
     }
 
-    /**
-     *
-     * @param styleMap
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeStyleMap(StyleMap styleMap)
-            throws XMLStreamException, KmlException {
-
+    private void writeStyleMap(StyleMap value) throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_KML, TAG_STYLE_MAP);
-        this.writeCommonAbstractStyleSelector(styleMap);
-        for (Pair pair : styleMap.getPairs()) {
-            this.writePair(pair);
+        writeCommonStyleSelector(value);
+        for (Pair pair : value.getPairs()) {
+            writePair(pair);
         }
-        this.writeStandardExtensionLevel(
-                styleMap.extensions(),
-                Names.STYLE_MAP);
+        writeStandardExtensionLevel(value.extensions(), Names.STYLE_MAP);
         writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param pair
-     * @throws XMLStreamException
-     */
-    private void writePair(Pair pair)
-            throws XMLStreamException, KmlException {
-
+    private void writePair(Pair value) throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_KML, TAG_PAIR);
-        this.writeCommonAbstractObject(pair);
-        if (pair.getKey() != null) {
-            this.writeKey(pair.getKey());
-        }
-        if (pair.getStyleUrl() != null) {
-            this.writeStyleUrl(pair.getStyleUrl());
-        }
-        if (pair.getAbstractStyleSelector() != null) {
+        writeCommonAbstractObject(value);
+        writeKey(value.getKey());
+        writeStyleUrl(value.getStyleUrl());
+        if (value.getAbstractStyleSelector() != null) {
             checkVersion(URI_KML_2_2);
-            this.writeAbstractStyleSelector(pair.getAbstractStyleSelector());
+            writeStyleSelector(value.getAbstractStyleSelector());
         }
-        this.writeStandardExtensionLevel(
-                pair.extensions(),
-                Names.PAIR);
+        writeStandardExtensionLevel(value.extensions(), Names.PAIR);
         writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param style
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeStyle(Style style)
-            throws XMLStreamException, KmlException {
-
+    private void writeStyle(Style value) throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_KML, TAG_STYLE);
-        this.writeCommonAbstractStyleSelector(style);
-        if (style.getIconStyle() != null) {
-            this.writeIconStyle(style.getIconStyle());
-        }
-        if (style.getLabelStyle() != null) {
-            this.writeLabelStyle(style.getLabelStyle());
-        }
-        if (style.getLineStyle() != null) {
-            this.writeLineStyle(style.getLineStyle());
-        }
-        if (style.getPolyStyle() != null) {
-            this.writePolyStyle(style.getPolyStyle());
-        }
-        if (style.getBalloonStyle() != null) {
-            this.writeBalloonStyle(style.getBalloonStyle());
-        }
-        if (style.getListStyle() != null) {
-            this.writeListStyle(style.getListStyle());
-        }
-        this.writeStandardExtensionLevel(
-                style.extensions(),
-                Names.STYLE);
+        writeCommonStyleSelector(value);
+        writeIconStyle   (value.getIconStyle());
+        writeLabelStyle  (value.getLabelStyle());
+        writeLineStyle   (value.getLineStyle());
+        writePolyStyle   (value.getPolyStyle());
+        writeBalloonStyle(value.getBalloonStyle());
+        writeListStyle(value.getListStyle());
+        writeStandardExtensionLevel(value.extensions(), Names.STYLE);
         writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param iconStyle
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeIconStyle(IconStyle iconStyle)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_ICON_STYLE);
-        this.writeCommonAbstractColorStyle(iconStyle);
-        if (KmlUtilities.isFiniteNumber(iconStyle.getScale())) {
-            this.writeScale(iconStyle.getScale());
+    private void writeIconStyle(IconStyle value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_ICON_STYLE);
+            writeCommonColorStyle(value);
+            writeScale  (value.getScale());
+            writeHeading(value.getHeading());
+            writeIcon   (value.getIcon());
+            writeHotSpot(value.getHotSpot());
+            writeStandardExtensionLevel(value.extensions(), Names.ICON_STYLE);
+            writer.writeEndElement();
         }
-        if (KmlUtilities.isFiniteNumber(iconStyle.getHeading())) {
-            this.writeHeading(iconStyle.getHeading());
-        }
-        if (iconStyle.getIcon() != null) {
-            this.writeIcon(iconStyle.getIcon());
-        }
-        if (iconStyle.getHotSpot() != null) {
-            this.writeHotSpot(iconStyle.getHotSpot());
-        }
-        this.writeStandardExtensionLevel(
-                iconStyle.extensions(),
-                Names.ICON_STYLE);
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param labelStyle
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeLabelStyle(LabelStyle labelStyle)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_LABEL_STYLE);
-        this.writeCommonAbstractColorStyle(labelStyle);
-        if (KmlUtilities.isFiniteNumber(labelStyle.getScale())) {
-            this.writeScale(labelStyle.getScale());
+    private void writeLabelStyle(LabelStyle value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_LABEL_STYLE);
+            writeCommonColorStyle(value);
+            writeScale(value.getScale());
+            writeStandardExtensionLevel(value.extensions(), Names.LABEL_STYLE);
+            writer.writeEndElement();
         }
-        this.writeStandardExtensionLevel(
-                labelStyle.extensions(),
-                Names.LABEL_STYLE);
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param lineStyle
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeLineStyle(LineStyle lineStyle)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_LINE_STYLE);
-        this.writeCommonAbstractColorStyle(lineStyle);
-        if (KmlUtilities.isFiniteNumber(lineStyle.getWidth())) {
-            this.writeWidth(lineStyle.getWidth());
+    private void writeLineStyle(LineStyle value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_LINE_STYLE);
+            writeCommonColorStyle(value);
+            writeWidth(value.getWidth());
+            writeStandardExtensionLevel(value.extensions(), Names.LINE_STYLE);
+            writer.writeEndElement();
         }
-        this.writeStandardExtensionLevel(
-                lineStyle.extensions(),
-                Names.LINE_STYLE);
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param polyStyle
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writePolyStyle(PolyStyle polyStyle)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_POLY_STYLE);
-        this.writeCommonAbstractColorStyle(polyStyle);
-        this.writeFill(polyStyle.getFill());
-        this.writeOutline(polyStyle.getOutline());
-        this.writeStandardExtensionLevel(
-                polyStyle.extensions(),
-                Names.POLY_STYLE);
-        writer.writeEndElement();
+    private void writePolyStyle(PolyStyle value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_POLY_STYLE);
+            writeCommonColorStyle(value);
+            writeFill(value.getFill());
+            writeOutline(value.getOutline());
+            writeStandardExtensionLevel(value.extensions(), Names.POLY_STYLE);
+            writer.writeEndElement();
+        }
     }
 
-    /**
-     *
-     * @param balloonStyle
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeBalloonStyle(BalloonStyle balloonStyle)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_BALLOON_STYLE);
-        this.writeCommonAbstractSubStyle(balloonStyle);
-        if (balloonStyle.getBgColor() != null) {
-            this.writeBgColor(balloonStyle.getBgColor());
-        }
-        if (balloonStyle.getTextColor() != null) {
-            this.writeTextColor(balloonStyle.getTextColor());
-        }
-        if (balloonStyle.getText() != null) {
-            this.writeText(balloonStyle.getText());
-        }
-        if (balloonStyle.getDisplayMode() != null
-                && checkVersionSimple(URI_KML_2_2)) {
-            this.writeDisplayMode(balloonStyle.getDisplayMode());
-        }
-        this.writeStandardExtensionLevel(
-                balloonStyle.extensions(),
-                Names.BALLOON_STYLE);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param listStyle
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeListStyle(ListStyle listStyle)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_LIST_STYLE);
-        this.writeCommonAbstractSubStyle(listStyle);
-        if (listStyle.getListItem() != null) {
-            this.writeListItem(listStyle.getListItem());
-        }
-        if (listStyle.getBgColor() != null) {
-            this.writeBgColor(listStyle.getBgColor());
-        }
-        for (ItemIcon itemIcon : listStyle.getItemIcons()) {
-            this.writeItemIcon(itemIcon);
-        }
-        if (KmlUtilities.isFiniteNumber(listStyle.getMaxSnippetLines())
-                && checkVersionSimple(URI_KML_2_2)) {
-            this.writeMaxSnippetLines(listStyle.getMaxSnippetLines());
-        }
-        this.writeStandardExtensionLevel(
-                listStyle.extensions(),
-                Names.LIST_STYLE);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param itemIcon
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeItemIcon(ItemIcon itemIcon)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_ITEM_ICON);
-        this.writeCommonAbstractObject(itemIcon);
-        if (itemIcon.getStates() != null) {
-            this.writeStates(itemIcon.getStates());
-        }
-        if (itemIcon.getHref() != null) {
-            this.writeHref(itemIcon.getHref());
-        }
-        this.writeStandardExtensionLevel(
-                itemIcon.extensions(),
-                Names.ITEM_ICON);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param itemIconStates
-     * @throws XMLStreamException
-     */
-    private void writeStates(List<ItemIconState> itemIconStates)
-            throws XMLStreamException {
-
-        writer.writeStartElement(URI_KML, TAG_STATE);
-        int i = 0;
-        int size = itemIconStates.size();
-        for (ItemIconState itemIconState : itemIconStates) {
-            i++;
-            if (i == size) {
-                writer.writeCharacters(itemIconState.getItemIconState());
-            } else {
-                writer.writeCharacters(itemIconState.getItemIconState() + " ");
+    private void writeBalloonStyle(BalloonStyle value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_BALLOON_STYLE);
+            writeCommonSubStyle(value);
+            writeBgColor  (value.getBgColor());
+            writeTextColor(value.getTextColor());
+            writeText     (value.getText());
+            if (checkVersionSimple(URI_KML_2_2)) {
+                writeDisplayMode(value.getDisplayMode());
             }
+            writeStandardExtensionLevel(value.extensions(), Names.BALLOON_STYLE);
+            writer.writeEndElement();
         }
-        writer.writeEndElement();
+    }
+
+    private void writeListStyle(ListStyle value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_LIST_STYLE);
+            writeCommonSubStyle(value);
+            writeListItem(value.getListItem());
+            writeBgColor(value.getBgColor());
+            for (ItemIcon itemIcon : value.getItemIcons()) {
+                writeItemIcon(itemIcon);
+            }
+            if (checkVersionSimple(URI_KML_2_2)) {
+                writeMaxSnippetLines(value.getMaxSnippetLines());
+            }
+            writeStandardExtensionLevel(value.extensions(), Names.LIST_STYLE);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeItemIcon(ItemIcon value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_ITEM_ICON);
+            writeCommonAbstractObject(value);
+            writeStates(value.getStates());
+            writeHref(value.getHref());
+            writeStandardExtensionLevel(value.extensions(), Names.ITEM_ICON);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeStates(List<ItemIconState> value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_STATE);
+            int i = 0;
+            int size = value.size();
+            for (ItemIconState itemIconState : value) {
+                i++;
+                if (i == size) {
+                    writer.writeCharacters(itemIconState.getItemIconState());
+                } else {
+                    writer.writeCharacters(itemIconState.getItemIconState() + " ");
+                }
+            }
+            writer.writeEndElement();
+        }
     }
 
     /**
-     * <p>This method writes an icon element typed as BasicLink.</p>
-     *
-     * @param icon
-     * @throws XMLStreamException
-     * @throws KmlException
+     * This method writes an icon element typed as BasicLink.
      */
-    private void writeIcon(BasicLink icon)
-            throws XMLStreamException, KmlException {
+    private void writeIcon(BasicLink value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_ICON);
+            writeIdAttributes(value.getIdAttributes());
+            writeSimpleExtensionsScheduler(Names.OBJECT, value.extensions().simples(Names.OBJECT));
+            writeHref(value.getHref());
+            writeStandardExtensionLevel(value.extensions(), Names.BASIC_LINK);
+            writer.writeEndElement();
+        }
+    }
 
+    /**
+     * This method writes an icon element typed as Link.
+     */
+    private void writeIcon(Icon value) throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_KML, TAG_ICON);
-        if (icon.getIdAttributes() != null) {
-            this.writeIdAttributes(icon.getIdAttributes());
-        }
-
-        this.writeSimpleExtensionsScheduler(Names.OBJECT,
-                icon.extensions().simples(Names.OBJECT));
-
-        if (icon.getHref() != null) {
-            this.writeHref(icon.getHref());
-        }
-
-        this.writeStandardExtensionLevel(
-                icon.extensions(),
-                Names.BASIC_LINK);
+        writeLink_structure(value);
         writer.writeEndElement();
     }
 
-    /**
-     * <p>This method writes an icon element typed as Link.</p>
-     *
-     * @param icon
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeIcon(Icon icon)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_ICON);
-        this.writeLink_structure(icon);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param link
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeLink(Link link)
-            throws XMLStreamException, KmlException {
-
+    private void writeLink(Link value) throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_KML, TAG_LINK);
-        this.writeLink_structure(link);
+        writeLink_structure(value);
         writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param url
-     * @throws XMLStreamException
-     * @throws KmlException
-     * @deprecated
-     */
     @Deprecated
-    private void writeUrl(Url url)
-            throws XMLStreamException, KmlException {
-
+    private void writeUrl(Url value) throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_KML, TAG_URL);
-        this.writeLink_structure(url);
+        writeLink_structure(value);
         writer.writeEndElement();
     }
 
     /**
-     * <p>This method writes the Link structure used by different elements.</p>
-     *
-     * @param link
-     * @throws XMLStreamException
-     * @throws KmlException
+     * This method writes the Link structure used by different elements.
      */
-    private void writeLink_structure(Link link)
-            throws XMLStreamException, KmlException {
-
-        this.writeCommonAbstractObject(link);
-
-        if (link.getHref() != null) {
-            this.writeHref(link.getHref());
-        }
-
-        this.writeStandardExtensionLevel(
-                link.extensions(),
-                Names.BASIC_LINK);
-
-        if (link.getRefreshMode() != null) {
-            this.writeRefreshMode(link.getRefreshMode());
-        }
-        if (KmlUtilities.isFiniteNumber(link.getRefreshInterval())) {
-            this.writeRefreshInterval(link.getRefreshInterval());
-        }
-        if (link.getViewRefreshMode() != null) {
-            this.writeViewRefreshMode(link.getViewRefreshMode());
-        }
-        if (KmlUtilities.isFiniteNumber(link.getViewRefreshTime())) {
-            this.writeViewRefreshTime(link.getViewRefreshTime());
-        }
-        if (KmlUtilities.isFiniteNumber(link.getViewBoundScale())) {
-            this.writeViewBoundScale(link.getViewBoundScale());
-        }
-        if (link.getViewFormat() != null) {
-            this.writeViewFormat(link.getViewFormat());
-        }
-        if (link.getHttpQuery() != null) {
-            this.writeHttpQuery(link.getHttpQuery());
-        }
-
-        this.writeStandardExtensionLevel(
-                link.extensions(),
-                Names.LINK);
+    private void writeLink_structure(Link value) throws XMLStreamException, KmlException {
+        writeCommonAbstractObject(value);
+        writeHref(value.getHref());
+        writeStandardExtensionLevel(value.extensions(), Names.BASIC_LINK);
+        writeRefreshMode    (value.getRefreshMode());
+        writeRefreshInterval(value.getRefreshInterval());
+        writeViewRefreshMode(value.getViewRefreshMode());
+        writeViewRefreshTime(value.getViewRefreshTime());
+        writeViewBoundScale (value.getViewBoundScale());
+        writeViewFormat     (value.getViewFormat());
+        writeHttpQuery      (value.getHttpQuery());
+        writeStandardExtensionLevel(value.extensions(), Names.LINK);
     }
 
     /**
-     * <p>This method writes the common fields for
-     * instances of AbstractColorStyle.</p>
+     * This method writes the common fields for instances of AbstractColorStyle.
      *
-     * @param abstractColorStyle The AbstractColorStyle to write.
-     * @throws XMLStreamException
-     * @throws KmlException
+     * @param value The AbstractColorStyle to write.
      */
-    private void writeCommonAbstractColorStyle(AbstractColorStyle abstractColorStyle)
-            throws XMLStreamException, KmlException {
-
-        this.writeCommonAbstractSubStyle(abstractColorStyle);
-        if (abstractColorStyle.getColor() != null) {
-            this.writeColor(abstractColorStyle.getColor());
-        }
-        if (abstractColorStyle.getColorMode() != null) {
-            this.writeColorMode(abstractColorStyle.getColorMode());
-        }
-
-        this.writeStandardExtensionLevel(
-                abstractColorStyle.extensions(),
-                Names.COLOR_STYLE);
+    private void writeCommonColorStyle(AbstractColorStyle value) throws XMLStreamException, KmlException {
+        writeCommonSubStyle(value);
+        writeColor(value.getColor());
+        writeColorMode(value.getColorMode());
+        writeStandardExtensionLevel(value.extensions(), Names.COLOR_STYLE);
     }
 
     /**
-     * <p>This method writes the common fields for
-     * instances of AbstractSubStyle.</p>
+     * This method writes the common fields for instances of AbstractSubStyle.
      *
-     * @param abstractSubStyle The AbstractSubStyle to write.
-     * @throws XMLStreamException
-     * @throws KmlException
+     * @param value The AbstractSubStyle to write.
      */
-    private void writeCommonAbstractSubStyle(AbstractSubStyle abstractSubStyle)
-            throws XMLStreamException, KmlException {
-
-        this.writeCommonAbstractObject(abstractSubStyle);
-        this.writeStandardExtensionLevel(
-                abstractSubStyle.extensions(),
-                Names.SUB_STYLE);
+    private void writeCommonSubStyle(AbstractSubStyle value) throws XMLStreamException, KmlException {
+        writeCommonAbstractObject(value);
+        writeStandardExtensionLevel(value.extensions(), Names.SUB_STYLE);
     }
 
-    /**
-     *
-     * @param placemark
-     * @throws XMLStreamException
-     */
-    private void writePlacemark(Feature placemark)
-            throws XMLStreamException, KmlException {
-
+    private void writePlacemark(Feature value) throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_KML, TAG_PLACEMARK);
-        this.writeCommonAbstractFeature(placemark);
-        if (placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()) != null) {
-            AbstractGeometry geometry = (AbstractGeometry) placemark.getProperty(
-                    KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-            if (geometry != null) {
-                this.writeAbstractGeometry(geometry);
-            }
-        }
-        this.writeStandardExtensionLevel(
-                (Extensions) placemark.getProperty(
-                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-                Names.PLACEMARK);
+        writeCommonAbstractFeature(value);
+        writeGeometry((AbstractGeometry) value.getPropertyValue(KmlConstants.TAG_GEOMETRY));
+        writeStandardExtensionLevel((Extensions) value.getPropertyValue(KmlConstants.TAG_EXTENSIONS), Names.PLACEMARK);
         writer.writeEndElement();
     }
 
     /**
      *
-     * @param abstractContainer The AbstractContainer to write
-     * @throws XMLStreamException
+     * @param value The AbstractContainer to write
      */
-    private void writeAbstractContainer(Feature abstractContainer)
-            throws XMLStreamException, KmlException {
-
-        if (abstractContainer.getType().equals(KmlModelConstants.TYPE_FOLDER)) {
-            this.writeFolder(abstractContainer);
-        } else if (abstractContainer.getType().equals(KmlModelConstants.TYPE_DOCUMENT)) {
-            this.writeDocument(abstractContainer);
+    private void writeAbstractContainer(Feature value) throws XMLStreamException, KmlException {
+        if (value.getType().equals(KmlModelConstants.TYPE_FOLDER)) {
+            writeFolder(value);
+        } else if (value.getType().equals(KmlModelConstants.TYPE_DOCUMENT)) {
+            writeDocument(value);
         }
     }
 
     /**
      *
-     * @param abstractOverlay The AbstractOverlay to write.
-     * @throws XMLStreamException
+     * @param value The AbstractOverlay to write.
      */
-    private void writeAbstractOverlay(Feature abstractOverlay)
-            throws XMLStreamException, KmlException {
-
-        if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY)) {
-            this.writeGroundOverlay(abstractOverlay);
-        } else if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_SCREEN_OVERLAY)) {
-            this.writeScreenOverlay(abstractOverlay);
-        } else if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_PHOTO_OVERLAY)) {
-            this.writePhotoOverlay(abstractOverlay);
+    private void writeAbstractOverlay(Feature value) throws XMLStreamException, KmlException {
+        if (value.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY)) {
+            writeGroundOverlay(value);
+        } else if (value.getType().equals(KmlModelConstants.TYPE_SCREEN_OVERLAY)) {
+            writeScreenOverlay(value);
+        } else if (value.getType().equals(KmlModelConstants.TYPE_PHOTO_OVERLAY)) {
+            writePhotoOverlay(value);
         }
     }
 
-    /**
-     *
-     * @param photoOverlay
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writePhotoOverlay(Feature photoOverlay)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_PHOTO_OVERLAY);
-        this.writeCommonAbstractOverlay(photoOverlay);
-        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_ROTATION.getName()) != null) {
-            Double rotation = (Double) photoOverlay.getProperty(
-                    KmlModelConstants.ATT_PHOTO_OVERLAY_ROTATION.getName()).getValue();
+    private void writePhotoOverlay(Feature value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_PHOTO_OVERLAY);
+            writeCommonOverlay(value);
+            Double rotation = (Double) value.getPropertyValue(KmlConstants.TAG_ROTATION);
             if (rotation != null) {
-                this.writeRotation(rotation);
+                writeRotation(rotation);
             }
+            writeViewVolume((ViewVolume) value.getPropertyValue(KmlConstants.TAG_VIEW_VOLUME));
+            writeImagePyramid((ImagePyramid) value.getPropertyValue(KmlConstants.TAG_IMAGE_PYRAMID));
+            writePoint((Point) value.getPropertyValue(KmlConstants.TAG_POINT));
+            writeShape((Shape) value.getPropertyValue(KmlConstants.TAG_SHAPE));
+            writeStandardExtensionLevel((Extensions) value.getPropertyValue(KmlConstants.TAG_EXTENSIONS), Names.PHOTO_OVERLAY);
+            writer.writeEndElement();
         }
-        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_VIEW_VOLUME.getName()) != null) {
-            ViewVolume viewVolume = (ViewVolume) photoOverlay.getProperty(
-                    KmlModelConstants.ATT_PHOTO_OVERLAY_VIEW_VOLUME.getName()).getValue();
-            if (viewVolume != null) {
-                this.writeViewVolume(viewVolume);
-            }
-        }
-        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_IMAGE_PYRAMID.getName()) != null) {
-            ImagePyramid imagePyramid = (ImagePyramid) photoOverlay.getProperty(
-                    KmlModelConstants.ATT_PHOTO_OVERLAY_IMAGE_PYRAMID.getName()).getValue();
-            if (imagePyramid != null) {
-                this.writeImagePyramid(imagePyramid);
-            }
-        }
-        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_POINT.getName()) != null) {
-            Point point = (Point) photoOverlay.getProperty(
-                    KmlModelConstants.ATT_PHOTO_OVERLAY_POINT.getName()).getValue();
-            if (point != null) {
-                this.writePoint(point);
-            }
-        }
-        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_SHAPE.getName()) != null) {
-            Shape shape = (Shape) photoOverlay.getProperty(
-                    KmlModelConstants.ATT_PHOTO_OVERLAY_SHAPE.getName()).getValue();
-            if (shape != null) {
-                this.writeShape(shape);
-            }
-        }
-        this.writeStandardExtensionLevel(
-                (Extensions) photoOverlay.getProperty(
-                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-                Names.PHOTO_OVERLAY);
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param imagePyramid
-     * @throws XMLStreamException
-     */
-    private void writeImagePyramid(ImagePyramid imagePyramid)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_IMAGE_PYRAMID);
-        this.writeCommonAbstractObject(imagePyramid);
-        if (KmlUtilities.isFiniteNumber(imagePyramid.getTitleSize())) {
-            this.writeTitleSize(imagePyramid.getTitleSize());
+    private void writeImagePyramid(ImagePyramid value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_IMAGE_PYRAMID);
+            writeCommonAbstractObject(value);
+            writeTitleSize (value.getTitleSize());
+            writeMaxWidth  (value.getMaxWidth());
+            writeMaxHeight (value.getMaxHeight());
+            writeGridOrigin(value.getGridOrigin());
+            writeStandardExtensionLevel(value.extensions(), Names.IMAGE_PYRAMID);
+            writer.writeEndElement();
         }
-        if (KmlUtilities.isFiniteNumber(imagePyramid.getMaxWidth())) {
-            this.writeMaxWidth(imagePyramid.getMaxWidth());
-        }
-        if (KmlUtilities.isFiniteNumber(imagePyramid.getMaxHeight())) {
-            this.writeMaxHeight(imagePyramid.getMaxHeight());
-        }
-        if (imagePyramid.getGridOrigin() != null) {
-            this.writeGridOrigin(imagePyramid.getGridOrigin());
-        }
-        this.writeStandardExtensionLevel(
-                imagePyramid.extensions(),
-                Names.IMAGE_PYRAMID);
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param viewVolume
-     * @throws XMLStreamException
-     */
-    private void writeViewVolume(ViewVolume viewVolume)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_VIEW_VOLUME);
-        this.writeCommonAbstractObject(viewVolume);
-        if (KmlUtilities.isFiniteNumber(viewVolume.getLeftFov())) {
-            this.writeLeftFov(viewVolume.getLeftFov());
+    private void writeViewVolume(ViewVolume value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_VIEW_VOLUME);
+            writeCommonAbstractObject(value);
+            writeLeftFov  (value.getLeftFov());
+            writeRightFov (value.getRightFov());
+            writeBottomFov(value.getBottomFov());
+            writeTopFov   (value.getTopFov());
+            writeNear     (value.getNear());
+            writeStandardExtensionLevel(value.extensions(), Names.VIEW_VOLUME);
+            writer.writeEndElement();
         }
-        if (KmlUtilities.isFiniteNumber(viewVolume.getRightFov())) {
-            this.writeRightFov(viewVolume.getRightFov());
-        }
-        if (KmlUtilities.isFiniteNumber(viewVolume.getBottomFov())) {
-            this.writeBottomFov(viewVolume.getBottomFov());
-        }
-        if (KmlUtilities.isFiniteNumber(viewVolume.getTopFov())) {
-            this.writeTopFov(viewVolume.getTopFov());
-        }
-        if (KmlUtilities.isFiniteNumber(viewVolume.getNear())) {
-            this.writeNear(viewVolume.getNear());
-        }
-        this.writeStandardExtensionLevel(
-                viewVolume.extensions(),
-                Names.VIEW_VOLUME);
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param screenOverlay
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeScreenOverlay(Feature screenOverlay)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_SCREEN_OVERLAY);
-        this.writeCommonAbstractOverlay(screenOverlay);
-        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY.getName()) != null) {
-            Vec2 overlayXY = (Vec2) screenOverlay.getProperty(
-                    KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY.getName()).getValue();
-            if (overlayXY != null) {
-                this.writeOverlayXY(overlayXY);
-            }
-        }
-        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY.getName()) != null) {
-            Vec2 screenXY = (Vec2) screenOverlay.getProperty(
-                    KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY.getName()).getValue();
-            if (screenXY != null) {
-                this.writeScreenXY(screenXY);
-            }
-        }
-        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATIONXY.getName()) != null) {
-            Vec2 rotationXY = (Vec2) screenOverlay.getProperty(
-                    KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATIONXY.getName()).getValue();
-            if (rotationXY != null) {
-                this.writeRotationXY(rotationXY);
-            }
-        }
-        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE.getName()) != null) {
-            Vec2 size = (Vec2) screenOverlay.getProperty(
-                    KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE.getName()).getValue();
-            if (size != null) {
-                this.writeSize(size);
-            }
-        }
-        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION.getName()) != null) {
-            Double rotation = (Double) screenOverlay.getProperty(
-                    KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION.getName()).getValue();
+    private void writeScreenOverlay(Feature value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_SCREEN_OVERLAY);
+            writeCommonOverlay(value);
+            writeOverlayXY ((Vec2) value.getPropertyValue(KmlConstants.TAG_OVERLAY_XY));
+            writeScreenXY  ((Vec2) value.getPropertyValue(KmlConstants.TAG_SCREEN_XY));
+            writeRotationXY((Vec2) value.getPropertyValue(KmlConstants.TAG_ROTATION_XY));
+            writeSize      ((Vec2) value.getPropertyValue(KmlConstants.TAG_SIZE));
+            Double rotation = (Double) value.getPropertyValue(KmlConstants.TAG_ROTATION);
             if (rotation != null) {
-                this.writeRotation(rotation);
+                writeRotation(rotation);
             }
+            writeStandardExtensionLevel((Extensions) value.getPropertyValue(KmlConstants.TAG_EXTENSIONS), Names.SCREEN_OVERLAY);
+            writer.writeEndElement();
         }
-        this.writeStandardExtensionLevel(
-                (Extensions) screenOverlay.getProperty(
-                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-                Names.SCREEN_OVERLAY);
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param groundOverlay
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeGroundOverlay(Feature groundOverlay)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_GROUND_OVERLAY);
-        this.writeCommonAbstractOverlay(groundOverlay);
-        if (groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE.getName()) != null) {
-            Double altitude = (Double) groundOverlay.getProperty(
-                    KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE.getName()).getValue();
+    private void writeGroundOverlay(Feature value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_GROUND_OVERLAY);
+            writeCommonOverlay(value);
+            Double altitude = (Double) value.getPropertyValue(KmlConstants.TAG_ALTITUDE);
             if (altitude != null) {
-                this.writeAltitude(altitude);
+                writeAltitude(altitude);
             }
+            writeAltitudeMode((AltitudeMode) value.getPropertyValue(KmlConstants.TAG_ALTITUDE_MODE));
+            writeLatLonBox((LatLonBox) value.getPropertyValue(KmlConstants.TAG_LAT_LON_BOX));
+            writeStandardExtensionLevel((Extensions) value.getPropertyValue(KmlConstants.TAG_EXTENSIONS), Names.GROUND_OVERLAY);
+            writer.writeEndElement();
         }
-        if (groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE_MODE.getName()) != null) {
-            AltitudeMode altitudeMode = (AltitudeMode) groundOverlay.getProperty(
-                    KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE_MODE.getName()).getValue();
-            if (altitudeMode != null) {
-                this.writeAltitudeMode(altitudeMode);
-            }
+    }
+
+    private void writeLatLonBox(LatLonBox value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_LAT_LON_BOX);
+            writeCommonLatLonBox(value);
+            writeRotation(value.getRotation());
+            writeStandardExtensionLevel(value.extensions(), Names.LAT_LON_BOX);
+            writer.writeEndElement();
         }
-        if (groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()) != null) {
-            LatLonBox latLonBox = (LatLonBox) groundOverlay.getProperty(
-                    KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
-            if (latLonBox != null) {
-                this.writeLatLonBox(latLonBox);
-            }
-        }
-        this.writeStandardExtensionLevel(
-                (Extensions) groundOverlay.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-                Names.GROUND_OVERLAY);
-        writer.writeEndElement();
     }
 
     /**
-     *
-     * @param latLonBox
-     * @throws XMLStreamException
-     * @throws KmlException
+     * This method writes tha common fields for AbstractLatLonBox instances.
      */
-    private void writeLatLonBox(LatLonBox latLonBox)
-            throws XMLStreamException, KmlException {
+    private void writeCommonLatLonBox(AbstractLatLonBox value) throws XMLStreamException, KmlException {
+        writeCommonAbstractObject(value);
+        writeNorth(value.getNorth());
+        writeSouth(value.getSouth());
+        writeEast (value.getEast());
+        writeWest (value.getWest());
+        writeStandardExtensionLevel(value.extensions(), Names.ABSTRACT_LAT_LON_BOX);
+    }
 
-        writer.writeStartElement(URI_KML, TAG_LAT_LON_BOX);
-        this.writeCommonAbstractLatLonBox(latLonBox);
-        if (KmlUtilities.isFiniteNumber(latLonBox.getRotation())) {
-            this.writeRotation(latLonBox.getRotation());
+    private void writeCommonOverlay(Feature value) throws XMLStreamException, KmlException {
+        writeCommonAbstractFeature(value);
+        writeColor((Color) value.getPropertyValue(KmlConstants.TAG_COLOR));
+        writeDrawOrder((Integer) value.getPropertyValue(KmlConstants.TAG_DRAW_ORDER));
+        Icon icon = (Icon) value.getPropertyValue(KmlConstants.TAG_ICON);
+        if (icon != null) {
+            writeIcon(icon);
         }
-        this.writeStandardExtensionLevel(
-                latLonBox.extensions(),
-                Names.LAT_LON_BOX);
-        writer.writeEndElement();
+        writeStandardExtensionLevel((Extensions) value.getPropertyValue(KmlConstants.TAG_EXTENSIONS), Names.OVERLAY);
     }
 
     /**
-     * <p>This method writes tha common fields for
-     * AbstractLatLonBox instances.</p>
+     * This method writes tha common fields for AbstractContainer instances.
      *
-     * @param abstractLatLonBox
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeCommonAbstractLatLonBox(AbstractLatLonBox abstractLatLonBox)
-            throws XMLStreamException, KmlException {
-
-        this.writeCommonAbstractObject(abstractLatLonBox);
-        if (KmlUtilities.isFiniteNumber(abstractLatLonBox.getNorth())) {
-            this.writeNorth(abstractLatLonBox.getNorth());
-        }
-        if (KmlUtilities.isFiniteNumber(abstractLatLonBox.getSouth())) {
-            this.writeSouth(abstractLatLonBox.getSouth());
-        }
-        if (KmlUtilities.isFiniteNumber(abstractLatLonBox.getEast())) {
-            this.writeEast(abstractLatLonBox.getEast());
-        }
-        if (KmlUtilities.isFiniteNumber(abstractLatLonBox.getWest())) {
-            this.writeWest(abstractLatLonBox.getWest());
-        }
-        this.writeStandardExtensionLevel(
-                abstractLatLonBox.extensions(),
-                Names.ABSTRACT_LAT_LON_BOX);
-    }
-
-    private void writeCommonAbstractOverlay(Feature abstractOverlay)
-            throws XMLStreamException, KmlException {
-
-        this.writeCommonAbstractFeature(abstractOverlay);
-        if (abstractOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_COLOR.getName()) != null) {
-            Color color = (Color) abstractOverlay.getProperty(
-                    KmlModelConstants.ATT_OVERLAY_COLOR.getName()).getValue();
-            if (color != null) {
-                this.writeColor(color);
-            }
-        }
-        if (abstractOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_DRAW_ORDER.getName()) != null) {
-            Integer drawOrder = (Integer) abstractOverlay.getProperty(
-                    KmlModelConstants.ATT_OVERLAY_DRAW_ORDER.getName()).getValue();
-            if (drawOrder != null) {
-                this.writeDrawOrder(drawOrder);
-            }
-        }
-        if (abstractOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()) != null) {
-            Icon icon = (Icon) abstractOverlay.getProperty(
-                    KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue();
-            if (icon != null) {
-                this.writeIcon(icon);
-            }
-        }
-        this.writeStandardExtensionLevel(
-                (Extensions) abstractOverlay.getProperty(
-                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-                Names.OVERLAY);
-    }
-
-    /**
-     * <p>This method writes tha common fields for
-     * AbstractContainer instances.</p>
-     *
-     * @param abstractContainer The AbstractContainer to write.
+     * @param value The AbstractContainer to write.
      * @throws XMLStreamException
      */
-    private void writeCommonAbstractContainer(Feature abstractContainer)
-            throws XMLStreamException, KmlException {
-
-        this.writeCommonAbstractFeature(abstractContainer);
-        this.writeStandardExtensionLevel((Extensions) abstractContainer.getProperty(
-                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-                Names.CONTAINER);
+    private void writeCommonContainer(Feature value) throws XMLStreamException, KmlException {
+        writeCommonAbstractFeature(value);
+        writeStandardExtensionLevel((Extensions) value.getPropertyValue(KmlConstants.TAG_EXTENSIONS), Names.CONTAINER);
     }
 
-    /**
-     *
-     * @param folder
-     * @throws XMLStreamException
-     */
-    private void writeFolder(Feature folder)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_FOLDER);
-        Iterator i;
-        this.writeCommonAbstractContainer(folder);
-        if (folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()) != null) {
-            i = folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
+    private void writeFolder(Feature value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_FOLDER);
+            writeCommonContainer(value);
+            Iterator<?> i = ((Iterable<?>) value.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
             while (i.hasNext()) {
-                this.writeAbstractFeature((Feature) i.next());
+                writeAbstractFeature((Feature) i.next());
             }
+            writeStandardExtensionLevel((Extensions) value.getPropertyValue(KmlConstants.TAG_EXTENSIONS), Names.FOLDER);
+            writer.writeEndElement();
         }
-        this.writeStandardExtensionLevel(
-                (Extensions) folder.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-                Names.FOLDER);
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param document
-     * @throws XMLStreamException
-     */
-    private void writeDocument(Feature document)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_DOCUMENT);
-        Iterator i;
-        this.writeCommonAbstractContainer(document);
-        if (document.getProperties(KmlModelConstants.ATT_DOCUMENT_SCHEMAS.getName()) != null) {
-            i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_SCHEMAS.getName()).iterator();
+    private void writeDocument(Feature value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_DOCUMENT);
+            writeCommonContainer(value);
+            Iterator<?> i = ((Iterable<?>) value.getPropertyValue(KmlConstants.TAG_SCHEMA)).iterator();
             while (i.hasNext()) {
                 checkVersion(URI_KML_2_2);
-                this.writeSchema((Schema) ((Property) i.next()).getValue());
+                writeSchema((Schema) i.next());
             }
-        }
-        if (document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()) != null) {
-            i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
+            i = ((Iterable<?>) value.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
             while (i.hasNext()) {
-                this.writeAbstractFeature((Feature) (i.next()));
+                writeAbstractFeature((Feature) (i.next()));
             }
+            writeStandardExtensionLevel((Extensions) value.getPropertyValue(KmlConstants.TAG_EXTENSIONS), Names.DOCUMENT);
+            writer.writeEndElement();
         }
-        this.writeStandardExtensionLevel(
-                (Extensions) document.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-                Names.DOCUMENT);
-        writer.writeEndElement();
     }
 
-    /**
-     *
-     * @param schema
-     * @throws XMLStreamException
-     */
-    private void writeSchema(Schema schema)
-            throws XMLStreamException {
-
-        writer.writeStartElement(URI_KML, TAG_SCHEMA);
-        if (schema.getName() != null) {
-            writer.writeAttribute(ATT_NAME, schema.getName());
-        }
-        if (schema.getId() != null) {
-            writer.writeAttribute(ATT_ID, schema.getId());
-        }
-        for (SimpleField sf : schema.getSimpleFields()) {
-            this.writeSimpleField(sf);
-        }
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param simpleField
-     * @throws XMLStreamException
-     */
-    private void writeSimpleField(SimpleField simpleField)
-            throws XMLStreamException {
-
-        writer.writeStartElement(URI_KML, TAG_SIMPLE_FIELD);
-        if (simpleField.getType() != null) {
-            writer.writeAttribute(ATT_TYPE, simpleField.getType());
-        }
-        if (simpleField.getName() != null) {
-            writer.writeAttribute(ATT_NAME, simpleField.getName());
-        }
-        if (simpleField.getDisplayName() != null) {
-            this.writeDisplayName(simpleField.getDisplayName());
-        }
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param abstractGeometry
-     * @throws XMLStreamException
-     */
-    private void writeAbstractGeometry(AbstractGeometry abstractGeometry)
-            throws XMLStreamException, KmlException {
-
-        if (abstractGeometry instanceof MultiGeometry) {
-            this.writeMultiGeometry((MultiGeometry) abstractGeometry);
-        } else if (abstractGeometry instanceof LineString) {
-            this.writeLineString((LineString) abstractGeometry);
-        } else if (abstractGeometry instanceof Polygon) {
-            this.writePolygon((Polygon) abstractGeometry);
-        } else if (abstractGeometry instanceof Point) {
-            this.writePoint((Point) abstractGeometry);
-        } else if (abstractGeometry instanceof LinearRing) {
-            this.writeLinearRing((LinearRing) abstractGeometry);
-        } else if (abstractGeometry instanceof Model) {
-            this.writeModel((Model) abstractGeometry);
-        } else {
-            for (StaxStreamWriter candidate : this.extensionWriters) {
-                if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, abstractGeometry)) {
-                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, abstractGeometry);
-                }
+    private void writeSchema(Schema value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_SCHEMA);
+            if (value.getName() != null) {
+                writer.writeAttribute(ATT_NAME, value.getName());
             }
+            if (value.getId() != null) {
+                writer.writeAttribute(ATT_ID, value.getId());
+            }
+            for (SimpleField sf : value.getSimpleFields()) {
+                writeSimpleField(sf);
+            }
+            writer.writeEndElement();
         }
     }
 
-    /**
-     * <p>This method writes the common fields for
-     * instances of AbstractGeometry.</p>
-     *
-     * @param abstractGeometry
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    public void writeCommonAbstractGeometry(AbstractGeometry abstractGeometry)
-            throws XMLStreamException, KmlException {
-
-        this.writeCommonAbstractObject(abstractGeometry);
-        this.writeStandardExtensionLevel(
-                abstractGeometry.extensions(),
-                Names.GEOMETRY);
+    private void writeSimpleField(SimpleField value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_SIMPLE_FIELD);
+            if (value.getType() != null) {
+                writer.writeAttribute(ATT_TYPE, value.getType());
+            }
+            if (value.getName() != null) {
+                writer.writeAttribute(ATT_NAME, value.getName());
+            }
+            writeDisplayName(value.getDisplayName());
+            writer.writeEndElement();
+        }
     }
 
-    /**
-     *
-     * @param model
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    public void writeModel(Model model)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_MODEL);
-        this.writeCommonAbstractGeometry(model);
-        if (model.getAltitudeMode() != null) {
-            this.writeAltitudeMode(model.getAltitudeMode());
-        }
-        if (model.getLocation() != null) {
-            this.writeLocation(model.getLocation());
-        }
-        if (model.getOrientation() != null) {
-            this.writeOrientation(model.getOrientation());
-        }
-        if (model.getScale() != null) {
-            this.writeScale(model.getScale());
-        }
-        if (model.getLink() != null) {
-            this.writeLink(model.getLink());
-        }
-        if (model.getRessourceMap() != null) {
-            checkVersion(URI_KML_2_2);
-            this.writeResourceMap(model.getRessourceMap());
-        }
-        this.writeStandardExtensionLevel(
-                model.extensions(),
-                Names.MODEL);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param location
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeLocation(Location location)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_LOCATION);
-        this.writeCommonAbstractObject(location);
-        if (KmlUtilities.isFiniteNumber(location.getLongitude())) {
-            this.writeLongitude(location.getLongitude());
-        }
-        if (KmlUtilities.isFiniteNumber(location.getLatitude())) {
-            this.writeLatitude(location.getLatitude());
-        }
-        if (KmlUtilities.isFiniteNumber(location.getAltitude())) {
-            this.writeAltitude(location.getAltitude());
-        }
-        this.writeStandardExtensionLevel(
-                location.extensions(),
-                Names.LOCATION);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param orientation
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeOrientation(Orientation orientation)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_ORIENTATION);
-        this.writeCommonAbstractObject(orientation);
-        if (KmlUtilities.isFiniteNumber(orientation.getHeading())) {
-            this.writeHeading(orientation.getHeading());
-        }
-        if (KmlUtilities.isFiniteNumber(orientation.getTilt())) {
-            this.writeTilt(orientation.getTilt());
-        }
-        if (KmlUtilities.isFiniteNumber(orientation.getRoll())) {
-            this.writeRoll(orientation.getRoll());
-        }
-        this.writeStandardExtensionLevel(
-                orientation.extensions(),
-                Names.ORIENTATION);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param scale
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeScale(Scale scale)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_SCALE_BIG);
-        if (KmlUtilities.isFiniteNumber(scale.getX())) {
-            this.writeX(scale.getX());
-        }
-        if (KmlUtilities.isFiniteNumber(scale.getY())) {
-            this.writeY(scale.getY());
-        }
-        if (KmlUtilities.isFiniteNumber(scale.getZ())) {
-            this.writeZ(scale.getZ());
-        }
-        this.writeStandardExtensionLevel(
-                scale.extensions(),
-                Names.SCALE);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param resourceMap
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeResourceMap(ResourceMap resourceMap)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_RESOURCE_MAP);
-        this.writeCommonAbstractObject(resourceMap);
-        for (Alias alias : resourceMap.getAliases()) {
-            this.writeAlias(alias);
-        }
-        this.writeStandardExtensionLevel(
-                resourceMap.extensions(),
-                Names.RESOURCE_MAP);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param alias
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeAlias(Alias alias)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_ALIAS);
-        this.writeCommonAbstractObject(alias);
-        if (alias.getTargetHref() != null) {
-            this.writeTargetHref(alias.getTargetHref());
-        }
-        if (alias.getSourceHref() != null) {
-            this.writeSourceHref(alias.getSourceHref());
-        }
-        this.writeStandardExtensionLevel(
-                alias.extensions(),
-                Names.ALIAS);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param polygon
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writePolygon(Polygon polygon)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_POLYGON);
-        this.writeCommonAbstractGeometry(polygon);
-        this.writeExtrude(polygon.getExtrude());
-        this.writeTessellate(polygon.getTessellate());
-        if (polygon.getAltitudeMode() != null) {
-            this.writeAltitudeMode(polygon.getAltitudeMode());
-        }
-        if (polygon.getOuterBoundary() != null) {
-            this.writeOuterBoundary(polygon.getOuterBoundary());
-        }
-        for (Boundary innerBoundary : polygon.getInnerBoundaries()) {
-            this.writeInnerBoundary(innerBoundary);
-        }
-        this.writeStandardExtensionLevel(
-                polygon.extensions(),
-                Names.POLYGON);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param boundary
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeOuterBoundary(Boundary boundary)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_OUTER_BOUNDARY_IS);
-        this.writeBoundary(boundary);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param boundary
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeInnerBoundary(Boundary boundary)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_INNER_BOUNDARY_IS);
-        this.writeBoundary(boundary);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param boundary
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeBoundary(Boundary boundary)
-            throws XMLStreamException, KmlException {
-
-        if (boundary.getLinearRing() != null) {
-            this.writeLinearRing(boundary.getLinearRing());
-        }
-        this.writeStandardExtensionLevel(
-                boundary.extensions(),
-                Names.BOUNDARY);
-    }
-
-    /**
-     *
-     * @param lineString
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeLineString(LineString lineString)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_LINE_STRING);
-        this.writeCommonAbstractGeometry(lineString);
-        this.writeExtrude(lineString.getExtrude());
-        this.writeTessellate(lineString.getTessellate());
-        if (lineString.getAltitudeMode() != null) {
-            this.writeAltitudeMode(lineString.getAltitudeMode());
-        }
-
-        this.writeCoordinates(lineString.getCoordinateSequence());
-
-        this.writeStandardExtensionLevel(
-                lineString.extensions(),
-                Names.LINE_STRING);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param linearRing
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeLinearRing(LinearRing linearRing)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_LINEAR_RING);
-        this.writeCommonAbstractGeometry(linearRing);
-        this.writeExtrude(linearRing.getExtrude());
-        this.writeTessellate(linearRing.getTessellate());
-        if (linearRing.getAltitudeMode() != null) {
-            this.writeAltitudeMode(linearRing.getAltitudeMode());
-        }
-        this.writeCoordinates(linearRing.getCoordinateSequence());
-        this.writeStandardExtensionLevel(
-                linearRing.extensions(),
-                Names.LINEAR_RING);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param multiGeometry
-     * @throws XMLStreamException
-     * @throws KmlException
-     */
-    private void writeMultiGeometry(MultiGeometry multiGeometry)
-            throws XMLStreamException, KmlException {
-        writer.writeStartElement(URI_KML, TAG_MULTI_GEOMETRY);
-        this.writeCommonAbstractGeometry(multiGeometry);
-        for (AbstractGeometry abstractGeometry : multiGeometry.getGeometries()) {
-            this.writeAbstractGeometry(abstractGeometry);
-        }
-        this.writeStandardExtensionLevel(
-                multiGeometry.extensions(),
-                Names.MULTI_GEOMETRY);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    private void writePoint(Point point)
-            throws XMLStreamException, KmlException {
-
-        writer.writeStartElement(URI_KML, TAG_POINT);
-        this.writeCommonAbstractGeometry(point);
-        this.writeExtrude(point.getExtrude());
-        if (point.getAltitudeMode() != null) {
-            this.writeAltitudeMode(point.getAltitudeMode());
-        }
-        if (point.getCoordinateSequence() != null) {
-            this.writeCoordinates(point.getCoordinateSequence());
-        }
-        this.writeStandardExtensionLevel(
-                point.extensions(),
-                Names.POINT);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param coordinates
-     * @throws XMLStreamException
-     */
-    public void writeCoordinates(CoordinateSequence coordinates)
-            throws XMLStreamException {
-
-        writer.writeStartElement(URI_KML, TAG_COORDINATES);
-        writer.writeCharacters(KmlUtilities.toString(coordinates));
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param extrude
-     * @throws XMLStreamException
-     */
-    private void writeExtrude(boolean extrude)
-            throws XMLStreamException {
-
-        if (DEF_EXTRUDE != extrude) {
-            writer.writeStartElement(URI_KML, TAG_EXTRUDE);
-            if (extrude) {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
+    private void writeGeometry(AbstractGeometry value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            if (value instanceof MultiGeometry) {
+                writeMultiGeometry((MultiGeometry) value);
+            } else if (value instanceof LineString) {
+                writeLineString((LineString) value);
+            } else if (value instanceof Polygon) {
+                writePolygon((Polygon) value);
+            } else if (value instanceof Point) {
+                writePoint((Point) value);
+            } else if (value instanceof LinearRing) {
+                writeLinearRing((LinearRing) value);
+            } else if (value instanceof Model) {
+                writeModel((Model) value);
             } else {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
-            }
-            writer.writeEndElement();
-        }
-    }
-
-    /**
-     *
-     * @param visibility
-     * @throws XMLStreamException
-     */
-    private void writeVisibility(Boolean v)
-            throws XMLStreamException {
-
-        boolean visibility = v.booleanValue();
-        if (DEF_VISIBILITY != visibility) {
-            writer.writeStartElement(URI_KML, TAG_VISIBILITY);
-            if (visibility) {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
-            } else {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
-            }
-            writer.writeEndElement();
-        }
-    }
-
-    /**
-     *
-     * @param open
-     * @throws XMLStreamException
-     */
-    private void writeOpen(Boolean o)
-            throws XMLStreamException {
-
-        boolean open = o.booleanValue();
-        if (DEF_OPEN != open) {
-            writer.writeStartElement(URI_KML, TAG_OPEN);
-            if (open) {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
-            } else {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
-            }
-            writer.writeEndElement();
-        }
-    }
-
-    /**
-     *
-     * @param fill
-     * @throws XMLStreamException
-     */
-    private void writeFill(boolean fill)
-            throws XMLStreamException {
-
-        if (DEF_FILL != fill) {
-            writer.writeStartElement(URI_KML, TAG_FILL);
-            if (fill) {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
-            } else {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
-            }
-            writer.writeEndElement();
-        }
-    }
-
-    /**
-     *
-     * @param outline
-     * @throws XMLStreamException
-     */
-    private void writeOutline(boolean outline) throws XMLStreamException {
-        if (DEF_OUTLINE != outline) {
-            writer.writeStartElement(URI_KML, TAG_OUTLINE);
-            if (outline) {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
-            } else {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
-            }
-            writer.writeEndElement();
-        }
-    }
-
-    /**
-     *
-     * @param tessellate
-     * @throws XMLStreamException
-     */
-    private void writeTessellate(boolean tessellate) throws XMLStreamException {
-        if (DEF_TESSELLATE != tessellate) {
-            writer.writeStartElement(URI_KML, TAG_TESSELLATE);
-            if (tessellate) {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
-            } else {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
-            }
-            writer.writeEndElement();
-        }
-    }
-
-    /**
-     *
-     * @param refreshVisibility
-     * @throws XMLStreamException
-     */
-    private void writeRefreshVisibility(Boolean rv) throws XMLStreamException {
-        boolean refreshVisibility = rv.booleanValue();
-        if (DEF_REFRESH_VISIBILITY != refreshVisibility) {
-            writer.writeStartElement(URI_KML, TAG_REFRESH_VISIBILITY);
-            if (refreshVisibility) {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
-            } else {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
-            }
-            writer.writeEndElement();
-        }
-    }
-
-    /**
-     *
-     * @param flyToView
-     * @throws XMLStreamException
-     */
-    private void writeFlyToView(Boolean ftv) throws XMLStreamException {
-        boolean flyToView = ftv.booleanValue();
-        if (DEF_FLY_TO_VIEW != flyToView) {
-            writer.writeStartElement(URI_KML, TAG_FLY_TO_VIEW);
-            if (flyToView) {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
-            } else {
-                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
-            }
-            writer.writeEndElement();
-        }
-    }
-
-    /**
-     *
-     * @param address
-     * @throws XMLStreamException
-     */
-    private void writeAddress(String address) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_ADDRESS);
-        writer.writeCharacters(address);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param snippet
-     * @throws XMLStreamException
-     */
-    private void writeSnippet(Object snippet) throws XMLStreamException {
-        if (snippet instanceof String || snippet instanceof Cdata) {
-            writer.writeStartElement(URI_KML, TAG_SNIPPET);
-            this.writeCharacterContent(snippet);
-        } else if (snippet instanceof Snippet) {
-            Snippet s = (Snippet) snippet;
-            writer.writeStartElement(URI_KML, TAG_SNIPPET_BIG);
-            if (DEF_MAX_SNIPPET_LINES_ATT != s.getMaxLines()) {
-                writer.writeAttribute(ATT_MAX_LINES, String.valueOf(s.getMaxLines()));
-            }
-            this.writeCharacterContent(s.getContent());
-        }
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param phoneNumber
-     * @throws XMLStreamException
-     */
-    private void writePhoneNumber(String phoneNumber) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_PHONE_NUMBER);
-        writer.writeCharacters(phoneNumber);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param name
-     * @throws XMLStreamException
-     */
-    private void writeName(String name) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_NAME);
-        writer.writeCharacters(name);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param description
-     * @throws XMLStreamException
-     */
-    private void writeDescription(Object description) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_DESCRIPTION);
-        this.writeCharacterContent(description);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param href
-     * @throws XMLStreamException
-     */
-    public void writeHref(String href) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_HREF);
-        writer.writeCharacters(href);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param text
-     * @throws XMLStreamException
-     */
-    private void writeText(Object text) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_TEXT);
-        this.writeCharacterContent(text);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param uri
-     * @throws XMLStreamException
-     */
-    private void writeStyleUrl(URI uri) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_STYLE_URL);
-        writer.writeCharacters(uri.toString());
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param viewFormat
-     * @throws XMLStreamException
-     */
-    private void writeViewFormat(String viewFormat) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_VIEW_FORMAT);
-        writer.writeCharacters(viewFormat);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param httpQuery
-     * @throws XMLStreamException
-     */
-    private void writeHttpQuery(String httpQuery) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_HTTP_QUERY);
-        writer.writeCharacters(httpQuery);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param targetHref
-     * @throws XMLStreamException
-     */
-    private void writeTargetHref(URI targetHref) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_TARGET_HREF);
-        writer.writeCharacters(targetHref.toString());
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param sourceHref
-     * @throws XMLStreamException
-     */
-    private void writeSourceHref(URI sourceHref) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_SOURCE_HREF);
-        writer.writeCharacters(sourceHref.toString());
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param begin
-     * @throws XMLStreamException
-     */
-    public void writeBegin(Calendar begin) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_BEGIN);
-        this.writeCalendar(begin);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param end
-     * @throws XMLStreamException
-     */
-    public void writeEnd(Calendar end) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_END);
-        this.writeCalendar(end);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param when
-     * @throws XMLStreamException
-     */
-    public void writeWhen(Calendar when) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_WHEN);
-        this.writeCalendar(when);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param calendar
-     * @throws XMLStreamException
-     */
-    private void writeCalendar(Calendar calendar) throws XMLStreamException {
-        writer.writeCharacters(KmlUtilities.getXMLFormatedCalendar(calendar, true));
-    }
-
-    /**
-     *
-     * @param displayName
-     * @throws XMLStreamException
-     */
-    private void writeDisplayName(Object displayName) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_DISPLAY_NAME);
-        this.writeCharacterContent(displayName);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param value
-     * @throws XMLStreamException
-     */
-    private void writeValue(String value) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_VALUE);
-        writer.writeCharacters(value);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param cookie
-     * @throws XMLStreamException
-     */
-    private void writeCookie(String cookie) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_COOKIE);
-        writer.writeCharacters(cookie);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param message
-     * @throws XMLStreamException
-     */
-    private void writeMessage(String message) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_MESSAGE);
-        writer.writeCharacters(message);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param linkName
-     * @throws XMLStreamException
-     */
-    private void writeLinkName(String linkName) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_LINK_NAME);
-        writer.writeCharacters(linkName);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param linkDescription
-     * @throws XMLStreamException
-     */
-    private void writeLinkDescription(Object linkDescription) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_LINK_DESCRIPTION);
-        this.writeCharacterContent(linkDescription);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param expires
-     * @throws XMLStreamException
-     */
-    private void writeExpires(Calendar expires) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_EXPIRES);
-        this.writeCalendar(expires);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param linkSnippet
-     * @throws XMLStreamException
-     */
-    private void writeLinkSnippet(Snippet linkSnippet) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_LINK_SNIPPET);
-        if (DEF_MAX_SNIPPET_LINES_ATT != linkSnippet.getMaxLines()) {
-            writer.writeAttribute(ATT_MAX_LINES, String.valueOf(linkSnippet.getMaxLines()));
-        }
-        this.writeCharacterContent(linkSnippet.getContent());
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param color
-     * @throws XMLStreamException
-     */
-    private void writeColor(Color color) throws XMLStreamException {
-        if (DEF_COLOR != color) {
-            writer.writeStartElement(URI_KML, TAG_COLOR);
-            writer.writeCharacters(KmlUtilities.toKmlColor(color));
-            writer.writeEndElement();
-        }
-    }
-
-    /**
-     *
-     * @param color
-     * @throws XMLStreamException
-     */
-    private void writeBgColor(Color color) throws XMLStreamException {
-        if (DEF_BG_COLOR != color) {
-            writer.writeStartElement(URI_KML, TAG_BG_COLOR);
-            writer.writeCharacters(KmlUtilities.toKmlColor(color));
-            writer.writeEndElement();
-        }
-    }
-
-    /**
-     *
-     * @param color
-     * @throws XMLStreamException
-     */
-    private void writeTextColor(Color color) throws XMLStreamException {
-        if (DEF_TEXT_COLOR != color) {
-            writer.writeStartElement(URI_KML, TAG_TEXT_COLOR);
-            writer.writeCharacters(KmlUtilities.toKmlColor(color));
-            writer.writeEndElement();
-        }
-    }
-
-    /**
-     *
-     * @param colorMode
-     * @throws XMLStreamException
-     */
-    private void writeColorMode(ColorMode colorMode) throws XMLStreamException {
-        if (DEF_COLOR_MODE != colorMode) {
-            writer.writeStartElement(URI_KML, TAG_COLOR_MODE);
-            writer.writeCharacters(colorMode.getColorMode());
-            writer.writeEndElement();
-        }
-    }
-
-    /**
-     *
-     * @param altitudeMode
-     * @throws XMLStreamException
-     */
-    public void writeAltitudeMode(AltitudeMode altitudeMode) throws XMLStreamException, KmlException {
-        if (DEF_ALTITUDE_MODE != altitudeMode) {
-            if (altitudeMode instanceof org.geotoolkit.data.kml.model.EnumAltitudeMode) {
-                writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
-                writer.writeCharacters(altitudeMode.getAltitudeMode());
-                writer.writeEndElement();
-            } else {
-                for (StaxStreamWriter candidate : this.extensionWriters) {
-                    if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, altitudeMode)) {
-                        ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, altitudeMode);
+                for (StaxStreamWriter candidate : extensionWriters) {
+                    if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, value)) {
+                        ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, value);
                     }
                 }
             }
@@ -2906,670 +1186,928 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     *
-     * @param displayMode
-     * @throws XMLStreamException
+     * This method writes the common fields for instances of AbstractGeometry.
      */
-    private void writeDisplayMode(DisplayMode displayMode) throws XMLStreamException {
-        if (DEF_DISPLAY_MODE != displayMode) {
+    public void writeCommonAbstractGeometry(AbstractGeometry value) throws XMLStreamException, KmlException {
+        writeCommonAbstractObject(value);
+        writeStandardExtensionLevel(value.extensions(), Names.GEOMETRY);
+    }
+
+    public void writeModel(Model value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_MODEL);
+        writeCommonAbstractGeometry(value);
+        writeAltitudeMode(value.getAltitudeMode());
+        if (value.getLocation() != null) {
+            writeLocation(value.getLocation());
+        }
+        if (value.getOrientation() != null) {
+            writeOrientation(value.getOrientation());
+        }
+        if (value.getScale() != null) {
+            writeScale(value.getScale());
+        }
+        if (value.getLink() != null) {
+            writeLink(value.getLink());
+        }
+        if (value.getRessourceMap() != null) {
+            checkVersion(URI_KML_2_2);
+            writeResourceMap(value.getRessourceMap());
+        }
+        writeStandardExtensionLevel(value.extensions(), Names.MODEL);
+        writer.writeEndElement();
+    }
+
+    private void writeLocation(Location value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_LOCATION);
+        writeCommonAbstractObject(value);
+        writeLongitude(value.getLongitude());
+        writeLatitude (value.getLatitude());
+        writeAltitude (value.getAltitude());
+        writeStandardExtensionLevel(value.extensions(), Names.LOCATION);
+        writer.writeEndElement();
+    }
+
+    private void writeOrientation(Orientation value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_ORIENTATION);
+        writeCommonAbstractObject(value);
+        writeHeading(value.getHeading());
+        writeTilt   (value.getTilt());
+        writeRoll   (value.getRoll());
+        writeStandardExtensionLevel(value.extensions(), Names.ORIENTATION);
+        writer.writeEndElement();
+    }
+
+    private void writeScale(Scale value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_SCALE_BIG);
+        writeX(value.getX());
+        writeY(value.getY());
+        writeZ(value.getZ());
+        writeStandardExtensionLevel(value.extensions(), Names.SCALE);
+        writer.writeEndElement();
+    }
+
+    private void writeResourceMap(ResourceMap value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_RESOURCE_MAP);
+        writeCommonAbstractObject(value);
+        for (Alias alias : value.getAliases()) {
+            writeAlias(alias);
+        }
+        writeStandardExtensionLevel(value.extensions(), Names.RESOURCE_MAP);
+        writer.writeEndElement();
+    }
+
+    private void writeAlias(Alias value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_ALIAS);
+        writeCommonAbstractObject(value);
+        writeTargetHref(value.getTargetHref());
+        writeSourceHref(value.getSourceHref());
+        writeStandardExtensionLevel(value.extensions(), Names.ALIAS);
+        writer.writeEndElement();
+    }
+
+    private void writePolygon(Polygon value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_POLYGON);
+        writeCommonAbstractGeometry(value);
+        writeExtrude     (value.getExtrude());
+        writeTessellate  (value.getTessellate());
+        writeAltitudeMode(value.getAltitudeMode());
+        if (value.getOuterBoundary() != null) {
+            writeOuterBoundary(value.getOuterBoundary());
+        }
+        for (Boundary innerBoundary : value.getInnerBoundaries()) {
+            writeInnerBoundary(innerBoundary);
+        }
+        writeStandardExtensionLevel(value.extensions(), Names.POLYGON);
+        writer.writeEndElement();
+    }
+
+    private void writeOuterBoundary(Boundary value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_OUTER_BOUNDARY_IS);
+        writeBoundary(value);
+        writer.writeEndElement();
+    }
+
+    private void writeInnerBoundary(Boundary value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_INNER_BOUNDARY_IS);
+        writeBoundary(value);
+        writer.writeEndElement();
+    }
+
+    private void writeBoundary(Boundary value) throws XMLStreamException, KmlException {
+        if (value.getLinearRing() != null) {
+            writeLinearRing(value.getLinearRing());
+        }
+        writeStandardExtensionLevel(value.extensions(), Names.BOUNDARY);
+    }
+
+    private void writeLineString(LineString value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_LINE_STRING);
+        writeCommonAbstractGeometry(value);
+        writeExtrude     (value.getExtrude());
+        writeTessellate  (value.getTessellate());
+        writeAltitudeMode(value.getAltitudeMode());
+        writeCoordinates (value.getCoordinateSequence());
+        writeStandardExtensionLevel(value.extensions(), Names.LINE_STRING);
+        writer.writeEndElement();
+    }
+
+    private void writeLinearRing(LinearRing value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_LINEAR_RING);
+        writeCommonAbstractGeometry(value);
+        writeExtrude     (value.getExtrude());
+        writeTessellate  (value.getTessellate());
+        writeAltitudeMode(value.getAltitudeMode());
+        writeCoordinates (value.getCoordinateSequence());
+        writeStandardExtensionLevel(value.extensions(), Names.LINEAR_RING);
+        writer.writeEndElement();
+    }
+
+    private void writeMultiGeometry(MultiGeometry value) throws XMLStreamException, KmlException {
+        writer.writeStartElement(URI_KML, TAG_MULTI_GEOMETRY);
+        writeCommonAbstractGeometry(value);
+        for (AbstractGeometry geometry : value.getGeometries()) {
+            writeGeometry(geometry);
+        }
+        writeStandardExtensionLevel(value.extensions(), Names.MULTI_GEOMETRY);
+        writer.writeEndElement();
+    }
+
+    private void writePoint(Point value) throws XMLStreamException, KmlException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_POINT);
+            writeCommonAbstractGeometry(value);
+            writeExtrude     (value.getExtrude());
+            writeAltitudeMode(value.getAltitudeMode());
+            writeCoordinates (value.getCoordinateSequence());
+            writeStandardExtensionLevel(value.extensions(), Names.POINT);
+            writer.writeEndElement();
+        }
+    }
+
+    public void writeCoordinates(CoordinateSequence value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_COORDINATES);
+            writer.writeCharacters(KmlUtilities.toString(value));
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeExtrude(boolean value) throws XMLStreamException {
+        if (DEF_EXTRUDE != value) {
+            writer.writeStartElement(URI_KML, TAG_EXTRUDE);
+            if (value) {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeVisibility(Boolean value) throws XMLStreamException {
+        if (value != null && DEF_VISIBILITY != value) {
+            writer.writeStartElement(URI_KML, TAG_VISIBILITY);
+            writer.writeCharacters(value ? SimpleTypeContainer.BOOLEAN_TRUE
+                                         : SimpleTypeContainer.BOOLEAN_FALSE);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeOpen(Boolean value) throws XMLStreamException {
+        if (value != null && DEF_OPEN != value) {
+            writer.writeStartElement(URI_KML, TAG_OPEN);
+            writer.writeCharacters(value ? SimpleTypeContainer.BOOLEAN_TRUE
+                                         : SimpleTypeContainer.BOOLEAN_FALSE);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeFill(boolean value) throws XMLStreamException {
+        if (DEF_FILL != value) {
+            writer.writeStartElement(URI_KML, TAG_FILL);
+            if (value) {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeOutline(boolean value) throws XMLStreamException {
+        if (DEF_OUTLINE != value) {
+            writer.writeStartElement(URI_KML, TAG_OUTLINE);
+            if (value) {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeTessellate(boolean value) throws XMLStreamException {
+        if (DEF_TESSELLATE != value) {
+            writer.writeStartElement(URI_KML, TAG_TESSELLATE);
+            if (value) {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeRefreshVisibility(Boolean value) throws XMLStreamException {
+        if (value != null && DEF_REFRESH_VISIBILITY != value) {
+            writer.writeStartElement(URI_KML, TAG_REFRESH_VISIBILITY);
+            if (value) {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeFlyToView(Boolean value) throws XMLStreamException {
+        if (value != null && DEF_FLY_TO_VIEW != value) {
+            writer.writeStartElement(URI_KML, TAG_FLY_TO_VIEW);
+            if (value) {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeAddress(String value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_ADDRESS);
+            writer.writeCharacters(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeSnippet(Object value) throws XMLStreamException {
+        if (value != null) {
+            if (value instanceof String || value instanceof Cdata) {
+                writer.writeStartElement(URI_KML, TAG_SNIPPET);
+                writeCharacterContent(value);
+            } else if (value instanceof Snippet) {
+                Snippet s = (Snippet) value;
+                writer.writeStartElement(URI_KML, TAG_SNIPPET_BIG);
+                if (DEF_MAX_SNIPPET_LINES_ATT != s.getMaxLines()) {
+                    writer.writeAttribute(ATT_MAX_LINES, String.valueOf(s.getMaxLines()));
+                }
+                writeCharacterContent(s.getContent());
+            }
+            writer.writeEndElement();
+        }
+    }
+
+    private void writePhoneNumber(String value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_PHONE_NUMBER);
+            writer.writeCharacters(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeName(String value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_NAME);
+            writer.writeCharacters(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeDescription(Object value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_DESCRIPTION);
+            writeCharacterContent(value);
+            writer.writeEndElement();
+        }
+    }
+
+    public void writeHref(String value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_HREF);
+            writer.writeCharacters(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeText(Object value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_TEXT);
+            writeCharacterContent(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeStyleUrl(URI value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_STYLE_URL);
+            writer.writeCharacters(value.toString());
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeViewFormat(String value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_VIEW_FORMAT);
+            writer.writeCharacters(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeHttpQuery(String value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_HTTP_QUERY);
+            writer.writeCharacters(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeTargetHref(URI value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_TARGET_HREF);
+            writer.writeCharacters(value.toString());
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeSourceHref(URI value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_SOURCE_HREF);
+            writer.writeCharacters(value.toString());
+            writer.writeEndElement();
+        }
+    }
+
+    public void writeBegin(Calendar value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_BEGIN);
+            writeCalendar(value);
+            writer.writeEndElement();
+        }
+    }
+
+    public void writeEnd(Calendar value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_END);
+            writeCalendar(value);
+            writer.writeEndElement();
+        }
+    }
+
+    public void writeWhen(Calendar value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_WHEN);
+            writeCalendar(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeCalendar(Calendar value) throws XMLStreamException {
+        writer.writeCharacters(KmlUtilities.getXMLFormatedCalendar(value, true));
+    }
+
+    private void writeDisplayName(Object value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_DISPLAY_NAME);
+            writeCharacterContent(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeValue(String value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_VALUE);
+            writer.writeCharacters(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeCookie(String value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_COOKIE);
+            writer.writeCharacters(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeMessage(String value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_MESSAGE);
+            writer.writeCharacters(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeLinkName(String value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_LINK_NAME);
+            writer.writeCharacters(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeLinkDescription(Object value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_LINK_DESCRIPTION);
+            writeCharacterContent(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeExpires(Calendar value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_EXPIRES);
+            writeCalendar(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeLinkSnippet(Snippet value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_LINK_SNIPPET);
+            if (DEF_MAX_SNIPPET_LINES_ATT != value.getMaxLines()) {
+                writer.writeAttribute(ATT_MAX_LINES, String.valueOf(value.getMaxLines()));
+            }
+            writeCharacterContent(value.getContent());
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeColor(Color value) throws XMLStreamException {
+        if (value != null && DEF_COLOR != value) {
+            writer.writeStartElement(URI_KML, TAG_COLOR);
+            writer.writeCharacters(KmlUtilities.toKmlColor(value));
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeBgColor(Color value) throws XMLStreamException {
+        if (value != null && DEF_BG_COLOR != value) {
+            writer.writeStartElement(URI_KML, TAG_BG_COLOR);
+            writer.writeCharacters(KmlUtilities.toKmlColor(value));
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeTextColor(Color value) throws XMLStreamException {
+        if (value != null && DEF_TEXT_COLOR != value) {
+            writer.writeStartElement(URI_KML, TAG_TEXT_COLOR);
+            writer.writeCharacters(KmlUtilities.toKmlColor(value));
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeColorMode(ColorMode value) throws XMLStreamException {
+        if (value != null && DEF_COLOR_MODE != value) {
+            writer.writeStartElement(URI_KML, TAG_COLOR_MODE);
+            writer.writeCharacters(value.getColorMode());
+            writer.writeEndElement();
+        }
+    }
+
+    public void writeAltitudeMode(AltitudeMode value) throws XMLStreamException, KmlException {
+        if (value != null && DEF_ALTITUDE_MODE != value) {
+            if (value instanceof org.geotoolkit.data.kml.model.EnumAltitudeMode) {
+                writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
+                writer.writeCharacters(value.getAltitudeMode());
+                writer.writeEndElement();
+            } else {
+                for (StaxStreamWriter candidate : extensionWriters) {
+                    if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, value)) {
+                        ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, value);
+                    }
+                }
+            }
+        }
+    }
+
+    private void writeDisplayMode(DisplayMode value) throws XMLStreamException {
+        if (value != null && DEF_DISPLAY_MODE != value) {
             writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
-            writer.writeCharacters(displayMode.getDisplayMode());
+            writer.writeCharacters(value.getDisplayMode());
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param styleState
-     * @throws XMLStreamException
-     */
-    private void writeKey(StyleState styleState) throws XMLStreamException {
-        if (DEF_STYLE_STATE != styleState) {
+    private void writeKey(StyleState value) throws XMLStreamException {
+        if (value != null && DEF_STYLE_STATE != value) {
             writer.writeStartElement(URI_KML, TAG_KEY);
-            writer.writeCharacters(styleState.getStyleState());
+            writer.writeCharacters(value.getStyleState());
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param refreshMode
-     * @throws XMLStreamException
-     */
-    private void writeRefreshMode(RefreshMode refreshMode) throws XMLStreamException {
-        if (DEF_REFRESH_MODE != refreshMode) {
+    private void writeRefreshMode(RefreshMode value) throws XMLStreamException {
+        if (value != null && DEF_REFRESH_MODE != value) {
             writer.writeStartElement(URI_KML, TAG_REFRESH_MODE);
-            writer.writeCharacters(refreshMode.getRefreshMode());
+            writer.writeCharacters(value.getRefreshMode());
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param viewRefreshMode
-     * @throws XMLStreamException
-     */
-    private void writeViewRefreshMode(ViewRefreshMode viewRefreshMode) throws XMLStreamException {
-        if (DEF_VIEW_REFRESH_MODE != viewRefreshMode) {
+    private void writeViewRefreshMode(ViewRefreshMode value) throws XMLStreamException {
+        if (value != null && DEF_VIEW_REFRESH_MODE != value) {
             writer.writeStartElement(URI_KML, TAG_VIEW_REFRESH_MODE);
-            writer.writeCharacters(viewRefreshMode.getViewRefreshMode());
+            writer.writeCharacters(value.getViewRefreshMode());
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param listItem
-     * @throws XMLStreamException
-     */
-    private void writeListItem(ListItem listItem) throws XMLStreamException {
-        if (DEF_LIST_ITEM != listItem) {
+    private void writeListItem(ListItem value) throws XMLStreamException {
+        if (value != null && DEF_LIST_ITEM != value) {
             writer.writeStartElement(URI_KML, TAG_LIST_ITEM);
-            writer.writeCharacters(listItem.getItem());
+            writer.writeCharacters(value.getItem());
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param shape
-     * @throws XMLStreamException
-     */
-    private void writeShape(Shape shape) throws XMLStreamException {
-        if (DEF_SHAPE != shape) {
+    private void writeShape(Shape value) throws XMLStreamException {
+        if (value != null && DEF_SHAPE != value) {
             writer.writeStartElement(URI_KML, TAG_SHAPE);
-            writer.writeCharacters(shape.getShape());
+            writer.writeCharacters(value.getShape());
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param gridOrigin
-     * @throws XMLStreamException
-     */
-    private void writeGridOrigin(GridOrigin gridOrigin) throws XMLStreamException {
-        if (DEF_GRID_ORIGIN != gridOrigin) {
+    private void writeGridOrigin(GridOrigin value) throws XMLStreamException {
+        if (value != null && DEF_GRID_ORIGIN != value) {
             writer.writeStartElement(URI_KML, TAG_GRID_ORIGIN);
-            writer.writeCharacters(gridOrigin.getGridOrigin());
+            writer.writeCharacters(value.getGridOrigin());
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param scale
-     * @throws XMLStreamException
-     */
-    private void writeScale(double scale) throws XMLStreamException {
-        if (DEF_SCALE != scale) {
+    private void writeScale(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_SCALE != value) {
             writer.writeStartElement(URI_KML, TAG_SCALE);
-            writer.writeCharacters(Double.toString(scale));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param width
-     * @throws XMLStreamException
-     */
-    private void writeWidth(double width) throws XMLStreamException {
-        if (DEF_WIDTH != width) {
+    private void writeWidth(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_WIDTH != value) {
             writer.writeStartElement(URI_KML, TAG_WIDTH);
-            writer.writeCharacters(Double.toString(width));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param altitude
-     * @throws XMLStreamException
-     */
-    private void writeAltitude(double altitude) throws XMLStreamException {
-        if (DEF_ALTITUDE != altitude) {
+    private void writeAltitude(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_ALTITUDE != value) {
             writer.writeStartElement(URI_KML, TAG_ALTITUDE);
-            writer.writeCharacters(Double.toString(altitude));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param range
-     * @throws XMLStreamException
-     */
-    private void writeRange(double range) throws XMLStreamException {
-        if (DEF_RANGE != range) {
+    private void writeRange(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_RANGE != value) {
             writer.writeStartElement(URI_KML, TAG_RANGE);
-            writer.writeCharacters(Double.toString(range));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param drawOrder
-     * @throws XMLStreamException
-     */
-    private void writeDrawOrder(int drawOrder) throws XMLStreamException {
-        if (DEF_DRAW_ORDER != drawOrder) {
+    private void writeDrawOrder(Integer value) throws XMLStreamException {
+        if (value != null && DEF_DRAW_ORDER != value) {
             writer.writeStartElement(URI_KML, TAG_DRAW_ORDER);
-            writer.writeCharacters(Integer.toString(drawOrder));
+            writer.writeCharacters(Integer.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param x
-     * @throws XMLStreamException
-     */
-    private void writeX(double x) throws XMLStreamException {
-        if (DEF_X != x) {
+    private void writeX(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_X != value) {
             writer.writeStartElement(URI_KML, TAG_X);
-            writer.writeCharacters(Double.toString(x));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param y
-     * @throws XMLStreamException
-     */
-    private void writeY(double y) throws XMLStreamException {
-        if (DEF_Y != y) {
+    private void writeY(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_Y != value) {
             writer.writeStartElement(URI_KML, TAG_Y);
-            writer.writeCharacters(Double.toString(y));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param z
-     * @throws XMLStreamException
-     */
-    private void writeZ(double z) throws XMLStreamException {
-        if (DEF_Z != z) {
+    private void writeZ(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_Z != value) {
             writer.writeStartElement(URI_KML, TAG_Z);
-            writer.writeCharacters(Double.toString(z));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param minAltitude
-     * @throws XMLStreamException
-     */
-    private void writeMinAltitude(double minAltitude) throws XMLStreamException {
-        if (DEF_MIN_ALTITUDE != minAltitude) {
+    private void writeMinAltitude(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_MIN_ALTITUDE != value) {
             writer.writeStartElement(URI_KML, TAG_MIN_ALTITUDE);
-            writer.writeCharacters(Double.toString(minAltitude));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param maxAltitude
-     * @throws XMLStreamException
-     */
-    private void writeMaxAltitude(double maxAltitude) throws XMLStreamException {
-        if (DEF_MAX_ALTITUDE != maxAltitude) {
+    private void writeMaxAltitude(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_MAX_ALTITUDE != value) {
             writer.writeStartElement(URI_KML, TAG_MAX_ALTITUDE);
-            writer.writeCharacters(Double.toString(maxAltitude));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param pixels
-     * @throws XMLStreamException
-     */
-    private void writeMinLodPixels(double pixels) throws XMLStreamException {
-        if (DEF_MIN_LOD_PIXELS != pixels) {
+    private void writeMinLodPixels(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_MIN_LOD_PIXELS != value) {
             writer.writeStartElement(URI_KML, TAG_MIN_LOD_PIXELS);
-            writer.writeCharacters(Double.toString(pixels));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param pixels
-     * @throws XMLStreamException
-     */
-    private void writeMaxLodPixels(double pixels) throws XMLStreamException {
-        if (DEF_MAX_LOD_PIXELS != pixels) {
+    private void writeMaxLodPixels(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_MAX_LOD_PIXELS != value) {
             writer.writeStartElement(URI_KML, TAG_MAX_LOD_PIXELS);
-            writer.writeCharacters(Double.toString(pixels));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param fadeExtent
-     * @throws XMLStreamException
-     */
-    private void writeMinFadeExtent(double fadeExtent) throws XMLStreamException {
-        if (DEF_MIN_FADE_EXTENT != fadeExtent) {
+    private void writeMinFadeExtent(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_MIN_FADE_EXTENT != value) {
             writer.writeStartElement(URI_KML, TAG_MIN_FADE_EXTENT);
-            writer.writeCharacters(Double.toString(fadeExtent));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param fadeExtent
-     * @throws XMLStreamException
-     */
-    private void writeMaxFadeExtent(double fadeExtent) throws XMLStreamException {
-        if (DEF_MAX_FADE_EXTENT != fadeExtent) {
+    private void writeMaxFadeExtent(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_MAX_FADE_EXTENT != value) {
             writer.writeStartElement(URI_KML, TAG_MAX_FADE_EXTENT);
-            writer.writeCharacters(Double.toString(fadeExtent));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     *
-     * @param refreshInterval
-     * @throws XMLStreamException
-     */
-    private void writeRefreshInterval(double refreshInterval) throws XMLStreamException {
-        if (DEF_REFRESH_INTERVAL != refreshInterval) {
+    private void writeRefreshInterval(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_REFRESH_INTERVAL != value) {
             writer.writeStartElement(URI_KML, TAG_REFRESH_INTERVAL);
-            writer.writeCharacters(Double.toString(refreshInterval));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param viewRefreshTime
-     * @throws XMLStreamException
-     */
-    private void writeViewRefreshTime(double viewRefreshTime) throws XMLStreamException {
-        if (DEF_VIEW_REFRESH_TIME != viewRefreshTime) {
+    private void writeViewRefreshTime(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_VIEW_REFRESH_TIME != value) {
             writer.writeStartElement(URI_KML, TAG_VIEW_REFRESH_TIME);
-            writer.writeCharacters(Double.toString(viewRefreshTime));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param viewBoundScale
-     * @throws XMLStreamException
-     */
-    private void writeViewBoundScale(double viewBoundScale) throws XMLStreamException {
-        if (DEF_VIEW_BOUND_SCALE != viewBoundScale) {
+    private void writeViewBoundScale(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_VIEW_BOUND_SCALE != value) {
             writer.writeStartElement(URI_KML, TAG_VIEW_BOUND_SCALE);
-            writer.writeCharacters(Double.toString(viewBoundScale));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param near
-     * @throws XMLStreamException
-     */
-    private void writeNear(double near) throws XMLStreamException {
-        if (DEF_NEAR != near) {
+    private void writeNear(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_NEAR != value) {
             writer.writeStartElement(URI_KML, TAG_NEAR);
-            writer.writeCharacters(Double.toString(near));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param minRefreshPeriod
-     * @throws XMLStreamException
-     */
-    private void writeMinRefreshPeriod(double minRefreshPeriod) throws XMLStreamException {
-        if (DEF_MIN_REFRESH_PERIOD != minRefreshPeriod) {
+    private void writeMinRefreshPeriod(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_MIN_REFRESH_PERIOD != value) {
             writer.writeStartElement(URI_KML, TAG_MIN_REFRESH_PERIOD);
-            writer.writeCharacters(Double.toString(minRefreshPeriod));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param maxSessionLength
-     * @throws XMLStreamException
-     */
-    private void writeMaxSessionLength(double maxSessionLength) throws XMLStreamException {
-        if (DEF_MAX_SESSION_LENGTH != maxSessionLength) {
+    private void writeMaxSessionLength(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_MAX_SESSION_LENGTH != value) {
             writer.writeStartElement(URI_KML, TAG_MAX_SESSION_LENGTH);
-            writer.writeCharacters(Double.toString(maxSessionLength));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param titleSize
-     * @throws XMLStreamException
-     */
-    private void writeTitleSize(int titleSize) throws XMLStreamException {
-        if (DEF_TITLE_SIZE != titleSize) {
+    private void writeTitleSize(int value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_TITLE_SIZE != value) {
             writer.writeStartElement(URI_KML, TAG_TITLE_SIZE);
-            writer.writeCharacters(Integer.toString(titleSize));
+            writer.writeCharacters(Integer.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param maxWidth
-     * @throws XMLStreamException
-     */
-    private void writeMaxWidth(int maxWidth) throws XMLStreamException {
-        if (DEF_MAX_WIDTH != maxWidth) {
+    private void writeMaxWidth(int value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_MAX_WIDTH != value) {
             writer.writeStartElement(URI_KML, TAG_MAX_WIDTH);
-            writer.writeCharacters(Integer.toString(maxWidth));
+            writer.writeCharacters(Integer.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param maxHeight
-     * @throws XMLStreamException
-     */
-    private void writeMaxHeight(int maxHeight) throws XMLStreamException {
-        if (DEF_MAX_HEIGHT != maxHeight) {
+    private void writeMaxHeight(int value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_MAX_HEIGHT != value) {
             writer.writeStartElement(URI_KML, TAG_MAX_HEIGHT);
-            writer.writeCharacters(Integer.toString(maxHeight));
+            writer.writeCharacters(Integer.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param msl
-     * @throws XMLStreamException
-     */
-    private void writeMaxSnippetLines(int msl) throws XMLStreamException {
-        if (DEF_MAX_SNIPPET_LINES != msl) {
+    private void writeMaxSnippetLines(int value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_MAX_SNIPPET_LINES != value) {
             writer.writeStartElement(URI_KML, TAG_MAX_SNIPPET_LINES);
-            writer.writeCharacters(Integer.toString(msl));
+            writer.writeCharacters(Integer.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param heading
-     * @throws XMLStreamException
-     */
-    private void writeHeading(double heading) throws XMLStreamException {
-        if (DEF_HEADING != heading) {
+    private void writeHeading(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_HEADING != value) {
             writer.writeStartElement(URI_KML, TAG_HEADING);
-            writer.writeCharacters(Double.toString(heading));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param bottomFov
-     * @throws XMLStreamException
-     */
-    private void writeBottomFov(double bottomFov) throws XMLStreamException {
-        if (DEF_BOTTOM_FOV != bottomFov) {
+    private void writeBottomFov(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_BOTTOM_FOV != value) {
             writer.writeStartElement(URI_KML, TAG_BOTTOM_FOV);
-            writer.writeCharacters(Double.toString(bottomFov));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param topFov
-     * @throws XMLStreamException
-     */
-    private void writeTopFov(double topFov) throws XMLStreamException {
-        if (DEF_TOP_FOV != topFov) {
+    private void writeTopFov(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_TOP_FOV != value) {
             writer.writeStartElement(URI_KML, TAG_TOP_FOV);
-            writer.writeCharacters(Double.toString(topFov));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param leftFov
-     * @throws XMLStreamException
-     */
-    private void writeLeftFov(double leftFov) throws XMLStreamException {
-        if (DEF_LEFT_FOV != leftFov) {
+    private void writeLeftFov(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_LEFT_FOV != value) {
             writer.writeStartElement(URI_KML, TAG_LEFT_FOV);
-            writer.writeCharacters(Double.toString(leftFov));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param rightFov
-     * @throws XMLStreamException
-     */
-    private void writeRightFov(double rightFov) throws XMLStreamException {
-        if (DEF_RIGHT_FOV != rightFov) {
+    private void writeRightFov(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_RIGHT_FOV != value) {
             writer.writeStartElement(URI_KML, TAG_RIGHT_FOV);
-            writer.writeCharacters(Double.toString(rightFov));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param longitude
-     * @throws XMLStreamException
-     */
-    private void writeLongitude(double longitude) throws XMLStreamException {
-        if (DEF_LONGITUDE != longitude) {
+    private void writeLongitude(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_LONGITUDE != value) {
             writer.writeStartElement(URI_KML, TAG_LONGITUDE);
-            writer.writeCharacters(Double.toString(longitude));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     * This method writes a latitude angle.
-     * @param latitude The latitude cookie.
-     * @throws XMLStreamException
-     */
-    private void writeLatitude(double latitude) throws XMLStreamException {
-        if (DEF_LATITUDE != latitude) {
+    private void writeLatitude(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_LATITUDE != value) {
             writer.writeStartElement(URI_KML, TAG_LATITUDE);
-            writer.writeCharacters(Double.toString(latitude));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param tilt
-     * @throws XMLStreamException
-     */
-    private void writeTilt(double tilt) throws XMLStreamException {
-        if (DEF_TILT != tilt) {
+    private void writeTilt(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_TILT != value) {
             writer.writeStartElement(URI_KML, TAG_TILT);
-            writer.writeCharacters(Double.toString(KmlUtilities.checkAnglePos180(tilt)));
+            writer.writeCharacters(Double.toString(KmlUtilities.checkAnglePos180(value)));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param rotation
-     * @throws XMLStreamException
-     */
-    private void writeRotation(double rotation) throws XMLStreamException {
-        if (DEF_ROTATION != rotation) {
+    private void writeRotation(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_ROTATION != value) {
             writer.writeStartElement(URI_KML, TAG_ROTATION);
-            writer.writeCharacters(Double.toString(rotation));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param north
-     * @throws XMLStreamException
-     */
-    private void writeNorth(double north) throws XMLStreamException {
-        if (DEF_NORTH != north) {
+    private void writeNorth(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_NORTH != value) {
             writer.writeStartElement(URI_KML, TAG_NORTH);
-            writer.writeCharacters(Double.toString(north));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param south
-     * @throws XMLStreamException
-     */
-    private void writeSouth(double south) throws XMLStreamException {
-        if (DEF_SOUTH != south) {
+    private void writeSouth(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_SOUTH != value) {
             writer.writeStartElement(URI_KML, TAG_SOUTH);
-            writer.writeCharacters(Double.toString(south));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param east
-     * @throws XMLStreamException
-     */
-    private void writeEast(double east) throws XMLStreamException {
-        if (DEF_EAST != east) {
+    private void writeEast(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_EAST != value) {
             writer.writeStartElement(URI_KML, TAG_EAST);
-            writer.writeCharacters(Double.toString(east));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param west
-     * @throws XMLStreamException
-     */
-    private void writeWest(double west) throws XMLStreamException {
-        if (DEF_WEST != west) {
+    private void writeWest(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_WEST != value) {
             writer.writeStartElement(URI_KML, TAG_WEST);
-            writer.writeCharacters(Double.toString(west));
+            writer.writeCharacters(Double.toString(value));
             writer.writeEndElement();
         }
     }
 
-    /**
-     *
-     * @param roll
-     * @throws XMLStreamException
-     */
-    private void writeRoll(double roll) throws XMLStreamException {
-        if (DEF_ROLL != roll) {
+    private void writeRoll(double value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value) && DEF_ROLL != value) {
             writer.writeStartElement(URI_KML, TAG_ROLL);
-            writer.writeCharacters(Double.toString(roll));
+            writer.writeCharacters(Double.toString(value));
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeVec2(Vec2 value) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(value.getX()) && DEF_VEC2_X != value.getX()) {
+            writer.writeAttribute(ATT_X, Double.toString(value.getX()));
+        }
+        if (KmlUtilities.isFiniteNumber(value.getY()) && DEF_VEC2_Y != value.getY()) {
+            writer.writeAttribute(ATT_Y, Double.toString(value.getY()));
+        }
+        if (value.getXUnits() != null && !DEF_VEC2_XUNIT.equals(value.getXUnits())) {
+            writer.writeAttribute(ATT_XUNITS, value.getXUnits().getUnit());
+        }
+        if (value.getYUnits() != null && !DEF_VEC2_YUNIT.equals(value.getYUnits())) {
+            writer.writeAttribute(ATT_YUNITS, value.getYUnits().getUnit());
+        }
+    }
+
+    private void writeHotSpot(Vec2 value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_HOT_SPOT);
+            writeVec2(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeOverlayXY(Vec2 value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_OVERLAY_XY);
+            writeVec2(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeScreenXY(Vec2 value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_SCREEN_XY);
+            writeVec2(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeRotationXY(Vec2 value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_ROTATION_XY);
+            writeVec2(value);
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeSize(Vec2 value) throws XMLStreamException {
+        if (value != null) {
+            writer.writeStartElement(URI_KML, TAG_SIZE);
+            writeVec2(value);
             writer.writeEndElement();
         }
     }
 
     /**
-     *
-     * @param vec2
-     * @throws XMLStreamException
-     */
-    private void writeVec2(Vec2 vec2) throws XMLStreamException {
-        if (KmlUtilities.isFiniteNumber(vec2.getX()) && DEF_VEC2_X != vec2.getX()) {
-            writer.writeAttribute(ATT_X, Double.toString(vec2.getX()));
-        }
-        if (KmlUtilities.isFiniteNumber(vec2.getY()) && DEF_VEC2_Y != vec2.getY()) {
-            writer.writeAttribute(ATT_Y, Double.toString(vec2.getY()));
-        }
-        if (vec2.getXUnits() != null && !DEF_VEC2_XUNIT.equals(vec2.getXUnits())) {
-            writer.writeAttribute(ATT_XUNITS, vec2.getXUnits().getUnit());
-        }
-        if (vec2.getYUnits() != null && !DEF_VEC2_YUNIT.equals(vec2.getYUnits())) {
-            writer.writeAttribute(ATT_YUNITS, vec2.getYUnits().getUnit());
-        }
-    }
-
-    /**
-     *
-     * @param hotspot
-     * @throws XMLStreamException
-     */
-    private void writeHotSpot(Vec2 hotspot) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_HOT_SPOT);
-        this.writeVec2(hotspot);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param overlayXY
-     * @throws XMLStreamException
-     */
-    private void writeOverlayXY(Vec2 overlayXY) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_OVERLAY_XY);
-        this.writeVec2(overlayXY);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param screenXY
-     * @throws XMLStreamException
-     */
-    private void writeScreenXY(Vec2 screenXY) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_SCREEN_XY);
-        this.writeVec2(screenXY);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param rotationXY
-     * @throws XMLStreamException
-     */
-    private void writeRotationXY(Vec2 rotationXY) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_ROTATION_XY);
-        this.writeVec2(rotationXY);
-        writer.writeEndElement();
-    }
-
-    /**
-     *
-     * @param size
-     * @throws XMLStreamException
-     */
-    private void writeSize(Vec2 size) throws XMLStreamException {
-        writer.writeStartElement(URI_KML, TAG_SIZE);
-        this.writeVec2(size);
-        writer.writeEndElement();
-    }
-
-    /**
-     * <p>This method whrites character content as
-     * CDATA if input String contains "&lt;" character.
-     * Following KML elements mays contains CDATA : </p>
+     * Writes character content as CDATA if input String contains "&lt;" character.
+     * Following KML elements mays contains CDATA:
      * <ul>
      * <li>snippet,</p>
      * <li>description,</li>
@@ -3577,15 +2115,12 @@ public class KmlWriter extends StaxStreamWriter {
      * <li>linkDescription,</li>
      * <li>linkSnippet.</li>
      * </ul>
-     *
-     * @param string
-     * @throws XMLStreamException
      */
-    private void writeCharacterContent(Object string) throws XMLStreamException {
-        if (string instanceof Cdata) {
-            writer.writeCData(string.toString());
-        } else if (string instanceof String) {
-            writer.writeCharacters((String) string);
+    private void writeCharacterContent(Object value) throws XMLStreamException {
+        if (value instanceof Cdata) {
+            writer.writeCData(value.toString());
+        } else if (value instanceof String) {
+            writer.writeCharacters((String) value);
         } else {
             throw new IllegalArgumentException("Only String or CDATA argument.");
         }
@@ -3594,11 +2129,6 @@ public class KmlWriter extends StaxStreamWriter {
     /*
      * ------------------------ UTILITARY METHODS ------------------------------
      */
-    /**
-     *
-     * @param version
-     * @throws KmlException
-     */
     private void checkVersion(String version) throws KmlException {
         if (URI_KML.equals(version)) {
             return;
@@ -3606,11 +2136,6 @@ public class KmlWriter extends StaxStreamWriter {
         throw new KmlException("Kml writer error : Element not allowed by " + URI_KML + " namespace.");
     }
 
-    /**
-     *
-     * @param version
-     * @return
-     */
     private boolean checkVersionSimple(String version) {
         return URI_KML.equals(version);
     }
@@ -3619,19 +2144,13 @@ public class KmlWriter extends StaxStreamWriter {
      * ------------------- WRITING EXTENSIONS METHODS --------------------------
      */
     /**
-     * <p>This method writes complex extensions using associated writer.</p>
-     *
-     * @param ext
-     * @param objectExtensions
-     * @throws KmlException
-     * @throws XMLStreamException
+     * Writes complex extensions using associated writer.
      */
-    private void writeComplexExtensionsScheduler(
-            Extensions.Names ext, List<Object> objectExtensions)
-            throws KmlException, XMLStreamException {
-
+    private void writeComplexExtensionsScheduler(Extensions.Names ext, List<Object> objectExtensions)
+            throws KmlException, XMLStreamException
+    {
         for (Object object : objectExtensions) {
-            for (StaxStreamWriter candidate : this.extensionWriters) {
+            for (StaxStreamWriter candidate : extensionWriters) {
                 if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, ext, object)) {
                     ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, ext, object);
                 }
@@ -3640,19 +2159,13 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * <p>This method writes simple extensions using associated writer.</p>
-     *
-     * @param ext
-     * @param simpleExtensions
-     * @throws KmlException
-     * @throws XMLStreamException
+     * Writes simple extensions using associated writer.
      */
-    private void writeSimpleExtensionsScheduler(
-            Extensions.Names ext, List<SimpleTypeContainer> simpleExtensions)
-            throws KmlException, XMLStreamException {
-
+    private void writeSimpleExtensionsScheduler(Extensions.Names ext, List<SimpleTypeContainer> simpleExtensions)
+            throws KmlException, XMLStreamException
+    {
         for (SimpleTypeContainer object : simpleExtensions) {
-            for (StaxStreamWriter candidate : this.extensionWriters) {
+            for (StaxStreamWriter candidate : extensionWriters) {
                 if (((KmlExtensionWriter) candidate).canHandleSimple(URI_KML, ext, object.getTagName())) {
                     ((KmlExtensionWriter) candidate).writeSimpleExtensionElement(URI_KML, ext, object);
                 }
@@ -3661,38 +2174,27 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * <p>This method allows writting extensions at given level.</p>
-     *
-     * @param extensions
-     * @param level
-     * @throws KmlException
-     * @throws XMLStreamException
+     * Writes extensions at given level.
      */
     private void writeStandardExtensionLevel(Extensions extensions, Names level)
-            throws KmlException, XMLStreamException {
-
-        this.writeComplexExtensionsScheduler(
-                level, extensions.complexes(level));
-        this.writeSimpleExtensionsScheduler(
-                level, extensions.simples(level));
+            throws KmlException, XMLStreamException
+    {
+        writeComplexExtensionsScheduler(level, extensions.complexes(level));
+        writeSimpleExtensionsScheduler(level, extensions.simples(level));
     }
 
     /**
-     * <p>This method allows writting XML data using associated writer.</p>
-     *
-     * @param data
-     * @throws KmlException
-     * @throws XMLStreamException
+     * Writes XML data using associated writer.
      */
-    private void writeDataScheduler(List<Object> data)
-            throws KmlException, XMLStreamException {
-
-        for (Object object : data) {
-            for (StaxStreamWriter candidate : this.dataWriters) {
-                if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, object)) {
-                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, object);
-                } else if (((KmlExtensionWriter) candidate).canHandleSimple(URI_KML, null, ((SimpleTypeContainer) object).getTagName())) {
-                    ((KmlExtensionWriter) candidate).writeSimpleExtensionElement(URI_KML, null, (SimpleTypeContainer) object);
+    private void writeDataScheduler(List<Object> data) throws KmlException, XMLStreamException {
+        if (data != null) {
+            for (Object object : data) {
+                for (StaxStreamWriter candidate : dataWriters) {
+                    if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, object)) {
+                        ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, object);
+                    } else if (((KmlExtensionWriter) candidate).canHandleSimple(URI_KML, null, ((SimpleTypeContainer) object).getTagName())) {
+                        ((KmlExtensionWriter) candidate).writeSimpleExtensionElement(URI_KML, null, (SimpleTypeContainer) object);
+                    }
                 }
             }
         }

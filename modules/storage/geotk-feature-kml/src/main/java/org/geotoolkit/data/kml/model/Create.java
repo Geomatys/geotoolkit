@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 
 /**
  * <p>This interface maps Create element.</p>

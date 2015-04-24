@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreUtilities;
@@ -32,12 +33,11 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -64,7 +64,7 @@ public class AddDelta extends AbstractDelta{
      * a feature store which may be slow or changing with time.
      * this features from the given collection will be copied.
      */
-    public AddDelta(final Session session, final GenericName typeName, final Collection<? extends Feature> features){
+    public AddDelta(final Session session, final String typeName, final Collection<? extends Feature> features){
         super(session,typeName);
         ensureNonNull("type name", typeName);
         ensureNonNull("features", features);
@@ -84,7 +84,7 @@ public class AddDelta extends AbstractDelta{
         try{
             while(ite.hasNext()){
                 Feature sf = ite.next();
-                sf = FeatureUtilities.deepCopy(sf);
+                sf = FeatureExt.deepCopy(sf);
                 this.features.add(sf);
             }
         }finally{
@@ -163,7 +163,7 @@ public class AddDelta extends AbstractDelta{
      */
     @Override
     public Map<String, String> commit(final FeatureStore store) throws DataStoreException {
-        final List<FeatureId> createdIds = store.addFeatures(type, features);
+        final List<FeatureId> createdIds = store.addFeatures(type.toString(), features);
 
         //iterator and list should have the same size
         final Map<String,String> updates = new HashMap<String, String>();
@@ -173,7 +173,7 @@ public class AddDelta extends AbstractDelta{
             if(createdIds != null && !createdIds.isEmpty()){
                 while(ite.hasNext()){
                     final Feature f = ite.next();
-                    final String id = f.getIdentifier().getID();
+                    final String id = FeatureExt.getId(f).getID();
                         updates.put(id, createdIds.get(i).getID());
                     i++;
                 }

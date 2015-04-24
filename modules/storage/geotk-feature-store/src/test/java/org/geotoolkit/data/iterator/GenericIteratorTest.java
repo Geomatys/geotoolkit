@@ -23,6 +23,9 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import org.apache.sis.referencing.CommonCRS;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -34,28 +37,20 @@ import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
 import org.geotoolkit.data.memory.GenericModifyFeatureIterator;
-import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
-import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
-import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.*;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
@@ -64,9 +59,19 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 import org.opengis.util.GenericName;
 
-import java.util.*;
-
 import static junit.framework.Assert.*;
+import org.apache.sis.feature.FeatureTypeExt;
+import org.apache.sis.feature.ReprojectFeatureType;
+import org.apache.sis.feature.TransformFeatureType;
+import org.apache.sis.feature.ViewFeatureType;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.referencing.CRS;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.data.memory.GenericDecoratedFeatureIterator;
 
 /**
  * Tests of the different iterators.
@@ -75,21 +80,103 @@ import static junit.framework.Assert.*;
  */
 public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
 
-    protected static final FeatureFactory AF = FeatureFactory.LENIENT;
-
     private static final double DELTA = 0.000001d;
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     private static final GeometryFactory GF = new GeometryFactory();
-    private static final String COMPLEX_ID_1 = "complex-1";
-    private static final String COMPLEX_ID_2 = "complex-2";
+    private static final Integer COMPLEX_ID_1 = 11;
+    private static final Integer COMPLEX_ID_2 = 12;
     private static final GenericName NAME = NamesExt.create("http://test.com", "TestSchema");
 
-    private final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+    private final FeatureCollection collection;
+    private final FeatureCollection collectionComplex;
+    private final GenericName name;
+    private final FeatureType originalType;
+    private final FeatureType reducedType;
+    private final FeatureType reprojectedType;
+    private final Integer id1;
+    private final Integer id2;
+    private final Integer id3;
 
-    private final String id1 = NAME.tip().toString()+"."+0;
-    private final String id2 = NAME.tip().toString()+"."+1;
-    private final String id3 = NAME.tip().toString()+"."+2;
+    private final Feature sf1;
+    private final Feature sf2;
+    private final Feature sf3;
 
+    public GenericIteratorTest() throws NoSuchAuthorityCodeException, FactoryException{
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        name = NamesExt.create("http://test.com", "TestSchema");
+        builder = new FeatureTypeBuilder();
+        builder.setName(name);
+        builder.addAttribute(Integer.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(Point.class).setName("att_geom").setCRS(CommonCRS.WGS84.normalizedGeographic());
+        builder.addAttribute(String.class).setName("att_string");
+        builder.addAttribute(Double.class).setName("att_double");
+        originalType = builder.build();
+
+        //build a reduced type for retype iterator
+        builder = new FeatureTypeBuilder();
+        builder.setName(name);
+        builder.addAttribute(Integer.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(Double.class).setName("att_double");
+        reducedType = builder.build();
+
+        //build a reprojected type for reproject iterator
+        builder = new FeatureTypeBuilder();
+        builder.setName(name);
+        builder.addAttribute(Integer.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(Point.class).setName("att_geom").setCRS(CRS.forCode("EPSG:4326"));
+        builder.addAttribute(String.class).setName("att_string");
+        builder.addAttribute(Double.class).setName("att_double");
+        reprojectedType = builder.build();
+
+
+        collection = FeatureStoreUtilities.collection("id", originalType);
+
+        id1 = 0;
+        sf1 = originalType.newInstance();
+        sf1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), id1);
+        sf1.setPropertyValue("att_geom", GF.createPoint(new Coordinate(3, 0)));
+        sf1.setPropertyValue("att_string", "bbb");
+        sf1.setPropertyValue("att_double", 3d);
+        collection.add(sf1);
+
+        id2 = 1;
+        sf2 = originalType.newInstance();
+        sf2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), id2);
+        sf2.setPropertyValue("att_geom", GF.createPoint(new Coordinate(1, 0)));
+        sf2.setPropertyValue("att_string", "ccc");
+        sf2.setPropertyValue("att_double", 1d);
+        collection.add(sf2);
+
+        id3 = 2;
+        sf3 = originalType.newInstance();
+        sf3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), id3);
+        sf3.setPropertyValue("att_geom", GF.createPoint(new Coordinate(2, 0)));
+        sf3.setPropertyValue("att_string", "aaa");
+        sf3.setPropertyValue("att_double", 2d);
+        collection.add(sf3);
+
+        builder = new FeatureTypeBuilder();
+        builder.setName(name);
+        builder.addAttribute(Integer.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(String.class).setName("att_string").setMinimumOccurs(0).setMaximumOccurs(1);
+        builder.addAttribute(Double.class).setName("att_double").setMinimumOccurs(0).setMaximumOccurs(1);
+        FeatureType ct = builder.build();
+
+        collectionComplex = FeatureStoreUtilities.collection("cid", ct);
+
+        final Feature f1 = ct.newInstance();
+        f1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), COMPLEX_ID_1);
+        f1.setPropertyValue("att_string","aaaa");
+        f1.setPropertyValue("att_double",12.0);
+        collectionComplex.add(f1);
+
+        final Feature f2 = ct.newInstance();
+        f2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), COMPLEX_ID_2);
+        f2.setPropertyValue("att_string","bbbb");
+        f2.setPropertyValue("att_double",7.0);
+        collectionComplex.add(f2);
+
+    }
 
     @Test
     public void testEmptyIterator(){
@@ -178,7 +265,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         while(ite.hasNext()){
 
             f = ite.next();
-            final String id = f.getIdentifier().getID();
+            final Object id = f.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
 
             if(id1.equals(id)){
                 mask |= 1<<0;
@@ -208,7 +295,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, FeatureStoreUtilities.calculateCount(ite));
         ite = GenericFilterFeatureIterator.wrap(collection.iterator(), FF.equals(FF.literal("aaa"), FF.property("att_string")));
 
-        assertEquals(ite.next().getIdentifier().getID(),id3);
+        assertEquals(id3, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
         try{
             ite.next();
             fail("Should have raise a no such element exception.");
@@ -239,7 +326,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericMaxFeatureIterator.wrap(collection.iterator(), 1);
-        assertEquals(ite.next().getIdentifier().getID(),id1);
+        assertEquals(id1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
         try{
             ite.next();
             fail("Should have raise a no such element exception.");
@@ -265,8 +352,8 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         FeatureCollection collection = buildSimpleFeatureCollection();
         FeatureType originalType = collection.getFeatureType();
         Filter filter = Filter.INCLUDE;
-        Map<PropertyDescriptor,Object> values = new HashMap<PropertyDescriptor, Object>();
-        values.put(originalType.getDescriptor("att_string"), "toto");
+        Map<String,Object> values = new HashMap<>();
+        values.put("att_string", "toto");
 
         FeatureIterator ite = GenericModifyFeatureIterator.wrap(collection.iterator(), filter, values);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
@@ -284,7 +371,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         ite = GenericModifyFeatureIterator.wrap(collection.iterator(), filter, values);
         while(ite.hasNext()){
             Feature f = ite.next();
-            if(f.getIdentifier().getID().equals(id3)){
+            if (f.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()).equals(id3)) {
                 assertTrue(f.getProperty("att_string").getValue().equals("toto"));
             }else{
                 assertFalse(f.getProperty("att_string").getValue().equals("toto"));
@@ -318,10 +405,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
     }
 
     @Test
-    public void testReprojectFeatureIterator() throws DataStoreException, FactoryException, MismatchedFeatureException{
-
-        FeatureCollection collection = buildSimpleFeatureCollection();
-        FeatureType reprojectedType = buildReprojectFT();
+    public void testReprojectFeatureIterator() throws DataStoreException, FactoryException{
         QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(collection.getFeatureType().getName());
         Query query = qb.buildQuery();
@@ -329,16 +413,15 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
 
         final CoordinateReferenceSystem targetCRS = CommonCRS.WGS84.geographic();
 
-        FeatureReader retyped = GenericReprojectFeatureIterator.wrap(reader, targetCRS, new Hints());
-        assertEquals(reprojectedType,retyped.getFeatureType());
+        FeatureReader retyped = GenericDecoratedFeatureIterator.wrap(reader, new ReprojectFeatureType(reader.getFeatureType(), targetCRS), new Hints());
 
         int mask = 0;
         Feature f;
         while(retyped.hasNext()){
             f = retyped.next();
-            final String id = f.getIdentifier().getID();
+            final Object id = f.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
 
-            assertEquals(3, f.getProperties().size());
+            assertEquals(4, f.getType().getProperties(true).size());
             assertEquals(targetCRS,JTS.findCoordinateReferenceSystem((Geometry)f.getProperty("att_geom").getValue()));
 
             if(id1.equals(id)){
@@ -360,14 +443,14 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
 
         //check has next do not iterate
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
-        retyped = GenericReprojectFeatureIterator.wrap(reader, CommonCRS.WGS84.geographic(), new Hints());
+        retyped = GenericDecoratedFeatureIterator.wrap(reader, new ReprojectFeatureType(reader.getFeatureType(), CommonCRS.WGS84.geographic()), new Hints());
         testIterationOnNext(retyped, 3);
 
         //check sub iterator is properly closed
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(reader);
         assertFalse(checkIte.isClosed());
-        retyped = GenericReprojectFeatureIterator.wrap(checkIte, CommonCRS.WGS84.geographic(), new Hints());
+        retyped = GenericDecoratedFeatureIterator.wrap(checkIte, new ReprojectFeatureType(checkIte.getFeatureType(), CommonCRS.WGS84.geographic()), new Hints());
         while(retyped.hasNext()) retyped.next();
         retyped.close();
         assertTrue(checkIte.isClosed());
@@ -378,10 +461,10 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         FeatureType originalType = buildOriginalFT();
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final GenericName name = NamesExt.create("http://test.com", "TestSchema");
-        builder.reset();
         builder.setName(name);
-        builder.add("att_geom", LineString.class, CommonCRS.WGS84.normalizedGeographic());
-        final FeatureType type = builder.buildFeatureType();
+        builder.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        builder.addAttribute(LineString.class).setName("att_geom").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType type = builder.build();
 
         final LineString geom = GF.createLineString(
                 new Coordinate[]{
@@ -394,7 +477,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
                 });
 
         final FeatureCollection collection = FeatureStoreUtilities.collection("id", type);
-        Feature sf = FeatureUtilities.defaultFeature(type, "");
+        Feature sf = type.newInstance();
         sf.setPropertyValue("att_geom", geom);
         collection.add(sf);
 
@@ -409,11 +492,12 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         hints.put(HintsPending.FEATURE_DETACHED, Boolean.TRUE);
 
         GeometryTransformer decim = new GeometryScaleTransformer(10, 10);
-        FeatureReader retyped = GenericTransformFeatureIterator.wrap(reader,decim, hints);
+        final TransformFeatureType ttype = new TransformFeatureType(reader.getFeatureType(), decim);
+        FeatureReader retyped = GenericDecoratedFeatureIterator.wrap(reader, ttype, hints);
 
         assertTrue(retyped.hasNext());
 
-        LineString decimated = (LineString) retyped.next().getDefaultGeometryProperty().getValue();
+        LineString decimated = (LineString) retyped.next().getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
 
         assertFalse(retyped.hasNext());
         retyped.close();
@@ -429,7 +513,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         assertTrue(reader.hasNext());
 
-        LineString notDecimated = (LineString) reader.next().getDefaultGeometryProperty().getValue();
+        LineString notDecimated = (LineString) reader.next().getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
         assertEquals(6, notDecimated.getNumPoints());
         assertFalse(reader.hasNext());
         reader.close();
@@ -441,11 +525,11 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         hints.put(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
 
         decim = new GeometryScaleTransformer(10, 10);
-        retyped = GenericTransformFeatureIterator.wrap(reader,decim, hints);
+        retyped = GenericDecoratedFeatureIterator.wrap(reader,new TransformFeatureType(reader.getFeatureType(), decim), hints);
 
         assertTrue(retyped.hasNext());
 
-        decimated = (LineString) retyped.next().getDefaultGeometryProperty().getValue();
+        decimated = (LineString) retyped.next().getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
 
         assertFalse(retyped.hasNext());
         retyped.close();
@@ -461,7 +545,7 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         assertTrue(reader.hasNext());
 
-        notDecimated = (LineString) reader.next().getDefaultGeometryProperty().getValue();
+        notDecimated = (LineString) reader.next().getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
         assertEquals(6, notDecimated.getNumPoints());
         assertFalse(reader.hasNext());
         reader.close();
@@ -470,23 +554,23 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
     @Test
     public void testRetypeFeatureIterator() throws DataStoreException{
 
-        FeatureCollection collection = buildSimpleFeatureCollection();
-        FeatureType reducedType = buildReduceFT();
-        QueryBuilder qb = new QueryBuilder();
+        final FeatureCollection collection = buildSimpleFeatureCollection();
+        final FeatureType reducedType = FeatureTypeExt.createSubType(collection.getFeatureType(), AttributeConvention.IDENTIFIER_PROPERTY.toString(),"att_double");
+        final QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(collection.getFeatureType().getName());
-        Query query = qb.buildQuery();
+        final Query query = qb.buildQuery();
         FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
-        FeatureReader retyped = GenericRetypeFeatureIterator.wrap(reader,reducedType,null);
+        FeatureReader retyped = GenericDecoratedFeatureIterator.wrap(reader, (ViewFeatureType) reducedType,null);
         assertEquals(reducedType,retyped.getFeatureType());
 
         int mask = 0;
         Feature f;
         while(retyped.hasNext()){
             f = retyped.next();
-            final String id = f.getIdentifier().getID();
+            final Object id = f.getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString());
 
-            assertEquals(1, f.getProperties().size());
+            assertEquals(2, f.getType().getProperties(true).size());
 
             if(id1.equals(id)){
                 mask |= 1<<0;
@@ -500,20 +584,18 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
             }
         }
 
-        if(mask!=7){
-            fail("missing features in iterations");
-        }
+        assertEquals("missing features in iterations", 7, mask);
 
         //check has next do not iterate
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
-        retyped = GenericRetypeFeatureIterator.wrap(reader,reducedType,null);
+        retyped = GenericDecoratedFeatureIterator.wrap(reader, (ViewFeatureType) reducedType,null);
         testIterationOnNext(retyped, 3);
 
         //check sub iterator is properly closed
         reader = collection.getSession().getFeatureStore().getFeatureReader(query);
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(reader);
         assertFalse(checkIte.isClosed());
-        retyped = GenericRetypeFeatureIterator.wrap(checkIte,reducedType,null);
+        retyped = GenericDecoratedFeatureIterator.wrap(checkIte, (ViewFeatureType) reducedType,null);
         while(retyped.hasNext()) retyped.next();
         retyped.close();
         assertTrue(checkIte.isClosed());
@@ -532,9 +614,9 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
 
 
         ite = GenericSortByFeatureIterator.wrap(collection.iterator(), sorts);
-        assertEquals(id3,ite.next().getIdentifier().getID());
-        assertEquals(id1,ite.next().getIdentifier().getID());
-        assertEquals(id2,ite.next().getIdentifier().getID());
+        assertEquals(id3, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
+        assertEquals(id1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
+        assertEquals(id2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
 
         try{
             ite.next();
@@ -570,8 +652,8 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
-        assertEquals(ite.next().getIdentifier().getID(),COMPLEX_ID_2);
-        assertEquals(ite.next().getIdentifier().getID(),COMPLEX_ID_1);
+        assertEquals(COMPLEX_ID_2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
+        assertEquals(COMPLEX_ID_1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
 
         try{
             ite.next();
@@ -589,8 +671,8 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
-        assertEquals(ite.next().getIdentifier().getID(),COMPLEX_ID_1);
-        assertEquals(ite.next().getIdentifier().getID(),COMPLEX_ID_2);
+        assertEquals(COMPLEX_ID_1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
+        assertEquals(COMPLEX_ID_2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
 
         try{
             ite.next();
@@ -608,8 +690,8 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
-        assertEquals(ite.next().getIdentifier().getID(),COMPLEX_ID_2);
-        assertEquals(ite.next().getIdentifier().getID(),COMPLEX_ID_1);
+        assertEquals(COMPLEX_ID_2, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
+        assertEquals(COMPLEX_ID_1, ite.next().getPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString()));
 
         try{
             ite.next();
@@ -697,44 +779,28 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         assertTrue(checkIte.isClosed());
     }
 
-    private FeatureType buildReprojectFT() throws FactoryException {
-        //build a reprojected type for reproject iterator
-        builder.reset();
-        builder.setName(NAME);
-        builder.add("att_geom", Point.class, CommonCRS.WGS84.geographic());
-        builder.add("att_string", String.class);
-        builder.add("att_double", Double.class);
-        FeatureType reprojectedType = builder.buildSimpleFeatureType();
-        return reprojectedType;
-    }
-
-    private FeatureType buildReduceFT() {
-        //build a reduced type for retype iterator
-        builder.reset();
-        builder.setName(NAME);
-        builder.add("att_double", Double.class);
-        FeatureType reducedType = builder.buildSimpleFeatureType();
-        return reducedType;
-    }
-
     private FeatureCollection buildComplexFeatureCollection() {
-        builder.reset();
+        FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.setName(NAME);
-        builder.add("att_string", String.class,0,1,false,null);
-        builder.add("att_double", Double.class,0,1,false,null);
-        FeatureType ct = builder.buildFeatureType();
+        builder.addAttribute(Integer.class).setName("id").addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        builder.addAttribute(String.class).setName("att_string");
+        builder.addAttribute(Double.class).setName("att_double");
+        FeatureType ct = builder.build();
 
         FeatureCollection collectionComplex = FeatureStoreUtilities.collection("cid", ct);
 
-        Collection<Property> props = new ArrayList<Property>();
-        props.add(AF.createAttribute("aaaa", (AttributeDescriptor) ct.getDescriptor("att_string"), null));
-        props.add(AF.createAttribute(12, (AttributeDescriptor) ct.getDescriptor("att_double"), null));
-        collectionComplex.add(AF.createFeature(props, ct, COMPLEX_ID_1));
+        Feature f1 = ct.newInstance();
+        f1.setPropertyValue("id", COMPLEX_ID_1);
+        f1.setPropertyValue("att_string", "aaaa");
+        f1.setPropertyValue("att_double", 12.0);
+        collectionComplex.add(f1);
 
-        props = new ArrayList<Property>();
-        props.add(AF.createAttribute("bbbb", (AttributeDescriptor) ct.getDescriptor("att_string"), null));
-        props.add(AF.createAttribute(7, (AttributeDescriptor) ct.getDescriptor("att_double"), null));
-        collectionComplex.add(AF.createFeature(props, ct, COMPLEX_ID_2));
+        Feature f2 = ct.newInstance();
+        f2.setPropertyValue("id", COMPLEX_ID_2);
+        f2.setPropertyValue("att_string", "bbbb");
+        f2.setPropertyValue("att_double", 7.0);
+        collectionComplex.add(f2);
+
         return collectionComplex;
     }
 
@@ -742,22 +808,22 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
         FeatureType originalType = buildOriginalFT();
         FeatureCollection collection = FeatureStoreUtilities.collection("id", originalType);
 
-        String id1 = NAME.tip().toString()+"."+0;
-        Feature sf1 = FeatureUtilities.defaultFeature(originalType, id1);
+        Feature sf1 = originalType.newInstance();
+        sf1.setPropertyValue("id", 0);
         sf1.setPropertyValue("att_geom", GF.createPoint(new Coordinate(3, 0)));
         sf1.setPropertyValue("att_string", "bbb");
         sf1.setPropertyValue("att_double", 3d);
         collection.add(sf1);
 
-        String id2 = NAME.tip().toString()+"."+1;
-        Feature sf2 = FeatureUtilities.defaultFeature(originalType, id2);
+        Feature sf2 = originalType.newInstance();
+        sf2.setPropertyValue("id", 1);
         sf2.setPropertyValue("att_geom", GF.createPoint(new Coordinate(1, 0)));
         sf2.setPropertyValue("att_string", "ccc");
         sf2.setPropertyValue("att_double", 1d);
         collection.add(sf2);
 
-        String id3 = NAME.tip().toString()+"."+2;
-        Feature sf3 = FeatureUtilities.defaultFeature(originalType, id3);
+        Feature sf3 = originalType.newInstance();
+        sf3.setPropertyValue("id", 2);
         sf3.setPropertyValue("att_geom", GF.createPoint(new Coordinate(2, 0)));
         sf3.setPropertyValue("att_string", "aaa");
         sf3.setPropertyValue("att_double", 2d);
@@ -766,12 +832,13 @@ public class GenericIteratorTest extends org.geotoolkit.test.TestBase {
     }
 
     private FeatureType buildOriginalFT() {
-        builder.reset();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.setName(NAME);
-        builder.add("att_geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
-        builder.add("att_string", String.class);
-        builder.add("att_double", Double.class);
-        return builder.buildSimpleFeatureType();
+        builder.addAttribute(Integer.class).setName("id").addRole(AttributeRole.IDENTIFIER_COMPONENT);
+        builder.addAttribute(Point.class).setName("att_geom").setCRS(CommonCRS.WGS84.normalizedGeographic()).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        builder.addAttribute(String.class).setName("att_string");
+        builder.addAttribute(Double.class).setName("att_double");
+        return builder.build();
     }
 
     private void testIterationOnNext(final FeatureIterator ite, final int size){

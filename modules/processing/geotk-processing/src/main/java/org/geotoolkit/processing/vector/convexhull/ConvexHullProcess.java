@@ -25,23 +25,24 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.processing.AbstractProcess;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.PropertyType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.parameter.Parameters.*;
+
 
 /**
  * Compute the convex hull from a FeatureCollection. An optional parameter
  * geometry_name set the GeometryAttribute name used to compute the convex hull.
  * By default the process use the default GeometryAttribute in Features.
+ *
  * @author Quentin Boileau
- * @module pending
  */
 public class ConvexHullProcess extends AbstractProcess {
-
     /**
      * Default constructor
      */
@@ -54,49 +55,40 @@ public class ConvexHullProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList   = value(ConvexHullDescriptor.FEATURE_IN, inputParameters);
-        final String geometryName                           = value(ConvexHullDescriptor.GEOMETRY_NAME, inputParameters);
-
+        final FeatureCollection inputFeatureList = value(ConvexHullDescriptor.FEATURE_IN, inputParameters);
+        final String geometryName                = value(ConvexHullDescriptor.GEOMETRY_NAME, inputParameters);
         final Geometry hull = computeConvexHull(inputFeatureList, geometryName);
-
         getOrCreate(ConvexHullDescriptor.GEOMETRY_OUT, outputParameters).setValue(hull);
     }
 
     /**
      * Compute the convex hull from a feature collection on a geometry attribute name
-     * @param inputFeatureList
-     * @param geometryName
+     *
      * @return the convex hull geometry
      */
     private Geometry computeConvexHull(final FeatureCollection inputFeatureList, String geometryName) {
-
-
         Geometry convexHull = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem crs = null;
-        final FeatureIterator iter = inputFeatureList.iterator();
-        try {
+        try (final FeatureIterator iter = inputFeatureList.iterator()) {
             while (iter.hasNext()) {
                 final Feature feature = iter.next();
 
                 //in the first pass, if the geometry attribute name is null, we use the default geometry attribute name
                 if (geometryName == null) {
-                    geometryName = feature.getDefaultGeometryProperty().getName().tip().toString();
+                    geometryName = AttributeConvention.GEOMETRY_PROPERTY.toString();
                 }
-                for (Property property : feature.getProperties()) {
-                    if (property.getDescriptor() instanceof GeometryDescriptor) {
-                        final GeometryDescriptor desc = (GeometryDescriptor) property.getDescriptor();
-                        if (desc.getName().tip().toString().equals(geometryName)) {
-                            crs = desc.getCoordinateReferenceSystem();
-
-                            final Geometry tmpGeom = (Geometry) property.getValue();
+                for (PropertyType property : feature.getType().getProperties(true)) {
+                    if (AttributeConvention.isGeometryAttribute(property)) {
+                        final String name = property.getName().tip().toString();
+                        if (name.equals(geometryName)) {
+                            crs = FeatureExt.getCRS(property);
+                            final Geometry tmpGeom = (Geometry) feature.getPropertyValue(name);
                             convexHull = convexHull.union(tmpGeom);
                             convexHull = convexHull.convexHull();
                         }
                     }
                 }
             }
-        } finally {
-            iter.close();
         }
         convexHull.setSRID(SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1));
         return convexHull;

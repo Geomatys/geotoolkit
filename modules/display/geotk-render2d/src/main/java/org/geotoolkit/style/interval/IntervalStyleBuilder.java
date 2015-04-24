@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.table.AbstractTableModel;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
@@ -40,10 +41,12 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.Operation;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
@@ -63,7 +66,6 @@ import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Stroke;
-import org.opengis.style.StyleFactory;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -337,23 +339,29 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         //search the different numeric attributs
         FeatureType schema = layer.getCollection().getFeatureType();
 
-        for(PropertyDescriptor desc : schema.getDescriptors()){
-            Class<?> type = desc.getType().getBinding();
+        for(PropertyType desc : schema.getProperties(true)){
+            if(desc instanceof AttributeType){
+                Class<?> type = ((AttributeType)desc).getValueClass();
 
-            if(Number.class.isAssignableFrom(type) || type == byte.class || type==short.class ||
-               type==int.class || type==long.class || type==float.class || type == double.class){
-                properties.add(ff.property(desc.getName().tip().toString()));
+                if(Number.class.isAssignableFrom(type) || type == byte.class || type==short.class ||
+                   type==int.class || type==long.class || type==float.class || type == double.class){
+                    properties.add(ff.property(desc.getName().tip().toString()));
+                }
             }
         }
 
         //find the geometry class for template
-        GeometryDescriptor geo = schema.getGeometryDescriptor();
-        
-        if(geo==null){
+        Class<?> geoClass = null;
+        try{
+            PropertyType geo = schema.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString());
+            geoClass = ((AttributeType)((Operation)geo).getResult()).getValueClass();
+        }catch(PropertyNotFoundException ex){
+        }
+
+        if(geoClass==null){
             return;
         }
         
-        Class<?> geoClass = geo.getType().getBinding();
 
         if(template==null){
             if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){
@@ -367,7 +375,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
 
         //search the extreme values
-        final QueryBuilder query = new QueryBuilder(layer.getCollection().getFeatureType().getName());
+        final QueryBuilder query = new QueryBuilder(layer.getCollection().getFeatureType().getName().toString());
 
         if(classification == null || layer == null) return;
         if(!properties.contains(classification)) return;

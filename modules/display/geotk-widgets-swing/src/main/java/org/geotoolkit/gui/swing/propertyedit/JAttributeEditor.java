@@ -26,11 +26,13 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.PropertyType;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.*;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Property;
 import org.opengis.util.InternationalString;
 
 /**
@@ -93,8 +95,8 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
     }
     
     public Property getProperty() {
-        if(editor != null ){
-            property.setValue(editor.getValue());
+        if(editor instanceof Attribute){
+            ((Attribute)property).setValue(editor.getValue());
         }
         return property;
     }
@@ -110,7 +112,7 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
         if (useProvidedEditor) {
             
             if (this.property != null) {
-                editor.setValue(property.getType(), property.getValue(), property.getUserData());
+                editor.setValue(FeatureExt.getType(property), property.getValue());
             }
             editor.addPropertyChangeListener(this);
             editor.addFocusListener(this);
@@ -119,9 +121,9 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
         } else {
             
             if (this.property != null) {
-                editor = getEditor(editors,this.property.getType());
+                editor = getEditor(editors, (AttributeType) FeatureExt.getType(this.property));
                 if(editor != null){
-                    editor.setValue(property.getType(), property.getValue(), property.getUserData());
+                    editor.setValue(FeatureExt.getType(property), property.getValue());
                     editor.addPropertyChangeListener(this);
                     editor.addFocusListener(this);
                     add(BorderLayout.CENTER,editor);
@@ -150,10 +152,10 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
     }
 
 
-    public static PropertyValueEditor getEditor(final Collection<? extends PropertyValueEditor> editors, PropertyType type){
+    public static PropertyValueEditor getEditor(final Collection<? extends PropertyValueEditor> editors, AttributeType type){
         if(type != null){
             for(PropertyValueEditor edit : editors){
-                final Class clazz = type.getBinding();
+                final Class clazz = type.getValueClass();
                 if(edit instanceof ArrayEditor && clazz.isArray()){
                     final PropertyValueEditor cp = edit.copy();
                     ((ArrayEditor)cp).setEditors(editors);

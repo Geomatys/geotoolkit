@@ -24,23 +24,24 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CRS;
 
 import org.junit.Test;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * JUnit test of clip with a FeatureCollection process
@@ -49,7 +50,6 @@ import static org.junit.Assert.*;
  */
 public class DifferenceTest extends AbstractProcessTest {
 
-    private static FeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
     private static FeatureType type;
 
@@ -77,34 +77,27 @@ public class DifferenceTest extends AbstractProcessTest {
         //Expected Features out
         final FeatureCollection featureListResult = buildResultList();
 
-        assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
-        assertEquals(featureListOut.getID(), featureListResult.getID());
-        assertEquals(featureListOut.size(), featureListResult.size());
-        assertTrue(featureListOut.containsAll(featureListResult));
+        compare(featureListResult,featureListOut);
     }
 
     private static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Building");
-        ftb.add("name", String.class);
-        ftb.add("position", Polygon.class, CRS.forCode("EPSG:3395"));
-        ftb.add("height", Integer.class);
-
-        ftb.setDefaultGeometry("position");
-        final FeatureType sft = ftb.buildFeatureType();
-        return sft;
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("name");
+        ftb.addAttribute(Polygon.class).setName("position").setCRS(CRS.forCode("EPSG:3395")).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Integer.class).setName("height");
+        return ftb.build();
     }
 
     private static FeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Building");
-        ftb.add("name", String.class);
-        ftb.add("position", Geometry.class, CRS.forCode("EPSG:3395"));
-        ftb.add("height", Integer.class);
-
-        ftb.setDefaultGeometry("position");
-        final FeatureType sft = ftb.buildFeatureType();
-        return sft;
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("name");
+        ftb.addAttribute(Geometry.class).setName("position").setCRS(CRS.forCode("EPSG:3395")).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        ftb.addAttribute(Integer.class).setName("height");
+        return ftb.build();
     }
 
     private static FeatureCollection buildFeatureList() throws FactoryException {
@@ -115,7 +108,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
         geometryFactory = new GeometryFactory();
 
-        Feature myFeature1;
+        Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(6.0, 3.0),
@@ -124,14 +117,13 @@ public class DifferenceTest extends AbstractProcessTest {
                     new Coordinate(6.0, 4.0),
                     new Coordinate(6.0, 3.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Building1");
-        sfb.setPropertyValue("height", 12);
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature1 = sfb.buildFeature("id-01");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-01");
+        myFeature1.setPropertyValue("name", "Building1");
+        myFeature1.setPropertyValue("height", 12);
+        myFeature1.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature1);
 
-        Feature myFeature2;
+        Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(8.0, 4.0),
@@ -140,14 +132,13 @@ public class DifferenceTest extends AbstractProcessTest {
                     new Coordinate(8.0, 7.0),
                     new Coordinate(8.0, 4.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Building2");
-        sfb.setPropertyValue("height", 12);
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature2 = sfb.buildFeature("id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue("name", "Building2");
+        myFeature2.setPropertyValue("height", 12);
+        myFeature2.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature2);
 
-        Feature myFeature3;
+        Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(6.0, -2.0),
@@ -156,14 +147,13 @@ public class DifferenceTest extends AbstractProcessTest {
                     new Coordinate(6.0, 1.0),
                     new Coordinate(6.0, -2.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Building3");
-        sfb.setPropertyValue("height", 12);
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature3 = sfb.buildFeature("id-03");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03");
+        myFeature3.setPropertyValue("name", "Building3");
+        myFeature3.setPropertyValue("height", 12);
+        myFeature3.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature3);
 
-        Feature myFeature4;
+        Feature myFeature4 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(0.0, 6.0),
@@ -172,14 +162,13 @@ public class DifferenceTest extends AbstractProcessTest {
                     new Coordinate(0.0, 9.0),
                     new Coordinate(0.0, 6.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Building4");
-        sfb.setPropertyValue("height", 12);
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature4 = sfb.buildFeature("id-04");
+        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-04");
+        myFeature4.setPropertyValue("name", "Building4");
+        myFeature4.setPropertyValue("height", 12);
+        myFeature4.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature4);
 
-        Feature myFeature5;
+        Feature myFeature5 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(-4.0, 1.0),
@@ -188,11 +177,10 @@ public class DifferenceTest extends AbstractProcessTest {
                     new Coordinate(-4.0, 3.0),
                     new Coordinate(-4.0, 1.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Building5");
-        sfb.setPropertyValue("height", 12);
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature5 = sfb.buildFeature("id-05");
+        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-05");
+        myFeature5.setPropertyValue("name", "Building5");
+        myFeature5.setPropertyValue("height", 12);
+        myFeature5.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature5);
 
 
@@ -207,7 +195,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
         geometryFactory = new GeometryFactory();
 
-        Feature myFeature1;
+        Feature myFeature1 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(0.0, 1.0),
@@ -216,14 +204,13 @@ public class DifferenceTest extends AbstractProcessTest {
                     new Coordinate(0.0, 3.0),
                     new Coordinate(0.0, 1.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Building11");
-        sfb.setPropertyValue("height", 12);
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature1 = sfb.buildFeature("id-11");
+        myFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-11");
+        myFeature1.setPropertyValue("name", "Building11");
+        myFeature1.setPropertyValue("height", 12);
+        myFeature1.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature1);
 
-        Feature myFeature2;
+        Feature myFeature2 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(3.0, 5.0),
@@ -232,14 +219,13 @@ public class DifferenceTest extends AbstractProcessTest {
                     new Coordinate(3.0, 6.0),
                     new Coordinate(3.0, 5.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Building11");
-        sfb.setPropertyValue("height", 12);
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature2 = sfb.buildFeature("id-12");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-12");
+        myFeature2.setPropertyValue("name", "Building11");
+        myFeature2.setPropertyValue("height", 12);
+        myFeature2.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature2);
 
-        Feature myFeature3;
+        Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(6.0, 3.0),
@@ -248,14 +234,13 @@ public class DifferenceTest extends AbstractProcessTest {
                     new Coordinate(6.0, 6.0),
                     new Coordinate(6.0, 3.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Building13");
-        sfb.setPropertyValue("height", 12);
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature3 = sfb.buildFeature("id-13");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-13");
+        myFeature3.setPropertyValue("name", "Building13");
+        myFeature3.setPropertyValue("height", 12);
+        myFeature3.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature3);
 
-        Feature myFeature4;
+        Feature myFeature4 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(10.0, 0.0),
@@ -264,11 +249,10 @@ public class DifferenceTest extends AbstractProcessTest {
                     new Coordinate(10.0, 4.0),
                     new Coordinate(10.0, 0.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Building14");
-        sfb.setPropertyValue("height", 12);
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature4 = sfb.buildFeature("id-14");
+        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-14");
+        myFeature4.setPropertyValue("name", "Building14");
+        myFeature4.setPropertyValue("height", 12);
+        myFeature4.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature4);
 
         return featureList;
@@ -284,7 +268,7 @@ public class DifferenceTest extends AbstractProcessTest {
 
 
 
-        Feature myFeature2;
+        Feature myFeature2 = type.newInstance();
         LinearRing ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(8.0, 6.0),
@@ -296,14 +280,13 @@ public class DifferenceTest extends AbstractProcessTest {
                     new Coordinate(9.0, 6.0),
                     new Coordinate(8.0, 6.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Building2");
-        sfb.setPropertyValue("height", 12);
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature2 = sfb.buildFeature("id-02");
+        myFeature2.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-02");
+        myFeature2.setPropertyValue("name", "Building2");
+        myFeature2.setPropertyValue("height", 12);
+        myFeature2.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature2);
 
-        Feature myFeature3;
+        Feature myFeature3 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(11.0, 1.0),
@@ -316,14 +299,13 @@ public class DifferenceTest extends AbstractProcessTest {
                     new Coordinate(11.0, 0.0),
                     new Coordinate(11.0, 1.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Building3");
-        sfb.setPropertyValue("height", 12);
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature3 = sfb.buildFeature("id-03");
+        myFeature3.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-03");
+        myFeature3.setPropertyValue("name", "Building3");
+        myFeature3.setPropertyValue("height", 12);
+        myFeature3.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature3);
 
-        Feature myFeature4;
+        Feature myFeature4 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(3.0, 6.0),
@@ -332,14 +314,13 @@ public class DifferenceTest extends AbstractProcessTest {
                     new Coordinate(3.0, 9.0),
                     new Coordinate(3.0, 6.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Building4");
-        sfb.setPropertyValue("height", 12);
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature4 = sfb.buildFeature("id-04");
+        myFeature4.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-04");
+        myFeature4.setPropertyValue("name", "Building4");
+        myFeature4.setPropertyValue("height", 12);
+        myFeature4.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature4);
 
-        Feature myFeature5;
+        Feature myFeature5 = type.newInstance();
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(-4.0, 1.0),
@@ -348,11 +329,10 @@ public class DifferenceTest extends AbstractProcessTest {
                     new Coordinate(-4.0, 3.0),
                     new Coordinate(-4.0, 1.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Building5");
-        sfb.setPropertyValue("height", 12);
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
-        myFeature5 = sfb.buildFeature("id-05");
+        myFeature5.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "id-05");
+        myFeature5.setPropertyValue("name", "Building5");
+        myFeature5.setPropertyValue("height", 12);
+        myFeature5.setPropertyValue("position", geometryFactory.createPolygon(ring, null));
         featureList.add(myFeature5);
 
         return featureList;

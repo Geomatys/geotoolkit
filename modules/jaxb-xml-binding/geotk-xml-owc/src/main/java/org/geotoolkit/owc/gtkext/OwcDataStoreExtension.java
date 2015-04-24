@@ -132,9 +132,9 @@ public class OwcDataStoreExtension extends OwcExtension {
         
         //write the type name
         final List<Object> fieldList = offering.getOperationOrContentOrStyleSet();
-        final GenericName typeName = getTypeName(mapLayer);
+        final String typeName = getTypeName(mapLayer);
         if(typeName!=null){
-            fieldList.add(new ParameterType(KEY_DATANAME,String.class.getName(),NamesExt.toExpandedString(typeName)));
+            fieldList.add(new ParameterType(KEY_DATANAME,String.class.getName(),typeName));
         }
                        
         //write store creation parameters
@@ -213,7 +213,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         return null;
     }
     
-    private static GenericName getTypeName(MapLayer layer){
+    private static String getTypeName(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
             final Source source = fml.getCollection().getSource();
@@ -224,7 +224,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         }else if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final CoverageReference covref = cml.getCoverageReference();
-            return covref.getName();
+            return covref.getName().toString();
         }
         return null;
     }

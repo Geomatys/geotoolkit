@@ -25,22 +25,22 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.AttributeType;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
-import org.geotoolkit.feature.type.FeatureType;
+import org.apache.sis.feature.DefaultAttributeType;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.geotoolkit.data.mapinfo.mif.MIFUtils;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
  * Util class to build a feature from Multi line object of a MIF file.
@@ -53,16 +53,8 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
     public static final GenericName NAME = NamesExt.create("PLINE");
     public static final GenericName SMOOTH_NAME = NamesExt.create("SMOOTH");
 
-    private static final AttributeDescriptor SMOOTH;
-    private static final AttributeDescriptor PEN;
-
-    static {
-        PEN = new DefaultAttributeDescriptor(STRING_TYPE, Pen.NAME, 1, 1, true, null);
-
-        final AttributeType smoothType =
-                new DefaultAttributeType(SMOOTH_NAME, Boolean.class, false, false, null, null, null);
-        SMOOTH = new DefaultAttributeDescriptor(smoothType, SMOOTH_NAME, 1, 1, false, Boolean.FALSE);
-    }
+    private static final AttributeType SMOOTH = new DefaultAttributeType(Collections.singletonMap("name", SMOOTH_NAME), Boolean.class, 1, 1, null);
+    private static final AttributeType PEN = new DefaultAttributeType(Collections.singletonMap("name", Pen.NAME), String.class, 1, 1, null);
 
     public FeatureType featureType;
 
@@ -112,13 +104,13 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
                 lineTab[lineCount] = GEOMETRY_FACTORY.createLineString(seq);
             }
 
-            toFill.getDefaultGeometryProperty().setValue(GEOMETRY_FACTORY.createMultiLineString(lineTab));
+            toFill.setPropertyValue(MIFUtils.findGeometryProperty(toFill.getType()).getName().tip().toString(), GEOMETRY_FACTORY.createMultiLineString(lineTab));
 
         } catch (InputMismatchException ex) {
             throw new DataStoreException("Line is not properly defined : not enough points found.", ex);
         }
 
-        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getDescriptors().contains(PEN)) {
+        if(scanner.hasNext(Pen.PEN_PATTERN) && toFill.getType().getProperties(true).contains(PEN)) {
             String args = scanner.next()+scanner.nextLine();
             String[] argsTab = args.substring(args.indexOf('(')+1, args.length()-1)
                     .replaceAll("[^\\d^,]+", "")
@@ -131,12 +123,12 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
                 final int pattern = Integer.decode(argsTab[1]);
                 final int color = Integer.decode(argsTab[2]);
                 Pen pen = new Pen(width, pattern, color);
-                toFill.getProperty(Pen.NAME).setValue(pen);
+                toFill.setPropertyValue(Pen.NAME.toString(),pen);
             }
         }
 
         if(scanner.hasNext(Pattern.compile(SMOOTH_NAME.tip().toString(), Pattern.CASE_INSENSITIVE))) {
-            toFill.getProperty(SMOOTH_NAME).setValue(Boolean.TRUE);
+            toFill.setPropertyValue(SMOOTH_NAME.toString(),Boolean.TRUE);
         }
 
     }
@@ -151,7 +143,7 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
         StringBuilder builder = new StringBuilder(NAME.tip().toString());
 
         MultiLineString polyLine = null;
-        Object value = geometry.getDefaultGeometryProperty().getValue();
+        Object value = MIFUtils.getGeometryValue(geometry);
         if(value instanceof LineString) {
             polyLine = GEOMETRY_FACTORY.createMultiLineString(new LineString[]{(LineString)value});
         } else {
@@ -170,19 +162,14 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
             }
         }
 
-        if(geometry.getProperty(Pen.NAME) != null) {
-            Object penValue = geometry.getProperty(Pen.NAME).getValue();
-            if(penValue != null && penValue instanceof Pen) {
-                builder.append(penValue).append('\n');
-            }
+        final Object pen = MIFUtils.getPropertySafe(geometry, Pen.NAME.toString());
+        if (pen instanceof Pen) {
+            builder.append(pen).append('\n');
         }
 
-        Property smooth;
-        if((smooth =geometry.getProperty(SMOOTH_NAME)) != null) {
-            Object val = smooth.getValue();
-            if(val != null && val instanceof Boolean && val.equals(Boolean.TRUE)) {
-                builder.append(SMOOTH_NAME.tip().toString()).append('\n');
-            }
+        final Object smooth = MIFUtils.getPropertySafe(geometry, SMOOTH_NAME.toString());
+        if (Boolean.TRUE.equals(smooth)) {
+            builder.append(SMOOTH_NAME.tip().toString()).append('\n');
         }
 
         return builder.toString();
@@ -204,8 +191,8 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    protected List<AttributeDescriptor> getAttributes() {
-        final List<AttributeDescriptor> descList = new ArrayList<AttributeDescriptor>(2);
+    protected List<AttributeType> getAttributes() {
+        final List<AttributeType> descList = new ArrayList<AttributeType>(2);
         descList.add(PEN);
         descList.add(SMOOTH);
 

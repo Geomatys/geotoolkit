@@ -32,19 +32,21 @@ import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.test.TestData;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
 
 /**
- * 
+ *
  * @version $Id$
  * @author Ian Schneider
  * @author James Macgill
@@ -141,7 +143,10 @@ public class ShapefileTest extends AbstractTestCaseSupport {
 
     @Test
     public void testHolyPolygons() throws Exception {
-        FeatureType type = FeatureTypeUtilities.createType("junk","a:MultiPolygon");
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("test");
+        ftb.addAttribute(MultiPolygon.class).setName("a").addRole(AttributeRole.DEFAULT_GEOMETRY);
+        final FeatureType type = ftb.build();
         Collection<Feature> features = new ArrayList<>();
 
         File tmpFile = getTempFile();
@@ -151,16 +156,16 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         ShapefileFeatureStoreFactory make = new ShapefileFeatureStoreFactory();
         String pathId = ShapefileFeatureStoreFactory.PATH.getName().getCode();
         FeatureStore s = (FeatureStore) make.create(Collections.singletonMap(pathId, tmpFile.toURI().toURL()));
-        s.createFeatureType(type.getName(),type);
+        s.createFeatureType(type);
         GenericName typeName = type.getName();
 
         Session session = s.createSession(true);
-        session.addFeatures(typeName,features);
+        session.addFeatures(typeName.toString(),features);
         session.commit();
 
         s = new ShapefileFeatureStore(tmpFile.toURI());
         typeName = s.getNames().iterator().next();
-        FeatureCollection fc = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
+        FeatureCollection fc = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName.toString()));
 
         ShapefileReadWriteTest.compare(features, fc);
     }
@@ -187,10 +192,10 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     public void testDuplicateColumnNames() throws Exception {
         File file = TestData.file(AbstractTestCaseSupport.class, "bad/state.shp");
         ShapefileFeatureStore featureStore = new ShapefileFeatureStore(file.toURI());
-        FeatureType schema = featureStore.getFeatureType(featureStore.getNames().iterator().next());
+        FeatureType schema = featureStore.getFeatureType(featureStore.getNames().iterator().next().toString());
 
-        assertEquals(6, schema.getDescriptors().size());
-        assertTrue(featureStore.getCount(QueryBuilder.all(schema.getName())) > 0);
+        assertEquals(6+3, schema.getProperties(true).size()); //+3 for env,geom,id calculated fields
+        assertTrue(featureStore.getCount(QueryBuilder.all(schema.getName().toString())) > 0);
     }
 
     @Test

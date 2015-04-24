@@ -18,10 +18,11 @@
 package org.geotoolkit.filter.identity;
 
 import java.io.Serializable;
-import org.geotoolkit.feature.Feature;
+import org.apache.sis.feature.FeatureExt;
 import org.opengis.filter.identity.GmlObjectId;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.opengis.feature.Feature;
 
 /**
  * Immutable gml object id.
@@ -52,7 +53,7 @@ public class DefaultGmlObjectId implements GmlObjectId,Serializable {
     @Override
     public boolean matches(final Object object) {
         if (object instanceof Feature) {
-            return id.equals(((Feature)object).getIdentifier().getID());
+            return id.equals( FeatureExt.getId((Feature)object).getID());
         }
 
         return false;

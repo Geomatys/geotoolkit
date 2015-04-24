@@ -48,11 +48,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.FeatureBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
-import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.identity.FeatureId;
@@ -67,23 +64,24 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.simple.SimpleFeature;
-import org.geotoolkit.feature.type.FeatureType;
 
 import org.geotoolkit.test.TestData;
 import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 /**
  *
@@ -169,10 +167,10 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     public void testSchema() throws Exception {
         URL url = ShapeTestData.url(STATE_POP);
         IndexedShapefileFeatureStore s = new IndexedShapefileFeatureStore(url.toURI());
-        FeatureType schema = s.getFeatureType(s.getTypeNames()[0]);
-        Collection<PropertyDescriptor> types = schema.getDescriptors();
-        assertEquals("Number of Attributes", 253, types.size());
-        assertNotNull(schema.getCoordinateReferenceSystem());
+        FeatureType schema = s.getFeatureType(s.getName().toString());
+        Collection<? extends PropertyType> types = schema.getProperties(true);
+        assertEquals("Number of Attributes", 256, types.size());
+        assertNotNull(FeatureExt.getCRS(schema));
     }
 
     @Test
@@ -230,7 +228,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         while (indexIter.hasNext()) {
             Feature newFeature = indexIter.next();
 
-            BoundingBox bounds = DefaultBoundingBox.castOrCopy(newFeature.getBounds());
+            BoundingBox bounds = DefaultBoundingBox.castOrCopy(FeatureExt.getEnvelope(newFeature));
             Geometry geometry = factory.toGeometry(new JTSEnvelope2D(
                     bounds));
             double newArea = geometry.getArea();
@@ -251,10 +249,10 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         newBounds = new Envelope(newBounds.getMinX() + dx, newBounds.getMaxX()
                 - dx, newBounds.getMinY() + dy, newBounds.getMaxY() - dy);
 
-        CoordinateReferenceSystem crs = ds.getFeatureType().getCoordinateReferenceSystem();
+        CoordinateReferenceSystem crs = FeatureExt.getCRS(ds.getFeatureType());
 
         performQueryComparison(ds, ds2, new JTSEnvelope2D(newBounds, crs));
-        performQueryComparison(ds, ds2, new JTSEnvelope2D(smallestFeature.getBounds()));
+        performQueryComparison(ds, ds2, new JTSEnvelope2D(FeatureExt.getEnvelope(smallestFeature)));
 
         assertTrue(file.exists());
         ds.close();
@@ -269,14 +267,14 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         FeatureCollection features = ds.createSession(true).getFeatureCollection(QueryBuilder.all(ds.getName()));
         FeatureIterator indexIter = features.iterator();
 
-        Set<String> expectedFids = new HashSet<String>();
+        Set<String> expectedFids = new HashSet<>();
         final Filter fidFilter;
         try {
             FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
-            Set<FeatureId> fids = new HashSet<FeatureId>();
+            Set<FeatureId> fids = new HashSet<>();
             while (indexIter.hasNext()) {
                 Feature newFeature = indexIter.next();
-                String id = newFeature.getIdentifier().getID();
+                String id = FeatureExt.getId(newFeature).getID();
                 expectedFids.add(id);
                 fids.add(ff.featureId(id));
             }
@@ -285,21 +283,21 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             indexIter.close();
         }
 
-        Set<String> actualFids = new HashSet<String>();
+        Set<String> actualFids = new HashSet<>();
         {
-            indexIter = ds.getFeatureReader(QueryBuilder.filtered(ds.getName(), fidFilter));
+            indexIter = ds.getFeatureReader(QueryBuilder.filtered(ds.getName().toString(), fidFilter));
             while (indexIter.hasNext()) {
                 Feature next = indexIter.next();
-                String id = next.getIdentifier().getID();
+                String id = FeatureExt.getId(next).getID();
                 actualFids.add(id);
             }
             indexIter.close();
         }
 
-        TreeSet<String> lackingFids = new TreeSet<String>(expectedFids);
+        TreeSet<String> lackingFids = new TreeSet<>(expectedFids);
         lackingFids.removeAll(actualFids);
 
-        TreeSet<String> unexpectedFids = new TreeSet<String>(actualFids);
+        TreeSet<String> unexpectedFids = new TreeSet<>(actualFids);
         unexpectedFids.removeAll(expectedFids);
 
         String lacking = String.valueOf(lackingFids);
@@ -317,12 +315,12 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         FeatureCollection features;
         FeatureIterator indexIter;
         FilterFactory2 fac = (FilterFactory2) FactoryFinder.getFilterFactory(null);
-        String geometryName = indexedDS.getFeatureType().getGeometryDescriptor().getLocalName();
+        String geometryName = FeatureExt.getDefaultGeometryAttribute(indexedDS.getFeatureType()).getName().tip().toString();
 
         Filter filter = fac.bbox(fac.property(geometryName), newBounds);
 
-        features = indexedDS.createSession(true).getFeatureCollection(QueryBuilder.filtered(indexedDS.getName(),filter));
-        FeatureCollection features2 = baselineDS.createSession(true).getFeatureCollection(QueryBuilder.filtered(baselineDS.getName(),filter));
+        features = indexedDS.createSession(true).getFeatureCollection(QueryBuilder.filtered(indexedDS.getName().toString(),filter));
+        FeatureCollection features2 = baselineDS.createSession(true).getFeatureCollection(QueryBuilder.filtered(baselineDS.getName().toString(),filter));
 
         FeatureIterator baselineIter = features2.iterator();
         indexIter = features.iterator();
@@ -358,8 +356,8 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         // assertEquals("Number of Features loaded", 3, count); // JAR WRONG
 
         FeatureType schema = firstFeature(features).getType();
-        assertNotNull(schema.getGeometryDescriptor());
-        assertEquals("Number of Attributes", 253, schema.getDescriptors().size());
+        assertNotNull(schema.getProperty(AttributeConvention.GEOMETRY_PROPERTY.toString()));
+        assertEquals("Number of Attributes", 256, schema.getProperties(true).size());
         assertEquals("Value of statename is wrong", firstFeature(features)
                 .getPropertyValue("STATE_NAME"), "Illinois");
         assertEquals("Value of land area is wrong", ((Double) firstFeature(
@@ -393,16 +391,16 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         FeatureWriter writer = null;
 
         try {
-            writer = sds.getFeatureWriter(sds.getName(), Filter.INCLUDE);
+            writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName().toString()));
 
             while (writer.hasNext()) {
-                SimpleFeature feat = (SimpleFeature) writer.next();
-                Byte b = (Byte) feat.getAttribute(1);
+                Feature feat = writer.next();
+                Byte b = (Byte) feat.getPropertyValue("b");
 
                 if ((b.byteValue() % 2) == 0) {
                     writer.remove();
                 } else {
-                    feat.setAttribute(1, new Byte((byte) -1));
+                    feat.setPropertyValue("b", new Byte((byte) -1));
                 }
             }
         } finally {
@@ -417,7 +415,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         FeatureIterator i = fc.iterator();
         for (; i.hasNext();) {
-            assertEquals(-1, ((Byte) ((SimpleFeature)i.next()).getAttribute(1)).byteValue());
+            assertEquals(-1, ((Byte)i.next().getPropertyValue("b")).byteValue());
         }
         i.close();
         sds.close();
@@ -437,7 +435,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             FeatureWriter writer = null;
 
             try {
-                writer = sds.getFeatureWriter(sds.getName(), Filter.INCLUDE);
+                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName().toString()));
                 writer.next();
                 writer.remove();
             } finally {
@@ -466,7 +464,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             FeatureWriter writer = null;
 
             try {
-                writer = sds.getFeatureWriter(sds.getName(), Filter.INCLUDE);
+                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName().toString()));
                 writer.next();
                 writer.remove();
             } finally {
@@ -493,7 +491,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             FeatureWriter writer = null;
 
             try {
-                writer = sds.getFeatureWriter(sds.getName(), Filter.INCLUDE);
+                writer = sds.getFeatureWriter(QueryBuilder.all(sds.getName().toString()));
 
                 while (writer.hasNext()) {
                     writer.next();
@@ -515,23 +513,23 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     @Test
     public void testTestTransaction() throws Exception {
         final IndexedShapefileFeatureStore sds = createDataStore();
-        final long idx = sds.getCount(QueryBuilder.all(sds.getName()));
+        final long idx = sds.getCount(QueryBuilder.all(sds.getName().toString()));
         final Session session = sds.createSession(true);
 
         Feature[] newFeatures1 = new Feature[1];
         Feature[] newFeatures2 = new Feature[2];
         GeometryFactory fac = new GeometryFactory();
-        newFeatures1[0] = FeatureTypeUtilities.template(sds.getFeatureType());
+        newFeatures1[0] = sds.getFeatureType().newInstance();
         newFeatures1[0].setPropertyValue("a",fac.createPoint(new Coordinate(0, 0)));
-        newFeatures2[0] = FeatureTypeUtilities.template(sds.getFeatureType());
+        newFeatures2[0] = sds.getFeatureType().newInstance();
         newFeatures2[0].setPropertyValue("a",fac.createPoint(new Coordinate(0, 0)));
-        newFeatures2[1] = FeatureTypeUtilities.template(sds.getFeatureType());
+        newFeatures2[1] = sds.getFeatureType().newInstance();
         newFeatures2[1].setPropertyValue("a",fac.createPoint(new Coordinate(0, 0)));
 
-        session.addFeatures(sds.getName(),FeatureStoreUtilities.collection(newFeatures1));
-        session.addFeatures(sds.getName(),FeatureStoreUtilities.collection(newFeatures2));
+        session.addFeatures(sds.getName().toString(),FeatureStoreUtilities.collection(newFeatures1));
+        session.addFeatures(sds.getName().toString(),FeatureStoreUtilities.collection(newFeatures2));
         session.commit();
-        assertEquals(idx + 3, sds.getCount(QueryBuilder.all(sds.getName())));
+        assertEquals(idx + 3, sds.getCount(QueryBuilder.all(sds.getName().toString())));
         sds.close();
 
     }
@@ -539,44 +537,40 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     private FeatureType createExampleSchema() {
         FeatureTypeBuilder build = new FeatureTypeBuilder();
         build.setName("junk");
-        build.add("a", Point.class, CommonCRS.WGS84.normalizedGeographic());
-        build.add("b", Byte.class);
-        build.add("c", Short.class);
-        build.add("d", Double.class);
-        build.add("e", Float.class);
-        build.add("f", String.class);
-        build.add("g", Date.class);
-        build.add("h", Boolean.class);
-        build.add("i", Number.class);
-        build.add("j", Long.class);
-        build.add("k", BigDecimal.class);
-        build.add("l", BigInteger.class);
+        build.addAttribute(Point.class).setName("a").setCRS(CommonCRS.WGS84.normalizedGeographic());
+        build.addAttribute(Byte.class).setName("b");
+        build.addAttribute(Short.class).setName("c");
+        build.addAttribute(Double.class).setName("d");
+        build.addAttribute(Float.class).setName("e");
+        build.addAttribute(String.class).setName("f");
+        build.addAttribute(Date.class).setName("g");
+        build.addAttribute(Boolean.class).setName("h");
+        build.addAttribute(Number.class).setName("i");
+        build.addAttribute(Long.class).setName("j");
+        build.addAttribute(BigDecimal.class).setName("k");
+        build.addAttribute(BigInteger.class).setName("l");
 
-        return build.buildSimpleFeatureType();
+        return build.build();
     }
 
     private Collection<Feature> createFeatureCollection() throws Exception {
         FeatureType featureType = createExampleSchema();
-        FeatureBuilder build = new FeatureBuilder(featureType);
 
         Collection<Feature> features = new ArrayList<>();
         for (int i = 0, ii = 20; i < ii; i++) {
-
-            build.add(new GeometryFactory().createPoint(new Coordinate(1, -1)));
-            build.add(new Byte((byte) i));
-            build.add(new Short((short) i));
-            build.add(new Double(i));
-            build.add(new Float(i));
-            build.add(new String(i + " "));
-            build.add(new Date(i));
-            build.add(new Boolean(true));
-            build.add(new Integer(22));
-            build.add(new Long(1234567890123456789L));
-            build.add(new BigDecimal(new BigInteger(
-                    "12345678901234567890123456789"), 2));
-            build.add(new BigInteger("12345678901234567890123456789"));
-
-            Feature feature = build.buildFeature(null);
+            final Feature feature = featureType.newInstance();
+            feature.setPropertyValue("a",new GeometryFactory().createPoint(new Coordinate(1, -1)));
+            feature.setPropertyValue("b",new Byte((byte) i));
+            feature.setPropertyValue("c",new Short((short) i));
+            feature.setPropertyValue("d",new Double(i));
+            feature.setPropertyValue("e",new Float(i));
+            feature.setPropertyValue("f",new String(i + " "));
+            feature.setPropertyValue("g",new Date(i));
+            feature.setPropertyValue("h",new Boolean(true));
+            feature.setPropertyValue("i",new Integer(22));
+            feature.setPropertyValue("j",new Long(1234567890123456789L));
+            feature.setPropertyValue("k",new BigDecimal(new BigInteger("12345678901234567890123456789"), 2));
+            feature.setPropertyValue("l",new BigInteger("12345678901234567890123456789"));
             features.add(feature);
         }
         return features;
@@ -624,15 +618,15 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     private void writeFeatures(final IndexedShapefileFeatureStore s, final Collection<Feature> fc)
             throws Exception {
         final FeatureType type = fc.iterator().next().getType();
-        s.createFeatureType(type.getName(),type);
+        s.createFeatureType(type);
 
-        final FeatureWriter fw = s.getFeatureWriter(type.getName(),Filter.INCLUDE);
+        final FeatureWriter fw = s.getFeatureWriter(QueryBuilder.all(type.getName().toString()));
         final Iterator<Feature> it = fc.iterator();
 
         while (it.hasNext()) {
             Feature feature = it.next();
             Feature newFeature = fw.next();
-            FeatureUtilities.copy(feature, newFeature, false);
+            FeatureExt.copy(feature, newFeature, false);
             fw.write();
         }
 
@@ -644,14 +638,14 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         // make features
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Junk");
-        ftb.add("a", geom.getClass(), CommonCRS.WGS84.normalizedGeographic());
-        final FeatureType type = ftb.buildSimpleFeatureType();
+        ftb.addAttribute(geom.getClass()).setName("a").setCRS(CommonCRS.WGS84.normalizedGeographic());
+        final FeatureType type = ftb.build();
 
         final Collection<Feature> features = new ArrayList<>();
 
         for (int i = 0, ii = 20; i < ii; i++) {
-            Feature feature = FeatureBuilder.build(type,
-                    new Object[] { geom.clone() }, null);
+            Feature feature = type.newInstance();
+            feature.setPropertyValue("a", geom.clone());
             features.add(feature);
         }
 
@@ -661,7 +655,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         // write features
         IndexedShapefileFeatureStore s = new IndexedShapefileFeatureStore(tmpFile.toURI());
-        s.createFeatureType(type.getName(),type);
+        s.createFeatureType(type);
         writeFeatures(s, features);
 
         s.close();
@@ -675,13 +669,12 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         // verify
         try{
             while (fci.hasNext()) {
-                SimpleFeature f = (SimpleFeature) fci.next();
-                Geometry fromShape = (Geometry) f.getDefaultGeometry();
+                Feature f = fci.next();
+                Geometry fromShape = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(f);
 
                 if (fromShape instanceof GeometryCollection) {
                     if (!(geom instanceof GeometryCollection)) {
-                        fromShape = ((GeometryCollection) fromShape)
-                                .getGeometryN(0);
+                        fromShape = ((GeometryCollection) fromShape).getGeometryN(0);
                     }
                 }
 
@@ -733,7 +726,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
      * ids match the {@code <typeName>.<number>} structure but the {@code <typeName>} part does not
      * match the actual typeName, shoud ensure the invalid fids are ignored
      *
-     * @throws FileException
+     * @throws java.lang.Exception
      */
     @Test
     public void testWipesOutInvalidFidsFromFilters() throws Exception {
@@ -741,16 +734,14 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         final Session session = ds.createSession(true);
 
         final String validFid1, validFid2, invalidFid1, invalidFid2;
-        {
-            FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(ds.getName()));
-            validFid1 = features.next().getIdentifier().getID();
-            validFid2 = features.next().getIdentifier().getID();
-            invalidFid1 = "_" + features.next().getIdentifier().getID();
-            invalidFid2 = features.next().getIdentifier().getID()+ "abc";
-            features.close();
+        try (FeatureIterator features = ds.getFeatureReader(QueryBuilder.all(ds.getName().toString()))) {
+            validFid1 = FeatureExt.getId(features.next()).getID();
+            validFid2 = FeatureExt.getId(features.next()).getID();
+            invalidFid1 = "_" + FeatureExt.getId(features.next()).getID();
+            invalidFid2 = FeatureExt.getId(features.next()).getID()+ "abc";
         }
         FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
-        Set<Identifier> ids = new HashSet<Identifier>();
+        Set<Identifier> ids = new HashSet<>();
         ids.add(ff.featureId(validFid1));
         ids.add(ff.featureId(validFid2));
         ids.add(ff.featureId(invalidFid1));
@@ -760,25 +751,24 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         final FeatureType schema = ds.getFeatureType();
         final String typeName = schema.getName().tip().toString();
         //get a property of type String to update its value by the given filter
-        final AttributeDescriptor attribute = (AttributeDescriptor) schema.getDescriptor("f");
 
         assertEquals(2, count(ds, typeName, fidFilter));
 
-        session.updateFeatures(ds.getName(),fidFilter,attribute, "modified");
+        session.updateFeatures(ds.getName().toString(),fidFilter, Collections.singletonMap("f", "modified"));
         session.commit();
         Filter modifiedFilter = ff.equals(ff.property("f"), ff.literal("modified"));
         assertEquals(2, count(ds, typeName, modifiedFilter));
 
-        final long initialCount = ds.getCount(QueryBuilder.all(ds.getName()));
-        session.removeFeatures(ds.getName(),fidFilter);
+        final long initialCount = ds.getCount(QueryBuilder.all(ds.getName().toString()));
+        session.removeFeatures(ds.getName().toString(),fidFilter);
         session.commit();
-        final long afterCount = ds.getCount(QueryBuilder.all(ds.getName()));
+        final long afterCount = ds.getCount(QueryBuilder.all(ds.getName().toString()));
         assertEquals(initialCount - 2, afterCount);
     }
 
     private int count(final FeatureStore ds, final String typeName, final Filter filter) throws Exception {
         FeatureReader reader;
-        reader = ds.getFeatureReader(QueryBuilder.filtered(ds.getFeatureType(typeName).getName(), filter));
+        reader = ds.getFeatureReader(QueryBuilder.filtered(typeName, filter));
         int count = 0;
         try {
             while (reader.hasNext()) {

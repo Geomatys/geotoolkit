@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
@@ -55,7 +56,6 @@ import static org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRen
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.opengis.coverage.Coverage;
-import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -75,6 +75,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.FactoryException;
 import org.apache.sis.util.Utilities;
+import org.opengis.feature.PropertyNotFoundException;
 
 /**
  * Abstract renderer for symbolizer which only apply on coverages data.
@@ -95,10 +96,13 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         if(graphic instanceof ProjectedFeature){
             final ProjectedFeature pf = (ProjectedFeature) graphic;
             final String geomName = symbol.getSource().getGeometryPropertyName();
-            final Object obj;
+            Object obj;
             if(geomName == null || geomName.isEmpty()){
-                final GeometryAttribute att = pf.getCandidate().getDefaultGeometryProperty();
-                obj = (att!=null) ? att.getValue() : null;
+                try{
+                    obj = pf.getCandidate().getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
+                }catch(PropertyNotFoundException ex){
+                    obj = null;
+                }
             }else{
                 obj = GO2Utilities.evaluate(GO2Utilities.FILTER_FACTORY.property(geomName), pf.getCandidate(), null, null);
             }

@@ -27,10 +27,9 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.FeatureType;
 
 /**
  * FeatureCollection that takes it's source from a join query.
@@ -104,7 +103,7 @@ public class DefaultFeatureStoreJoinFeatureCollection extends AbstractFeatureCol
     }
 
     @Override
-    public void update(final Filter filter, final Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+    public void update(final Filter filter, final Map<String,?> values) throws DataStoreException {
         if(isWritable()){
             throw new UnsupportedOperationException("Not supported yet.");
         }else{

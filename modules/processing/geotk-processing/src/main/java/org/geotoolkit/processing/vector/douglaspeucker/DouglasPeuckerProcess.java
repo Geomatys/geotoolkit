@@ -25,16 +25,14 @@ import java.util.Collections;
 
 import org.apache.sis.measure.Units;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.PropertyType;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -42,9 +40,13 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.processing.vector.douglaspeucker.DouglasPeuckerDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+import org.opengis.feature.AttributeType;
+
 
 /**
  * Process to simplify geometry contained into a Features.
@@ -53,10 +55,8 @@ import static org.geotoolkit.parameter.Parameters.*;
  * The used unit for the accuracy is meters.
  *
  * @author Quentin Boileau
- * @module pending
  */
 public class DouglasPeuckerProcess extends AbstractProcess {
-
     /**
      * Default constructor
      */
@@ -69,15 +69,15 @@ public class DouglasPeuckerProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList   = value(FEATURE_IN, inputParameters);
-        final Double inputAccuracy                          = value(ACCURACY_IN, inputParameters);
-        final Boolean inputBehavior                               = value(DEL_SMALL_GEO_IN, inputParameters) != null ?
-                                                                    value(DEL_SMALL_GEO_IN, inputParameters) :
-                                                                    DEL_SMALL_GEO_IN.getDefaultValue();
+        final FeatureCollection inputFeatureList = value(FEATURE_IN, inputParameters);
+        final Double inputAccuracy               = value(ACCURACY_IN, inputParameters);
+        final Boolean inputBehavior              = value(DEL_SMALL_GEO_IN, inputParameters) != null ?
+                                                   value(DEL_SMALL_GEO_IN, inputParameters) :
+                                                         DEL_SMALL_GEO_IN.getDefaultValue();
 
-        final Boolean inputLenient                                = value(LENIENT_TRANSFORM_IN, inputParameters) != null ?
-                                                                    value(LENIENT_TRANSFORM_IN, inputParameters) :
-                                                                    LENIENT_TRANSFORM_IN.getDefaultValue();
+        final Boolean inputLenient               = value(LENIENT_TRANSFORM_IN, inputParameters) != null ?
+                                                   value(LENIENT_TRANSFORM_IN, inputParameters) :
+                                                         LENIENT_TRANSFORM_IN.getDefaultValue();
 
         final FeatureCollection resultFeatureList =
                 new DouglasPeuckerFeatureCollection(inputFeatureList, inputAccuracy, inputBehavior, inputLenient);
@@ -103,19 +103,20 @@ public class DouglasPeuckerProcess extends AbstractProcess {
     static Feature simplifyFeature(final Feature oldFeature, final Double accuracy, final boolean behavior, final boolean lenient)
             throws FactoryException, MismatchedDimensionException, TransformException {
 
-        final CoordinateReferenceSystem originalCRS = oldFeature.getType().getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem originalCRS = FeatureExt.getCRS(oldFeature.getType());
         final GeographicCRS longLatCRS = CommonCRS.WGS84.normalizedGeographic();
         final MathTransform mtToLongLatCRS = CRS.findOperation(originalCRS, longLatCRS, null).getMathTransform();
-
-        final Feature resultFeature = FeatureUtilities.defaultFeature(oldFeature.getType(), oldFeature.getIdentifier().getID());
-        for (Property property : oldFeature.getProperties()) {
-            if (property.getDescriptor() instanceof GeometryDescriptor) {
-
-                //Geometry IN
-                final Geometry originalGeometry = (Geometry) property.getValue();
+        final Feature resultFeature = oldFeature.getType().newInstance();
+        FeatureExt.setId(resultFeature, FeatureExt.getId(oldFeature));
+        for (PropertyType property : oldFeature.getType().getProperties(true)) {
+            if(!(property instanceof AttributeType)) continue;
+            
+            final String name = property.getName().toString();
+            final Object value = oldFeature.getPropertyValue(name);
+            if (AttributeConvention.isGeometryAttribute(property)) {
 
                 //convert geometry into WGS84
-                final Geometry convertedGeometry = JTS.transform(originalGeometry, mtToLongLatCRS);
+                final Geometry convertedGeometry = JTS.transform((Geometry) value, mtToLongLatCRS);
                 Envelope convertEnvelope = convertedGeometry.getEnvelopeInternal();
 
                 //create custom projection for the geometry
@@ -128,10 +129,10 @@ public class DouglasPeuckerProcess extends AbstractProcess {
                 if (convertEnvelope.getWidth() < accuracy && convertEnvelope.getHeight() < accuracy) {
                     //In this case, if behavior boolean is true, we return null for the feature
                     //else we set the geometry feature to null
-                    if(behavior) {
+                    if (behavior) {
                         return null;
-                    }else{
-                        resultFeature.getProperty(property.getName()).setValue(new GeometryFactory().buildGeometry(Collections.EMPTY_LIST));
+                    } else {
+                        resultFeature.setPropertyValue(name, JTS.emptyGeometry(convertedGeometry.getClass(),null,null));
                     }
                 } else {
                      //simplify geometry
@@ -140,13 +141,12 @@ public class DouglasPeuckerProcess extends AbstractProcess {
                     //restor to original CRS
                     simplifiedGeometry = JTS.transform(simplifiedGeometry, projection.inverse());
                     simplifiedGeometry = JTS.transform(simplifiedGeometry, mtToLongLatCRS.inverse());
-                    resultFeature.getProperty(property.getName()).setValue(simplifiedGeometry);
+                    resultFeature.setPropertyValue(name, simplifiedGeometry);
                 }
             } else {
-                resultFeature.getProperty(property.getName()).setValue(property.getValue());
+                resultFeature.setPropertyValue(name, value);
             }
         }
         return resultFeature;
     }
-
 }

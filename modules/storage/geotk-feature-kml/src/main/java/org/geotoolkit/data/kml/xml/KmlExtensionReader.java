@@ -23,9 +23,10 @@ import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.KmlException;
 
 /**
- * <p>This interface provides methods a StaxStreamReader needs to implement
+ * Provides methods a StaxStreamReader needs to implement
  * to be added as an extension reader to Kml main reader with method
- * <span style="font-style: italic;">addExtensionReader()</span></p>
+ * {@code addExtensionReader()}.
+ *
  * <p>Here is an example of use:</p>
  *
  * <pre>
@@ -46,40 +47,12 @@ import org.geotoolkit.data.kml.model.KmlException;
  * @module pending
  */
 public interface KmlExtensionReader {
-
-    /**
-     *
-     * @param containingUri
-     * @param containingTag
-     * @param contentsUri
-     * @param contentsTag
-     * @return
-     */
     boolean canHandleComplexExtension(String containingUri, String containingTag,
             String contentsUri, String contentsTag);
 
-    /**
-     *
-     * @param containingUri
-     * @param containingTag
-     * @param contentsUri
-     * @param contentsTag
-     * @return
-     */
     boolean canHandleSimpleExtension(String containingUri, String containingTag,
             String contentsUri, String contentsTag);
 
-    /**
-     * 
-     * @param containingUri
-     * @param containingTag
-     * @param contentsUri
-     * @param contentsTag
-     * @return
-     * @throws XMLStreamException
-     * @throws KmlException
-     * @throws URISyntaxException
-     */
     Entry<Object, Extensions.Names> readExtensionElement(
             String containingUri, String containingTag, String contentsUri, String contentsTag)
             throws XMLStreamException, KmlException, URISyntaxException;

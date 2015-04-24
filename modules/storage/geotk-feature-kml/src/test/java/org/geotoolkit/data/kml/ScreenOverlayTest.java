@@ -19,7 +19,6 @@ package org.geotoolkit.data.kml;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -31,15 +30,14 @@ import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.Link;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.model.Units;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -52,10 +50,6 @@ public class ScreenOverlayTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/screenOverlay.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public ScreenOverlayTest() {
-    }
 
     @Test
     public void screenOverlayReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
@@ -66,36 +60,36 @@ public class ScreenOverlayTest extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         final Feature screenOverlay = kmlObjects.getAbstractFeature();
-        assertTrue(screenOverlay.getType().equals(KmlModelConstants.TYPE_SCREEN_OVERLAY));
+        assertEquals(KmlModelConstants.TYPE_SCREEN_OVERLAY, screenOverlay.getType());
 
-        assertEquals("Simple crosshairs", screenOverlay.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertEquals("Simple crosshairs", screenOverlay.getPropertyValue(KmlConstants.TAG_NAME));
         assertEquals("This screen overlay uses fractional positioning\n"
                 + "   to put the image in the exact center of the screen",
-                screenOverlay.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()).getValue());
-        assertEquals("khScreenOverlay756", ((IdAttributes) screenOverlay.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()).getValue()).getId());
+                screenOverlay.getPropertyValue(KmlConstants.TAG_DESCRIPTION));
+        assertEquals("khScreenOverlay756", ((IdAttributes) screenOverlay.getPropertyValue(KmlConstants.ATT_ID)).getId());
 
-        final Icon icon = (Icon) screenOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue();
+        final Icon icon = (Icon) screenOverlay.getPropertyValue(KmlConstants.TAG_ICON);
         assertEquals("http://myserver/myimage.jpg", icon.getHref());
 
-        final Vec2 overlayXY = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY.getName()).getValue();
+        final Vec2 overlayXY = (Vec2) screenOverlay.getPropertyValue(KmlConstants.TAG_OVERLAY_XY);
         assertEquals(.5, overlayXY.getX(), DELTA);
         assertEquals(.5, overlayXY.getY(), DELTA);
         assertEquals(Units.transform("fraction"), overlayXY.getXUnits());
         assertEquals(Units.transform("fraction"), overlayXY.getYUnits());
 
-        final Vec2 screenXY = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY.getName()).getValue();
+        final Vec2 screenXY = (Vec2) screenOverlay.getPropertyValue(KmlConstants.TAG_SCREEN_XY);
         assertEquals(.5, screenXY.getX(), DELTA);
         assertEquals(.5, screenXY.getY(), DELTA);
         assertEquals(Units.transform("fraction"), screenXY.getXUnits());
         assertEquals(Units.transform("fraction"), screenXY.getYUnits());
 
-        final Vec2 size = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE.getName()).getValue();
+        final Vec2 size = (Vec2) screenOverlay.getPropertyValue(KmlConstants.TAG_SIZE);
         assertEquals(0, size.getX(), DELTA);
         assertEquals(0, size.getY(), DELTA);
         assertEquals(Units.transform("pixels"), size.getXUnits());
         assertEquals(Units.transform("pixels"), size.getYUnits());
 
-        assertEquals(39.37878630116985, (Double) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION.getName()).getValue(), DELTA);
+        assertEquals(39.37878630116985, (Double) screenOverlay.getPropertyValue(KmlConstants.TAG_ROTATION), DELTA);
     }
 
     @Test
@@ -113,16 +107,15 @@ public class ScreenOverlayTest extends org.geotoolkit.test.TestBase {
         final IdAttributes idAttributes = kmlFactory.createIdAttributes("khScreenOverlay756", null);
 
         final Feature screenOverlay = kmlFactory.createScreenOverlay();
-        final Collection<Property> screenOverlayProperties = screenOverlay.getProperties();
-        screenOverlayProperties.add(FF.createAttribute("Simple crosshairs", KmlModelConstants.ATT_NAME, null));
-        screenOverlayProperties.add(FF.createAttribute("This screen overlay uses fractional positioning\n"
-                + "   to put the image in the exact center of the screen", KmlModelConstants.ATT_DESCRIPTION, null));
-        screenOverlayProperties.add(FF.createAttribute(icon, KmlModelConstants.ATT_OVERLAY_ICON, null));
-        screenOverlayProperties.add(FF.createAttribute(idAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        screenOverlayProperties.add(FF.createAttribute(overlayXY, KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY, null));
-        screenOverlayProperties.add(FF.createAttribute(screenXY, KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY, null));
-        screenOverlayProperties.add(FF.createAttribute(size, KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE, null));
-        screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION.getName()).setValue(39.37878630116985);
+        screenOverlay.setPropertyValue(KmlConstants.TAG_NAME, "Simple crosshairs");
+        screenOverlay.setPropertyValue(KmlConstants.TAG_DESCRIPTION, "This screen overlay uses fractional positioning\n"
+                + "   to put the image in the exact center of the screen");
+        screenOverlay.setPropertyValue(KmlConstants.TAG_ICON, icon);
+        screenOverlay.setPropertyValue(KmlConstants.ATT_ID, idAttributes);
+        screenOverlay.setPropertyValue(KmlConstants.TAG_OVERLAY_XY, overlayXY);
+        screenOverlay.setPropertyValue(KmlConstants.TAG_SCREEN_XY, screenXY);
+        screenOverlay.setPropertyValue(KmlConstants.TAG_SIZE, size);
+        screenOverlay.setPropertyValue(KmlConstants.TAG_ROTATION, 39.37878630116985);
 
         final Kml kml = kmlFactory.createKml(null, screenOverlay, null, null);
 
@@ -134,8 +127,6 @@ public class ScreenOverlayTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

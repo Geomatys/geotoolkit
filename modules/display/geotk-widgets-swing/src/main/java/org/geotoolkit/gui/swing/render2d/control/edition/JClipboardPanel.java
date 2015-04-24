@@ -29,11 +29,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.feature.FeatureExt;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.geometry.jts.JTSMapping;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -43,7 +43,7 @@ import org.apache.sis.referencing.CRS;
 import org.geotoolkit.util.GeotkClipboard;
 import org.apache.sis.util.logging.Logging;
 
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -195,7 +195,7 @@ public class JClipboardPanel extends javax.swing.JPanel {
                 ite = featureListOut.iterator();
                 //we should have only one feature in this collection
                 while(ite.hasNext()){
-                    candidate = FeatureUtilities.deepCopy(ite.next());
+                    candidate = FeatureExt.deepCopy(ite.next());
                 }
 
             }catch(NoSuchIdentifierException ex){
@@ -257,11 +257,11 @@ public class JClipboardPanel extends javax.swing.JPanel {
 
         if(candidate instanceof Feature){
             final Feature f = (Feature) candidate;
-            if(f.getDefaultGeometryProperty() != null){
-                result = (Geometry) f.getDefaultGeometryProperty().getValue();
+            if(FeatureExt.hasAGeometry(f.getType())){
+                result = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(f);
                 //make a copy and ensure the crs is set
                 result = (Geometry) result.clone();
-                JTS.setCRS(result, f.getDefaultGeometryProperty().getType().getCoordinateReferenceSystem());
+                JTS.setCRS(result, FeatureExt.getCRS(f.getType()));
             }
         }
 

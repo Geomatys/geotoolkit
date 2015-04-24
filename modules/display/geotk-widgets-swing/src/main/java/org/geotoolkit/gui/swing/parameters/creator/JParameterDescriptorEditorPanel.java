@@ -29,7 +29,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.geotoolkit.feature.FeatureUtilities;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.gui.swing.propertyedit.JAttributeEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -147,7 +147,7 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
             guiMandatory.setSelected(param.isMandatory());
             guiTypeCB.setSelectedItem(param.getType());
 
-            defaultValueEditor.setProperty(FeatureUtilities.toProperty(((ParameterDescriptor)param.getDescriptor()).createValue()));
+            defaultValueEditor.setProperty(FeatureExt.toProperty(((ParameterDescriptor)param.getDescriptor()).createValue()));
             contentPanel.add(BorderLayout.CENTER,parameterEditPanel);
 
         } else {

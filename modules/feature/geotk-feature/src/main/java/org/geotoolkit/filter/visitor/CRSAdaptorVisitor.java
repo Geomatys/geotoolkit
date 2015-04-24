@@ -1,15 +1,17 @@
 package org.geotoolkit.filter.visitor;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyNotFoundException;
+import org.opengis.feature.PropertyType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -26,9 +28,9 @@ import org.apache.sis.util.Utilities;
  */
 public class CRSAdaptorVisitor extends DuplicatingFilterVisitor {
 
-    private final ComplexType dataType;
+    private final FeatureType dataType;
 
-    public CRSAdaptorVisitor(ComplexType type){
+    public CRSAdaptorVisitor(FeatureType type){
         super();
         this.dataType = type;
     }
@@ -46,10 +48,12 @@ public class CRSAdaptorVisitor extends DuplicatingFilterVisitor {
             CoordinateReferenceSystem targetCrs = null;
             if(exp1 instanceof PropertyName){
                 final PropertyName pn = (PropertyName)exp1;
-                final PropertyDescriptor desc = dataType.getDescriptor(pn.getPropertyName());
-                if(desc != null && desc instanceof GeometryDescriptor){
-                    targetCrs = ((GeometryDescriptor) desc).getCoordinateReferenceSystem();
-                }
+                try{
+                    final PropertyType desc = dataType.getProperty(pn.getPropertyName());
+                    if(desc instanceof AttributeType){
+                        targetCrs = FeatureExt.getCRS(desc);
+                    }
+                }catch(PropertyNotFoundException ex){/* not important*/}
             }
 
             Literal l = (Literal)visit(exp2,extraData);

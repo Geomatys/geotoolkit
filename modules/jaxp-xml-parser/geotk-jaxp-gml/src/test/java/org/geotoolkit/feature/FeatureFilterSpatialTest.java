@@ -25,6 +25,8 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -34,7 +36,6 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoin
 import org.junit.Test;
 
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.spatial.Equals;
@@ -43,6 +44,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 /**
  * Testing filters used on ISO/JTS geometries.
@@ -77,39 +81,38 @@ public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
         final GenericName id = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "id");
 
 
-        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
+        FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName(NamesExt.create("http://cite.opengeospatial.org/gmlsf", "AggregateGeoFeature"));
-        sftb.add(description, String.class);
-        sftb.add(name, String.class);
-        sftb.add(multiPointProperty, MultiPoint.class, CommonCRS.WGS84.geographic());
-        sftb.add(multiCurveProperty, MultiLineString.class, CommonCRS.WGS84.geographic());
-        sftb.add(multiSurfaceProperty, MultiPolygon.class, CommonCRS.WGS84.geographic());
-        sftb.add(doubleProperty, Double.class);
-        sftb.add(intRangeProperty, String.class);
-        sftb.add(strProperty, String.class);
-        sftb.add(featureCode, String.class);
-        sftb.add(id, String.class);
+        sftb.addAttribute(String.class).setName(description);
+        sftb.addAttribute(String.class).setName(name);
+        sftb.addAttribute(MultiPoint.class).setName(multiPointProperty).setCRS(CommonCRS.WGS84.geographic());
+        sftb.addAttribute(MultiLineString.class).setName(multiCurveProperty).setCRS(CommonCRS.WGS84.geographic());
+        sftb.addAttribute(MultiPolygon.class).setName(multiSurfaceProperty).setCRS(CommonCRS.WGS84.geographic());
+        sftb.addAttribute(Double.class).setName(doubleProperty);
+        sftb.addAttribute(String.class).setName(intRangeProperty);
+        sftb.addAttribute(String.class).setName(strProperty);
+        sftb.addAttribute(String.class).setName(featureCode);
+        sftb.addAttribute(String.class).setName(id).addRole(AttributeRole.IDENTIFIER_COMPONENT);
 
-        final FeatureType aggregateGeoFeatureType = sftb.buildFeatureType();
+        final FeatureType aggregateGeoFeatureType = sftb.build();
 
         /*********************************************************************************************
          *                            AggregateGeoFeature 1                                          *
          *********************************************************************************************/
-        FeatureBuilder sfb = new FeatureBuilder(aggregateGeoFeatureType);
-        sfb.setPropertyValue(description, "description-f005");
-        sfb.setPropertyValue(name, "name-f005");
+        final Feature aggregateGeoFeature1 = aggregateGeoFeatureType.newInstance();
+        aggregateGeoFeature1.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), "f005");
+        aggregateGeoFeature1.setPropertyValue(description.toString(), "description-f005");
+        aggregateGeoFeature1.setPropertyValue(name.toString(), "name-f005");
         GeometryFactory factory = new GeometryFactory();
         Point[] points = new Point[3];
         points[0] = factory.createPoint(new Coordinate(70.83, 29.86));
         points[1] = factory.createPoint(new Coordinate(68.87, 31.08));
         points[2] = factory.createPoint(new Coordinate(71.96, 32.19));
-        sfb.setPropertyValue(multiPointProperty, factory.createMultiPoint(points));
-        sfb.setPropertyValue(doubleProperty, 2012.78);
-        sfb.setPropertyValue(strProperty, "Ma quande lingues coalesce...");
-        sfb.setPropertyValue(featureCode, "BK030");
-        sfb.setPropertyValue(id, "f005");
-
-        final Feature aggregateGeoFeature1 = sfb.buildFeature("f005");
+        aggregateGeoFeature1.setPropertyValue(multiPointProperty.toString(), factory.createMultiPoint(points));
+        aggregateGeoFeature1.setPropertyValue(doubleProperty.toString(), 2012.78);
+        aggregateGeoFeature1.setPropertyValue(strProperty.toString(), "Ma quande lingues coalesce...");
+        aggregateGeoFeature1.setPropertyValue(featureCode.toString(), "BK030");
+        aggregateGeoFeature1.setPropertyValue(id.toString(), "f005");
 
         /*********************************************************************************************
          *                                                                                           *
@@ -121,26 +124,26 @@ public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
         final GenericName str4Property = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "str4Property");
         final GenericName featureRef = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "featureRef");
 
-        sftb.reset();
+        sftb = new FeatureTypeBuilder();
 
         sftb.setName(NamesExt.create("http://cite.opengeospatial.org/gmlsf", "EntitéGénérique"));
-        sftb.add(description, String.class);
-        sftb.add(name, String.class);
-        sftb.add(attributGeometrie, Geometry.class, CommonCRS.WGS84.geographic());
-        sftb.add(boolProperty, Boolean.class);
-        sftb.add(str4Property, String.class);
-        sftb.add(featureRef, String.class);
-        sftb.add(id, String.class);
+        sftb.addAttribute(String.class).setName(description);
+        sftb.addAttribute(String.class).setName(name);
+        sftb.addAttribute(Geometry.class).setName(attributGeometrie).setCRS(CommonCRS.WGS84.geographic());
+        sftb.addAttribute(Boolean.class).setName(boolProperty);
+        sftb.addAttribute(String.class).setName(str4Property);
+        sftb.addAttribute(String.class).setName(featureRef);
+        sftb.addAttribute(String.class).setName(id).addRole(AttributeRole.IDENTIFIER_COMPONENT);
 
-        final FeatureType entiteGeneriqueType = sftb.buildFeatureType();
+        final FeatureType entiteGeneriqueType = sftb.build();
 
-        sfb = new FeatureBuilder(entiteGeneriqueType);
 
         /*********************************************************************************************
          *                            EntitéGénérique 1                                              *
          *********************************************************************************************/
-        sfb.setPropertyValue(description, "description-f004");
-        sfb.setPropertyValue(name, "name-f004");
+        final Feature entiteGenerique1 = entiteGeneriqueType.newInstance();
+        entiteGenerique1.setPropertyValue(description.toString(), "description-f004");
+        entiteGenerique1.setPropertyValue(name.toString(), "name-f004");
 
         Coordinate[] exteriorCoord = new Coordinate[5];
         exteriorCoord[0] = new Coordinate(60.5, 0);
@@ -161,22 +164,19 @@ public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
         LinearRing[] interiors = new LinearRing[1];
         interiors[0] = interior;
 
-        sfb.setPropertyValue(attributGeometrie, factory.createPolygon(exterior, interiors));
-        sfb.setPropertyValue(boolProperty, false);
-        sfb.setPropertyValue(str4Property, "abc3");
-        sfb.setPropertyValue(featureRef, "name-f003");
-        sfb.setPropertyValue(id, "f004");
-
-        final Feature entiteGenerique1 = sfb.buildFeature("f004");
-
-        sfb.reset();
+        entiteGenerique1.setPropertyValue(attributGeometrie.toString(), factory.createPolygon(exterior, interiors));
+        entiteGenerique1.setPropertyValue(boolProperty.toString(), false);
+        entiteGenerique1.setPropertyValue(str4Property.toString(), "abc3");
+        entiteGenerique1.setPropertyValue(featureRef.toString(), "name-f003");
+        entiteGenerique1.setPropertyValue(id.toString(), "f004");
 
         /*********************************************************************************************
          *                            EntitéGénérique 2                                              *
          *********************************************************************************************/
 
-        sfb.setPropertyValue(description, "description-f007");
-        sfb.setPropertyValue(name, "name-f007");
+        final Feature entiteGenerique2 = entiteGeneriqueType.newInstance();
+        entiteGenerique2.setPropertyValue(description.toString(), "description-f007");
+        entiteGenerique2.setPropertyValue(name.toString(), "name-f007");
 
         Coordinate[] exteriorCoord2 = new Coordinate[6];
         exteriorCoord2[0] = new Coordinate(35, 15);
@@ -201,20 +201,18 @@ public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
         LinearRing[] interiors2 = new LinearRing[1];
         interiors2[0] = interior;
 
-        sfb.setPropertyValue(attributGeometrie, factory.createPolygon(exterior2, interiors2));
-        sfb.setPropertyValue(boolProperty, false);
-        sfb.setPropertyValue(str4Property, "def4");
-        sfb.setPropertyValue(id, "f007");
-
-        final Feature entiteGenerique2 = sfb.buildFeature("f007");
-
-        sfb.reset();
+        entiteGenerique2.setPropertyValue(attributGeometrie.toString(), factory.createPolygon(exterior2, interiors2));
+        entiteGenerique2.setPropertyValue(boolProperty.toString(), false);
+        entiteGenerique2.setPropertyValue(str4Property.toString(), "def4");
+        entiteGenerique2.setPropertyValue(id.toString(), "f007");
 
         /*********************************************************************************************
          *                            EntitéGénérique 3                                              *
          *********************************************************************************************/
-        sfb.setPropertyValue(description, "description-f017");
-        sfb.setPropertyValue(name, "name-f017");
+
+        final Feature entiteGenerique3 = entiteGeneriqueType.newInstance();
+        entiteGenerique3.setPropertyValue(description.toString(), "description-f017");
+        entiteGenerique3.setPropertyValue(name.toString(), "name-f017");
 
         Coordinate[] lineCoord = new Coordinate[5];
         lineCoord[0] = new Coordinate(50.174, 4.899);
@@ -224,13 +222,12 @@ public class FeatureFilterSpatialTest extends org.geotoolkit.test.TestBase {
         lineCoord[4] = new Coordinate(54.982, 8.879);
 
 
-        sfb.setPropertyValue(attributGeometrie, factory.createLineString(lineCoord));
-        sfb.setPropertyValue(boolProperty, false);
-        sfb.setPropertyValue(str4Property, "qrst");
-        sfb.setPropertyValue(featureRef, "name-f015");
-        sfb.setPropertyValue(id, "f017");
+        entiteGenerique3.setPropertyValue(attributGeometrie.toString(), factory.createLineString(lineCoord));
+        entiteGenerique3.setPropertyValue(boolProperty.toString(), false);
+        entiteGenerique3.setPropertyValue(str4Property.toString(), "qrst");
+        entiteGenerique3.setPropertyValue(featureRef.toString(), "name-f015");
+        entiteGenerique3.setPropertyValue(id.toString(), "f017");
 
-        final Feature entiteGenerique3 = sfb.buildFeature("f017");
 
         /*
          * Filter equals on aggregateGeoFeature1

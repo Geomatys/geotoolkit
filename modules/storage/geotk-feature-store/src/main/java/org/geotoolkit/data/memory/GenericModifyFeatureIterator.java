@@ -20,13 +20,11 @@ package org.geotoolkit.data.memory;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
 
 /**
@@ -41,7 +39,7 @@ public class GenericModifyFeatureIterator<R extends FeatureIterator> implements 
 
     protected final R iterator;
     protected final Filter filter;
-    protected final Map<PropertyDescriptor,Object> values;
+    protected final Map<String,?> values;
     protected Feature nextFeature = null;
 
     /**
@@ -49,7 +47,7 @@ public class GenericModifyFeatureIterator<R extends FeatureIterator> implements 
      *
      * @param iterator FeatureReader to modify
      */
-    private GenericModifyFeatureIterator(final R iterator, final Filter filter, final Map<PropertyDescriptor,Object> newValues) {
+    private GenericModifyFeatureIterator(final R iterator, final Filter filter, final Map<String,?> newValues) {
         this.iterator = iterator;
         this.filter = filter;
         this.values = newValues;
@@ -88,16 +86,15 @@ public class GenericModifyFeatureIterator<R extends FeatureIterator> implements 
         if(iterator.hasNext()){
             Feature candidate = iterator.next();
             if(filter.evaluate(candidate)){
-                candidate = FeatureUtilities.copy(candidate);
+                candidate = FeatureExt.copy(candidate);
                 //must modify this feature
-                for(final Entry<PropertyDescriptor,Object> entry : values.entrySet()){
-                    final Property prop = candidate.getProperty(entry.getKey().getName());
-                    if(prop != null){
+                for(final Entry<String,?> entry : values.entrySet()){
+                    try{
+                        candidate.setPropertyValue(entry.getKey(), entry.getValue());
+                    }catch(IllegalArgumentException ex){
                         //the property might be null if the query didn't ask for this
                         //dont raise an error, that's normal
-                        prop.setValue(entry.getValue());
                     }
-                    
                 }
             }
 
@@ -129,22 +126,21 @@ public class GenericModifyFeatureIterator<R extends FeatureIterator> implements 
     /**
      * Wrap a FeatureIterator with a modifiycation set
      */
-    public static FeatureIterator wrap(final FeatureIterator reader, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values){
+    public static FeatureIterator wrap(final FeatureIterator reader, final Filter filter, final Map<String, ?> values){
         return new GenericModifyFeatureIterator(reader, filter, values);
     }
 
-    public static Feature apply(Feature candidate, final Map<? extends PropertyDescriptor, ? extends Object> values){
+    public static Feature apply(Feature candidate, final Map<String, ?> values){
 
-        candidate = FeatureUtilities.copy(candidate);
+        candidate = FeatureExt.copy(candidate);
         //must modify this feature
-        for(final Entry<? extends PropertyDescriptor,? extends Object> entry : values.entrySet()){
-            final Property prop = candidate.getProperty(entry.getKey().getName());
-            if(prop != null){
+        for(final Entry<String,?> entry : values.entrySet()){
+            try{
+                candidate.setPropertyValue(entry.getKey(), entry.getValue());
+            }catch(IllegalArgumentException ex){
                 //the property might be null if the query didn't ask for this
                 //dont raise an error, that's normal
-                prop.setValue(entry.getValue());
             }
-
         }
 
         return candidate;

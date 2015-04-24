@@ -19,6 +19,7 @@ package org.geotoolkit.data.osm.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.opengis.feature.Feature;
 
 /**
  * Diff files are composed of transactions.
@@ -28,17 +29,17 @@ import java.util.List;
  */
 public class Transaction {
 
-    private final List<IdentifiedElement> elements;
+    private final List<Feature> elements;
     private final TransactionType type;
     private final String version;
     private final String generator;
 
-    public Transaction(final TransactionType type, final List<IdentifiedElement> elements, final String version, final String generator){
+    public Transaction(final TransactionType type, final List<Feature> elements, final String version, final String generator){
 
         if(elements instanceof ArrayList){
-            this.elements = (List<IdentifiedElement>) ((ArrayList)elements).clone();
+            this.elements = (List<Feature>) ((ArrayList)elements).clone();
         }else{
-            this.elements = new ArrayList<IdentifiedElement>(elements);
+            this.elements = new ArrayList<>(elements);
         }
         this.type = type;
         this.version = version;
@@ -55,7 +56,7 @@ public class Transaction {
     /**
      * @return List if element affected by this transaction.
      */
-    public List<IdentifiedElement> getElements(){
+    public List<Feature> getElements(){
         return elements;
     }
 
@@ -76,7 +77,7 @@ public class Transaction {
         sb.append(type.toString());
         sb.append(" version=").append(version);
         sb.append(" generator=").append(generator);
-        for(IdentifiedElement ele : elements){
+        for(Feature ele : elements){
             sb.append('\n');
             sb.append(ele.toString());
         }

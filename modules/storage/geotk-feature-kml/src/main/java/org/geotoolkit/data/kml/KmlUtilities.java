@@ -28,15 +28,14 @@ import org.geotoolkit.data.kml.model.KmlException;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
- * <p>This class provides utilities for reading and writting KML files.</p>
+ * This class provides utilities for reading and writting KML files.
  *
  * @author Samuel Andrés
  * @module pending
  */
 public class KmlUtilities {
-
     /**
-     * <p>This method transforms a Kml color string to java instance of java.awt.Color class.</p>
+     * Transforms a Kml color string to java instance of java.awt.Color class.
      * <p>BE CAREFUL : Color object RGB constructors and Kml representation are not in
      * same order (a : alpha; b: blue; g: green; r: red) : </p>
      * <ul>
@@ -60,11 +59,8 @@ public class KmlUtilities {
      * </pre>
      *
      * @param kmlColor Kml string color hexadecimal representation.
-     * @return
-     * @throws KmlException
      */
     public static Color parseColor(final String kmlColor) throws KmlException {
-
         Color color = null;
 
         if (kmlColor.matches("[0-9a-fA-F]{8}")) {
@@ -80,7 +76,7 @@ public class KmlUtilities {
     }
 
     /**
-     * <p>This method transforms an instance of java.awt.Color class into a Kml color string.</p>
+     * Transforms an instance of java.awt.Color class into a Kml color string.
      * <p>BE CAREFUL : Color object RGB constructors and Kml representation are not in
      * same order (a : alpha; b: blue; g: green; r: red) : </p>
      * <ul>
@@ -102,9 +98,6 @@ public class KmlUtilities {
      *  &lt;/restriction>
      * &lt;/simpleType>
      * </pre>
-     * 
-     * @param color
-     * @return
      */
     public static String toKmlColor(final Color color) {
         final String r = Integer.toHexString(color.getRed());
@@ -113,29 +106,29 @@ public class KmlUtilities {
         final String a = Integer.toHexString(color.getAlpha());
         final StringBuilder sb = new StringBuilder();
 
-        if(a.length() == 1){
+        if (a.length() == 1) {
             sb.append('0');
         }
         sb.append(a);
-        if(b.length() == 1){
+        if (b.length() == 1) {
             sb.append('0');
         }
         sb.append(b);
-        if(g.length() == 1){
+        if (g.length() == 1) {
             sb.append('0');
         }
         sb.append(g);
-        if(r.length() == 1){
+        if (r.length() == 1) {
             sb.append('0');
         }
         sb.append(r);
-        
+
         return sb.toString();
     }
 
 
     /**
-     * <p>This method check value for Anglepos180 element.</p>
+     * Checks value for Anglepos180 element.
      *
      * <pre>
      * &lt;simpleType name="anglepos180Type">
@@ -145,9 +138,6 @@ public class KmlUtilities {
      *  &lt;/restriction>
      * &lt;/simpleType>
      * </pre>
-     * 
-     * @param angle
-     * @return
      */
     public static double checkAnglePos180(double angle) {
         if (angle < 0 || angle > 180) {
@@ -159,7 +149,7 @@ public class KmlUtilities {
     }
 
     /**
-     * <p>This method check value for Anglepos90 element.</p>
+     * Checks value for Anglepos90 element.
      *
      * <pre>
      * &lt;simpleType name="angle90posType">
@@ -169,9 +159,6 @@ public class KmlUtilities {
      *  &lt;/restriction>
      * &lt;/simpleType>
      * </pre>
-     *
-     * @param angle
-     * @return
      */
     public static double checkAnglePos90(double angle) {
         if (angle < 0 || angle > 90) {
@@ -183,7 +170,7 @@ public class KmlUtilities {
     }
 
     /**
-     * <p>This method check value for Angle180 element.</p>
+     * Checks value for Angle180 element.
      *
      * <pre>
      * &lt;simpleType name="angle180Type">
@@ -193,9 +180,6 @@ public class KmlUtilities {
      *  &lt;/restriction>
      * &lt;/simpleType>
      * </pre>
-     *
-     * @param angle
-     * @return
      */
     public static double checkAngle180(double angle) {
         if (angle < -180 || angle > 180) {
@@ -207,7 +191,7 @@ public class KmlUtilities {
     }
 
     /**
-     * <p>This method check value for Angle180 element.</p>
+     * Checks value for Angle180 element.
      *
      * <pre>
      * &lt;simpleType name="angle90Type">
@@ -217,9 +201,6 @@ public class KmlUtilities {
      *  &lt;/restriction>
      * &lt;/simpleType>
      * </pre>
-     *
-     * @param angle
-     * @return
      */
     public static double checkAngle90(double angle) {
         if (angle < -90 || angle > 90) {
@@ -231,7 +212,7 @@ public class KmlUtilities {
     }
 
     /**
-     * <p>This method check value for Angle360 element.</p>
+     * Checks value for Angle360 element.
      *
      * <pre>
      * &lt;simpleType name="angle360Type">
@@ -241,9 +222,6 @@ public class KmlUtilities {
      *  &lt;/restriction>
      * &lt;/simpleType>
      * </pre>
-     *
-     * @param angle
-     * @return
      */
     public static double checkAngle360(double angle) {
         if (angle < -360 || angle > 360) {
@@ -255,18 +233,14 @@ public class KmlUtilities {
     }
 
     /**
-     * <p>Retrieves a coma separated StringBuilder from a 2D/3D coordinate.</p>
-     *
-     * @param coordinate
-     * @return
+     * Retrieves a coma separated StringBuilder from a 2D/3D coordinate.
      */
     public static StringBuilder toString(Coordinate coordinate) {
-
         final StringBuilder sb = new StringBuilder();
         sb.append(coordinate.x);
         sb.append(',');
         sb.append(coordinate.y);
-        if(!Double.isNaN(coordinate.z)) {
+        if (!Double.isNaN(coordinate.z)) {
             sb.append(',');
             sb.append(coordinate.z);
         }
@@ -274,31 +248,23 @@ public class KmlUtilities {
     }
 
     /**
-     * <p>Retrieves a XML list (space separated values) of coordinates.</p>
-     *
-     * @param coordinates
-     * @return
+     * Retrieves a XML list (space separated values) of coordinates.
      */
-    public static String toString(CoordinateSequence coordinates){
-
+    public static String toString(CoordinateSequence coordinates) {
         final StringBuilder sb = new StringBuilder();
-
-        for(int i=0, n=coordinates.size(); i<n; i++){
+        for (int i=0, n=coordinates.size(); i<n; i++) {
             sb.append(toString(coordinates.getCoordinate(i)));
-            if(i != n-1)
+            if (i != n-1) {
                 sb.append(' ');
+            }
         }
         return sb.toString();
     }
 
     /**
-     * <p>Retrieves Coordinate (2D/3D) from coma separated values.</p>
-     *
-     * @param coordinates
-     * @return
+     * Retrieves Coordinate (2D/3D) from coma separated values.
      */
-    public static Coordinate toCoordinate(String coordinates){
-
+    public static Coordinate toCoordinate(String coordinates) {
         final String[] coordinatesList = coordinates.split(",");
         final Coordinate c = new Coordinate();
 
@@ -312,20 +278,12 @@ public class KmlUtilities {
     }
 
     /**
-     * <p>Retrieves XML formated time.</p>
-     *
-     * @param hours
-     * @param minutes
-     * @param seconds
-     * @param milli
-     * @param forceTime
-     * @param time
-     * @return
+     * Retrieves XML formated time.
      */
     public static StringBuilder appendXMLFormatedTime(
-            int hours, int minutes, int seconds, int milli, boolean forceTime, StringBuilder time){
-
-        if(!(hours == 0 && minutes == 0 && seconds == 0 && milli == 0) || forceTime){
+            int hours, int minutes, int seconds, int milli, boolean forceTime, StringBuilder time)
+    {
+        if (!(hours == 0 && minutes == 0 && seconds == 0 && milli == 0) || forceTime) {
             time.append('T');
             if(hours < 10) {
                 time.append('0');
@@ -344,7 +302,7 @@ public class KmlUtilities {
             }
             time.append(seconds);
 
-            if (milli != 0){
+            if (milli != 0) {
                 time.append('.');
                 time.append(milli);
             }
@@ -353,32 +311,26 @@ public class KmlUtilities {
     }
 
     /**
-     * <p>Retrieves XML formated timezone.</p>
-     *
-     * @param zoneOffset
-     * @param timeZone
-     * @return
+     * Retrieves XML formated timezone.
      */
-    public static StringBuilder appendXMLFormatedTimeZone(
-            int zoneOffset, StringBuilder timeZone) {
-
+    public static StringBuilder appendXMLFormatedTimeZone(int zoneOffset, StringBuilder timeZone) {
         int minutesOffset = zoneOffset / (60 * 1000);
         final int hoursOffset = Math.abs(minutesOffset / 60);
         minutesOffset = (minutesOffset % 60)*60;
 
-        if(zoneOffset == 0){
+        if (zoneOffset == 0) {
             timeZone.append('Z');
         } else {
             if(zoneOffset > 0)
                 timeZone.append('+');
             else if (zoneOffset < 0)
                 timeZone.append('-');
-            
-            if(hoursOffset < 10)
+
+            if (hoursOffset < 10)
                 timeZone.append('0');
             timeZone.append(hoursOffset);
             timeZone.append(':');
-            if(minutesOffset < 10)
+            if (minutesOffset < 10)
                 timeZone.append('0');
             timeZone.append(minutesOffset);
         }
@@ -386,18 +338,11 @@ public class KmlUtilities {
     }
 
     /**
-     * <p>Retrieves XML formated date</p>
-     *
-     * @param year
-     * @param month
-     * @param day
-     * @param forceDay
-     * @param date
-     * @return
+     * Retrieves XML formated date.
      */
     public static StringBuilder appendXMLFormatedDate(
-            int year, int month, int day, boolean forceDay, StringBuilder date){
-        
+            int year, int month, int day, boolean forceDay, StringBuilder date)
+    {
         date.append(year);
         if (day > 1 || forceDay){
             date.append('-');
@@ -418,27 +363,22 @@ public class KmlUtilities {
     }
 
     /**
-     * <p>Retrieves XML formated datetime from Calendar.</p>
-     *
-     * @param calendar
-     * @param forceDateTime
-     * @return
+     * Retrieves XML formated datetime from Calendar.
      */
-    public static String getXMLFormatedCalendar(Calendar calendar, boolean forceDateTime){
-
+    public static String getXMLFormatedCalendar(Calendar calendar, boolean forceDateTime) {
         StringBuilder date = null;
         final int day = calendar.get(Calendar.DAY_OF_MONTH);
         final int month = calendar.get(Calendar.MONTH)+1;
         final int year;
 
-        if(calendar.get(Calendar.ERA) == GregorianCalendar.BC){
+        if (calendar.get(Calendar.ERA) == GregorianCalendar.BC) {
             year = -calendar.get(Calendar.YEAR);
         } else {
             year = calendar.get(Calendar.YEAR);
         }
 
         date = appendXMLFormatedDate(year, month, day, forceDateTime, new StringBuilder());
-        
+
         date = appendXMLFormatedTime(calendar.get(
                 Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE),
@@ -446,7 +386,7 @@ public class KmlUtilities {
                 calendar.get(Calendar.MILLISECOND),
                 forceDateTime, date);
 
-        if(calendar.getTimeZone() != null){
+        if (calendar.getTimeZone() != null) {
             date = appendXMLFormatedTimeZone(calendar.get(Calendar.ZONE_OFFSET), date);
         }
 
@@ -455,10 +395,9 @@ public class KmlUtilities {
 
     /**
      *
-     * @param d
      * @return true if d is not infinite nor NaN.
      */
-    public static boolean isFiniteNumber(double d){
+    public static boolean isFiniteNumber(double d) {
         return !Double.isInfinite(d) && !Double.isNaN(d);
     }
 
@@ -535,20 +474,12 @@ public class KmlUtilities {
                 || TAG_STYLE_MAP.equals(eName));
     }
 
-    /**
-     * @param eName
-     * @return
-     */
     public static boolean isAbstractSubStyle(String eName) {
         return (TAG_BALLOON_STYLE.equals(eName)
                 || TAG_LIST_STYLE.equals(eName)
                 || isAbstractColorStyle(eName));
     }
 
-    /**
-     * @param eName
-     * @return
-     */
     public static boolean isAbstractColorStyle(String eName) {
         return (TAG_ICON_STYLE.equals(eName)
                 || TAG_LABEL_STYLE.equals(eName)
@@ -556,10 +487,6 @@ public class KmlUtilities {
                 || TAG_LINE_STYLE.equals(eName));
     }
 
-    /**
-     * @param eName
-     * @return
-     */
     public static boolean isAbstractObject(String eName) {
         // Traiter le cas particuloer du TAG_ICON qui peut être un basicLink
         return (isAbstractFeature(eName)
@@ -576,14 +503,11 @@ public class KmlUtilities {
                 || TAG_SCHEMA_DATA.equals(eName));
     }
 
-    /**
-     * @param eName
-     * @return
-     */
     public static boolean isAbstractLatLonBox(String eName) {
         return (TAG_LAT_LON_ALT_BOX.equals(eName)
                 || TAG_LAT_LON_BOX.equals(eName));
     }
-    
-    private KmlUtilities(){}
+
+    private KmlUtilities() {
+    }
 }

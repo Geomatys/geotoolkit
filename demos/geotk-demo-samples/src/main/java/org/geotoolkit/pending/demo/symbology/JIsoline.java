@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.measure.Unit;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import org.apache.sis.feature.FeatureExt;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -32,7 +33,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.style.MutableStyle;
 import org.jdesktop.swingx.JXErrorPane;
-import org.geotoolkit.feature.Feature;
+import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.style.Description;
@@ -80,7 +81,7 @@ public class JIsoline extends JAbstractMapPane{
 
             @Override
             public Coordinate getValues(RenderingContext2D context, Feature feature) throws IOException {
-                final Geometry geom = (Geometry) feature.getDefaultGeometryProperty().getValue();
+                final Geometry geom = (Geometry) FeatureExt.getDefaultGeometryAttributeValue(feature);
                 final Point centroid = geom.getCentroid();
                 final Coordinate c = new Coordinate();
                 c.x = centroid.getX();

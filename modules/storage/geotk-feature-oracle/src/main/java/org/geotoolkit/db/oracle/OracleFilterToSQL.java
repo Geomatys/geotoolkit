@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import net.iharder.Base64;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.db.FilterToSQL;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
@@ -34,9 +36,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
@@ -95,6 +94,8 @@ import org.opengis.filter.temporal.TOverlaps;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 
 /**
  * Convert filters and expressions in SQL.
@@ -103,11 +104,11 @@ import org.apache.sis.util.logging.Logging;
  */
 public class OracleFilterToSQL implements FilterToSQL {
 
-    private final ComplexType featureType;
+    private final FeatureType featureType;
     private final PrimaryKey pkey;
     private int currentsrid;
 
-    public OracleFilterToSQL(ComplexType featureType, PrimaryKey pkey) {
+    public OracleFilterToSQL(FeatureType featureType, PrimaryKey pkey) {
         this.featureType = featureType;
         this.pkey = pkey;
     }
@@ -841,9 +842,9 @@ public class OracleFilterToSQL implements FilterToSQL {
             //requiered when encoding geometry
             currentsrid = -1;
             if (featureType != null) {
-                final AttributeDescriptor descriptor = (AttributeDescriptor) property.evaluate(featureType);
-                if (descriptor instanceof GeometryDescriptor) {
-                    Integer srid = (Integer) descriptor.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_SRID);
+                final PropertyType descriptor = (PropertyType) property.evaluate(featureType);
+                if (AttributeConvention.isGeometryAttribute(descriptor)) {
+                    Integer srid = (Integer) FeatureExt.getCharacteristicValue(descriptor, JDBCFeatureStore.JDBC_PROPERTY_SRID.toString(), null);
                     if(srid!=null){
                         currentsrid = srid;
                     }

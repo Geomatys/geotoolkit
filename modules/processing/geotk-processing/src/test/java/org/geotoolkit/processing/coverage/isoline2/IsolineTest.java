@@ -26,18 +26,18 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.feature.type.BasicFeatureTypes;
+import org.apache.sis.internal.feature.AttributeConvention;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CommonCRS;
 
-import org.geotoolkit.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.parameter.ParameterValueGroup;
 
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
 
 /**
  *
@@ -180,8 +180,7 @@ public class IsolineTest extends org.geotoolkit.test.TestBase {
         assertEquals(1, col.size());
 
         org.opengis.feature.Feature candidate = col.iterator().next();
-        Property geometryAttribute = candidate.getProperty(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
-        Geometry geom = (Geometry)geometryAttribute.getValue();
+        Geometry geom = (Geometry) candidate.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
         assertTrue(geom instanceof LineString);
         LineString line = (LineString) geom;
         CoordinateSequence sequence = line.getCoordinateSequence();

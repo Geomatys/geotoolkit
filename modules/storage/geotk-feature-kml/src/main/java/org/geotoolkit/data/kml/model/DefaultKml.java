@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
-import org.geotoolkit.feature.Feature;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
+import org.opengis.feature.Feature;
 
 /**
  *
@@ -34,7 +34,7 @@ public class DefaultKml implements Kml {
     private String version = URI_KML_2_2;
     private NetworkLinkControl networkLinkControl;
     private Feature abstractFeature;
-    private Map<String, String> extensionsUris = new HashMap<String, String>();
+    private Map<String, String> extensionsUris = new HashMap<>();
 
     /**
      *

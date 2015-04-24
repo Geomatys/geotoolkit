@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -37,21 +36,16 @@ import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.NetworkLinkControl;
 import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.Update;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlWriter;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.xml.DomCompare;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
-import static org.junit.Assert.*;
+import org.opengis.feature.Feature;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -62,30 +56,9 @@ public class CreateTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/create.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public CreateTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void createReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
-
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
         final Kml kmlObjects = reader.read();
@@ -97,36 +70,29 @@ public class CreateTest extends org.geotoolkit.test.TestBase {
         assertEquals("http://myserver.com/Point.kml", targetHref.toString());
 
         assertEquals(1, update.getUpdates().size());
-        assertTrue(update.getUpdates().get(0) instanceof Create);
         Create create = (Create) update.getUpdates().get(0);
 
         assertEquals(1, create.getContainers().size());
-        assertTrue(create.getContainers().get(0) instanceof Feature);
-        assertTrue(((Feature) create.getContainers().get(0)).getType().equals(KmlModelConstants.TYPE_DOCUMENT));
-        final Feature document = (Feature) create.getContainers().get(0);
-        assertEquals("region24",((IdAttributes) document.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()).getValue()).getTargetId());
+        final Feature document = create.getContainers().get(0);
+        assertEquals(KmlModelConstants.TYPE_DOCUMENT, document.getType());
+        assertEquals("region24",((IdAttributes) document.getPropertyValue(KmlConstants.ATT_ID)).getTargetId());
 
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
-        Iterator i;
-        i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-        if(i.hasNext()){
-            final Object object = i.next();
-            assertTrue(object instanceof Feature);
-            final Feature placemark = (Feature) object;
-            assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
-            assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
+        Iterator<?> i = ((Iterable<?>) document.getPropertyValue(KmlConstants.TAG_FEATURES)).iterator();
+        assertTrue("Expected at least one element.", i.hasNext());
+        final Feature placemark = (Feature) i.next();
+        assertEquals(KmlModelConstants.TYPE_PLACEMARK, placemark.getType());
 
-            assertEquals("placemark891",((IdAttributes) placemark.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()).getValue()).getId());
-            final Point point = (Point) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+        assertEquals("placemark891", ((IdAttributes) placemark.getPropertyValue(KmlConstants.ATT_ID)).getId());
+        final Point point = (Point) placemark.getPropertyValue(KmlConstants.TAG_GEOMETRY);
 
-            final CoordinateSequence coordinates = point.getCoordinateSequence();
-            assertEquals(1, coordinates.size());
+        final CoordinateSequence coordinates = point.getCoordinateSequence();
+        assertEquals(1, coordinates.size());
 
-            final Coordinate coordinate = coordinates.getCoordinate(0);
-            assertEquals(-95.48, coordinate.x, DELTA);
-            assertEquals(40.43, coordinate.y, DELTA);
-            assertEquals(0, coordinate.z, DELTA);
-        }
+        final Coordinate coordinate = coordinates.getCoordinate(0);
+        assertEquals(-95.48, coordinate.x, DELTA);
+        assertEquals(40.43, coordinate.y, DELTA);
+        assertEquals(0, coordinate.z, DELTA);
+        assertFalse("Expected exactly one element.", i.hasNext());
     }
 
     @Test
@@ -139,16 +105,14 @@ public class CreateTest extends org.geotoolkit.test.TestBase {
         final Point point = kmlFactory.createPoint(coordinates);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        final Collection<Property> placemarkProperties = placemark.getProperties();
         final IdAttributes placemarkIdAttributes = kmlFactory.createIdAttributes("placemark891", null);
-        placemarkProperties.add(FF.createAttribute(placemarkIdAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        placemarkProperties.add(FF.createAttribute(point, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark.setPropertyValue(KmlConstants.ATT_ID, placemarkIdAttributes);
+        placemark.setPropertyValue(KmlConstants.TAG_GEOMETRY, point);
 
         final Feature document = kmlFactory.createDocument();
-        final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        document.setPropertyValue(KmlConstants.TAG_FEATURES, placemark);
         final IdAttributes documentIdAttributes = kmlFactory.createIdAttributes(null, "region24");
-        documentProperties.add(FF.createAttribute(documentIdAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
+        document.setPropertyValue(KmlConstants.ATT_ID, documentIdAttributes);
 
         final Create create = kmlFactory.createCreate();
         create.setContainers(Arrays.asList(document));
@@ -172,8 +136,6 @@ public class CreateTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
 }

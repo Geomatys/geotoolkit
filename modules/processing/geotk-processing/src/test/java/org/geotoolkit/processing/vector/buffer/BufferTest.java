@@ -24,29 +24,35 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.measure.quantity.Length;
 import javax.measure.Unit;
 import org.apache.sis.measure.Units;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
+import org.apache.sis.internal.feature.BiFunction;
+import org.apache.sis.internal.feature.FeatureLoop;
+import org.apache.sis.internal.feature.Predicate;
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.processing.vector.AbstractProcessTest;
 import org.apache.sis.referencing.CRS;
-import org.geotoolkit.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 
 import org.junit.Test;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
 import static org.junit.Assert.*;
+import org.opengis.feature.AttributeType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
+
 
 /**
  * JUnit test douglas peucker simplification on FeatureCollection
@@ -55,7 +61,6 @@ import static org.junit.Assert.*;
  */
 public class BufferTest extends AbstractProcessTest {
 
-    private static FeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
     private static FeatureType type;
     private static final Double distance = new Double(5);
@@ -99,30 +104,36 @@ public class BufferTest extends AbstractProcessTest {
 
         double precision = 0.01;
         //geometry out list
-        FeatureIterator iteratorOut = featureListOut.iterator();
-        ArrayList<Geometry> geomsOut = new ArrayList<Geometry>();
-        int itOut = 0;
+        final FeatureIterator iteratorOut = featureListOut.iterator();
+        final ArrayList<Geometry> geomsOut = new ArrayList<>();
+        final AtomicInteger itOut = new AtomicInteger();
         while (iteratorOut.hasNext()) {
             Feature featureOut = iteratorOut.next();
-
-            for (Property propertyOut : featureOut.getProperties()) {
-                if (propertyOut.getDescriptor() instanceof GeometryDescriptor) {
-                    geomsOut.add(itOut++, (Geometry) propertyOut.getValue());
+            FeatureLoop.loop(featureOut, (Predicate)null, new BiFunction<PropertyType, Object, Object>() {
+                @Override
+                public Object apply(PropertyType t, Object u) {
+                    if(t instanceof AttributeType && Geometry.class.isAssignableFrom(((AttributeType)t).getValueClass())){
+                        geomsOut.add(itOut.getAndIncrement(), (Geometry) u);
+                    }
+                    return u;
                 }
-            }
+            });
         }
         //geometry input list
-        FeatureIterator listIterator = featureList.iterator();
-        ArrayList<Geometry> geomsInput = new ArrayList<Geometry>();
-        int itResult = 0;
+        final FeatureIterator listIterator = featureList.iterator();
+        final ArrayList<Geometry> geomsInput = new ArrayList<>();
+        final AtomicInteger itResult = new AtomicInteger();
         while (listIterator.hasNext()) {
             Feature feature = listIterator.next();
-
-            for (Property property : feature.getProperties()) {
-                if (property.getDescriptor() instanceof GeometryDescriptor) {
-                    geomsInput.add(itResult++, (Geometry) property.getValue());
+            FeatureLoop.loop(feature, (Predicate)null, new BiFunction<PropertyType, Object, Object>() {
+                @Override
+                public Object apply(PropertyType t, Object u) {
+                    if(t instanceof AttributeType && Geometry.class.isAssignableFrom(((AttributeType)t).getValueClass())){
+                        geomsInput.add(itResult.getAndIncrement(), (Geometry)u);
+                    }
+                    return u;
                 }
-            }
+            });
         }
 
         assertEquals(geomsInput.size(), geomsOut.size());
@@ -137,11 +148,11 @@ public class BufferTest extends AbstractProcessTest {
     private static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("BufferTest");
-        ftb.add("name", String.class);
-        ftb.add("position", Geometry.class, CRS.forCode("EPSG:3395"));
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY);
+        ftb.addAttribute(String.class).setName("name");
+        ftb.addAttribute(Geometry.class).setName("position").setCRS(CRS.forCode("EPSG:3395")).addRole(AttributeRole.DEFAULT_GEOMETRY);
 
-        ftb.setDefaultGeometry("position");
-        final FeatureType sft = ftb.buildFeatureType();
+        final FeatureType sft = ftb.build();
         return sft;
     }
 
@@ -152,16 +163,14 @@ public class BufferTest extends AbstractProcessTest {
 
         geometryFactory = new GeometryFactory();
 
-        Feature myFeature1;
-
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Point");
-        sfb.setPropertyValue("position", geometryFactory.createPoint(new Coordinate(-10.0, 10.0)));
-        myFeature1 = sfb.buildFeature("id-01");
+        Feature myFeature1 = type.newInstance();
+        myFeature1.setPropertyValue("@identifier", "id-01");
+        myFeature1.setPropertyValue("name", "Point");
+        myFeature1.setPropertyValue("position", geometryFactory.createPoint(new Coordinate(-10.0, 10.0)));
         featureList.add(myFeature1);
 
 
-        Feature myFeature2;
+        Feature myFeature2 = type.newInstance();
         LineString line = geometryFactory.createLineString(
                 new Coordinate[]{
                     new Coordinate(30.0, 40.0),
@@ -169,14 +178,13 @@ public class BufferTest extends AbstractProcessTest {
                     new Coordinate(60.0, 50.0),
                     new Coordinate(70.0, 40.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "LineString");
-        sfb.setPropertyValue("position", line);
-        myFeature2 = sfb.buildFeature("id-02");
+        myFeature2.setPropertyValue("@identifier", "id-02");
+        myFeature2.setPropertyValue("name", "LineString");
+        myFeature2.setPropertyValue("position", line);
         featureList.add(myFeature2);
 
 
-        Feature myFeature3;
+        Feature myFeature3 = type.newInstance();
         LinearRing ring2 = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(-10.0, -10.0),
@@ -190,10 +198,9 @@ public class BufferTest extends AbstractProcessTest {
                     new Coordinate(10.0, -20.0),
                     new Coordinate(-10.0, -10.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Polygone");
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring2, null));
-        myFeature3 = sfb.buildFeature("id-03");
+        myFeature3.setPropertyValue("@identifier", "id-03");
+        myFeature3.setPropertyValue("name", "Polygone");
+        myFeature3.setPropertyValue("position", geometryFactory.createPolygon(ring2, null));
         featureList.add(myFeature3);
 
         return featureList;
@@ -205,16 +212,14 @@ public class BufferTest extends AbstractProcessTest {
 
         geometryFactory = new GeometryFactory();
 
-        Feature myFeature1;
-
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Point");
-        sfb.setPropertyValue("position", geometryFactory.createPoint(new Coordinate(-10.0, 10.0)).buffer(distance));
-        myFeature1 = sfb.buildFeature("id-01");
+        Feature myFeature1 = type.newInstance();
+        myFeature1.setPropertyValue("@identifier", "id-01");
+        myFeature1.setPropertyValue("name", "Point");
+        myFeature1.setPropertyValue("position", geometryFactory.createPoint(new Coordinate(-10.0, 10.0)).buffer(distance));
         featureList.add(myFeature1);
 
 
-        Feature myFeature2;
+        Feature myFeature2 = type.newInstance();
         LineString line = geometryFactory.createLineString(
                 new Coordinate[]{
                     new Coordinate(30.0, 40.0),
@@ -222,14 +227,13 @@ public class BufferTest extends AbstractProcessTest {
                     new Coordinate(60.0, 50.0),
                     new Coordinate(70.0, 40.0)
                 });
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "LineString");
-        sfb.setPropertyValue("position", line.buffer(distance));
-        myFeature2 = sfb.buildFeature("id-02");
+        myFeature2.setPropertyValue("@identifier", "id-02");
+        myFeature2.setPropertyValue("name", "LineString");
+        myFeature2.setPropertyValue("position", line.buffer(distance));
         featureList.add(myFeature2);
 
 
-        Feature myFeature3;
+        Feature myFeature3 = type.newInstance();
         LinearRing ring2 = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(-10.0, -10.0),
@@ -244,10 +248,9 @@ public class BufferTest extends AbstractProcessTest {
                     new Coordinate(-10.0, -10.0)
                 });
 
-        sfb = new FeatureBuilder(type);
-        sfb.setPropertyValue("name", "Polygone");
-        sfb.setPropertyValue("position", geometryFactory.createPolygon(ring2, null).buffer(distance));
-        myFeature3 = sfb.buildFeature("id-03");
+        myFeature3.setPropertyValue("@identifier", "id-03");
+        myFeature3.setPropertyValue("name", "Polygone");
+        myFeature3.setPropertyValue("position", geometryFactory.createPolygon(ring2, null).buffer(distance));
         featureList.add(myFeature3);
 
         return featureList;

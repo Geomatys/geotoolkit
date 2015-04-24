@@ -16,8 +16,9 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+
 
 /**
  * A FeatureWriter is a feature iterator allowing both modification and insertion

@@ -22,30 +22,31 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.processing.vector.VectorProcessUtils;
 import org.apache.sis.referencing.CommonCRS;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureType;
+import org.opengis.feature.PropertyType;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.feature.FeatureExt;
+import org.apache.sis.feature.builder.AttributeRole;
+import org.apache.sis.feature.builder.FeatureTypeBuilder;
+import org.apache.sis.internal.feature.AttributeConvention;
 
 import static org.geotoolkit.parameter.Parameters.*;
+import org.opengis.feature.AttributeType;
+
 
 /**
  * Process compute union between two FeatureCollection
@@ -59,7 +60,6 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @module pending
  */
 public class UnionProcess extends AbstractProcess {
-
     /**
      * Default constructor
      */
@@ -72,47 +72,41 @@ public class UnionProcess extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection inputFeatureList   = value(VectorDescriptor.FEATURE_IN, inputParameters);
-        final FeatureCollection unionFeatureList   = value(UnionDescriptor.FEATURE_UNION, inputParameters);
-        final String inputGeometryName                      = value(UnionDescriptor.INPUT_GEOMETRY_NAME, inputParameters);
-        final String unionGeometryName                      = value(UnionDescriptor.UNION_GEOMETRY_NAME, inputParameters);
-
+        final FeatureCollection inputFeatureList  = value(VectorDescriptor.FEATURE_IN, inputParameters);
+        final FeatureCollection unionFeatureList  = value(UnionDescriptor.FEATURE_UNION, inputParameters);
+        final String inputGeometryName            = value(UnionDescriptor.INPUT_GEOMETRY_NAME, inputParameters);
+        final String unionGeometryName            = value(UnionDescriptor.UNION_GEOMETRY_NAME, inputParameters);
         final FeatureCollection resultFeatureList = new UnionFeatureCollection(inputFeatureList, unionFeatureList, inputGeometryName, unionGeometryName);
-
         getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**
      * Generate an union FeatureCollection comparing a Feature to a FeatureCollection.
      * During the second pass, we remove duplicates Features
-     * @param inputFeature
-     * @param newFeatureType - the new FeatureType
-     * @param unionFC - union FeatureCollection
-     * @param inputGeomName - attribute name of the used Geometry from inputFeature
-     * @param unionGeomName - attribute name of the used Geometry from unionFC
-     * @param firstPass
-     * @param featureList - Set of already created Features (it's used in order to remove duplicate Features)
+     *
+     * @param newFeatureType the new FeatureType
+     * @param unionFC union FeatureCollection
+     * @param inputGeomName attribute name of the used Geometry from inputFeature
+     * @param unionGeomName attribute name of the used Geometry from unionFC
+     * @param featureList Set of already created Features (it's used in order to remove duplicate Features)
      * @return the result FeatureCollection of an union between a Feature and a FeatureCollection
-     * @throws TransformException
-     * @throws FactoryException
      */
     static FeatureCollection unionFeatureToFC(final Feature inputFeature, final FeatureType newFeatureType, final FeatureCollection unionFC,
             final String inputGeomName, final String unionGeomName, final boolean firstPass, final Set<String> featureList)
-            throws TransformException, FactoryException {
-
-
+            throws TransformException, FactoryException
+    {
         final FeatureCollection resultFeatureList =
-                FeatureStoreUtilities.collection(inputFeature.getIdentifier().getID(), newFeatureType);
-
-         /*
+                FeatureStoreUtilities.collection(FeatureExt.getId(inputFeature).getID(), newFeatureType);
+        /*
          * In order to get all part of Feature, add a second pass with the diffenrence between the FeatureGeometry
          * and united intersections. if return nothing we have all the geometry feature, else we add the difference
          */
         Geometry inputGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
-        for (final Property inputProperty : inputFeature.getProperties()) {
-            if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
-                if (inputProperty.getName().tip().toString().equals(inputGeomName)) {
-                    inputGeometry = (Geometry) inputProperty.getValue();
+        for (final PropertyType inputProperty : inputFeature.getType().getProperties(true)) {
+            if (AttributeConvention.isGeometryAttribute(inputProperty)) {
+                final String name = inputProperty.getName().tip().toString();
+                if (name.equals(inputGeomName)) {
+                    inputGeometry = (Geometry) inputFeature.getPropertyValue(name);
                 }
             }
         }
@@ -120,20 +114,17 @@ public class UnionProcess extends AbstractProcess {
         Geometry remainingGeometry = inputGeometry;
         boolean isIntersected = false;
         //Check if each union Features intersect inputFeature. if yes, create a new Feature which is union of both
-        final FeatureIterator unionIter = unionFC.iterator();
-        try {
+        try (final FeatureIterator unionIter = unionFC.iterator()) {
             while (unionIter.hasNext()) {
                 final Feature unionFeature = unionIter.next();
-
-                String featureID = null;
+                final String featureID;
 
                 //Invert ID order for the second pass (firstpass "inputID U unionID", second pass "unionID U inputID")
                 if (firstPass) {
-                    featureID = inputFeature.getIdentifier().getID() + "-" + unionFeature.getIdentifier().getID();
+                    featureID = FeatureExt.getId(inputFeature).getID() + "-" + FeatureExt.getId(unionFeature).getID();
                 } else {
-                    featureID = unionFeature.getIdentifier().getID() + "-" + inputFeature.getIdentifier().getID();
+                    featureID = FeatureExt.getId(unionFeature).getID() + "-" + FeatureExt.getId(inputFeature).getID();
                 }
-
 
                 final Feature resultFeature = unionFeatureToFeature(inputFeature, unionFeature, newFeatureType,
                         inputGeomName, unionGeomName, featureID, firstPass);
@@ -142,124 +133,119 @@ public class UnionProcess extends AbstractProcess {
                 //Else we add the resutl Feature to resultFeatureList
                 if (resultFeature != null) {
                     isIntersected = true;
-
                     resultFeatureList.add(resultFeature);
-                    Geometry intersectGeom =  (Geometry) resultFeature.getDefaultGeometryProperty().getValue();
+                    Geometry intersectGeom =  (Geometry) resultFeature.getPropertyValue(AttributeConvention.GEOMETRY_PROPERTY.toString());
                     remainingGeometry = remainingGeometry.difference(intersectGeom);
                 }
             }
-        } finally {
-            unionIter.close();
         }
-
 
         //If remaining Geometry is empty and isIntersecting boolean is false, mean the geometry
         if (remainingGeometry.isEmpty() && !isIntersected) {
-            final Feature remainingFeature = FeatureUtilities.defaultFeature(newFeatureType, inputFeature.getIdentifier().getID());
+            final Feature remainingFeature = newFeatureType.newInstance();
+            FeatureExt.setId(remainingFeature, FeatureExt.getId(inputFeature));
             //Copy none Geometry attributes
-            for (final Property inputProperty : inputFeature.getProperties()) {
-                if (!(inputProperty.getDescriptor() instanceof GeometryDescriptor)) {
-                    remainingFeature.getProperty(inputProperty.getName()).setValue(inputProperty.getValue());
+            for (final PropertyType inputProperty : inputFeature.getType().getProperties(true)) {
+                if(!(inputProperty instanceof AttributeType) || AttributeConvention.contains(inputProperty.getName())) continue;
+                if (!AttributeConvention.isGeometryAttribute(inputProperty)) {
+                    final String name = inputProperty.getName().toString();
+                    remainingFeature.setPropertyValue(name, inputFeature.getPropertyValue(name));
                 }
             }
             if (firstPass) {
-                remainingFeature.getProperty(inputGeomName).setValue(inputGeometry);
+                remainingFeature.setPropertyValue(inputGeomName, inputGeometry);
             } else {
-                remainingFeature.getProperty(unionGeomName).setValue(inputGeometry);
+                remainingFeature.setPropertyValue(unionGeomName, inputGeometry);
             }
             resultFeatureList.add(remainingFeature);
 
-
-        //Create a remaining Feature with the inputGeometry
         }
 
-        if(!(remainingGeometry.isEmpty())) {
-            final Feature remainingFeature = FeatureUtilities.defaultFeature(newFeatureType, inputFeature.getIdentifier().getID());
+        //Create a remaining Feature with the inputGeometry
+        if (!(remainingGeometry.isEmpty())) {
+            if(remainingGeometry.equalsTopo(inputGeometry)) {
+                remainingGeometry = inputGeometry;
+            }
+
+            final Feature remainingFeature = newFeatureType.newInstance();
+            FeatureExt.setId(remainingFeature, FeatureExt.getId(inputFeature));
             //Copy none Geometry attributes
-            for (final Property inputProperty : inputFeature.getProperties()) {
-                if (!(inputProperty.getDescriptor() instanceof GeometryDescriptor)) {
-                    remainingFeature.getProperty(inputProperty.getName()).setValue(inputProperty.getValue());
+            for (final PropertyType inputProperty : inputFeature.getType().getProperties(true)) {
+                if(!(inputProperty instanceof AttributeType) || AttributeConvention.contains(inputProperty.getName())) continue;
+                if (!AttributeConvention.isGeometryAttribute(inputProperty)) {
+                    final String name = inputProperty.getName().toString();
+                    remainingFeature.setPropertyValue(name, inputFeature.getPropertyValue(name));
                 }
             }
             //System.out.println("LOG Empty remaining Geometry");
             if (firstPass) {
-                remainingFeature.getProperty(inputGeomName).setValue(remainingGeometry);
+                remainingFeature.setPropertyValue(inputGeomName, remainingGeometry);
             } else {
-                remainingFeature.getProperty(unionGeomName).setValue(remainingGeometry);
+                remainingFeature.setPropertyValue(unionGeomName, remainingGeometry);
             }
-             resultFeatureList.add(remainingFeature);
+            resultFeatureList.add(remainingFeature);
         }
-
-
-        final Collection<Feature> featureToRemove = new ArrayList<Feature>();
+        final Collection<Feature> featureToRemove = new ArrayList<>();
         /* Check if created features are already present in featureList.
          * If yes, we delete them from the returning FeatureCollection
          * else we add them into the featureList
          */
         for (final Feature createdFeature : resultFeatureList) {
-            final String createdFeatureID = createdFeature.getIdentifier().getID();
+            final String createdFeatureID = FeatureExt.getId(createdFeature).getID();
             if (featureList.contains(createdFeatureID)) {
                 featureToRemove.add(createdFeature);
             } else {
                 featureList.add(createdFeatureID);
             }
         }
-
         //remove existing feature
         resultFeatureList.removeAll(featureToRemove);
-
         return resultFeatureList;
     }
 
     /**
      * Create a Feature which is the union between two Features. If there is no intersection,
      * function will return null.
-     * @param inputFeature
-     * @param unionFeature
-     * @param newFeatureType
-     * @param inputGeomName- attribute name of the used Geometry in inputFeature
-     * @param unionGeomName - attribute name of the used Geometry in unionFeature
-     * @param featureID - ID of the new Feature
-     * @param firstPass - boolean to set which Geometry is use for the created Feature
+     *
+     * @param inputGeomName attribute name of the used Geometry in inputFeature
+     * @param unionGeomName attribute name of the used Geometry in unionFeature
+     * @param featureID ID of the new Feature
+     * @param firstPass boolean to set which Geometry is use for the created Feature
      * @return the union Feature with intersection as Geometry. Return null if there is no intersection.
-     * @throws FactoryException
-     * @throws TransformException
      */
     private static Feature unionFeatureToFeature(final Feature inputFeature, final Feature unionFeature, final FeatureType newFeatureType,
             final String inputGeomName, final String unionGeomName, final String featureID, final boolean firstPass) throws FactoryException,
-            TransformException {
-
-
+            TransformException
+    {
         final Geometry intersectGeometry = VectorProcessUtils.intersectionFeatureToFeature(inputFeature, unionFeature, inputGeomName, unionGeomName);
-
         if (!intersectGeometry.isEmpty()) {
-
-            final Feature resultFeature = FeatureUtilities.defaultFeature(newFeatureType, featureID);
+            final Feature resultFeature = newFeatureType.newInstance();
+            resultFeature.setPropertyValue(AttributeConvention.IDENTIFIER_PROPERTY.toString(), featureID);
 
             //copy none Geometry attributes
-            for (final Property unionProperty : unionFeature.getProperties()) {
-                if (!(unionProperty.getDescriptor() instanceof GeometryDescriptor)) {
-                    resultFeature.getProperty(unionProperty.getName()).setValue(unionProperty.getValue());
+            for (final PropertyType unionProperty : unionFeature.getType().getProperties(true)) {
+                if(!(unionProperty instanceof AttributeType) || AttributeConvention.contains(unionProperty.getName())) continue;
+                if (!AttributeConvention.isGeometryAttribute(unionProperty)) {
+                    final String name = unionProperty.getName().toString();
+                    resultFeature.setPropertyValue(name, unionFeature.getPropertyValue(name));
                 }
             }
-
-            for (final Property inputProperty : inputFeature.getProperties()) {
-                if (!(inputProperty.getDescriptor() instanceof GeometryDescriptor)) {
-                    resultFeature.getProperty(inputProperty.getName()).setValue(inputProperty.getValue());
+            for (final PropertyType inputProperty : inputFeature.getType().getProperties(true)) {
+                if(!(inputProperty instanceof AttributeType) || AttributeConvention.contains(inputProperty.getName())) continue;
+                if (!AttributeConvention.isGeometryAttribute(inputProperty)) {
+                    final String name = inputProperty.getName().toString();
+                    resultFeature.setPropertyValue(name, inputFeature.getPropertyValue(name));
                 }
             }
-
             if (firstPass) {
-                resultFeature.getProperty(inputGeomName).setValue(intersectGeometry);
+                resultFeature.setPropertyValue(inputGeomName, intersectGeometry);
             } else {
-                resultFeature.getProperty(unionGeomName).setValue(intersectGeometry);
+                resultFeature.setPropertyValue(unionGeomName, intersectGeometry);
             }
-
             return resultFeature;
         } else {
             return null;
         }
-
     }
 
     /**
@@ -280,35 +266,30 @@ public class UnionProcess extends AbstractProcess {
         }
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        //add identifier
+        ftb.addAttribute(String.class).setName(AttributeConvention.IDENTIFIER_PROPERTY).addRole(AttributeRole.IDENTIFIER_COMPONENT);
 
         // Name of the new FeatureType.
         ftb.setName(type1.getName().tip().toString() + "-" + type2.getName().tip().toString());
 
         //Copy all properties from type1
-        Iterator<PropertyDescriptor> iteSource = type1.getDescriptors().iterator();
-        while (iteSource.hasNext()) {
-            final PropertyDescriptor sourceDesc = iteSource.next();
-
+        for (final PropertyType sourceDesc : type1.getProperties(true)) {
+            if(AttributeConvention.contains(sourceDesc.getName())) continue;
             //add all descriptors but geometry
-            if (!(sourceDesc instanceof GeometryDescriptor)) {
-                ftb.add(sourceDesc);
+            if (!AttributeConvention.isGeometryAttribute(sourceDesc)) {
+                ftb.addProperty(sourceDesc);
             }
         }
 
         // Copy all properties from the type2 without duplicate
-        final Iterator<PropertyDescriptor> iteTarget = type2.getDescriptors().iterator();
-        while (iteTarget.hasNext()) {
-            final PropertyDescriptor targetDesc = iteTarget.next();
-
-            if (!(targetDesc instanceof GeometryDescriptor)) {
-
-                iteSource = type1.getDescriptors().iterator();
+        for (final PropertyType targetDesc : type2.getProperties(true)) {
+            if(AttributeConvention.contains(targetDesc.getName())) continue;
+            
+            if (!AttributeConvention.isGeometryAttribute(targetDesc)) {
                 boolean isExistDesc = false;
                 //search if target descriptor name already exist into source descriptors
-                while (iteSource.hasNext()) {
-                    final PropertyDescriptor sourceDesc = iteSource.next();
-
-                    if (!(sourceDesc instanceof GeometryDescriptor)) {
+                for (final PropertyType sourceDesc : type1.getProperties(true)) {
+                    if (!AttributeConvention.isGeometryAttribute(sourceDesc)) {
                         //if attribute descriptor name isn't found into ftb we add it
                         if ((targetDesc.getName().equals(sourceDesc.getName()))) {
                             isExistDesc = true;
@@ -316,15 +297,13 @@ public class UnionProcess extends AbstractProcess {
                         }
                     }
                 }
-                if(!isExistDesc) {
-                    ftb.add(targetDesc);
+                if (!isExistDesc) {
+                    ftb.addProperty(targetDesc);
                 }
             }
         }
         //add geometry
-        ftb.add(geometryName, Geometry.class, geometryCRS);
-        ftb.setDefaultGeometry(geometryName);
-        FeatureType returnType = ftb.buildFeatureType();
-        return returnType;
+        ftb.addAttribute(Geometry.class).setName(geometryName).setCRS(geometryCRS).addRole(AttributeRole.DEFAULT_GEOMETRY);
+        return ftb.build();
     }
 }

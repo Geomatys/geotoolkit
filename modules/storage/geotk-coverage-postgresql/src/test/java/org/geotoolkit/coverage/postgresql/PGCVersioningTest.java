@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
+import org.apache.sis.feature.FeatureExt;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.CoverageStore;
@@ -42,7 +43,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataStores;
@@ -75,7 +75,7 @@ public class PGCVersioningTest extends org.geotoolkit.test.TestBase {
         Assume.assumeTrue(f.exists());
         final Properties properties = new Properties();
         properties.load(new FileInputStream(f));
-        params = FeatureUtilities.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
+        params = FeatureExt.toParameter((Map)properties, PARAMETERS_DESCRIPTOR, false);
     }
 
     public PGCVersioningTest(){

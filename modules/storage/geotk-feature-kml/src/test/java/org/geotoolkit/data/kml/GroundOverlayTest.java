@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
@@ -37,9 +36,8 @@ import org.geotoolkit.xml.DomCompare;
 
 import org.junit.Test;
 
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
+import org.opengis.feature.Feature;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
@@ -52,10 +50,6 @@ public class GroundOverlayTest extends org.geotoolkit.test.TestBase {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/groundOverlay.kml";
-    private static final FeatureFactory FF = FeatureFactory.LENIENT;
-
-    public GroundOverlayTest() {
-    }
 
     @Test
     public void groundOverlayReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
@@ -66,17 +60,17 @@ public class GroundOverlayTest extends org.geotoolkit.test.TestBase {
         reader.dispose();
 
         final Feature groundOverlay = kmlObjects.getAbstractFeature();
-        assertTrue(groundOverlay.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY));
-        assertEquals("GroundOverlay.kml", groundOverlay.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertEquals("7fffffff",KmlUtilities.toKmlColor((Color) groundOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_COLOR.getName()).getValue()));
-        assertEquals(1,groundOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_DRAW_ORDER.getName()).getValue());
-        final Icon icon = (Icon) groundOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue();
+        assertEquals(KmlModelConstants.TYPE_GROUND_OVERLAY, groundOverlay.getType());
+        assertEquals("GroundOverlay.kml", groundOverlay.getPropertyValue(KmlConstants.TAG_NAME));
+        assertEquals("7fffffff", KmlUtilities.toKmlColor((Color) groundOverlay.getPropertyValue(KmlConstants.TAG_COLOR)));
+        assertEquals(1, groundOverlay.getPropertyValue(KmlConstants.TAG_DRAW_ORDER));
+        final Icon icon = (Icon) groundOverlay.getPropertyValue(KmlConstants.TAG_ICON);
             assertEquals("http://www.google.com/intl/en/images/logo.gif",icon.getHref());
             assertEquals(RefreshMode.ON_INTERVAL, icon.getRefreshMode());
             assertEquals(86400, icon.getRefreshInterval(),DELTA);
             assertEquals(0.75, icon.getViewBoundScale(),DELTA);
 
-        final LatLonBox latLonBox = (LatLonBox) groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
+        final LatLonBox latLonBox = (LatLonBox) groundOverlay.getPropertyValue(KmlConstants.TAG_LAT_LON_BOX);
             assertEquals(37.83234, latLonBox.getNorth(), DELTA);
             assertEquals(37.832122, latLonBox.getSouth(), DELTA);
             assertEquals(-122.373033, latLonBox.getEast(), DELTA);
@@ -113,12 +107,11 @@ public class GroundOverlayTest extends org.geotoolkit.test.TestBase {
         final int drawOrder = 1;
 
         final Feature groundOverlay = kmlFactory.createGroundOverlay();
-        final Collection<Property> groundOverlayProperties = groundOverlay.getProperties();
-        groundOverlayProperties.add(FF.createAttribute(name, KmlModelConstants.ATT_NAME, null));
-        groundOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_COLOR.getName()).setValue(color);
-        groundOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_DRAW_ORDER.getName()).setValue(drawOrder);
-        groundOverlayProperties.add(FF.createAttribute(icon, KmlModelConstants.ATT_OVERLAY_ICON, null));
-        groundOverlayProperties.add(FF.createAttribute(latLonBox, KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX, null));
+        groundOverlay.setPropertyValue(KmlConstants.TAG_NAME, name);
+        groundOverlay.setPropertyValue(KmlConstants.TAG_COLOR, color);
+        groundOverlay.setPropertyValue(KmlConstants.TAG_DRAW_ORDER, drawOrder);
+        groundOverlay.setPropertyValue(KmlConstants.TAG_ICON, icon);
+        groundOverlay.setPropertyValue(KmlConstants.TAG_LAT_LON_BOX, latLonBox);
 
         final Kml kml = kmlFactory.createKml(null, groundOverlay, null, null);
 
@@ -130,9 +123,6 @@ public class GroundOverlayTest extends org.geotoolkit.test.TestBase {
         writer.write(kml);
         writer.dispose();
 
-        DomCompare.compare(
-                 new File(pathToTestFile), temp);
-
+        DomCompare.compare(new File(pathToTestFile), temp);
     }
-
 }
