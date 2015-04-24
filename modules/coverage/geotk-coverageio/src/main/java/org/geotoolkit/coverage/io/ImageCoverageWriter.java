@@ -547,6 +547,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             throw new CoverageStoreException(Errors.format(Errors.Keys.UNSUPPORTED_MULTI_OCCURRENCE_1, GridCoverage.class));
         }
         final boolean isNetcdfHack = imageWriter.getClass().getName().equals("org.geotoolkit.image.io.plugin.NetcdfImageWriter"); // TODO: DEPRECATED: to be removed in Apache SIS.
+        final boolean isTiffHack = imageWriter.getClass().getName().equals("org.geotoolkit.image.io.plugin.TiffImageWriter");
         /*
          * Convert the geodetic coordinates to pixel coordinates.
          */
@@ -702,14 +703,18 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 res = param.getResolution();
             }
             if (crs == null && gridGeometry.isDefined(GridGeometry2D.CRS)) {
-                if (imageWriter instanceof MultidimensionalImageStore || isNetcdfHack) {
+                if (imageWriter instanceof MultidimensionalImageStore 
+                 || isNetcdfHack
+                 || isTiffHack) {
                     crs = gridGeometry.getCoordinateReferenceSystem();
                 } else {
                     crs = gridGeometry.getCoordinateReferenceSystem2D();
                 }
             }
             if (env == null && gridGeometry.isDefined(GridGeometry2D.ENVELOPE)) {
-                if (imageWriter instanceof MultidimensionalImageStore || isNetcdfHack) {
+                if (imageWriter instanceof MultidimensionalImageStore 
+                 || isNetcdfHack
+                 || isTiffHack) {
                     env = gridGeometry.getEnvelope();
                 } else {
                     env = gridGeometry.getEnvelope2D();
@@ -722,21 +727,47 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             if (env != null) {
                 final GridDomainAccessor accessor = new GridDomainAccessor(imageMetadata);
                 final Dimension size = getImageSize(image, imageParam);
-                final double xmin = env.getMinimum(X_DIMENSION);
                 final double ymax = env.getMaximum(Y_DIMENSION);
+                final double[] origin = env.getLowerCorner().getCoordinate();
+                final int dim = origin.length;
+                origin[Y_DIMENSION] = ymax;
+                
                 if (res != null) {
-                    final double[] p = new double[] {xmin, ymax};
-                    accessor.setOrigin(p);
-                    p[0] = +res[X_DIMENSION]; p[1]=0; accessor.addOffsetVector(p);
-                    p[1] = -res[Y_DIMENSION]; p[0]=0; accessor.addOffsetVector(p);
-                    p[0] = env.getMedian(X_DIMENSION);
-                    p[1] = env.getMedian(Y_DIMENSION);
-                    accessor.setSpatialRepresentation(p, null, PixelOrientation.UPPER_LEFT);
-                    accessor.setLimits(new int[2], new int[] {size.width-1, size.height-1});
+                    accessor.setOrigin(origin);
+                    final double[] p = new double[dim];
+                    final double[] median = new double[dim];
+                    for (int i = 0; i < dim; i++) {
+                        Arrays.fill(p, 0);
+                        if (i == X_DIMENSION) {
+                            p[i] = +res[X_DIMENSION];
+                        } else if (i == Y_DIMENSION) {
+                            p[i] = -res[Y_DIMENSION];
+                        } else {
+                            p[i] = 1;
+                        }
+                        accessor.addOffsetVector(p);
+                        median[i] = env.getMedian(i);
+                    }
+                    
+                    accessor.setSpatialRepresentation(median, null, PixelOrientation.UPPER_LEFT);
+                    final int[] maxGrid = new int[dim];
+                    Arrays.fill(maxGrid, 1);
+                    maxGrid[X_DIMENSION] = size.width  - 1;
+                    maxGrid[Y_DIMENSION] = size.height - 1;
+                    accessor.setLimits(new int[dim], maxGrid);
                 } else {
-                    // Let the accessor compute the resolution for us.
-                    accessor.setAll(xmin, ymax, env.getMaximum(X_DIMENSION),
-                            env.getMinimum(Y_DIMENSION), size.width, size.height, false, null);
+                    
+                    final double[] envBounds = env.getUpperCorner().getCoordinate();
+                    envBounds[Y_DIMENSION] = env.getMinimum(Y_DIMENSION);
+                    
+                    final int[] high = new int[dim];
+                    Arrays.fill(high, 1);
+                    high[X_DIMENSION] = size.width - 1;
+                    high[Y_DIMENSION] = size.height - 1;
+                    
+                    accessor.setRectifiedGridDomain(origin, envBounds, null, high, null, false);
+                    accessor.setSpatialRepresentation(origin, envBounds, null, PixelOrientation.UPPER_LEFT);
+                    
                 }
             }
             final int n = coverage.getNumSampleDimensions();

@@ -22,7 +22,9 @@ import com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet;
 
 import java.util.Collection;
 import java.awt.geom.AffineTransform;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.apache.sis.util.ArgumentChecks;
 
@@ -44,6 +46,13 @@ import org.apache.sis.util.NullArgumentException;
  */
 public final class GeoTiffMetaDataStack {
 
+    /**
+     * Date formatter to format in accordance with tiff specification.<br><br>
+     * 
+     * More informations at : http://www.awaresystems.be/imaging/tiff/tifftags/datetime.html.
+     */
+    private static final SimpleDateFormat S_DATE_FORMAT = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+    
     private final Element ifd;
 
     //what needs to be written when flush is called
@@ -56,6 +65,7 @@ public final class GeoTiffMetaDataStack {
     private List<Node> noDatas                    = new ArrayList<Node>();
     private Node minSampleValue                   = null;
     private Node maxSampleValue                   = null;
+    private Node date                             = null;
 
     public GeoTiffMetaDataStack(Node tiffTree) {
         ensureNonNull("tiffTree", tiffTree);
@@ -151,6 +161,19 @@ public final class GeoTiffMetaDataStack {
     void setMaxSampleValue(final int ...maximumSampleValues) {
         maxSampleValue = createTiffField(GeoTiffConstants.MaxSampleValue, "maxSampleValue"); 
         maxSampleValue.appendChild(createTiffShorts(maximumSampleValues));
+    }
+    
+    /**
+     * Set date into this {@link GeoTiffMetaDataStack} in aim of build or write metadata. 
+     * 
+     * @param date which be set into metadata node.
+     * @throws NullArgumentException if date is {@code null}.
+     */
+    synchronized void setDate(final Date date) {
+        ArgumentChecks.ensureNonNull("date", date);
+        this.date = createTiffField(GeoTiffConstants.DateTime, "date"); 
+        final String sdat = S_DATE_FORMAT.format(date);
+        this.date.appendChild(createTiffAsciis(sdat));
     }
     
     void addModelTiePoint(final TiePoint tp) {
@@ -250,6 +273,9 @@ public final class GeoTiffMetaDataStack {
         
         if (!noDatas.isEmpty()) 
             for (Node nd : noDatas) ifd.appendChild(nd);
+        
+        if (date != null)
+            ifd.appendChild(date);
             
         if (!doubleValues.isEmpty()) {
             final Node nDoubles = createTiffField(getGeoDoubleParamsTag());

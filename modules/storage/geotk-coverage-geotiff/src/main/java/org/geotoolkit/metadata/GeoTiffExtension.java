@@ -103,7 +103,7 @@ public abstract class GeoTiffExtension {
      * @param value
      * @throws FactoryException 
      */
-    public static void setOrCreateSliceDimension(SpatialMetadata metadata, CoordinateReferenceSystem axisCrs, double value) throws FactoryException{
+     public static void setOrCreateSliceDimension(SpatialMetadata metadata, CoordinateReferenceSystem axisCrs, double value) throws FactoryException{
         //ensure no cache modify the values
         metadata.clearInstancesCache();
 

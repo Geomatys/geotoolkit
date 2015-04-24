@@ -906,7 +906,9 @@ public class TiffImageWriter extends SpatialImageWriter {
 
         if (!(iioImgMetadata instanceof SpatialMetadata)) return;
 
-        final String tiffFormatName = getOriginatingProvider().getNativeImageMetadataFormatName(); 
+        final String tiffFormatName = (getOriginatingProvider() != null) 
+                                     ? getOriginatingProvider().getNativeImageMetadataFormatName() 
+                                     : null; 
 
         final String[] formatNames = iioImgMetadata.getMetadataFormatNames();
         if (!ArraysExt.contains(formatNames, tiffFormatName) &&
@@ -943,14 +945,9 @@ public class TiffImageWriter extends SpatialImageWriter {
             final GeoTiffMetaDataWriter writer = new GeoTiffMetaDataWriter();
             try {
                 writer.fillMetadata(tiffTree, (SpatialMetadata) metadata);
-            } catch (FactoryException ex) {
+            } catch (Exception ex) {
                 throw new IOException(ex);
             }
-
-            //the tree changes are not stored in the model, imageio bug ?
-//            //I didn't found a way to update the tree so I recreate the iiometadata.
-//            metadata = new TIFFImageMetadata(
-//                    TIFFImageMetadata.parseIFD(DomUtilities.getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD)));
         }
 
         return metadata;

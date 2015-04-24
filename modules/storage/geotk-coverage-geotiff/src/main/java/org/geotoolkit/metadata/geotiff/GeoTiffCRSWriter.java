@@ -22,7 +22,6 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import java.io.IOException;
-
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.referencing.IdentifiedObjects;
@@ -85,19 +84,19 @@ public final class GeoTiffCRSWriter {
         ensureNonNull("crs", crs);
 
         final int crsType;
-        if(crs instanceof ProjectedCRS){
+        if (crs instanceof ProjectedCRS) {
             crsType = ModelTypeProjected;
             fillProjectedCRSMetaDatas(stack, (ProjectedCRS) crs);
-        }else if(crs instanceof GeocentricCRS){
+        } else if(crs instanceof GeocentricCRS) {
             crsType = ModelTypeGeocentric;
             fillGeocentricCRSMetaDatas(stack, (GeocentricCRS) crs);
-        }else if(crs instanceof GeographicCRS){
+        } else if(crs instanceof GeographicCRS) {
             crsType = ModelTypeGeographic;
             fillGeographicCRSMetaDatas(stack, (GeographicCRS) crs);
-        }else{
+        } else {
             throw new IOException("GeoTiff only handle ProjectedCRS, GeocentricCRS or GeographicCRS. Can not support CRS : " + crs);
         }
-
+    
         // add GTModelTypeGeoKey in GeoKeyDirectoryEntry
         stack.addShort(GTModelTypeGeoKey, crsType);
     }

@@ -22,7 +22,9 @@ package org.geotoolkit.metadata.geotiff;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.image.io.ImageMetadataException;
@@ -30,6 +32,8 @@ import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultTemporalCRS;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
@@ -44,9 +48,14 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.internal.image.io.GridDomainAccessor;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.w3c.dom.Node;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ReferencingUtilities;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -63,7 +72,7 @@ public class GeoTiffMetaDataWriter {
     /**
      * Complete the TIFF metadata tree with geotiff informations.
      */
-    public void fillMetadata(Node tiffTree, final SpatialMetadata spatialMD) throws ImageMetadataException, IOException, FactoryException{
+    public void fillMetadata(Node tiffTree, final SpatialMetadata spatialMD) throws ImageMetadataException, IOException, FactoryException, TransformException{
         ArgumentChecks.ensureNonNull("tiffTree", tiffTree);
         ArgumentChecks.ensureNonNull("spatialMD", spatialMD);
         
@@ -73,7 +82,7 @@ public class GeoTiffMetaDataWriter {
         //fill geotiff crs information
         final CoordinateReferenceSystem coverageCRS = spatialMD.getInstanceForType(CoordinateReferenceSystem.class);
         final GeoTiffCRSWriter crsWriter = new GeoTiffCRSWriter();
-        crsWriter.fillCRSMetaDatas(stack, coverageCRS);
+        crsWriter.fillCRSMetaDatas(stack, CRSUtilities.getCRS2D(coverageCRS));
 
         //fill the transformation information
         final RectifiedGrid domain = spatialMD.getInstanceForType(RectifiedGrid.class);
@@ -113,6 +122,17 @@ public class GeoTiffMetaDataWriter {
                 gridToCrs = (AffineTransform)PixelTranslation.translate(trs, orientation, PixelOrientation.UPPER_LEFT,0,1);
             }
         }
+        
+        //-- find a date from crs
+        final int tempOrdinate = getTemporalOrdinate(coverageCRS);
+        if (tempOrdinate >= 0) {
+            //-- add temporal tag
+            final GridDomainAccessor gda = new GridDomainAccessor(spatialMD);
+            final double[] origin        = gda.getAttributeAsDoubles("origin", false);
+            final double date            = origin[tempOrdinate]; 
+            final Date dat               = DefaultTemporalCRS.castOrCopy(CommonCRS.Temporal.JAVA.crs()).toDate(date);
+            stack.setDate(dat);
+        }
 
         fillTransform(stack, gridToCrs, domain.getExtent());
 
@@ -121,6 +141,21 @@ public class GeoTiffMetaDataWriter {
 
         //write in the metadata tree
         stack.flush();
+    }
+    
+    /**
+     * Return the temporal ordinate from {@link CoordinateReferenceSystem} or -1 if temporal crs was not found.
+     * 
+     * @return temporal ordinate if exist else return -1.
+     */
+    private int getTemporalOrdinate(final CoordinateReferenceSystem crs) {
+        final List<CoordinateReferenceSystem> crss = ReferencingUtilities.decompose(crs);
+        int o = 0;
+        for (final CoordinateReferenceSystem c : crss) {
+            if (CRS.equalsIgnoreMetadata(c, CommonCRS.Temporal.JAVA.crs())) return o;
+            o += c.getCoordinateSystem().getDimension();
+        }
+        return -1;
     }
     
     /**
@@ -144,6 +179,11 @@ public class GeoTiffMetaDataWriter {
         final DimensionAccessor accessor                 = new DimensionAccessor(spatialMD);
         final List<GridSampleDimension> sampleDimensions = accessor.getGridSampleDimensions();
 
+        if (sampleDimensions == null) {
+            LOGGER.log(Level.FINE, "GeotiffMetadataWriter : no gridSampleDimension setted into spatialMetadata.");
+            return;
+        }
+        
         final int sampleDimensionNumber = sampleDimensions.size();
         
         double[] noData   = null;
