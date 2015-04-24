@@ -38,6 +38,8 @@ import org.opengis.util.FactoryException;
 import org.xml.sax.SAXException;
 
 import static org.apache.sis.test.Assert.*;
+import org.geotoolkit.wps.io.WPSMimeType;
+import org.geotoolkit.wps.io.WPSSchema;
 
 
 /**
@@ -67,7 +69,7 @@ public class ExecuteTest {
             final List<AbstractWPSInput> inputs = new ArrayList<AbstractWPSInput>();
             inputs.add(new WPSInputLiteral("literal", "10"));
             inputs.add(new WPSInputBoundingBox("bbox", corner, corner, "EPSG:4326", 2));
-            inputs.add(new WPSInputComplex("complex", point, Geometry.class));
+            inputs.add(new WPSInputComplex("complex", point, Geometry.class, "UTF-8", WPSSchema.OGC_GML_3_1_1.getValue(), WPSMimeType.APP_GML.val()));
             inputs.add(new WPSInputReference("reference", "http://link.to/reference/"));
 
             final List<WPSOutput> outputs = new ArrayList<WPSOutput>();
