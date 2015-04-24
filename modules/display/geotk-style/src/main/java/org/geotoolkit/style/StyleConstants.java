@@ -334,11 +334,12 @@ public final class StyleConstants {
         final SelectedChannelType gray = new DefaultSelectedChannelType("0", DEFAULT_CONTRAST_ENHANCEMENT);
         DEFAULT_RASTER_CHANNEL_GRAY = new DefaultChannelSelection(gray);
         DEFAULT_RASTER_OVERLAP = OverlapBehavior.LATEST_ON_TOP;
-        DEFAULT_RASTER_COLORMAP = new DefaultColorMap(new DefaultInterpolate(null, new ArrayList<InterpolationPoint>(), Method.COLOR, Mode.LINEAR, null));
-        DEFAULT_RASTER_OUTLINE = null;
         
         DEFAULT_FALLBACK = SF.literal(Color.RED);
         DEFAULT_CATEGORIZE_LOOKUP = FF.literal("RASTER_DATA");
+        DEFAULT_RASTER_COLORMAP = new DefaultColorMap(new DefaultInterpolate(DEFAULT_CATEGORIZE_LOOKUP, new ArrayList<InterpolationPoint>(), Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK));
+        DEFAULT_RASTER_OUTLINE = null;
+        
         CATEGORIZE_LESS_INFINITY = FF.literal("CATEGORIZE_LESS_INFINITY");
         
         DEFAULT_POINT_SYMBOLIZER = new DefaultPointSymbolizer(
