@@ -505,6 +505,10 @@ public class IntervalStyleBuilder extends AbstractTableModel{
     }
 
     public List<MutableRule> generateRules(final IntervalPalette palette){
+        return generateRules(palette, Filter.INCLUDE);
+    }
+
+    public List<MutableRule> generateRules(final IntervalPalette palette, Filter combinedFilter){
         analyze();
         List<MutableRule> rules = new ArrayList<MutableRule>();
 
@@ -536,7 +540,11 @@ public class IntervalStyleBuilder extends AbstractTableModel{
                 interval = ff.and(above, under);
                 title = "[ " + FORMAT.format(start) + " -> " + FORMAT.format(end) + " [";
             }
-            rule.setFilter(interval);
+            if(Filter.INCLUDE.equals(combinedFilter) || combinedFilter==null){
+                rule.setFilter(interval);
+            }else{
+                rule.setFilter(ff.and(combinedFilter,interval));
+            }
             rule.setName(title);
             rule.setDescription(sf.description(title, title));
 

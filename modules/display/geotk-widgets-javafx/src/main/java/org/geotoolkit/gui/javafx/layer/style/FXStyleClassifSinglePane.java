@@ -34,6 +34,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -45,6 +46,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
@@ -54,6 +56,7 @@ import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
@@ -66,6 +69,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
@@ -141,12 +145,14 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     @FXML private TableView<MutableRule> uiTable;
     @FXML private ComboBox<Palette> uiPalette;
     @FXML private SplitMenuButton uiTemplate;
+    @FXML private Button uiCombineFilter;
     
     private FeatureMapLayer layer;
     private Symbolizer template;
     //this is the target style element where we must generate the rules
     //it can be a MutableStyle or a MutableFeatureTypeStyle
     private Object targetStyleElement;
+    private Filter combineFilter = Filter.INCLUDE;
     
     
     public FXStyleClassifSinglePane() {
@@ -172,6 +178,16 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         final String val = str.get();
         final MutableRule r = createRule(uiProperty.getSelectionModel().getSelectedItem(), val,uiTable.getItems().size());
         uiTable.getItems().add(r);
+    }
+
+    @FXML
+    private void editCombineFilter(ActionEvent event) {
+        try {
+            combineFilter = FXCQLEditor.showFilterDialog(this, layer, combineFilter);
+            uiCombineFilter.setTooltip(new Tooltip(CQL.write(combineFilter)));
+        } catch (CQLException ex) {
+            Loggers.JAVAFX.log(Level.INFO, ex.getMessage(),ex);
+        }
     }
 
     @FXML
@@ -264,6 +280,8 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
         uiTemplate.getItems().add(miPoint);
         uiTemplate.getItems().add(miLine);
         uiTemplate.getItems().add(miPolygon);
+        
+        uiCombineFilter.setGraphic(new ImageView(GeotkFX.ICON_FILTER));
     }
     
     @Override
@@ -480,7 +498,11 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
 
         int idx = 0;
         for(Object obj : differentValues){
-            rules.add(createRule(property, obj,idx));
+            MutableRule rule = createRule(property, obj,idx);
+            if(combineFilter!=null && !Filter.INCLUDE.equals(combineFilter)){
+                rule.setFilter(GO2Utilities.FILTER_FACTORY.and(combineFilter, rule.getFilter()));
+            }
+            rules.add(rule);
             idx++;
         }
 

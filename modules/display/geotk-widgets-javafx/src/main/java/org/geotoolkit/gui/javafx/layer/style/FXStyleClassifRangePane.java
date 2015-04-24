@@ -36,6 +36,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -44,6 +45,7 @@ import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
@@ -105,9 +107,11 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
     @FXML private FXNumberSpinner uiClasses;
     @FXML private ComboBox<Object> uiPalette;    
     @FXML private TableView<MutableRule> uiTable;
+    @FXML private Button uiCombineFilter;
     //this is the target style element where we must generate the rules
     //it can be a MutableStyle or a MutableFeatureTypeStyle
     private Object targetStyleElement;
+    private Filter combineFilter = Filter.INCLUDE;
 
     private final IntervalStyleBuilder analyze = new IntervalStyleBuilder();
     private FeatureMapLayer layer;
@@ -146,7 +150,17 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
         analyze.setMethod(uiMethod.getValue());
         analyze.setNbClasses(uiClasses.valueProperty().get().intValue());
         analyze.setNormalize(uiNormalize.getValue());
-        uiTable.getItems().setAll(analyze.generateRules((IntervalPalette) uiPalette.getSelectionModel().getSelectedItem()));
+        uiTable.getItems().setAll(analyze.generateRules((IntervalPalette) uiPalette.getSelectionModel().getSelectedItem(),combineFilter));
+    }
+
+    @FXML
+    private void editCombineFilter(ActionEvent event) {
+        try {
+            combineFilter = FXCQLEditor.showFilterDialog(this, layer, combineFilter);
+            uiCombineFilter.setTooltip(new Tooltip(CQL.write(combineFilter)));
+        } catch (CQLException ex) {
+            Loggers.JAVAFX.log(Level.INFO, ex.getMessage(),ex);
+        }
     }
 
     @FXML
@@ -263,7 +277,8 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
         uiTemplate.getItems().add(miPoint);
         uiTemplate.getItems().add(miLine);
         uiTemplate.getItems().add(miPolygon);
-        
+
+        uiCombineFilter.setGraphic(new ImageView(GeotkFX.ICON_FILTER));
     }
     
     @Override
