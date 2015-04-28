@@ -20,6 +20,7 @@ package org.geotoolkit.gui.javafx.util;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -33,6 +34,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Border;
+import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.internal.Loggers;
 
 /**
  *
@@ -64,20 +67,21 @@ public class ButtonTableCell<S,T> extends TableCell<S,T> {
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                
-                if(onAction!=null){
-                    if(!isEditing()){
-                        getTableView().edit(getTableRow().getIndex(), getTableColumn());
+                final int rowIndex = getTableRow().getIndex();
+                if(onAction!=null) {
+                    if(!isEditing()) {
+                        getTableView().edit(rowIndex, getTableColumn());
                     }
                     
-                    final T item = getItem();
+                    final T item = getTableColumn().getCellData(rowIndex);
                     final T res = onAction.apply(item);
                     if(!Objects.equals(res,item)){
-                        try{
+                        try {
                             itemProperty().set(res);
                             commitEdit(res);
-                        }catch(Throwable ex){
-                            ex.printStackTrace();
+                        } catch(Throwable ex) {
+                            Loggers.JAVAFX.log(Level.WARNING, "Button table cell edition failed.", ex);
+                            cancelEdit();
                         }
                     }
                 }
