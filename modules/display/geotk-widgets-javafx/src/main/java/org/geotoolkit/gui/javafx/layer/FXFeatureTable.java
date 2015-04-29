@@ -63,10 +63,10 @@ import org.opengis.filter.identity.Identifier;
  */
 public class FXFeatureTable extends FXPropertyPane{
     
-    private final TableView<Feature> table = new TableView<>();
+    protected final TableView<Feature> table = new TableView<>();
     private boolean loadAll = false;
     
-    private FeatureMapLayer layer;
+    protected FeatureMapLayer layer;
     
     // Bundle management
     /**

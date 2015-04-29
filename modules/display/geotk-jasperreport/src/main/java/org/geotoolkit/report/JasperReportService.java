@@ -133,12 +133,9 @@ public final class JasperReportService extends Static {
      */
     public static void generateReport(final JasperReport report, final FeatureCollection col, final Map parameters,
                                   final OutputDef output) throws JRException, FeatureStoreRuntimeException{
-        final FeatureIterator ite = col.iterator();
-        try{
-            generateReport(report, ite, parameters, output);
-        }finally{
-            ite.close();
-        }
+        final FeatureCollectionDataSource source = new FeatureCollectionDataSource(col);
+        final JasperPrint print = JasperFillManager.fillReport(report, parameters, source);
+        generate(print, output);
     }
 
     /**

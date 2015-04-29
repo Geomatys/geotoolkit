@@ -57,6 +57,14 @@ public class FeatureCollectionDataSource implements JRDataSource {
         this.col = null;
         this.iterator = iterator;
     }
+    
+    public FeatureCollectionDataSource cloneDataSource(){
+        if(col!=null){
+            return new FeatureCollectionDataSource(col);
+        } else {
+            throw new UnsupportedOperationException("This operation needs the data source has a feature collection.");
+        }
+    }
 
     @Override
     public boolean next() throws JRException {
