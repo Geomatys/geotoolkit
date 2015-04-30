@@ -32,7 +32,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.apache.sis.referencing.AbstractReferenceSystem;
-import org.apache.sis.internal.referencing.OperationMethods;
 import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultSingleOperation;
@@ -153,7 +152,6 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
         ensureNonNull("baseToDerived",      baseToDerived);
         this.baseCRS = base;
         checkDimensions(base, baseToDerived, derivedCS);
-        OperationMethods.checkDimensions(conversionFromBase.getMethod(), baseToDerived, properties);
         final Class<?> c = (Class<?>) properties.get(CONVERSION_TYPE_KEY);
         Class<? extends Conversion> typeHint = getConversionType();
         if (c != null) {
@@ -225,7 +223,6 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
          */
         checkDimensions(base, baseToDerived, derivedCS);
         final OperationMethod method = new DefaultOperationMethod(baseToDerived);
-        OperationMethods.checkDimensions(method, baseToDerived, properties);
         this.conversionFromBase = (Conversion) DefaultSingleOperation.create(
             /* properties */ new UnprefixedMap(properties, "conversion."),
             /* sourceCRS  */ base,

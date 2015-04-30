@@ -18,10 +18,14 @@
 package org.geotoolkit.feature.type;
 
 import java.util.Collections;
+import org.opengis.feature.Feature;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.feature.IdentifiedType;
+import org.opengis.feature.Property;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
+import org.geotoolkit.feature.ComplexAttribute;
 
 /**
  *
@@ -32,7 +36,7 @@ import org.opengis.util.InternationalString;
 @Deprecated
 public abstract class AbstractOperationType extends DefaultPropertyType<OperationType> implements OperationType{
 
-    protected static final ParameterDescriptorGroup EMPTY_PARAMS = 
+    protected static final ParameterDescriptorGroup EMPTY_PARAMS =
             new DefaultParameterDescriptorGroup(Collections.singletonMap("name", "noargs"), 0, 1);
 
     private final IdentifiedType targetType;
@@ -53,5 +57,14 @@ public abstract class AbstractOperationType extends DefaultPropertyType<Operatio
     @Override
     public IdentifiedType getResult() {
         return targetType;
+    }
+
+    @Override
+    public Property apply(Feature feature, ParameterValueGroup parameters) {
+        if (feature instanceof ComplexAttribute) {
+            return invokeGet((ComplexAttribute) feature, parameters);
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 }
