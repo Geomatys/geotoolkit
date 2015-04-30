@@ -177,6 +177,7 @@
     <sis.version>0.6-jdk7-SNAPSHOT</sis.version>
     <derby.version>10.10.1.1</derby.version> <!-- If updated, need to search occurrences in APT files. -->
     <netcdf.version>4.3.21</netcdf.version>
+    <lucene.version>4.10.4</lucene.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <website.encoding>UTF-8</website.encoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
@@ -502,12 +503,12 @@
       <dependency>
          <groupId>org.apache.lucene</groupId>
          <artifactId>lucene-analyzers-common</artifactId>
-         <version>4.9.0</version>
+         <version>${lucene.version}</version>
       </dependency>
       <dependency>
          <groupId>org.apache.lucene</groupId>
          <artifactId>lucene-queryparser</artifactId>
-         <version>4.9.0</version>
+         <version>${lucene.version}</version>
       </dependency>
 
       <!-- Batik SVG -->

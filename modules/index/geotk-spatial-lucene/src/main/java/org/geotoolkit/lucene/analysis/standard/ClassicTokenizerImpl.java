@@ -719,5 +719,9 @@ public final void getText(CharTermAttribute t) {
     }
   }
 
+    @Override
+    public void setBufferSize(int i) {
+        throw new UnsupportedOperationException();
+    }
 
 }

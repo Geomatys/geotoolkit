@@ -108,11 +108,11 @@ public final class ClassicAnalyzer extends StopwordAnalyzerBase {
 
   @Override
   protected TokenStreamComponents createComponents(final String fieldName, final Reader reader) {
-    final ClassicTokenizer src = new ClassicTokenizer(matchVersion, reader);
+    final ClassicTokenizer src = new ClassicTokenizer(getVersion(), reader);
     src.setMaxTokenLength(maxTokenLength);
     TokenStream tok = new ClassicFilter(src);
-    tok = new LowerCaseFilter(matchVersion, tok);
-    tok = new StopFilter(matchVersion, tok, stopwords);
+    tok = new LowerCaseFilter(getVersion(), tok);
+    tok = new StopFilter(getVersion(), tok, stopwords);
     return new TokenStreamComponents(src, tok) {
       @Override
       protected void setReader(final Reader reader) throws IOException {

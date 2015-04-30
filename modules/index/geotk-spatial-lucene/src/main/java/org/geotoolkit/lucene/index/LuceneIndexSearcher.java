@@ -336,7 +336,7 @@ public class LuceneIndexSearcher extends IndexLucene {
 
             final String field       = "title";
             String stringQuery       = spatialQuery.getQuery();
-            final QueryParser parser = new ExtendedQueryParser(Version.LUCENE_4_9, field, analyzer, numericFields);
+            final QueryParser parser = new ExtendedQueryParser(Version.LATEST, field, analyzer, numericFields);
             parser.setDefaultOperator(Operator.AND);
             
             // remove term:* query
