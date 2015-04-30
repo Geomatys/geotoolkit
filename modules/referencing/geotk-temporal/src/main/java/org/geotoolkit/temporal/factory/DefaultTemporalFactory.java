@@ -113,7 +113,12 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     public Instant createInstant(final Date instant) {
         final Map<String, Object> prop = new HashMap<>();
         prop.put(IdentifiedObject.NAME_KEY, new DefaultIdentifier("instant"+(instantCount++)));
-        return new DefaultInstant(prop, instant); 
+        if (instant != null) {
+            return new DefaultInstant(prop, instant); 
+        } else {
+            final TemporalPosition position = new DefaultTemporalPosition(IndeterminateValue.UNKNOWN);
+            return new DefaultInstant(prop, position); 
+        }
     }
 
 //    /**
