@@ -24,6 +24,7 @@ import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.feature.Attribute;
+import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -54,6 +55,10 @@ public class AliasOperation extends AbstractOperationType {
             feature.getProperties().add(prop);
         }
         prop.setValue(value);
+    }
+
+    public org.opengis.feature.Property apply(Feature arg0, ParameterValueGroup arg1) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
