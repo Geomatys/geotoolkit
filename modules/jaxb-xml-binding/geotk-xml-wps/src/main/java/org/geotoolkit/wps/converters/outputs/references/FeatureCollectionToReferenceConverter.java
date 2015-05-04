@@ -82,6 +82,8 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
         if (source == null) {
             throw new UnconvertibleObjectException("The output data should be defined.");
         }
+
+        //TODO : useless test, null test above is all we need, fix this and other converters
         if (!(source instanceof FeatureCollection)) {
             throw new UnconvertibleObjectException("The requested output data is not an instance of FeatureCollection.");
         }

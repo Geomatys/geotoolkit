@@ -100,6 +100,7 @@ public class WPSConverterRegistry {
         register(BooleanToReferenceConverter                .getInstance());
         register(FileToReferenceConverter                   .getInstance());
         register(GeometryArrayToReferenceConverter          .getInstance());
+        register(StyledLayerDescriptorToReferenceConverter  .getInstance());
 
         //String -> Object converters
         register(new WPSObjectConverterAdapter(ObjectConverters.find(String.class, Unit.class)));

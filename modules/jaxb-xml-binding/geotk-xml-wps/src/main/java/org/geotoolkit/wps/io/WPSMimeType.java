@@ -41,6 +41,7 @@ public enum WPSMimeType {
     APP_SHP("application/x-zipped-shp"),
     APP_NETCDF("application/netcdf"),
     APP_GRIB("application/x-ogc-grib"),
+    APP_SLD("application/vnd.ogc.sld+xml"),
     
     OGC_WFS("application/x-ogc-wfs"),
     OGC_WMS("application/x-ogc-wms"),

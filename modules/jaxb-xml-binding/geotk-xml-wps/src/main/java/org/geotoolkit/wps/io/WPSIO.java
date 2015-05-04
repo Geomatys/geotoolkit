@@ -48,6 +48,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
+import org.opengis.sld.StyledLayerDescriptor;
 
 /**
  *
@@ -70,6 +71,8 @@ public final class WPSIO {
 
     private static final List<FormatSupport> FORMATSUPPORTS = Collections.synchronizedList(new ArrayList<FormatSupport>());
     static {
+        FORMATSUPPORTS.add(new FormatSupport(StyledLayerDescriptor.class, IOType.BOTH, WPSMimeType.APP_SLD.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_SLD_1_1_0.getValue(), true));
+
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(Feature.class, IOType.BOTH, WPSMimeType.APP_GML.val(), WPSEncoding.UTF8.getValue(), WPSSchema.OGC_FEATURE_3_1_1.getValue(), true));
