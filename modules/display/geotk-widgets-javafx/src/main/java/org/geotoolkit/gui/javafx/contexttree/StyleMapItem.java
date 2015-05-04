@@ -20,22 +20,21 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
-import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendService;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendTemplate;
+import org.geotoolkit.gui.javafx.util.TaskManager;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
@@ -93,11 +92,11 @@ public class StyleMapItem extends TreeItem implements LayerListener {
 
     @Override
     public void styleChange(MapLayer source, EventObject event) {
-        try {
-            imageProperty.set(SwingFXUtils.toFXImage(DefaultLegendService.portray(legendTemplate, source, null),null));
-        } catch (PortrayalException ex) {
-            Logger.getLogger(StyleMapItem.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        TaskManager.INSTANCE.submit("Calcul d'une légende", () -> {
+            final WritableImage legend = SwingFXUtils.toFXImage(DefaultLegendService.portray(legendTemplate, source, null), null);
+            Platform.runLater(() -> imageProperty.set(legend));
+            return null;
+        });
     }
 
     public ObjectProperty<Image> imageProperty() {
