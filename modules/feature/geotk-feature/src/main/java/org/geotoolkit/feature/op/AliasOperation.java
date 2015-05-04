@@ -55,5 +55,4 @@ public class AliasOperation extends AbstractOperationType {
         }
         prop.setValue(value);
     }
-
 }
