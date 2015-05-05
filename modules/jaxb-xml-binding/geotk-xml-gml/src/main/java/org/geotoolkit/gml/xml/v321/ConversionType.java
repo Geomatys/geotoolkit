@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ConversionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConversionType">
  *   &lt;complexContent>
@@ -44,11 +44,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ConversionType", propOrder = {
+@XmlType(/*name = "ConversionType",*/ propOrder = {
     "method",
     "parameterValueProperty"
 })
@@ -63,12 +63,12 @@ public class ConversionType
 
     /**
      * Gets the value of the method property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link OperationMethodPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link OperationMethodPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<OperationMethodPropertyType> getMethod() {
         return method;
@@ -76,12 +76,12 @@ public class ConversionType
 
     /**
      * Sets the value of the method property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link OperationMethodPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link OperationMethodPropertyType }{@code >}
-     *     
+     *
      */
     public void setMethod(JAXBElement<OperationMethodPropertyType> value) {
         this.method = ((JAXBElement<OperationMethodPropertyType> ) value);
@@ -89,27 +89,27 @@ public class ConversionType
 
     /**
      * Gets the value of the parameterValueProperty property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the parameterValueProperty property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getParameterValueProperty().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractGeneralParameterValuePropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractGeneralParameterValuePropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractGeneralParameterValuePropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<AbstractGeneralParameterValuePropertyType>> getParameterValueProperty() {
         if (parameterValueProperty == null) {

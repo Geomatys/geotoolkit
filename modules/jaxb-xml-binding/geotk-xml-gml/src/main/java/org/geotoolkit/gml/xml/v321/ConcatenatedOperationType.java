@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * gml:ConcatenatedOperation is an ordered sequence of two or more coordinate operations. This sequence of operations is constrained by the requirement that the source coordinate reference system of step (n+1) must be the same as the target coordinate reference system of step (n). The source coordinate reference system of the first step and the target coordinate reference system of the last step are the source and target coordinate reference system associated with the concatenated operation. Instead of a forward operation, an inverse operation may be used for one or more of the operation steps mentioned above, if the inverse operation is uniquely defined by the forward operation.
  * The gml:coordOperation property elements are an ordered sequence of associations to the two or more operations used by this concatenated operation. The AggregationAttributeGroup should be used to specify that the coordOperation associations are ordered.
- * 
+ *
  * <p>Java class for ConcatenatedOperationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ConcatenatedOperationType">
  *   &lt;complexContent>
@@ -48,11 +48,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ConcatenatedOperationType", propOrder = {
+@XmlType(/*name = "ConcatenatedOperationType",*/ propOrder = {
     "coordOperation"
 })
 public class ConcatenatedOperationType
@@ -66,27 +66,27 @@ public class ConcatenatedOperationType
 
     /**
      * Gets the value of the coordOperation property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the coordOperation property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCoordOperation().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link CoordinateOperationPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link CoordinateOperationPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link CoordinateOperationPropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<CoordinateOperationPropertyType>> getCoordOperation() {
         if (coordOperation == null) {
@@ -97,11 +97,11 @@ public class ConcatenatedOperationType
 
     /**
      * Gets the value of the aggregationType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public AggregationType getAggregationType() {
         return aggregationType;
@@ -109,11 +109,11 @@ public class ConcatenatedOperationType
 
     /**
      * Sets the value of the aggregationType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public void setAggregationType(AggregationType value) {
         this.aggregationType = value;

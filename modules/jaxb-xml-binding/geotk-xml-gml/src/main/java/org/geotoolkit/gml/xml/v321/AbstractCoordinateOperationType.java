@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractCoordinateOperationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractCoordinateOperationType">
  *   &lt;complexContent>
@@ -48,11 +48,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AbstractCoordinateOperationType", propOrder = {
+@XmlType(/*name = "AbstractCoordinateOperationType",*/ propOrder = {
     "domainOfValidity",
     "scope",
     "operationVersion",
@@ -80,11 +80,11 @@ public abstract class AbstractCoordinateOperationType
 
     /**
      * Gets the value of the domainOfValidity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DomainOfValidity }
-     *     
+     *
      */
     public DomainOfValidity getDomainOfValidity() {
         return domainOfValidity;
@@ -92,11 +92,11 @@ public abstract class AbstractCoordinateOperationType
 
     /**
      * Sets the value of the domainOfValidity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DomainOfValidity }
-     *     
+     *
      */
     public void setDomainOfValidity(DomainOfValidity value) {
         this.domainOfValidity = value;
@@ -104,25 +104,25 @@ public abstract class AbstractCoordinateOperationType
 
     /**
      * Gets the value of the scope property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the scope property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getScope().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getScope() {
         if (scope == null) {
@@ -133,11 +133,11 @@ public abstract class AbstractCoordinateOperationType
 
     /**
      * Gets the value of the operationVersion property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOperationVersion() {
         return operationVersion;
@@ -145,11 +145,11 @@ public abstract class AbstractCoordinateOperationType
 
     /**
      * Sets the value of the operationVersion property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOperationVersion(String value) {
         this.operationVersion = value;
@@ -157,25 +157,25 @@ public abstract class AbstractCoordinateOperationType
 
     /**
      * Gets the value of the coordinateOperationAccuracy property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the coordinateOperationAccuracy property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCoordinateOperationAccuracy().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CoordinateOperationAccuracy }
-     * 
-     * 
+     *
+     *
      */
     public List<CoordinateOperationAccuracy> getCoordinateOperationAccuracy() {
         if (coordinateOperationAccuracy == null) {
@@ -186,11 +186,11 @@ public abstract class AbstractCoordinateOperationType
 
     /**
      * Gets the value of the sourceCRS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CRSPropertyType }
-     *     
+     *
      */
     public CRSPropertyType getSourceCRS() {
         return sourceCRS;
@@ -198,11 +198,11 @@ public abstract class AbstractCoordinateOperationType
 
     /**
      * Sets the value of the sourceCRS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CRSPropertyType }
-     *     
+     *
      */
     public void setSourceCRS(CRSPropertyType value) {
         this.sourceCRS = value;
@@ -210,11 +210,11 @@ public abstract class AbstractCoordinateOperationType
 
     /**
      * Gets the value of the targetCRS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CRSPropertyType }
-     *     
+     *
      */
     public CRSPropertyType getTargetCRS() {
         return targetCRS;
@@ -222,11 +222,11 @@ public abstract class AbstractCoordinateOperationType
 
     /**
      * Sets the value of the targetCRS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CRSPropertyType }
-     *     
+     *
      */
     public void setTargetCRS(CRSPropertyType value) {
         this.targetCRS = value;

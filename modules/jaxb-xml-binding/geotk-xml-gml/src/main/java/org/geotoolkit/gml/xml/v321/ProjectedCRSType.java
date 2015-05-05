@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ProjectedCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ProjectedCRSType">
  *   &lt;complexContent>
@@ -45,11 +45,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ProjectedCRSType", propOrder = {
+@XmlType(/*name = "ProjectedCRSType",*/ propOrder = {
     "baseGeodeticCRS",
     "baseGeographicCRS",
     "cartesianCSProperty"
@@ -65,11 +65,11 @@ public class ProjectedCRSType
 
     /**
      * Gets the value of the baseGeodeticCRS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeodeticCRSPropertyType }
-     *     
+     *
      */
     public GeodeticCRSPropertyType getBaseGeodeticCRS() {
         return baseGeodeticCRS;
@@ -77,11 +77,11 @@ public class ProjectedCRSType
 
     /**
      * Sets the value of the baseGeodeticCRS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeodeticCRSPropertyType }
-     *     
+     *
      */
     public void setBaseGeodeticCRS(GeodeticCRSPropertyType value) {
         this.baseGeodeticCRS = value;
@@ -89,11 +89,11 @@ public class ProjectedCRSType
 
     /**
      * Gets the value of the baseGeographicCRS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeographicCRSPropertyType }
-     *     
+     *
      */
     public GeographicCRSPropertyType getBaseGeographicCRS() {
         return baseGeographicCRS;
@@ -101,11 +101,11 @@ public class ProjectedCRSType
 
     /**
      * Sets the value of the baseGeographicCRS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeographicCRSPropertyType }
-     *     
+     *
      */
     public void setBaseGeographicCRS(GeographicCRSPropertyType value) {
         this.baseGeographicCRS = value;
@@ -113,12 +113,12 @@ public class ProjectedCRSType
 
     /**
      * Gets the value of the cartesianCSProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<CartesianCSPropertyType> getCartesianCSProperty() {
         return cartesianCSProperty;
@@ -126,12 +126,12 @@ public class ProjectedCRSType
 
     /**
      * Sets the value of the cartesianCSProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CartesianCSPropertyType }{@code >}
-     *     
+     *
      */
     public void setCartesianCSProperty(JAXBElement<CartesianCSPropertyType> value) {
         this.cartesianCSProperty = ((JAXBElement<CartesianCSPropertyType> ) value);

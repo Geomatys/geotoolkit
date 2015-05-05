@@ -32,9 +32,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for PassThroughOperationType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="PassThroughOperationType">
  *   &lt;complexContent>
@@ -48,11 +48,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PassThroughOperationType", propOrder = {
+@XmlType(/*name = "PassThroughOperationType",*/ propOrder = {
     "modifiedCoordinate",
     "coordOperation"
 })
@@ -68,12 +68,12 @@ public class PassThroughOperationType extends AbstractCoordinateOperationType {
 
     /**
      * Gets the value of the modifiedCoordinate property.
-     * 
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Integer }
-     * 
-     * 
+     *
+     *
      */
     public List<Integer> getModifiedCoordinate() {
         if (modifiedCoordinate == null) {
@@ -84,13 +84,13 @@ public class PassThroughOperationType extends AbstractCoordinateOperationType {
 
     /**
      * Gets the value of the coordOperation property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link CoordinateOperationPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CoordinateOperationPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CoordinateOperationPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<CoordinateOperationPropertyType> getCoordOperation() {
         return coordOperation;
@@ -98,13 +98,13 @@ public class PassThroughOperationType extends AbstractCoordinateOperationType {
 
     /**
      * Sets the value of the coordOperation property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link CoordinateOperationPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CoordinateOperationPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CoordinateOperationPropertyType }{@code >}
-     *     
+     *
      */
     public void setCoordOperation(JAXBElement<CoordinateOperationPropertyType> value) {
         this.coordOperation = ((JAXBElement<CoordinateOperationPropertyType> ) value);
@@ -112,11 +112,11 @@ public class PassThroughOperationType extends AbstractCoordinateOperationType {
 
     /**
      * Gets the value of the aggregationType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public AggregationType getAggregationType() {
         return aggregationType;
@@ -124,11 +124,11 @@ public class PassThroughOperationType extends AbstractCoordinateOperationType {
 
     /**
      * Sets the value of the aggregationType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AggregationType }
-     *     
+     *
      */
     public void setAggregationType(AggregationType value) {
         this.aggregationType = value;

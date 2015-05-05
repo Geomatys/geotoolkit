@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for AbstractGeneralDerivedCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractGeneralDerivedCRSType">
  *   &lt;complexContent>
@@ -42,11 +42,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AbstractGeneralDerivedCRSType", propOrder = {
+@XmlType(/*name = "AbstractGeneralDerivedCRSType",*/ propOrder = {
     "conversionProperty"
 })
 @XmlSeeAlso({
@@ -62,12 +62,12 @@ public abstract class AbstractGeneralDerivedCRSType
 
     /**
      * Gets the value of the conversionProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link GeneralConversionPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link GeneralConversionPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<GeneralConversionPropertyType> getConversionProperty() {
         return conversionProperty;
@@ -75,12 +75,12 @@ public abstract class AbstractGeneralDerivedCRSType
 
     /**
      * Sets the value of the conversionProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link GeneralConversionPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link GeneralConversionPropertyType }{@code >}
-     *     
+     *
      */
     public void setConversionProperty(JAXBElement<GeneralConversionPropertyType> value) {
         this.conversionProperty = ((JAXBElement<GeneralConversionPropertyType> ) value);

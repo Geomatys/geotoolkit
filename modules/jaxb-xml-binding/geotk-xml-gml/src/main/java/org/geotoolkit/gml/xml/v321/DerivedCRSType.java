@@ -28,9 +28,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for DerivedCRSType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DerivedCRSType">
  *   &lt;complexContent>
@@ -44,11 +44,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DerivedCRSType", propOrder = {
+@XmlType(/*name = "DerivedCRSType",*/ propOrder = {
     "baseCRS",
     "derivedCRSType",
     "coordinateSystem"
@@ -66,11 +66,11 @@ public class DerivedCRSType
 
     /**
      * Gets the value of the baseCRS property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SingleCRSPropertyType }
-     *     
+     *
      */
     public SingleCRSPropertyType getBaseCRS() {
         return baseCRS;
@@ -78,11 +78,11 @@ public class DerivedCRSType
 
     /**
      * Sets the value of the baseCRS property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SingleCRSPropertyType }
-     *     
+     *
      */
     public void setBaseCRS(SingleCRSPropertyType value) {
         this.baseCRS = value;
@@ -90,11 +90,11 @@ public class DerivedCRSType
 
     /**
      * Gets the value of the derivedCRSType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CodeWithAuthorityType }
-     *     
+     *
      */
     public CodeWithAuthorityType getDerivedCRSType() {
         return derivedCRSType;
@@ -102,11 +102,11 @@ public class DerivedCRSType
 
     /**
      * Sets the value of the derivedCRSType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CodeWithAuthorityType }
-     *     
+     *
      */
     public void setDerivedCRSType(CodeWithAuthorityType value) {
         this.derivedCRSType = value;
@@ -114,12 +114,12 @@ public class DerivedCRSType
 
     /**
      * Gets the value of the coordinateSystem property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link CoordinateSystemPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CoordinateSystemPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<CoordinateSystemPropertyType> getCoordinateSystem() {
         return coordinateSystem;
@@ -127,12 +127,12 @@ public class DerivedCRSType
 
     /**
      * Sets the value of the coordinateSystem property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link CoordinateSystemPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CoordinateSystemPropertyType }{@code >}
-     *     
+     *
      */
     public void setCoordinateSystem(JAXBElement<CoordinateSystemPropertyType> value) {
         this.coordinateSystem = ((JAXBElement<CoordinateSystemPropertyType> ) value);
