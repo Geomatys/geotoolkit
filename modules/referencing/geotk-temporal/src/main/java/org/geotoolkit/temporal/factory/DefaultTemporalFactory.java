@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -24,10 +24,8 @@ import java.util.Map;
 import javax.measure.quantity.Duration;
 import javax.measure.unit.Unit;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
-import org.apache.sis.referencing.NamedIdentifier;
 
 import org.geotoolkit.factory.Factory;
-import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.temporal.object.DefaultCalendarDate;
 import org.geotoolkit.temporal.object.DefaultClockTime;
 import org.geotoolkit.temporal.object.DefaultDateAndTime;
@@ -81,15 +79,15 @@ import org.opengis.util.InternationalString;
 public class DefaultTemporalFactory extends Factory implements TemporalFactory {
 
     /**
-     * Count to ensure period unicity. 
+     * Count to ensure period unicity.
      */
     long periodCount;
-    
+
     /**
-     * Count to ensure instant unicity. 
+     * Count to ensure instant unicity.
      */
     long instantCount;
-    
+
     public DefaultTemporalFactory() {
         super();
         periodCount  = 0;
@@ -114,10 +112,10 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
         final Map<String, Object> prop = new HashMap<>();
         prop.put(IdentifiedObject.NAME_KEY, new DefaultIdentifier("instant"+(instantCount++)));
         if (instant != null) {
-            return new DefaultInstant(prop, instant); 
+            return new DefaultInstant(prop, instant);
         } else {
             final TemporalPosition position = new DefaultTemporalPosition(IndeterminateValue.UNKNOWN);
-            return new DefaultInstant(prop, position); 
+            return new DefaultInstant(prop, position);
         }
     }
 
@@ -136,7 +134,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     public Calendar createCalendar(final Identifier name, final Extent domainOfValidity) {
         return createCalendar(name, domainOfValidity, null, null);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -235,7 +233,7 @@ public class DefaultTemporalFactory extends Factory implements TemporalFactory {
     @Override
     public OrdinalPosition createOrdinalPosition(final TemporalReferenceSystem frame,
             final IndeterminateValue indeterminatePosition, final OrdinalEra ordinalPosition) {
-        return new DefaultOrdinalPosition(frame, indeterminatePosition, ordinalPosition); 
+        return new DefaultOrdinalPosition(frame, indeterminatePosition, ordinalPosition);
     }
 
     /**
