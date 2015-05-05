@@ -26,6 +26,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.opengis.referencing.crs.SingleCRS;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.grid.Viewer;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -69,7 +70,7 @@ public abstract strictfp class GridProcessingTestBase extends GridCoverageTestBa
         final AffineTransform atr = AffineTransform.getRotateInstance(toRadians(angle));
         atr.concatenate(getAffineTransform(coverage));
         final MathTransform tr = MathTransforms.linear(atr);
-        CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
+        SingleCRS crs = (SingleCRS) coverage.getCoordinateReferenceSystem();
         crs = new DefaultDerivedCRS("Rotation " + angle + "°", crs, tr, crs.getCoordinateSystem());
         resample(crs, null, null, true);
     }
@@ -174,7 +175,7 @@ public abstract strictfp class GridProcessingTestBase extends GridCoverageTestBa
         final AffineTransform atr = AffineTransform.getTranslateInstance(5, 5);
         atr.concatenate(getAffineTransform(coverage));
         final MathTransform tr = MathTransforms.linear(atr);
-        CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
+        SingleCRS crs = (SingleCRS) coverage.getCoordinateReferenceSystem();
         crs = new DefaultDerivedCRS("Translated", crs, tr, crs.getCoordinateSystem());
         assertEquals(asCRS, showResampled(crs, null, hints, useGeophysics));
 

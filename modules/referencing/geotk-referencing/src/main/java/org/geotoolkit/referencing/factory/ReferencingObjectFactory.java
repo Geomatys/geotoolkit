@@ -961,7 +961,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
         }
         DerivedCRS crs;
         try {
-            crs = new DefaultDerivedCRS(properties, conversionFromBase, baseCRS, mt, derivedCS);
+            crs = new DefaultDerivedCRS(properties, conversionFromBase, (SingleCRS) baseCRS, mt, derivedCS);    // TODO: cast
         } catch (IllegalArgumentException exception) {
             throw new FactoryException(exception);
         }

@@ -28,6 +28,8 @@ import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
 
 
 /**
@@ -113,5 +115,21 @@ public class DefaultProjection extends DefaultConversion implements Projection {
     @Override
     public Class<? extends Projection> getInterface() {
         return Projection.class;
+    }
+
+    /**
+     * Returns the source CRS, which must be geographic or {@code null}.
+     */
+    @Override
+    public final GeographicCRS getSourceCRS() {
+        return (GeographicCRS) super.getSourceCRS();
+    }
+
+    /**
+     * Returns the target CRS, which must be projected or {@code null}.
+     */
+    @Override
+    public final ProjectedCRS getTargetCRS() {
+        return (ProjectedCRS) super.getTargetCRS();
     }
 }

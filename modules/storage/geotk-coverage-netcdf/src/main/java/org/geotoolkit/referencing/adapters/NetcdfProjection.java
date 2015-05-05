@@ -28,6 +28,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
 import org.apache.sis.metadata.iso.extent.DefaultExtent;
 import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 
@@ -56,12 +58,12 @@ public class NetcdfProjection extends NetcdfIdentifiedObject implements
     /**
      * The source coordinate reference system, usually geographic.
      */
-    private final CoordinateReferenceSystem sourceCRS;
+    private final GeographicCRS sourceCRS;
 
     /**
      * The target coordinate reference system, usually projected.
      */
-    private final CoordinateReferenceSystem targetCRS;
+    private final ProjectedCRS targetCRS;
 
     /**
      * Creates a new wrapper for the given NetCDF projection.
@@ -71,8 +73,8 @@ public class NetcdfProjection extends NetcdfIdentifiedObject implements
      * @param targetCRS  The target CRS to be returned by {@link #getTargetCRS()}, or {@code null}.
      */
     public NetcdfProjection(final Projection projection,
-            final CoordinateReferenceSystem sourceCRS,
-            final CoordinateReferenceSystem targetCRS)
+            final GeographicCRS sourceCRS,
+            final ProjectedCRS targetCRS)
     {
         this.transform = new NetcdfTransform(projection);
         this.sourceCRS = sourceCRS;
@@ -108,7 +110,7 @@ public class NetcdfProjection extends NetcdfIdentifiedObject implements
      * @return The source CRS, or {@code null} if not available.
      */
     @Override
-    public CoordinateReferenceSystem getSourceCRS() {
+    public GeographicCRS getSourceCRS() {
         return sourceCRS;
     }
 
@@ -118,7 +120,7 @@ public class NetcdfProjection extends NetcdfIdentifiedObject implements
      * @return The target CRS, or {@code null} if not available.
      */
     @Override
-    public CoordinateReferenceSystem getTargetCRS() {
+    public ProjectedCRS getTargetCRS() {
         return targetCRS;
     }
 

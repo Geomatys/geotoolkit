@@ -60,6 +60,7 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeneralDerivedCRS;
+import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -239,7 +240,16 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
     }
 
     public CoordinateReferenceSystem getDisplayCRS() {
-        final CoordinateReferenceSystem objCRS2D = getObjectiveCRS2D();
+        /*
+         * TODO: will need a way to avoid the cast below. In my understanding, DerivedCRS may not be the appropriate
+         *       CRS to create after all, because in ISO 19111 a DerivedCRS is more than just a base CRS with a math
+         *       transform. A DerivedCRS may also "inherit" some characteritics of the base CRS. For example if the
+         *       base CRS is a VerticalCRS, then the DerivedCRS may also implement VerticalCRS.
+         *
+         *       I'm not yet sure what should be the appropriate kind of CRS to create here. ImageCRS? EngineeringCRS?
+         *       How to express the relationship to the base CRS is also not yet determined.
+         */
+        final SingleCRS objCRS2D = (SingleCRS) getObjectiveCRS2D();
         final CoordinateReferenceSystem displayCRS = new DefaultDerivedCRS("Derived - "+objCRS2D.getName().toString(),
                 objCRS2D, getObjectiveToDisplay(), objCRS2D.getCoordinateSystem());
         return displayCRS;
@@ -365,7 +375,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         final Envelope old = new GeneralEnvelope(envelope);
         envelope.setRange(0, canvasObjectiveBounds.getMinX(), canvasObjectiveBounds.getMaxX());
         envelope.setRange(1, canvasObjectiveBounds.getMinY(), canvasObjectiveBounds.getMaxY());
-        
+
         firePropertyChange(ENVELOPE_KEY, old, envelope.clone());
     }
 

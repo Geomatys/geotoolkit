@@ -31,6 +31,7 @@ import org.opengis.referencing.crs.GeneralDerivedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.opengis.referencing.crs.SingleCRS;
 import org.apache.sis.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.DefiningConversion;
@@ -92,7 +93,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
     /**
      * The base coordinate reference system.
      */
-    protected final CoordinateReferenceSystem baseCRS;
+    protected final SingleCRS baseCRS;
 
     /**
      * The conversion from the {@linkplain #getBaseCRS base CRS} to this CRS.
@@ -142,7 +143,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
      */
     protected AbstractDerivedCRS(final Map<String,?>       properties,
                                  final Conversion  conversionFromBase,
-                                 final CoordinateReferenceSystem base,
+                                 final SingleCRS base,
                                  final MathTransform    baseToDerived,
                                  final CoordinateSystem     derivedCS)
             throws MismatchedDimensionException
@@ -207,7 +208,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
      * @since 2.5
      */
     protected AbstractDerivedCRS(final Map<String,?>       properties,
-                                 final CoordinateReferenceSystem base,
+                                 final SingleCRS base,
                                  final MathTransform    baseToDerived,
                                  final CoordinateSystem     derivedCS)
             throws MismatchedDimensionException
@@ -269,7 +270,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
      * @return The base coordinate reference system.
      */
     @Override
-    public CoordinateReferenceSystem getBaseCRS() {
+    public SingleCRS getBaseCRS() {
         return baseCRS;
     }
 

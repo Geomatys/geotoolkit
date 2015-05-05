@@ -31,6 +31,7 @@ import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.opengis.referencing.crs.SingleCRS;
 import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.apache.sis.referencing.operation.DefaultOperationMethod;
@@ -109,7 +110,7 @@ public class DefaultDerivedCRS extends AbstractDerivedCRS implements DerivedCRS 
      * @since 2.5
      */
     public DefaultDerivedCRS(final String                    name,
-                             final CoordinateReferenceSystem base,
+                             final SingleCRS base,
                              final MathTransform    baseToDerived,
                              final CoordinateSystem     derivedCS)
             throws MismatchedDimensionException
@@ -141,7 +142,7 @@ public class DefaultDerivedCRS extends AbstractDerivedCRS implements DerivedCRS 
      * @since 2.5
      */
     public DefaultDerivedCRS(final Map<String,?>       properties,
-                             final CoordinateReferenceSystem base,
+                             final SingleCRS base,
                              final MathTransform    baseToDerived,
                              final CoordinateSystem     derivedCS)
             throws MismatchedDimensionException
@@ -166,7 +167,7 @@ public class DefaultDerivedCRS extends AbstractDerivedCRS implements DerivedCRS 
      */
     public DefaultDerivedCRS(final Map<String,?>       properties,
                              final Conversion  conversionFromBase,
-                             final CoordinateReferenceSystem base,
+                             final SingleCRS base,
                              final MathTransform    baseToDerived,
                              final CoordinateSystem     derivedCS)
             throws MismatchedDimensionException

@@ -37,8 +37,9 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
 import org.apache.sis.parameter.Parameterized;
-import org.apache.sis.internal.referencing.OperationMethods;
 import org.apache.sis.referencing.operation.transform.PassThroughTransform;
 import org.apache.sis.internal.system.Semaphores;
 import org.apache.sis.io.wkt.Formatter;
@@ -166,6 +167,11 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
                                              final OperationMethod           method,
                                              Class<? extends CoordinateOperation> type)
     {
+        if (Projection.class.isAssignableFrom(type)) {
+            if (!(sourceCRS instanceof GeographicCRS) || !(targetCRS instanceof ProjectedCRS)) {
+                type = Conversion.class;
+            }
+        }
         if (method != null) {
             if (method instanceof MathTransformProvider) {
                 final Class<? extends SingleOperation> candidate =
