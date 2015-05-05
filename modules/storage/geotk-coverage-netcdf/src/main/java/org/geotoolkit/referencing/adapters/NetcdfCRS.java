@@ -69,7 +69,7 @@ import org.apache.sis.referencing.datum.DefaultTemporalDatum;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
-import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
+import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.io.wkt.Formattable;
 import org.apache.sis.referencing.CommonCRS;
@@ -800,7 +800,11 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          */
         @Override
         public String formatTo(final Formatter formatter) {
-            return new DefaultProjectedCRS(this).formatTo(formatter);
+            return new DefaultProjectedCRS(this) {
+                @Override public String formatTo(final Formatter formatter) {
+                    return super.formatTo(formatter);
+                }
+            }.formatTo(formatter);
         }
     }
 }

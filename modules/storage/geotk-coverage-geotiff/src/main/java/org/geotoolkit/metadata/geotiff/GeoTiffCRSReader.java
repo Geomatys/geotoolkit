@@ -56,7 +56,7 @@ import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
+import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
@@ -122,9 +122,9 @@ final class GeoTiffCRSReader {
      * objects.
      */
     private final static MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
-    
+
     /**
-     * Logger to diffuse no blocking error message. 
+     * Logger to diffuse no blocking error message.
      */
     private static final Logger LOGGER = Logging.getLogger(GeoTiffCRSReader.class);
 
@@ -257,9 +257,8 @@ final class GeoTiffCRSReader {
                     // //
                     crs = new DefaultProjectedCRS(
                             java.util.Collections.singletonMap("name", IdentifiedObjects.getName(pcrs, new DefaultCitation("EPSG"))),
-                            pcrs.getConversionFromBase(),
                             (GeographicCRS) pcrs.getBaseCRS(),
-                            pcrs.getConversionFromBase().getMathTransform(),
+                            pcrs.getConversionFromBase(),
                             createProjectedCS(linearUnit));
                 }
             } catch (FactoryException fe) {

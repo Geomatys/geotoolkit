@@ -30,7 +30,7 @@ import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
+import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.test.LocaleDependantTestBase;
 import org.apache.sis.referencing.CommonCRS;

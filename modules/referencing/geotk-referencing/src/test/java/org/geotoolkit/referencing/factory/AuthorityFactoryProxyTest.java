@@ -33,6 +33,7 @@ import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.factory.web.WebCRSFactoryTest;
 import org.geotoolkit.referencing.factory.web.AutoCRSFactoryTest;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;

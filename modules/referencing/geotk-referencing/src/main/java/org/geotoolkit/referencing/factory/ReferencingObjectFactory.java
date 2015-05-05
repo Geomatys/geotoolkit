@@ -22,7 +22,6 @@ package org.geotoolkit.referencing.factory;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.HashMap;
 import java.awt.RenderingHints;
 import java.text.ParseException;
 import javax.measure.unit.Unit;
@@ -47,11 +46,12 @@ import org.apache.sis.referencing.cs.*;
 import org.apache.sis.referencing.crs.*;
 import org.apache.sis.referencing.datum.*;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
-import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
+import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
-import org.geotoolkit.referencing.operation.MathTransformProvider;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.apache.sis.referencing.cs.DefaultAffineCS;
+import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.util.collection.WeakHashSet;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
@@ -64,10 +64,7 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  * in the {@link ObjectFactory} interface.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.01
- *
  * @since 1.2
- * @level advanced
  * @module
  */
 @Buffered
@@ -985,10 +982,10 @@ public class ReferencingObjectFactory extends ReferencingFactory
      */
     @Override
     public ProjectedCRS createProjectedCRS(Map<String,?> properties,
-            final GeographicCRS baseCRS, final Conversion conversionFromBase,
+            final GeographicCRS baseCRS, Conversion conversionFromBase,
             final CartesianCS derivedCS) throws FactoryException
     {
-        MathTransform mt;
+        final MathTransform mt;
         final MathTransform existing = conversionFromBase.getMathTransform();
         final MathTransformFactory mtFactory = getMathTransformFactory();
         if (existing != null && mtFactory instanceof DefaultMathTransformFactory) {
@@ -1011,37 +1008,19 @@ public class ReferencingObjectFactory extends ReferencingFactory
              */
             final ParameterValueGroup parameters = conversionFromBase.getParameterValues();
             mt = mtFactory.createBaseToDerived(baseCRS, parameters, derivedCS);
-            OperationMethod method = conversionFromBase.getMethod();
-            if (!(method instanceof MathTransformProvider)) {
-                /*
-                 * Our Geotk implementation of DefaultProjectedCRS may not be able to detect
-                 * the conversion type (PlanarProjection, CylindricalProjection, etc.)  because
-                 * we rely on the Geotk-specific MathTransformProvider for that. We will try
-                 * to help it with the optional "conversionType" hint,  providing that the user
-                 * does not already provide this hint.
-                 */
-                if (!properties.containsKey(DefaultProjectedCRS.CONVERSION_TYPE_KEY)) {
-                    method = mtFactory.getLastMethodUsed();
-                    if (method instanceof MathTransformProvider) {
-                        final Map<String,Object> copy = new HashMap<>(properties);
-                        copy.put(DefaultProjectedCRS.CONVERSION_TYPE_KEY,
-                                ((MathTransformProvider) method).getOperationType());
-                        properties = copy;
-                    }
-                }
-            }
-            /*
-             * If the user gave an explicit conversion, checks if it is suitable.
-             * It may not be suitable is unit conversion, axis switch, etc. have
-             * been inserted in the operation chain by 'createBaseToDerived'.
-             */
-            if (existing != null && existing.equals(mt)) {
-                mt = existing;
-            }
+        }
+        /*
+         * If the user gave an explicit conversion, checks if it is suitable.
+         * It may not be suitable is unit conversion, axis switch, etc. have
+         * been inserted in the operation chain by 'createBaseToDerived'.
+         */
+        if (!mt.equals(existing)) {
+            conversionFromBase = new DefaultConversion(IdentifiedObjects.getProperties(conversionFromBase),
+                    conversionFromBase.getMethod(), mt);
         }
         ProjectedCRS crs;
         try {
-            crs = new DefaultProjectedCRS(properties, conversionFromBase, baseCRS, mt, derivedCS);
+            crs = new DefaultProjectedCRS(properties, baseCRS, conversionFromBase, derivedCS);
         } catch (IllegalArgumentException exception) {
             throw new FactoryException(exception);
         }

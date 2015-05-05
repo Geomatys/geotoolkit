@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.coverage.processing;
 
+import java.util.Collections;
+import java.util.Map;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -38,7 +40,7 @@ import org.opengis.referencing.operation.OperationNotFoundException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
+import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
@@ -47,6 +49,7 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.SampleCoverage;
 import org.geotoolkit.coverage.grid.ViewType;
+import org.apache.sis.referencing.operation.DefaultConversion;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -91,7 +94,8 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
                 fail(exception.getLocalizedMessage());
                 return null;
             }
-            return new DefaultProjectedCRS("Stereographic", base, mt, PredefinedCS.PROJECTED);
+            final Map<String, String> name = Collections.singletonMap(DefaultConversion.NAME_KEY, "Stereographic");
+            return new DefaultProjectedCRS(name, base, new DefaultConversion(name, factory.getLastMethodUsed(), mt), PredefinedCS.PROJECTED);
         } catch (NoSuchIdentifierException exception) {
             fail(exception.getLocalizedMessage());
             return null;
