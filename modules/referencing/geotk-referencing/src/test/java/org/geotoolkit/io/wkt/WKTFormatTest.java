@@ -85,7 +85,7 @@ public final strictfp class WKTFormatTest {
                "  GEOGCS[“WGS84”,\n" +
                "    DATUM[“WGS84”,\n" +
                "      SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
-               "    PRIMEM[“Greenwich”, 0.0],\n" +
+               "      PRIMEM[“Greenwich”, 0.0],\n" +
                "    UNIT[“degree”, 0.017453292519943295],\n" +
                "    AXIS[“Longitude”, EAST],\n" +
                "    AXIS[“Latitude”, NORTH]],\n" +
@@ -132,7 +132,7 @@ public final strictfp class WKTFormatTest {
                "  GEOGCS[“WGS84”,\n" +
                "    DATUM[“WGS84”,\n" +
                "      SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
-               "    PRIMEM[“Greenwich”, 0.0],\n" +
+               "      PRIMEM[“Greenwich”, 0.0],\n" +
                "    UNIT[“degree”, 0.017453292519943295],\n" +
                "    AXIS[“Latitude”, NORTH],\n" +
                "    AXIS[“Longitude”, EAST]],\n" +
@@ -178,7 +178,7 @@ public final strictfp class WKTFormatTest {
                "      SPHEROID[“Airy 1830”, 6377563.396, 299.3249646, AUTHORITY[“EPSG”, “7001”]],\n" +
                "      TOWGS84[375.0, -111.0, 431.0, 0.0, 0.0, 0.0, 0.0],\n" +
                "      AUTHORITY[“EPSG”, “6277”]],\n" +
-               "    PRIMEM[“Greenwich”,0.0, AUTHORITY[“EPSG”, “8901”]],\n" +
+               "      PRIMEM[“Greenwich”,0.0, AUTHORITY[“EPSG”, “8901”]],\n" +
                "    UNIT[“DMSH”,0.0174532925199433, AUTHORITY[“EPSG”, “9108”]],\n" +
                "    AXIS[“Lat”,NORTH],AXIS[“Long”,EAST], AUTHORITY[“EPSG”, “4277”]],\n" +
                "  PROJECTION[“Transverse_Mercator”],\n" +
@@ -224,7 +224,7 @@ public final strictfp class WKTFormatTest {
                "    DATUM[“Sphere”,\n" +
                "      SPHEROID[“Sphere”, 6370997.0, 0.0],\n" +
                "      TOWGS84[0, 0, 0, 0, 0, 0, 0]],\n" +
-               "    PRIMEM[“Greenwich”, 0.0],\n" +
+               "      PRIMEM[“Greenwich”, 0.0],\n" +
                "    UNIT[“degree”, 0.017453292519943295],\n" +
                "    AXIS[“Longitude”, EAST],\n" +
                "    AXIS[“Latitude”, NORTH]],\n" +
@@ -337,7 +337,7 @@ public final strictfp class WKTFormatTest {
                 "  DATUM[“World Geodetic System 1984”,\n" +
                 "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”, “7030”]],\n" +
                 "    AUTHORITY[“EPSG”, “6326”]],\n" +
-                "  PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”, “8901”]],\n" +
+                "    PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”, “8901”]],\n" +
                 "  UNIT[“metre”, 1.0],\n" +
                 "  AXIS[“Geocentric X”, GEOCENTRIC_X],\n" +
                 "  AXIS[“Geocentric Y”, GEOCENTRIC_Y],\n" +
@@ -351,7 +351,7 @@ public final strictfp class WKTFormatTest {
                 "  DATUM[“World Geodetic System 1984”,\n" +
                 "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, ID[“EPSG”, 7030]],\n" +
                 "    ID[“EPSG”, 6326]],\n" +
-                "  PRIMEM[“Greenwich”, 0.0, ID[“EPSG”, 8901]],\n" +
+                "    PRIMEM[“Greenwich”, 0.0, ID[“EPSG”, 8901]],\n" +
                 "  UNIT[“metre”, 1.0],\n" +
                 "  AXIS[“Geocentric X”, GEOCENTRIC_X],\n" +
                 "  AXIS[“Geocentric Y”, GEOCENTRIC_Y],\n" +
@@ -366,7 +366,7 @@ public final strictfp class WKTFormatTest {
                 "  DATUM[“WGS84”,\n" +
                 "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”, “7030”]],\n" +
                 "    AUTHORITY[“EPSG”, “6326”]],\n" +
-                "  PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”, “8901”]],\n" +
+                "    PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”, “8901”]],\n" +
                 "  UNIT[“metre”, 1.0],\n" +
                 "  AXIS[“X”, OTHER],\n" +
                 "  AXIS[“Y”, EAST],\n" +
@@ -396,7 +396,7 @@ public final strictfp class WKTFormatTest {
                 "  GEOGCS[“WGS 84”,\n" +
                 "    DATUM[“World Geodetic System 1984”,\n" +
                 "      SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
-                "    PRIMEM[“Greenwich”, 0.0],\n" +
+                "      PRIMEM[“Greenwich”, 0.0],\n" +
                 "    UNIT[“degree”, 0.017453292519943295],\n" +
                 "    AXIS[“Latitude”, NORTH],\n" +
                 "    AXIS[“Longitude”, EAST]],\n" +
@@ -426,7 +426,7 @@ public final strictfp class WKTFormatTest {
             "    DATUM[“OSGB_1936”,\n" +
             "      SPHEROID[“Airy 1830”, 6377563.396, 299.3249646],\n" +
             "      TOWGS84[375.0, -111.0, 431.0, 0.0, 0.0, 0.0, 0.0]],\n" +
-            "    PRIMEM[“Greenwich”,0.0],\n" +
+            "      PRIMEM[“Greenwich”,0.0],\n" +
             "    UNIT[“DMSH”,0.0174532925199433],\n" +
             "    AXIS[“Lat”,NORTH],AXIS[“Long”,EAST]],\n" +
             "  PROJECTION[“Transverse_Mercator”],\n" +
@@ -447,7 +447,7 @@ public final strictfp class WKTFormatTest {
             "    DATUM[“OSGB_1936”,\n" +
             "      SPHEROID[“Airy 1830”, 6377563.396, 299.3249646],\n" +
             "      TOWGS84[375.0, -111.0, 431.0, 0.0, 0.0, 0.0, 0.0]],\n" +
-            "    PRIMEM[“Greenwich”, 0.0],\n" +
+            "      PRIMEM[“Greenwich”, 0.0],\n" +
             "    UNIT[“degree”, 0.017453292519943295],\n" +
             "    AXIS[“Latitude”, NORTH],\n" +
             "    AXIS[“Longitude”, EAST]],\n" +
@@ -474,7 +474,7 @@ public final strictfp class WKTFormatTest {
             "    DATUM[“OSGB_1936”,\n" +
             "      SPHEROID[“Airy 1830”, 6377563.396, 299.3249646],\n" +
             "      TOWGS84[375.0, -111.0, 431.0, 0.0, 0.0, 0.0, 0.0]],\n" +
-            "    PRIMEM[“Greenwich”, 0.0],\n" +
+            "      PRIMEM[“Greenwich”, 0.0],\n" +
             "    UNIT[“degree”, 0.017453292519943295],\n" +
             "    AXIS[“Latitude”, NORTH],\n" +
             "    AXIS[“Longitude”, EAST]],\n" +
@@ -499,7 +499,7 @@ public final strictfp class WKTFormatTest {
             "    DATUM[“D_OSGB_1936”,\n" +
             "      SPHEROID[“Airy 1830”, 6377563.396, 299.3249646],\n" +
             "      TOWGS84[375.0, -111.0, 431.0, 0.0, 0.0, 0.0, 0.0]],\n" +
-            "    PRIMEM[“Greenwich”, 0.0],\n" +
+            "      PRIMEM[“Greenwich”, 0.0],\n" +
             "    UNIT[“degree”, 0.017453292519943295],\n" +
             "    AXIS[“Latitude”, NORTH],\n" +
             "    AXIS[“Longitude”, EAST]],\n" +
@@ -526,7 +526,7 @@ public final strictfp class WKTFormatTest {
             "    DATUM[“OSGB 1936”,\n" +
             "      SPHEROID[“Airy 1830”, 6377563.396, 299.3249646],\n" +
             "      TOWGS84[375.0, -111.0, 431.0, 0.0, 0.0, 0.0, 0.0]],\n" +
-            "    PRIMEM[“Greenwich”, 0.0],\n" +
+            "      PRIMEM[“Greenwich”, 0.0],\n" +
             "    ANGLEUNIT[“degree”, 0.017453292519943295],\n" +
             "    AXIS[“Latitude”, NORTH],\n" +
             "    AXIS[“Longitude”, EAST]],\n" +
@@ -563,7 +563,7 @@ public final strictfp class WKTFormatTest {
             "GEOGCS[“NTF (Paris)”,\n" +
             "  DATUM[“Nouvelle Triangulation Francaise (Paris)”,\n" +
             "    SPHEROID[“Clarke 1866”, 6378206.4, 294.9786982138982, AUTHORITY[“EPSG”, “7008”]]],\n" +
-            "  PRIMEM[“Paris”, 2.5969213],\n" +
+            "    PRIMEM[“Paris”, 2.5969213],\n" +
             "  UNIT[“grade”, 0.015707963267948967],\n" +
             "  AXIS[“λ”, EAST],\n" +
             "  AXIS[“φ”, NORTH]]"),
@@ -574,7 +574,7 @@ public final strictfp class WKTFormatTest {
             "GEOGCS[“NTF (Paris)”,\n" +
             "  DATUM[“Nouvelle Triangulation Francaise (Paris)”,\n" +
             "    SPHEROID[“Clarke 1866”, 6378206.4, 294.9786982138982, AUTHORITY[“EPSG”, “7008”]]],\n" +
-            "  PRIMEM[“Paris”, 2.33722917],\n" +
+            "    PRIMEM[“Paris”, 2.33722917],\n" +
             "  UNIT[“grade”, 0.015707963267948967],\n" +
             "  AXIS[“λ”, EAST],\n" +
             "  AXIS[“φ”, NORTH]]"),
