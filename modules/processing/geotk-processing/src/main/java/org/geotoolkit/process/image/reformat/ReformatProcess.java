@@ -22,12 +22,14 @@ import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferFloat;
+import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferShort;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.util.Hashtable;
 import javax.media.jai.RasterFactory;
+
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.parameter.Parameters;
@@ -126,6 +128,7 @@ public class ReformatProcess extends AbstractProcess {
                 if(inputType == DataBuffer.TYPE_SHORT) buffer = new DataBufferShort(width*height*nbBand);
                 else if(inputType == DataBuffer.TYPE_FLOAT) buffer = new DataBufferFloat(width*height*nbBand);
                 else if(inputType == DataBuffer.TYPE_DOUBLE) buffer = new DataBufferDouble(width*height*nbBand);
+                else if(inputType == DataBuffer.TYPE_INT) buffer = new DataBufferInt(width*height*nbBand);
                 else throw new IllegalArgumentException("Type not supported "+inputType);
                 final int[] bankIndices = new int[nbBand];
                 final int[] bandOffsets = new int[nbBand];

@@ -16,13 +16,14 @@
  */
 package org.geotoolkit.process.image.reformat;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
+
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessException;
@@ -95,5 +96,59 @@ public class ReformatTest {
         }
         
     }
-    
+
+    @Test
+    public void testCreateRasterInt() {
+        testCreateRaster(DataBuffer.TYPE_INT);
+    }
+
+    @Test
+    public void testCreateRasterDouble() {
+        testCreateRaster(DataBuffer.TYPE_DOUBLE);
+    }
+
+    @Test
+    public void testCreateRasterFloat() {
+        testCreateRaster(DataBuffer.TYPE_FLOAT);
+    }
+
+    @Test
+    public void testCreateRasterByte() {
+        testCreateRaster(DataBuffer.TYPE_BYTE);
+    }
+
+    @Test
+    public void testCreateRasterShort() {
+        testCreateRaster(DataBuffer.TYPE_SHORT);
+    }
+
+    @Test
+    public void testCreateRasterUShort() {
+        testCreateRaster(DataBuffer.TYPE_USHORT);
+    }
+
+    /**
+     * Use ReformatProcess.createRaster() utility method to create and test a raster of given sample type
+     * with 1 and 3 bands.
+     *
+     * @param sampleType to test with
+     */
+    private void testCreateRaster(int sampleType) {
+        final WritableRaster raster1B = ReformatProcess.createRaster(sampleType, 100, 100, 1, new Point(0, 0));
+        assertNotNull(raster1B);
+        final SampleModel sampleModel1B = raster1B.getSampleModel();
+        assertEquals(sampleType, sampleModel1B.getDataType());
+        assertEquals(1, sampleModel1B.getNumBands());
+        assertEquals(100, raster1B.getWidth());
+        assertEquals(100, raster1B.getHeight());
+
+        final WritableRaster raster3B = ReformatProcess.createRaster(sampleType, 100, 100, 3, new Point(0, 0));
+        assertNotNull(raster3B);
+        final SampleModel sampleModel3B = raster3B.getSampleModel();
+        assertEquals(sampleType, sampleModel3B.getDataType());
+        assertEquals(3, sampleModel3B.getNumBands());
+        assertEquals(100, raster3B.getWidth());
+        assertEquals(100, raster3B.getHeight());
+    }
+
 }
