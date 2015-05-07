@@ -184,6 +184,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         }
     }
 
+    public Object getInput(){
+        return base;
+    }
+
     /**
      * Start to read An object from the XML datasource.
      * @return A feature or featureCollection described in the XML stream.

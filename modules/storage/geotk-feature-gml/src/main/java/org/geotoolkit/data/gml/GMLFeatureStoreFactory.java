@@ -34,6 +34,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.data.gml.GMLFeatureStoreFactory.*;
+import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -57,10 +58,18 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     }
     
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
+    /**
+     * Open a folder of sparsed features
+     */
+    public static final ParameterDescriptor<Boolean> SPARSE = createDescriptor("sparse",
+                    new ResourceInternationalString("org/geotoolkit/gml/bundle","paramSparseAlias"),
+                    new ResourceInternationalString("org/geotoolkit/gml/bundle","paramSparseRemarks"),
+                    Boolean.class,null,Boolean.FALSE,null,null,null,false);
+
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("GMLParameters",
-                IDENTIFIER,URLP,NAMESPACE);
+                IDENTIFIER,URLP,SPARSE,NAMESPACE);
 
     @Override
     public Identification getIdentification() {
@@ -85,7 +94,12 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     @Override
     public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
-        return new GMLFeatureStore(params);
+        final Boolean sparse = ParametersExt.getOrCreateValue(params, SPARSE.getName().getCode()).booleanValue();
+        if(sparse){
+            return new GMLSparseFeatureStore(params);
+        }else{
+            return new GMLFeatureStore(params);
+        }
     }
 
     @Override
@@ -102,5 +116,17 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
     }
-    
+
+    @Override
+    public boolean canProcess(ParameterValueGroup params) {
+        final Boolean sparse = ParametersExt.getOrCreateValue(params, SPARSE.getName().getCode()).booleanValue();
+        if(sparse){
+            return true;
+        }else{
+            return super.canProcess(params);
+        }
+    }
+
+
+
 }

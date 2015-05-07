@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.storage.DataStoreException;
@@ -33,9 +34,9 @@ import org.geotoolkit.data.AbstractFeatureStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
+import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
-import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
@@ -47,7 +48,6 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataFileStore;
-import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.ParameterValueGroup;
@@ -57,11 +57,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GMLFeatureStore extends AbstractFeatureStore implements DataFileStore {
-
-    static final QueryCapabilities CAPABILITIES = new DefaultQueryCapabilities(false);
-
-    static final String BUNDLE_PATH = "org/geotoolkit/gml/bundle";
+public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataFileStore {
 
     private final File file;
     private String name;
@@ -70,11 +66,11 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     //all types
     private final Map<Name, Object> cache = new HashMap<>();
 
-    public GMLFeatureStore(final File f) throws MalformedURLException, DataStoreException{
+    public GMLSparseFeatureStore(final File f) throws MalformedURLException, DataStoreException{
         this(toParameters(f));
     }
 
-    public GMLFeatureStore(final ParameterValueGroup params) throws DataStoreException {
+    public GMLSparseFeatureStore(final ParameterValueGroup params) throws DataStoreException {
         super(params);
 
         final URL url = (URL) params.parameter(GMLFeatureStoreFactory.URLP.getName().toString()).getValue();
@@ -96,6 +92,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     private static ParameterValueGroup toParameters(final File f) throws MalformedURLException{
         final ParameterValueGroup params = GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         Parameters.getOrCreate(GMLFeatureStoreFactory.URLP, params).setValue(f.toURL());
+        Parameters.getOrCreate(GMLFeatureStoreFactory.SPARSE, params).setValue(true);
         return params;
     }
 
@@ -110,7 +107,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
             final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
             reader.setReadEmbeddedFeatureType(true);
             try {
-                FeatureReader ite = reader.readAsStream(file);
+                FeatureReader ite = reader.readAsStream(file.listFiles(new GMLFolderFeatureStoreFactory.ExtentionFileNameFilter(".gml"))[0]);
                 featureType = ite.getFeatureType();
             } catch (IOException | XMLStreamException ex) {
                 throw new DataStoreException(ex.getMessage(),ex);
@@ -134,7 +131,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     @Override
     public QueryCapabilities getQueryCapabilities() {
-        return CAPABILITIES;
+        return GMLFeatureStore.CAPABILITIES;
     }
 
     @Override
@@ -150,20 +147,8 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
 
-        final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader(featureType);
-        final CloseableIterator ite;
-        try {
-            ite = reader.readAsStream(file);
-        } catch (IOException | XMLStreamException ex) {
-            reader.dispose();
-            throw new DataStoreException(ex.getMessage(),ex);
-        } finally{
-            //do not dispose, the iterator is closeable and will close the reader
-            //reader.dispose();
-        }
-
-        final FeatureReader freader = GenericWrapFeatureIterator.wrapToReader(ite,featureType);
-        return handleRemaining(freader, query);
+        final Iterator ite = new Iterator(featureType, file);
+        return handleRemaining(ite, query);
     }
 
     // WRITING SUPPORT : TODO //////////////////////////////////////////////////
@@ -201,6 +186,78 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
+    }
+
+    private static final class Iterator implements FeatureReader{
+
+        private final FeatureType type;
+        private final JAXPStreamFeatureReader xmlReader;
+        private FeatureReader reader;
+        private Feature next = null;
+        private final File[] files;
+        private int index=-1;
+
+        public Iterator(FeatureType type, File folder) {
+            this.type = type;
+            this.xmlReader = new JAXPStreamFeatureReader(type);
+            this.files = folder.listFiles(new GMLFolderFeatureStoreFactory.ExtentionFileNameFilter(".gml"));
+        }
+
+        @Override
+        public FeatureType getFeatureType() {
+            return type;
+        }
+
+        @Override
+        public Feature next() throws FeatureStoreRuntimeException {
+            try {
+                findNext();
+            } catch (IOException | XMLStreamException ex) {
+                throw new FeatureStoreRuntimeException(ex);
+            }
+            Feature temp = next;
+            if(temp==null) throw new NoSuchElementException("No more features");
+            next = null;
+            return temp;
+        }
+
+        @Override
+        public boolean hasNext() throws FeatureStoreRuntimeException {
+            try {
+                findNext();
+            } catch (IOException | XMLStreamException ex) {
+                throw new FeatureStoreRuntimeException(ex);
+            }
+            return next != null;
+        }
+
+        private void findNext() throws IOException, XMLStreamException{
+            if(next!=null) return;
+
+            while(next==null){
+                if(reader==null){
+                    //get the next file
+                    index++;
+                    if(index>=files.length){
+                        return;
+                    }
+                    xmlReader.reset();
+                    reader = xmlReader.readAsStream(files[index]);
+                }
+
+                if(reader.hasNext()){
+                    next = reader.next();
+                }else{
+                    reader = null;
+                }
+            }
+        }
+
+        @Override
+        public void close() {
+            xmlReader.dispose();
+        }
+
     }
 
 }
