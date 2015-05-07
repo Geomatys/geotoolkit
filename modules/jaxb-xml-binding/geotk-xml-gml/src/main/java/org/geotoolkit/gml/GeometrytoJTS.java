@@ -177,20 +177,22 @@ public class GeometrytoJTS {
     }
 
     public static Point toJTS(final org.geotoolkit.gml.xml.Point gmlPoint, final CoordinateReferenceSystem parentCRS) throws NoSuchAuthorityCodeException, FactoryException{
-        final String crsName;
+        String crsName = null;
         if (parentCRS == null) {
             crsName = gmlPoint.getSrsName();
 
             /*if (crsName == null) {
                 throw new IllegalArgumentException("A GML point must specify Coordinate Reference System.");
             }*/
-        } else {
-            crsName = null;
         }
 
         //we get the coordinate of the point (if they are present)
         if (gmlPoint.getCoordinates() == null && gmlPoint.getPos() == null) {
             throw new IllegalArgumentException("A GML point must specify coordinates or direct position.");
+        }
+
+        if(crsName==null && gmlPoint.getPos()!=null){
+            crsName = gmlPoint.getPos().getSrsName();
         }
 
         final double[] coordinates = new double[2];
