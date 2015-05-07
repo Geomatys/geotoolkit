@@ -38,6 +38,8 @@ import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
+import org.opengis.parameter.ParameterNotFoundException;
+import org.opengis.parameter.ParameterValue;
 
 /**
  * GML featurestore factory.
@@ -119,8 +121,15 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     @Override
     public boolean canProcess(ParameterValueGroup params) {
-        final Boolean sparse = ParametersExt.getOrCreateValue(params, SPARSE.getName().getCode()).booleanValue();
-        if(sparse){
+        Boolean sparse = null;
+        try{
+            ParameterValue<?> parameter = params.parameter(SPARSE.getName().getCode());
+            if(parameter!=null && parameter.getValue() instanceof Boolean){
+                sparse = (Boolean) parameter.getValue();
+            }
+        }catch(ParameterNotFoundException ex){
+        }
+        if(sparse != null && sparse){
             return true;
         }else{
             return super.canProcess(params);
