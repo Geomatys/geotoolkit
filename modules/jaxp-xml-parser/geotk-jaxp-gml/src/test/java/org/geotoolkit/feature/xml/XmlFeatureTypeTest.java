@@ -298,6 +298,7 @@ public class XmlFeatureTypeTest {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"), temp);
     }
 
+    @Ignore
     @Test
     public void testWriteTypeWithSubstitutions() throws JAXBException, IOException, ParserConfigurationException, SAXException {
         final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();

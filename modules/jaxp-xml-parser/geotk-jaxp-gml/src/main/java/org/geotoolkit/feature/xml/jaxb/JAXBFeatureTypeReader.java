@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -55,6 +56,7 @@ import org.geotoolkit.feature.op.AliasOperation;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
+import org.geotoolkit.feature.type.DefaultFeatureType;
 import org.geotoolkit.feature.type.DefaultOperationDescriptor;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
 import org.geotoolkit.xsd.xml.v2001.ComplexType;
@@ -83,6 +85,7 @@ import org.geotoolkit.xsd.xml.v2001.Any;
 import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroup;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroupRef;
+import org.geotoolkit.xsd.xml.v2001.ComplexRestrictionType;
 import org.geotoolkit.xsd.xml.v2001.Group;
 import org.geotoolkit.xsd.xml.v2001.GroupRef;
 import org.geotoolkit.xsd.xml.v2001.NamedAttributeGroup;
@@ -218,7 +221,10 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
     //Substitution group hierarchy
     // example : AbstractGeometry -> [AbstractGeometricAggregate,AbstractGeometricPrimitive,GeometricComplex,AbstractImplicitGeometry]
-    private final Map<QName,List<QName>> substitutionGroups = new HashMap<>();
+    private final Map<QName,Set<QName>> substitutionGroups = new HashMap<>();
+
+    private final List<Entry<ComplexType,ModifiableType>> unfinished = new ArrayList<>();
+    private final List<ModifiableType> uncompleted = new ArrayList<>();
 
     public JAXBFeatureTypeReader() {
         this(null);
@@ -443,9 +449,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 final TopLevelElement ele = (TopLevelElement) att;
                 final QName parent = ele.getSubstitutionGroup();
                 if(parent!=null){
-                    List<QName> subList = substitutionGroups.get(parent);
+                    Set<QName> subList = substitutionGroups.get(parent);
                     if(subList==null){
-                        subList = new ArrayList<>();
+                        subList = new HashSet<>();
                         substitutionGroups.put(parent, subList);
                     }
                     subList.add(new QName(schema.getTargetNamespace(), ele.getName()));
@@ -469,20 +475,68 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                         final FeatureType ft = (FeatureType) ct;
                         result.add(ft);
 
+                        //if the type name is not the same as the element name, make a copy of the type renaming it
+                        if(!ft.getName().getLocalPart().equals(element.getName())){
+                            final Name name = new DefaultName(ft.getName().getNamespaceURI(), element.getName());
+                            final ModifiableFeaturetype renamed = new ModifiableFeaturetype(name,new ArrayList(), null, type.isAbstract(), null, ft, null);
+                            uncompleted.add(renamed);
+                            result.add(renamed);
+                        }
+
                     } else if (type == null && findSimpleType(typeName) == null) {
                         LOGGER.log(Level.WARNING, "Unable to find a the declaration of type {0} in schemas.", typeName.getLocalPart());
                         continue;
                     }
+
                 } else {
                     LOGGER.log(Level.WARNING, "null typeName for element : {0}", element.getName());
                 }
             }
         }
+
+        //finish all substitution types
+        for(Entry<ComplexType,ModifiableType> ct : unfinished){
+            completeType(ct.getKey(), ct.getValue());
+        }
+        unfinished.clear();
+
+        //finish all uncomplete types (inherited properties)
+        for(ModifiableType t : uncompleted){
+            checkInherit(t);
+        }
+        uncompleted.clear();
+
     }
 
-    private List<QName> getSubstitutions(QName name){
-        final List<QName> lst = substitutionGroups.get(name);
-        return lst==null ? Collections.EMPTY_LIST : lst;
+    private void checkInherit(ModifiableType t){
+        if(t.isLock()) return;
+
+        final AttributeType parent = t.getSuper();
+        if(parent!=null && parent instanceof ModifiableType){
+            checkInherit((ModifiableType)parent);
+
+            final org.geotoolkit.feature.type.ComplexType ct = (org.geotoolkit.feature.type.ComplexType) parent;
+            for(PropertyDescriptor pd : ct.getDescriptors()){
+                if(t.getDescriptor(pd.getName())==null){
+                    t.getDescriptors().add(pd);
+                }
+            }
+        }
+
+        t.rebuildPropertyMap();
+        t.lock();
+    }
+
+    private Set<QName> getSubstitutions(QName name){
+        final Set<QName> subs = new HashSet<>();
+        final Set<QName> lst = substitutionGroups.get(name);
+        if(lst!=null){
+            for(QName sub : lst){
+                subs.add(sub);
+                subs.addAll(getSubstitutions(sub));
+            }
+        }
+        return subs;
     }
 
     public FeatureType getFeatureTypeFromSchema(final Schema schema, final String name) throws SchemaException {
@@ -540,32 +594,60 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     }
 
     private org.geotoolkit.feature.type.ComplexType getType(String namespace, ComplexType type, String elementName) throws SchemaException{
+        return getType(namespace, type, elementName, false);
+    }
+
+    private org.geotoolkit.feature.type.ComplexType getType(String namespace, ComplexType type, String elementName, boolean delay) throws SchemaException{
         String typeName = type.getName();
         if(typeName==null || typeName.isEmpty()) typeName = elementName;
         final QName qname = new QName(namespace, typeName);
         final org.geotoolkit.feature.type.ComplexType ct = typeCache.get(qname);
-        if(ct!=null) return ct;
+        if(ct!=null && ((ModifiableType)ct).isLock()) return ct;
 
-        final boolean isFeatureType = isFeatureType(type);
+        final ModifiableType finalType;
 
-        final FeatureTypeBuilder builder = new FeatureTypeBuilder(new ModifiableFeatureTypeFactory());
-        builder.setAbstract(type.isAbstract());
-        String properName = qname.getLocalPart();
+        if(ct!=null){
+            finalType = (ModifiableType) ct;
+        }else{
+            final boolean isFeatureType = isFeatureType(type);
 
-        //we remove the 'Type' extension for feature types.
-        if (isFeatureType && properName.endsWith("Type")) {
-            properName = properName.substring(0, properName.lastIndexOf("Type"));
+            final FeatureTypeBuilder builder = new FeatureTypeBuilder(new ModifiableFeatureTypeFactory());
+            builder.setAbstract(type.isAbstract());
+            String properName = qname.getLocalPart();
+
+            //we remove the 'Type' extension for feature types.
+            if (isFeatureType && properName.endsWith("Type")) {
+                properName = properName.substring(0, properName.lastIndexOf("Type"));
+            }
+            final Name ftypeName = new DefaultName(namespace, properName);
+            builder.setName(ftypeName);
+            finalType = (ModifiableType) ((isFeatureType) ?
+                    new ModifiableFeaturetype(ftypeName,new ArrayList(), null, type.isAbstract(), null, ct, null)
+                    : builder.buildType());
+            typeCache.put(qname, finalType);
+
+            if(isFeatureType){
+                finalType.changeParent(BasicFeatureTypes.FEATURE);
+            }
         }
-        final Name ftypeName = new DefaultName(namespace, properName);
-        builder.setName(ftypeName);
-        final ModifiableType finalType = (ModifiableType) ((isFeatureType) ?
-                new ModifiableFeaturetype(ftypeName,new ArrayList(), null, type.isAbstract(), null, ct, null)
-                : builder.buildType());
-        typeCache.put(qname, finalType);
 
-        if(isFeatureType){
-            finalType.changeParent(BasicFeatureTypes.FEATURE);
+        if(delay){
+            //this is a subsitution, we don't resolve it now otherwise it will cause
+            //a loop and some inherited properties will be missing
+            unfinished.add(new AbstractMap.SimpleImmutableEntry<>(type, finalType));
+            return finalType;
         }
+
+        completeType(type, finalType);
+
+        return finalType;
+    }
+
+    private void completeType(ComplexType type, ModifiableType finalType) throws SchemaException{
+
+        if(finalType.isLock()) return;
+
+        final String namespace = finalType.getName().getNamespaceURI();
 
         //read attributes
         final List<Annotated> atts = type.getAttributeOrAttributeGroup();
@@ -582,6 +664,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         //read sequence properties
         addOrReplace(finalType.getDescriptors(), getGroupAttributes(namespace, type.getSequence()));
 
+        boolean uncomplete = false;
+
         //read complex content if defined
         final ComplexContent content = type.getComplexContent();
         ExtensionType ext = null;
@@ -592,6 +676,10 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 if(base!=null && !base.getLocalPart().equalsIgnoreCase("anytype")){
                     final org.geotoolkit.feature.type.ComplexType parent = getType(base);
                     if(parent!=null){
+                        if(!((ModifiableType)parent).isLock()){
+                            uncomplete = true;
+                        }
+
                         addOrReplace(finalType.getDescriptors(), parent.getDescriptors());
                         if(!Utils.GML_FEATURE_TYPES.contains(parent.getName())){
                             finalType.changeParent(parent);
@@ -615,7 +703,22 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 addOrReplace(finalType.getDescriptors(), getGroupAttributes(namespace, ext.getSequence()));
             }
 
-            //TODO restrictions
+            // restrictions
+            ComplexRestrictionType restriction = content.getRestriction();
+            if(restriction!=null){
+//                final QName base = restriction.getBase();
+//                if(base!=null && !base.getLocalPart().equalsIgnoreCase("anytype")){
+//                    final org.geotoolkit.feature.type.ComplexType parent = getType(base);
+//                    if(parent!=null){
+//                        addOrReplace(finalType.getDescriptors(), parent.getDescriptors());
+//                        if(!Utils.GML_FEATURE_TYPES.contains(parent.getName())){
+//                            finalType.changeParent(parent);
+//                        }
+//                    }
+//                }
+
+                addOrReplace(finalType.getDescriptors(), getGroupAttributes(namespace, restriction.getSequence()));
+            }
         }
 
         //read simple content type if defined
@@ -634,7 +737,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                     addOrReplace(finalType.getDescriptors(), ((org.geotoolkit.feature.type.ComplexType)st).getDescriptors());
                 }else{
                     final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                    finalType.getDescriptors().add(adb.create(st, new DefaultName(qname.getNamespaceURI(), Utils.VALUE_PROPERTY_NAME), 0, 1, false, null));
+                    finalType.getDescriptors().add(adb.create(st, new DefaultName(namespace, Utils.VALUE_PROPERTY_NAME), 0, 1, false, null));
                 }
 
                 //read attributes
@@ -661,7 +764,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                     }else{
                         final PropertyType restType = resolveSimpleType(base);
                         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                        addOrReplace(finalType.getDescriptors(), adb.create(restType,new DefaultName(qname.getNamespaceURI(), Utils.VALUE_PROPERTY_NAME), 0, 1, false, null));
+                        addOrReplace(finalType.getDescriptors(), adb.create(restType,new DefaultName(namespace, Utils.VALUE_PROPERTY_NAME), 0, 1, false, null));
                     }
                 }
 
@@ -710,7 +813,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                     rpd = adb.buildDescriptor();
                 }
                 */
-                
+
                 addOrReplace(finalType.getDescriptors(), pd);
             }
         }
@@ -725,8 +828,14 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
         finalType.rebuildPropertyMap();
 
-        return finalType;
+        if(!uncomplete){
+            //finalType.lock();
+        }else{
+            uncompleted.add(finalType);
+        }
     }
+
+
 
     private static void removeAttributes(ModifiableType type, Set<Name> propNames){
         final List<PropertyDescriptor> descs = type.getDescriptors();
@@ -773,6 +882,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             }else if(particle instanceof ExplicitGroup){
                 final ExplicitGroup eg = (ExplicitGroup) particle;
                 atts.addAll(getGroupAttributes(namespace, eg));
+            }else{
+                throw new SchemaException("Unexpected TYPE : "+particle);
             }
         }
 
@@ -846,6 +957,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return descs;
     }
 
+    private List<PropertyDescriptor> elementToAttribute(final Element attributeElement, final String namespace) throws SchemaException {
+        return elementToAttribute(attributeElement, namespace, false);
+    }
     /**
      * Convert an Element to a AttributeDescriptor
      * Returns a list of AttributeDescriptors, other descriptors are substitution groups.
@@ -856,7 +970,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      * @return
      * @throws SchemaException
      */
-    private List<PropertyDescriptor> elementToAttribute(final Element attributeElement, final String namespace) throws SchemaException {
+    private List<PropertyDescriptor> elementToAttribute(final Element attributeElement, final String namespace, boolean isSubstitute) throws SchemaException {
         final List<PropertyDescriptor> results = new ArrayList<>();
 
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
@@ -892,10 +1006,9 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         //try to extract complex type
         if(attributeElement.getComplexType()!=null){
             final org.geotoolkit.feature.type.ComplexType type = getType(namespace,
-                    attributeElement.getComplexType(),attributeElement.getName());
+                    attributeElement.getComplexType(),attributeElement.getName(),isSubstitute);
             adb.setType(type);
         }
-
 
         final AttributeDescriptor baseDesc;
         if(adb.getType() instanceof org.geotoolkit.feature.type.ComplexType){
@@ -935,31 +1048,27 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         results.add(baseDesc);
 
         //check for substitutions
-        if(elementName!=null){
-            final List<QName> substitutions = getSubstitutions(new QName(namespace, elementName));
-            for(QName sub : substitutions){
-                final Element subEle = findGlobalElement(sub);
-                final List<PropertyDescriptor> subs = elementToAttribute(subEle,sub.getNamespaceURI());
-                //create an alias operator for each of them
-                for(PropertyDescriptor ad : subs){
-                    if(ad instanceof OperationDescriptor){
-                        final OperationDescriptor opDesc = (OperationDescriptor) ad;
-
-                        final OperationType optype = new AliasOperation(ad.getName(), baseDesc.getName(), (AttributeType)opDesc.getType().getResult());
-                        final OperationDescriptor desc = new DefaultOperationDescriptor(optype,
-                                ad.getName(), baseDesc.getMinOccurs(), baseDesc.getMaxOccurs(), baseDesc.isNillable());
-                        results.add(desc);
-                    }else{
-                        final OperationType optype = new AliasOperation(ad.getName(), baseDesc.getName(), (AttributeType) ad.getType());
-                        final OperationDescriptor desc = new DefaultOperationDescriptor(optype,
-                                ad.getName(), baseDesc.getMinOccurs(), baseDesc.getMaxOccurs(), baseDesc.isNillable());
-                        results.add(desc);
+        if(elementName!=null && !isSubstitute){
+            final Collection<QName> substitutions = getSubstitutions(new QName(namespace, elementName));
+            if(substitutions!=null && !substitutions.isEmpty()){
+                long time = System.currentTimeMillis();
+                for(QName sub : substitutions){
+                    final Element subEle = findGlobalElement(sub);
+                    final List<PropertyDescriptor> subs = elementToAttribute(subEle,sub.getNamespaceURI(),true);
+                    //create an alias operator for each of them
+                    for(PropertyDescriptor ad : subs){
+                        if(ad instanceof OperationDescriptor){
+                            throw new UnsupportedOperationException("Substitution is an operation, not supported.");
+                        }else{
+                            final OperationType optype = new AliasOperation(ad.getName(), baseDesc.getName(), (AttributeType) ad.getType());
+                            final OperationDescriptor desc = new DefaultOperationDescriptor(optype,
+                                    ad.getName(), baseDesc.getMinOccurs(), baseDesc.getMaxOccurs(), baseDesc.isNillable());
+                            results.add(desc);
+                        }
                     }
                 }
             }
-
         }
-
 
         return results;
 
@@ -1222,7 +1331,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 if(descs.get(i).getName().equals(pd.getName())){
                     //replace existing property
                     descs.set(i, pd);
-                    break loop;
+                    continue loop;
                 }
             }
             //add new property

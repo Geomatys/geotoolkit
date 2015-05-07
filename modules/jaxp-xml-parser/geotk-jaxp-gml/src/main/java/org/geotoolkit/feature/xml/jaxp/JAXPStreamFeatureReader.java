@@ -81,6 +81,7 @@ import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.OperationDescriptor;
 import org.geotoolkit.feature.type.OperationType;
+import org.opengis.geometry.coordinate.Position;
 
 
 /**
@@ -394,6 +395,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         if (Boolean.TRUE.equals(this.properties.get(SKIP_UNEXPECTED_PROPERTY_TAGS))) {
                             toTagEnd(propName.getLocalPart());
                             continue;
+                        } else if(featureType.getDescriptor("_any")!=null){
+                            //TODO make a string of all the content
+                            toTagEnd(propName.getLocalPart());
+                            continue;
                         } else {
                             throw new IllegalArgumentException("Unexpected attribute:" + propName + " not found in :\n" + featureType);
                         }
@@ -404,13 +409,13 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     if(pdesc instanceof OperationDescriptor){
                         final OperationType opType = (OperationType) pdesc.getType();
                         final PropertyType resultType = (PropertyType) opType.getResult();
-                        final Object value = readPropertyValue(resultType);
+                        final Object value = readPropertyValue(resultType,false);
                         ops.add(new AbstractMap.SimpleImmutableEntry<>((OperationDescriptor)pdesc,value));
                         continue;
                     }
 
                     //parse the value
-                    final Object value = readPropertyValue(propertyType);
+                    final Object value = readPropertyValue(propertyType,true);
 
                     ////////////////////////////////////////////////////////////
                     final Property prevProp = namedProperties.get(propName);
@@ -505,12 +510,17 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         return feature;
     }
 
-    private Object readPropertyValue(PropertyType propertyType) throws XMLStreamException{
+    private Object readPropertyValue(PropertyType propertyType, boolean skipCurrent) throws XMLStreamException{
         final Name propName = nameCache.get(reader.getName());
 
         Object value = null;
         if (propertyType instanceof GeometryType) {
-            int event = reader.next();
+            int event;
+            if(skipCurrent){
+                event = reader.next();
+            }else{
+                event = reader.getEventType();
+            }
             while (event != START_ELEMENT) {
                 event = reader.next();
             }

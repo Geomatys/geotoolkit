@@ -108,6 +108,15 @@ public class Utils {
             new DefaultName(GML_311_NAMESPACE, "Observation"),
             new DefaultName(GML_311_NAMESPACE, "DirectedObservation"),
             new DefaultName(GML_311_NAMESPACE, "DirectedObservationAtDistance"),
+            new DefaultName(GML_311_NAMESPACE, "MultiPointCoverage"),
+            new DefaultName(GML_311_NAMESPACE, "MultiCurveCoverage"),
+            new DefaultName(GML_311_NAMESPACE, "MultiSurfaceCoverage"),
+            new DefaultName(GML_311_NAMESPACE, "MultiSolidCoverage"),
+            new DefaultName(GML_311_NAMESPACE, "GridCoverage"),
+            new DefaultName(GML_311_NAMESPACE, "_FeatureCollection"),
+            new DefaultName(GML_311_NAMESPACE, "_Coverage"),
+            new DefaultName(GML_311_NAMESPACE, "_ContinuousCoverage"),
+            new DefaultName(GML_311_NAMESPACE, "_DiscreteCoverage"),
             //3.2.1
             new DefaultName(GML_321_NAMESPACE, "AbstractFeatureType"),
             new DefaultName(GML_321_NAMESPACE, "AbstractFeatureCollection"),
@@ -120,7 +129,13 @@ public class Utils {
             new DefaultName(GML_321_NAMESPACE, "DirectedObservationAtDistance"),
             new DefaultName(GML_321_NAMESPACE, "DynamicFeatureCollection"),
             new DefaultName(GML_321_NAMESPACE, "DynamicFeature"),
-            new DefaultName(GML_321_NAMESPACE, "DiscreteCoverage")
+            new DefaultName(GML_321_NAMESPACE, "DiscreteCoverage"),
+            new DefaultName(GML_321_NAMESPACE, "MultiPointCoverage"),
+            new DefaultName(GML_321_NAMESPACE, "MultiCurveCoverage"),
+            new DefaultName(GML_321_NAMESPACE, "MultiSurfaceCoverage"),
+            new DefaultName(GML_321_NAMESPACE, "MultiSolidCoverage"),
+            new DefaultName(GML_321_NAMESPACE, "GridCoverage"),
+            new DefaultName(GML_321_NAMESPACE, "RectifiedGridCoverage"),
         })));
 
         GML_STANDARD_OBJECT_PROPERTIES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new Name[]{
@@ -237,36 +252,52 @@ public class Utils {
         CLASS_BINDING.put("token",              String.class);
         CLASS_BINDING.put("NCName",             String.class);
         CLASS_BINDING.put("TimePositionUnion",  String.class);
+        CLASS_BINDING.put("Name",               String.class);
 
 
         // GML geometry types
+        CLASS_BINDING.put("AbstractGeometry",              Geometry.class);
+        CLASS_BINDING.put("AbstractGeometryType",          Geometry.class);
+        CLASS_BINDING.put("AbstractGeometryTypeCollection",Geometry.class);
         CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);
         CLASS_BINDING.put("MultiPoint",                    MultiPoint.class);
+        CLASS_BINDING.put("MultiPointType",                MultiPoint.class);
         CLASS_BINDING.put("MultiPointPropertyType",        MultiPoint.class);
         CLASS_BINDING.put("Point",                         Point.class);
+        CLASS_BINDING.put("PointType",                     Point.class);
         CLASS_BINDING.put("PointPropertyType",             Point.class);
         CLASS_BINDING.put("Curve",                         LineString.class);
+        CLASS_BINDING.put("CurveType",                     LineString.class);
         CLASS_BINDING.put("CurvePropertyType",             LineString.class);
         CLASS_BINDING.put("MultiGeometry",                 GeometryCollection.class);
+        CLASS_BINDING.put("MultiGeometryType",             GeometryCollection.class);
         CLASS_BINDING.put("MultiGeometryPropertyType",     GeometryCollection.class);
         CLASS_BINDING.put("CompositeCurve",                MultiLineString.class);
+        CLASS_BINDING.put("CompositeCurveType",            MultiLineString.class);
         CLASS_BINDING.put("CompositeCurvePropertyType",    MultiLineString.class);
-        CLASS_BINDING.put("MultiLineStringPropertyType",   MultiLineString.class);
         CLASS_BINDING.put("MultiLineString",               MultiLineString.class);
+        CLASS_BINDING.put("MultiLineStringType",           MultiLineString.class);
+        CLASS_BINDING.put("MultiLineStringPropertyType",   MultiLineString.class);
         CLASS_BINDING.put("Envelope",                      Envelope.class);
+        CLASS_BINDING.put("EnvelopeType",                  Envelope.class);
         CLASS_BINDING.put("EnvelopePropertyType",          Envelope.class);
         CLASS_BINDING.put("PolyHedralSurface",             MultiPolygon.class);
+        CLASS_BINDING.put("PolyHedralSurfaceType",         MultiPolygon.class);
         CLASS_BINDING.put("PolyHedralSurfacePropertyType", MultiPolygon.class);
         CLASS_BINDING.put("MultiSurfacePropertyType",      MultiPolygon.class);
-        CLASS_BINDING.put("MultiPolygonPropertyType",      MultiPolygon.class);
         CLASS_BINDING.put("MultiPolygon",                  MultiPolygon.class);
-        CLASS_BINDING.put("SurfacePropertyType",           Polygon.class);
+        CLASS_BINDING.put("MultiPolygonType",              MultiPolygon.class);
+        CLASS_BINDING.put("MultiPolygonPropertyType",      MultiPolygon.class);
         CLASS_BINDING.put("SurfaceType",                   Polygon.class);
+        CLASS_BINDING.put("SurfacePropertyType",           Polygon.class);
         CLASS_BINDING.put("Polygon",                       Polygon.class);
+        CLASS_BINDING.put("PolygonType",                   Polygon.class);
         CLASS_BINDING.put("PolygonPropertyType",           Polygon.class);
         CLASS_BINDING.put("Ring",                          LinearRing.class);
+        CLASS_BINDING.put("RingType",                      LinearRing.class);
         CLASS_BINDING.put("RingPropertyType",              LinearRing.class);
         CLASS_BINDING.put("LinearRing",                    LinearRing.class);
+        CLASS_BINDING.put("LinearRingType",                LinearRing.class);
         CLASS_BINDING.put("LinearRingPropertyType",        LinearRing.class);
 
     }
@@ -553,7 +584,7 @@ public class Utils {
         try {
             //search in the jar files if we have it
             if(location.startsWith("http://schemas.opengis.net/")){
-                String localUrl = location.replace("http://schemas.opengis.net/", "/xsd/");
+                String localUrl = location.replace("http://schemas.opengis.net/", "/org/geotoolkit/xsd/");
                 schemaUrl = Utils.class.getResource(localUrl);
             }
 
@@ -565,7 +596,6 @@ public class Utils {
             return null;
         }
 
-        System.out.println(schemaUrl);
         try {
             LOGGER.log(Level.FINE, "retrieving:{0}", location);
             final Unmarshaller u = XSDMarshallerPool.getInstance().acquireUnmarshaller();
