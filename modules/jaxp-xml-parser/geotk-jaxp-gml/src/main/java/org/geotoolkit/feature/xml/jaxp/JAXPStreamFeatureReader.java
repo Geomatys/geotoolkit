@@ -34,7 +34,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
-import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -81,7 +80,6 @@ import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.OperationDescriptor;
 import org.geotoolkit.feature.type.OperationType;
-import org.opengis.geometry.coordinate.Position;
 
 
 /**
@@ -119,6 +117,9 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         }
     };
 
+    
+    private final Map<String,String> schemaLocations = new HashMap<>();
+
     public JAXPStreamFeatureReader() {
         this(new ArrayList<FeatureType>());
     }
@@ -130,6 +131,14 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     public JAXPStreamFeatureReader(final List<FeatureType> featureTypes) {
         this.featureTypes = featureTypes;
         this.properties.put(READ_EMBEDDED_FEATURE_TYPE, false);
+    }
+
+    /**
+     * XSD Schema locations.
+     * Will be filled only if reading feature type was asked.
+     */
+    public Map<String, String> getSchemaLocations() {
+        return schemaLocations;
     }
 
     /**
@@ -254,6 +263,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 final String namespace = urls[i];
                 if (!(namespace.equalsIgnoreCase("http://www.opengis.net/gml") || namespace.equalsIgnoreCase("http://www.opengis.net/wfs")) && i + 1 < urls.length) {
                     final String fturl = urls[i + 1];
+                    schemaLocations.put(namespace, fturl);
                     try {
                         final URL url = Utils.resolveURL(base, fturl);
                         List<FeatureType> fts = (List<FeatureType>) featureTypeReader.read(url.openStream());

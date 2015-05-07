@@ -68,10 +68,27 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
                     new ResourceInternationalString("org/geotoolkit/gml/bundle","paramSparseAlias"),
                     new ResourceInternationalString("org/geotoolkit/gml/bundle","paramSparseRemarks"),
                     Boolean.class,null,Boolean.FALSE,null,null,null,false);
+    
+    /**
+     * Open a store where gml files may not exist, in this case the given xsd is used
+     * to list the possible types.
+     */
+    public static final ParameterDescriptor<String> XSD = createDescriptor("xsd",
+                    new ResourceInternationalString("org/geotoolkit/gml/bundle","paramXSDAlias"),
+                    new ResourceInternationalString("org/geotoolkit/gml/bundle","paramXSDRemarks"),
+                    String.class,null,null,null,null,null,false);
+
+    /**
+     * Name of the feature type to use in the XSD.
+     */
+    public static final ParameterDescriptor<String> XSD_TYPE_NAME = createDescriptor("xsdtypename",
+                    new ResourceInternationalString("org/geotoolkit/gml/bundle","paramXSDTypeNameAlias"),
+                    new ResourceInternationalString("org/geotoolkit/gml/bundle","paramXSDTypeNameRemarks"),
+                    String.class,null,null,null,null,null,false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("GMLParameters",
-                IDENTIFIER,URLP,SPARSE,NAMESPACE);
+                IDENTIFIER,URLP,SPARSE,XSD,XSD_TYPE_NAME,NAMESPACE);
 
     @Override
     public Identification getIdentification() {

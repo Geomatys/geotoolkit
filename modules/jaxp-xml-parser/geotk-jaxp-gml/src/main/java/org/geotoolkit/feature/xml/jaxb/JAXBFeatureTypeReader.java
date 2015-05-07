@@ -226,6 +226,11 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     private final List<Entry<ComplexType,ModifiableType>> unfinished = new ArrayList<>();
     private final List<ModifiableType> uncompleted = new ArrayList<>();
 
+    /**
+     * Target namespace of the primary XSD.
+     */
+    private String targetNamespace;
+
     public JAXBFeatureTypeReader() {
         this(null);
     }
@@ -251,6 +256,14 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         if(locationMap!=null){
             this.locationMap.putAll(locationMap);
         }
+    }
+
+    /**
+     * Target namespace of the primary XSD.
+     * This value is available only after reading.
+     */
+    public String getTargetNamespace() {
+        return targetNamespace;
     }
 
     /**
@@ -377,6 +390,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             }
             else throw new JAXBException("Unsupported input type : "+candidate);
             POOL.recycle(unmarshaller);
+            targetNamespace = schema.getTargetNamespace();
             knownSchemas.put("unknow location", schema);
             return getAllFeatureTypeFromSchema(schema, baseLocation);
         } catch (IOException ex) {
