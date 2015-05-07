@@ -73,9 +73,11 @@ public class LargeCache implements TileCache {
                     try {
                         final LargeMap removed = (LargeMap) phantomQueue.remove();
                         removed.removeTiles();
-                        // Re-distribute freed memory amount between remaining caches.
-                        final long mC = LargeCache.this.memoryCapacity / (tileManagers.size());
-                        updateLList(mC);
+                        if (!tileManagers.isEmpty()) {
+                            // Re-distribute freed memory amount between remaining caches.
+                            final long mC = LargeCache.this.memoryCapacity / (tileManagers.size());
+                            updateLList(mC);
+                        }
                     } catch (InterruptedException e) {
                         LOGGER.log(Level.WARNING, "Reference cleaner has been interrupted ! It could cause severe memory leaks.");
                         return;
