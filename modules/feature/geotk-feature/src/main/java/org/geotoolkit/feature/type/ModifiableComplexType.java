@@ -34,17 +34,85 @@ import org.opengis.util.InternationalString;
  */
 public class ModifiableComplexType extends DefaultComplexType implements ModifiableType {
 
+    private boolean lock = false;
     private AttributeType parent;
 
     public ModifiableComplexType(final Name name, final Collection<PropertyDescriptor> properties,
             final boolean identified, final boolean isAbstract, final List<Filter> restrictions,
             final AttributeType superType, final InternationalString description) {
         super(name, properties, identified, isAbstract, restrictions, superType, description);
-        this.descriptorsList = new ArrayList<>(this.descriptorsList);
+        this.descriptorsList = new ArrayList(this.descriptorsList){
+
+            @Override
+            public boolean add(Object e) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.add(e);
+            }
+
+            @Override
+            public void add(int index, Object element) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                super.add(index, element);
+            }
+
+            @Override
+            public boolean addAll(Collection c) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.addAll(c);
+            }
+
+            @Override
+            public boolean addAll(int index, Collection c) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.addAll(index, c);
+            }
+
+            @Override
+            public boolean remove(Object o) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.remove(o);
+            }
+
+            @Override
+            public Object remove(int index) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.remove(index);
+            }
+
+            @Override
+            public boolean removeAll(Collection c) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.removeAll(c);
+            }
+
+            @Override
+            public void clear() {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                super.clear();
+            }
+
+            @Override
+            public Object set(int index, Object element) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.set(index, element);
+            }
+
+        };
     }
 
     @Override
+    public void lock() {
+        this.lock = true;
+    }
+
+    @Override
+    public boolean isLock() {
+        return lock;
+    }
+    
+    @Override
     public void changeProperty(final int index, PropertyDescriptor desc) {
+
         if(desc==null){
             this.descriptorsList.remove(index);
         }else{

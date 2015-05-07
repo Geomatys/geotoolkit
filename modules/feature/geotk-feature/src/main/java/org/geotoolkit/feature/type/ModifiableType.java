@@ -26,6 +26,10 @@ import java.util.List;
  */
 public interface ModifiableType extends ComplexType {
 
+    void lock();
+
+    boolean isLock();
+
     void changeProperty(int index, PropertyDescriptor desc);
 
     void changeParent(AttributeType parent);

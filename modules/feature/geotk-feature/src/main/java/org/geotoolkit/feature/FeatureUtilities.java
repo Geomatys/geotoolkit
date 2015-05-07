@@ -406,7 +406,7 @@ public final class FeatureUtilities {
     ////////////////////////////////////////////////////////////////////////////
 
     public static Property defaultProperty(final PropertyDescriptor desc){
-        return defaultProperty(desc, null);
+        return defaultProperty(desc, "");
     }
 
     public static Property defaultProperty(final PropertyDescriptor desc, final String id){
@@ -419,7 +419,7 @@ public final class FeatureUtilities {
             final Collection<Property> props = new ArrayList<Property>();
             for(final PropertyDescriptor subDesc : ct.getDescriptors()){
                 for(int i=0,n=subDesc.getMinOccurs();i<n;i++){
-                    final Property prop = defaultProperty(subDesc);
+                    final Property prop = defaultProperty(subDesc,"");
                     if(prop != null){
                         props.add(prop);
                     }

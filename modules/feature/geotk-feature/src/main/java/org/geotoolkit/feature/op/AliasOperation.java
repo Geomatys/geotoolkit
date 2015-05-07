@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.feature.op;
 
+import java.util.Collection;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.Property;
@@ -47,12 +49,33 @@ public class AliasOperation extends AbstractOperationType {
 
     @Override
     public void invokeSet(ComplexAttribute feature, Object value) {
-        Property prop = feature.getProperty(refName);
-        if(prop==null){
-            final PropertyDescriptor desc = feature.getType().getDescriptor(refName);
-            prop = FeatureUtilities.defaultProperty(desc);
-            feature.getProperties().add(prop);
+        if(value instanceof ComplexAttribute){
+            final ComplexAttribute ca = (ComplexAttribute) value;
+
+            ComplexAttribute prop = (ComplexAttribute) feature.getProperty(refName);
+            if(prop!=null)feature.getValue().remove(prop);
+
+            if(prop==null){
+                PropertyDescriptor desc = feature.getType().getDescriptor(refName);
+                //make a descriptor with same name and parameters but different type
+                final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                adb.copy(desc);
+                adb.setType(ca.getType());
+                desc = adb.buildDescriptor();
+                prop = (ComplexAttribute) FeatureUtilities.defaultProperty(desc,"noid");
+                feature.getProperties().add(prop);
+            }
+            prop.getValue().clear();
+            ((Collection)prop.getValue()).addAll(ca.getValue());
+
+        }else{
+            Property prop = feature.getProperty(refName);
+            if(prop==null){
+                final PropertyDescriptor desc = feature.getType().getDescriptor(refName);
+                prop = FeatureUtilities.defaultProperty(desc);
+                feature.getProperties().add(prop);
+            }
+            prop.setValue(value);
         }
-        prop.setValue(value);
     }
 }

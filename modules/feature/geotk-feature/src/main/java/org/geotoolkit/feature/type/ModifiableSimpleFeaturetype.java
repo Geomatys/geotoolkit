@@ -17,6 +17,7 @@
 package org.geotoolkit.feature.type;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
@@ -32,13 +33,80 @@ import org.opengis.util.InternationalString;
  */
 public class ModifiableSimpleFeaturetype extends DefaultSimpleFeatureType implements ModifiableType {
 
+    private boolean lock = false;
     private AttributeType parent;
 
     public ModifiableSimpleFeaturetype(final Name name, final List<AttributeDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
             final List<Filter> restrictions, final AttributeType superType, final InternationalString description) {
         super(name, schema, defaultGeometry, isAbstract, restrictions, superType, description);
-        this.descriptorsList = new ArrayList<>(this.descriptorsList);
+        this.descriptorsList = new ArrayList(this.descriptorsList){
+
+            @Override
+            public boolean add(Object e) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.add(e);
+            }
+
+            @Override
+            public void add(int index, Object element) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                super.add(index, element);
+            }
+
+            @Override
+            public boolean addAll(Collection c) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.addAll(c);
+            }
+
+            @Override
+            public boolean addAll(int index, Collection c) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.addAll(index, c);
+            }
+
+            @Override
+            public boolean remove(Object o) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.remove(o);
+            }
+
+            @Override
+            public Object remove(int index) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.remove(index);
+            }
+
+            @Override
+            public boolean removeAll(Collection c) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.removeAll(c);
+            }
+
+            @Override
+            public void clear() {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                super.clear();
+            }
+
+            @Override
+            public Object set(int index, Object element) {
+                if(lock) throw new IllegalArgumentException("Modifiable type has been locked");
+                return super.set(index, element);
+            }
+
+        };
+    }
+
+    @Override
+    public void lock() {
+        this.lock = true;
+    }
+
+    @Override
+    public boolean isLock() {
+        return lock;
     }
 
     @Override
