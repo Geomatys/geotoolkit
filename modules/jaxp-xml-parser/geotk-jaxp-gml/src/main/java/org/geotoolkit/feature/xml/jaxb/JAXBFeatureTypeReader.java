@@ -589,7 +589,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             ext = content.getExtension();
             if (ext != null) {
                 final QName base = ext.getBase();
-                if(base!=null){
+                if(base!=null && !base.getLocalPart().equalsIgnoreCase("anytype")){
                     final org.geotoolkit.feature.type.ComplexType parent = getType(base);
                     if(parent!=null){
                         addOrReplace(finalType.getDescriptors(), parent.getDescriptors());

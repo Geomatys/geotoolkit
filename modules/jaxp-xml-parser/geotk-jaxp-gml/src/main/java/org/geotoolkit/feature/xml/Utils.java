@@ -542,20 +542,30 @@ public class Utils {
         throw new MalformedURLException("Could not resolve xsd location : "+location);
     }
 
-     /**
+    /**
      * Retrieve an XSD schema from a http location
      * @param location
      * @return
      */
     public static Schema getDistantSchema(final String location) {
-        final URL schemaUrl;
+
+        URL schemaUrl = null;
         try {
-            schemaUrl = resolveURL(null, location);
+            //search in the jar files if we have it
+            if(location.startsWith("http://schemas.opengis.net/")){
+                String localUrl = location.replace("http://schemas.opengis.net/", "/xsd/");
+                schemaUrl = Utils.class.getResource(localUrl);
+            }
+
+            if(schemaUrl==null){
+                schemaUrl = resolveURL(null, location);
+            }
         } catch (MalformedURLException | URISyntaxException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             return null;
         }
 
+        System.out.println(schemaUrl);
         try {
             LOGGER.log(Level.FINE, "retrieving:{0}", location);
             final Unmarshaller u = XSDMarshallerPool.getInstance().acquireUnmarshaller();
@@ -596,7 +606,11 @@ public class Utils {
              return null;
          }
          if (schemaLocation != null  && baseLocation != null && baseLocation.startsWith("http://") && !schemaLocation.startsWith("http://")) {
-            return baseLocation + schemaLocation;
+             if(schemaLocation.startsWith("./")){
+                 return baseLocation + schemaLocation.substring(2);
+             }else{
+                return baseLocation + schemaLocation;
+             }
         } else {
             return schemaLocation;
         }
