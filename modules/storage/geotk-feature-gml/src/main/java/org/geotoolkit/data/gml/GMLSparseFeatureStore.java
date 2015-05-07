@@ -222,6 +222,11 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
         }
 
         @Override
+        public void remove() {
+            throw new UnsupportedOperationException("No supported yet");
+        }
+
+        @Override
         public boolean hasNext() throws FeatureStoreRuntimeException {
             try {
                 findNext();
