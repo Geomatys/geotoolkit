@@ -1016,7 +1016,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
          */
         if (!mt.equals(existing)) {
             conversionFromBase = new DefaultConversion(IdentifiedObjects.getProperties(conversionFromBase),
-                    conversionFromBase.getMethod(), mt);
+                    conversionFromBase.getMethod(), mt, null);
         }
         ProjectedCRS crs;
         try {
