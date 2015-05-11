@@ -63,6 +63,7 @@ import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.DefaultPassThroughOperation;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 
 import static java.util.Collections.singletonMap;
@@ -1429,8 +1430,6 @@ search: for (int j=0; j<targets.size(); j++) {
              * check anyway for avoiding the creation of intermediate objects.
              */
             if (!(lower == 0 && upper == orderedSourceDim)) {
-                final MathTransform step = getMathTransformFactory()
-                        .createPassThroughTransform(lower, subTransform, orderedSourceDim - upper);
                 final Map<String,?> properties = IdentifiedObjects.getProperties(subOperation);
                 /*
                  * The DefaultPassThroughOperation constuctor expect a SingleOperation.
@@ -1441,11 +1440,11 @@ search: for (int j=0; j<targets.size(); j++) {
                 if (subOperation instanceof SingleOperation) {
                     op = (SingleOperation) subOperation;
                 } else {
-                    op = (SingleOperation) DefaultSingleOperation.create(properties,
+                    op = (SingleOperation) AbstractCoordinateOperation.create(properties,
                             subOperation.getSourceCRS(), subOperation.getTargetCRS(), subTransform,
                             new DefaultOperationMethod(subTransform), subOperation.getClass());
                 }
-                subOperation = new DefaultPassThroughOperation(properties, stepSourceCRS, stepTargetCRS, op, step);
+                subOperation = new DefaultPassThroughOperation(properties, stepSourceCRS, stepTargetCRS, op, lower, orderedSourceDim - upper);
             }
             /*
              * Concatenate the operation with the ones we have found so far, and use the

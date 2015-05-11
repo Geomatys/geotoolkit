@@ -40,9 +40,10 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.CRS_Test;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.operation.DefaultConversion;
+import org.apache.sis.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.transform.MathTransformNo2D;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.IdentifiedObjects;
 import org.junit.*;
 
 import static org.geotoolkit.test.Assert.*;
@@ -140,7 +141,8 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
         final Conversion        conversion     = inverse(sourceCRS.getConversionFromBase());
         final MathTransform2D   transform      = (MathTransform2D) conversion.getMathTransform();
         final MathTransformNo2D transformNo2D  = new MathTransformNo2D(transform);
-        final Conversion        conversionNo2D = new DefaultConversion(conversion, sourceCRS, targetCRS, transformNo2D);
+        final Conversion        conversionNo2D = new DefaultConversion(IdentifiedObjects.getProperties(conversion),
+                sourceCRS, targetCRS, null, conversion.getMethod(), transformNo2D);
         assertFalse(conversionNo2D.getMathTransform() instanceof MathTransform2D);
         /*
          * The rectangle to test, which contains the South pole.
@@ -271,7 +273,7 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
      * However those properties are not significant for the purpose of this test.
      */
     private static Conversion inverse(final Conversion conversion) throws NoninvertibleTransformException {
-        return new DefaultConversion(conversion, conversion.getTargetCRS(),
-                conversion.getSourceCRS(), conversion.getMathTransform().inverse());
+        return new DefaultConversion(IdentifiedObjects.getProperties(conversion), conversion.getTargetCRS(),
+                conversion.getSourceCRS(), null, conversion.getMethod(), conversion.getMathTransform().inverse());
     }
 }

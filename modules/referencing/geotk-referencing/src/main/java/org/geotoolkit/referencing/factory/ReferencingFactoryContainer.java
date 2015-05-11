@@ -43,7 +43,6 @@ import org.geotoolkit.internal.referencing.Identifier3D;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
-import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.geotoolkit.referencing.cs.Axes;
 import org.geotoolkit.referencing.CRS;
@@ -51,6 +50,7 @@ import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.cs.CoordinateSystems;
 
+import org.apache.sis.referencing.operation.DefaultConversion;
 import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
 
 
@@ -488,8 +488,8 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
                      mtFactory.createConcatenatedTransform(
                      mtFactory.createAffineTransform(prepend), mt),
                      mtFactory.createAffineTransform(append));
-                projection = new DefiningConversion(IdentifiedObjects.getProperties(projection),
-                                                    projection.getMethod(), mt);
+                projection = new DefaultConversion(IdentifiedObjects.getProperties(projection),
+                                                    projection.getMethod(), mt, null);
             }
             return crsFactory.createProjectedCRS(crsName, base3D, projection, targetCS);
         }

@@ -41,7 +41,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.cs.Axes;
 import org.apache.sis.referencing.cs.DefaultCoordinateSystemAxis;
 import org.apache.sis.util.collection.BackingStoreException;
@@ -49,6 +48,7 @@ import org.apache.sis.util.collection.WeakHashSet;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Decorator;
+import org.apache.sis.referencing.operation.DefaultConversion;
 
 import static org.apache.sis.util.collection.Containers.hashMapCapacity;
 
@@ -348,8 +348,8 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
             final ReferencingFactoryContainer factories = getFactoryContainer(true);
             final CRSFactory crsFactory = factories.getCRSFactory();
             Conversion fromBase = derivedCRS.getConversionFromBase();
-            fromBase = new DefiningConversion(getProperties(fromBase),
-                    fromBase.getMethod(), fromBase.getParameterValues());
+            fromBase = new DefaultConversion(getProperties(fromBase),
+                    fromBase.getMethod(), null, fromBase.getParameterValues());
             if (crs instanceof ProjectedCRS) {
                 modified = crsFactory.createProjectedCRS(properties,
                         (GeographicCRS) baseCRS, fromBase, (CartesianCS) cs);

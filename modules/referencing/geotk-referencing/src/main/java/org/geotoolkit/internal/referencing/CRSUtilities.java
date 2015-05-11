@@ -71,18 +71,6 @@ public final class CRSUtilities extends Static {
     public static final String EPSG_VERSION = "7.09";
 
     /**
-     * The key for specifying explicitely the value to be returned by {@link #getParameterValues()}.
-     * It is usually not necessary to specify those parameters because they are inferred either from
-     * the {@link MathTransform}, or specified explicitely in a {@link DefiningConversion}. However
-     * there is a few cases, for example the Molodenski transform, where none of the above can apply,
-     * because Geotk implements those operations as a concatenation of math transforms, and such
-     * concatenations don't have {@link ParameterValueGroup}.
-     *
-     * @since 3.20
-     */
-    public static final String PARAMETERS_KEY = "parameters";
-
-    /**
      * Number of {@link org.geotoolkit.referencing.cs.AxisRangeType} values.
      * This is defined in order to avoid creating a useless array of enumeration
      * just for determining its length.

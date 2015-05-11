@@ -77,10 +77,8 @@ import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.operation.DefaultSingleOperation;
-import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.apache.sis.referencing.operation.DefaultOperationMethod;
-import org.geotoolkit.referencing.operation.DefaultConcatenatedOperation;
+import org.apache.sis.referencing.operation.DefaultConcatenatedOperation;
 import org.geotoolkit.internal.referencing.factory.ImplementationHints;
 import org.geotoolkit.internal.referencing.DeprecatedCode;
 import org.geotoolkit.internal.referencing.SimpleRecord;
@@ -88,15 +86,17 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.TableWriter;
+import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.cs.CoordinateSystems;
+import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.Version;
 
 import static org.geotoolkit.internal.InternalUtilities.COMPARISON_THRESHOLD;
-import static org.geotoolkit.internal.referencing.CRSUtilities.PARAMETERS_KEY;
+import static org.apache.sis.internal.referencing.OperationMethods.PARAMETERS_KEY;
 
 
 /**
@@ -2766,7 +2766,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     if (isConversion && (sourceCRS==null || targetCRS==null)) {
                         // Note: we usually can't resolve sourceCRS and targetCRS because there
                         // is many of them for the same coordinate operation (projection) code.
-                        operation = new DefiningConversion(properties, method, parameters);
+                        operation = new DefaultConversion(properties, method, null, parameters);
                     } else if (isConcatenated) {
                         /*
                          * Concatenated operation: we need to close the current result set, because
@@ -2802,7 +2802,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             safetyGuard.remove(epsg);
                         }
                         try {
-                            return new DefaultConcatenatedOperation(properties, operations);
+                            return new DefaultConcatenatedOperation(properties, operations, factories.getMathTransformFactory());
                         } catch (IllegalArgumentException exception) {
                             // May happen if there is less than 2 operations to concatenate.
                             // It happen for some deprecated CRS like 8658 for example.
@@ -2853,7 +2853,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         final MathTransform mt = factories.getMathTransformFactory().createBaseToDerived(
                                 sourceCRS, parameters, targetCRS.getCoordinateSystem());
                         // TODO: use GeoAPI factory method once available (http://jira.codehaus.org/browse/GEO-216).
-                        operation = DefaultSingleOperation.create(properties, sourceCRS, targetCRS, mt, method, expected);
+                        operation = AbstractCoordinateOperation.create(properties, sourceCRS, targetCRS, mt, method, expected);
                     }
                     returnValue = ensureSingleton(operation, returnValue, code);
                     if (result.isClosed()) {

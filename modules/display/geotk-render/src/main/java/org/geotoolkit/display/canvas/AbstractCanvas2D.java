@@ -48,7 +48,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
+import org.apache.sis.referencing.crs.DefaultDerivedCRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -68,6 +68,8 @@ import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.internal.referencing.provider.Affine;
+import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 
@@ -76,6 +78,13 @@ import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
  * @author Johann Sorel (Geomatys)
  */
 public abstract class AbstractCanvas2D extends AbstractCanvas{
+    /**
+     * The operation method used by {@link #getDisplayCRS()}.
+     * This is a temporary constant, as we will probably need to replace the creation
+     * of a {@link DefaultDerivedCRS} by something else. After that replacement, this
+     * constant will be removed.
+     */
+    private static final Affine DISPLAY_TO_OBJECTIVE_OPERATION = new Affine();
 
     public static final class AxisFinder implements Comparator<CoordinateSystemAxis>{
 
@@ -250,8 +259,10 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
          *       How to express the relationship to the base CRS is also not yet determined.
          */
         final SingleCRS objCRS2D = (SingleCRS) getObjectiveCRS2D();
-        final CoordinateReferenceSystem displayCRS = new DefaultDerivedCRS("Derived - "+objCRS2D.getName().toString(),
-                objCRS2D, getObjectiveToDisplay(), objCRS2D.getCoordinateSystem());
+        final Map<String,?> name = Collections.singletonMap(DefaultDerivedCRS.NAME_KEY, "Derived - "+objCRS2D.getName().toString());
+        final CoordinateReferenceSystem displayCRS = new DefaultDerivedCRS(name, objCRS2D,
+                new DefaultConversion(name, DISPLAY_TO_OBJECTIVE_OPERATION, getObjectiveToDisplay(), null),
+                objCRS2D.getCoordinateSystem());
         return displayCRS;
     }
 

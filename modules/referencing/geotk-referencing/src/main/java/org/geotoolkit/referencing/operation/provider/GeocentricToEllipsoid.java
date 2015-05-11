@@ -155,18 +155,18 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
             EllipsoidToGeocentric.createDescriptorGroup("Geocentric_To_Ellipsoid");
 
     /**
-     * If this provider is for the 3D case, then {@code complement} is the provider for the 2D case.
-     * Conversely if this provider is for the 2D case, then {@code complement} is the provider for
-     * the 3D case.
+     * The providers for the 2D and 3D cases.
      */
-    private final GeocentricToEllipsoid complement;
+    private final GeocentricToEllipsoid[] complements;
 
     /**
      * Constructs a provider with default parameters.
      */
     public GeocentricToEllipsoid() {
-        super(PARAMETERS); // TODO: (3, 3)
-        complement = new GeocentricToEllipsoid(this);
+        super(PARAMETERS);
+        complements = new GeocentricToEllipsoid[2];
+        complements[0] = new GeocentricToEllipsoid(2, complements);
+        complements[1] = new GeocentricToEllipsoid(3, complements);
     }
 
     /**
@@ -174,9 +174,9 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
      *
      * @param complement The provider for the 3D case.
      */
-    private GeocentricToEllipsoid(final GeocentricToEllipsoid complement) {
-        super(3, 2, PARAMETERS);
-        this.complement = complement;
+    private GeocentricToEllipsoid(final int dimension, final GeocentricToEllipsoid[] complements) {
+        super(3, dimension, PARAMETERS);
+        this.complements = complements;
     }
 
     /**
@@ -221,6 +221,6 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
     public OperationMethod redimension(final int sourceDimensions, final int targetDimensions) {
         ArgumentChecks.ensureBetween("sourceDimensions", 3, 3, sourceDimensions);
         ArgumentChecks.ensureBetween("targetDimensions", 2, 3, targetDimensions);
-        return (Objects.equals(targetDimensions, getTargetDimensions())) ? this : complement;
+        return complements[targetDimensions - 2];
     }
 }

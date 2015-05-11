@@ -100,11 +100,11 @@ public final strictfp class SouthOrientatedTest {
         assertTrue(transform instanceof LinearTransform);
         Matrix matrix = ((LinearTransform) transform).getMatrix();
         assertDiagonal(matrix);
-        assertFalse(matrix.isIdentity());
         assertEquals("West direction should be unchanged. ",      +1, matrix.getElement(0,0), EPS);
         assertEquals("North-South direction should be reverted.", -1, matrix.getElement(1,1), EPS);
         assertEquals("No easting expected.",                       0, matrix.getElement(0,2), EPS);
         assertEquals("No northing expected.",                      0, matrix.getElement(1,2), EPS);
+        assertFalse(matrix.isIdentity());
 
         /*
          * Tests "Transverse Mercator South Oriented"

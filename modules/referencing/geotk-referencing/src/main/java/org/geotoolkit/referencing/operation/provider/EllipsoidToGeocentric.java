@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import java.util.Collections;
-import java.util.Objects;
 import javax.measure.unit.SI;
 import net.jcip.annotations.Immutable;
 
@@ -196,28 +195,26 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
     }
 
     /**
-     * If this provider is for the 3D case, then {@code complement} is the provider for the 2D case.
-     * Conversely if this provider is for the 2D case, then {@code complement} is the provider for
-     * the 3D case.
+     * The providers for the 2D and 3D cases.
      */
-    private final EllipsoidToGeocentric complement;
+    private final EllipsoidToGeocentric[] complements;
 
     /**
      * Constructs a provider with default parameters.
      */
     public EllipsoidToGeocentric() {
-        super(PARAMETERS); // TODO: (3, 3)
-        complement = new EllipsoidToGeocentric(this);
+        super(PARAMETERS);
+        complements = new EllipsoidToGeocentric[2];
+        complements[0] = new EllipsoidToGeocentric(2, complements);
+        complements[1] = new EllipsoidToGeocentric(3, complements);
     }
 
     /**
-     * Constructs a provider for the 2-dimensional case.
-     *
-     * @param complement The provider for the 3D case.
+     * Constructs a provider for the 2-dimensional or 3-dimensional case.
      */
-    private EllipsoidToGeocentric(final EllipsoidToGeocentric complement) {
-        super(2, 3, PARAMETERS);
-        this.complement = complement;
+    private EllipsoidToGeocentric(final int dimension, final EllipsoidToGeocentric[] complements) {
+        super(dimension, 3, PARAMETERS);
+        this.complements = complements;
     }
 
     /**
@@ -280,6 +277,6 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
     public OperationMethod redimension(final int sourceDimensions, final int targetDimensions) {
         ArgumentChecks.ensureBetween("sourceDimensions", 2, 3, sourceDimensions);
         ArgumentChecks.ensureBetween("targetDimensions", 3, 3, targetDimensions);
-        return (Objects.equals(sourceDimensions, getSourceDimensions())) ? this : complement;
+        return complements[sourceDimensions - 2];
     }
 }

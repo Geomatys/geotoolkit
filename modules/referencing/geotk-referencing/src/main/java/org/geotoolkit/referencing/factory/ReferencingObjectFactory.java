@@ -21,6 +21,7 @@
 package org.geotoolkit.referencing.factory;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.awt.RenderingHints;
 import java.text.ParseException;
@@ -34,7 +35,6 @@ import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.factory.Hints;
@@ -45,13 +45,11 @@ import org.geotoolkit.lang.Buffered;
 import org.apache.sis.referencing.cs.*;
 import org.apache.sis.referencing.crs.*;
 import org.apache.sis.referencing.datum.*;
-import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
+import org.apache.sis.referencing.crs.DefaultDerivedCRS;
 import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
-import org.apache.sis.referencing.IdentifiedObjects;
-import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
+import org.apache.sis.internal.referencing.OperationMethods;
 import org.apache.sis.referencing.cs.DefaultAffineCS;
-import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.util.collection.WeakHashSet;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
@@ -950,15 +948,9 @@ public class ReferencingObjectFactory extends ReferencingFactory
             final CoordinateReferenceSystem baseCRS, final Conversion conversionFromBase,
             final CoordinateSystem derivedCS) throws FactoryException
     {
-        MathTransform mt = conversionFromBase.getMathTransform();
-        if (mt == null) {
-            final ParameterValueGroup parameters = conversionFromBase.getParameterValues();
-            final MathTransformFactory mtFactory = getMathTransformFactory();
-            mt = mtFactory.createParameterizedTransform(parameters);
-        }
         DerivedCRS crs;
         try {
-            crs = new DefaultDerivedCRS(properties, conversionFromBase, (SingleCRS) baseCRS, mt, derivedCS);    // TODO: cast
+            crs = new DefaultDerivedCRS(properties, (SingleCRS) baseCRS, conversionFromBase, derivedCS);    // TODO: cast
         } catch (IllegalArgumentException exception) {
             throw new FactoryException(exception);
         }
@@ -985,39 +977,8 @@ public class ReferencingObjectFactory extends ReferencingFactory
             final GeographicCRS baseCRS, Conversion conversionFromBase,
             final CartesianCS derivedCS) throws FactoryException
     {
-        final MathTransform mt;
-        final MathTransform existing = conversionFromBase.getMathTransform();
-        final MathTransformFactory mtFactory = getMathTransformFactory();
-        if (existing != null && mtFactory instanceof DefaultMathTransformFactory) {
-            /*
-             * In the particular case of Geotk implementation, we use a shortcut which avoid
-             * the cost of creating a new parameterized transform; we use directly the existing
-             * transform instance instead. It also avoid slight rounding errors as a side-effect.
-             * This is because transforms are free to convert angular parameters from degrees to
-             * radians, store the values internally in radians, and convert then back to degrees
-             * when 'conversionFromBase.getParameterValues()' is invoked. This sometime result in
-             * slightly different values than the original ones. Those differences are enough for
-             * getting a math transform which is different in the sense of equals(Object), with
-             * the usual consequences on cached instances.
-             */
-            mt = ((DefaultMathTransformFactory) mtFactory).createBaseToDerived(baseCRS.getCoordinateSystem(), existing, derivedCS);
-        } else {
-            /*
-             * Non-Geotk implementation, or no existing MathTransform instance.
-             * Creates the transform from the parameters.
-             */
-            final ParameterValueGroup parameters = conversionFromBase.getParameterValues();
-            mt = mtFactory.createBaseToDerived(baseCRS, parameters, derivedCS);
-        }
-        /*
-         * If the user gave an explicit conversion, checks if it is suitable.
-         * It may not be suitable is unit conversion, axis switch, etc. have
-         * been inserted in the operation chain by 'createBaseToDerived'.
-         */
-        if (!mt.equals(existing)) {
-            conversionFromBase = new DefaultConversion(IdentifiedObjects.getProperties(conversionFromBase),
-                    conversionFromBase.getMethod(), mt, null);
-        }
+        final Map<String,Object> copy = new HashMap<>(properties);
+        copy.put(OperationMethods.MT_FACTORY, getMathTransformFactory());
         ProjectedCRS crs;
         try {
             crs = new DefaultProjectedCRS(properties, baseCRS, conversionFromBase, derivedCS);

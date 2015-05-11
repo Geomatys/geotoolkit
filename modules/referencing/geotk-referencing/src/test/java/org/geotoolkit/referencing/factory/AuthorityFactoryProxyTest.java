@@ -26,13 +26,13 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.FactoryException;
 
 import org.apache.sis.test.DependsOn;
-import org.geotoolkit.referencing.crs.*;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.apache.sis.referencing.crs.DefaultGeographicCRS;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.factory.web.WebCRSFactoryTest;
 import org.geotoolkit.referencing.factory.web.AutoCRSFactoryTest;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.crs.DefaultDerivedCRS;
 import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 
 import org.junit.*;
@@ -68,13 +68,12 @@ public final strictfp class AuthorityFactoryProxyTest {
      */
     @Test
     public void testType() {
-        assertEquals(ProjectedCRS.class,              getInstance(ProjectedCRS.class)        .type);
-        assertEquals(ProjectedCRS.class,              getInstance(DefaultProjectedCRS.class) .type);
-        assertEquals(GeographicCRS.class,             getInstance(GeographicCRS.class)       .type);
-        assertEquals(GeographicCRS.class,             getInstance(DefaultGeographicCRS.class).type);
-        assertEquals(DerivedCRS.class,                getInstance(DefaultDerivedCRS.class)   .type);
-        assertEquals(CoordinateReferenceSystem.class, getInstance(AbstractDerivedCRS.class)  .type);
-        assertEquals(GeodeticDatum.class,             getInstance(DefaultGeodeticDatum.class).type);
+        assertEquals(ProjectedCRS.class,  getInstance(ProjectedCRS.class)        .type);
+        assertEquals(ProjectedCRS.class,  getInstance(DefaultProjectedCRS.class) .type);
+        assertEquals(GeographicCRS.class, getInstance(GeographicCRS.class)       .type);
+        assertEquals(GeographicCRS.class, getInstance(DefaultGeographicCRS.class).type);
+        assertEquals(DerivedCRS.class,    getInstance(DefaultDerivedCRS.class)   .type);
+        assertEquals(GeodeticDatum.class, getInstance(DefaultGeodeticDatum.class).type);
     }
 
     /**

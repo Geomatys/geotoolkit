@@ -24,6 +24,7 @@ import javax.vecmath.Point3d;
 
 import org.opengis.util.FactoryException;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.TransformException;
@@ -35,11 +36,10 @@ import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
 import org.apache.sis.referencing.operation.transform.CoordinateDomain;
+import org.apache.sis.referencing.CommonCRS;
 
 import org.junit.*;
-import org.opengis.referencing.datum.Ellipsoid;
 
-import org.apache.sis.referencing.CommonCRS;
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
 

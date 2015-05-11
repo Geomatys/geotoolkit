@@ -63,6 +63,7 @@ import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.apache.sis.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.internal.referencing.VerticalDatumTypes;
+import org.apache.sis.referencing.operation.DefaultConversion;
 
 import static java.util.Collections.singletonMap;
 import static javax.measure.unit.SI.METRE;
@@ -1235,9 +1236,9 @@ public class ReferencingParser extends MathTransformParser {
                     singletonMap(IdentifiedObject.NAME_KEY, buffer.toString()),
                     number, AxisDirection.OTHER, Unit.ONE);
             }
-            final Conversion conversion = new DefiningConversion(
+            final Conversion conversion = new DefaultConversion(
                     singletonMap(IdentifiedObject.NAME_KEY, method.getName().getCode()),
-                    method, toBase.inverse());
+                    method, toBase.inverse(), null);
             final CoordinateSystem cs = new AbstractCS(properties, axis);
             return crsFactory.createDerivedCRS(properties, base, conversion, cs);
         } catch (FactoryException | NoninvertibleTransformException exception) {

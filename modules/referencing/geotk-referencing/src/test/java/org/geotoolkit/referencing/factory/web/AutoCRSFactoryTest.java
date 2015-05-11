@@ -30,7 +30,6 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.operation.projection.TransverseMercator;
 import org.geotoolkit.referencing.operation.projection.Orthographic;
 import org.geotoolkit.test.referencing.ReferencingTestBase;

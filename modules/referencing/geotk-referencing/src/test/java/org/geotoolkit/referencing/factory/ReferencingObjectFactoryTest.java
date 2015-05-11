@@ -47,6 +47,7 @@ import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.DefaultConversion;
 import org.junit.*;
 import static org.geotoolkit.referencing.Assert.*;
 
@@ -238,7 +239,7 @@ public final strictfp class ReferencingObjectFactoryTest extends ReferencingTest
              */
             final ProjectedCRS projCRS = crsFactory.createProjectedCRS(dummyName,
                     CommonCRS.WGS84.normalizedGeographic(),
-                    new DefiningConversion(dummyName, method, mt),
+                    new DefaultConversion(dummyName, method, mt, null),
                     PredefinedCS.PROJECTED);
             final Conversion conversion = projCRS.getConversionFromBase();
             assertSame(classification, mt, conversion.getMathTransform());

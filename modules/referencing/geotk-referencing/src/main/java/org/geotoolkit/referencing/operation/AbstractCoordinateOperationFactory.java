@@ -53,6 +53,8 @@ import org.apache.sis.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.cs.CoordinateSystems;
+import org.apache.sis.referencing.operation.DefaultConcatenatedOperation;
+import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 
@@ -448,7 +450,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
                 }
             }
         }
-        operation = DefaultSingleOperation.create(properties, sourceCRS, targetCRS, transform, method, type);
+        operation = AbstractCoordinateOperation.create(properties, sourceCRS, targetCRS, transform, method, type);
         operation = pool.unique(operation);
         return operation;
     }
@@ -472,7 +474,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
             final OperationMethod     method,
             final ParameterValueGroup parameters) throws FactoryException
     {
-        Conversion conversion = new DefiningConversion(properties, method, parameters);
+        Conversion conversion = new DefaultConversion(properties, method, null, parameters);
         conversion = pool.unique(conversion);
         return conversion;
     }

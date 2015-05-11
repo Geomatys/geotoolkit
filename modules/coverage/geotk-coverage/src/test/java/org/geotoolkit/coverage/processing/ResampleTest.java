@@ -95,7 +95,7 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
                 return null;
             }
             final Map<String, String> name = Collections.singletonMap(DefaultConversion.NAME_KEY, "Stereographic");
-            return new DefaultProjectedCRS(name, base, new DefaultConversion(name, factory.getLastMethodUsed(), mt, null), PredefinedCS.PROJECTED);
+            return new DefaultProjectedCRS(name, base, new DefaultConversion(name, factory.getLastMethodUsed(), mt, parameters), PredefinedCS.PROJECTED);
         } catch (NoSuchIdentifierException exception) {
             fail(exception.getLocalizedMessage());
             return null;

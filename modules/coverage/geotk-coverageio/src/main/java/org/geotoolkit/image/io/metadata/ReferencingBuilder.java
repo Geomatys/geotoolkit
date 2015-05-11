@@ -39,7 +39,6 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
@@ -54,6 +53,7 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.lang.Builder;
 
+import org.apache.sis.referencing.operation.DefaultConversion;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
@@ -364,7 +364,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                 accessor.warning(null, getClass(), "getConversionFromBase", e);
             }
             final MathTransform tr = factory.createBaseToDerived(baseCRS, parameters, derivedCS);
-            return new DefiningConversion(properties, factory.getLastMethodUsed(), tr);
+            return new DefaultConversion(properties, factory.getLastMethodUsed(), tr, parameters);
         }
         return getDefault("getBaseToCRS", cvAccessor, Conversion.class);
     }

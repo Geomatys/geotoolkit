@@ -20,17 +20,11 @@
  */
 package org.geotoolkit.referencing.operation;
 
-import java.util.Map;
 import java.util.Collections;
-import net.jcip.annotations.Immutable;
-
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
-
-import org.apache.sis.io.wkt.Formatter;
-import org.apache.sis.internal.referencing.WKTUtilities;
+import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.referencing.operation.DefaultOperationMethod;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -43,20 +37,13 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Matthias Basler
- * @version 3.20
- *
- * @see org.opengis.referencing.operation.CoordinateOperationFactory#createDefiningConversion
- *
  * @since 2.1
  * @module
+ *
+ * @deprecated DefaultConversion moved to Apache SIS. DefiningConversion is no longer needed.
  */
-@Immutable
+@Deprecated
 public class DefiningConversion extends DefaultConversion {
-    /**
-     * Serial number for inter-operability with different versions.
-     */
-    private static final long serialVersionUID = 7399026512478064721L;
-
     /**
      * Convenience constructor for creating a defining conversion with a default operation method.
      * The operation method is assumed two-dimensional.
@@ -67,7 +54,7 @@ public class DefiningConversion extends DefaultConversion {
      * @since 2.2
      */
     public DefiningConversion(final String name, final ParameterValueGroup parameters) {
-        this(Collections.singletonMap(NAME_KEY, name), getOperationMethod(parameters), parameters);
+        super(Collections.singletonMap(NAME_KEY, name), getOperationMethod(parameters), null, parameters);
     }
 
     /**
@@ -79,68 +66,5 @@ public class DefiningConversion extends DefaultConversion {
         final ParameterDescriptorGroup descriptor = parameters.getDescriptor();
         return new DefaultOperationMethod(
                 org.geotoolkit.referencing.IdentifiedObjects.getProperties(descriptor, null), 2, 2, descriptor);
-    }
-
-    /**
-     * Constructs a conversion from a set of parameters.
-     * The properties given in argument follow the same rules than for the
-     * {@linkplain AbstractCoordinateOperation#AbstractCoordinateOperation(Map,
-     * CoordinateReferenceSystem, CoordinateReferenceSystem, MathTransform)
-     * base-class constructor}.
-     *
-     * @param properties Set of properties. Should contains at least {@code "name"}.
-     * @param method     The operation method.
-     * @param parameters The parameter values.
-     */
-    public DefiningConversion(final Map<String,?>       properties,
-                              final OperationMethod     method,
-                              final ParameterValueGroup parameters)
-    {
-        super(properties, null, null, null, method);
-        ensureNonNull("parameters", parameters);
-        this.parameters = parameters.clone();
-    }
-
-    /**
-     * Constructs a conversion from a math transform.
-     * The properties given in argument follow the same rules than for the
-     * {@linkplain AbstractCoordinateOperation#AbstractCoordinateOperation(Map,
-     * CoordinateReferenceSystem, CoordinateReferenceSystem, MathTransform)
-     * base-class constructor}.
-     *
-     * @param properties Set of properties. Should contains at least {@code "name"}.
-     * @param method     The operation method.
-     * @param transform  Transform from positions in the {@linkplain #getSourceCRS source CRS}
-     *                   to positions in the {@linkplain #getTargetCRS target CRS}.
-     *
-     * @since 2.5
-     */
-    public DefiningConversion(final Map<String,?>   properties,
-                              final OperationMethod method,
-                              final MathTransform   transform)
-    {
-        super(properties, null, null, transform, method);
-    }
-
-    /**
-     * Invoked by the super-class constructor for checking argument validity. This special
-     * kind of conversion accepts non-null {@code transform} even if {@code sourceCRS} and
-     * {@code targetCRS} are non-null.
-     */
-    @Override
-    void validate() throws IllegalArgumentException {
-        if (transform == null) {
-            super.validate();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String formatTo(final Formatter formatter) {
-        final String name = super.formatTo(formatter);
-        WKTUtilities.append(parameters, formatter);
-        return name;
     }
 }

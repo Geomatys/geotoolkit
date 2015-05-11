@@ -38,8 +38,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
-import org.geotoolkit.referencing.operation.DefaultConversion;
-import org.geotoolkit.referencing.operation.DefiningConversion;
+import org.apache.sis.referencing.operation.DefaultConversion;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 
@@ -133,8 +132,9 @@ public final class IrregularAxesConverter {
         if (method.equals(HACK)) {
             ProjectedCRS crs = createProjectedCRS(baseCRS, "Mercator_1SP");
             Conversion cnv = crs.getConversionFromBase();
-            cnv = new DefaultConversion(Collections.singletonMap(ProjectedCRS.NAME_KEY, "Mixed cnv."), baseCRS, crs,
-                    new ModifiedMercator((AbstractMathTransform) cnv.getMathTransform()), cnv.getMethod());
+            cnv = new DefaultConversion(Collections.singletonMap(ProjectedCRS.NAME_KEY, "Mixed cnv."),
+                    baseCRS, crs, null, cnv.getMethod(),
+                    new ModifiedMercator((AbstractMathTransform) cnv.getMathTransform()));
             crs = crsFactory.createProjectedCRS(Collections.singletonMap(ProjectedCRS.NAME_KEY,
                 method + " (" + baseCRS.getName().getCode() + ')'), baseCRS, cnv, crs.getCoordinateSystem());
             return crs;
@@ -149,8 +149,8 @@ public final class IrregularAxesConverter {
         final MathTransform projection = mtFactory.createParameterizedTransform(parameters);
         return crsFactory.createProjectedCRS(Collections.singletonMap(ProjectedCRS.NAME_KEY,
                 method + " (" + baseCRS.getName().getCode() + ')'), baseCRS,
-                new DefiningConversion(Collections.singletonMap(ProjectedCRS.NAME_KEY, method),
-                mtFactory.getLastMethodUsed(), projection), PredefinedCS.PROJECTED);
+                new DefaultConversion(Collections.singletonMap(ProjectedCRS.NAME_KEY, method),
+                mtFactory.getLastMethodUsed(), projection, parameters), PredefinedCS.PROJECTED);
     }
 
     /**
