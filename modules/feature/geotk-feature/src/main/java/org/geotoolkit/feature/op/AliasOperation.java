@@ -23,9 +23,11 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AbstractOperationType;
 import org.geotoolkit.feature.type.AttributeType;
+import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.feature.Attribute;
+import org.opengis.feature.IdentifiedType;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -34,17 +36,45 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class AliasOperation extends AbstractOperationType {
 
+    private final PropertyDescriptor desc;
     private final Name refName;
 
-    public AliasOperation(Name newName, Name refName, AttributeType type) {
-        super(newName, null, type, EMPTY_PARAMS);
+    public AliasOperation(Name newName, Name refName, PropertyDescriptor type) {
+        super(newName, null, (AttributeType)type.getType(), EMPTY_PARAMS);
+        this.desc = type;
         this.refName = refName;
+    }
+
+    public Name getRefName() {
+        return refName;
+    }
+
+    private Property createDefault(){
+        return FeatureUtilities.defaultProperty(desc, "");
     }
 
     @Override
     public Attribute invokeGet(ComplexAttribute feature, ParameterValueGroup parameters) {
-        final Property prop = feature.getProperty(refName);
-        return (prop==null)  ? null : (Attribute)prop;
+        Property prop = feature.getProperty(refName);
+        if(prop==null) return null;
+        
+        //check the type, the alias may have a restricted type
+        final IdentifiedType resType = getResult();
+        if(resType instanceof ComplexType){
+            if(prop.getType().equals(resType)){
+                return (Attribute) prop;
+            }
+        }else if(resType instanceof AttributeType){
+            final Class clazz = ((AttributeType)resType).getBinding();
+            final Object value = prop.getValue();
+            if(value==null) return null;
+            if(clazz.isAssignableFrom(value.getClass())){
+                prop = createDefault();
+                prop.setValue(value);
+                return (Attribute) prop;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -62,7 +92,7 @@ public class AliasOperation extends AbstractOperationType {
                 adb.copy(desc);
                 adb.setType(ca.getType());
                 desc = adb.buildDescriptor();
-                prop = (ComplexAttribute) FeatureUtilities.defaultProperty(desc,"noid");
+                prop = (ComplexAttribute) FeatureUtilities.defaultProperty(desc,"");
                 feature.getProperties().add(prop);
             }
             prop.getValue().clear();

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
@@ -321,7 +323,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
                 return super.next();
             }else{
                 //append mode
-                currentFeature = FeatureUtilities.defaultFeature(type, FeatureUtilities.createDefaultFeatureId());
+                currentFeature = FeatureFactory.LENIENT.createFeature(new ArrayList(), type, FeatureUtilities.createDefaultFeatureId());
                 currentFile = null;
                 return currentFeature;
             }

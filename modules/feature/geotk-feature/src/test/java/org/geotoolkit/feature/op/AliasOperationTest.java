@@ -41,7 +41,7 @@ public class AliasOperationTest {
         ftb.setName("TypeWithAlias");
         final AttributeDescriptor attDesc = ftb.add("name",String.class);
 
-        final OperationType opType = new AliasOperation(DefaultName.valueOf("substitute"), DefaultName.valueOf("name"), attDesc.getType());
+        final OperationType opType = new AliasOperation(DefaultName.valueOf("substitute"), DefaultName.valueOf("name"), attDesc);
         final PropertyDescriptor pd = new DefaultOperationDescriptor(opType, DefaultName.valueOf("substitute"), 1, 1, true);
         ftb.add(pd);
 

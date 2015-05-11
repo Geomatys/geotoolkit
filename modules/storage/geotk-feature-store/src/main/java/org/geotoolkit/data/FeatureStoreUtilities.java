@@ -45,6 +45,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.memory.GenericMappingFeatureCollection;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
@@ -161,6 +162,9 @@ public class FeatureStoreUtilities {
                 final Feature f = ite.next();
                 final Feature candidate = writer.next();
                 FeatureUtilities.copy(f,candidate,false);
+                if(candidate instanceof AbstractFeature){
+                    ((AbstractFeature)candidate).setIdentifier(f.getIdentifier());
+                }
                 writer.write();
                 ids.add(candidate.getIdentifier());
             }

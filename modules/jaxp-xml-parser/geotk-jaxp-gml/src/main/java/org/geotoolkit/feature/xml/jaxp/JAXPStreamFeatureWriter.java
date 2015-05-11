@@ -53,10 +53,12 @@ import org.geotoolkit.feature.ComplexAttribute;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.op.AliasOperation;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.OperationType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
@@ -309,27 +311,45 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             for(final PropertyDescriptor desc : type.getDescriptors()){
                 final Collection<Property> props = feature.getProperties(desc.getName());
                 for (Property a : props) {
-                    writeProperty(a);
+                    writeProperty(feature,a,false);
                     allProps.remove(a);
                 }
             }
 
             //write remaining properties
             for(Property a : allProps){
-                writeProperty(a);
+                writeProperty(feature,a,false);
             }
 
         }
     }
 
-    private void writeProperty(Property a) throws XMLStreamException{
+    private void writeProperty(ComplexAttribute parent, Property a, boolean isSubstitute) throws XMLStreamException{
+        final ComplexType parentType = parent.getType();
         final Object valueA = a.getValue();
         final PropertyType typeA = a.getType();
-        final Name nameA = a.getName();
+        final Name nameA = a.getDescriptor().getName();
         final String nameProperty = nameA.getLocalPart();
         String namespaceProperty = nameA.getNamespaceURI();
 
         if(isAttributeProperty(nameA)) return;
+
+        //search for link operation which match
+        if(!isSubstitute){
+            for(PropertyDescriptor desc : parentType.getDescriptors()){
+                final PropertyType pt = desc.getType();
+                if(pt instanceof AliasOperation && ((AliasOperation)pt).getRefName().equals(nameA)){
+                    //possible substitute group
+                    Property p = parent.getProperty(desc.getName());
+                    if(p!=null){
+                        //valid substitute, we write it instead of the current property
+                        writeProperty(parent, p, true);
+                        return;
+                    }
+                }
+            }
+        }
+
 
 
         if (a instanceof ComplexAttribute) {
@@ -441,11 +461,16 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         } else {
 
             if (valueA != null) {
-                if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
-                    writer.writeStartElement(namespaceProperty, nameProperty);
-                } else {
-                    writer.writeStartElement(nameProperty);
+                final boolean descIsType = Utils.isGeometricType(typeA.getName());
+
+                if(!descIsType){
+                    if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
+                        writer.writeStartElement(namespaceProperty, nameProperty);
+                    } else {
+                        writer.writeStartElement(nameProperty);
+                    }
                 }
+
                 final CoordinateReferenceSystem crs = ((GeometryType)typeA).getCoordinateReferenceSystem();
                 final JAXBElement element;
                 final MarshallerPool POOL;
@@ -475,7 +500,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 } catch (JAXBException ex) {
                     LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
                 }
-                writer.writeEndElement();
+                
+                if(!descIsType)writer.writeEndElement();
             }
         }
     }

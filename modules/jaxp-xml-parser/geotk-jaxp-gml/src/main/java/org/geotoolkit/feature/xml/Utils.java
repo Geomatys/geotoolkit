@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.logging.Level;
@@ -219,6 +220,7 @@ public class Utils {
     }
 
     private static final Map<String, Class> CLASS_BINDING = new HashMap<>();
+    private static final Set<String> GEOMETRIC_NAME = new HashSet<>();
     static {
         CLASS_BINDING.put("long",     Long.class);
         CLASS_BINDING.put("integer",  Integer.class);
@@ -300,11 +302,30 @@ public class Utils {
         CLASS_BINDING.put("LinearRingType",                LinearRing.class);
         CLASS_BINDING.put("LinearRingPropertyType",        LinearRing.class);
 
+        for(Entry<String,Class> entry : CLASS_BINDING.entrySet()){
+            if(Geometry.class.isAssignableFrom(entry.getValue())){
+                GEOMETRIC_NAME.add(entry.getKey());
+            }
+        }
     }
 
     public static boolean isGeometricType(final QName elementType) {
+        if (elementType != null && elementType.getNamespaceURI().contains(GML_311_NAMESPACE)) {
+            return GEOMETRIC_NAME.contains(elementType.getLocalPart());
+        }
+        return false;
+    }
+
+    public static boolean isGeometricType(final Name elementType) {
+        if (elementType != null && elementType.getNamespaceURI().contains(GML_311_NAMESPACE)) {
+            return GEOMETRIC_NAME.contains(elementType.getLocalPart());
+        }
+        return false;
+    }
+
+    public static boolean isPrimitiveType(final QName elementType) {
         if (elementType != null) {
-            return CLASS_BINDING.get(elementType.getLocalPart()) != null;
+            return CLASS_BINDING.containsKey(elementType.getLocalPart());
         }
         return false;
     }

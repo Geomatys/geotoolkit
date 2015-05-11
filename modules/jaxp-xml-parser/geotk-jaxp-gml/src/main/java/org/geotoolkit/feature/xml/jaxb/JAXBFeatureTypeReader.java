@@ -1040,7 +1040,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
             atb.setBinding(Object.class);
             if (elementType != null) {
-                if(Utils.isGeometricType(elementType)){
+                if(Utils.isPrimitiveType(elementType)){
                     final Class c = Utils.getTypeFromQName(elementType);
                     if (c == null) {
                         throw new SchemaException("The attribute : " + attributeElement + " does no have a declared type.");
@@ -1074,7 +1074,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                         if(ad instanceof OperationDescriptor){
                             throw new UnsupportedOperationException("Substitution is an operation, not supported.");
                         }else{
-                            final OperationType optype = new AliasOperation(ad.getName(), baseDesc.getName(), (AttributeType) ad.getType());
+                            final OperationType optype = new AliasOperation(ad.getName(), baseDesc.getName(), ad);
                             final OperationDescriptor desc = new DefaultOperationDescriptor(optype,
                                     ad.getName(), baseDesc.getMinOccurs(), baseDesc.getMaxOccurs(), baseDesc.isNillable());
                             results.add(desc);

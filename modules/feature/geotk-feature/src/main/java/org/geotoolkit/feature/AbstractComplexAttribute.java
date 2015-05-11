@@ -126,6 +126,14 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
                 return prop;
             }
         }
+
+        //check if it's and operation
+        final PropertyDescriptor propDesc = getType().getDescriptor(name);
+        if(propDesc!=null && propDesc.getType() instanceof OperationType){
+            final OperationType opType = (OperationType) propDesc.getType();
+            return (Property) opType.invokeGet(this, opType.getParameters().createValue());
+        }
+
         return null;
     }
 
