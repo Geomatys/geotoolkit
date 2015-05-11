@@ -30,17 +30,32 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 
 import static javax.xml.stream.XMLStreamReader.*;
+import javax.xml.stream.util.StreamReaderDelegate;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.stax.StAXSource;
+import org.geotoolkit.util.DomUtilities;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * An abstract class for all stax parser.<br/>
@@ -228,6 +243,67 @@ public abstract class StaxStreamReader extends AbstractConfigurable {
      */
     protected static double parseDouble(final String candidate) {
         return Double.parseDouble(candidate.replace(',', '.'));
+    }
+
+    /**
+     * Iterator on the reader until it reachs the end of the given tag name.
+     * Return the read elements as dom.
+     *
+     * TODO : not supported yet, needed for GML antype nodes, waiting for the new Feature Model.
+     *
+     * @return Element 
+     */
+    protected List<Node> readAsDom(final String tagName) throws XMLStreamException{
+        if(true) throw new XMLStreamException("Not supported yet.");
+
+
+        //TODO this is just a draft, we need a way to pass down namespaces and stop reading on tag end for each sub node
+        final List<Node> nodes = new ArrayList<>();
+
+        while(reader.hasNext()){
+
+            if(START_ELEMENT == reader.next()){
+
+                final XMLStreamReader limitedReader = new StreamReaderDelegate(reader){
+                    @Override
+                    public boolean hasNext() throws XMLStreamException {
+                        return super.hasNext();
+                    }
+                };
+
+                final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setNamespaceAware(true);
+                final TransformerFactory trsFactory = TransformerFactory.newInstance();
+                try {
+                    final DocumentBuilder builder = factory.newDocumentBuilder();
+                    final Transformer idTransform = trsFactory.newTransformer();
+                    final Source input = new StAXSource(limitedReader);
+                    final PipedOutputStream ps = new PipedOutputStream();
+                    final PipedInputStream is = new PipedInputStream(ps);
+                    final Result output = new StreamResult(ps);
+                    idTransform.transform(input, output);
+                    ps.close();
+                    nodes.add(builder.parse(is));
+                } catch (TransformerConfigurationException e) {
+                    throw new XMLStreamException(e.getMessage());
+                } catch (TransformerFactoryConfigurationError e) {
+                    throw new XMLStreamException(e.getMessage());
+                } catch (IOException e) {
+                    throw new XMLStreamException(e.getMessage());
+                } catch (TransformerException e) {
+                    throw new XMLStreamException(e.getMessage());
+                } catch (SAXException e) {
+                    throw new XMLStreamException(e.getMessage());
+                } catch (ParserConfigurationException e) {
+                    throw new XMLStreamException(e.getMessage());
+                }
+            }else if(END_ELEMENT == reader.next() &&
+                tagName.equalsIgnoreCase(reader.getLocalName())){
+                break;
+            }
+        }
+
+        return nodes;
     }
 
 }

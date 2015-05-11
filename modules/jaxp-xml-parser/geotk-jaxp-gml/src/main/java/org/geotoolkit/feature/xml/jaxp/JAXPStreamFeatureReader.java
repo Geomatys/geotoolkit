@@ -80,6 +80,7 @@ import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.OperationDescriptor;
 import org.geotoolkit.feature.type.OperationType;
+import org.w3c.dom.Node;
 
 
 /**
@@ -410,7 +411,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             toTagEnd(propName.getLocalPart());
                             continue;
                         } else if(featureType.getDescriptor("_any")!=null){
-                            //TODO make a string of all the content
+                            //TODO make a string or dom of all the content ?
+                            //final List<Node> nodes = readAsDom(propName.getLocalPart());
                             toTagEnd(propName.getLocalPart());
                             continue;
                         } else {
