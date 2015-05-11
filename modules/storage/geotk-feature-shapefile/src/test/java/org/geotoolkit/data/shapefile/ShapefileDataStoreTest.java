@@ -28,7 +28,6 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.ShapeTestData;
@@ -46,7 +45,6 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -72,7 +70,7 @@ import org.geotoolkit.test.TestData;
 import static org.junit.Assert.*;
 
 /**
- * 
+ *
  * @version $Id$
  * @author Ian Schneider
  * @module pending

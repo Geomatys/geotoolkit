@@ -17,7 +17,6 @@
 package org.geotoolkit.data.shapefile;
 
 import org.junit.Test;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -30,7 +29,7 @@ import org.apache.sis.storage.DataStoreException;
 import static org.junit.Assert.*;
 
 /**
- * 
+ *
  * @version $Id$
  * @author ian
  * @module pending

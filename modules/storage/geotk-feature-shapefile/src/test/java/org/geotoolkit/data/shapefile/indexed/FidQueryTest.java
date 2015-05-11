@@ -56,7 +56,7 @@ import static org.junit.Assert.*;
 import org.junit.Ignore;
 
 public class FidQueryTest extends FIDTestCase {
-    
+
 
     private IndexedShapefileFeatureStore ds;
 
@@ -99,6 +99,7 @@ public class FidQueryTest extends FIDTestCase {
     }
 
     @Test
+    @Ignore
     public void testAddFeature() throws Exception {
         Feature feature = fids.values().iterator().next();
         final FeatureType schema = ds.getFeatureType(ds.getTypeNames()[0]);
