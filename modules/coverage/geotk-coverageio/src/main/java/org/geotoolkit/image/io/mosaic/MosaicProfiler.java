@@ -21,7 +21,6 @@ import java.util.Random;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.IOException;
-import net.jcip.annotations.ThreadSafe;
 
 import org.apache.sis.math.Statistics;
 import org.geotoolkit.resources.Errors;
@@ -64,7 +63,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
  * @since 3.00
  * @module
  */
-@ThreadSafe
 public class MosaicProfiler {
     /**
      * The default minimal tile size.

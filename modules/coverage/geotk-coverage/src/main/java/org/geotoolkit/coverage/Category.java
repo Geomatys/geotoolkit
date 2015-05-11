@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.Objects;
 import java.io.Serializable;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
@@ -84,7 +83,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @since 1.2
  * @module
  */
-@Immutable
 public class Category implements Serializable {
     /**
      * Serial number for inter-operability with different versions.

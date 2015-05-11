@@ -19,7 +19,6 @@ package org.geotoolkit.io;
 
 import java.io.IOException;
 import java.io.Writer;
-import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.io.IO;
 import org.apache.sis.io.LineAppender;
 import org.apache.sis.util.ArgumentChecks;
@@ -42,7 +41,6 @@ import org.geotoolkit.lang.Decorator;
  * @deprecated Moved to Apache SIS as {@link LineAppender}.
  */
 @Deprecated
-@ThreadSafe
 @Decorator(Writer.class)
 public class IndentedLineWriter extends FilterWriter {
     /**

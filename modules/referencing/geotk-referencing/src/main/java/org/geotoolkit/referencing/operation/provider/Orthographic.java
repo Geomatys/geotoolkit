@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -68,7 +67,6 @@ import org.apache.sis.internal.referencing.provider.Mercator2SP;
  * @since 2.1
  * @module
  */
-@Immutable
 public class Orthographic extends MapProjection {
     /**
      * For compatibility with different versions during deserialization.

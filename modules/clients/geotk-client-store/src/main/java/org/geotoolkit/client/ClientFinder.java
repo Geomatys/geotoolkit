@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
-import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.internal.util.LazySet;
 import org.geotoolkit.lang.Static;
@@ -49,7 +48,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @todo Consider renaming this class as <code>ServerFactory</code> (see
  * <a href="http://jira.geotoolkit.org/browse/PENDING-55">PENDING-55</a>).
  */
-@ThreadSafe
 public final class ClientFinder extends Static {
     /**
      * The service loader. This loader and its iterator are not synchronized;

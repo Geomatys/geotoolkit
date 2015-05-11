@@ -27,7 +27,6 @@ import java.awt.image.DataBufferDouble;
 import java.util.Arrays;
 import java.util.Objects;
 import java.io.Serializable;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -56,7 +55,6 @@ import static org.geotoolkit.util.Utilities.hash;
  * @since 2.0
  * @module
  */
-@Immutable
 final class LocalizationGridTransform2D extends GridTransform implements MathTransform2D {
     /**
      * Serial number for inter-operability with different versions.

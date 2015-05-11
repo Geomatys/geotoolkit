@@ -21,7 +21,6 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import java.awt.geom.Point2D;
 import java.awt.image.RasterFormatException;
 import javax.media.jai.Warp;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
@@ -41,7 +40,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
  * @since 2.1
  * @module
  */
-@Immutable
 final class WarpAdapter extends Warp {
     /**
      * For cross-version compatibility.

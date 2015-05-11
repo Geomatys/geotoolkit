@@ -22,7 +22,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.UnmodifiableGeometryException;
 
@@ -44,7 +43,6 @@ import static java.lang.Double.NEGATIVE_INFINITY;
  * @since 2.3
  * @module
  */
-@Immutable
 final class InfiniteRectangle2D extends Rectangle2D implements Serializable {
     /**
      * Serial number for inter-operability with different versions.

@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import java.io.IOException;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterDescriptor;
@@ -73,7 +72,6 @@ import org.apache.sis.util.logging.Logging;
  * @since 2.1
  * @module
  */
-@Immutable
 public class NADCON extends MathTransformProvider {
     /**
      * Serial number for inter-operability with different versions.

@@ -23,7 +23,6 @@ import java.util.TreeSet;
 import java.util.TreeMap;
 import java.io.PrintWriter;
 import java.io.IOException;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
@@ -117,7 +116,6 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 2.1
  * @module
  */
-@ThreadSafe
 public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRSAuthorityFactory {
     /**
      * The default filename to read, which is {@value}. The default

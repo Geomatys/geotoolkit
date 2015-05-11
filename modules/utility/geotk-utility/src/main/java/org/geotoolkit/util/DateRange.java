@@ -21,7 +21,6 @@ import java.util.Date;
 import javax.measure.unit.Unit;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
-import net.jcip.annotations.Immutable;
 
 import org.apache.sis.measure.Units;
 import org.apache.sis.measure.Range;
@@ -41,7 +40,6 @@ import org.geotoolkit.resources.Errors;
  * @since 2.5
  * @module
  */
-@Immutable
 public class DateRange extends Range<Date> {
     /**
      * For cross-version compatibility.

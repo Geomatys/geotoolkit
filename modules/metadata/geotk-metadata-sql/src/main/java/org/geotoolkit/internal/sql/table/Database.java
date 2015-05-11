@@ -42,8 +42,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 
-import net.jcip.annotations.ThreadSafe;
-
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.factory.Hints;
@@ -74,7 +72,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-@ThreadSafe
 public class Database implements Localized {
     /**
      * The timeout (in minutes) for acquiring a write lock.

@@ -31,7 +31,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.sql.DataSource;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.CodeList;
 import org.opengis.metadata.Identifier;
@@ -71,7 +70,6 @@ import static org.apache.sis.metadata.TypeValuePolicy.DECLARING_INTERFACE;
  * @since 3.03
  * @module
  */
-@ThreadSafe
 public class MetadataWriter extends MetadataSource {
     /**
      * {@code true} if child tables inherit the index of their parent tables.

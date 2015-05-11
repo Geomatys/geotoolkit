@@ -20,7 +20,6 @@ package org.geotoolkit.io;
 import java.io.IOException;
 import java.io.Writer;
 import javax.swing.text.StyleConstants;
-import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.io.IO;
 
@@ -65,7 +64,6 @@ import org.geotoolkit.lang.Decorator;
  * @deprecated Moved to Apache SIS as {@link TableAppender}.
  */
 @Deprecated
-@ThreadSafe
 @Decorator(Writer.class)
 public class TableWriter extends FilterWriter {
     /**

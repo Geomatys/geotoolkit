@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
@@ -37,7 +36,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException; // For javadoc
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
-import org.geotoolkit.metadata.Citations;
+
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.collection.WeakHashSet;
 import org.geotoolkit.internal.FactoryUtilities;
@@ -75,7 +74,6 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  * @since 2.2
  * @module
  */
-@ThreadSafe
 public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
     /**
      * The key for an optional value in the {@link Hints} map specifying custom factories

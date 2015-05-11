@@ -34,7 +34,6 @@ import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.naming.NameNotFoundException;
 import javax.naming.NoInitialContextException;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
@@ -101,7 +100,6 @@ import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
  * @since 2.1
  * @module
  */
-@ThreadSafe
 @ImplementationHints(forceLongitudeFirst=false)
 public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory

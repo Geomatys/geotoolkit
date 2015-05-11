@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.internal.referencing;
 
-import net.jcip.annotations.Immutable;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.Identifier;
 import org.apache.sis.referencing.NamedIdentifier;
@@ -33,7 +32,6 @@ import org.apache.sis.util.Deprecable;
  * @since 3.16
  * @module
  */
-@Immutable
 public final class DeprecatedName extends NamedIdentifier implements Deprecable {
     /**
      * For cross-version compatibility.

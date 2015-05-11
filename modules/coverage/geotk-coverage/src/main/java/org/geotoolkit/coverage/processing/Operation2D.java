@@ -20,7 +20,6 @@ package org.geotoolkit.coverage.processing;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.parameter.ParameterValueGroup;
@@ -60,7 +59,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @deprecated The API of this class will change in a future Geotk release. Do not rely on it.
  */
-@Immutable
 @Deprecated
 public abstract class Operation2D extends AbstractOperation {
     /**

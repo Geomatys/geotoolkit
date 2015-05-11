@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import org.apache.sis.internal.referencing.provider.Equirectangular;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -76,7 +75,6 @@ import org.geotoolkit.metadata.Citations;
  * @since 2.1
  * @module
  */
-@Immutable
 public class ObliqueMercator extends MapProjection {
     /**
      * For compatibility with different versions during deserialization.
@@ -468,7 +466,6 @@ public class ObliqueMercator extends MapProjection {
      * @since 2.1
      * @module
      */
-    @Immutable
     public static class TwoPoint extends ObliqueMercator {
         /**
          * For compatibility with different versions during deserialization.

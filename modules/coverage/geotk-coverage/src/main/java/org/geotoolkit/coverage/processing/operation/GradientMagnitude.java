@@ -23,7 +23,6 @@ import javax.media.jai.KernelJAI;
 import javax.media.jai.ParameterList;
 import javax.media.jai.operator.GradientMagnitudeDescriptor;
 import javax.measure.unit.Unit;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -122,7 +121,6 @@ import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
  * @since 1.2
  * @module
  */
-@Immutable
 public class GradientMagnitude extends OperationJAI {
     /**
      * Serial number for inter-operability with different versions.

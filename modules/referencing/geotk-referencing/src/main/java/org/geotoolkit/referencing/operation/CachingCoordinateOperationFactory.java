@@ -19,7 +19,6 @@ package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
 import java.util.Objects;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -57,7 +56,6 @@ import org.apache.sis.util.collection.Cache;
  * @module
  */
 @Buffered
-@ThreadSafe
 @Decorator(CoordinateOperationFactory.class)
 public class CachingCoordinateOperationFactory extends AbstractCoordinateOperationFactory {
     /**

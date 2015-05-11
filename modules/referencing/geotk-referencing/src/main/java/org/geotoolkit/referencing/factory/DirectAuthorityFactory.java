@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.Collection;
 import java.awt.RenderingHints;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.*;
 
@@ -44,7 +43,6 @@ import org.geotoolkit.factory.Hints;
  * @since 2.3
  * @module
  */
-@ThreadSafe
 public abstract class DirectAuthorityFactory extends AbstractAuthorityFactory {
 
     // IMPLEMENTATION NOTE:  The reason why this class exist is that we don't want "indirect"

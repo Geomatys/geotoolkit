@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -52,7 +51,6 @@ import net.jcip.annotations.ThreadSafe;
  * @since 3.00
  * @module
  */
-@ThreadSafe
 public interface ObjectStream<E> extends Closeable, Remote {
     /**
      * Returns the next element, or {@code null} if there is no more element to return. This

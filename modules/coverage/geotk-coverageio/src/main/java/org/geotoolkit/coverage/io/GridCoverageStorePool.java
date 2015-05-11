@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.coverage.io;
 
-import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -57,7 +56,6 @@ import net.jcip.annotations.ThreadSafe;
  * @todo Needs a background task for disposing the readers or writers after some amount
  *       of inactivity.
  */
-@ThreadSafe
 public class GridCoverageStorePool {
     /**
      * The grid coverage readers.

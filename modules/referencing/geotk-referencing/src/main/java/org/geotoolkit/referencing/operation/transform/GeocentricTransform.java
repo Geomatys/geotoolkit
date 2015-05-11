@@ -32,7 +32,6 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
 import javax.measure.converter.UnitConverter;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
@@ -83,7 +82,6 @@ import static org.geotoolkit.util.Utilities.hash;
  * @since 1.2
  * @module
  */
-@Immutable
 public class GeocentricTransform extends AbstractMathTransform implements EllipsoidalTransform, Serializable {
     /**
      * Serial number for inter-operability with different versions.

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -81,7 +80,6 @@ import static org.geotoolkit.referencing.operation.provider.UniversalParameters.
  * @since 2.1
  * @module
  */
-@Immutable
 public class AbridgedMolodensky extends Molodensky {
     /**
      * Serial number for inter-operability with different versions.

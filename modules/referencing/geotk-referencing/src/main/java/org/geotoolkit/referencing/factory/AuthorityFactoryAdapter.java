@@ -27,7 +27,6 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.awt.RenderingHints;
 import javax.measure.unit.Unit;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -73,7 +72,6 @@ import static org.geotoolkit.internal.FactoryUtilities.ATTEMPTS_DELAY;
  * @since 2.2
  * @module
  */
-@ThreadSafe
 @Decorator(AuthorityFactory.class)
 public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     /**

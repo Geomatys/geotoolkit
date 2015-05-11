@@ -38,7 +38,6 @@ import javax.media.jai.OperationDescriptor;
 import javax.media.jai.ParameterListDescriptor;
 import javax.media.jai.RegistryElementDescriptor;
 
-import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Role;
@@ -86,7 +85,6 @@ import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
  * @since 2.2
  * @module
  */
-@Immutable
 public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup {
     /**
      * Serial number for inter-operability with different versions.

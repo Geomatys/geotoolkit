@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.MultiColumnIdentifier;
@@ -39,7 +38,6 @@ import org.geotoolkit.resources.Errors;
  * @since 3.10
  * @module
  */
-@Immutable
 final class GridCoverageIdentifier extends MultiColumnIdentifier<GridCoverageIdentifier> implements Serializable {
     /**
      * For cross-version compatibility.

@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Properties;
 import javax.sql.DataSource;
 import java.awt.RenderingHints;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.SingleCRS;
@@ -64,7 +63,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-@ThreadSafe
 public class SpatialDatabase extends Database {
     /**
      * The horizontal SRID of {@link #horizontalCRS}, as declared in the PostGIS geometry column.

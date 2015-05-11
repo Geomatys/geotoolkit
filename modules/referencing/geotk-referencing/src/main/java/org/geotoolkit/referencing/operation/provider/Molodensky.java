@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.operation.provider;
 import java.util.Collection;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -101,7 +100,6 @@ import static org.geotoolkit.referencing.operation.provider.UniversalParameters.
  * @since 2.1
  * @module
  */
-@Immutable
 public class Molodensky extends MathTransformProvider {
     /**
      * Serial number for inter-operability with different versions.

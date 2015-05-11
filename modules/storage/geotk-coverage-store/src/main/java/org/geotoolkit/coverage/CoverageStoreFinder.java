@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
-import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.internal.util.Citations;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.internal.util.LazySet;
@@ -46,7 +45,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @since 3.20
  * @module pending
  */
-@ThreadSafe
 public final class CoverageStoreFinder extends Static {
     /**
      * The service loader. This loader and its iterator are not synchronized;

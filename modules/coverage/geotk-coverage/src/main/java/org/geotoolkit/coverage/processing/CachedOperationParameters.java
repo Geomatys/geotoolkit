@@ -22,7 +22,6 @@ import java.util.Locale;
 import java.util.Arrays;
 import java.util.TreeMap;
 import java.util.Objects;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.processing.Operation;
@@ -44,7 +43,6 @@ import org.geotoolkit.coverage.CoverageReferences;
  * @since 2.1
  * @module
  */
-@Immutable
 final class CachedOperationParameters {
     /**
      * The operation to apply on grid coverages.

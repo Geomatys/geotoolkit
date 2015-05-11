@@ -19,7 +19,6 @@ package org.geotoolkit.referencing.operation.provider;
 
 import org.apache.sis.internal.referencing.provider.Equirectangular;
 import java.util.List;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -75,7 +74,6 @@ import org.geotoolkit.metadata.Citations;
  * @since 2.4
  * @module
  */
-@Immutable
 public class HotineObliqueMercator extends ObliqueMercator {
     /**
      * For cross-version compatibility.
@@ -346,7 +344,6 @@ public class HotineObliqueMercator extends ObliqueMercator {
      * @since 2.4
      * @module
      */
-    @Immutable
     public static class TwoPoint extends HotineObliqueMercator {
         /**
          * For cross-version compatibility.

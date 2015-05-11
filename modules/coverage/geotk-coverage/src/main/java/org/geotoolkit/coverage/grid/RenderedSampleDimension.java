@@ -27,7 +27,6 @@ import java.awt.image.SampleModel;
 import javax.measure.unit.Unit;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.ColorInterpretation;
@@ -52,7 +51,6 @@ import org.apache.sis.referencing.operation.transform.MathTransforms;
  * @since 2.1
  * @module
  */
-@Immutable
 final class RenderedSampleDimension extends GridSampleDimension {
     /**
      * Serial number for inter-operability with different versions.

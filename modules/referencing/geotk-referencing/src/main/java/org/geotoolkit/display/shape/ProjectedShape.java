@@ -25,7 +25,6 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.FlatteningPathIterator;
 import java.io.Serializable;
-import net.jcip.annotations.NotThreadSafe;
 
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
@@ -57,7 +56,6 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
  * @since 3.20
  * @module
  */
-@NotThreadSafe
 public class ProjectedShape implements Shape, Serializable {
     /**
      * For cross-version compatibility.

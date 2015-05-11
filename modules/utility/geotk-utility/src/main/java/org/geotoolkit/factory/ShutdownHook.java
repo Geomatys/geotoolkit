@@ -19,7 +19,6 @@ package org.geotoolkit.factory;
 
 import java.util.Iterator;
 import javax.imageio.spi.ServiceRegistry;
-import net.jcip.annotations.ThreadSafe;
 
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.internal.Threads;
@@ -37,7 +36,6 @@ import org.geotoolkit.internal.Threads;
  * @since 3.00
  * @module
  */
-@ThreadSafe
 public final class ShutdownHook extends Thread {
     /**
      * The shutdown hook registered to the JVM, stored for allowing unregistration.

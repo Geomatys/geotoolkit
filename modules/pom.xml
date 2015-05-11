@@ -51,10 +51,6 @@
        =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>net.jcip</groupId>
-      <artifactId>jcip-annotations</artifactId>
-    </dependency>
-    <dependency>
       <groupId>javax.measure</groupId>
       <artifactId>jsr-275</artifactId>
     </dependency>

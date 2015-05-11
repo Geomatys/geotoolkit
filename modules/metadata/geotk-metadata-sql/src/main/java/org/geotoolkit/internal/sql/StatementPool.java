@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
-import net.jcip.annotations.NotThreadSafe;
 
 import org.geotoolkit.internal.Threads;
 import org.apache.sis.util.logging.Logging;
@@ -83,7 +82,6 @@ import static org.apache.sis.util.collection.Containers.hashMapCapacity;
  * @since 3.03
  * @module
  */
-@NotThreadSafe
 @SuppressWarnings("serial")
 public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V> implements Runnable {
     /**

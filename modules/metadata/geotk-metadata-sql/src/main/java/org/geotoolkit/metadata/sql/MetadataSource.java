@@ -28,7 +28,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.logging.Level;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.annotation.UML;
 import org.opengis.util.CodeList;
@@ -78,7 +77,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @since 3.03 (derived from 2.1)
  * @module
  */
-@ThreadSafe
 public class MetadataSource implements AutoCloseable {
     /**
      * The column name used for the identifiers. We do not quote this

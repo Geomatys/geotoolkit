@@ -21,7 +21,6 @@ import java.util.Objects;
 import java.io.IOException;
 import java.awt.image.ColorModel;
 import javax.imageio.ImageTypeSpecifier;
-import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.image.io.Palette;
 import org.geotoolkit.image.io.PaletteFactory;
@@ -51,7 +50,6 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  * @since 3.11
  * @module
  */
-@Immutable
 final class SampleDimensionPalette extends Palette {
     /**
      * The singleton factory. We override only the method which is known to be invoked by

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.factory.web;
 
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
@@ -56,7 +55,6 @@ import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
  * @since 2.4
  * @module
  */
-@ThreadSafe
 public class HTTP_AuthorityFactory extends AuthorityFactoryAdapter implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
 {

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.TreeMap;
 import java.util.SortedMap;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
@@ -62,7 +61,6 @@ import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.remov
  * @since 2.4
  * @module
  */
-@ThreadSafe
 public class URN_AuthorityFactory extends AuthorityFactoryAdapter implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
 {

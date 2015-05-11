@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Date;
 import java.util.List;
-import net.jcip.annotations.Immutable;
 
 import org.apache.sis.util.Version;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
@@ -40,7 +39,6 @@ import org.opengis.sld.StyledLayerDescriptor;
  *
  * @see GetMap
  */
-@Immutable
 public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.xml.GetFeatureInfo {
     /**
      * X coordinate to request.

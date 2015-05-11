@@ -40,7 +40,6 @@ import javax.measure.quantity.Angle;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.measure.unit.SI;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.parameter.*;
 import org.opengis.referencing.*;
@@ -133,7 +132,6 @@ import static org.apache.sis.internal.referencing.OperationMethods.PARAMETERS_KE
  * @since 1.2
  * @module
  */
-@ThreadSafe
 @ImplementationHints(forceLongitudeFirst=false)
 public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory

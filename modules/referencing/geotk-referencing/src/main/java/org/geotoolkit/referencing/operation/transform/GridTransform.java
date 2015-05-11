@@ -31,7 +31,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.InvalidObjectException;
 import java.io.NotSerializableException;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.Matrix;
 
@@ -90,7 +89,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
  * @since 3.00
  * @module
  */
-@Immutable
 public class GridTransform extends AbstractMathTransform implements Serializable {
     /**
      * Serial number for inter-operability with different versions.

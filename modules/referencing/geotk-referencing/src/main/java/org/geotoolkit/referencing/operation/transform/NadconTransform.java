@@ -19,7 +19,6 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.net.URL;
 import java.io.File;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -100,7 +99,6 @@ import static org.geotoolkit.referencing.operation.provider.NADCON.*;
  * @since 2.1
  * @module
  */
-@Immutable
 public class NadconTransform extends GridTransform2D {
     /**
      * Serial number for inter-operability with different versions.

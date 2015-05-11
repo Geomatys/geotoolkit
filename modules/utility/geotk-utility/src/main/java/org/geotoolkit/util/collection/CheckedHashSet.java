@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
-import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.util.resources.Errors;
 import org.apache.sis.util.collection.CheckedContainer;
 
@@ -63,7 +62,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @see Collections#checkedSet(Set, Class)
  * @see Collections#synchronizedSet(Set)
  */
-@ThreadSafe
 public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedContainer<E>, Cloneable {
     /**
      * Serial version UID for compatibility with different versions.
@@ -178,7 +176,6 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedContai
      *
      * @see CheckedHashSet#iterator()
      */
-    @ThreadSafe
     private final class Iter implements Iterator<E> {
         /** The {@link LinkedHashSet} iterator. */
         private final Iterator<E> iterator;

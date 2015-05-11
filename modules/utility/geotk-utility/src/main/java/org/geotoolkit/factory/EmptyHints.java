@@ -19,8 +19,6 @@ package org.geotoolkit.factory;
 
 import java.util.Map;
 import java.awt.RenderingHints;
-import net.jcip.annotations.Immutable;
-
 
 /**
  * An immutable empty set of hints.
@@ -31,7 +29,6 @@ import net.jcip.annotations.Immutable;
  * @since 2.4
  * @module
  */
-@Immutable
 final class EmptyHints extends Hints {
     /**
      * Creates an empty instance.

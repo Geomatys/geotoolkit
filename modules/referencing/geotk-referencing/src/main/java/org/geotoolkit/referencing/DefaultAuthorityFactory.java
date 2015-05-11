@@ -25,7 +25,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.imageio.spi.ServiceRegistry;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.util.FactoryException;
@@ -63,7 +62,6 @@ import org.apache.sis.referencing.CommonCRS;
  * @since 2.3
  * @module
  */
-@ThreadSafe
 final class DefaultAuthorityFactory extends CachingAuthorityFactory implements CRSAuthorityFactory {
     /**
      * List of codes without authority space. We can not defines them in an ordinary

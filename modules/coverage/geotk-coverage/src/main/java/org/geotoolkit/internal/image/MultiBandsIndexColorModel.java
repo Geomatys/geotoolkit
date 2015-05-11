@@ -25,7 +25,6 @@ import java.awt.image.WritableRaster;
 import java.awt.image.IndexColorModel;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.ComponentSampleModel;
-import net.jcip.annotations.Immutable;
 
 
 /**
@@ -43,7 +42,6 @@ import net.jcip.annotations.Immutable;
  * @since 2.0
  * @module
  */
-@Immutable
 final class MultiBandsIndexColorModel extends IndexColorModel {
     /**
      * The number of bands.

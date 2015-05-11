@@ -27,7 +27,6 @@ import java.io.InputStreamReader;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
@@ -84,7 +83,6 @@ import org.apache.sis.util.ArraysExt;
  * @since 2.1
  * @module
  */
-@ThreadSafe
 public class DatumAliases extends ReferencingFactory implements DatumFactory {
     /**
      * The default file for alias table.

@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.text.BreakIterator;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 
@@ -44,7 +43,6 @@ import org.geotoolkit.process.ProgressController;
  * @since 1.0
  * @module
  */
-@ThreadSafe
 public class ProgressPrinter extends ProgressController {
     /**
      * The stream where to write progress reports.

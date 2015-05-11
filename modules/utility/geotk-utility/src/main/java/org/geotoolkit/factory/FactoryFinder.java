@@ -24,7 +24,6 @@ import java.util.Collections;
 import javax.imageio.spi.ServiceRegistry;
 import java.io.IOException;
 import java.io.Writer;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.Factory;
 import org.opengis.util.NameFactory;
@@ -106,7 +105,6 @@ import org.apache.sis.internal.util.LazySet;
  * @level basic
  * @module
  */
-@ThreadSafe
 public class FactoryFinder extends Static {
     /**
      * The key for a special hints specifying an additional

@@ -32,7 +32,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.event.IIOReadProgressListener;
 import javax.media.jai.InterpolationNearest;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
@@ -128,7 +127,6 @@ import static org.geotoolkit.internal.InternalUtilities.debugEquals;
  * @since 2.1
  * @module
  */
-@ThreadSafe
 public class CoverageStack extends AbstractCoverage {
     /**
      * For compatibility during cross-version serialization.

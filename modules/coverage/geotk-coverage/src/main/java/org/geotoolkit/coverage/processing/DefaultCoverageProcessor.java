@@ -31,7 +31,6 @@ import java.awt.RenderingHints;
 import javax.media.jai.JAI;
 import javax.media.jai.TileCache;
 import javax.media.jai.Interpolation;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.processing.Operation;
@@ -75,7 +74,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @since 1.2
  * @module
  */
-@ThreadSafe
 public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
     /**
      * Augments the amout of memory allocated for the JAI tile cache.

@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import org.apache.sis.internal.referencing.provider.Equirectangular;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -72,7 +71,6 @@ import org.geotoolkit.metadata.Citations;
  * @since 3.00
  * @module
  */
-@Immutable
 public class CassiniSoldner extends MapProjection {
     /**
      * For compatibility with different versions during deserialization.

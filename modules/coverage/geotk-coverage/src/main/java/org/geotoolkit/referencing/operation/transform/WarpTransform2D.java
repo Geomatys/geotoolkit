@@ -28,8 +28,6 @@ import javax.media.jai.WarpOpImage;
 import javax.media.jai.WarpPolynomial;
 import javax.media.jai.operator.WarpDescriptor;
 
-import net.jcip.annotations.Immutable;
-
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -82,7 +80,6 @@ import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
  * @since 1.2
  * @module
  */
-@Immutable
 public class WarpTransform2D extends AbstractMathTransform2D implements Serializable {
     /**
      * Serial number for inter-operability with different versions.

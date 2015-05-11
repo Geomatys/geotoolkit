@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import net.jcip.annotations.Immutable;
 
 import org.apache.sis.geometry.ImmutableEnvelope;
 import org.geotoolkit.ows.xml.RequestBase;
@@ -43,7 +42,6 @@ import org.opengis.sld.StyledLayerDescriptor;
  * @author Johann Sorel (Geomatys)
  * @author Guilhem Legal (Geomatys)
  */
-@Immutable
 public class GetMap implements RequestBase {
     /**
      * Envelope which contains the bounds and the crs for the request.

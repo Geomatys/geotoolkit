@@ -28,7 +28,6 @@ import javax.measure.quantity.Angle;
 import javax.measure.quantity.Duration;
 import javax.measure.quantity.Length;
 import javax.vecmath.SingularMatrixException;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -87,7 +86,6 @@ import static org.apache.sis.referencing.IdentifiedObjects.isHeuristicMatchForNa
  * @since 1.2
  * @module
  */
-@ThreadSafe
 public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperationFactory {
     /**
      * The operation to use by {@link #createTransformationStep(GeographicCRS,GeographicCRS)} for

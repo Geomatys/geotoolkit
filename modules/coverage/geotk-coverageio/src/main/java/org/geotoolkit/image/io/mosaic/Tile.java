@@ -36,7 +36,6 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.FileImageInputStream;
-import net.jcip.annotations.Immutable;
 import java.lang.reflect.Field;
 
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -135,7 +134,6 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @since 2.5
  * @module
  */
-@Immutable
 public class Tile implements Comparable<Tile>, Serializable {
     /**
      * For cross-version compatibility during serialization.

@@ -22,7 +22,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.imageio.spi.ServiceRegistry;
-import net.jcip.annotations.NotThreadSafe;
 
 import org.opengis.metadata.quality.ConformanceResult;
 
@@ -77,7 +76,6 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  * @since 2.1
  * @module
  */
-@NotThreadSafe
 public class FactoryRegistry extends ServiceRegistry {
     /**
      * The logger for all events related to factory registry.

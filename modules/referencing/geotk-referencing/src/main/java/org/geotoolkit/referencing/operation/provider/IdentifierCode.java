@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import net.jcip.annotations.Immutable;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
@@ -35,7 +34,6 @@ import org.apache.sis.metadata.iso.ImmutableIdentifier;
  * @since 3.03
  * @module
  */
-@Immutable
 final class IdentifierCode extends ImmutableIdentifier {
     /**
      * For cross-version compatibility.

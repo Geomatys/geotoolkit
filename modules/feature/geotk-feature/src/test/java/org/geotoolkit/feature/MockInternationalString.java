@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
-import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.util.Locales;
 import org.apache.sis.util.collection.Containers;
 import org.apache.sis.util.iso.AbstractInternationalString;
@@ -50,7 +49,6 @@ import org.geotoolkit.resources.Errors;
  * @since 2.1
  * @module
  */
-@ThreadSafe
 public class MockInternationalString extends AbstractInternationalString implements Serializable {
 
     private String defaultVar;

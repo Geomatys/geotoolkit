@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.operation.transform;
 import java.util.Arrays;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValue;
@@ -85,7 +84,6 @@ import static org.geotoolkit.util.Utilities.hash;
  * @since 1.2
  * @module
  */
-@Immutable
 public class MolodenskyTransform extends AbstractMathTransform implements EllipsoidalTransform, Serializable {
     /**
      * Serial number for inter-operability with different versions.

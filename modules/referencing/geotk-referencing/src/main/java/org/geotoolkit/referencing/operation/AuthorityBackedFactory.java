@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.Identifier;
@@ -83,7 +82,6 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperati
  * @since 2.2
  * @module
  */
-@ThreadSafe
 public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
     /**
      * The default authority factory to use.

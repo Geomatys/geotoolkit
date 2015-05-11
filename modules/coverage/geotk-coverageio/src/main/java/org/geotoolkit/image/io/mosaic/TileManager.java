@@ -34,7 +34,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.spatial.PixelOrientation;
 
@@ -58,7 +57,6 @@ import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
  * @since 2.5
  * @module
  */
-@ThreadSafe
 public abstract class TileManager implements Serializable {
     /**
      * For cross-version compatibility during serialization.

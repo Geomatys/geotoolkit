@@ -21,7 +21,6 @@ import java.util.Objects;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
-import net.jcip.annotations.Immutable;
 
 import org.apache.sis.util.Utilities;
 
@@ -35,7 +34,6 @@ import org.apache.sis.util.Utilities;
  * @since 2.5
  * @module
  */
-@Immutable
 class ReaderInputPair {
     /**
      * The image reader, or the provider if none.

@@ -18,7 +18,6 @@
 package org.geotoolkit.io;
 
 import java.io.Writer;
-import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.io.IO;
 import org.apache.sis.io.LineAppender;
 
@@ -41,7 +40,6 @@ import org.geotoolkit.lang.Decorator;
  * @deprecated Moved to Apache SIS as {@link LineAppender}.
  */
 @Deprecated
-@ThreadSafe
 @Decorator(Writer.class)
 public class LineWriter extends FilterWriter {
     /**

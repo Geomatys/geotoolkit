@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.coverage.processing.operation;
 
-import net.jcip.annotations.Immutable;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.processing.OperationJAI;
 
@@ -77,7 +76,6 @@ import org.geotoolkit.coverage.processing.OperationJAI;
  * @todo Should operates on {@code sampleToGeophysics} transform when possible.
  *       See <A HREF="http://jira.codehaus.org/browse/GEOT-610">GEOT-610</A>.
  */
-@Immutable
 public class Rescale extends OperationJAI {
     /**
      * Serial number for inter-operability with different versions.

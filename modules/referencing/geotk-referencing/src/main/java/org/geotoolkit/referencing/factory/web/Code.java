@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.factory.web;
 
 import javax.measure.unit.Unit;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -40,7 +39,6 @@ import org.geotoolkit.resources.Errors;
  * @since 2.2
  * @module
  */
-@Immutable
 final class Code {
     /**
      * The maximal amount of numeric fields that we expect after the {@code "AUTO:"} part.

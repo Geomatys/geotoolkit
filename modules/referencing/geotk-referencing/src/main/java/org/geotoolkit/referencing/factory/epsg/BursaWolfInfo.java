@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
-import net.jcip.annotations.Immutable;
 
 
 /**
@@ -29,7 +28,6 @@ import net.jcip.annotations.Immutable;
  * @since 2.1
  * @module
  */
-@Immutable
 final class BursaWolfInfo {
     /**
      * The value of {@code CO.COORD_OP_CODE}.

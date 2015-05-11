@@ -24,7 +24,6 @@ import java.awt.RenderingHints;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyChangeListener;
 import javax.measure.unit.Unit;
-import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Classes;
@@ -41,7 +40,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @since 2.0
  * @module
  */
-@ThreadSafe
 public abstract class AbstractGraduation implements Graduation, Serializable {
     /**
      * Serial number for inter-operability with different versions.

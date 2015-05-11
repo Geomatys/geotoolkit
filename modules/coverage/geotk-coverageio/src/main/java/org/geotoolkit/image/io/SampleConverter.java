@@ -18,7 +18,6 @@
 package org.geotoolkit.image.io;
 
 import java.awt.image.Raster;
-import net.jcip.annotations.Immutable;
 
 import org.apache.sis.math.MathFunctions;
 import org.apache.sis.util.Classes;
@@ -60,7 +59,6 @@ import org.apache.sis.util.Classes;
  * @since 2.4
  * @module
  */
-@Immutable
 public abstract class SampleConverter {
     /**
      * A sample converter that do not performs any conversion.
@@ -293,7 +291,6 @@ public abstract class SampleConverter {
     /**
      * A sample converter that does not perform any conversion.
      */
-    @Immutable
     private static final class Identity extends SampleConverter {
         @Override public double convert(double   value)  {return value;}
         @Override public float  convert(float    value)  {return value;}
@@ -310,7 +307,6 @@ public abstract class SampleConverter {
      * A sample converter that replaces a single pad value by {@link Double#NaN NaN}
      * for floating point numbers, or {@code 0} for integers.
      */
-    @Immutable
     private static class PadValueMask extends SampleConverter {
         final double doubleValue;
         final float  floatValue;
@@ -340,7 +336,6 @@ public abstract class SampleConverter {
      * A sample converter that replaces a single pad value by 0,
      * and applies an offset on all other values.
      */
-    @Immutable
     private static final class Offset extends PadValueMask {
         private final double doubleOffset;
         private final float  floatOffset;
@@ -374,7 +369,6 @@ public abstract class SampleConverter {
      * A sample converter that replaces an arbitrary amount of pad values by
      * {@link Double#NaN NaN} for floating point numbers, or {@code 0} for integers.
      */
-    @Immutable
     private static class PadValuesMask extends SampleConverter {
         private final double[] doubleValues;
         private final float [] floatValues;
@@ -418,7 +412,6 @@ public abstract class SampleConverter {
      * A sample converter that replaces many pad values by 0,
      * and applies an offset on all other values.
      */
-    @Immutable
     private static final class MaskAndOffset extends PadValuesMask {
         private final double doubleOffset;
         private final float  floatOffset;

@@ -20,7 +20,6 @@ package org.geotoolkit.internal.image.jai;
 import javax.media.jai.util.Range;
 import javax.media.jai.OperationDescriptorImpl;
 import javax.media.jai.registry.RenderedRegistryMode;
-import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.image.jai.NodataFilter;
 import static org.geotoolkit.image.jai.NodataFilter.OPERATION_NAME;
@@ -35,7 +34,6 @@ import static org.geotoolkit.image.jai.NodataFilter.OPERATION_NAME;
  * @since 2.1
  * @module
  */
-@Immutable
 public final class NodataFilterDescriptor extends OperationDescriptorImpl {
     /**
      * For cross-version compatibility.

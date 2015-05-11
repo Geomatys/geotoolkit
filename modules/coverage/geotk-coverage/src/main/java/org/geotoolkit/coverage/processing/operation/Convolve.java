@@ -18,7 +18,6 @@
 package org.geotoolkit.coverage.processing.operation;
 
 import javax.media.jai.operator.ConvolveDescriptor;
-import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.coverage.processing.OperationJAI;
 
@@ -60,7 +59,6 @@ import org.geotoolkit.coverage.processing.OperationJAI;
  * @since 2.0
  * @module
  */
-@Immutable
 public class Convolve extends OperationJAI {
     /**
      * Serial number for inter-operability with different versions.

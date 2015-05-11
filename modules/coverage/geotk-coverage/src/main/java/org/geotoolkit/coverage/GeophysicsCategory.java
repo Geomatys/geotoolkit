@@ -18,7 +18,6 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Color;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
@@ -40,7 +39,6 @@ import org.apache.sis.measure.NumberRange;
  * @since 2.0
  * @module
  */
-@Immutable
 final class GeophysicsCategory extends Category {
     /**
      * Serial number for inter-operability with different versions.

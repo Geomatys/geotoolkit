@@ -21,8 +21,6 @@ import java.util.Set;
 import java.util.Map;
 import java.util.Objects;
 import java.awt.RenderingHints;
-import net.jcip.annotations.Immutable;
-
 
 /**
  * Compares two factories for equality.
@@ -34,7 +32,6 @@ import net.jcip.annotations.Immutable;
  * @since 2.1
  * @module
  */
-@Immutable
 final class FactoryComparator {
     /**
      * A pair of factory already compared.

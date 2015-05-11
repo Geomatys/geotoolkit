@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
-import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.util.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -63,7 +62,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @see Collections#checkedMap(Map, Class, Class)
  * @see Collections#synchronizedMap(Map)
  */
-@ThreadSafe
 public class CheckedHashMap<K,V> extends LinkedHashMap<K,V> implements Cloneable {
     /**
      * Serial version UID for compatibility with different versions.
@@ -346,7 +344,6 @@ public class CheckedHashMap<K,V> extends LinkedHashMap<K,V> implements Cloneable
      * A synchronized iterator with a check for write permission prior element removal.
      * This class wraps the iterator provided by the {@link LinkedHashMap} views.
      */
-    @ThreadSafe
     private final class Iter<E> implements Iterator<E> {
         /** The {@link LinkedHashMap} iterator. */
         private final Iterator<E> iterator;
@@ -387,7 +384,6 @@ public class CheckedHashMap<K,V> extends LinkedHashMap<K,V> implements Cloneable
      * This is used directly for wrapping {@link Map#values()}, or indirectly for wrapping
      * {@link Map#keySet()} or {@link Map#entrySet()} views.
      */
-    @ThreadSafe
     private class Sync<E> implements Collection<E> {
         /** The {@link Map#keySet()}, {@link Map#values()} or {@link Map#entrySet()} view. */
         private final Collection<E> view;

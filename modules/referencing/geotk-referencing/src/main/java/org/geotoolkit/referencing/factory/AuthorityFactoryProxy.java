@@ -21,7 +21,6 @@
 package org.geotoolkit.referencing.factory;
 
 import javax.measure.unit.Unit;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -66,7 +65,6 @@ import org.geotoolkit.resources.Errors;
  * @since 2.4
  * @module
  */
-@Immutable
 abstract class AuthorityFactoryProxy<T> {
     /**
      * The type of objects to be created.

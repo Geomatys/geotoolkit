@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wms.xml;
 
-import net.jcip.annotations.Immutable;
 import org.geotoolkit.ows.xml.RequestBase;
 import org.apache.sis.util.Version;
 
@@ -28,7 +27,6 @@ import org.apache.sis.util.Version;
  * @author Johann Sorel (Geomatys)
  * @author Guilhem Legal (Geomatys)
  */
-@Immutable
 public final class GetCapabilities implements RequestBase {
     /**
      * The output format for this request.

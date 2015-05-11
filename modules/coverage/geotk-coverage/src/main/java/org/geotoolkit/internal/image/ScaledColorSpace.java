@@ -18,7 +18,6 @@
 package org.geotoolkit.internal.image;
 
 import java.awt.color.ColorSpace;
-import net.jcip.annotations.Immutable;
 import org.apache.sis.util.Classes;
 
 
@@ -32,7 +31,6 @@ import org.apache.sis.util.Classes;
  * @since 1.2
  * @module
  */
-@Immutable
 public final class ScaledColorSpace extends ColorSpace {
     /**
      * For cross-version compatibility.

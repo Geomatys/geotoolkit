@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.cs.CSAuthorityFactory;
@@ -67,7 +66,6 @@ import org.geotoolkit.metadata.Citations;
  * @since 2.3
  * @module
  */
-@ThreadSafe
 @ImplementationHints(forceLongitudeFirst=true)
 public class LongitudeFirstEpsgFactory extends OrderedAxisAuthorityFactory implements CRSAuthorityFactory,
         CSAuthorityFactory, CoordinateOperationAuthorityFactory, DatumAuthorityFactory

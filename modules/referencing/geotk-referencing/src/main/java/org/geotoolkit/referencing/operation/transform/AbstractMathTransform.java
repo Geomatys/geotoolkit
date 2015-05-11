@@ -26,7 +26,6 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.QuadCurve2D;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.Matrix;
@@ -61,7 +60,6 @@ import static org.geotoolkit.util.Utilities.hash;
  * "{@code implements MathTransform2D}" clause themselves, or extend the {@link AbstractMathTransform2D} base class,
  * if they know to map two-dimensional coordinate systems.
  */
-@ThreadSafe
 @Deprecated
 public abstract class AbstractMathTransform extends org.apache.sis.referencing.operation.transform.AbstractMathTransform
         implements org.geotoolkit.io.wkt.Formattable

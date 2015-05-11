@@ -27,7 +27,6 @@ import javax.media.jai.OpImage;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.NullOpImage;
 
-import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
@@ -56,7 +55,6 @@ import org.apache.sis.util.Classes;
  * @since 1.2
  * @module
  */
-@Immutable
 public abstract class IndexColorOperation extends Operation2D {
     /**
      * Constructs an operation. The operation name will be the same than the

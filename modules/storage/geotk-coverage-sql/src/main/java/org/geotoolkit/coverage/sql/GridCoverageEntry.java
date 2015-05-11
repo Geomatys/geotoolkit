@@ -35,7 +35,6 @@ import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -75,7 +74,6 @@ import org.geotoolkit.resources.Errors;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-@Immutable
 final class GridCoverageEntry extends DefaultEntry implements GridCoverageReference {
     /**
      * For cross-version compatibility.

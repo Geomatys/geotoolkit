@@ -22,7 +22,6 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Objects;
 import javax.measure.unit.Unit;
-import net.jcip.annotations.Immutable;
 
 
 /**
@@ -40,7 +39,6 @@ import net.jcip.annotations.Immutable;
  * @since 2.0
  * @module
  */
-@Immutable
 final class GeophysicsCategoryList extends CategoryList {
     /**
      * Serial number for inter-operability with different versions.

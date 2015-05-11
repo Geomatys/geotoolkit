@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.util.regex.Pattern;
-import net.jcip.annotations.Immutable;
 
 
 /**
@@ -37,7 +36,6 @@ import net.jcip.annotations.Immutable;
  * @since 1.2
  * @module
  */
-@Immutable
 public class DefaultFileFilter extends javax.swing.filechooser.FileFilter
         implements FileFilter, FilenameFilter
 {

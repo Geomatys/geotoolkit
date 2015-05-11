@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import javax.imageio.IIOException;
 import javax.imageio.ImageTypeSpecifier;
-import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.image.ColorUtilities;
@@ -42,7 +41,6 @@ import org.geotoolkit.internal.image.ColorUtilities;
  * @since 3.11 (derived from 2.4)
  * @module
  */
-@Immutable
 final class IndexedPalette extends Palette {
     /**
      * The maximal allowed value, corresponding to the maximum value for unsigned 16 bits integer.

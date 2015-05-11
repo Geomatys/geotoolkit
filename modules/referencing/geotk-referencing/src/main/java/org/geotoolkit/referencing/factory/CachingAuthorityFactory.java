@@ -33,8 +33,6 @@ import javax.measure.unit.Unit;
 import java.lang.ref.WeakReference;
 import java.awt.RenderingHints;
 import java.io.PrintWriter;
-import net.jcip.annotations.GuardedBy;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -87,7 +85,6 @@ import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
  * @module
  */
 @Buffered
-@ThreadSafe
 @Decorator(AbstractAuthorityFactory.class)
 public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     /**
@@ -132,7 +129,6 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * <p>
      * Every access to this pool must be synchronized on {@code findPool}.
      */
-    @GuardedBy("self")
     private final Map<IdentifiedObject, Map<ComparisonMode,IdentifiedObject>> findPool = new WeakHashMap<>();
 
     /**
@@ -1048,7 +1044,6 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * @since 2.4
      * @module
      */
-    @ThreadSafe
     private final class Finder extends IdentifiedObjectFinder {
         /**
          * The finder on which to delegate the work. This is acquired by {@link #acquire()}

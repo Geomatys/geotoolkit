@@ -20,7 +20,6 @@ package org.geotoolkit.coverage.processing.operation;
 import java.util.Collections;
 import java.lang.reflect.Array;
 import javax.media.jai.Interpolation;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
@@ -104,7 +103,6 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  * @since 2.2
  * @module
  */
-@Immutable
 public class Interpolate extends Operation2D {
     /**
      * Serial number for inter-operability with different versions.

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
-import net.jcip.annotations.ThreadSafe;
 import org.apache.sis.util.resources.Errors;
 import org.apache.sis.util.collection.CheckedContainer;
 
@@ -64,7 +63,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @see Collections#checkedList(List, Class)
  * @see Collections#synchronizedList(List)
  */
-@ThreadSafe
 public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContainer<E>, Cloneable {
     /**
      * Serial version UID for compatibility with different versions.
@@ -180,7 +178,6 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedContaine
      *
      * @see CheckedArrayList#iterator()
      */
-    @ThreadSafe
     private class Iter<I extends Iterator<E>> implements Iterator<E> {
         /** The {@link ArrayList} iterator. */
         protected final I iterator;

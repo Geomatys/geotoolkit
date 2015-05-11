@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -75,7 +74,6 @@ import org.apache.sis.internal.referencing.provider.LambertConformal1SP;
  * @since 2.1
  * @module
  */
-@Immutable
 public class TransverseMercator extends MapProjection {
     /**
      * For cross-version compatibility.
@@ -409,7 +407,6 @@ public class TransverseMercator extends MapProjection {
      * @since 2.2
      * @module
      */
-    @Immutable
     public static class SouthOrientated extends TransverseMercator {
         /**
          * For cross-version compatibility.

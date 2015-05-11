@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
 import javax.measure.unit.Unit;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.util.CodeList;
 import org.opengis.util.InternationalString;
@@ -66,7 +65,6 @@ import org.apache.sis.util.Numbers;
  *
  * @deprecated Moved to Apache SIS as {@link org.apache.sis.parameter.DefaultParameterDescriptor}.
  */
-@Immutable
 @Deprecated
 public class DefaultParameterDescriptor<T> extends org.apache.sis.parameter.DefaultParameterDescriptor<T> {
     /**

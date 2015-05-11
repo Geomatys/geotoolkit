@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.factory.web;
 import java.util.Collections;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -48,7 +47,6 @@ import org.apache.sis.referencing.CommonCRS;
  * @since 2.2
  * @module
  */
-@Immutable
 abstract class Factlet {
     /**
      * Returns the {@code AUTO} code for this plugin.

@@ -18,8 +18,6 @@
 package org.geotoolkit.metadata.sql;
 
 import java.util.Objects;
-import net.jcip.annotations.Immutable;
-
 
 /**
  * The key for an entry in the {@link MetadataSource} cache.
@@ -30,7 +28,6 @@ import net.jcip.annotations.Immutable;
  * @since 3.03
  * @module
  */
-@Immutable
 final class CacheKey {
     /**
      * The metadata interface to be implemented.

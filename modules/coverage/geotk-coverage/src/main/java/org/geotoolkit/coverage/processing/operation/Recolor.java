@@ -19,7 +19,6 @@ package org.geotoolkit.coverage.processing.operation;
 
 import java.util.Collections;
 import java.awt.Color;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
@@ -71,7 +70,6 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  * @since 1.2
  * @module
  */
-@Immutable
 public class Recolor extends IndexColorOperation {
     /**
      * For cross-version compatibility.

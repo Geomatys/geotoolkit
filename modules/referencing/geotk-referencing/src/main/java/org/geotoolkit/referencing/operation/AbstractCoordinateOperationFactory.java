@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.awt.RenderingHints;
 import javax.measure.converter.ConversionException;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
@@ -80,7 +79,6 @@ import static org.geotoolkit.internal.InternalUtilities.debugEquals;
  * @level advanced
  * @module
  */
-@ThreadSafe
 public abstract class AbstractCoordinateOperationFactory extends ReferencingFactory
         implements CoordinateOperationFactory
 {

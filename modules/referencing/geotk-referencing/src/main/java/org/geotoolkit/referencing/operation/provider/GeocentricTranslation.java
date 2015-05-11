@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -74,7 +73,6 @@ import org.apache.sis.util.ArgumentChecks;
  * @since 2.2
  * @module
  */
-@Immutable
 public class GeocentricTranslation extends PositionVector7Param {
     /**
      * Serial number for inter-operability with different versions.

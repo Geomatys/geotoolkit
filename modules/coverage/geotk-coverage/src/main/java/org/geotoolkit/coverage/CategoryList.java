@@ -30,7 +30,6 @@ import java.util.Comparator;
 import java.util.Locale;
 import javax.measure.unit.Unit;
 import javax.media.jai.iterator.WritableRectIter;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.Matrix;
@@ -69,7 +68,6 @@ import static java.lang.Double.doubleToRawLongBits;
  * @since 1.2
  * @module
  */
-@Immutable
 class CategoryList extends AbstractList<Category> implements MathTransform1D, Comparator<Category>, Serializable {
     /**
      * Serial number for inter-operability with different versions.

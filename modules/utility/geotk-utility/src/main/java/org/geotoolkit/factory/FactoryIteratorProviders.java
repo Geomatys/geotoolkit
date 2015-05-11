@@ -19,7 +19,6 @@ package org.geotoolkit.factory;
 
 import java.util.Set;
 import java.util.LinkedHashSet;
-import net.jcip.annotations.ThreadSafe;
 
 import org.apache.sis.util.ArraysExt;
 
@@ -33,7 +32,6 @@ import org.apache.sis.util.ArraysExt;
  * @version 3.00
  * @module
  */
-@ThreadSafe
 final class FactoryIteratorProviders {
     /**
      * The system-wide configuration. This is the instance configured by

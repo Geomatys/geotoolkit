@@ -20,7 +20,6 @@ package org.geotoolkit.metadata;
 import java.util.Set;
 import java.util.Objects;
 import java.io.Serializable;
-import net.jcip.annotations.Immutable;
 import org.opengis.annotation.Obligation;
 
 import org.opengis.metadata.ExtendedElementInformation;
@@ -57,7 +56,6 @@ import org.apache.sis.util.collection.WeakHashSet;
  * @deprecated Moved to Apache SIS as {@link org.apache.sis.metadata.MetadataStandard#asInformationMap}.
  */
 @Deprecated
-@Immutable
 public class ValueRestriction implements Serializable {
     /**
      * For cross-versions compatibility.

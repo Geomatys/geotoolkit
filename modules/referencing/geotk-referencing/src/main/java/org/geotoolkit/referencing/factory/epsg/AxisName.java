@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.factory.epsg;
 
 import java.util.Objects;
-import net.jcip.annotations.Immutable;
 
 
 /**
@@ -30,7 +29,6 @@ import net.jcip.annotations.Immutable;
  * @since 2.3
  * @module
  */
-@Immutable
 final class AxisName {
     /**
      * The coordinate system axis name (never {@code null}).

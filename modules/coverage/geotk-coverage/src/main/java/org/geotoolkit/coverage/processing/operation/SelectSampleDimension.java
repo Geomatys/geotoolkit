@@ -18,7 +18,6 @@
 package org.geotoolkit.coverage.processing.operation;
 
 import javax.media.jai.operator.BandSelectDescriptor;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterValueGroup;
@@ -93,7 +92,6 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
  * @since 2.0
  * @module
  */
-@Immutable
 public class SelectSampleDimension extends Operation2D {
     /**
      * Serial number for inter-operability with different versions.

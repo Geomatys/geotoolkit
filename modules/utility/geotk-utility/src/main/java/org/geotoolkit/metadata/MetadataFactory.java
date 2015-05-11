@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import net.jcip.annotations.ThreadSafe;
 import org.opengis.util.FactoryException;
 import org.apache.sis.metadata.MetadataStandard;
 import org.apache.sis.metadata.KeyNamePolicy;
@@ -62,7 +61,6 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  * @since 3.03
  * @module
  */
-@ThreadSafe
 public class MetadataFactory extends Factory {
     /**
      * An optional set of factories to try before to create the metadata objects directly.

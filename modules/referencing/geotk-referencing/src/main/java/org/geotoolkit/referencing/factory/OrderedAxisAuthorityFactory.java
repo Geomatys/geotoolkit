@@ -22,7 +22,6 @@ import java.util.Comparator;
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
@@ -107,7 +106,6 @@ import org.apache.sis.referencing.cs.CoordinateSystems;
  * @since 2.2
  * @module
  */
-@ThreadSafe
 public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
         implements CSAuthorityFactory, CRSAuthorityFactory, Comparator<CoordinateSystemAxis>
 {

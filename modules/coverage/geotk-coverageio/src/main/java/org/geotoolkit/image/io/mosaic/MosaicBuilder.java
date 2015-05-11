@@ -32,7 +32,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
-import net.jcip.annotations.ThreadSafe;
 
 import org.apache.sis.math.MathFunctions;
 import org.geotoolkit.math.Fraction;
@@ -81,7 +80,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureBetween;
  * @since 2.5
  * @module
  */
-@ThreadSafe
 public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
     /**
      * The default tile size in pixels.

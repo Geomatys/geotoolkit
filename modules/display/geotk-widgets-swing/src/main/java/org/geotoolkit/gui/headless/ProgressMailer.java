@@ -34,7 +34,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.AddressException;
-import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.logging.Logging;
@@ -53,7 +52,6 @@ import static org.apache.sis.util.CharSequences.length;
  * @since 2.0
  * @module
  */
-@ThreadSafe
 public class ProgressMailer extends ProgressController {
     /**
      * The session for sending emails.

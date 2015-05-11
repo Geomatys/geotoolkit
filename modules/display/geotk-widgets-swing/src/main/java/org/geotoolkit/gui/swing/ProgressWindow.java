@@ -27,7 +27,6 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXTitledSeparator;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 
@@ -55,7 +54,6 @@ import org.apache.sis.util.Disposable;
  * @since 1.0
  * @module
  */
-@ThreadSafe
 public class ProgressWindow extends ProgressController implements Disposable {
     /**
      * Initial width for the progress window, in pixels.

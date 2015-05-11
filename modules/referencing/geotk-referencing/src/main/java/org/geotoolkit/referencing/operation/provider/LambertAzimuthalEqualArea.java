@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -79,7 +78,6 @@ import org.apache.sis.internal.referencing.provider.Mercator2SP;
  * @since 2.4
  * @module
  */
-@Immutable
 public class LambertAzimuthalEqualArea extends MapProjection {
     /**
      * For cross-version compatibility.

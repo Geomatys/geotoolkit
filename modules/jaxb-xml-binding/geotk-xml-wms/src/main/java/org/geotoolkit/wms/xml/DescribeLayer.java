@@ -17,7 +17,6 @@
 package org.geotoolkit.wms.xml;
 
 import java.util.List;
-import net.jcip.annotations.Immutable;
 import org.geotoolkit.ows.xml.RequestBase;
 
 import org.apache.sis.util.Version;
@@ -31,7 +30,6 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
  * @author Johann Sorel (Geomatys)
  * @author Guilhem Legal (Geomatys)
  */
-@Immutable
 public final class DescribeLayer implements RequestBase {
     /**
      * List of layers to request.

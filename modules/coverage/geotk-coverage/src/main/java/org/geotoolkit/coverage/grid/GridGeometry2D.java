@@ -22,7 +22,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Locale;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -98,7 +97,6 @@ import org.geotoolkit.resources.Errors;
  * @since 2.1
  * @module
  */
-@Immutable
 public class GridGeometry2D extends GeneralGridGeometry {
     /**
      * Serial number for inter-operability with different versions.

@@ -20,7 +20,6 @@ package org.geotoolkit.coverage.grid;
 import java.util.Objects;
 import java.io.Serializable;
 import java.awt.image.RenderedImage;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
@@ -81,7 +80,6 @@ import static org.apache.sis.util.ArgumentChecks.*;
  * @since 1.2
  * @module
  */
-@Immutable
 public class GeneralGridGeometry implements GridGeometry, Serializable {
     /**
      * Serial number for inter-operability with different versions.

@@ -23,7 +23,6 @@ import java.util.HashMap;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -38,7 +37,6 @@ import net.jcip.annotations.ThreadSafe;
  * @since 2.3
  * @module
  */
-@ThreadSafe
 public final class IconFactory {
     /**
      * The default factory instance.

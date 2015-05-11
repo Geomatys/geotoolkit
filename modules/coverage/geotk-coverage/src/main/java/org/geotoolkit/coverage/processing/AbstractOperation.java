@@ -23,7 +23,6 @@ package org.geotoolkit.coverage.processing;
 import java.util.Objects;
 import java.io.Serializable;
 import java.awt.RenderingHints;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.processing.Operation;
@@ -64,7 +63,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @since 2.2
  * @module
  */
-@Immutable
 public abstract class AbstractOperation implements Operation, Serializable {
     /**
      * Serial number for inter-operability with different versions.

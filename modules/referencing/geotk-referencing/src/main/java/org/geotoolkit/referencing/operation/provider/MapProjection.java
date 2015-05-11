@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import java.util.NoSuchElementException;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.util.GenericName;
 import org.opengis.metadata.citation.Citation;
@@ -59,7 +58,6 @@ import org.geotoolkit.metadata.Citations;
  * @since 2.0
  * @module
  */
-@Immutable
 public abstract class MapProjection extends MathTransformProvider {
     /**
      * Serial number for inter-operability with different versions.

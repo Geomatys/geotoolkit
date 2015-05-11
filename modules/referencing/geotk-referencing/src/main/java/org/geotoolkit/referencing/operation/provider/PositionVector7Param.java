@@ -19,7 +19,6 @@ package org.geotoolkit.referencing.operation.provider;
 
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -93,7 +92,6 @@ import static org.geotoolkit.referencing.operation.provider.UniversalParameters.
  * @since 2.2
  * @module
  */
-@Immutable
 public class PositionVector7Param extends MathTransformProvider {
     /**
      * Serial number for inter-operability with different versions.

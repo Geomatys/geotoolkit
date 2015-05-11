@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import org.apache.sis.internal.referencing.provider.Equirectangular;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -67,7 +66,6 @@ import org.geotoolkit.metadata.Citations;
  * @since 2.4
  * @module
  */
-@Immutable
 public class ObliqueStereographic extends Stereographic {
     /**
      * For compatibility with different versions during deserialization.

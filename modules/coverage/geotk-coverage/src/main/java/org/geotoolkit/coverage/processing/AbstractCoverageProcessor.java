@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimensionType;
@@ -86,7 +85,6 @@ import org.apache.sis.util.Localized;
  * @since 2.2
  * @module
  */
-@ThreadSafe
 public abstract class AbstractCoverageProcessor extends Factory implements GridCoverageProcessor, Localized {
     /**
      * The logger for coverage processing operations.

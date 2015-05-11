@@ -21,7 +21,6 @@ import java.util.Collections;
 import javax.media.jai.Interpolation;
 import javax.media.jai.operator.WarpDescriptor;
 import javax.media.jai.operator.AffineDescriptor;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.Coverage;
@@ -145,7 +144,6 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  * @since 2.2
  * @module
  */
-@Immutable
 public class Resample extends Operation2D {
     /**
      * Serial number for inter-operability with different versions.

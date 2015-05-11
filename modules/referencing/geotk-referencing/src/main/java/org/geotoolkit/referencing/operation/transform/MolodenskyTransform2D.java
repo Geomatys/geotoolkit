@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
-import net.jcip.annotations.Immutable;
+
 
 import org.opengis.referencing.operation.MathTransform2D;
 
@@ -33,7 +33,6 @@ import org.opengis.referencing.operation.MathTransform2D;
  * @since 2.1
  * @module
  */
-@Immutable
 final class MolodenskyTransform2D extends MolodenskyTransform implements MathTransform2D {
     /**
      * Serial number for compatibility with different versions.

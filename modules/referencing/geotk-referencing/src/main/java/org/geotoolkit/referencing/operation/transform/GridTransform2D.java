@@ -22,7 +22,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.DataBuffer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.Matrix;
@@ -48,7 +47,6 @@ import org.apache.sis.internal.referencing.DirectPositionView;
  * @since 3.00
  * @module
  */
-@Immutable
 public class GridTransform2D extends GridTransform implements MathTransform2D {
     /**
      * Serial number for inter-operability with different versions.
@@ -123,7 +121,6 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
      * @since 3.00
      * @module
      */
-    @Immutable
     private final class Inverse extends AbstractMathTransform.Inverse implements MathTransform2D {
         /**
          * Serial number for inter-operability with different versions.

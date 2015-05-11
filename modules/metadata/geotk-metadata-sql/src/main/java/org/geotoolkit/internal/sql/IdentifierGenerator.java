@@ -21,7 +21,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientException;
-import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -60,7 +59,6 @@ import net.jcip.annotations.ThreadSafe;
  * @since 3.03
  * @module
  */
-@ThreadSafe
 public abstract class IdentifierGenerator<K, V extends StatementEntry> {
     /**
      * The most straightforward implementation of {@link IdentifierGenerator}.
@@ -76,7 +74,6 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
      * @since 3.03
      * @module
      */
-    @ThreadSafe
     public static final class Simple extends IdentifierGenerator<String,StatementEntry> {
         /**
          * Creates a new generator using the given pool of prepared statements.

@@ -18,7 +18,6 @@
 package org.geotoolkit.process;
 
 import java.util.Locale;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 
@@ -61,7 +60,6 @@ import org.apache.sis.util.iso.SimpleInternationalString;
  * @since 3.19 (derived from 2.0)
  * @module
  */
-@ThreadSafe
 public abstract class ProgressController implements Localized, ProcessListener {
     /**
      * The language to use for formatting messages.

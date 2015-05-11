@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.WildcardType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.InvocationTargetException;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
 
@@ -44,7 +43,6 @@ import org.opengis.util.FactoryException;
  * @since 3.03
  * @module
  */
-@Immutable
 final class FactoryMethod {
     /**
      * A dummy {@code FactoryMethod} used by {@link MetadataFactory} as a sentinel

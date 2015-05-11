@@ -23,7 +23,6 @@ package org.geotoolkit.referencing.factory;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.jcip.annotations.NotThreadSafe;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
@@ -31,7 +30,7 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.metadata.Identifier;
+
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.geotoolkit.referencing.CRS;
@@ -77,7 +76,6 @@ import static org.apache.sis.util.Utilities.deepEquals;
  * @since 2.4
  * @module
  */
-@NotThreadSafe
 public class IdentifiedObjectFinder {
     /**
      * The factory to use for creating objects. This is the factory specified at construction time.

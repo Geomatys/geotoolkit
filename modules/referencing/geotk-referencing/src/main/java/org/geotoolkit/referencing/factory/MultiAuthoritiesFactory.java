@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.factory;
 
 import java.util.*;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.*;
 import org.opengis.referencing.cs.*;
@@ -65,7 +64,6 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  * @since 2.4
  * @module
  */
-@ThreadSafe
 public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
 {

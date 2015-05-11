@@ -19,7 +19,6 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Date;
 import java.util.Objects;
-import net.jcip.annotations.Immutable;
 import org.geotoolkit.util.Utilities;
 
 
@@ -33,7 +32,6 @@ import org.geotoolkit.util.Utilities;
  * @since 3.10
  * @module
  */
-@Immutable
 final class CoverageRequest {
     /**
      * The name of the requested layer.

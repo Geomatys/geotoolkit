@@ -23,7 +23,6 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import java.util.Arrays;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -125,7 +124,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureBetween;
  * @since 2.0
  * @module
  */
-@ThreadSafe
 public class LocalizationGrid {
     /**
      * Number of grid's columns.

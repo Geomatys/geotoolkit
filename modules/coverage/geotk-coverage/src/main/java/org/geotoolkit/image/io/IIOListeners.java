@@ -27,7 +27,6 @@ import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.event.IIOReadProgressListener;
 import javax.imageio.event.IIOWriteWarningListener;
 import javax.imageio.event.IIOWriteProgressListener;
-import net.jcip.annotations.ThreadSafe;
 
 import org.apache.sis.util.ArraysExt;
 
@@ -45,7 +44,6 @@ import org.apache.sis.util.ArraysExt;
  * @since 2.1
  * @module
  */
-@ThreadSafe
 public class IIOListeners implements Serializable {
     /**
      * For compatibility with different versions.

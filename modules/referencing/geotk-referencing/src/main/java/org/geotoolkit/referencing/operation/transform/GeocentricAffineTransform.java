@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
-import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -74,7 +73,6 @@ import static org.geotoolkit.util.Utilities.hash;
  * @since 2.2
  * @module
  */
-@Immutable
 public class GeocentricAffineTransform extends ProjectiveTransform_tmp {
     /**
      * Serial number for inter-operability with different versions.

@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.factory.Hints;
 
@@ -45,7 +44,6 @@ import org.geotoolkit.factory.Hints;
  * @since 2.0
  * @module
  */
-@ThreadSafe
 public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
     /**
      * Table names using as "sentinel value" for detecting the presence of an EPSG database.

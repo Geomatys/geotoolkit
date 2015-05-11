@@ -19,7 +19,6 @@ package org.geotoolkit.coverage.processing.operation;
 
 import javax.media.jai.operator.MinFilterShape;
 import javax.media.jai.operator.MinFilterDescriptor;
-import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.coverage.processing.FilterOperation;
 
@@ -68,7 +67,6 @@ import org.geotoolkit.coverage.processing.FilterOperation;
  * @since 2.3
  * @module
  */
-@Immutable
 public class MinFilter extends FilterOperation {
     /**
      * Serial number for inter-operability with different versions.

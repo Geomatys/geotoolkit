@@ -22,7 +22,6 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.awt.RenderingHints;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 
@@ -54,7 +53,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureStrictlyPositive;
  * @since 2.1
  * @module
  */
-@ThreadSafe
 public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     /**
      * A backing store used by {@link ThreadedAuthorityFactory}. A new instance is created

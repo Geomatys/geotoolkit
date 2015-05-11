@@ -19,7 +19,6 @@ package org.geotoolkit.internal.sql.table;
 
 import java.util.Objects;
 import java.io.Serializable;
-import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.NullArgumentException;
@@ -35,7 +34,6 @@ import org.apache.sis.util.NullArgumentException;
  * @since 3.11 (derived from Seagis)
  * @module
  */
-@ThreadSafe
 public class DefaultEntry implements Entry, Serializable {
     /**
      * For cross-version compatibility.

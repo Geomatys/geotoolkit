@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.factory.web;
 
 import javax.measure.unit.Unit;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -38,7 +37,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @since 2.4
  * @module
  */
-@Immutable
 final class URN_Type {
     /**
      * List of object types. An object type is for example {@code "crs"} in

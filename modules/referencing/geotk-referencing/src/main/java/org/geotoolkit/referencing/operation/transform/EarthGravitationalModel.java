@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -71,7 +70,6 @@ import static org.geotoolkit.referencing.operation.provider.EllipsoidToGeoid.*;
  * @since 2.3
  * @module
  */
-@Immutable
 public class EarthGravitationalModel extends VerticalTransform {
     /**
      * Pre-computed values of some square roots.

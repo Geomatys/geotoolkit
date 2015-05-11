@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -51,7 +50,6 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
  * @since 1.2
  * @module
  */
-@Immutable
 public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     /**
      * Serial number for inter-operability with different versions.

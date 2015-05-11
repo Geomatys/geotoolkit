@@ -26,7 +26,6 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import javax.measure.unit.Unit;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -75,7 +74,6 @@ import static org.apache.sis.util.collection.Containers.hashMapCapacity;
  * @since 2.3
  * @module
  */
-@ThreadSafe
 @Decorator(AuthorityFactory.class)
 public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
     /**

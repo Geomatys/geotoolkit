@@ -23,7 +23,6 @@ package org.geotoolkit.referencing.factory;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Logger;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.Factory;
 import org.opengis.referencing.AuthorityFactory;
@@ -59,7 +58,6 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
  * @since 2.1
  * @module
  */
-@ThreadSafe
 public class ReferencingFactory extends org.geotoolkit.factory.Factory implements Factory {
     /**
      * The logger for event related to Geotk factories.

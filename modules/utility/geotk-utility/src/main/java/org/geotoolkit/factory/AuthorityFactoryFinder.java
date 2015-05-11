@@ -20,7 +20,6 @@ package org.geotoolkit.factory;
 import java.util.Set;
 import java.util.LinkedHashSet;
 import javax.imageio.spi.ServiceRegistry;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
@@ -56,7 +55,6 @@ import static org.geotoolkit.util.collection.XCollections.unmodifiableOrCopy;
  * @level basic
  * @module
  */
-@ThreadSafe
 public final class AuthorityFactoryFinder extends FactoryFinder {
     /**
      * The authority names. Will be created only when first needed.

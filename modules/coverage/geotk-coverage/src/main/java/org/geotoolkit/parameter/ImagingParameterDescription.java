@@ -23,7 +23,6 @@ import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.io.Serializable;
 import javax.media.jai.OperationDescriptor;
-import net.jcip.annotations.Immutable;
 
 import org.apache.sis.util.iso.AbstractInternationalString;
 
@@ -38,7 +37,6 @@ import org.apache.sis.util.iso.AbstractInternationalString;
  * @since 2.2
  * @module
  */
-@Immutable
 final class ImagingParameterDescription extends AbstractInternationalString implements Serializable {
     /**
      * Serial number for inter-operability with different versions.

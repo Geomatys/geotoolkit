@@ -18,7 +18,6 @@
 package org.geotoolkit.coverage;
 
 import javax.media.jai.PropertySource;
-import net.jcip.annotations.NotThreadSafe;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
@@ -52,7 +51,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
  * @since 2.1
  * @module
  */
-@NotThreadSafe
 @Decorator(Coverage.class)
 public class TransformedCoverage extends AbstractCoverage {
     /**

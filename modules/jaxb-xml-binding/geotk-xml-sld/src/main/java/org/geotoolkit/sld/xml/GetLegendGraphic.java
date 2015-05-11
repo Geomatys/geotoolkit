@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.sld.xml;
 
-import net.jcip.annotations.Immutable;
 import org.geotoolkit.ows.xml.RequestBase;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
 import org.apache.sis.util.Version;
@@ -31,7 +30,6 @@ import org.geotoolkit.feature.type.Name;
  * @author Johann Sorel (Geomatys)
  * @author Guilhem Legal (Geomatys)
  */
-@Immutable
 public final class GetLegendGraphic implements RequestBase {
     /**
      * Layer to consider.

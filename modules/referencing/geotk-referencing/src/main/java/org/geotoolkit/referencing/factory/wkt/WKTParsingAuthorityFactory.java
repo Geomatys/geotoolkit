@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.text.ParseException;
 import java.awt.RenderingHints;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
@@ -89,7 +88,6 @@ import org.apache.sis.util.ArraysExt;
  * @since 3.10 (derived from 3.00)
  * @module
  */
-@ThreadSafe
 public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
     /**
      * The authority for this factory. Will be computed by

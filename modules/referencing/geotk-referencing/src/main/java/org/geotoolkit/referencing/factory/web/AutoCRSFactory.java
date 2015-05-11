@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
@@ -92,7 +91,6 @@ import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
  * @since 2.0
  * @module
  */
-@ThreadSafe
 public class AutoCRSFactory extends DirectAuthorityFactory implements CRSAuthorityFactory {
     /**
      * The authority code. We use the {@code AUTO2} title, but merge the identifiers from

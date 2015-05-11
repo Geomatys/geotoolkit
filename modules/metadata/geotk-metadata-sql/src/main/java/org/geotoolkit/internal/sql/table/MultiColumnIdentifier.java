@@ -18,7 +18,6 @@
 package org.geotoolkit.internal.sql.table;
 
 import java.util.Arrays;
-import net.jcip.annotations.Immutable;
 
 import org.apache.sis.util.Classes;
 
@@ -39,7 +38,6 @@ import org.apache.sis.util.Classes;
  * @since 3.10
  * @module
  */
-@Immutable
 public abstract class MultiColumnIdentifier<T extends MultiColumnIdentifier<T>> implements Comparable<T> {
     /**
      * Creates a new instance.

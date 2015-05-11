@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.factory.web;
 
-import net.jcip.annotations.Immutable;
 import org.opengis.parameter.ParameterValueGroup;
 
 
@@ -59,7 +58,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @since 2.2
  * @module
  */
-@Immutable
 final class Auto42002 extends Factlet {
     /**
      * A shared (thread-safe) instance.

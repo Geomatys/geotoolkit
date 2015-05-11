@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.factory.web;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -43,7 +42,6 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
  * @since 2.4
  * @module
  */
-@Immutable
 final class URN_Parser {
     /**
      * The beginning parts of the URN, typically {@code "urn:ogc:def:"} and {@code "urn:x-ogc:def:"}.

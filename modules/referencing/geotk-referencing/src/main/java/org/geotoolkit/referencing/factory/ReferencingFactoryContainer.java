@@ -23,7 +23,6 @@ import javax.measure.converter.ConversionException;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 import javax.measure.unit.SI;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -80,7 +79,6 @@ import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
  * @level advanced
  * @module
  */
-@ThreadSafe
 public class ReferencingFactoryContainer extends ReferencingFactory {
     /**
      * A factory registry used as a cache for factory groups created up to date.

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
-import net.jcip.annotations.Immutable;
 
 
 /**
@@ -31,7 +30,6 @@ import net.jcip.annotations.Immutable;
  * @since 2.2
  * @module
  */
-@Immutable
 final class TableInfo {
     /**
      * The class of object to be created.

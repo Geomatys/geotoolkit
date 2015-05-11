@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -75,7 +74,6 @@ import org.geotoolkit.metadata.Citations;
  * @since 2.4
  * @module
  */
-@Immutable
 public class Stereographic extends MapProjection {
     /**
      * For compatibility with different versions during deserialization.

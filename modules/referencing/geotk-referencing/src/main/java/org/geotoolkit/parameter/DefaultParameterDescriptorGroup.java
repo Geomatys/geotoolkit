@@ -22,7 +22,6 @@ package org.geotoolkit.parameter;
 
 import java.util.Map;
 import java.util.Collections;
-import net.jcip.annotations.Immutable;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
@@ -43,7 +42,6 @@ import org.apache.sis.referencing.AbstractIdentifiedObject;
  *
  * @deprecated Moved to Apache SIS as {@link org.apache.sis.parameter.DefaultParameterDescriptorGroup}.
  */
-@Immutable
 public class DefaultParameterDescriptorGroup extends org.apache.sis.parameter.DefaultParameterDescriptorGroup {
     /**
      * Constructs a group with the same values than the specified one. This copy constructor

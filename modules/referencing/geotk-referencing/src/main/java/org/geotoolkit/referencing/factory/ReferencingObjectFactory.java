@@ -28,7 +28,6 @@ import java.text.ParseException;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.*;
 import org.opengis.referencing.cs.*;
@@ -66,7 +65,6 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  * @module
  */
 @Buffered
-@ThreadSafe
 public class ReferencingObjectFactory extends ReferencingFactory
         implements CSFactory, DatumFactory, CRSFactory
 {

@@ -30,14 +30,13 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.concurrent.Callable;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
-import org.geotoolkit.internal.sql.DefaultDataSource;
+
 import org.geotoolkit.internal.sql.Dialect;
 import org.apache.sis.util.NullArgumentException;
 
@@ -71,7 +70,6 @@ import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
  * @since 3.00
  * @module
  */
-@ThreadSafe
 public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
     /**
      * The schema where the installer will create the tables in the JavaDB database.

@@ -19,7 +19,6 @@ package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
 import java.util.HashMap;
-import net.jcip.annotations.Immutable;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.referencing.IdentifiedObject;
@@ -59,7 +58,6 @@ import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_IDENTIFIER_ARRA
  *
  * @deprecated To be removed after the port to SIS.
  */
-@Immutable
 @Deprecated
 public abstract class MathTransformProvider extends DefaultOperationMethod
         implements org.apache.sis.referencing.operation.transform.MathTransformProvider

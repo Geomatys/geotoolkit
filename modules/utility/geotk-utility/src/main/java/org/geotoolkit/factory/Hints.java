@@ -32,7 +32,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import javax.naming.Name;
 import javax.sql.DataSource;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.AxisDirection;
@@ -927,7 +926,6 @@ public class Hints extends RenderingHints {
      * @since 2.1
      * @module
      */
-    @Immutable
     @SuppressWarnings("serial") // Not relevant because of writeReplace()
     public static class Key extends RenderingHints.Key implements Serializable {
         /**
@@ -1067,7 +1065,6 @@ public class Hints extends RenderingHints {
      * @since 2.4
      * @module
      */
-    @Immutable
     @SuppressWarnings("serial") // Not relevant because of Key.writeReplace()
     public static final class ClassKey extends Key {
         /**
@@ -1157,7 +1154,6 @@ public class Hints extends RenderingHints {
      * @since 2.4
      * @module
      */
-    @Immutable
     @SuppressWarnings("serial") // Not relevant because of Key.writeReplace()
     public static final class FileKey extends Key {
         /**
@@ -1221,7 +1217,6 @@ public class Hints extends RenderingHints {
      * @since 2.4
      * @module
      */
-    @Immutable
     @SuppressWarnings("serial") // Not relevant because of Key.writeReplace()
     public static final class IntegerKey extends Key {
         /**
@@ -1298,7 +1293,6 @@ public class Hints extends RenderingHints {
      * @since 2.4
      * @module
      */
-    @Immutable
     @SuppressWarnings("serial") // Not relevant because of Key.writeReplace()
     public static final class OptionKey extends Key {
         /**
@@ -1358,7 +1352,6 @@ public class Hints extends RenderingHints {
      * @since 2.4
      * @module
      */
-    @Immutable
     @SuppressWarnings("serial") // Not relevant because of Key.writeReplace()
     static final class DataSourceKey extends Key {
         /**

@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import net.jcip.annotations.Immutable;
-
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -69,7 +67,6 @@ import org.geotoolkit.metadata.Citations;
  * @since 3.11
  * @module
  */
-@Immutable
 public class Polyconic extends MapProjection {
     /**
      * For cross-version compatibility.

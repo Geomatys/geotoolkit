@@ -19,7 +19,6 @@ package org.geotoolkit.coverage.processing;
 
 import javax.media.jai.KernelJAI;
 import javax.media.jai.Interpolation;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.Coverage;
@@ -56,7 +55,6 @@ import org.geotoolkit.coverage.processing.operation.Resample;
  * @since 2.2
  * @module
  */
-@ThreadSafe
 public class Operations {
     /**
      * The default instance.

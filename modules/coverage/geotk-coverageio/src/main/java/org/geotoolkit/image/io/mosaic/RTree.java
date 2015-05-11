@@ -29,7 +29,6 @@ import java.util.logging.Level;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.IOException;
-import net.jcip.annotations.NotThreadSafe;
 
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.Cloneable;
@@ -50,7 +49,6 @@ import org.geotoolkit.util.Cloneable;
  * @since 2.5
  * @module
  */
-@NotThreadSafe
 final class RTree implements Cloneable {
     /**
      * The logging level for printing a tree of the nodes obtained by {@link #searchTiles}. We

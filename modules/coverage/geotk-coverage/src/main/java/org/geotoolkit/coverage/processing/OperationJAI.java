@@ -35,7 +35,6 @@ import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.OperationDescriptor;
 import javax.media.jai.registry.RenderedRegistryMode;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.processing.OperationNotFoundException;
@@ -117,7 +116,6 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  *
  * @deprecated The API of this class will change in a future Geotk release. Do not rely on it.
  */
-@Immutable
 @Deprecated
 public class OperationJAI extends Operation2D {
     /**

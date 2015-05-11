@@ -19,7 +19,6 @@ package org.geotoolkit.referencing.operation.provider;
 
 import java.util.Collections;
 import javax.measure.unit.SI;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -80,7 +79,6 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @since 2.0
  * @module
  */
-@Immutable
 public class EllipsoidToGeocentric extends MathTransformProvider {
     /**
      * Serial number for inter-operability with different versions.

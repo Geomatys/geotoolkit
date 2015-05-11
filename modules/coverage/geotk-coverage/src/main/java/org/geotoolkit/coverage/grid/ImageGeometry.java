@@ -23,7 +23,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.Serializable;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -59,7 +58,6 @@ import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
  * @since 2.5
  * @module
  */
-@Immutable
 public class ImageGeometry implements GridGeometry, Serializable {
     /**
      * For cross-version compatibility.

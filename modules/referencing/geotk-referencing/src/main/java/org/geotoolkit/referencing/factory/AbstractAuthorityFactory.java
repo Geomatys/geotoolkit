@@ -23,7 +23,6 @@ package org.geotoolkit.referencing.factory;
 import java.util.Set;
 import java.util.Collections;
 import javax.measure.unit.Unit;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.*;
 import org.opengis.referencing.cs.*;
@@ -70,7 +69,6 @@ import org.geotoolkit.resources.Errors;
  * @since 1.2
  * @module
  */
-@ThreadSafe
 public abstract class AbstractAuthorityFactory extends ReferencingFactory implements AuthorityFactory {
     /**
      * The name factory to use for creating {@link GenericName}.

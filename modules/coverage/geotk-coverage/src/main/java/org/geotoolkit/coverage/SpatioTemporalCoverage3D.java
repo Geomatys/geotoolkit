@@ -23,7 +23,6 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
-import net.jcip.annotations.NotThreadSafe;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
@@ -77,7 +76,6 @@ import org.geotoolkit.resources.Errors;
  * @since 2.1
  * @module
  */
-@NotThreadSafe
 @Decorator(Coverage.class)
 public class SpatioTemporalCoverage3D extends AbstractCoverage {
     /**

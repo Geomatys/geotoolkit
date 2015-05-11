@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Locale;
 import javax.media.jai.JAI;
 import javax.measure.unit.Unit;
-import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.ColorInterpretation;
 import org.opengis.coverage.PaletteInterpretation;
@@ -84,7 +83,6 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
  * @since 1.2
  * @module
  */
-@Immutable
 public class GridSampleDimension implements SampleDimension, Serializable {
     /**
      * Serial number for inter-operability with different versions.

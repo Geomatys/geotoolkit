@@ -18,7 +18,6 @@
 package org.geotoolkit.display.axis;
 
 import java.awt.RenderingHints;
-import net.jcip.annotations.Immutable;
 
 
 /**
@@ -30,7 +29,6 @@ import net.jcip.annotations.Immutable;
  * @since 2.0
  * @module
  */
-@Immutable
 final class RenderingHintKey extends RenderingHints.Key {
     /**
      * The required base class.

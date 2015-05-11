@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.LinkedHashSet;
-import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.util.FactoryException;
@@ -60,7 +59,6 @@ import org.apache.sis.referencing.CommonCRS;
  * @since 2.2
  * @module
  */
-@ThreadSafe
 public class WebCRSFactory extends DirectAuthorityFactory implements CRSAuthorityFactory {
     /**
      * An optional prefix put in front of code. For example a code may be {@code "CRS84"}

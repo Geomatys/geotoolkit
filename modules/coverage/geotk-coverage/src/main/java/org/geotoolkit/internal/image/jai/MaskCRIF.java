@@ -23,7 +23,6 @@ import javax.media.jai.ImageLayout;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.awt.RenderingHints;
-import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.image.jai.Mask;
 
@@ -37,7 +36,6 @@ import org.geotoolkit.image.jai.Mask;
  * @since 3.00
  * @module
  */
-@Immutable
 public final class MaskCRIF extends CRIFImpl {
     /**
      * Constructs a default factory.

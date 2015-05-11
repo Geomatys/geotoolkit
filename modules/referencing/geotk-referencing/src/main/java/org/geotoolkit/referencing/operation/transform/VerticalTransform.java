@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Arrays;
-import net.jcip.annotations.ThreadSafe;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.referencing.operation.matrix.Matrices;
@@ -37,7 +36,6 @@ import org.apache.sis.referencing.operation.transform.IterationStrategy;
  * @since 2.3
  * @module
  */
-@ThreadSafe
 public abstract class VerticalTransform extends AbstractMathTransform {
     /**
      * The input and output dimension.

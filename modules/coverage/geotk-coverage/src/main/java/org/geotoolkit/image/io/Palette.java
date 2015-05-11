@@ -30,7 +30,6 @@ import java.lang.ref.WeakReference;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import javax.imageio.ImageTypeSpecifier;
-import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ArgumentChecks;
@@ -57,7 +56,6 @@ import org.apache.sis.util.NullArgumentException;
  * @since 2.4
  * @module
  */
-@Immutable
 public abstract class Palette {
     /**
      * The originating factory.

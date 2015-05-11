@@ -22,7 +22,6 @@ import java.awt.image.DataBuffer;
 import java.awt.image.ColorModel;
 import java.awt.color.ColorSpace;
 import javax.imageio.ImageTypeSpecifier;
-import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.image.ScaledColorSpace;
@@ -38,7 +37,6 @@ import org.geotoolkit.internal.image.ScaledColorSpace;
  * @since 2.4
  * @module
  */
-@Immutable
 final class ContinuousPalette extends Palette {
     /**
      * The minimal value, inclusive.
