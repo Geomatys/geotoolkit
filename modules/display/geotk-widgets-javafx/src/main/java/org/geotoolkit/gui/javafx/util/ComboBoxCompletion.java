@@ -42,7 +42,7 @@ public class ComboBoxCompletion {
 
     public ComboBoxCompletion(final ComboBox comboBox) {
         this.comboBox = comboBox;
-        this.comboBox.setOnKeyReleased(this::onKeyPress);
+        this.comboBox.setOnKeyReleased(this::onKeyReleased);
         baseData = comboBox.getItems();
         comboBox.itemsProperty().addListener(this::updateBaseData);
     }
@@ -51,7 +51,7 @@ public class ComboBoxCompletion {
      * Update available {@link ComboBox#items} according to typed value.
      * @param event 
      */
-    private void onKeyPress(KeyEvent event) {
+    private void onKeyReleased(KeyEvent event) {
         if (baseData == null || baseData.isEmpty()) {
             return;
         }
@@ -108,5 +108,15 @@ public class ComboBoxCompletion {
                 // In case user mistype word separation (Ex : typed "Point10" instead of "Point 10" or "type-1" instead of "type - 1").
                 .replaceAll("([a-zA-Z]+|\\d+|\\W+)\\s*", "$1\\\\s*");
         return Pattern.compile("(?i)"+pattern);                
+    }
+    
+    /**
+     * Build a new combobox completion but does not return it to avoid warnings
+     * "new instance ignored".
+     * 
+     * @param combobox 
+     */
+    public static void autocomplete(final ComboBox combobox){
+        new ComboBoxCompletion(combobox);
     }
 }
