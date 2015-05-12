@@ -97,10 +97,20 @@ public final class IconBuilder {
             height = Math.max(height, icon.getIconHeight());
         }
         
-        //we want a square
+        // We want a square. We compute additional margin to draw icon and text in center of thee square.
+        final int additionalLeftInset;
+        final int additionalTopInset;
         if (squareWanted) {
+            final int tmpWidth = width;
             width = Math.max(width, height);
+            additionalLeftInset = (width - tmpWidth) / 2;
+            
+            final int tmpHeight = height;
             height = Math.max(width, height);
+            additionalTopInset = (height - tmpHeight) / 2;
+        } else {
+            additionalLeftInset = 0;
+            additionalTopInset = 0;
         }
         
         img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -121,10 +131,10 @@ public final class IconBuilder {
             g.fill(rect);
         }
 
-        int x = border + insets.left;
+        int x = border + insets.left + additionalLeftInset;
         //draw icon
         if(icon != null){
-            g.drawImage(icon.getImage(), x, (height-icon.getIconHeight())/2, null);
+            g.drawImage(icon.getImage(), x, (height-icon.getIconHeight())/2 + additionalTopInset, null);
             x += icon.getIconWidth()+graphicGap;
         }
 
@@ -135,7 +145,7 @@ public final class IconBuilder {
         
         g.setFont(font);
         
-        g.drawString(text, x, fm.getAscent()+border+insets.top);
+        g.drawString(text, x, fm.getAscent()+border+insets.top + additionalTopInset);
         
         if(bgColor!=null){
             //draw border
