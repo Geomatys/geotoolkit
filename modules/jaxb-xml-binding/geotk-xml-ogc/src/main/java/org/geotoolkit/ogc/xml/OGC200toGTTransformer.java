@@ -424,11 +424,15 @@ public class OGC200toGTTransformer {
             int pos = pname.indexOf(':');
             if (pos != -1 && namespaceMapping != null) {
                 String prefix = pname.substring(0, pos);
+                boolean isAtt = prefix.startsWith("@");
+                if(isAtt) prefix = prefix.substring(1);
                 String namespace = namespaceMapping.get(prefix);
                 if (namespace == null) {
                     throw new IllegalArgumentException("Prefix " + prefix + " is nor bounded.");
                 } else {
-                    sb.append('{').append(namespace).append('}').append(pname.substring(pos +1));
+                    sb.append('{').append(namespace).append('}');
+                    if(isAtt) sb.append('@');
+                    sb.append(pname.substring(pos +1));
                 }
             } else {
                 sb.append(pname);
