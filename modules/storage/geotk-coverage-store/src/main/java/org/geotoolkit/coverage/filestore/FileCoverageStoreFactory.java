@@ -20,12 +20,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import javax.imageio.ImageIO;
-import javax.imageio.spi.IIORegistry;
-import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
@@ -33,7 +30,6 @@ import org.geotoolkit.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.lang.Setup;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
@@ -49,7 +45,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * Coverage Store which rely on standard java readers and writers.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
  */
 public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
@@ -70,7 +65,7 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
      * Mandatory - the folder path
      */
     public static final ParameterDescriptor<URL> PATH =
-            new DefaultParameterDescriptor<>("path","folder path",URL.class,null,true);
+            new DefaultParameterDescriptor<>("path", new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageFileDescription-path"), URL.class, null, true);
 
     /**
      * Mandatory - the image reader type.
@@ -79,7 +74,7 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
     public static final ParameterDescriptor<String> TYPE;
     static{
         final String code = "type";
-        final CharSequence remarks = "Reader type";
+        final ResourceInternationalString remarks = new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageFileDescription-type");
         final Map<String,Object> params = new HashMap<>();
         params.put(DefaultParameterDescriptor.NAME_KEY, code);
         params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
@@ -95,7 +90,7 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
     public static final DefaultParameterDescriptor<String> PATH_SEPARATOR =
             new DefaultParameterDescriptor<>(
                     "pathSeparator",
-                    "If specified, layer names will be built by concatenating image file name with its parent folder until the store root. Given separator will be used as separator in path.",
+                    new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageFileDescription-pathSeparator"),
                     String.class, null, false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =

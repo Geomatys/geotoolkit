@@ -23,11 +23,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
+import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.storage.DataType;
-import org.geotoolkit.storage.DefaultFactoryMetadata;
-import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.util.collection.MapUtilities;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
@@ -41,7 +39,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * General implementation of methods for CoverageStoreFactory implementations.
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
  */
 public abstract class AbstractCoverageStoreFactory extends Factory implements CoverageStoreFactory {
 
@@ -50,7 +47,7 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
      * Subclasses should redeclared this parameter with a different default value.
      */
     public static final ParameterDescriptor<String> IDENTIFIER =
-            new DefaultParameterDescriptor<String>("identifier","Factory identifier.",String.class,null,true);
+            new DefaultParameterDescriptor<String>("identifier", new ResourceInternationalString("org/geotoolkit/coverage/bundle", "identifier-property"), String.class, null, true);
 
     /**
      * Create the identifier descriptor, and set only one valid value, the one in parameter.
@@ -77,7 +74,7 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
             
     /** parameter for namespace of the coveragestore */
     public static final ParameterDescriptor<String> NAMESPACE =
-             new DefaultParameterDescriptor<String>("namespace","Namespace prefix",String.class,null,false);
+             new DefaultParameterDescriptor<String>("namespace", new ResourceInternationalString("org/geotoolkit/coverage/bundle", "namespace-description") ,String.class,null,false);
 
 
     /** Default Implementation abuses the naming convention.
