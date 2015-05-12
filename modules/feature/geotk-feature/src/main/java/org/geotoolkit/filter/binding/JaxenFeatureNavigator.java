@@ -17,8 +17,11 @@
 
 package org.geotoolkit.filter.binding;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 import org.apache.sis.util.iso.Names;
 
 import org.jaxen.FunctionCallException;
@@ -40,7 +43,9 @@ import org.jaxen.util.SelfAxisIterator;
 import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
@@ -86,17 +91,21 @@ final class JaxenFeatureNavigator implements Navigator{
 
     @Override
     public String getElementName(final Object o) {
+        String str = null;
         if(o instanceof Property){
             final Property candidate = (Property) o;
-            return candidate.getName().toString();
+            str = candidate.getName().toString();
         }else if(o instanceof PropertyDescriptor){
             final PropertyDescriptor candidate = (PropertyDescriptor) o;
-            return candidate.getName().getLocalPart();
+            str = candidate.getName().getLocalPart();
         }else if(o instanceof PropertyType){
             final PropertyType candidate = (PropertyType) o;
-            return candidate.getName().getLocalPart();
+            str = candidate.getName().getLocalPart();
         }
-        return null;
+        if(str!=null && str.startsWith("@")){
+            str = str.substring(1);
+        }
+        return str;
     }
 
     @Override
@@ -116,14 +125,26 @@ final class JaxenFeatureNavigator implements Navigator{
 
     @Override
     public String getAttributeNamespaceUri(final Object o) {
-        //final Identifier id = (Identifier) o;
-        return null;
+        return getElementNamespaceUri(o);
     }
 
     @Override
     public String getAttributeName(final Object o) {
-        //final Identifier id = (Identifier) o;
-        return "Id";
+        String str = null;
+        if(o instanceof Property){
+            final Property candidate = (Property) o;
+            str = candidate.getName().toString();
+        }else if(o instanceof PropertyDescriptor){
+            final PropertyDescriptor candidate = (PropertyDescriptor) o;
+            str = candidate.getName().getLocalPart();
+        }else if(o instanceof PropertyType){
+            final PropertyType candidate = (PropertyType) o;
+            str = candidate.getName().getLocalPart();
+        }
+        if(str!=null && str.startsWith("@")){
+            str = str.substring(1);
+        }
+        return str;
     }
 
     @Override
@@ -235,13 +256,13 @@ final class JaxenFeatureNavigator implements Navigator{
     public Iterator getChildAxisIterator(final Object o) throws UnsupportedAxisException {
         if(o instanceof ComplexAttribute){
             final ComplexAttribute candidate = (ComplexAttribute) o;
-            return candidate.getProperties().iterator();
+            return new PropIterator(candidate.getProperties().iterator(),false);
         }else if(o instanceof PropertyDescriptor){
             final PropertyDescriptor ca = (PropertyDescriptor) o;
             final PropertyType type = ca.getType();
             if(type instanceof ComplexType){
                 final ComplexType ct = (ComplexType) type;
-                return ct.getDescriptors().iterator();
+                return new PropIterator(ct.getDescriptors().iterator(),false);
             }else{
                 return JaxenConstants.EMPTY_ITERATOR;
             }
@@ -249,7 +270,7 @@ final class JaxenFeatureNavigator implements Navigator{
             final PropertyType type = (PropertyType) o;
             if(type instanceof ComplexType){
                 final ComplexType ct = (ComplexType) type;
-                return ct.getDescriptors().iterator();
+                return new PropIterator(ct.getDescriptors().iterator(),false);
             }else{
                 return JaxenConstants.EMPTY_ITERATOR;
             }
@@ -301,6 +322,18 @@ final class JaxenFeatureNavigator implements Navigator{
             if(id != null){
                 return Collections.singleton(id).iterator();
             }
+        } else if(o instanceof AttributeDescriptor){
+            final AttributeDescriptor ca = (AttributeDescriptor) o;
+            final PropertyType type = ca.getType();
+            if(type instanceof ComplexType){
+                final ComplexType ct = (ComplexType) type;
+                return new PropIterator(ct.getDescriptors().iterator(), true);
+            }else{
+                return JaxenConstants.EMPTY_ITERATOR;
+            }
+        } else if(o instanceof ComplexType){
+            final ComplexType ct = (ComplexType) o;
+            return new PropIterator(ct.getDescriptors().iterator(), true);
         }
 
         return JaxenConstants.EMPTY_ITERATOR;
@@ -328,8 +361,6 @@ final class JaxenFeatureNavigator implements Navigator{
 
 
     //INTERFACE ////////////////////////////////////////////////////////////////
-
-
 
     @Override
     public Object getDocument(final String string) throws FunctionCallException {
@@ -366,6 +397,61 @@ final class JaxenFeatureNavigator implements Navigator{
     @Override
     public short getNodeType(final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    private static class PropIterator implements Iterator{
+
+        private final Iterator ite;
+        private final boolean attributes;
+        private Object next = null;
+
+        public PropIterator(Iterator ite, boolean attributes) {
+            this.ite = ite;
+            this.attributes = attributes;
+        }
+
+        @Override
+        public boolean hasNext() {
+            findNext();
+            return next!=null;
+        }
+
+        @Override
+        public Object next() {
+            findNext();
+            if(next==null) throw new NoSuchElementException();
+            Object n = next;
+            next = null;
+            return n;
+        }
+
+        @Override
+        public void remove() {
+
+        }
+
+        private void findNext(){
+            while(ite.hasNext() && next==null){
+                final Object candidate = ite.next();
+
+                Name name = null;
+                if(candidate instanceof PropertyDescriptor){
+                    name = ((PropertyDescriptor)candidate).getName();
+                }else if(candidate instanceof Property){
+                    name = ((Property)candidate).getName();
+                }
+
+                if(name!=null){
+                    if(attributes){
+                        next = name.getLocalPart().startsWith("@") ? candidate : null;
+                    }else{
+                        next = !name.getLocalPart().startsWith("@") ? candidate : null;
+                    }
+                }
+
+            }
+        }
+        
     }
 
 }
