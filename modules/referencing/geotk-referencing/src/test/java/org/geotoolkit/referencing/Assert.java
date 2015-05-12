@@ -18,18 +18,13 @@
 package org.geotoolkit.referencing;
 
 import java.util.Objects;
-
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
-
 import org.apache.sis.util.Utilities;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.WKTFormat;
-import org.apache.sis.geometry.AbstractEnvelope;
-import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 
 import static java.lang.StrictMath.*;
@@ -168,88 +163,6 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
             format.setIndentation(org.apache.sis.io.wkt.WKTFormat.SINGLE_LINE);
             final String wkt = format.format(object);
             assertMultilinesEquals(object.getName().getCode(), decodeQuotes(expected), wkt);
-        }
-    }
-
-    /**
-     * Returns {@code true} if the following string has no carriage return or line feed.
-     *
-     * @param  text The text to check.
-     * @return {@code true} if the given text is a single line.
-     */
-    private static boolean isSingleLine(final String text) {
-        return text.lastIndexOf('\n') < 0 && text.lastIndexOf('\r') < 0;
-    }
-
-    /**
-     * Tests if the given {@code outer} envelope contains the given {@code inner} envelope.
-     * This method will also verify class consistency by invoking the {@code intersects}
-     * method, and by interchanging the arguments.
-     *
-     * @param outer The envelope which is expected to contains the given inner envelope.
-     * @param inner The envelope which should be contained by the outer envelope.
-     *
-     * @since 3.20
-     */
-    public static void assertContains(final AbstractEnvelope outer, final Envelope inner) {
-        assertTrue("outer.contains(inner)",   outer.contains  (inner, true));
-        assertTrue("outer.contains(inner)",   outer.contains  (inner, false));
-        assertTrue("outer.intersects(inner)", outer.intersects(inner, true));
-        assertTrue("outer.intersects(inner)", outer.intersects(inner, false));
-        if (inner instanceof AbstractEnvelope) {
-            final AbstractEnvelope ai = (AbstractEnvelope) inner;
-            assertTrue ("inner.intersects(outer)", ai.intersects(outer, true));
-            assertTrue ("inner.intersects(outer)", ai.intersects(outer, false));
-            assertFalse("inner.contains(outer)",   ai.contains  (outer, true));
-            assertFalse("inner.contains(outer)",   ai.contains  (outer, false));
-        }
-        final GeneralDirectPosition median = new GeneralDirectPosition(inner.getDimension());
-        for (int i=median.getDimension(); --i>=0;) {
-            median.setOrdinate(i, inner.getMedian(i));
-        }
-        assertTrue("outer.contains(median)", outer.contains(median));
-    }
-
-    /**
-     * Tests if the given {@code e1} envelope is disjoint with the given {@code e2} envelope.
-     * This method will also verify class consistency by invoking the {@code contains} method,
-     * and by interchanging the arguments.
-     *
-     * @param e1 The first envelope to test.
-     * @param e2 The second envelope to test.
-     *
-     * @since 3.20
-     */
-    public static void assertDisjoint(final AbstractEnvelope e1, final Envelope e2) {
-        assertFalse("e1.intersects(e2)", e1.intersects(e2, false));
-        assertFalse("e1.intersects(e2)", e1.intersects(e2, true));
-        assertFalse("e1.contains(e2)",   e1.contains  (e2, false));
-        assertFalse("e1.contains(e2)",   e1.contains  (e2, true));
-        if (e2 instanceof AbstractEnvelope) {
-            final AbstractEnvelope ae = (AbstractEnvelope) e2;
-            assertFalse("e2.intersects(e1)", ae.intersects(e1, false));
-            assertFalse("e2.intersects(e1)", ae.intersects(e1, true));
-            assertFalse("e2.contains(e1)",   ae.contains  (e1, false));
-            assertFalse("e2.contains(e1)",   ae.contains  (e1, true));
-        }
-        final int dimension = e1.getDimension();
-        final int numCases = (int) round(pow(3, dimension));
-        final GeneralDirectPosition pos = new GeneralDirectPosition(dimension);
-        for (int index=0; index<numCases; index++) {
-            int n = index;
-            for (int i=0; i<dimension; i++) {
-                final double ordinate;
-                switch (n % 3) {
-                    case 0: ordinate = e2.getMinimum(i); break;
-                    case 1: ordinate = e2.getMedian (i); break;
-                    case 2: ordinate = e2.getMaximum(i); break;
-                    default: throw new AssertionError(i);
-                }
-                pos.setOrdinate(i, ordinate);
-                n /= 3;
-            }
-            assertEquals(0, n); // Opportunist check of this assert method.
-            assertFalse("e1.contains(" + pos + ')', e1.contains(pos));
         }
     }
 }
