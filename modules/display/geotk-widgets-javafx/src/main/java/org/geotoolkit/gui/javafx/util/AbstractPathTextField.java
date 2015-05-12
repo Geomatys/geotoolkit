@@ -41,6 +41,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import static javafx.scene.layout.Region.USE_PREF_SIZE;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
@@ -109,6 +110,7 @@ public abstract class AbstractPathTextField extends HBox {
         openPathButton.disableProperty().bind(notValidPath);
         
         setAlignment(Pos.CENTER);
+        setHgrow(inputText, Priority.ALWAYS);
         setSpacing(5);
         getChildren().addAll(inputText, choosePathButton);
         

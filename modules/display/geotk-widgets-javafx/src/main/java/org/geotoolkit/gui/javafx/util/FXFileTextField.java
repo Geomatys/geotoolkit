@@ -96,7 +96,7 @@ public class FXFileTextField extends AbstractPathTextField {
     @Override
     protected URI getURIForText(String inputText) throws Exception {
         if (rootPath.get() == null) {
-            return new URI(inputText);
+            return new URI(inputText.matches("[A-Za-z]+://.+")? inputText : "file://"+inputText);
         } else {
             return Paths.get(rootPath.get(), inputText == null? "" : inputText).toUri();
         }

@@ -75,6 +75,7 @@ public class TreeMenuItem {
         if (selection != null && !selection.isEmpty()) {
             Object tmpValue;
             for (final TreeItem item : selection) {
+                if (item == null) continue;
                 tmpValue = item.getValue();
                 if (tmpValue != null && type.isAssignableFrom(tmpValue.getClass())) {
                     result.add((T)tmpValue);

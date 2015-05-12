@@ -35,6 +35,21 @@
     -fx-background-color : #FFFFFF;
 }
 
+.flatbutton:armed {
+    -fx-border-radius : 12;
+    -fx-border-color : #AAAAAA;
+    -fx-background-radius : 12;
+    -fx-background-color : #DDDDDD;
+}
+
+// For toggle buttons
+.flatbutton:selected {
+    -fx-border-radius : 12;
+    -fx-border-color : #AAAAAA;
+    -fx-background-radius : 12;
+    -fx-background-color : #DDDDDD;
+}
+
 #corner {
     -fx-background-color: #ffffff;
     -fx-background-insets: 0,0,0,0;

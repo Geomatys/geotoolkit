@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root id="FXParameterGroupPane" alignment="TOP_LEFT" graphicTextGap="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="root" type="TitledPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <stylesheets>
+        <URL value="@/org/geotoolkit/gui/javafx/parameter/parameters.css" />
+    </stylesheets>
+   <graphic>
+      <HBox minHeight="0.0" minWidth="0.0" spacing="10.0" styleClass="undecorated">
+         <children>
+            <MenuButton fx:id="uiAddBtn" mnemonicParsing="false" styleClass="flatbutton" />
+            <ToggleButton fx:id="uiAdvancedBtn" mnemonicParsing="false" styleClass="flatbutton" />
+         </children>
+      </HBox>
+   </graphic>
+   <content>
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="15.0" styleClass="value-group-separator">
+         <children>
+            <FlowPane fx:id="uiInnerValues" hgap="15.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rowValignment="TOP" styleClass="values" vgap="15.0">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets></FlowPane>
+            <FlowPane fx:id="uiInnerGroups" hgap="15.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rowValignment="TOP" styleClass="groups" vgap="15.0" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+   </content>
+</fx:root>

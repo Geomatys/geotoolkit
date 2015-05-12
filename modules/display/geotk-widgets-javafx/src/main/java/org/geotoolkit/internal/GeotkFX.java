@@ -185,7 +185,11 @@ public final class GeotkFX {
      * 
      * @param candidate 
      */
-    public static void loadJRXML(Parent candidate, Class cdtClass){
+    public static void loadJRXML(Parent candidate, Class cdtClass) {
+        loadJRXML(candidate, cdtClass, true);
+    }
+    
+    public static void loadJRXML(Parent candidate, Class cdtClass, boolean loadDefaultCSS) {
         final String fxmlpath = "/"+cdtClass.getName().replace('.', '/')+".fxml";
         final FXMLLoader loader = new FXMLLoader(cdtClass.getResource(fxmlpath));
         loader.setResources(GeotkFX.BUNDLE);
@@ -199,7 +203,10 @@ public final class GeotkFX {
         } catch (IOException ex) {
             throw new IllegalArgumentException(ex.getMessage(), ex);
         }
-        candidate.getStylesheets().add(GeotkFX.CSS_PATH);
+        
+        if (loadDefaultCSS) {
+            candidate.getStylesheets().add(GeotkFX.CSS_PATH);
+        }
     }
     
     public static ExceptionDialog newExceptionDialog(final String headerText, final Throwable t) {

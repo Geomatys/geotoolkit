@@ -18,7 +18,6 @@
 package org.geotoolkit.gui.javafx.chooser;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -310,7 +309,7 @@ public class FXStoreChooser extends SplitPane {
     }
 
     
-    static class FactoryCell extends ListCell{
+    public static class FactoryCell extends ListCell{
         
         @Override
         protected void updateItem(Object item, boolean empty) {
@@ -327,7 +326,6 @@ public class FXStoreChooser extends SplitPane {
                 setGraphic(new ImageView(findIcon(item)));
             }
         }
-
     }
 
     private static final Image EMPTY_24 = SwingFXUtils.toFXImage(new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB),null);

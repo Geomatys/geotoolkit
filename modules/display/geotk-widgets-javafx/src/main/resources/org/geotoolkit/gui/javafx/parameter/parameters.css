@@ -1,0 +1,162 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2015, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 3 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+/* 
+Component hierarchy for FXParameterGroupPane should be : 
+-> Root FXParameterGroupPane
+    -> value-group-separator (VBox)
+        -> values (flowPane)
+            -> descriptor-container (titledPane)
+                -> descriptor-content (flowPane)
+                    -> parameter-editor 1 (HBox ?)
+                    -> ...
+                    -> parameter-editor n (HBox ?)
+            -> another descriptor-container
+                -> descriptor-content (flowPane)
+                    -> parameter-editor 1 (HBox ?)
+                    -> ...
+                    -> parameter-editor n (HBox ?)
+            -> ...
+        -> groups (flowPane)
+            -> descriptor-container (titledPane)
+                -> descriptor-content (flowPane)
+                    -> FXParameterGroupPane 1
+                    -> ...
+                    -> FXParameterGroupPane n
+            -> ...
+            
+
+    Created on : 7 mai 2015, 12:08:28
+    Author     : Alexis Manin (Geomatys)
+*/
+
+.root {
+    -fx-border-radius : 12;
+    -fx-border-color : #AAAAAA;
+    -fx-background-radius : 12;
+    -fx-background-color : #FFFFFF;
+}
+
+.infobutton {
+    -fx-alignment:CENTER;
+    -fx-graphic-text-gap:0;
+    -fx-border-radius: 16;
+    -fx-border-color: #FFFFFF;
+    -fx-background-radius: 16;
+    -fx-background-color: cornflowerblue;
+}
+
+.infobutton:hover {
+    -fx-background-color: lightsteelblue;
+}
+
+.infobutton:armed {
+    -fx-background-color: aliceblue;
+}
+
+.flatbutton {
+    -fx-alignment:CENTER;
+    -fx-graphic-text-gap:0;
+    -fx-border-radius : 12;
+    -fx-border-color : #AAAAAA;
+    -fx-background-radius : 12;
+    -fx-background-color : white;
+}
+
+.flatbutton:hover {
+    -fx-background-color : aliceblue;
+}
+
+.flatbutton:armed {
+    -fx-border-color : #AAAAAA;
+    -fx-background-color : #DDDDDD;
+}
+
+/* For toggle buttons */
+.flatbutton:selected {
+    -fx-border-color : #AAAAAA;
+    -fx-background-color : #DDDDDD;
+}
+
+.descriptor-container {
+    -fx-background-color: #AABBCC44;
+    /*-fx-background-color: bisque;*/
+    -fx-background-radius: 7;
+}
+
+.titled-pane > .title {
+    -fx-background-color: transparent;
+    -fx-alignment: CENTER_RIGHT;
+    -fx-border-radius: 7 7 0 0;
+}
+
+.undecorated,
+.value-group-separator,
+.values,
+.groups,
+.parameter-editor,
+.descriptor-content,
+.titled-pane > .content {
+    -fx-border-color: transparent;
+    -fx-border-style: none;
+    -fx-background-color: transparent;    
+}
+
+/** Style for the label displayed in information popup. */
+.infolabel {
+    -fx-background-color: lightgoldenrodyellow;
+    -fx-border-style:solid;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-label-padding: 4;
+}
+
+/*
+
+DEBUG STYLES
+
+.parameter-editor {
+    -fx-background-color: pink;
+    -fx-border-style: none;
+}
+
+.values {
+    -fx-background-color: red;
+    -fx-border-style: none;
+}
+
+.groups {
+    -fx-background-color: blue;
+    -fx-border-style: none;
+}
+
+.value-group-separator {
+    -fx-background-color: yellow;
+    -fx-border-style: none;
+}
+
+.root {
+    -fx-background-color: white;
+    -fx-border-style: none;
+}
+
+.descriptor-content {
+    -fx-background-color: #00000011;
+    -fx-background-radius: 0 0 7 7;
+    -fx-border-style: none;
+}
+
+*/

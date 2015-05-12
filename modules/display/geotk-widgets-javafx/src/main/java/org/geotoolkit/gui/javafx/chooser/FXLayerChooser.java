@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ListCell;
@@ -100,7 +101,7 @@ public class FXLayerChooser extends BorderPane{
 
     private Object source = null;
     
-    private final ListView<Object>layerNames = new ListView<>();
+    public final ListView<Object> layerNames = new ListView<>();
     private final ScrollPane scroll = new ScrollPane(layerNames);
     
     public FXLayerChooser() {        
@@ -200,7 +201,12 @@ public class FXLayerChooser extends BorderPane{
             firstCandidates.addAll(secondCandidates);
         }
 
-        layerNames.setItems(FXCollections.observableArrayList(firstCandidates));
+        final Runnable setList = () -> layerNames.setItems(FXCollections.observableArrayList(firstCandidates));
+        if (Platform.isFxApplicationThread()) {
+            setList.run();
+        } else {
+            Platform.runLater(setList);
+        }
     }
 
     public Object getSource() {
