@@ -81,6 +81,11 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType impleme
         this.timeStamp        = timeStamp;
     }
 
+    @Override
+    public String getVersion() {
+        return "1.1.0";
+    }
+
     /**
      * Gets the value of the lockId property.
      * 

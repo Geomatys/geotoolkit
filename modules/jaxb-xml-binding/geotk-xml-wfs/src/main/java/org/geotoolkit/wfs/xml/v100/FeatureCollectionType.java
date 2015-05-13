@@ -64,7 +64,12 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType  implem
     public FeatureCollectionType(final String fid) {
         super(fid);
     }
-    
+
+    @Override
+    public String getVersion() {
+        return "1.0.0";
+    }
+
     /**
      * Gets the value of the lockId property.
      * 

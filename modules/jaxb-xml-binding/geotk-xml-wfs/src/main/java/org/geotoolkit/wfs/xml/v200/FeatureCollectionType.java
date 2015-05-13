@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.WFSFeatureCollection;
 import org.geotoolkit.wfs.xml.WFSResponse;
 
@@ -80,6 +79,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     public FeatureCollectionType() {
 
+    }
+
+    @Override
+    public String getVersion() {
+        return "2.0.0";
     }
 
     public FeatureCollectionType(final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {

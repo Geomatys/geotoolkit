@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.ValueCollection;
 
 
@@ -88,6 +87,11 @@ public class ValueCollectionType implements ValueCollection {
     public ValueCollectionType(final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {
         this.numberReturned = numberOfFeatures;
         this.timeStamp = timeStamp;
+    }
+
+    @Override
+    public String getVersion() {
+        return "2.0.0";
     }
 
     /**

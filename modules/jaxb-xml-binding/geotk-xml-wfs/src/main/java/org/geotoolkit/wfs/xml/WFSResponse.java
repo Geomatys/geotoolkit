@@ -23,4 +23,6 @@ package org.geotoolkit.wfs.xml;
  */
 public interface WFSResponse {
 
+    String getVersion();
+
 }

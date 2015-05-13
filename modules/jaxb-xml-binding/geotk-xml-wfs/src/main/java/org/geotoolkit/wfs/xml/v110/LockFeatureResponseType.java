@@ -66,6 +66,11 @@ public class LockFeatureResponseType implements WFSResponse, LockFeatureResponse
     @XmlElement(name = "FeaturesNotLocked")
     private FeaturesNotLockedType featuresNotLocked;
 
+    @Override
+    public String getVersion() {
+        return "1.1.0";
+    }
+
     /**
      * The LockFeatureResponse includes a LockId element that contains a lock identifier.
      * The lock identifier can be used by a client,
