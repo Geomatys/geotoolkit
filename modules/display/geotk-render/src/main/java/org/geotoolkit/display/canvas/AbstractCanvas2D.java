@@ -260,7 +260,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
          */
         final SingleCRS objCRS2D = (SingleCRS) getObjectiveCRS2D();
         final Map<String,?> name = Collections.singletonMap(DefaultDerivedCRS.NAME_KEY, "Derived - "+objCRS2D.getName().toString());
-        final CoordinateReferenceSystem displayCRS = new DefaultDerivedCRS(name, objCRS2D,
+        final CoordinateReferenceSystem displayCRS = DefaultDerivedCRS.create(name, objCRS2D,
                 new DefaultConversion(name, DISPLAY_TO_OBJECTIVE_OPERATION, getObjectiveToDisplay(), null),
                 objCRS2D.getCoordinateSystem());
         return displayCRS;

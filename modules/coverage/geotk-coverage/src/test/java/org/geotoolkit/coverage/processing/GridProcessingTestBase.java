@@ -76,7 +76,7 @@ public abstract strictfp class GridProcessingTestBase extends GridCoverageTestBa
         final MathTransform tr = MathTransforms.linear(atr);
         SingleCRS crs = (SingleCRS) coverage.getCoordinateReferenceSystem();
         final Map<String, String> name = Collections.singletonMap(DefaultDerivedCRS.NAME_KEY, "Rotation " + angle + "°");
-        crs = new DefaultDerivedCRS(name, crs, new DefaultConversion(name, new Affine(), tr, null), crs.getCoordinateSystem());
+        crs = DefaultDerivedCRS.create(name, crs, new DefaultConversion(name, new Affine(), tr, null), crs.getCoordinateSystem());
         resample(crs, null, null, true);
     }
 

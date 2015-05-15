@@ -44,6 +44,7 @@ import org.apache.sis.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.transform.MathTransformNo2D;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.IdentifiedObjects;
+import org.apache.sis.referencing.crs.HardCodedCRS;
 import org.junit.*;
 
 import static org.geotoolkit.test.Assert.*;
@@ -200,32 +201,34 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
     }
 
     /**
-     * Tests the transformations of an envelope from a 4D CRS to a 2D CRS
+     * Tests the transformation of an envelope from a 4D CRS to a 2D CRS
      * where the ordinates in one dimension are NaN.
      *
      * @throws TransformException Should never happen.
+     *
+     * @since 0.6
      */
     @Test
     public void testTransformation4to2D() throws TransformException {
-        final CoordinateReferenceSystem crs = new DefaultCompoundCRS(name("4D CRS"),
-                CommonCRS.WGS84.normalizedGeographic(),
-                CommonCRS.Vertical.ELLIPSOIDAL.crs(),
-                CommonCRS.Temporal.JAVA.crs());
+        final CoordinateReferenceSystem targetCRS = HardCodedCRS.WGS84;
+        final CoordinateReferenceSystem sourceCRS = new DefaultCompoundCRS(
+                Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "4D CRS"),
+                HardCodedCRS.WGS84,
+                HardCodedCRS.GRAVITY_RELATED_HEIGHT,
+                HardCodedCRS.TIME);
 
-        final GeneralEnvelope env = new GeneralEnvelope(crs);
+        final GeneralEnvelope env = new GeneralEnvelope(sourceCRS);
         env.setRange(0, -170, 170);
         env.setRange(1, -80,   80);
         env.setRange(2, -50,  -50);
         env.setRange(3, Double.NaN, Double.NaN);
-        assertFalse(env.isAllNaN());
-        assertTrue(env.isEmpty());
-        final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
-        assertSame(CommonCRS.WGS84.normalizedGeographic(), crs2D);
-        final Envelope env2D = org.apache.sis.geometry.Envelopes.transform(env, crs2D);
+        assertFalse("isAllNaN", env.isAllNaN());    // Opportunist test (not really the topic of this method).
+        assertTrue ("isEmpty",  env.isEmpty());     // Opportunist test (not really the topic of this method).
         /*
          * If the referencing framework has selected the CopyTransform implementation
          * as expected, then the envelope ordinates should not be NaN.
          */
+        final Envelope env2D = org.apache.sis.geometry.Envelopes.transform(env, targetCRS);
         assertEquals(-170, env2D.getMinimum(0), 0);
         assertEquals( 170, env2D.getMaximum(0), 0);
         assertEquals( -80, env2D.getMinimum(1), 0);

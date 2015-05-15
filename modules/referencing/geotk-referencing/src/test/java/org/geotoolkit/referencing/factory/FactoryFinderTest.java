@@ -45,9 +45,9 @@ public final strictfp class FactoryFinderTest {
     public void testDefault() {
         final Hints hints = null;
         final Iterator<DatumFactory> it = FactoryFinder.getDatumFactories(hints).iterator();
-        assertTrue (it.hasNext()); assertTrue(it.next() instanceof DatumAliases);
-        assertTrue (it.hasNext()); assertTrue(it.next() instanceof ReferencingObjectFactory);
-        assertFalse(it.hasNext());
+        assertTrue ("hasNext", it.hasNext()); assertTrue("next", it.next() instanceof DatumAliases);
+        assertTrue ("hasNext", it.hasNext()); assertTrue("next", it.next() instanceof ReferencingObjectFactory);
+        assertFalse("hasNext", it.hasNext());
     }
 
     /**
@@ -65,8 +65,7 @@ public final strictfp class FactoryFinderTest {
             }
         });
         final Iterator<DatumFactory> it = FactoryFinder.getDatumFactories(hints).iterator();
-        assertTrue (it.hasNext()); assertTrue(it.next() instanceof DatumAliases);
-        assertTrue (it.hasNext()); assertTrue(it.next() instanceof ReferencingObjectFactory);
-        assertFalse(it.hasNext());
+        assertTrue ("hasNext", it.hasNext()); assertTrue("next", it.next() instanceof DatumAliases);
+        assertFalse("hasNext", it.hasNext());
     }
 }
