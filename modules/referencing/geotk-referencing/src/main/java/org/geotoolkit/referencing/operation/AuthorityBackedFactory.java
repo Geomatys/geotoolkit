@@ -46,6 +46,7 @@ import org.apache.sis.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.EllipsoidalTransform;
 import org.geotoolkit.referencing.factory.NoSuchIdentifiedResource;
+import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
@@ -178,7 +179,8 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
              */
             final Hints hints = EMPTY_HINTS.clone();
             noForce(hints);
-            authorityFactory = factory = getCoordinateOperationAuthorityFactory(DEFAULT_AUTHORITY, hints);
+// TODO     authorityFactory = factory = getCoordinateOperationAuthorityFactory(DEFAULT_AUTHORITY, hints);
+            authorityFactory = factory = new ThreadedEpsgFactory();
         }
         return factory;
     }
