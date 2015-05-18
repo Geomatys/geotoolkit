@@ -5,16 +5,30 @@
      must be specified as a property on the command line. -->
 
 <project name="UpdateVersion" default="update">
-    <target name="update">
+    <target name="update" depends="updateSisVersion">
         <replace dir="${geotk.dir}" failOnNoReplacements="true">
             <include name="**/pom.xml"/>
-            <!-- replace SIS version -->
-            <replacefilter token="&lt;sis.version&gt;${sis.oldversion}&lt;/sis.version&gt;"
-                           value="&lt;sis.version&gt;${sis.version}&lt;/sis.version&gt;"/>
-
             <!-- replace Geotoolkit version -->
             <replacefilter token="&lt;version&gt;${geotk.oldversion}&lt;/version&gt;"
                            value="&lt;version&gt;${geotk.version}&lt;/version&gt;"/>
+        </replace>
+    </target>
+
+    <!-- replace SIS version -->
+    <target name="updateSisVersion" depends="updateGeoapiVersion">
+        <replace dir="${geotk.dir}" failOnNoReplacements="true">
+            <include name="pom.xml"/>
+            <replacefilter token="&lt;sis.version&gt;${sis.oldversion}&lt;/sis.version&gt;"
+                           value="&lt;sis.version&gt;${sis.version}&lt;/sis.version&gt;"/>
+        </replace>
+    </target>
+
+    <!-- replace Geoapi version -->
+    <target name="updateGeoapiVersion">
+        <replace dir="${geotk.dir}" failOnNoReplacements="true">
+            <include name="pom.xml"/>
+            <replacefilter token="&lt;geoapi.version&gt;${geoapi.oldversion}&lt;/geoapi.version&gt;"
+                           value="&lt;geoapi.version&gt;${geoapi.version}&lt;/geoapi.version&gt;"/>
         </replace>
     </target>
 </project>
