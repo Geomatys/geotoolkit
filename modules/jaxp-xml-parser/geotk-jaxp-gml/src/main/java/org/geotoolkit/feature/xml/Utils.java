@@ -317,7 +317,7 @@ public class Utils {
     }
 
     public static boolean isGeometricType(final Name elementType) {
-        if (elementType != null && elementType.getNamespaceURI().contains(GML_311_NAMESPACE)) {
+        if (elementType != null && elementType.getNamespaceURI()!=null && elementType.getNamespaceURI().contains(GML_311_NAMESPACE)) {
             return GEOMETRIC_NAME.contains(elementType.getLocalPart());
         }
         return false;
