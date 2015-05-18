@@ -42,6 +42,10 @@ import org.opengis.referencing.operation.TransformException;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.GeometryAttribute;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.coverage.Coverage;
 
 /**
@@ -100,7 +104,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
     protected static Geometry toGeometry(final Object object, Expression exp){
         Object value;
         if ((exp instanceof PropertyName) && object instanceof Feature && ((PropertyName)exp).getPropertyName().isEmpty()) {
-            value = ((Feature)object).getDefaultGeometryProperty().getValue();
+            value = findFirstGeometry((Feature)object);
         } else {
             value = exp.evaluate(object);
         }
@@ -226,6 +230,37 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
 
             return new Object[]{leftMatch,rightMatch,matchingCRS};
         }
+
+    }
+
+    private static Object findFirstGeometry(ComplexAttribute ca){
+        //search for a default geometry
+        if(ca instanceof Feature){
+            final Feature feature = (Feature) ca;
+            final GeometryDescriptor geomDesc = feature.getType().getGeometryDescriptor();
+            if(geomDesc!=null){
+                final GeometryAttribute geomAtt = feature.getDefaultGeometryProperty();
+                return (geomAtt==null) ? null : geomAtt.getValue();
+            }
+        }
+
+        //search normal properties
+        for(Property p : ca.getProperties()){
+            if(p instanceof GeometryAttribute){
+                Object val = p.getValue();
+                if(val!=null) return val;
+            }
+        }
+
+        //search complex properties
+        for(Property p : ca.getProperties()){
+            if(p instanceof ComplexAttribute){
+                Object val = findFirstGeometry((ComplexAttribute) p);
+                if(val!=null) return val;
+            }
+        }
+
+        return null;
 
     }
 
