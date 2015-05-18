@@ -10,7 +10,7 @@
             <include name="**/pom.xml"/>
             <!-- replace SIS version -->
             <replacefilter token="&lt;sis.version&gt;${sis.oldversion}&lt;/sis.version&gt;"
-                           value="&lt;sis.version&gt;${sis.versionversion}&lt;/sis.version&gt;"/>
+                           value="&lt;sis.version&gt;${sis.version}&lt;/sis.version&gt;"/>
 
             <!-- replace Geotoolkit version -->
             <replacefilter token="&lt;version&gt;${geotk.oldversion}&lt;/version&gt;"
