@@ -68,9 +68,12 @@ import org.apache.sis.referencing.operation.matrix.MatrixSIS;
 import static java.util.Collections.singletonMap;
 import static java.util.Collections.singletonList;
 import static org.apache.sis.measure.Units.MILLISECOND;
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.apache.sis.referencing.IdentifiedObjects.isHeuristicMatchForName;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
 import static org.geotoolkit.referencing.CRS.equalsApproximatively;
-import static org.apache.sis.referencing.IdentifiedObjects.isHeuristicMatchForName;
+import static org.geotoolkit.referencing.factory.ReferencingFactory.LOGGER;
+import static org.geotoolkit.factory.Factory.EMPTY_HINTS;
 
 
 /**
@@ -149,19 +152,6 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         this.lenientDatumShift = lenientDatumShift;
         this.hints.put(Hints.DATUM_SHIFT_METHOD,  (molodenskyMethod != null) ? molodenskyMethod : "Geocentric");
         this.hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.valueOf(lenientDatumShift));
-    }
-
-    /**
-     * Invoked by {@link org.geotoolkit.factory.FactoryRegistry} in order to set the ordering relative
-     * to other factories. The current implementation specifies that this factory should defer to
-     * {@link CachingCoordinateOperationFactory}.
-     *
-     * @since 3.00
-     */
-    @Override
-    protected void setOrdering(final Organizer organizer) {
-        super.setOrdering(organizer);
-        organizer.after(CachingCoordinateOperationFactory.class, false);
     }
 
     /**

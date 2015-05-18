@@ -1,7 +1,1 @@
-# CachingCoordinateOperationFactory should be first because it is the
-# preferred one if the user just ask for the first factory returned by
-# ServiceLoader without iterating over the alternatives.
-
 org.geotoolkit.referencing.operation.CachingCoordinateOperationFactory
-org.geotoolkit.referencing.operation.AuthorityBackedFactory
-org.geotoolkit.referencing.operation.DefaultCoordinateOperationFactory

@@ -77,7 +77,6 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.operation.DefaultOperationMethod;
-import org.apache.sis.referencing.operation.DefaultConcatenatedOperation;
 import org.geotoolkit.internal.referencing.factory.ImplementationHints;
 import org.geotoolkit.internal.referencing.DeprecatedCode;
 import org.geotoolkit.internal.referencing.SimpleRecord;
@@ -417,6 +416,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * {@code DirectEpsgFactory} instance if garbage collected.
      */
     protected final Connection connection;
+
+    private transient CoordinateOperationFactory opFactory;     // TODO
 
     /**
      * Creates a factory using the given connection. The connection is
@@ -2769,11 +2770,6 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         /*
                          * Concatenated operation: we need to close the current result set, because
                          * we are going to invoke this method recursively in the following lines.
-                         *
-                         * Note: we instantiate directly the Geotk's implementation of
-                         * ConcatenatedOperation instead of using CoordinateOperationFactory in order
-                         * to avoid loading the quite large Geotk's implementation of that factory,
-                         * and also because it is not part of FactoryContainer anyway.
                          */
                         result.close();
                         properties = new HashMap<>(properties); // Because this class uses a shared map.
@@ -2799,13 +2795,10 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         } finally {
                             safetyGuard.remove(epsg);
                         }
-                        try {
-                            return new DefaultConcatenatedOperation(properties, operations, factories.getMathTransformFactory());
-                        } catch (IllegalArgumentException exception) {
-                            // May happen if there is less than 2 operations to concatenate.
-                            // It happen for some deprecated CRS like 8658 for example.
-                            throw new FactoryException(exception);
+                        if (opFactory == null) {    // TODO
+                            opFactory = new org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory();
                         }
+                        return opFactory.createConcatenatedOperation(properties, operations);
                     } else {
                         /*
                          * Needs to create a math transform. A special processing is performed for

@@ -1,6 +1,0 @@
-# DatumAliase should be first because it is the preferred factory
-# if the user just ask for the first one returned by ServiceLoader
-# without iterating over the alternatives.
-
-org.geotoolkit.referencing.factory.DatumAliases
-org.geotoolkit.referencing.factory.ReferencingObjectFactory

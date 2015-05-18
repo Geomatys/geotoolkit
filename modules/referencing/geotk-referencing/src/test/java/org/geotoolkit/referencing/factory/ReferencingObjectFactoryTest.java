@@ -26,29 +26,22 @@ import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
-
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
-import org.opengis.util.GenericName;
-
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
-
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
-import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
-
 import org.geotoolkit.test.referencing.ReferencingTestBase;
-
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.DefaultConversion;
 import org.junit.*;
+
 import static org.geotoolkit.referencing.Assert.*;
 
 
@@ -57,7 +50,6 @@ import static org.geotoolkit.referencing.Assert.*;
  * factories (not authority factories).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
  *
  * @since 2.0
  */
@@ -246,64 +238,5 @@ public final strictfp class ReferencingObjectFactoryTest extends ReferencingTest
             final OperationMethod projMethod = conversion.getMethod();
             assertEquals(classification, projMethod.getName().getCode());
         }
-    }
-
-    /**
-     * Tests datum aliases. Note: ellipsoid and prime meridian are dummy values
-     * (not conform to the usage in real world) just for testing purpose.
-     *
-     * @throws FactoryException If a CRS can not be created.
-     */
-    @Test
-    public void testDatumAliases() throws FactoryException {
-        final String           name0 = "Nouvelle Triangulation Francaise (Paris)";
-        final String           name1 = "Nouvelle_Triangulation_Francaise_Paris";
-        final String           name2 = "NTF (Paris meridian)";
-        final Ellipsoid    ellipsoid = CommonCRS.WGS84.ellipsoid();
-        final PrimeMeridian meridian = CommonCRS.WGS84.primeMeridian();
-        DatumFactory         factory = new ReferencingObjectFactory();
-        final Map<String,?> properties = Collections.singletonMap("name", name1);
-        GeodeticDatum datum = factory.createGeodeticDatum(properties, ellipsoid, meridian);
-        assertTrue(datum.getAlias().isEmpty());
-
-        for (int i=0; i<3; i++) {
-            switch (i) {
-                case  0: factory = new DatumAliases(factory);                    break;
-                case  1: factory = AuthorityFactoryFinder.getDatumFactory(null); break;
-                case  2: ((DatumAliases) factory).freeUnused();                  break;
-                default: throw new AssertionError(); // Should not occurs.
-            }
-            final String pass = "Pass #"+i;
-            datum = factory.createGeodeticDatum(properties, ellipsoid, meridian);
-            final GenericName[] aliases = datum.getAlias().toArray(new GenericName[0]);
-            assertEquals(pass, 3, aliases.length);
-            assertEquals(pass, name0, aliases[0].tip().toString());
-            assertEquals(pass, name1, aliases[1].tip().toString());
-            assertEquals(pass, name2, aliases[2].tip().toString());
-        }
-
-        datum = factory.createGeodeticDatum(Collections.singletonMap("name", "Tokyo"), ellipsoid, meridian);
-        Collection<GenericName> aliases = datum.getAlias();
-        assertEquals(4, aliases.size());
-
-        ((DatumAliases) factory).freeUnused();
-        datum = factory.createGeodeticDatum(Collections.singletonMap("name", "_toKyo  _"), ellipsoid, meridian);
-        assertEquals(4, datum.getAlias().size());
-        assertTrue(aliases.equals(datum.getAlias()));
-
-        datum = factory.createGeodeticDatum(Collections.singletonMap("name", "D_Tokyo"), ellipsoid, meridian);
-        assertEquals(4, datum.getAlias().size());
-
-        datum = factory.createGeodeticDatum(Collections.singletonMap("name", "Luxembourg 1930"), ellipsoid, meridian);
-        assertEquals(3, datum.getAlias().size());
-
-        datum = factory.createGeodeticDatum(Collections.singletonMap("name", "Dummy"), ellipsoid, meridian);
-        assertTrue("Non existing datum should have no alias.", datum.getAlias().isEmpty());
-
-        datum = factory.createGeodeticDatum(Collections.singletonMap("name", "WGS 84"), ellipsoid, meridian);
-        assertTrue (IdentifiedObjects.isHeuristicMatchForName(datum, "WGS 84"));
-        assertTrue (IdentifiedObjects.isHeuristicMatchForName(datum, "WGS_1984"));
-        assertTrue (IdentifiedObjects.isHeuristicMatchForName(datum, "World Geodetic System 1984"));
-        assertFalse(IdentifiedObjects.isHeuristicMatchForName(datum, "WGS 72"));
     }
 }

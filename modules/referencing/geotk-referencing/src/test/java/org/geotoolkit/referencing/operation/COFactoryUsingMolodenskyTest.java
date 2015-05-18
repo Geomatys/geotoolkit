@@ -18,14 +18,11 @@
 package org.geotoolkit.referencing.operation;
 
 import java.awt.geom.Point2D;
-import javax.imageio.spi.ServiceRegistry;
-
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.Conversion;
@@ -38,14 +35,10 @@ import org.opengis.referencing.operation.Projection;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.apache.sis.referencing.crs.DefaultDerivedCRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.apache.sis.referencing.operation.matrix.Matrices;
-import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.TransformTestBase;
 import org.apache.sis.referencing.CommonCRS;
@@ -89,18 +82,6 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
             NAD27_H    = "COMPD_CS[\"NAD27 + Z\","   + WKT.GEOGCS_NAD27      + ',' + WKT.VERTCS_HEIGHT + ']',
             MERCATOR_Z = "COMPD_CS[\"Mercator + Z\","+ WKT.PROJCS_MERCATOR   + ',' + WKT.VERTCS_Z      + ']';
 
-    /**
-     * A filter to be used in constructor for selecting a {@link DefaultCoordinateOperationFactory}
-     * instance not backed by an EPSG database ({@link AuthorityBackedFactory}).
-     */
-    static final ServiceRegistry.Filter FILTER = new ServiceRegistry.Filter() {
-        @Override public boolean filter(final Object provider) {
-            if (provider instanceof CoordinateOperationFactory) {
-                return isUsingDefaultFactory((CoordinateOperationFactory) provider);
-            }
-            return true;
-        }
-    };
 
     /**
      * The hints used for fetching the factories.
@@ -117,7 +98,8 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
      *       avoid after we switch to JSR-330.
      */
     public COFactoryUsingMolodenskyTest() {
-        this(new Hints(FactoryFinder.FILTER_KEY, FILTER, Hints.DATUM_SHIFT_METHOD, "Molodensky"));
+        this(new Hints(Hints.COORDINATE_OPERATION_FACTORY, new DefaultCoordinateOperationFactory(),
+                Hints.DATUM_SHIFT_METHOD, "Molodensky"));
     }
 
     /**

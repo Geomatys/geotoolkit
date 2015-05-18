@@ -32,9 +32,10 @@ import org.geotoolkit.lang.Buffered;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.FactoryNotFoundException;
-import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.collection.Cache;
+
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.factory.Factory.EMPTY_HINTS;
 
 
 /**
@@ -184,8 +185,7 @@ public class CachingCoordinateOperationFactory extends AbstractCoordinateOperati
                 return candidate;
             }
         }
-        throw new FactoryNotFoundException(Errors.format(
-                Errors.Keys.FACTORY_NOT_FOUND_1, CoordinateOperationFactory.class));
+        return new AuthorityBackedFactory();
     }
 
     /**

@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.operation;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.FactoryFinder;
 
 
 /**
@@ -35,7 +34,8 @@ public final strictfp class COFactoryUsingGeocentricTest extends COFactoryUsingM
      * Creates a new test suite.
      */
     public COFactoryUsingGeocentricTest() {
-        super(new Hints(FactoryFinder.FILTER_KEY, FILTER, Hints.DATUM_SHIFT_METHOD, "Geocentric"));
+        super(new Hints(Hints.COORDINATE_OPERATION_FACTORY, new DefaultCoordinateOperationFactory(),
+                Hints.DATUM_SHIFT_METHOD, "Geocentric"));
     }
 
     /**

@@ -23,7 +23,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.math.XMath;
 import org.apache.sis.referencing.CRS;
 import org.geotoolkit.referencing.cs.PredefinedCS;
-import org.geotoolkit.referencing.factory.ReferencingObjectFactory;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CRSFactory;
@@ -101,7 +101,7 @@ public class QuadTree {
                 params.put("name","plate_carre");
                 final Conversion createDefiningConversion = coordinateOperationFactory.createDefiningConversion(params, operationMethod, plate_carree);
 
-                final CRSFactory crsFactory = new ReferencingObjectFactory();
+                final CRSFactory crsFactory = DefaultFactories.forBuildin(CRSFactory.class);
                 final ProjectedCRS createProjectedCRS = crsFactory.createProjectedCRS(params, geoCrs, createDefiningConversion, PredefinedCS.PROJECTED);
 
                 return org.geotoolkit.referencing.CRS.transform(tmpEnv, createProjectedCRS);

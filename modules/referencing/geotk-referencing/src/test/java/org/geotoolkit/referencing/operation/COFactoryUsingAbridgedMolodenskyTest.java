@@ -36,7 +36,8 @@ public final strictfp class COFactoryUsingAbridgedMolodenskyTest extends COFacto
      * Creates a new test suite.
      */
     public COFactoryUsingAbridgedMolodenskyTest() {
-        super(new Hints(FactoryFinder.FILTER_KEY, FILTER, Hints.DATUM_SHIFT_METHOD, "Abridged Molodensky"));
+        super(new Hints(Hints.COORDINATE_OPERATION_FACTORY, new DefaultCoordinateOperationFactory(),
+                Hints.DATUM_SHIFT_METHOD, "Abridged Molodensky"));
     }
 
     /**

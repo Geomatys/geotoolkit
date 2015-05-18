@@ -17,9 +17,14 @@
 package org.geotoolkit.internal.referencing;
 
 import java.text.ParseException;
+import org.opengis.referencing.crs.CRSFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CSFactory;
+import org.opengis.referencing.datum.DatumFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.geotoolkit.io.wkt.MathTransformParser;
+import org.geotoolkit.io.wkt.ReferencingParser;
 import org.apache.sis.internal.referencing.Pending;
 import org.apache.sis.io.wkt.Symbols;
 
@@ -33,5 +38,19 @@ public final class PendingSIS extends Pending {
         // TODO: recycle a parser.
         final MathTransformParser parser = new MathTransformParser(Symbols.getDefault(), factory);
         return parser.parseMathTransform(text);
+    }
+
+    @Override
+    public CoordinateReferenceSystem createFromWKT(
+            final DatumFactory datumFactory,
+            final CSFactory csFactory,
+            final CRSFactory crsFactory,
+            final MathTransformFactory mtFactory,
+            final String text) throws ParseException
+    {
+        // TODO: recycle a parser.
+        final ReferencingParser parser = new ReferencingParser(Symbols.getDefault(), datumFactory, csFactory, crsFactory, mtFactory);
+        parser.setISOConform(true);
+        return parser.parseCoordinateReferenceSystem(text);
     }
 }

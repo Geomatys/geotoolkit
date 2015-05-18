@@ -43,7 +43,6 @@ import org.apache.sis.referencing.cs.DefaultEllipsoidalCS;
 import org.apache.sis.referencing.datum.DefaultPrimeMeridian;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
 import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
-import org.geotoolkit.referencing.factory.DatumAliasesTest;
 
 import org.apache.sis.io.wkt.Symbols;
 import org.apache.sis.test.DependsOn;
@@ -67,7 +66,7 @@ import static org.geotoolkit.referencing.Assert.*;
  *
  * @since 2.0
  */
-@DependsOn({ParserTest.class, DatumAliasesTest.class})
+@DependsOn({ParserTest.class})
 public final strictfp class WKTFormatTest {
     private static Map<String,String> name(final String name) {
         return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);

@@ -22,13 +22,13 @@ package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.awt.RenderingHints;
 import javax.measure.converter.ConversionException;
 
 import org.opengis.util.FactoryException;
-import org.opengis.util.NoSuchIdentifierException;
 import org.opengis.metadata.quality.PositionalAccuracy;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -44,17 +44,12 @@ import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.WeakHashSet;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.factory.ReferencingFactory;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.apache.sis.internal.referencing.provider.Affine;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
-import org.apache.sis.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.cs.CoordinateSystems;
-import org.apache.sis.referencing.operation.DefaultConcatenatedOperation;
-import org.apache.sis.referencing.operation.DefaultConversion;
-import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 
 import static java.util.Collections.singletonMap;
@@ -73,14 +68,11 @@ import static org.geotoolkit.internal.InternalUtilities.debugEquals;
  * more "intelligent" job is left to subclasses.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
- *
  * @since 2.1
- * @level advanced
  * @module
  */
-public abstract class AbstractCoordinateOperationFactory extends ReferencingFactory
-        implements CoordinateOperationFactory
+public abstract class AbstractCoordinateOperationFactory
+        extends org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory
 {
     /**
      * The identifier for an identity operation.
@@ -127,6 +119,9 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     protected static final Identifier INVERSE_OPERATION =
             new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.INVERSE_OPERATION));
 
+    @Deprecated
+    final Map<RenderingHints.Key, Object> hints;
+
     /**
      * The set of helper methods on factories.
      */
@@ -155,6 +150,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * @param userHints The hints, or {@code null} if none.
      */
     public AbstractCoordinateOperationFactory(final Hints userHints) {
+        hints = new LinkedHashMap<>();
         factories = ReferencingFactoryContainer.instance(userHints);
     }
 
@@ -168,6 +164,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * @param userHints The hints, or {@code null} if none.
      */
     AbstractCoordinateOperationFactory(final CoordinateOperationFactory factory, final Hints hints) {
+        this.hints = new LinkedHashMap<>();
         if (factory instanceof AbstractCoordinateOperationFactory) {
             factories = ((AbstractCoordinateOperationFactory) factory).factories;
         } else {
@@ -188,7 +185,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * and {@link Hints#MATH_TRANSFORM_FACTORY MATH_TRANSFORM} {@code FACTORY} hints. Other values
      * may be provided as well, at implementation choice.
      */
-    @Override
+    @Deprecated
     public Map<RenderingHints.Key,?> getImplementationHints() {
         if (!hintsInitialized) {
             final Map<RenderingHints.Key, ?> toAdd = factories.getImplementationHints();
@@ -209,7 +206,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
                 }
             }
         }
-        return super.getImplementationHints();
+        return hints;
     }
 
     /**
@@ -218,36 +215,9 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      *
      * @return The hints to add to {@link #hints}.
      */
+    @Deprecated
     Map<RenderingHints.Key, ?> initializeHints() {
         return factories.getImplementationHints();
-    }
-
-    /**
-     * Returns the operation method of the given name. The default implementation returns the first
-     * method from the set returned by {@link MathTransformFactory#getAvailableMethods(Class)}
-     * which have a {@linkplain IdentifiedObjects#nameMatches matching name}.
-     *
-     * @param  name The name of the operation method to fetch.
-     * @return The operation method of the given name.
-     * @throws FactoryException if the requested operation method can not be fetched.
-     *
-     * @see #createOperationMethod(Map, Integer, Integer, ParameterDescriptorGroup)
-     *
-     * @since 3.19
-     */
-    @Override
-    public OperationMethod getOperationMethod(final String name) throws FactoryException {
-        final MathTransformFactory mtFactory = getMathTransformFactory();
-        if (mtFactory instanceof DefaultMathTransformFactory) {
-            return ((DefaultMathTransformFactory) mtFactory).getOperationMethod(name);
-        }
-        for (final OperationMethod method : mtFactory.getAvailableMethods(SingleOperation.class)) {
-            if (IdentifiedObjects.isHeuristicMatchForName(method, name)) {
-                return method;
-            }
-        }
-        throw new NoSuchIdentifierException(Errors.format(
-                Errors.Keys.NO_TRANSFORM_FOR_CLASSIFICATION_1, name), name);
     }
 
     /**
@@ -453,43 +423,8 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         return operation;
     }
 
-    /**
-     * Constructs a defining conversion from a set of properties.
-     *
-     * @param  properties Set of properties. Should contains at least {@code "name"}.
-     * @param  method The operation method.
-     * @param  parameters The parameter values.
-     * @return The defining conversion.
-     * @throws FactoryException if the object creation failed.
-     *
-     * @see DefiningConversion
-     *
-     * @since 2.5
-     */
-    @Override
-    public Conversion createDefiningConversion(
-            final Map<String,?>       properties,
-            final OperationMethod     method,
-            final ParameterValueGroup parameters) throws FactoryException
-    {
-        Conversion conversion = new DefaultConversion(properties, method, null, parameters);
-        conversion = pool.unique(conversion);
-        return conversion;
-    }
-
-    /**
-     * Creates an operation method from a set of properties and a descriptor group. The default
-     * implementation delegates to the {@link DefaultOperationMethod#DefaultOperationMethod(Map,
-     * Integer, Integer, ParameterDescriptorGroup) DefaultOperationMethod} constructor.
-     *
-     * @param  properties Set of properties. Shall contains at least {@code "name"}.
-     * @param  sourceDimension Number of dimensions in the source CRS of this operation method.
-     * @param  targetDimension Number of dimensions in the target CRS of this operation method.
-     * @param  parameters The set of parameters, or {@code null} if none.
-     *
-     * @see #getOperationMethod(String)
-     *
-     * @since 3.19
+    /*
+     * Temporary hack for accepting null parameters.
      */
     @Override
     public OperationMethod createOperationMethod(final Map<String,?> properties,
@@ -499,25 +434,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         if (parameters == null) {
             parameters = Parameters.EMPTY_GROUP;
         }
-        return new DefaultOperationMethod(properties, sourceDimension, targetDimension, parameters);
-    }
-
-    /**
-     * Creates a concatenated operation from a sequence of operations.
-     *
-     * @param  properties Set of properties. Should contains at least {@code "name"}.
-     * @param  operations The sequence of operations.
-     * @return The concatenated operation.
-     * @throws FactoryException if the object creation failed.
-     */
-    @Override
-    public CoordinateOperation createConcatenatedOperation(final Map<String,?> properties,
-            final CoordinateOperation... operations) throws FactoryException
-    {
-        CoordinateOperation operation;
-        operation = new DefaultConcatenatedOperation(properties, operations, getMathTransformFactory());
-        operation = pool.unique(operation);
-        return operation;
+        return super.createOperationMethod(properties, sourceDimension, targetDimension, parameters);
     }
 
     /**

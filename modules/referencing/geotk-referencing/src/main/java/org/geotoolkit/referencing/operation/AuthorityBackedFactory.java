@@ -28,7 +28,6 @@ import java.util.logging.LogRecord;
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -41,8 +40,6 @@ import org.apache.sis.metadata.iso.extent.Extents;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.Factory;
-import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.internal.referencing.Identifier3D;
 import org.geotoolkit.internal.referencing.OperationContext;
 import org.apache.sis.referencing.IdentifiedObjects;
@@ -56,6 +53,8 @@ import org.geotoolkit.resources.Descriptions;
 import static org.geotoolkit.referencing.CRS.equalsApproximatively;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory;
+import static org.geotoolkit.factory.Factory.EMPTY_HINTS;
+import static org.geotoolkit.referencing.factory.ReferencingFactory.LOGGER;
 
 
 /**
@@ -154,20 +153,6 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
         userHints.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.FALSE);
         userHints.put(Hints.FORCE_STANDARD_AXIS_DIRECTIONS,   Boolean.FALSE);
         userHints.put(Hints.FORCE_STANDARD_AXIS_UNITS,        Boolean.FALSE);
-    }
-
-    /**
-     * Invoked by {@link org.geotoolkit.factory.FactoryRegistry} in order to set the ordering
-     * relative to other factories. The current implementation specifies that this factory
-     * should have priority over a plain (not backed by an authority)
-     * {@code DefaultCoordinateOperationFactory}.
-     *
-     * @since 3.00
-     */
-    @Override
-    protected void setOrdering(final Organizer organizer) {
-        super.setOrdering(organizer); // Defer to CachingCoordinateOperationFactory
-        organizer.before(DefaultCoordinateOperationFactory.class, false);
     }
 
     /**
@@ -850,18 +835,18 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
      *
      * @since 3.03
      */
-    @Override
-    public ConformanceResult availability() {
-        try {
-            final CoordinateOperationAuthorityFactory authorityFactory = getAuthorityFactory();
-            if (authorityFactory instanceof Factory) {
-                return ((Factory) authorityFactory).availability();
-            }
-        } catch (FactoryRegistryException exception) {
-            // Declares as not available for the given raison.
-            return new Availability(exception);
-        }
-        // Declare as available if not disposed.
-        return super.availability();
-    }
+//    @Override
+//    public ConformanceResult availability() {
+//        try {
+//            final CoordinateOperationAuthorityFactory authorityFactory = getAuthorityFactory();
+//            if (authorityFactory instanceof Factory) {
+//                return ((Factory) authorityFactory).availability();
+//            }
+//        } catch (FactoryRegistryException exception) {
+//            // Declares as not available for the given raison.
+//            return new Availability(exception);
+//        }
+//        // Declare as available if not disposed.
+//        return super.availability();
+//    }
 }

@@ -45,7 +45,6 @@ import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 
 import org.apache.sis.util.Classes;
-import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.apache.sis.measure.Angle;
 import org.apache.sis.referencing.CommonCRS;
@@ -67,7 +66,6 @@ import static org.geotoolkit.referencing.Commons.*;
  *
  * @since 3.00
  */
-@DependsOn(FactoryFinderTest.class)
 public final strictfp class OrderedAxisAuthorityFactoryTest extends ReferencingTestBase {
     /**
      * {@code true} if metadata (especially identifiers) should be erased, or {@code false} if
