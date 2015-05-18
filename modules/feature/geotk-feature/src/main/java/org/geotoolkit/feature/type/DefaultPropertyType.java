@@ -172,11 +172,11 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
             return false;
         }
 
-        if (!Objects.equals(superType, prop.getSuper())) {
+        if (!Objects.equals(getSuper(), prop.getSuper())) {
             return false;
         }
 
-        if (!Objects.equals(description, prop.getDescription())) {
+        if (!Objects.equals(getDescription(), prop.getDescription())) {
             return false;
         }
 

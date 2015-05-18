@@ -161,7 +161,12 @@ public class FeatureStoreUtilities {
             while(ite.hasNext()){
                 final Feature f = ite.next();
                 final Feature candidate = writer.next();
-                FeatureUtilities.copy(f,candidate,false);
+                if(candidate.getType().equals(f.getType())){
+                    candidate.getProperties().clear();
+                    candidate.getProperties().addAll(f.getProperties());
+                }else{
+                    FeatureUtilities.copy(f,candidate,false);
+                }
                 if(candidate instanceof AbstractFeature){
                     ((AbstractFeature)candidate).setIdentifier(f.getIdentifier());
                 }

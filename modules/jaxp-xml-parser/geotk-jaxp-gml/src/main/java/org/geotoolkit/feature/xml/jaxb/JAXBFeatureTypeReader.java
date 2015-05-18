@@ -82,6 +82,7 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.geotoolkit.xsd.xml.v2001.Annotated;
 import org.geotoolkit.xsd.xml.v2001.Any;
+import org.geotoolkit.xsd.xml.v2001.Appinfo;
 import org.geotoolkit.xsd.xml.v2001.Attribute;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroup;
 import org.geotoolkit.xsd.xml.v2001.AttributeGroupRef;
@@ -468,7 +469,13 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                         subList = new HashSet<>();
                         substitutionGroups.put(parent, subList);
                     }
-                    subList.add(new QName(schema.getTargetNamespace(), ele.getName()));
+                    final QName name = new QName(schema.getTargetNamespace(), ele.getName());
+                    if(subList.contains(name)){
+                        //name already here, check if one of them is deprecated
+                        subList.add(name);
+                    }else{
+                        subList.add(name);
+                    }
                 }
             }
         }
@@ -1065,7 +1072,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         if(elementName!=null && !isSubstitute){
             final Collection<QName> substitutions = getSubstitutions(new QName(namespace, elementName));
             if(substitutions!=null && !substitutions.isEmpty()){
-                long time = System.currentTimeMillis();
                 for(QName sub : substitutions){
                     final Element subEle = findGlobalElement(sub);
                     final List<PropertyDescriptor> subs = elementToAttribute(subEle,sub.getNamespaceURI(),true);
@@ -1177,20 +1183,29 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     }
 
     private Element findGlobalElement(final QName typeName){
+        Element element = null;
         // look in the schemas
         for (Entry<String,Schema> entry : knownSchemas.entrySet()) {
             final Schema schema = entry.getValue();
             if(!schema.getTargetNamespace().equalsIgnoreCase(typeName.getNamespaceURI())) continue;
+            loop:
             for(OpenAttrs att : schema.getSimpleTypeOrComplexTypeOrGroup()){
                 if(att instanceof Element){
                     final TopLevelElement candidate = (TopLevelElement) att;
                     if(candidate.getName().equals(typeName.getLocalPart())){
+                        //check if it's a deprecated type, we will return it only in last case
+                        if(isDeprecated(candidate)){
+                            element = candidate;
+                            continue loop;
+                        }
+
+                        //found it
                         return candidate;
                     }
                 }
             }
         }
-        return null;
+        return element;
     }
 
     private NamedAttributeGroup findAttributeGroup(final QName typeName){
@@ -1351,6 +1366,22 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             //add new property
             descs.add(pd);
         }
+    }
+
+    private static boolean isDeprecated(TopLevelElement candidate){
+        //check if it's a deprecated type, we will return it only in last case
+        if(candidate.getAnnotation()!=null){
+            for(Object obj : candidate.getAnnotation().getAppinfoOrDocumentation()){
+                if(obj instanceof Appinfo){
+                    for(Object cdt : ((Appinfo)obj).getContent()){
+                        if(cdt instanceof String && "deprecated".equalsIgnoreCase((String)cdt)){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }

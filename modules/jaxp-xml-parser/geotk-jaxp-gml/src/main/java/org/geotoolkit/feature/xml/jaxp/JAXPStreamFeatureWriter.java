@@ -22,6 +22,7 @@ import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +59,7 @@ import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.OperationDescriptor;
 import org.geotoolkit.feature.type.OperationType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
@@ -245,6 +247,15 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         //write properties in the type order
         for(final PropertyDescriptor desc : type.getDescriptors()){
+//            if(desc instanceof OperationDescriptor) continue;
+//
+//            final Collection<Property> props;
+//            final Property subProp = getSubstitu(feature, desc);
+//            if(subProp!=null){
+//                props = Arrays.asList(subProp);
+//            }else{
+//                props = feature.getProperties(desc.getName());
+//            }
             final Collection<Property> props = feature.getProperties(desc.getName());
             for (Property a : props) {
                 final Object valueA = a.getValue();
@@ -309,6 +320,18 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
             //write properties in the type order
             for(final PropertyDescriptor desc : type.getDescriptors()){
+//                if(desc instanceof OperationDescriptor) continue;
+//
+//                final Collection<Property> props;
+//                final Property subProp = getSubstitu(feature, desc);
+//                if(subProp!=null){
+//                    props = Arrays.asList(subProp);
+//                    allProps.removeAll(feature.getProperties(desc.getName()));
+//                }else{
+//                    props = feature.getProperties(desc.getName());
+//                    allProps.removeAll(props);
+//                }
+
                 final Collection<Property> props = feature.getProperties(desc.getName());
                 for (Property a : props) {
                     writeProperty(feature,a,false);
@@ -342,6 +365,13 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     //possible substitute group
                     Property p = parent.getProperty(desc.getName());
                     if(p!=null){
+                        final PropertyType originalType = parent.getType().getDescriptor(a.getName()).getType();
+                        if(p.getType().equals(originalType)){
+                            //substitute has exactly the same type
+                            //we favorite the non alias type
+                            break;
+                        }
+
                         //valid substitute, we write it instead of the current property
                         writeProperty(parent, p, true);
                         return;
@@ -669,6 +699,25 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
         }
         return false;
+    }
+
+    private static Name getSubtituteRefName(PropertyDescriptor prop){
+        PropertyType type = prop.getType();
+        if(type instanceof AliasOperation){
+            return ((AliasOperation)type).getRefName();
+        }
+        return null;
+    }
+
+    private static Property getSubstitu(ComplexAttribute parent, PropertyDescriptor prop){
+        final Name name = prop.getName();
+        for(PropertyDescriptor desc : parent.getType().getDescriptors()){
+            if(name.equals(getSubtituteRefName(desc))){
+                Property sub = parent.getProperty(desc.getName());
+                if(sub!=null) return sub;
+            }
+        }
+        return null;
     }
 
 }

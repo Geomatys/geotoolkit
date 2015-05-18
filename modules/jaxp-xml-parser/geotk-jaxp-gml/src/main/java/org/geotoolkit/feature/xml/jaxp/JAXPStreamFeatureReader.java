@@ -390,9 +390,14 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             propertyContainer.add(att);
 
         }else{
+            boolean doNext = true;
             //read a real complex type
-            while (reader.hasNext()) {
-                int event = reader.next();
+            while (!doNext || reader.hasNext()) {
+                if(doNext){
+                    reader.next();
+                }
+                doNext = true;
+                int event = reader.getEventType();
 
                 if (event == START_ELEMENT) {
                     final Name propName = nameCache.get(reader.getName());
@@ -427,6 +432,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         final PropertyType resultType = (PropertyType) opType.getResult();
                         final Object value = readPropertyValue(resultType,false);
                         ops.add(new AbstractMap.SimpleImmutableEntry<>((OperationDescriptor)pdesc,value));
+                        if(resultType.getName().equals(pdesc.getName())){
+                            //we are already on the next element here, jaxb ate one
+                            doNext = false;
+                        }
                         continue;
                     }
 
