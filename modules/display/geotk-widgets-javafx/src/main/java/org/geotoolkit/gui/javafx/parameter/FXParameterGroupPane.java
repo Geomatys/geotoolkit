@@ -30,17 +30,21 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import org.apache.sis.util.ArgumentChecks;
@@ -71,7 +75,7 @@ import org.opengis.util.InternationalString;
  *
  * @author Alexis Manin (Geomatys)
  */
-public class FXParameterGroupPane extends TitledPane {
+public class FXParameterGroupPane extends BorderPane {
 
     private static final String FLAT_BUTTON_CLASS = "flatbutton";
     private static final String INFO_BUTTON_CLASS = "infobutton";
@@ -81,7 +85,7 @@ public class FXParameterGroupPane extends TitledPane {
     private static final String ROOT_CLASS = "root";
     private static final String INFO_LABEL_CLASS = "infolabel";
     
-    private static final Image ICON_PLUS = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PLUS, 16, Color.CYAN), null);
+    private static final Image ICON_PLUS = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PLUS, 16, new Color(74,123,165)), null);
     private static final Image ICON_INFO = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_INFO, 16, Color.WHITE), null);
     private static final Image ICON_MORE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_TH_LIST, 16, Color.BLACK), null);
     
@@ -92,8 +96,7 @@ public class FXParameterGroupPane extends TitledPane {
      * Flow pane in which we'll add all {@link ParameterValue} editors. 
      */
     @FXML
-    private FlowPane uiInnerValues;
-    
+    private TilePane uiInnerValues;
     
     /**
      * Flow pane in which we'll add all {@link ParameterGroup} editors. 
@@ -163,10 +166,7 @@ public class FXParameterGroupPane extends TitledPane {
         editionGroups.clear();
         optionalParameterCount.set(0);
 
-        if (newValue == null) {
-            setText("Aucun paramètre");
-
-        } else {
+        if (newValue != null) {
             final ParameterDescriptorGroup newDescriptor = newValue.getDescriptor();
             // Optional or multi-occurence descriptors. We allow user to add more in editor.
             for (final GeneralParameterDescriptor childDesc : newDescriptor.descriptors()) {
@@ -277,8 +277,10 @@ public class FXParameterGroupPane extends TitledPane {
 
         private final VBox content = new VBox();
         
+        private final Label uiTitle = new Label();
         private final Button uiAdd = new Button(null, new ImageView(ICON_PLUS));
-        private final HBox header = new HBox(10, uiAdd);
+        final Separator headerExpander = new Separator();
+        private final HBox uiToolbar = new HBox(10, uiTitle, headerExpander, uiAdd);
 
         private final GeneralParameterDescriptor descriptor;
 
@@ -286,43 +288,52 @@ public class FXParameterGroupPane extends TitledPane {
             super();
             ArgumentChecks.ensureNonNull("Parameter descriptor", descriptor);
             this.descriptor = descriptor;
-            setText(descriptor.getName().getCode());
+            uiTitle.setText(descriptor.getName().getCode());
 
             getStyleClass().add(DESCRIPTOR_CONTAINER_CLASS);
             content.getStyleClass().add(DESCRIPTOR_CONTENT_CLASS);
             content.setFillWidth(true);
-            setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-            
+//            setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
             uiAdd.getStyleClass().add(FLAT_BUTTON_CLASS);
             uiAdd.managedProperty().bind(uiAdd.visibleProperty());
             uiAdd.setVisible((ParametersExt.getParameters(inputGroup.get(), descriptor.getName().getCode()).size() < descriptor.getMaximumOccurs()));
             uiAdd.setOnAction(event -> addParameterEditor());
-            
+
             // Make panel visible only in advanced mode for optional / preconfigured parameters.
             if (this.descriptor.getMinimumOccurs() < 1
                     || (this.descriptor instanceof ParameterDescriptor && ((ParameterDescriptor) this.descriptor).getDefaultValue() != null)) {
                 visibleProperty().bind(uiAdvancedBtn.selectedProperty());
                 managedProperty().bind(visibleProperty());
             }
-            
-            
-                final InternationalString description = (descriptor.getDescription() != null)
-                        ? descriptor.getDescription() : descriptor.getRemarks();
-                if (description != null) {
-                    final Button descriptionButton = new Button(null, new ImageView(ICON_INFO));
-                    descriptionButton.setOnAction(event -> {
-                        infoLabel.setText(description.toString());
-                        Bounds localToScreen = descriptionButton.localToScreen(descriptionButton.getBoundsInLocal());
-                        descriptionPopup.show(descriptionButton, localToScreen.getMinX(), localToScreen.getMinY());
-                    });
 
-                    descriptionButton.setAlignment(Pos.CENTER);
-                    descriptionButton.getStyleClass().add(INFO_BUTTON_CLASS);
-                    header.getChildren().add(descriptionButton);
-                }
-                
+            final InternationalString description = (descriptor.getDescription() != null)
+                    ? descriptor.getDescription() : descriptor.getRemarks();
+            if (description != null) {
+                final Button descriptionButton = new Button(null, new ImageView(ICON_INFO));
+                descriptionButton.setOnAction(event -> {
+                    infoLabel.setText(description.toString());
+                    Bounds localToScreen = descriptionButton.localToScreen(descriptionButton.getBoundsInLocal());
+                    descriptionPopup.show(descriptionButton, localToScreen.getMinX(), localToScreen.getMinY());
+                });
+
+                descriptionButton.setAlignment(Pos.CENTER);
+                descriptionButton.getStyleClass().add(INFO_BUTTON_CLASS);
+                uiToolbar.getChildren().add(descriptionButton);
+            }
+
             setContent(content);
-            setGraphic(header);
+            setGraphic(uiToolbar);
+            
+            /* 
+             * CONFIGURE HEADER POSITION
+             */
+            uiToolbar.setAlignment(Pos.CENTER_LEFT);
+            HBox.setHgrow(headerExpander, Priority.ALWAYS);
+            headerExpander.setVisible(false);
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            uiToolbar.setMaxWidth(Double.MAX_VALUE);
+            uiToolbar.prefWidthProperty().bind(widthProperty().subtract(50));
         }
 
         /**

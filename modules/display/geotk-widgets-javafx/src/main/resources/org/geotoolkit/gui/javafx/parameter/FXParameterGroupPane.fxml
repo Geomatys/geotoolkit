@@ -8,27 +8,34 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root id="FXParameterGroupPane" alignment="TOP_LEFT" graphicTextGap="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="root" type="TitledPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root styleClass="root" type="BorderPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
     <stylesheets>
         <URL value="@/org/geotoolkit/gui/javafx/parameter/parameters.css" />
     </stylesheets>
-   <graphic>
-      <HBox minHeight="0.0" minWidth="0.0" spacing="10.0" styleClass="undecorated">
+   <center>
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="15.0" styleClass="value-group-separator">
+         <children>
+            <TilePane fx:id="uiInnerValues" alignment="TOP_LEFT" hgap="15.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefColumns="2" prefRows="5" styleClass="values" tileAlignment="TOP_LEFT" vgap="15.0" VBox.vgrow="SOMETIMES">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </TilePane>
+            <FlowPane fx:id="uiInnerGroups" hgap="15.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rowValignment="TOP" styleClass="groups" vgap="15.0" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+   </center>
+   <top>
+      <HBox alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0" styleClass="undecorated" BorderPane.alignment="CENTER">
          <children>
             <MenuButton fx:id="uiAddBtn" mnemonicParsing="false" styleClass="flatbutton" />
             <ToggleButton fx:id="uiAdvancedBtn" mnemonicParsing="false" styleClass="flatbutton" />
          </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
       </HBox>
-   </graphic>
-   <content>
-      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="15.0" styleClass="value-group-separator">
-         <children>
-            <FlowPane fx:id="uiInnerValues" hgap="15.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rowValignment="TOP" styleClass="values" vgap="15.0">
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets></FlowPane>
-            <FlowPane fx:id="uiInnerGroups" hgap="15.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rowValignment="TOP" styleClass="groups" vgap="15.0" VBox.vgrow="ALWAYS" />
-         </children>
-      </VBox>
-   </content>
+   </top>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
 </fx:root>

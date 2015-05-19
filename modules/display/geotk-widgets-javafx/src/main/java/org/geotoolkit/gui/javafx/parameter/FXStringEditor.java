@@ -44,7 +44,7 @@ public class FXStringEditor extends FXValueEditor{
     
     @Override
     public boolean canHandle(Class binding) {
-        return String.class.isAssignableFrom(binding);
+        return CharSequence.class.isAssignableFrom(binding) || Character.class.isAssignableFrom(binding);
     }
 
     @Override
