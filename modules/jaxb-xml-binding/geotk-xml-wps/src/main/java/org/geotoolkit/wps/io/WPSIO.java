@@ -220,7 +220,7 @@ public final class WPSIO {
                     formClass = BoundingBoxType.class;
                 } else if (dataType.equals(FormChoice.COMPLEX)) {
                     formClass = ComplexDataType.class;
-                } else if (dataType.equals(FormChoice.LITERAL)) {
+                } else if (dataType.equals(FormChoice.REFERENCE)) {
                     formClass = ReferenceType.class;
                 }
 
