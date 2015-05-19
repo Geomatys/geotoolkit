@@ -18,9 +18,11 @@ package org.geotoolkit.filter.binding;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.sis.util.ObjectConverters;
@@ -56,15 +58,22 @@ public final class BeanBinding extends AbstractBinding<Object> implements Serial
             final PropertyDescriptor[] descs = info.getPropertyDescriptors();
             if(descs==null)return null;
             for(PropertyDescriptor d : descs){
-                if(d.getName().equalsIgnoreCase(xpath)){
-                    Object o = d.getReadMethod().invoke(candidate);
-                    return ObjectConverters.convert(o, target);
+                if(d.getName().equalsIgnoreCase(xpath)) {
+                    final Method readMethod = d.getReadMethod();
+                    if (readMethod == null) return null;
+                    
+                    Object o = readMethod.invoke(candidate);
+                    if (o == null || target == null || target.isInstance(o)) {
+                        return (T) o;
+                    } else {
+                        return ObjectConverters.convert(o, target);
+                    }
                 }
             }
-        } catch (Exception ex) {
-            Logger.getLogger(BeanBinding.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        } catch (IntrospectionException | ReflectiveOperationException ex) {
+            throw new IllegalStateException(ex);
         }
-        return null;
     }
 
     @Override
@@ -72,15 +81,26 @@ public final class BeanBinding extends AbstractBinding<Object> implements Serial
         try {
             final BeanInfo info = Introspector.getBeanInfo(candidate.getClass());
             final PropertyDescriptor[] descs = info.getPropertyDescriptors();
-            if(descs==null)return;
-            for(PropertyDescriptor d : descs){
-                if(d.getName().equalsIgnoreCase(xpath)){
-                    d.getWriteMethod().invoke(candidate, value);
+            if (descs == null)
+                return;
+            for (PropertyDescriptor d : descs) {
+                if (d.getName().equalsIgnoreCase(xpath)) {
+
+                    final Method writeMethod = d.getWriteMethod();
+                    if (writeMethod == null)
+                        return;
+
+                    final Class<?> propertyType = d.getPropertyType();
+                    if (value == null || propertyType.isInstance(value)) {
+                        writeMethod.invoke(candidate, value);
+                    } else {
+                        writeMethod.invoke(candidate,
+                                ObjectConverters.convert(value, propertyType));
+                    }
                 }
             }
-        } catch (Exception ex) {
-            Logger.getLogger(BeanBinding.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IntrospectionException | ReflectiveOperationException ex) {
+            throw new IllegalStateException(ex);
         }
-        return;
     }
 }
