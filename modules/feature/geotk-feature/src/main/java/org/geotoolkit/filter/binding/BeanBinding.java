@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.util.Numbers;
 import org.apache.sis.util.ObjectConverters;
 
 /**
@@ -90,7 +91,8 @@ public final class BeanBinding extends AbstractBinding<Object> implements Serial
                     if (writeMethod == null)
                         return;
 
-                    final Class<?> propertyType = d.getPropertyType();
+                    Class<?> propertyType = d.getPropertyType();
+                    propertyType = Numbers.primitiveToWrapper(propertyType);
                     if (value == null || propertyType.isInstance(value)) {
                         writeMethod.invoke(candidate, value);
                     } else {
