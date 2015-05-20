@@ -97,7 +97,6 @@
     <module>geotk-feature-csv</module>
     <module>geotk-feature-gpx</module>
     <module>geotk-feature-gml</module>
-    <module>geotk-feature-h2</module>
     <module>geotk-feature-kml</module>
     <module>geotk-feature-shapefile</module>
     <module>geotk-feature-om</module>
