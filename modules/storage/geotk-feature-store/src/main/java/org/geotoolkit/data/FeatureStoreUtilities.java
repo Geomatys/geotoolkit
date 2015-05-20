@@ -47,6 +47,7 @@ import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
@@ -161,7 +162,8 @@ public class FeatureStoreUtilities {
             while(ite.hasNext()){
                 final Feature f = ite.next();
                 final Feature candidate = writer.next();
-                if(candidate.getType().equals(f.getType())){
+                FeatureType type = candidate.getType();
+                if( !(type instanceof SimpleFeatureType) && candidate.getType().equals(f.getType())){
                     candidate.getProperties().clear();
                     candidate.getProperties().addAll(f.getProperties());
                 }else{
