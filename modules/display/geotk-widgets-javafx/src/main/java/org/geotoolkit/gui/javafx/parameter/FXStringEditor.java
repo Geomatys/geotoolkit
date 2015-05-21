@@ -17,9 +17,7 @@
 
 package org.geotoolkit.gui.javafx.parameter;
 
-import javafx.beans.property.Property;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.beans.property.StringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
@@ -27,35 +25,23 @@ import javafx.scene.control.TextField;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXStringEditor extends FXValueEditor{
+public class FXStringEditor extends FXValueEditor {
 
     private final TextField textField = new TextField();
-
-    public FXStringEditor() {
-        textField.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(currentValue!=null){
-                    currentValue.setValue(textField.getText());
-                }
-            }
-        });
-    }
     
     @Override
     public boolean canHandle(Class binding) {
         return CharSequence.class.isAssignableFrom(binding) || Character.class.isAssignableFrom(binding);
     }
-
-    @Override
-    public void setValue(Property value) {
-        super.setValue(value);
-        textField.setText(value.getValue()==null ? "" : value.getValue().toString());
-    }
     
     @Override
     public Node getComponent() {
         return textField;
+    }
+
+    @Override
+    public StringProperty valueProperty() {
+        return textField.textProperty();
     }
     
 }

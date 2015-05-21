@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.javafx.parameter;
 
 import java.util.List;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -117,7 +118,7 @@ public class FXParameterEditor extends BorderPane {
         
         public ParameterValueGroup parent;
         public GeneralParameterDescriptor desc;
-        public SimpleObjectProperty<GeneralParameterValue> value;
+        public final SimpleObjectProperty<GeneralParameterValue> value;
 
         public ParamEntry(ParameterValueGroup parent, GeneralParameterDescriptor desc, GeneralParameterValue value) {
             this.parent = parent;
@@ -194,13 +195,17 @@ public class FXParameterEditor extends BorderPane {
             
             setText(null);
             setGraphic(null);
-            if(!empty && availableEditors!=null && entry!=null && entry.value.getValue() != null){
+            if(!empty && availableEditors !=null && entry !=null && entry.value.getValue() != null){
                 for(FXValueEditor editor : availableEditors){
-                    if(entry.desc instanceof ParameterDescriptor && editor.canHandle((ParameterDescriptor)entry.desc)){
-                        final ParameterValue pval = (ParameterValue) entry.value.getValue();
+                    if(entry.desc instanceof ParameterDescriptor && editor.canHandle((ParameterDescriptor)entry.desc)) {                        
                         final FXValueEditor valEditor = editor.copy();
                         valEditor.setParamDesc((ParameterDescriptor)entry.desc);
-                        valEditor.setValue(FXUtilities.beanProperty(pval, "value", Object.class));
+                        
+                        final ParameterValue pval = (ParameterValue) entry.value.getValue();
+                        valEditor.valueProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
+                            pval.setValue(newValue);
+                        });
+                        
                         setGraphic(valEditor.getComponent());
                         break;
                     }

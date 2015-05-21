@@ -213,11 +213,10 @@ public class FXParameterGroupPane extends BorderPane {
                 final FXValueEditor editor = tmpEditor.copy();
                 editor.setParamDesc(descriptor);
                 // Bind editor input to parameter value.
-                SimpleObjectProperty valueProperty = new SimpleObjectProperty(value.getValue());
-                valueProperty.addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
+                editor.valueProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
                     value.setValue(newValue);
                 });
-                editor.setValue(valueProperty);
+                
                 final Node component = editor.getComponent();
 
                 final HBox container = new HBox(5, component);

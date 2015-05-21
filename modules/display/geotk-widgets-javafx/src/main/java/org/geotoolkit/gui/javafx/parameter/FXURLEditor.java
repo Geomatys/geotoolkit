@@ -25,9 +25,12 @@ import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
+import javafx.util.StringConverter;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.gui.javafx.util.FXFileTextField;
@@ -54,6 +57,8 @@ public class FXURLEditor extends FXValueEditor {
      */
     private ObjectConverter<String, Object> valueConverter;
 
+    private final SimpleObjectProperty valueProperty = new SimpleObjectProperty();
+
     public FXURLEditor() {
         String previousPath = getPreviousPath();
         if (previousPath != null && !previousPath.isEmpty()) {
@@ -65,32 +70,37 @@ public class FXURLEditor extends FXValueEditor {
                     pathField.rootPath.set(rootPath.getParent().toAbsolutePath().toString());
                 }
             } catch (Exception e) {
-                Loggers.JAVAFX.log(Level.WARNING, "Cannot initialize root path for editor : "+previousPath, e);
+                Loggers.JAVAFX.log(Level.WARNING, "Cannot initialize root path for editor : " + previousPath, e);
             }
         }
-        pathField.textProperty().addListener(this::updatePropertyValue);
+
+        currentAttributeType.addListener(this::updateConverter);
+        currentParamDesc.addListener(this::updateConverter);
+        
+        Bindings.bindBidirectional(pathField.textProperty(), valueProperty,
+                new StringConverter() {
+                    @Override
+                    public String toString(Object object) {
+                        if (object == null || valueConverter == null || valueConverter.inverse() == null) return null;
+                        return valueConverter.inverse().apply(object);
+                    }
+
+                    @Override
+                    public Object fromString(String string) {
+                        if (string == null || valueConverter == null) return null;
+                        return valueConverter.apply(checkAndAdaptPath(string));
+                    }
+                });
     }
 
-    /**
-     * Update target property value when input field value changes.
-     *
-     * @param observable
-     * @param oldValue
-     * @param newValue New value to set for targete property.
-     */
-    protected void updatePropertyValue(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        if (currentValue != null) {
-            if (newValue == null) {
-                currentValue.setValue(null);
-            } else {
-                try {
-                    currentValue.setValue(valueConverter.apply(checkAndAdaptPath(newValue)));
-                } catch (Exception ex) {
-                    // TODO : Set red borders on editor
-                    Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
-                }
-            }
-        }
+    @Override
+    public Property valueProperty() {
+        return valueProperty;
+    }
+
+    
+    public void updateConverter(ObservableValue observable, Object oldValue, Object newValue) {
+        valueConverter = ObjectConverters.find(String.class, getValueClass());
     }
 
     protected static String checkAndAdaptPath(final String input) {
@@ -118,18 +128,6 @@ public class FXURLEditor extends FXValueEditor {
             }
         }
         return false;
-    }
-
-    @Override
-    public void setValue(Property value) {
-        super.setValue(value);
-        try {
-            valueConverter = ObjectConverters.find(String.class, getValueClass());
-            pathField.setText(valueConverter.inverse().apply(value.getValue()));
-        } catch (Exception ex) {
-            Loggers.JAVAFX.log(Level.WARNING, "Cannot initialize editor value.", ex);
-            pathField.setText("");
-        }
     }
 
     @Override

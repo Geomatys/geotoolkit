@@ -17,9 +17,7 @@
 
 package org.geotoolkit.gui.javafx.parameter;
 
-import javafx.beans.property.Property;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.beans.property.BooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 
@@ -27,36 +25,23 @@ import javafx.scene.control.CheckBox;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXBooleanEditor extends FXValueEditor{
+public class FXBooleanEditor extends FXValueEditor {
 
     private final CheckBox checkbox = new CheckBox();
-
-    public FXBooleanEditor() {
-        checkbox.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-                if(currentValue!=null){
-                    currentValue.setValue(checkbox.isSelected());
-                }
-            }
-        });
-    }
     
     @Override
     public boolean canHandle(Class binding) {
-        return Boolean.class.isAssignableFrom(binding);
-    }
-
-    @Override
-    public void setValue(Property value) {
-        super.setValue(value);
-        checkbox.setSelected(Boolean.TRUE.equals(value.getValue()));
+        return Boolean.class.isAssignableFrom(binding) || boolean.class.isAssignableFrom(binding);
     }
     
     @Override
     public Node getComponent() {
         return checkbox;
+    }
+
+    @Override
+    public BooleanProperty valueProperty() {
+        return checkbox.selectedProperty();
     }
     
 }

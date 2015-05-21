@@ -17,13 +17,17 @@
 
 package org.geotoolkit.gui.javafx.parameter;
 
+import java.util.Collection;
 import javafx.beans.property.Property;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import org.apache.sis.util.Numbers;
 import org.apache.sis.util.ObjectConverters;
-import org.apache.sis.util.UnconvertibleObjectException;
+import org.opengis.feature.AttributeType;
+import org.opengis.parameter.ParameterDescriptor;
 
 /**
  *
@@ -31,21 +35,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
  */
 public class FXNumberEditor extends FXValueEditor{
 
-    private final TextField textField = new TextField();
-
-    public FXNumberEditor() {
-        textField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if(currentValue!=null){
-                    try{
-                        Object val = ObjectConverters.convert(textField.getText(), getValueClass());
-                        if(val!=null) currentValue.setValue(val);
-                    }catch(UnconvertibleObjectException ex){}
-                }
-            }
-        });
-    }
+    private final Spinner spinner = new Spinner();
     
     @Override
     public boolean canHandle(Class binding) {
@@ -57,16 +47,55 @@ public class FXNumberEditor extends FXValueEditor{
                 || float.class.equals(binding)
                 || double.class.equals(binding);
     }
-
-    @Override
-    public void setValue(Property value) {
-        super.setValue(value);
-        textField.setText(String.valueOf(value.getValue()));
-    }
     
     @Override
     public Node getComponent() {
-        return textField;
+        return spinner;
+    }
+
+    @Override
+    public Property valueProperty() {
+        return spinner.getValueFactory().valueProperty();
     }
     
+    protected void updateValueFactory(final ObservableValue observable, final Object oldValue, final Object newValue) {
+        final Class valueClass = Numbers.primitiveToWrapper(getValueClass());
+        
+        final Object minValue;
+        final Object maxValue;
+        final Collection valueList;
+        if (newValue instanceof ParameterDescriptor) {
+            final ParameterDescriptor desc = (ParameterDescriptor) newValue;
+            minValue = desc.getMinimumValue();
+            maxValue = desc.getMaximumValue();
+            valueList = desc.getValidValues();
+            
+        } else if (newValue instanceof AttributeType) {
+            final AttributeType aType = (AttributeType) newValue;
+            valueList = extractChoices(aType);
+            // TODO : extract min and max 
+            minValue = null;
+            maxValue = null;
+        } else {
+            minValue = null;
+            maxValue = null;
+            valueList = null;
+        }
+        
+        final SpinnerValueFactory factory;
+        if (valueList != null && !valueList.isEmpty()) {
+            factory = new SpinnerValueFactory.ListSpinnerValueFactory(FXCollections.observableArrayList(valueList));
+            
+        } else if (Double.class.isAssignableFrom(valueClass) || Float.class.isAssignableFrom(valueClass)) {
+            Double minD = (minValue == null? Double.NaN : ObjectConverters.convert(minValue, Double.class));
+            Double maxD = (maxValue == null? Double.NaN : ObjectConverters.convert(maxValue, Double.class));
+            factory = new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.isNaN(minD)? -Double.MAX_VALUE : minD, Double.isNaN(maxD)? Double.MAX_VALUE : maxD);
+        } else {
+            Integer minI = (minValue == null? Integer.MIN_VALUE : ObjectConverters.convert(minValue, Integer.class));
+            Integer maxI = (maxValue == null? Integer.MIN_VALUE : ObjectConverters.convert(maxValue, Integer.class));
+            factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(minI, maxI);
+        }
+        
+        spinner.setValueFactory(factory);
+    }
 }
