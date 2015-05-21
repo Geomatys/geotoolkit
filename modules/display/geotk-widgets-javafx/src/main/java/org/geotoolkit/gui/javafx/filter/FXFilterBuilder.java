@@ -30,7 +30,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.HPos;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -42,7 +41,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.util.StringConverter;
 import org.apache.sis.util.ArgumentChecks;
@@ -103,7 +101,7 @@ public class FXFilterBuilder extends BorderPane {
     /**
      * Contains main information about edited filters.
      */
-    private final ArrayList<FilterBox> sandboxes = new ArrayList<>();
+    private final ObservableList<FilterBox> sandboxes = FXCollections.observableArrayList();
     
     /**
      * A simple observable boolean to know if we have multiple filters (rows in 
@@ -154,7 +152,7 @@ public class FXFilterBuilder extends BorderPane {
                 new ColumnConstraints(0, USE_COMPUTED_SIZE, Double.MAX_VALUE, Priority.SOMETIMES, HPos.CENTER, true),
                 new ColumnConstraints(USE_PREF_SIZE, USE_COMPUTED_SIZE, USE_PREF_SIZE, Priority.NEVER, HPos.CENTER, true)
         );
-        multipleRows = Bindings.size(filterEditors.getRowConstraints()).greaterThan(1);        
+        multipleRows = Bindings.size(sandboxes).greaterThan(1);
         
         addFilter = new Button(null, new ImageView(ICON_PLUS));
         addFilter.visibleProperty().bind(Bindings.isNotEmpty(availableProperties));
@@ -215,7 +213,6 @@ public class FXFilterBuilder extends BorderPane {
      * Add a new filter, and display an editor to allow user to configure it.
      */
     protected void addFilterRow() {
-        final int newRowIndice = filterEditors.getRowConstraints().size();
         
         // TODO : make international label for join types.
         final ChoiceBox<JOIN_TYPE> joinType = new ChoiceBox<>(JOIN_TYPES);
@@ -232,35 +229,26 @@ public class FXFilterBuilder extends BorderPane {
         
         operatorChoice.setConverter(operatorConverter);
         
-        // Add a new filter entry as active
-        sandboxes.add(newRowIndice, new FilterBox(joinType.valueProperty(), propertyChoice.valueProperty(), operatorChoice.valueProperty(), editorPane));
-        
-        propertyChoice.getSelectionModel().selectedItemProperty().addListener(new PropertyChoiceListener(operators));
-        operatorChoice.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends FXFilterOperator> observable, FXFilterOperator oldValue, FXFilterOperator newValue) -> {
-            if (newValue == null) {
-                editorPane.getChildren().clear();
-            } else {
-                final PropertyType pType = propertyChoice.valueProperty().get();
-                // Update editor only if old one is not compatible with the new editor.
-                if (editorPane.getChildren().isEmpty() || !newValue.canExtractSettings(pType, editorPane.getChildren().get(0))) {
-                    final Optional<Node> filterEditor = newValue.createFilterEditor(pType);
-                    if (filterEditor.isPresent()) {
-                        editorPane.getChildren().setAll(filterEditor.get());
-                    } else {
-                        editorPane.getChildren().clear();
-                    }
-                }
-            }
-        });
+        final FilterBox filterBox = new FilterBox(joinType.valueProperty(), propertyChoice.valueProperty(), operatorChoice.valueProperty(), editorPane);
+        filterBox.propertyType.addListener(new PropertyChoiceListener(operators));
+                
         removeButton.setOnAction(event -> {
             filterEditors.getChildren().removeAll(joinType, propertyChoice, operatorChoice, editorPane, removeButton);
-            filterEditors.getRowConstraints().remove(newRowIndice);
             // Delete filter entry
-            sandboxes.remove(newRowIndice);
+            sandboxes.remove(filterBox);
         });
         
+        // To add a new line in the grid, we must get row indice of the last added pane.
+        final int newRowIndice;
+        if (sandboxes.isEmpty()) {
+            newRowIndice = 0;
+        } else {
+            final FilterBox box = sandboxes.get(sandboxes.size()-1);
+            newRowIndice = GridPane.getRowIndex(box.filterEditorContainer) + 1;
+        }
+        
         filterEditors.addRow(newRowIndice, joinType, propertyChoice, operatorChoice, editorPane, removeButton);
-        filterEditors.getRowConstraints().add(new RowConstraints(0, USE_COMPUTED_SIZE, USE_PREF_SIZE, Priority.NEVER, VPos.CENTER, true));
+        sandboxes.add(filterBox);
     }
     
     /**
@@ -326,13 +314,16 @@ public class FXFilterBuilder extends BorderPane {
 
         public FilterBox(
                 ObjectProperty<JOIN_TYPE> joinType,
-                ObjectProperty<PropertyType> propertyName,
+                ObjectProperty<PropertyType> propertyType,
                 ObjectProperty<FXFilterOperator> operator,
                 Pane filterEditorContainer) {
             this.joinType = joinType;
-            this.propertyType = propertyName;
+            this.propertyType = propertyType;
             this.operator = operator;
             this.filterEditorContainer = filterEditorContainer;
+            
+            this.propertyType.addListener(this::updateOperator);
+            this.operator.addListener(this::updateOperator);
         }
         
         /**
@@ -351,5 +342,24 @@ public class FXFilterBuilder extends BorderPane {
                     GO2Utilities.FILTER_FACTORY.property(propertyType.get().getName()),
                     paneChildren.isEmpty()? null : paneChildren.get(0));
         }
-    }
+        
+        private void updateOperator(ObservableValue observable, Object oldValue, Object newValue) {
+            final FXFilterOperator op = operator.get();
+            final PropertyType property = propertyType.get();
+            
+            if (op == null || property == null) {
+                filterEditorContainer.getChildren().clear();
+            } else {
+                // Update editor only if old one is not compatible with the new editor.
+                if (filterEditorContainer.getChildren().isEmpty() || !op.canExtractSettings(property, filterEditorContainer.getChildren().get(0))) {
+                    final Optional<Node> filterEditor = op.createFilterEditor(property);
+                    if (filterEditor.isPresent()) {
+                        filterEditorContainer.getChildren().setAll(filterEditor.get());
+                    } else {
+                        filterEditorContainer.getChildren().clear();
+                    }
+                }
+            }
+        }
+    }   
 }

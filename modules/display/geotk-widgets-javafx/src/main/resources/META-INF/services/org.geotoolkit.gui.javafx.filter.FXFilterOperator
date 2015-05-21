@@ -1,1 +1,6 @@
 org.geotoolkit.gui.javafx.filter.FXNullOperator
+org.geotoolkit.gui.javafx.filter.FXAttributeEqualsOperator
+org.geotoolkit.gui.javafx.filter.FXGreaterOperator
+org.geotoolkit.gui.javafx.filter.FXGreaterOrEqualOperator
+org.geotoolkit.gui.javafx.filter.FXLessOperator
+org.geotoolkit.gui.javafx.filter.FXLessOrEqualOperator
