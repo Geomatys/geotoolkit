@@ -17,14 +17,11 @@
 
 package org.geotoolkit.metadata.geotiff;
 
-import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TreeSet;
@@ -35,17 +32,14 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.sis.measure.NumberRange;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.Numbers;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
+import static org.geotoolkit.coverage.SampleDimensionUtils.buildCategories;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.metadata.GeoTiffExtension;
-import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.util.FactoryException;
 import org.w3c.dom.Document;
@@ -390,87 +384,5 @@ public strictfp class ThirdPartyMetaDataReader {
             final GridSampleDimension dim = new GridSampleDimension(""+b, categories.toArray(new Category[categories.size()]), null);
             accessor.setDimension(dim, Locale.ENGLISH);
         }
-    }
-    
-    /**
-     * Build {@linkplain Category categories} {@link List} from sample and noData values from band. 
-     * 
-     * @param sampleValues map which contain all nodata for current band and min and max sample values.
-     * @param typeClass data type of 
-     * @param scaleZ scale use to convert sample values into geophysic values. 
-     * @param offsetZ offset use to convert sample values into geophysic values.
-     * @return {@link Category} list for current band.
-     */
-    private static List<Category> buildCategories(final double minSampleValue, final double maxSampleValue, 
-                                                  final double scaleZ,         final double offsetZ,
-                                                  final Class typeClass,       final TreeSet<Double> nodataValues) {
-        ArgumentChecks.ensureNonNull("noDataValues", nodataValues);
-        ArgumentChecks.ensureNonNull("typeClass",    typeClass);
-        final List<Category> categories = new ArrayList<>();
-        if (nodataValues.isEmpty()) {
-            categories.add(new Category("data", null, 
-                        getTypedRangeNumber(typeClass, 
-                                            minSampleValue, true, 
-                                            maxSampleValue, true), scaleZ, offsetZ));
-            return categories;
-        }
-        
-        double currentMinSV  = minSampleValue;
-        double currentMaxSV  = maxSampleValue;
-        boolean isMinInclude = true;
-        boolean isMaxInclude = true;
-        
-        final Iterator<Double> itNoData = nodataValues.iterator();
-        while (itNoData.hasNext()) {
-            final double currentNoData = itNoData.next();
-            categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), 
-                                       getTypedRangeNumber(typeClass, currentNoData, true, currentNoData, true)));
-            if (currentNoData == currentMinSV) {
-                isMinInclude = false;
-            } else if (currentNoData == currentMaxSV) {
-                isMaxInclude = false;
-            } else if (currentMinSV < currentNoData && currentNoData < currentMaxSV) {//-- intersection
-                categories.add(new Category("data", null, 
-                        getTypedRangeNumber(typeClass, 
-                                            currentMinSV, isMinInclude, 
-                                            currentNoData, false), scaleZ, offsetZ));
-                isMinInclude = false;
-                currentMinSV = currentNoData;
-            } else {
-                //-- volontary do nothing with no intersection
-            }
-        }
-        
-        assert currentMaxSV == maxSampleValue : "buildCategories : last category : currentMaxSample "
-                + "value should be equals to maxSampleValues. Expected : "+maxSampleValue+". Found : "+currentMaxSV;
-        
-        //-- add the last category
-        //-- it is the last category to insert in case with intersection between sample values intervals
-        //-- else if no intersection it just will be sample interval.
-        categories.add(new Category("data", null, 
-                        getTypedRangeNumber(typeClass, 
-                                            currentMinSV, isMinInclude, 
-                                            currentMaxSV, isMaxInclude), scaleZ, offsetZ));
-        
-        return categories;
-    }
-    
-    /**
-     * Returns an appropriate {@link NumberRange} from given parameters.
-     * 
-     * @param <T> type of internal data.
-     * @param type type of internal data.
-     * @param min minimum range value.
-     * @param isMinIncluded {@code true} if minimum value is considered as include into range interval else false (exclusive).
-     * @param max maximum range value.
-     * @param isMaxIncluded {@code true} if maximum value is considered as include into range interval else false (exclusive).
-     * @return appropriate range value casted in expected type.
-     */
-    private static <T extends Number & Comparable<T>> NumberRange<T> getTypedRangeNumber(final Class<T> type,
-            final double min, final boolean isMinIncluded,
-            final double max, final boolean isMaxIncluded)
-    {
-        return new NumberRange(type, Numbers.cast(min, type), isMinIncluded,
-                                     Numbers.cast(max, type), isMaxIncluded);
     }
 }
