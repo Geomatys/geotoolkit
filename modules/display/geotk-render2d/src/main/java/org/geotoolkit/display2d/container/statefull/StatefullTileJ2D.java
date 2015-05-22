@@ -183,7 +183,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                                 final CoverageMapLayer layer = (CoverageMapLayer) getUserObject();
                                 final ElevationModel elevMod = layer.getElevationModel();
                                 final GridCoverage2D dem = DefaultRasterSymbolizerRenderer.getDEMCoverage(coverage, elevMod);
-                                ri = DefaultRasterSymbolizerRenderer.applyStyle(null,coverage, dem, elevMod, (RasterSymbolizer)symbol.getSource(), getHints(false));
+                                ri = DefaultRasterSymbolizerRenderer.applyStyle(null,coverage, dem, (RasterSymbolizer)symbol.getSource());
                                 break;
                             }
                         }

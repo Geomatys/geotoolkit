@@ -19,8 +19,10 @@ package org.geotoolkit.coverage;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -29,9 +31,9 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import org.apache.sis.geometry.Envelopes;
-import org.apache.sis.geometry.GeneralDirectPosition;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
@@ -50,6 +52,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.Cancellable;
 import org.geotoolkit.util.ImageIOUtilities;
 
@@ -321,12 +324,18 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         //-- read the data
         final boolean deferred = param.isDeferred();
-        if (mosaics.size() == 1) {
-            //-- read a single slice
-            return readSlice(mosaics.get(0), wantedEnv, deferred);
-        } else {
-            //-- read a data cube of multiple slices
-            return readCube(mosaics, wantedEnv, deferred);
+         try {
+            if (mosaics.size() == 1) {
+
+                //-- read a single slice
+                return readSlice(mosaics.get(0), wantedEnv, deferred);
+
+            } else {
+                //-- read a data cube of multiple slices
+                return readCube(mosaics, wantedEnv, deferred);
+            }
+        } catch (DataStoreException ex) {
+            throw new CoverageStoreException(ex); //-- to be in accordance with reader method interface signature
         }
     }
 
@@ -339,7 +348,7 @@ public class PyramidalModelReader extends GridCoverageReader{
      * @return GridCoverage
      * @throws CoverageStoreException 
      */
-    private GridCoverage readSlice(GridMosaic mosaic, Envelope wantedEnv, boolean deferred) throws CoverageStoreException{
+    private GridCoverage readSlice(GridMosaic mosaic, Envelope wantedEnv, boolean deferred) throws CoverageStoreException, DataStoreException {
         
         final CoordinateReferenceSystem wantedCRS = wantedEnv.getCoordinateReferenceSystem();
         final Envelope mosEnvelope                = mosaic.getEnvelope();
@@ -351,6 +360,8 @@ public class PyramidalModelReader extends GridCoverageReader{
               
         final DirectPosition upperLeft = mosaic.getUpperLeftCorner();
         assert CRS.equalsIgnoreMetadata(upperLeft.getCoordinateReferenceSystem(), wantedCRS);
+        
+        final ViewType currentViewType = getPyramidalModel().getPackMode();
         
         final int xAxis = CRSUtilities.firstHorizontalAxis(wantedCRS);
         final int yAxis = xAxis +1;
@@ -456,7 +467,7 @@ public class PyramidalModelReader extends GridCoverageReader{
             } catch (DataStoreException ex) {
                 throw new CoverageStoreException(ex.getMessage(),ex);
             }
-
+            int i = 0;
             while(true){
                 Object obj = null;
                 try {
@@ -490,21 +501,39 @@ public class PyramidalModelReader extends GridCoverageReader{
                     }else{
                         ImageReader reader = null;
                         try {
-                            reader = tile.getImageReader();
+                            reader    = tile.getImageReader();
                             tileImage = reader.read(tile.getImageIndex());
                         } catch (IOException ex) {
                             throw new CoverageStoreException(ex.getMessage(),ex);
-                        }finally{
+                        } finally {
                             ImageIOUtilities.releaseReader(reader);
                         }
                     }
                     
-                    if(image == null){
+//                        try {
+//                            ImageIO.write(tileImage, "tiff", new File("/home/rmarechal/Documents/osmTile/imgBefore"+i+".tiff"));
+//                        } catch (IOException ex) {
+//                            Logger.getLogger(PyramidalModelReader.class.getName()).log(Level.SEVERE, null, ex);
+//                        }
+                    //-- if photographic transform ARGB
+                    if (ViewType.PHOTOGRAPHIC.equals(currentViewType)) {
+                        //-- transform argb
+                        tileImage = forceAlpha(tileImage);
+                        
+//                        try {
+//                            ImageIO.write(tileImage, "tiff", new File("/home/rmarechal/Documents/osmTile/imgAfter"+(i++)+".tiff"));
+//                        } catch (IOException ex) {
+//                            Logger.getLogger(PyramidalModelReader.class.getName()).log(Level.SEVERE, null, ex);
+//                        }
+                    }
+                    
+                    
+                    if (image == null) {
                         image = BufferedImages.createImage(
                                 (int)(tileMaxCol-tileMinCol)*tileSize.width, 
                                 (int)(tileMaxRow-tileMinRow)*tileSize.height, tileImage);
                     }
-
+                    
                     ((BufferedImage)image).getRaster().setDataElements(offset.x, offset.y, tileImage.getData());
                     //we consider all images have the same data model
                     //g2d.drawRenderedImage(tileImage, new AffineTransform(1, 0, 0, 1, offset.x, offset.y));
@@ -536,8 +565,24 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         return gcb.build();
     }
+    
+     /**
+     * Add an alpha band to the image and remove any black border if asked.
+     *
+     * TODO, this could be done more efficiently by adding an ImageLayout hints
+     * when doing the coverage reprojection. but hints can not be passed currently.
+     */
+    private static RenderedImage forceAlpha(RenderedImage img) {
+        if (!img.getColorModel().hasAlpha()) {
+            //Add alpha channel
+            final BufferedImage buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
+            img = buffer;
+        }
+        return img;
+    }
 
-    private GridCoverage readCube(List<GridMosaic> mosaics, Envelope wantedEnv, boolean deferred) throws CoverageStoreException{
+    private GridCoverage readCube(List<GridMosaic> mosaics, Envelope wantedEnv, boolean deferred) throws CoverageStoreException, DataStoreException{
         //regroup mosaic by hierarchy cubes
         final TreeMap groups = new TreeMap();
         for(GridMosaic mosaic : mosaics){
@@ -592,7 +637,7 @@ public class PyramidalModelReader extends GridCoverageReader{
      * @throws CoverageStoreException
      */
     private GridCoverage rebuildCoverage(TreeMap<Double,Object> groups, Envelope wantedEnv, boolean deferred, int axisIndex)
-            throws CoverageStoreException {
+            throws CoverageStoreException, DataStoreException {
 
         final CoordinateReferenceSystem crs = wantedEnv.getCoordinateReferenceSystem();
         final CoordinateSystem cs = crs.getCoordinateSystem();

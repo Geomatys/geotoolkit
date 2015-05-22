@@ -23,6 +23,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.awt.image.renderable.ParameterBlock;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
+import javax.imageio.ImageIO;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.LookupTableJAI;
@@ -113,11 +116,13 @@ import org.opengis.style.SelectedChannelType;
 import org.opengis.style.ShadedRelief;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.process.coverage.statistics.StatisticOp;
 import org.geotoolkit.process.coverage.statistics.Statistics;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
+import org.opengis.coverage.grid.GridCoverage;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -158,6 +163,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             GridCoverage2D elevationCoverage = getObjectiveElevationCoverage(projectedCoverage);
             final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
             final CoverageReference ref = coverageLayer.getCoverageReference();
+            
+            assert ref != null : "CoverageMapLayer.getCoverageReference() contract don't allow null pointeur.";
 
             if (dataCoverage == null) {
                 //LOGGER.log(Level.WARNING, "RasterSymbolizer : Reprojected coverage is null.");
@@ -211,7 +218,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             // 4 - Apply style                                                //
             ////////////////////////////////////////////////////////////////////
 
-            RenderedImage dataImage = applyStyle(ref, dataCoverage, elevationCoverage, coverageLayer.getElevationModel(), sourceSymbol, hints);
+//            RenderedImage dataImage = dataCoverage.getRenderedImage();
+            RenderedImage dataImage = applyStyle(ref, dataCoverage, elevationCoverage, sourceSymbol);
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
 
             ////////////////////////////////////////////////////////////////////
@@ -260,9 +268,242 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         } catch (Exception e) {
             LOGGER.log(Level.WARNING,"Portrayal exception: "+e.getMessage(),e);
         }
+    }    
+    
+    /**
+     * Apply style on current coverage.<br><br>
+     * 
+     * Style application follow way given by 
+     * <a href="http://portal.opengeospatial.org/files/?artifact_id=16700">OpenGIS_Symbology_Encoding_Implementation_Specification</a> sheet 32.
+     * 
+     * @param ref needed to compute statistics from internal metadata in case where missing informations.
+     * @param coverage current styled coverage.
+     * @param elevationCoverage needed object to generate shaded relief, {àcode null} if none.
+     * @param styleElement the {@link RasterSymbolizer} which contain styles properties.
+     * @return styled coverage representation.
+     * @throws ProcessException if problem during apply Color map or shaded relief styles.
+     * @throws FactoryException if problem during apply shaded relief style.
+     * @throws TransformException if problem during apply shaded relief style.
+     * @throws PortrayalException if problem during apply contrast enhancement style.
+     * @see #applyColorMapStyle(org.geotoolkit.coverage.CoverageReference, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer) 
+     * @see #applyShadedRelief(java.awt.image.RenderedImage, org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer) 
+     * @see #applyContrastEnhancement(java.awt.image.RenderedImage, org.opengis.style.RasterSymbolizer) 
+     */
+    public static RenderedImage applyStyle(CoverageReference ref, GridCoverage2D coverage, 
+            GridCoverage2D elevationCoverage,
+            final RasterSymbolizer styleElement) 
+            throws ProcessException, FactoryException, TransformException, PortrayalException 
+             {
+     
+        RenderedImage image = applyColorMapStyle(ref, coverage, styleElement);
+        image = applyShadedRelief(image, coverage, elevationCoverage, styleElement);
+        image = applyContrastEnhancement(image, styleElement);
+        return image;
+    }
+    
+    /**
+     * Returns contrast enhancement modified image.
+     * 
+     * @param image worked image.
+     * @param styleElement the {@link RasterSymbolizer} which contain contrast enhancement properties.
+     * @return contrast enhancement modified image.
+     * @throws PortrayalException if problem during gamma value application
+     * @see #brigthen(java.awt.image.RenderedImage, int) 
+     */
+    private static RenderedImage applyContrastEnhancement(RenderedImage image, final RasterSymbolizer styleElement) 
+            throws PortrayalException {
+        ArgumentChecks.ensureNonNull("image", image);
+        ArgumentChecks.ensureNonNull("styleElement", styleElement);
+         //-- contrast enhancement -------------------
+        final ContrastEnhancement ce = styleElement.getContrastEnhancement();
+        if(ce != null && image.getColorModel() instanceof ComponentColorModel){
+
+            // histogram/normalize adjustment ----------------------------------
+            final ContrastMethod method = ce.getMethod();
+            if (ContrastMethod.HISTOGRAM.equals(method)) {
+                image = equalize(image);
+            } else if(ContrastMethod.NORMALIZE.equals(method)) {
+                image = normalize(image);
+            }
+
+            // gamma correction ------------------------------------------------
+            final Double gamma = ce.getGammaValue().evaluate(null, Double.class);
+            if (gamma != null && gamma != 1) {
+                //Specification : page 35
+                // A “GammaValue” tells how much to brighten (values greater than 1.0) or dim (values less than 1.0) an image.
+                image = brigthen(image, (int) ((gamma - 1) * 255f));
+            }
+        }
+        return image;
+    }
+    
+    /**
+     * Apply shaded relief on the image parameter from coverage geographic properties and elevation coverage properties.
+     * 
+     * @param colorMappedImage image result issue from {@link #applyColorMapStyle(org.geotoolkit.coverage.CoverageReference, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer) }
+     * @param coverage base coverage 
+     * @param elevationCoverage elevation coverage if exist, should be {@code null}, 
+     * if {@code null} image is just transformed into {@link BufferedImage#TYPE_INT_ARGB}.
+     * @param styleElement the {@link RasterSymbolizer} which contain shaded relief properties.
+     * @return image with shadow.
+     * @throws FactoryException if problem during DEM generation.
+     * @throws TransformException if problem during DEM generation.
+     * @see #getDEMCoverage(org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.coverage.grid.GridCoverage2D) 
+     */
+    private static RenderedImage applyShadedRelief(RenderedImage colorMappedImage, final GridCoverage2D coverage, 
+            final GridCoverage2D elevationCoverage, final RasterSymbolizer styleElement) 
+            throws FactoryException, TransformException, ProcessException {
+        ArgumentChecks.ensureNonNull("colorMappedImage", colorMappedImage);
+        ArgumentChecks.ensureNonNull("coverage", coverage);
+        ArgumentChecks.ensureNonNull("styleElement", styleElement);
+        
+        //-- shaded relief---------------------------------------------------------
+        final ShadedRelief shadedRel = styleElement.getShadedRelief();
+        shadingCase:
+        if (shadedRel != null && shadedRel.getReliefFactor() != null) {
+            final double factor = shadedRel.getReliefFactor().evaluate(null, Double.class);
+            if (factor== 0.0) break shadingCase;
+
+            //BUG ? When using the grid coverage builder the color model is changed
+            if (colorMappedImage.getColorModel() instanceof CompatibleColorModel) {
+                final BufferedImage bi = new BufferedImage(colorMappedImage.getWidth(), colorMappedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                bi.createGraphics().drawRenderedImage(colorMappedImage, new AffineTransform());
+                colorMappedImage = bi;
+            }
+
+            //-- ReliefShadow creating --------------------
+            final GridCoverage2D mntCoverage;
+            if (elevationCoverage != null) {
+                mntCoverage = getDEMCoverage(coverage, elevationCoverage);
+            } else {
+                break shadingCase;
+                //does not have a nice result, still better then nothing
+                //but is really slow to calculate, disabled for now.
+                //mntCoverage = getGeoideCoverage(coverage);
+            }
+
+            final GridCoverageBuilder gcb = new GridCoverageBuilder();
+            gcb.setGridGeometry(coverage.getGridGeometry());
+            gcb.setRenderedImage(colorMappedImage);
+            gcb.setName("tempimg");
+            final GridCoverage2D ti = gcb.getGridCoverage2D();
+
+            final MathTransform1D trs = (MathTransform1D) MathTransforms.linear(factor, 0);
+            final org.geotoolkit.process.coverage.shadedrelief.ShadedRelief proc = new org.geotoolkit.process.coverage.shadedrelief.ShadedRelief(
+                    ti, mntCoverage, trs);
+            final ParameterValueGroup res = proc.call();
+            final GridCoverage2D shaded = (GridCoverage2D) res.parameter(ShadedReliefDescriptor.OUT_COVERAGE_PARAM_NAME).getValue();
+            colorMappedImage = shaded.getRenderedImage();
+        }
+        return colorMappedImage;
+    }
+    
+    /**
+     * Apply {@linkplain RasterSymbolizer#getColorMap() color map style properties} on current coverage if need.<br><br>
+     * 
+     * In case where no {@linkplain ColorMap#getFunction() sample to geophysic} 
+     * transformation function is available and coverage is define as {@link ViewType#GEOPHYSICS} 
+     * a way is find to avoid empty result, like follow : <br>
+     * The first band from {@linkplain GridCoverage2D#getRenderedImage() coverage image} is selected
+     * and a grayscale color model is apply from {@linkplain ImageStatistics computed image statistic}.
+     * 
+     * @param ref needed to compute statistics from internal metadata in case where missing informations.
+     * @param coverage color map style apply on this object.
+     * @param styleElement the {@link RasterSymbolizer} which contain color map properties.
+     * @return image which is the coverage exprimate into {@link ViewType#PHOTOGRAPHIC}.
+     * @throws ProcessException if problem during statistic problem.
+     */
+    private static RenderedImage applyColorMapStyle(final CoverageReference ref, 
+            GridCoverage2D coverage,final RasterSymbolizer styleElement) throws ProcessException {
+        ArgumentChecks.ensureNonNull("CoverageReference", ref);
+        ArgumentChecks.ensureNonNull("coverage", coverage);
+        ArgumentChecks.ensureNonNull("styleElement", styleElement);
+        
+        RenderedImage resultImage;
+
+        //Recolor coverage -----------------------------------------------------
+        ColorMap recolor = styleElement.getColorMap();
+        //cheat on the colormap if we have only one band and no colormap
+        recolorCase:
+        if ((recolor == null || recolor.getFunction() == null)) {
+            RenderedImage ri = coverage.getRenderedImage();
+            if ((ri.getColorModel() instanceof IndexColorModel) 
+             || !hasView(coverage, ViewType.GEOPHYSICS)) {
+                //image has it's own color model
+                break recolorCase;
+            }
+            
+            LOGGER.log(Level.FINE, "applyColorMapStyle : fallBack way is choosen. GrayScale interpretation of the first coverage image band.");
+            
+            ri = coverage.view(ViewType.GEOPHYSICS).getRenderedImage();
+            
+            ImageStatistics analyse = ImageStatistics.transform(ref.getMetadata());
+            
+            if (analyse == null) analyse = Statistics.analyse(ri, true);
+            
+            final ImageStatistics.Band band0 = analyse.getBand(0);
+            final List<InterpolationPoint> values = new ArrayList<>();
+            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(Float.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0,0,0,0))));
+            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(band0.getMin(), GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
+            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(band0.getMax(), GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
+            final Expression lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+            final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
+            final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
+                    lookup, values, Method.COLOR, Mode.LINEAR, fallback);
+
+            recolor = GO2Utilities.STYLE_FACTORY.colorMap(function);
+        }
+        
+        //-- apply recolor function "sample to geophysic", sample interpretationµ.
+        if (recolor != null 
+         && recolor.getFunction() != null
+         && hasView(coverage, ViewType.GEOPHYSICS)) {
+            //color map is applied on geophysics view
+            coverage    = coverage.view(ViewType.GEOPHYSICS);
+            resultImage = coverage.getRenderedImage();
+
+            final Function fct = recolor.getFunction();
+            resultImage        = recolor(resultImage, fct);
+        } else {
+            //no color map, used the default image rendered view
+            // coverage = coverage.view(ViewType.RENDERED);
+            if (coverage.getViewTypes().contains(ViewType.PHOTOGRAPHIC)) {
+                resultImage = coverage.view(ViewType.PHOTOGRAPHIC).getRenderedImage();
+                resultImage = forceAlpha(resultImage);
+                if (resultImage instanceof WritableRenderedImage) {
+                    removeBlackBorder((WritableRenderedImage)resultImage); 
+                }
+            } else {
+                resultImage = coverage.view(ViewType.RENDERED).getRenderedImage();
+            }
+        }
+        assert resultImage != null : "applyColorMapStyle : image can't be null.";
+        return resultImage;
     }
 
-    private static int getBandIndice(String name, Coverage coverage) throws PortrayalException{
+    /**
+     * Returns {@code true} if {@link GridCoverage2D} own a view given in parameter, else {@code false}.<br><br>
+     * 
+     * Note : if {@link GridCoverage2D#getViewTypes() } is {@code null} return {@code false}.
+     * 
+     * @param coverage 
+     * @param expectedView expected view type.
+     * @return {@code true} if coverage should be read with expected view, else {@code false}.
+     * @see GridCoverage2D#getViewTypes() 
+     * @see ViewType
+     */
+    private static boolean hasView(final GridCoverage2D coverage, final ViewType expectedView) {
+        ArgumentChecks.ensureNonNull("coverage", coverage);
+        ArgumentChecks.ensureNonNull("expectedView", expectedView);
+        final Set<ViewType> covViewTypes = coverage.getViewTypes();
+        if (covViewTypes == null) return false;
+        for (ViewType vt : coverage.getViewTypes()) 
+            if (vt.equals(expectedView)) return true;
+        
+        return false;
+    }
+    
+    private static int getBandIndice(final String name, final Coverage coverage) throws PortrayalException{
         try{
             return Integer.parseInt(name);
         }catch(NumberFormatException ex){
@@ -583,136 +824,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     // RenderedImage JAI image operations ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    /**
-     *
-     * @param coverage
-     * @param styleElement
-     * @param hints
-     * @return
-     * @throws PortrayalException
-     */
-    public static RenderedImage applyStyle(CoverageReference ref, GridCoverage2D coverage, GridCoverage2D elevationCoverage, final ElevationModel elevationModel, final RasterSymbolizer styleElement,
-                final RenderingHints hints) throws PortrayalException, ProcessException, FactoryException, TransformException, IOException {
-
-        //band select ----------------------------------------------------------
-        //works as a JAI operation
-        final int nbDim = coverage.getNumSampleDimensions();
-
-        RenderedImage image;
-
-        //Recolor coverage -----------------------------------------------------
-        ColorMap recolor = styleElement.getColorMap();
-        //cheat on the colormap if we have only one band and no colormap
-        recolorCase:
-        if((recolor==null || recolor.getFunction()==null) && nbDim<3){
-            RenderedImage ri = coverage.getRenderedImage();
-            if( (ri.getColorModel() instanceof IndexColorModel) && (recolor==null || recolor.getFunction()==null)){
-                //image has it's own color model
-                break recolorCase;
-            }
-            ri = coverage.view(ViewType.GEOPHYSICS).getRenderedImage();
-
-            ImageStatistics analyse = null;
-            if(ref!=null){
-                analyse = ImageStatistics.transform(ref.getMetadata());
-            }
-            if(analyse==null){
-                //calculate it
-                analyse = Statistics.analyse(ri, true);
-            }
-            final ImageStatistics.Band band0 = analyse.getBand(0);
-            final List<InterpolationPoint> values = new ArrayList<>();
-            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(Float.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0,0,0,0))));
-            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(band0.getMin(), GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
-            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(band0.getMax(), GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
-            final Expression lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-            final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
-            final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
-                    lookup, values, Method.COLOR, Mode.LINEAR, fallback);
-
-            recolor = GO2Utilities.STYLE_FACTORY.colorMap(function);
-        }
-        if (recolor != null && recolor.getFunction() != null) {
-            //color map is applied on geophysics view
-            coverage = coverage.view(ViewType.GEOPHYSICS);
-            image = coverage.getRenderedImage();
-
-            final Function fct = recolor.getFunction();
-            image = recolor(image, fct);
-        } else {
-            //no color map, used the default image rendered view
-            // coverage = coverage.view(ViewType.RENDERED);
-            if (coverage.getViewTypes().contains(ViewType.PHOTOGRAPHIC)) {
-                image = coverage.view(ViewType.PHOTOGRAPHIC).getRenderedImage();
-                image = forceAlpha(image);
-                if (image instanceof WritableRenderedImage) {
-                    removeBlackBorder((WritableRenderedImage)image);
-                }
-            } else {
-                image = coverage.view(ViewType.RENDERED).getRenderedImage();
-            }
-        }
-
-        //shaded relief---------------------------------------------------------
-        final ShadedRelief shadedRel = styleElement.getShadedRelief();
-        shadingCase:
-        if(shadedRel!=null && shadedRel.getReliefFactor()!= null) {
-            final double factor = shadedRel.getReliefFactor().evaluate(null, Double.class);
-            if(factor== 0.0) break shadingCase;
-
-            //BUG ? When using the grid coverage builder the color model is changed
-            if(image.getColorModel() instanceof CompatibleColorModel){
-                final BufferedImage bi = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                bi.createGraphics().drawRenderedImage(image, new AffineTransform());
-                image = bi;
-            }
-
-            //ReliefShadow creating
-            final GridCoverage2D mntCoverage;
-            if (elevationCoverage != null) {
-                mntCoverage = getDEMCoverage(coverage, elevationCoverage);
-            } else {
-                break shadingCase;
-                //does not have a nice result, still better then nothing
-                //but is really slow to calculate, disabled for now.
-                //mntCoverage = getGeoideCoverage(coverage);
-            }
-
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setGridGeometry(coverage.getGridGeometry());
-            gcb.setRenderedImage(image);
-            gcb.setName("tempimg");
-            final GridCoverage2D ti = gcb.getGridCoverage2D();
-
-            final MathTransform1D trs = (MathTransform1D) MathTransforms.linear(factor, 0);
-            final org.geotoolkit.process.coverage.shadedrelief.ShadedRelief proc = new org.geotoolkit.process.coverage.shadedrelief.ShadedRelief(
-                    ti, mntCoverage, trs);
-            final ParameterValueGroup res = proc.call();
-            final GridCoverage2D shaded = (GridCoverage2D) res.parameter(ShadedReliefDescriptor.OUT_COVERAGE_PARAM_NAME).getValue();
-            image = shaded.getRenderedImage();
-        }
-
-        final ContrastEnhancement ce = styleElement.getContrastEnhancement();
-        if(ce != null && image.getColorModel() instanceof ComponentColorModel){
-
-            // histogram/normalize adjustment ----------------------------------
-            final ContrastMethod method = ce.getMethod();
-            if (ContrastMethod.HISTOGRAM.equals(method)) {
-                image = equalize(image);
-            } else if(ContrastMethod.NORMALIZE.equals(method)) {
-                image = normalize(image);
-            }
-
-            // gamma correction ------------------------------------------------
-            final Double gamma = ce.getGammaValue().evaluate(null, Double.class);
-            if (gamma != null && gamma != 1) {
-                //Specification : page 35
-                // A “GammaValue” tells how much to brighten (values greater than 1.0) or dim (values less than 1.0) an image.
-                image = brigthen(image, (int) ((gamma - 1) * 255f));
-            }
-        }
-        return image;
-    }
+    
 
     /**
      * {@inheritDoc }
@@ -987,6 +1099,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return JAI.create("matchcdf", fmt, CDFnorm);
     }
 
+    //-- indice de confiance 3/10 (cf:johann)
     private static RenderedImage brigthen(final RenderedImage image,final int brightness) throws PortrayalException{
         final ColorModel model = image.getColorModel();
 

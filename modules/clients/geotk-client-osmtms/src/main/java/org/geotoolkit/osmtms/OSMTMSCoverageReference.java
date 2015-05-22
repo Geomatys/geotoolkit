@@ -18,6 +18,7 @@ package org.geotoolkit.osmtms;
 
 import org.geotoolkit.coverage.*;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.feature.type.Name;
 
 /**
@@ -37,4 +38,15 @@ public class OSMTMSCoverageReference extends AbstractPyramidalCoverageReference 
         return ((OSMTileMapClient)store).getPyramidSet();
     }
 
+    /**
+     * Returns adapted {@link ViewType} for OSM TMS reference.
+     * The default associated view is {@link ViewType#PHOTOGRAPHIC}.
+     * 
+     * @return
+     * @throws DataStoreException 
+     */
+    @Override
+    public ViewType getPackMode() throws DataStoreException {
+        return ViewType.PHOTOGRAPHIC;
+    }
 }

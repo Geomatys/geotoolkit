@@ -317,7 +317,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             LOGGER.log(Level.FINE, strB.toString());
             return null;
         }
-
+        
         ////////////////////////////////////////////////////////////////////
         // 3 - Reproject data                                             //
         ////////////////////////////////////////////////////////////////////
