@@ -1198,6 +1198,28 @@ public final class DimapAccessor extends Static {
         return metadata;
     }
 
+    /**
+     * Extract imaging date from metadata tags {@code <IMAGING_DATE> and <IMAGING_TIME>}.
+     *
+     * @param doc dimap root Element
+     * @return a date or null if tags not found
+     */
+    public static Date getImagingDate(Element doc) {
+        final Element sceneSource = firstElement(doc, TAG_SCENE_SOURCE);
+
+        if (sceneSource != null) {
+            String imagingDate = textValueSafe(sceneSource, TAG_SCENE_IMAGING_DATE, String.class);
+            String imagingTime = textValueSafe(sceneSource, TAG_SCENE_IMAGING_TIME, String.class);
+
+            if (imagingDate != null && imagingTime != null) {
+                final ISODateParser dateParser = new ISODateParser();
+                return dateParser.parseToDate(imagingDate + "T" + imagingTime);
+            }
+
+        }
+        return null;
+    }
+
     public static Date getProductionDate(Element doc) {
         final Element production = firstElement(doc, TAG_PRODUCTION);
         return textValueSafe(production, TAG_DATASET_PRODUCTION_DATE, Date.class);

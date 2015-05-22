@@ -86,8 +86,10 @@ public class DimapExtension extends GeoTiffExtension {
 
         try {
             //temporal
-            final Date prodDate = DimapAccessor.getProductionDate(dimapNode);
-            GeoTiffExtension.setOrCreateSliceDimension(dimapMetadata, CommonCRS.Temporal.JAVA.crs(), prodDate.getTime());
+            final Date prodDate = DimapAccessor.getImagingDate(dimapNode);
+            if (prodDate != null) {
+                GeoTiffExtension.setOrCreateSliceDimension(dimapMetadata, CommonCRS.Temporal.JAVA.crs(), prodDate.getTime());
+            }
 
         } catch (FactoryException e) {
             throw new IOException(e.getMessage(), e);
