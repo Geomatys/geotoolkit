@@ -268,7 +268,7 @@ public abstract class StaxStreamReader extends AbstractConfigurable {
         };
 
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
+        factory.setNamespaceAware(false);
 
         final TransformerFactory trsFactory = TransformerFactory.newInstance();
         try {
