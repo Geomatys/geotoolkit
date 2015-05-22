@@ -1,0 +1,57 @@
+/* 
+    Style rules for filter edition and chaining panel.
+    Description of the component hierarchy : 
+    name --> javafx variable name
+    () --> component javafx class
+    [] --> component css class
+
+--> root (BorderPane) [filter-root]
+    --> top : addButton (Button) [header-button]
+    --> center : filterEditors (GridPane) [grid]
+        --> for each row {
+            --> joinChoice (ChoiceBox) [join-choice]
+            --> propertyChoice (ComboBox) [property-choice]
+            --> operatorChoice (ChoiceBox) [operator-choice]
+            --> editorPane (StackPane) [editor-pane]
+                --> ? - dynamic discovery -
+            --> removeButton (Button) [remove-button]
+        } 
+  
+    Created on : 22 mai 2015, 09:51:12
+    Author     : Alexis Manin (Geomatys)
+*/
+
+.filter-root {
+    -fx-padding: 5;
+}
+
+.header-button {
+    -fx-alignment: center;
+    -fx-border-radius: 12;
+    -fx-border-color: #AAAAAA;
+    -fx-background-radius: 12;
+    -fx-background-color: white;
+}
+
+.header-button:hover {
+    -fx-background-color: aliceblue;
+}
+
+.header-button:armed {
+    -fx-border-color: #AAAAAA;
+    -fx-background-color: #DDDDDD;
+}
+
+.grid {
+    -fx-hgap: 5;
+    -fx-vgap: 5;
+    -fx-padding: 5;
+}
+
+.join-choice, .operator-choice, .remove-button {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+    -fx-alignement: center;
+}
+
+.property-choice, .editor-pane {}

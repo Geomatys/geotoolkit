@@ -48,6 +48,7 @@ public abstract class FXComparableOperator implements FXFilterOperator {
             for (final FXValueEditor editor : FXValueEditor.getDefaultEditors()) {
                 if (editor.canHandle(tmpType)) {
                     final FXValueEditor editorCopy = editor.copy();
+                    editorCopy.setAttributeType(tmpType);
                     final Node node = editorCopy.getComponent();
                     EDITORS_IN_USE.put(node, editorCopy);
                     return Optional.of(node);

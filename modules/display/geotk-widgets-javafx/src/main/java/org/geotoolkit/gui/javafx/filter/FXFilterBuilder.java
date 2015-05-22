@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -109,8 +110,16 @@ public class FXFilterBuilder extends BorderPane {
      */
     public final BooleanBinding multipleRows;
     
+    /**
+     * A property to keep track of first edited filter.
+     */
+    protected final ObjectBinding<FilterBox> firstFilter = Bindings.valueAt(sandboxes, 0);
+    
     public FXFilterBuilder() {
         super();
+        
+        setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
+        setPrefSize(USE_COMPUTED_SIZE, USE_COMPUTED_SIZE);
         
         // String converters
         propertyConverter = new StringConverter<PropertyType>() {
@@ -147,9 +156,9 @@ public class FXFilterBuilder extends BorderPane {
         filterEditors = new GridPane();
         filterEditors.getColumnConstraints().addAll(
                 new ColumnConstraints(USE_COMPUTED_SIZE, USE_COMPUTED_SIZE, USE_PREF_SIZE, Priority.NEVER, HPos.CENTER, true),
-                new ColumnConstraints(0, USE_COMPUTED_SIZE, USE_PREF_SIZE, Priority.SOMETIMES, HPos.CENTER, true),
+                new ColumnConstraints(0, USE_COMPUTED_SIZE, USE_PREF_SIZE, Priority.NEVER, HPos.CENTER, true),
                 new ColumnConstraints(USE_PREF_SIZE, USE_COMPUTED_SIZE, USE_PREF_SIZE, Priority.NEVER, HPos.CENTER, true),
-                new ColumnConstraints(0, USE_COMPUTED_SIZE, Double.MAX_VALUE, Priority.SOMETIMES, HPos.CENTER, true),
+                new ColumnConstraints(0, USE_COMPUTED_SIZE, Double.MAX_VALUE, Priority.ALWAYS, HPos.CENTER, true),
                 new ColumnConstraints(USE_PREF_SIZE, USE_COMPUTED_SIZE, USE_PREF_SIZE, Priority.NEVER, HPos.CENTER, true)
         );
         multipleRows = Bindings.size(sandboxes).greaterThan(1);
@@ -157,9 +166,16 @@ public class FXFilterBuilder extends BorderPane {
         addFilter = new Button(null, new ImageView(ICON_PLUS));
         addFilter.visibleProperty().bind(Bindings.isNotEmpty(availableProperties));
         addFilter.setOnAction(event -> addFilterRow());
-        
+                
         setTop(addFilter);
         setCenter(filterEditors);
+        
+        // CSS rules
+        getStylesheets().add(FXFilterBuilder.class.getResource("/org/geotoolkit/gui/javafx/filter/FXFilterBuilder.css").toExternalForm());
+        getStyleClass().add("filter-root");
+        addFilter.getStyleClass().add("header-button");
+        filterEditors.getStyleClass().add("grid");
+        
     }
     
     /**
@@ -215,25 +231,33 @@ public class FXFilterBuilder extends BorderPane {
     protected void addFilterRow() {
         
         // TODO : make international label for join types.
-        final ChoiceBox<JOIN_TYPE> joinType = new ChoiceBox<>(JOIN_TYPES);
+        final ChoiceBox<JOIN_TYPE> joinChoice = new ChoiceBox<>(JOIN_TYPES);
         final ComboBox<PropertyType> propertyChoice = createPropertyChoice();
         final ObservableList<FXFilterOperator> operators = FXCollections.observableArrayList();
         final ChoiceBox<FXFilterOperator> operatorChoice = new ChoiceBox<>(operators);
         final StackPane editorPane = new StackPane();
         final Button removeButton = new Button(null, new ImageView(ICON_MINUS));
         
-        // bind remove button and join type visibility to number of rows. (only one row left = no join or deletion).
-        joinType.getSelectionModel().select(JOIN_TYPE.AND);
-        joinType.visibleProperty().bind(multipleRows);
-        removeButton.visibleProperty().bind(multipleRows);
+        // CSS rules
+        joinChoice.getStyleClass().add("join-choice");
+        propertyChoice.getStyleClass().add("property-choice");
+        operatorChoice.getStyleClass().add("operator-choice");
+        editorPane.getStyleClass().add("editor-pane");
+        removeButton.getStyleClass().add("remove-button");
+        
         
         operatorChoice.setConverter(operatorConverter);
+        operatorChoice.disableProperty().bind(propertyChoice.valueProperty().isNull());
         
-        final FilterBox filterBox = new FilterBox(joinType.valueProperty(), propertyChoice.valueProperty(), operatorChoice.valueProperty(), editorPane);
-        filterBox.propertyType.addListener(new PropertyChoiceListener(operators));
-                
+        final FilterBox filterBox = new FilterBox(joinChoice.valueProperty(), propertyChoice.valueProperty(), operatorChoice.valueProperty(), editorPane);
+        filterBox.propertyType.addListener(new PropertyChoiceListener(operators));   
+        
+        // bind remove button and join type visibility to number of rows (only one row left = no join or deletion).
+        joinChoice.getSelectionModel().select(JOIN_TYPE.AND);
+        joinChoice.visibleProperty().bind(firstFilter.isNotEqualTo(filterBox));            
+        removeButton.visibleProperty().bind(multipleRows);    
         removeButton.setOnAction(event -> {
-            filterEditors.getChildren().removeAll(joinType, propertyChoice, operatorChoice, editorPane, removeButton);
+            filterEditors.getChildren().removeAll(joinChoice, propertyChoice, operatorChoice, editorPane, removeButton);
             // Delete filter entry
             sandboxes.remove(filterBox);
         });
@@ -247,7 +271,7 @@ public class FXFilterBuilder extends BorderPane {
             newRowIndice = GridPane.getRowIndex(box.filterEditorContainer) + 1;
         }
         
-        filterEditors.addRow(newRowIndice, joinType, propertyChoice, operatorChoice, editorPane, removeButton);
+        filterEditors.addRow(newRowIndice, joinChoice, propertyChoice, operatorChoice, editorPane, removeButton);
         sandboxes.add(filterBox);
     }
     
