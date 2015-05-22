@@ -30,19 +30,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
-import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
@@ -53,8 +48,7 @@ import javax.xml.stream.util.StreamReaderDelegate;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stax.StAXSource;
-import org.geotoolkit.util.DomUtilities;
-import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
@@ -253,57 +247,53 @@ public abstract class StaxStreamReader extends AbstractConfigurable {
      *
      * @return Element 
      */
-    protected List<Node> readAsDom(final String tagName) throws XMLStreamException{
-        if(true) throw new XMLStreamException("Not supported yet.");
+    protected Document readAsDom(final String tagName) throws XMLStreamException{
+        
+        final XMLStreamReader limitedReader = new StreamReaderDelegate(reader){
+            boolean finished = false;
 
-
-        //TODO this is just a draft, we need a way to pass down namespaces and stop reading on tag end for each sub node
-        final List<Node> nodes = new ArrayList<>();
-
-        while(reader.hasNext()){
-
-            if(START_ELEMENT == reader.next()){
-
-                final XMLStreamReader limitedReader = new StreamReaderDelegate(reader){
-                    @Override
-                    public boolean hasNext() throws XMLStreamException {
-                        return super.hasNext();
-                    }
-                };
-
-                final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                factory.setNamespaceAware(true);
-                final TransformerFactory trsFactory = TransformerFactory.newInstance();
-                try {
-                    final DocumentBuilder builder = factory.newDocumentBuilder();
-                    final Transformer idTransform = trsFactory.newTransformer();
-                    final Source input = new StAXSource(limitedReader);
-                    final PipedOutputStream ps = new PipedOutputStream();
-                    final PipedInputStream is = new PipedInputStream(ps);
-                    final Result output = new StreamResult(ps);
-                    idTransform.transform(input, output);
-                    ps.close();
-                    nodes.add(builder.parse(is));
-                } catch (TransformerConfigurationException e) {
-                    throw new XMLStreamException(e.getMessage());
-                } catch (TransformerFactoryConfigurationError e) {
-                    throw new XMLStreamException(e.getMessage());
-                } catch (IOException e) {
-                    throw new XMLStreamException(e.getMessage());
-                } catch (TransformerException e) {
-                    throw new XMLStreamException(e.getMessage());
-                } catch (SAXException e) {
-                    throw new XMLStreamException(e.getMessage());
-                } catch (ParserConfigurationException e) {
-                    throw new XMLStreamException(e.getMessage());
-                }
-            }else if(END_ELEMENT == reader.next() &&
-                tagName.equalsIgnoreCase(reader.getLocalName())){
-                break;
+            @Override
+            public boolean hasNext() throws XMLStreamException {
+                if(finished) return false;
+                return super.hasNext();
             }
+
+            @Override
+            public int next() throws XMLStreamException {
+                int t = super.next();
+                finished = END_ELEMENT == t && tagName.equalsIgnoreCase(reader.getLocalName());
+                return t;
+            }
+
+        };
+
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+
+        final TransformerFactory trsFactory = TransformerFactory.newInstance();
+        try {
+            final DocumentBuilder builder = factory.newDocumentBuilder();
+            final Transformer idTransform = trsFactory.newTransformer();
+            final Source input = new StAXSource(limitedReader);
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            final Result output = new StreamResult(out);
+            idTransform.transform(input, output);
+            final Document doc = builder.parse(new ByteArrayInputStream(out.toByteArray()));
+            return doc;
+        } catch (TransformerConfigurationException e) {
+            throw new XMLStreamException(e.getMessage());
+        } catch (TransformerFactoryConfigurationError e) {
+            throw new XMLStreamException(e.getMessage());
+        } catch (IOException e) {
+            throw new XMLStreamException(e.getMessage());
+        } catch (TransformerException e) {
+            throw new XMLStreamException(e.getMessage());
+        } catch (SAXException e) {
+            throw new XMLStreamException(e.getMessage());
+        } catch (ParserConfigurationException e) {
+            throw new XMLStreamException(e.getMessage());
         }
 
-        return nodes;
     }
 
 }

@@ -22,7 +22,6 @@ import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -34,10 +33,21 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
+import org.apache.cxf.staxutils.StaxUtils;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.feature.ComplexAttribute;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.op.AliasOperation;
+import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.GeometryType;
+import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.feature.type.PropertyType;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -48,26 +58,13 @@ import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.xml.StaxStreamWriter;
-import org.geotoolkit.feature.ComplexAttribute;
-
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.op.AliasOperation;
-import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.feature.type.OperationDescriptor;
-import org.geotoolkit.feature.type.OperationType;
-import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.w3c.dom.Document;
 
 
 /**
@@ -446,45 +443,52 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         } else if (!(typeA instanceof GeometryType)) {
 
-            //simple type
-            String value = (valueA instanceof Property) ? null : Utils.getStringValue(valueA);
-            if (valueA instanceof Property || value != null || (value == null && !a.isNillable())) {
+            if(valueA instanceof Document){
+                //special case for xml documents
+                final Document doc = (Document) valueA;
+                StaxUtils.writeElement(doc.getDocumentElement(), writer, false);
 
-                if ((nameProperty.equals("name") || nameProperty.equals("description")) && !gmlNamespace.equals(namespaceProperty)) {
-                    namespaceProperty = gmlNamespace;
-                    LOGGER.finer("the property name and description of a feature must have the GML namespace");
-                }
-                if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
-                    writer.writeStartElement(namespaceProperty, nameProperty);
-                } else {
-                    writer.writeStartElement(nameProperty);
-                }
+            }else{
+                //simple type
+                String value = (valueA instanceof Property) ? null : Utils.getStringValue(valueA);
+                if (valueA instanceof Property || value != null || (value == null && !a.isNillable())) {
 
-                if(valueA instanceof Property){
-                    //some types, like Observation & Measurement have Object types which can be
-                    //properties again, we ensure to write then as proper xml tags
-                    final Property prop = (Property) valueA;
-                    final Name propName = prop.getName();
-                    final String namespaceURI = propName.getNamespaceURI();
-                    final String localPart = propName.getLocalPart();
-                    if (namespaceURI != null && !namespaceURI.isEmpty()) {
-                        writer.writeStartElement(namespaceURI, localPart);
-                    } else {
-                        writer.writeStartElement(localPart);
+                    if ((nameProperty.equals("name") || nameProperty.equals("description")) && !gmlNamespace.equals(namespaceProperty)) {
+                        namespaceProperty = gmlNamespace;
+                        LOGGER.finer("the property name and description of a feature must have the GML namespace");
                     }
-                    if(prop instanceof ComplexAttribute){
-                        writeComplexProperties((ComplexAttribute)prop);
-                    }else{
-                        value = Utils.getStringValue(prop.getValue());
-                        if(value!=null){
-                            writer.writeCharacters(value);
+                    if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
+                        writer.writeStartElement(namespaceProperty, nameProperty);
+                    } else {
+                        writer.writeStartElement(nameProperty);
+                    }
+
+                    if(valueA instanceof Property){
+                        //some types, like Observation & Measurement have Object types which can be
+                        //properties again, we ensure to write then as proper xml tags
+                        final Property prop = (Property) valueA;
+                        final Name propName = prop.getName();
+                        final String namespaceURI = propName.getNamespaceURI();
+                        final String localPart = propName.getLocalPart();
+                        if (namespaceURI != null && !namespaceURI.isEmpty()) {
+                            writer.writeStartElement(namespaceURI, localPart);
+                        } else {
+                            writer.writeStartElement(localPart);
                         }
+                        if(prop instanceof ComplexAttribute){
+                            writeComplexProperties((ComplexAttribute)prop);
+                        }else{
+                            value = Utils.getStringValue(prop.getValue());
+                            if(value!=null){
+                                writer.writeCharacters(value);
+                            }
+                        }
+                        writer.writeEndElement();
+                    }else if (value != null) {
+                        writer.writeCharacters(value);
                     }
                     writer.writeEndElement();
-                }else if (value != null) {
-                    writer.writeCharacters(value);
                 }
-                writer.writeEndElement();
             }
 
         // we add the geometry

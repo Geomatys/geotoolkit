@@ -80,6 +80,7 @@ import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.OperationDescriptor;
 import org.geotoolkit.feature.type.OperationType;
+import org.w3c.dom.Document;
 
 
 /**
@@ -416,9 +417,13 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             toTagEnd(propName.getLocalPart());
                             continue;
                         } else if(featureType.getDescriptor("_any")!=null){
-                            //TODO make a string or dom of all the content ?
-                            //final List<Node> nodes = readAsDom(propName.getLocalPart());
-                            toTagEnd(propName.getLocalPart());
+                            //convert the content ad a dom node
+                            final Document doc = readAsDom(propName.getLocalPart());
+                            final AttributeDescriptor pd = (AttributeDescriptor) featureType.getDescriptor("_any");
+                            final Attribute att = FF.createAttribute(doc, pd, null);
+                            namedProperties.put(pd.getName(),att);
+                            propertyContainer.add(att);
+                            doNext = false;
                             continue;
                         } else {
                             throw new IllegalArgumentException("Unexpected attribute:" + propName + " not found in :\n" + featureType);
