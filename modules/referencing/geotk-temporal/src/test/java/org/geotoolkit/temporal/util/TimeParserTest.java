@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util;
+package org.geotoolkit.temporal.util;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import junit.framework.TestCase;
+import org.geotoolkit.temporal.util.TimeParser;
 import org.junit.Test;
 
 

@@ -40,7 +40,7 @@ import org.apache.sis.referencing.datum.DefaultEngineeringDatum;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.PeriodUtilities;
+import org.geotoolkit.temporal.util.PeriodUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;

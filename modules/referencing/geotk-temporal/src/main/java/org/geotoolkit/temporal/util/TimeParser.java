@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util;
+package org.geotoolkit.temporal.util;
 
 import java.text.DateFormat;
 import java.text.ParsePosition;

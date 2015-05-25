@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util;
+package org.geotoolkit.temporal.util;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeSet;
+
+import org.geotoolkit.temporal.util.PeriodUtilities;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
