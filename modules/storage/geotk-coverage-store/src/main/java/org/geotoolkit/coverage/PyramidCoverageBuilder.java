@@ -1047,8 +1047,8 @@ public class PyramidCoverageBuilder {
      */
     private boolean isDimensionCompatible(GridSampleDimension gsd1, GridSampleDimension gsd2) {
 
-        NumberRange range1 = NumberRange.create(gsd1.getMinimumValue(), true, gsd1.getMaximumValue(), true);
-        NumberRange range2 = NumberRange.create(gsd2.getMinimumValue(), true, gsd2.getMaximumValue(), true);
+        NumberRange range1 = gsd1.getRange();
+        NumberRange range2 = gsd2.getRange();
 
         if (!range1.containsAny(range2)) return false;
 
@@ -1058,9 +1058,11 @@ public class PyramidCoverageBuilder {
         if (!Arrays.equals(pNoData, cNoData)) return false;
 
         //compare pixelSize and ColorSpace type
-        if (gsd1.getColorModel() != null && gsd2.getColorModel() != null) {
-            if (gsd1.getColorModel().getPixelSize() != gsd2.getColorModel().getPixelSize() ||
-                    gsd1.getColorModel().getColorSpace().getType() != gsd2.getColorModel().getColorSpace().getType()) {
+        final ColorModel pCM = gsd1.getColorModel();
+        final ColorModel cCM = gsd2.getColorModel();
+        if (pCM != null && cCM != null) {
+            if (pCM.getPixelSize() != cCM.getPixelSize() ||
+                    pCM.getColorSpace().getType() != cCM.getColorSpace().getType()) {
                 return false;
             }
         }
