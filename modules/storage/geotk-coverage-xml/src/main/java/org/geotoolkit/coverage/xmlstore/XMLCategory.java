@@ -154,7 +154,7 @@ public class XMLCategory {
         }
         final Category cat;
         if (Double.isNaN(lower) || lower == upper) {
-            cat = new Category(name, cols[0], lower);
+            cat = new Category(name, cols[0], range);
         } else {
             cat = new Category(name, cols, range, sampleToGeophysics);//-- sampletogeophysic may be null. 
         }
