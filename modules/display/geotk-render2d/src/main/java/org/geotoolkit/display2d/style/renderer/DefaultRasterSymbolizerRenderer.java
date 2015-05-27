@@ -19,12 +19,9 @@ package org.geotoolkit.display2d.style.renderer;
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.awt.image.renderable.ParameterBlock;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,7 +30,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
-import javax.imageio.ImageIO;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
 import javax.media.jai.LookupTableJAI;
@@ -122,12 +118,13 @@ import org.geotoolkit.process.coverage.statistics.StatisticOp;
 import org.geotoolkit.process.coverage.statistics.Statistics;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.grid.GridCoverage;
 
 /**
- * @author Johann Sorel (Geomatys)
+ * Symbolizer renderer adapted for Raster.
+ * 
+ * @author Johann Sorel    (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @module pending
+ * @author Marechal remi   (Geomatys)
  */
 public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedRasterSymbolizer>{
 
@@ -287,7 +284,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @throws PortrayalException if problem during apply contrast enhancement style.
      * @see #applyColorMapStyle(org.geotoolkit.coverage.CoverageReference, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer) 
      * @see #applyShadedRelief(java.awt.image.RenderedImage, org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer) 
-     * @see #applyContrastEnhancement(java.awt.image.RenderedImage, org.opengis.style.RasterSymbolizer) 
+     * @see #applyContrastEnhancement(java.awt.image.RenderedImage, org.opengis.style.RasterSymbolizer)  
      */
     public static RenderedImage applyStyle(CoverageReference ref, GridCoverage2D coverage, 
             GridCoverage2D elevationCoverage,

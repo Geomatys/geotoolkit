@@ -116,23 +116,39 @@ public final strictfp class SampleDimensionUtils {
      * @param minSampleValue minimum sample value for current {@link SampleDimension} (band).
      * @param maxSampleValue maximum sample value for current {@link SampleDimension} (band).
      * @param typeClass data type of 
-     * @param scaleZ scale use to convert sample values into geophysic values. 
-     * @param offsetZ offset use to convert sample values into geophysic values.
+     * @param scale scale use to convert sample values into geophysic values, or {@code null} if none. 
+     * @param offset offset use to convert sample values into geophysic values, or {@code null} if none.
      * @param nodataValues {@link Set} which contain all nodata, organize in ascending order, for current band.
      * @return {@link Category} list for current band.
      * @throws NullArgumentException if nodataValues {@link Set} or typeClass is {@code null}.
      */
     public static List<Category> buildCategories(final double minSampleValue, final double maxSampleValue, 
-                                                  final double scaleZ,         final double offsetZ,
+                                                  final Double scale,         final Double offset,
                                                   final Class typeClass,       final TreeSet<Double> nodataValues) {
         ArgumentChecks.ensureNonNull("noDataValues", nodataValues);
         ArgumentChecks.ensureNonNull("typeClass",    typeClass);
+        if ((scale != null && offset == null)
+          || scale == null && offset != null) 
+            throw new IllegalArgumentException("Impossible to build conform category : "
+                    + "offset and scale from sample to geophysic transformation must be "
+                    + "both null or both no null : scale = "+scale+", offset = "+offset);
         final List<Category> categories = new ArrayList<>();
         if (nodataValues.isEmpty()) {
-            categories.add(new Category("data", null, 
+            if (scale != null) {
+                assert offset != null;
+                categories.add(new Category("data", null, 
                         getTypedRangeNumber(typeClass, 
                                             minSampleValue, true, 
-                                            maxSampleValue, true), scaleZ, offsetZ));
+                                            maxSampleValue, true), scale, offset));
+            } else {
+                //-- create a category define as View.PHOTOMETRIC
+                assert offset == null;
+                categories.add(new Category("data", null, 
+                        getTypedRangeNumber(typeClass, 
+                                            minSampleValue, true, 
+                                            maxSampleValue, true)));
+            }
+            
             return categories;
         }
         
@@ -151,10 +167,22 @@ public final strictfp class SampleDimensionUtils {
             } else if (currentNoData == currentMaxSV) {
                 isMaxInclude = false;
             } else if (currentMinSV < currentNoData && currentNoData < currentMaxSV) {//-- intersection
-                categories.add(new Category("data", null, 
+                if (scale != null) {
+                    assert offset != null;
+                    categories.add(new Category("data", null, 
                         getTypedRangeNumber(typeClass, 
                                             currentMinSV, isMinInclude, 
-                                            currentNoData, false), scaleZ, offsetZ));
+                                            currentNoData, false), scale, offset));
+                } else {
+                    //-- create a category define as View.PHOTOMETRIC
+                    assert offset == null;
+                    categories.add(new Category("data", null, 
+                        getTypedRangeNumber(typeClass, 
+                                            currentMinSV, isMinInclude, 
+                                            currentNoData, false)));
+                }
+                
+                
                 isMinInclude = false;
                 currentMinSV = currentNoData;
             } else {
@@ -168,10 +196,21 @@ public final strictfp class SampleDimensionUtils {
         //-- add the last category
         //-- it is the last category to insert in case with intersection between sample values intervals
         //-- else if no intersection it just will be sample interval.
-        categories.add(new Category("data", null, 
+        if (scale != null) {
+            assert offset != null;
+            categories.add(new Category("data", null, 
                         getTypedRangeNumber(typeClass, 
                                             currentMinSV, isMinInclude, 
-                                            currentMaxSV, isMaxInclude), scaleZ, offsetZ));
+                                            currentMaxSV, isMaxInclude), scale, offset));
+        } else {
+            //-- create a category define as View.PHOTOMETRIC
+            assert offset == null;
+            categories.add(new Category("data", null, 
+                        getTypedRangeNumber(typeClass, 
+                                            currentMinSV, isMinInclude, 
+                                            currentMaxSV, isMaxInclude)));
+        }
+        
         
         return categories;
     }

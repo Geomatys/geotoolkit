@@ -104,8 +104,8 @@ public strictfp class ThirdPartyMetaDataReader {
         
         double[] modelTransformation = null;
         double[] modelPixelScale     = null;
-        double scaleZ                = 1;
-        double offsetZ               = 0;
+        Double sampleToGeoScale      = null;
+        Double sampleToGeoOffset     = null;
         boolean scaleFound           = false;
         
         //-- get sample per pixel and scale / offset
@@ -135,9 +135,9 @@ public strictfp class ThirdPartyMetaDataReader {
                     //-- scaleZ
                     if (StrictMath.abs(modelTransformation[10]) > 1E-9) {
                         if (modelPixelScale != null) assert StrictMath.abs(StrictMath.abs(modelTransformation[10]) - StrictMath.abs(modelPixelScale[2])) < 1E-9;
-                        scaleZ = modelTransformation[10];
+                        sampleToGeoScale = modelTransformation[10];
                     }
-                    offsetZ = modelTransformation[11];
+                    sampleToGeoOffset = modelTransformation[11];
                     break;
                 }
             }
@@ -218,7 +218,7 @@ public strictfp class ThirdPartyMetaDataReader {
                     //-- get pixel scale Z. Always array of length 3 (ScaleX, ScaleY, ScaleZ).
                     if (StrictMath.abs(modelPixelScale[2]) > 1E-9) {
                         if (modelTransformation != null) assert StrictMath.abs(StrictMath.abs(modelTransformation[10]) - StrictMath.abs(modelPixelScale[2])) < 1E-9;
-                        scaleZ = modelPixelScale[2];
+                        sampleToGeoScale = modelPixelScale[2];
                     }
                     break;
                 }
@@ -380,7 +380,7 @@ public strictfp class ThirdPartyMetaDataReader {
                 accessor.selectChild(accessor.appendChild());
             }
             
-            final List<Category> categories = buildCategories(minSV[b], maxSV[b], scaleZ, offsetZ, typeClass, noDatas);
+            final List<Category> categories = buildCategories(minSV[b], maxSV[b], sampleToGeoScale, sampleToGeoOffset, typeClass, noDatas);
             final GridSampleDimension dim = new GridSampleDimension(""+b, categories.toArray(new Category[categories.size()]), null);
             accessor.setDimension(dim, Locale.ENGLISH);
         }

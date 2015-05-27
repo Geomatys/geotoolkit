@@ -45,6 +45,7 @@ import org.opengis.filter.expression.Literal;
 
 import static org.geotoolkit.style.StyleConstants.*;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.image.internal.ImageUtils;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
@@ -340,10 +341,10 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             final int nbbit = colors.getPixelSize();
             final int type = image.getSampleModel().getDataType();
 
-            if (type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) {
+            if ((type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) && nbbit <= 16) {
                 final int mapSize = 1 << nbbit;
                 ARGB = new int[mapSize];
-
+                
                 for (int j = 0; j < mapSize; j++) {
                     int v = j * 255 / mapSize;
                     int a = 255 << 24;
@@ -366,7 +367,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             final int nbbit = colors.getPixelSize();
             final int type = image.getSampleModel().getDataType();
 
-            if (type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) {
+            if ((type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) && nbbit <= 16)  {
                 final int mapSize = 1 << nbbit;
                 ARGB = new int[mapSize];
 

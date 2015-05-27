@@ -86,8 +86,11 @@ public abstract class GeoTiffExtension {
 
     /**
      * Modify the spatial metadata of the geotiff coverage.
+     * 
      * @param reader
      * @param metadata to be modified
+     * @return 
+     * @throws java.io.IOException
      */
     public abstract SpatialMetadata fillSpatialMetaData(TiffImageReader reader, SpatialMetadata metadata) throws IOException;
 
