@@ -2350,7 +2350,7 @@ public class TiffImageReader extends SpatialImageReader {
                 default: throw new AssertionError(dataType);
             }
 
-            for (int s = 0; s < samplesPerPixel; s += pixelLength) {
+            nextSample : for (int s = 0; s < samplesPerPixel; s += pixelLength) {
 
             //-- stripoffset array index start --//
             final int currentStripOffset = srcRegion.y / rowsPerStrip + s * stripOffsets.length / planarDenum;
@@ -2372,6 +2372,11 @@ public class TiffImageReader extends SpatialImageReader {
             //-- read throught only necessarry stripOffsets to fill target image --//
             nextStrip : for (int cSO = currentStripOffset; cSO < maxStripOffset; cSO++) {
 
+               /*
+                * Test added when travel the last strip is not necessary.
+                */
+                if (ypos >= srcMaxy) continue nextSample;
+                
                 //-- buffer start position from stripOffsets --//
                 long currentBuffPos        = stripOffsets[cSO];
                 inputLZW.seek(currentBuffPos);
@@ -2400,7 +2405,7 @@ public class TiffImageReader extends SpatialImageReader {
 
                 //-- in case where sourceYsubsampling greater than row per strip --//
                 if (posRef >= rowsPerStrip * sourceScanlineStride) continue nextStrip;
-
+                
                 int nextPosRef         = posRef + nextRowStep;
                 int maxRowRefPos       = posRef + dstRegion.width * pixelLength * sourceXSubsampling;
 
@@ -2464,6 +2469,7 @@ public class TiffImageReader extends SpatialImageReader {
 
                             //-- write sample in target array if its necessary --//
                             if (samplePos == posRef) {
+                                try {
                                 switch (dataType) {
                                     case DataBuffer.TYPE_BYTE   : Array.setByte(targetArray, bankID, (byte) (prediPix[b])); break;
                                     case DataBuffer.TYPE_SHORT  :
@@ -2472,6 +2478,18 @@ public class TiffImageReader extends SpatialImageReader {
                                     case DataBuffer.TYPE_FLOAT  : Array.setFloat(targetArray, bankID, Float.intBitsToFloat((int) (prediPix[b]))); break;
                                     case DataBuffer.TYPE_DOUBLE : Array.setDouble(targetArray, bankID, Double.longBitsToDouble(prediPix[b])); break;
                                     default: throw new AssertionError(dataType);
+                                }
+                                } catch(ArrayIndexOutOfBoundsException ex) {
+                                    String mess = ex.getMessage();
+                                    mess = mess+"\n"+"sourceXsubsampling = "+sourceXSubsampling+"\n";
+                                    mess = mess+"sourceYsubsampling = "+sourceYSubsampling+"\n";
+                                    mess = mess+"srcRegion = "+srcRegion.toString()+"\n";
+                                    mess = mess+"dstRegion = "+dstRegion.toString();
+                                    throw new IndexOutOfBoundsException(mess);
+                                }
+                                
+                                if (bankID == 196606) {
+                                    System.out.println("");
                                 }
                                 bankID += planarDenum;
                                 if (++b == pixelLength) {
@@ -2484,7 +2502,7 @@ public class TiffImageReader extends SpatialImageReader {
                                 if (posRef == maxRowRefPos) {
                                     assert hdb == 0 : "hdb should be zero. hdb = "+hdb;
                                     ypos += sourceYSubsampling;
-
+//                                    if (ypos >= srcMaxy && b == 0) return;//-- I think I can do better
                                     //-- begin source position writing --//
                                     posRef      = nextPosRef;
                                     nextPosRef += nextRowStep;
