@@ -76,9 +76,9 @@ import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.lang.Workaround;
 

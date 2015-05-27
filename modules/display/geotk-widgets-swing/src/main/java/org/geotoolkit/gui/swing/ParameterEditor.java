@@ -53,11 +53,11 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.image.KernelEditor;
 import org.geotoolkit.internal.swing.SwingUtilities;
-import org.geotoolkit.internal.image.Adapters;
 import org.geotoolkit.resources.Vocabulary;
 
 import static java.awt.GridBagConstraints.*;
 import static org.apache.sis.util.Numbers.*;
+import org.geotoolkit.image.internal.Adapters;
 
 
 /**

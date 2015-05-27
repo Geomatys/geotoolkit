@@ -27,7 +27,7 @@ import javax.media.jai.InterpolationNearest;
 import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationBicubic;
 import javax.media.jai.operator.ScaleDescriptor;
-import org.geotoolkit.internal.image.ImageUtilities;
+import org.geotoolkit.image.internal.ImageUtilities;
 
 
 /**

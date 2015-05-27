@@ -32,8 +32,8 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.processing.OperationJAI;
+import org.geotoolkit.image.color.ColorUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.internal.image.ColorUtilities;
 
 
 /**

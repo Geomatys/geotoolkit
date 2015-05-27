@@ -39,7 +39,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.geotoolkit.image.io.IIOListeners;
+import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.resources.Errors;

@@ -33,8 +33,8 @@ import org.geotoolkit.coverage.processing.Operation2D;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.internal.image.ImageUtilities;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.geotoolkit.image.internal.ImageUtilities;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 

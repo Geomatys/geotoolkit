@@ -32,7 +32,7 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
-import org.geotoolkit.internal.image.ColorUtilities;
+import org.geotoolkit.image.color.ColorUtilities;
 
 /**
  * JAI operation to return a Shaded relief of the gridCoverage.

@@ -39,19 +39,16 @@ import javax.media.jai.OpImage;
 import org.geotoolkit.filter.AbstractExpression;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.internal.image.ColorUtilities;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.style.StyleConstants;
 
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.image.color.ColorUtilities;
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import org.apache.sis.util.Classes;
-import org.apache.sis.util.ObjectConverters;
 import static org.opengis.filter.expression.Expression.*;
 
 /**

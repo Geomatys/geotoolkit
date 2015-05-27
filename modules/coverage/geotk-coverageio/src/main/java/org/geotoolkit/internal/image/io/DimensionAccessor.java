@@ -20,7 +20,6 @@ package org.geotoolkit.internal.image.io;
 import java.util.Locale;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
@@ -35,7 +34,7 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.internal.image.ImageUtilities;
+import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;

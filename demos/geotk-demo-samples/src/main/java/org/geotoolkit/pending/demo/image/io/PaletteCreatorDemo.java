@@ -5,8 +5,8 @@ import java.awt.Color;
 import java.awt.image.IndexColorModel;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.geotoolkit.image.io.Palette;
-import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.palette.Palette;
+import org.geotoolkit.image.palette.PaletteFactory;
 
 /**
  * Get several colors from a specific color palette.

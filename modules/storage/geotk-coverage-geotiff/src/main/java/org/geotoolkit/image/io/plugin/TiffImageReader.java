@@ -77,7 +77,7 @@ import org.geotoolkit.image.io.InputStreamAdapter;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.internal.image.ScaledColorSpace;
+import org.geotoolkit.image.color.ScaledColorSpace;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.io.IOUtilities;

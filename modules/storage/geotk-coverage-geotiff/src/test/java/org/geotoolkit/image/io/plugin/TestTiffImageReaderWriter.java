@@ -54,9 +54,9 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.test.TestUtilities;
+import org.geotoolkit.image.color.ScaledColorSpace;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.iterator.*;
-import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.junit.After;
 import org.junit.Test;
 

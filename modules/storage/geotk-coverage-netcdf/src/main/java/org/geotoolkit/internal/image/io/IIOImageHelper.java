@@ -27,6 +27,7 @@ import javax.imageio.IIOImage;
 import javax.imageio.IIOParam;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.metadata.IIOMetadata;
+import org.geotoolkit.image.internal.ImageUtilities;
 
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -38,7 +39,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;

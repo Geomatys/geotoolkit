@@ -62,8 +62,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.Interpolator2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.image.io.IIOListeners;
-import org.geotoolkit.image.io.IIOReadProgressAdapter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -74,6 +72,8 @@ import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.NEGATIVE_INFINITY;
+import org.geotoolkit.image.palette.IIOListeners;
+import org.geotoolkit.image.palette.IIOReadProgressAdapter;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
 

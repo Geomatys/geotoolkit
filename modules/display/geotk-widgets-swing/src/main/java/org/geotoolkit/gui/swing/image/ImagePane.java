@@ -41,8 +41,8 @@ import javax.swing.SwingWorker;
 
 import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.gui.swing.ZoomPane;
+import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.image.ImageUtilities;
 
 
 /**

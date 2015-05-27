@@ -39,7 +39,7 @@ import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.internal.image.ColorUtilities;
+import org.geotoolkit.image.color.ColorUtilities;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;

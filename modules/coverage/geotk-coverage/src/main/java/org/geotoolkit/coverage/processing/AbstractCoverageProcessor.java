@@ -40,11 +40,11 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.grid.Interpolator2D;
-import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Localized;
+import org.geotoolkit.image.internal.ImageUtilities;
 
 
 /**

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display;
 
-import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.palette.PaletteFactory;
 
 /**
  *

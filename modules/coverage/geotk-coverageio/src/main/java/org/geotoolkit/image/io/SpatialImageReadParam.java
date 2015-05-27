@@ -39,6 +39,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.Classes;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.geotoolkit.image.palette.PaletteFactory;
 
 
 /**

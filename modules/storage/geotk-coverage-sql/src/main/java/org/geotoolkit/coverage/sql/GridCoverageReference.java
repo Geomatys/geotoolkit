@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.net.URI;
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.CancellationException;
 import java.awt.geom.Rectangle2D;
@@ -27,7 +25,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.image.io.IIOListeners;
+import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;

@@ -38,9 +38,9 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.image.color.ColorUtilities;
 
 
 /**

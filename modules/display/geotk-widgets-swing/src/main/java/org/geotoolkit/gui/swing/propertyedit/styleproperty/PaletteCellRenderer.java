@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
-import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.style.interval.Palette;
 import org.apache.sis.util.logging.Logging;
 
@@ -64,7 +64,7 @@ public class PaletteCellRenderer extends DefaultListCellRenderer {
             if (paletteValue instanceof String) {
                 try {
                     final String paletteName = String.valueOf(paletteValue);
-                    final org.geotoolkit.image.io.Palette palette = PF.getPalette(paletteName, 10);
+                    final org.geotoolkit.image.palette.Palette palette = PF.getPalette(paletteName, 10);
                     final RenderedImage img = palette.getLegend(rect.getSize());
                     ((Graphics2D) g).drawRenderedImage(img, new AffineTransform(1,0,0,1,2,2));
                 } catch (IOException ex) {

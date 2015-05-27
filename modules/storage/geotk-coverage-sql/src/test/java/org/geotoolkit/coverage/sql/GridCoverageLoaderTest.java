@@ -32,9 +32,9 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.image.color.ScaledColorSpace;
 
 import org.junit.*;
 import static org.junit.Assert.*;

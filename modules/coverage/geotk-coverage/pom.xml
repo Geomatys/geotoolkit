@@ -83,8 +83,9 @@
       <artifactId>vecmath</artifactId>
     </dependency>
     <dependency>
-      <groupId>javax.media</groupId>
-      <artifactId>jai_core</artifactId>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverage-imagery</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.media</groupId>
@@ -99,6 +100,13 @@
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverage-imagery</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
       <scope>test</scope>
     </dependency>
   </dependencies>

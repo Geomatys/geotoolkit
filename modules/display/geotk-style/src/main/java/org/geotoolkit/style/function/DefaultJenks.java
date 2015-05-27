@@ -28,8 +28,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.filter.AbstractExpression;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.image.classification.Classification;
-import org.geotoolkit.image.io.Palette;
-import org.geotoolkit.image.io.PaletteFactory;
 import static org.geotoolkit.style.StyleConstants.*;
 
 import org.opengis.filter.expression.Expression;
@@ -40,6 +38,8 @@ import org.opengis.filter.expression.Literal;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
+import org.geotoolkit.image.palette.Palette;
+import org.geotoolkit.image.palette.PaletteFactory;
 
 /**
  * Jenks ColorMap function.

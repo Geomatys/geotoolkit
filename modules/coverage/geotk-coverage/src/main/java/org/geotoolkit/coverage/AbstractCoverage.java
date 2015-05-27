@@ -80,12 +80,12 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.io.LineWriter;
 import org.apache.sis.util.Localized;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.internal.image.ImageUtilities;
 import org.apache.sis.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Debug;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
 import org.apache.sis.util.iso.Types;
+import org.geotoolkit.image.internal.ImageUtilities;
 
 
 /**

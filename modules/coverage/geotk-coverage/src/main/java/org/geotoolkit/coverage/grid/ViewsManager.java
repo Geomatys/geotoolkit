@@ -33,7 +33,6 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.LookupTableJAI;
 import javax.media.jai.operator.FormatDescriptor;
 import javax.media.jai.operator.LookupDescriptor;
-import javax.swing.text.View;
 
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridCoverage;
@@ -51,8 +50,6 @@ import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.image.ColorUtilities;
-import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 
 import static java.lang.Double.NaN;
@@ -60,6 +57,8 @@ import static java.lang.Double.isNaN;
 import static java.lang.Double.doubleToRawLongBits;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.geotoolkit.image.color.ColorUtilities;
+import org.geotoolkit.image.internal.ImageUtilities;
 
 
 /**

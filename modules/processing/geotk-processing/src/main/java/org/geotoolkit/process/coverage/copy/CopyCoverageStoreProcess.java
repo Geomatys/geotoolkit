@@ -34,7 +34,6 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.Name;
-import org.geotoolkit.image.coverage.GridCombineIterator;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.Process;
@@ -68,6 +67,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 
 import static org.geotoolkit.parameter.Parameters.value;
 import static org.geotoolkit.process.coverage.copy.CopyCoverageStoreDescriptor.ERASE;

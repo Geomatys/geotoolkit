@@ -45,7 +45,7 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.gui.swing.ListTableModel;
 import org.geotoolkit.gui.swing.image.PaletteComboBox;
 import org.geotoolkit.internal.coverage.ColorPalette;
-import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.lang.Debug;
 

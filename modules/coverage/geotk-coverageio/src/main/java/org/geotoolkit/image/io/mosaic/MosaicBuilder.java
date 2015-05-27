@@ -42,13 +42,12 @@ import org.apache.sis.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.coverage.grid.ImageGeometry;
-import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
-import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 
 import static org.apache.sis.util.ArgumentChecks.ensureBetween;
+import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.image.palette.IIOListeners;
 
 
 /**

@@ -22,11 +22,11 @@ import java.io.IOException;
 import java.awt.image.ColorModel;
 import javax.imageio.ImageTypeSpecifier;
 
-import org.geotoolkit.image.io.Palette;
-import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.coverage.GridSampleDimension;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.geotoolkit.image.palette.Palette;
+import org.geotoolkit.image.palette.PaletteFactory;
 
 
 /**

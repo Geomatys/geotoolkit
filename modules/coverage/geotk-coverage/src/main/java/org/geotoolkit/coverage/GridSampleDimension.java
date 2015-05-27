@@ -45,10 +45,10 @@ import org.apache.sis.util.Classes;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.image.ColorUtilities;
 
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.geotoolkit.image.color.ColorUtilities;
 
 
 /**

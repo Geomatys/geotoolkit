@@ -77,13 +77,13 @@ import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
-import org.geotoolkit.internal.image.ImageUtilities;
-import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Errors;
 
 import org.apache.sis.referencing.operation.transform.TransferFunction;
 import static java.awt.image.DataBuffer.*;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.image.palette.PaletteFactory;
 
 
 /**

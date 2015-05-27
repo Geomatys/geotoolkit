@@ -63,6 +63,9 @@ import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import org.geotoolkit.image.palette.IndexedPalette;
+import org.geotoolkit.image.palette.Palette;
+import org.geotoolkit.image.palette.PaletteFactory;
 
 
 /**

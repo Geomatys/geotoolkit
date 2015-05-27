@@ -40,7 +40,7 @@ import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.internal.coverage.TransferFunction;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
-import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.internal.coverage.ColorPalette;
 import org.geotoolkit.resources.Errors;
 

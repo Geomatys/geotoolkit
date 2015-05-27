@@ -24,7 +24,7 @@ import java.util.logging.LogRecord;
 import javax.sql.DataSource;
 
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.resources.Loggings;

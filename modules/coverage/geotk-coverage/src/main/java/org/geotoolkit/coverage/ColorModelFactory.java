@@ -28,9 +28,9 @@ import java.awt.image.ComponentColorModel;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.image.ColorUtilities;
-import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.apache.sis.util.collection.WeakValueHashMap;
+import org.geotoolkit.image.color.ColorUtilities;
+import org.geotoolkit.image.color.ScaledColorSpace;
 
 
 /**

@@ -47,9 +47,9 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.processing.Operation2D;
 import org.geotoolkit.coverage.processing.CannotReprojectException;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.geotoolkit.image.internal.ImageUtilities;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 
 

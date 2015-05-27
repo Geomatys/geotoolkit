@@ -21,8 +21,8 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import org.geotoolkit.display.PortrayalException;
-import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.image.BufferedImages;
+import org.geotoolkit.image.internal.ImageUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

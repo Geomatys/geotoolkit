@@ -39,9 +39,9 @@ import org.geotoolkit.io.TableWriter;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.measure.MeasurementRange;
+import org.geotoolkit.image.color.ColorUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.image.ColorUtilities;
 
 
 /**

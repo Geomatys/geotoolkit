@@ -18,34 +18,27 @@ package org.geotoolkit.style.function;
 
 import java.awt.Color;
 import java.awt.image.*;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import javax.media.jai.ImageLayout;
-import javax.media.jai.NullOpImage;
-import javax.media.jai.OpImage;
 
 import org.geotoolkit.filter.AbstractExpression;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.image.RecolorRenderedImage;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.internal.image.ColorUtilities;
-import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.image.color.ColorUtilities;
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
 
 import static org.geotoolkit.style.StyleConstants.*;
-import org.apache.sis.util.Classes;
-import org.geotoolkit.image.internal.ImageUtils;
 import static org.opengis.filter.expression.Expression.*;
 
 /**

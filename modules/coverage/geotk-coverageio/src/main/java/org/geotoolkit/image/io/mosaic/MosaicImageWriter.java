@@ -60,18 +60,17 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.util.resources.IndexedResourceBundle;
+import org.geotoolkit.image.internal.ImageUtilities;
 import org.geotoolkit.image.io.InvalidImageStoreException;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.internal.Threads;
-import org.geotoolkit.internal.image.ImageUtilities;
-import org.geotoolkit.internal.image.io.IIOUtilities;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.RawFile;
-import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
 
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
+import org.geotoolkit.internal.image.io.IIOUtilities;
 
 
 /**

@@ -39,7 +39,7 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.internal.coverage.ColorPalette;
 import org.geotoolkit.internal.coverage.TransferFunction;

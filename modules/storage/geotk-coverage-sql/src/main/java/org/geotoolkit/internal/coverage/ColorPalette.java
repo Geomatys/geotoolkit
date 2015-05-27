@@ -29,10 +29,10 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.image.io.PaletteFactory;
-import org.geotoolkit.internal.image.ColorUtilities;
 
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
+import org.geotoolkit.image.color.ColorUtilities;
+import org.geotoolkit.image.palette.PaletteFactory;
 
 
 

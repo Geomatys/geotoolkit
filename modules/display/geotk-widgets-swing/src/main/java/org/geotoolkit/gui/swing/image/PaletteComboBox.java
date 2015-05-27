@@ -37,12 +37,12 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import org.geotoolkit.image.color.ColorUtilities;
 
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.image.io.Palette;
-import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.palette.Palette;
+import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.image.io.SpatialImageReadParam;
-import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.internal.coverage.ColorPalette;
 
 

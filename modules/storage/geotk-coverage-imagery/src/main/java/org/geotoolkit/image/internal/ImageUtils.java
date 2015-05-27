@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.image.internal;
 
+import org.geotoolkit.image.color.ScaledColorSpace;
 import java.awt.Dimension;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
@@ -33,7 +34,6 @@ import org.apache.sis.util.ArgumentChecks;
 import static org.geotoolkit.image.internal.SampleType.Byte;
 import static org.geotoolkit.image.internal.SampleType.Short;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
-import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.geotoolkit.lang.Static;
 
 /**

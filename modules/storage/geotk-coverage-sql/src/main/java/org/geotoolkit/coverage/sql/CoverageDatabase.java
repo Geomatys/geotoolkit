@@ -55,7 +55,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.image.io.IIOListeners;
+import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.internal.sql.table.ConfigurationKey;

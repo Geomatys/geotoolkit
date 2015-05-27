@@ -61,7 +61,7 @@ import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.DateRange;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.Threads;
-import org.geotoolkit.image.io.IIOListeners;
+import org.geotoolkit.image.palette.IIOListeners;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.coverage.io.CoverageStoreException;

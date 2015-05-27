@@ -48,6 +48,7 @@ import org.geotoolkit.internal.image.io.GridDomainAccessor;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import org.geotoolkit.image.palette.PaletteFactory;
 
 
 /**

@@ -28,9 +28,9 @@ import javax.imageio.ImageWriteParam;
 import org.opengis.coverage.PaletteInterpretation;
 
 import org.geotoolkit.image.ImageWorker;
-import org.geotoolkit.internal.image.SimpleBufferedImageOp;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.image.internal.SimpleBufferedImageOp;
 
 
 /**

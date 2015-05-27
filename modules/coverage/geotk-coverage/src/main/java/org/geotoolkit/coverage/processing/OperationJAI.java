@@ -62,7 +62,6 @@ import org.geotoolkit.parameter.ImagingParameterDescriptors;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.image.jai.Registry;
-import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.apache.sis.util.ArraysExt;
@@ -72,6 +71,7 @@ import org.apache.sis.util.iso.AbstractInternationalString;
 import org.geotoolkit.resources.Errors;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.image.internal.ImageUtilities;
 
 
 /**

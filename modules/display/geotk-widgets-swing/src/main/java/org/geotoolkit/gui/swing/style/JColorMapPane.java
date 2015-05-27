@@ -98,7 +98,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.util.ColorCellEditor;
 import org.geotoolkit.gui.swing.util.ColorCellRenderer;
 import org.geotoolkit.gui.swing.util.NumberAlignRenderer;
-import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.LayerListener;

@@ -67,9 +67,9 @@ import org.apache.sis.measure.Range;
 import org.geotoolkit.gui.swing.util.SwingEventPassThrough;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.image.coverage.GridCombineIterator;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
