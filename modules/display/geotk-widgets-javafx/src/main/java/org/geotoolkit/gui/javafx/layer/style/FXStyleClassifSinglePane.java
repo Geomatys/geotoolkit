@@ -81,7 +81,7 @@ import org.geotoolkit.gui.javafx.layer.FXPropertyPane;
 import org.geotoolkit.gui.javafx.style.FXPaletteCell;
 import org.geotoolkit.gui.javafx.util.ButtonTableCell;
 import org.geotoolkit.gui.javafx.util.FXDeleteTableColumn;
-import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;

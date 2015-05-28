@@ -51,7 +51,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.palette.PaletteFactory;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.style.interval.DefaultIntervalPalette;
@@ -234,7 +234,7 @@ public final class FXUtilities {
             if (paletteValue instanceof String) {
                 try {
                     final String paletteName = String.valueOf(paletteValue);
-                    final org.geotoolkit.image.io.Palette palette = PF.getPalette(paletteName, 10);
+                    final org.geotoolkit.image.palette.Palette palette = PF.getPalette(paletteName, 10);
                     final RenderedImage img = interpolate ? palette.getLegend(rect.getSize()) : palette.getImage(rect.getSize());
                     ((Graphics2D) g).drawRenderedImage(img, new AffineTransform(1,0,0,1,2,2));
                 } catch (IOException ex) {
