@@ -60,11 +60,9 @@ public class EmptySelectionItem  extends TreeMenuItem {
      */
     private static void findFeatureLayers(final List<? extends TreeItem> selected, final List<CollectionMapLayer> toKeep) {
         for (final TreeItem item : selected) {
-            if (item.isLeaf()) {
-                if (item.getValue() instanceof CollectionMapLayer) {
-                    toKeep.add((CollectionMapLayer) item.getValue());
-                }
-            } else {
+            if (item.getValue() instanceof CollectionMapLayer) {
+                toKeep.add((CollectionMapLayer) item.getValue());
+            } else if (!item.isLeaf()) {
                 findFeatureLayers(item.getChildren(), toKeep);
             }
         }
