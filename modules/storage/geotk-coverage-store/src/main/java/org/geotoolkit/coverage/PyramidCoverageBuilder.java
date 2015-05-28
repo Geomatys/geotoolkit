@@ -1045,10 +1045,14 @@ public class PyramidCoverageBuilder {
      * @param gsd2 second GridSampleDimension
      * @return true if compatible, false otherwise
      */
-    private boolean isDimensionCompatible(GridSampleDimension gsd1, GridSampleDimension gsd2) {
-
+    private boolean isDimensionCompatible(final GridSampleDimension gsd1, final GridSampleDimension gsd2) {
+        ArgumentChecks.ensureNonNull("gsd1", gsd1);
+        ArgumentChecks.ensureNonNull("gsd2", gsd2);
+        
         NumberRange range1 = gsd1.getRange();
         NumberRange range2 = gsd2.getRange();
+        
+        if (range1 == null) return range2 == null; 
 
         if (!range1.containsAny(range2)) return false;
 

@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.external;
+package org.geotoolkit.image.palette.external;
 
 import org.geotoolkit.image.palette.PaletteFactory;
 

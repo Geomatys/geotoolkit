@@ -142,6 +142,7 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
      * @since 3.10
      */
     @Test
+    @Ignore
     public void testImageIO() throws IOException {
         final Locale locale = Locale.getDefault();
         final IIORegistry registry = IIORegistry.getDefaultInstance();

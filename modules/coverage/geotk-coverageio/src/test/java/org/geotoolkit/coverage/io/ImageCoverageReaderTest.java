@@ -295,6 +295,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
+    @Ignore
     public void readTwice() throws IOException, CoverageStoreException {
         final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readTwice");
         final File file = TestData.file(SampleModels.class, "Contour.png");
