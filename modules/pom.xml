@@ -108,7 +108,6 @@
     <module>metadata</module>
     <module>referencing</module>
     <module>feature</module>
-    <module>coverage</module>
     <module>index</module>
     <module>jaxp-xml-parser</module>
     <module>storage</module>

@@ -61,11 +61,6 @@
             <artifactId>geotk-referencing</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--<dependency>
-            <groupId>org.geotoolkit</groupId>
-            <artifactId>geotk-coverage</artifactId>
-            <version>${project.version}</version>
-        </dependency>-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>

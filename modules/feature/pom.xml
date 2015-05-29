@@ -90,6 +90,7 @@
     <module>geotk-geometry</module>
     <module>geotk-jtswrapper</module>
     <module>geotk-feature</module>
+    <module>geotk-coverage</module>
   </modules>
 
 </project>

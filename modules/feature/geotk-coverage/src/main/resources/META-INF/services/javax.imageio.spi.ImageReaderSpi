@@ -1,0 +1,9 @@
+org.geotoolkit.image.io.plugin.RawImageReader$Spi
+org.geotoolkit.image.io.plugin.HGTReader$Spi
+org.geotoolkit.image.io.plugin.AsciiGridReader$Spi
+org.geotoolkit.image.io.plugin.TextMatrixImageReader$Spi
+org.geotoolkit.image.io.plugin.TextRecordImageReader$Spi
+#org.geotoolkit.image.io.plugin.RawTiffImageReader$Spi
+# Note: TextRecordImageReader must be after TextMatrixImageReader
+# Note: HGTReader must be after RawImageReader
+# See javadoc for details.
