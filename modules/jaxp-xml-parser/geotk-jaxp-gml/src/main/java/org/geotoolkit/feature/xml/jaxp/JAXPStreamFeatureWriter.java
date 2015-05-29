@@ -495,7 +495,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         } else {
 
             if (valueA != null) {
-                final boolean descIsType = Utils.isGeometricType(typeA.getName());
+                final boolean descIsType = Utils.isGeometricType(typeA.getName()) && Utils.isGeometricType(nameA);
 
                 if(!descIsType){
                     if (namespaceProperty != null && !namespaceProperty.isEmpty()) {

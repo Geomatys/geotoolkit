@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -502,6 +503,43 @@ public class FeatureTypeBuilder {
     public AttributeDescriptor add(final PropertyType at, final Name name, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
         final AttributeDescriptor desc = attributeDescBuilder.create(at, name, crs, min, max, nillable, userData);
+        add(desc);
+        return desc;
+    }
+    
+    public AttributeDescriptor add(final Name typeName, final Class binding, final Name name, final CoordinateReferenceSystem crs,
+            final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
+        AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        atb.setName(typeName);
+        atb.setBinding(binding);
+        atb.setCRS(crs);
+        final AttributeDescriptor desc;
+        if (Geometry.class.isAssignableFrom(binding)) {
+            desc = attributeDescBuilder.create(atb.buildGeometryType(), name, crs, min, max, nillable, userData);
+        } else {
+            desc = attributeDescBuilder.create(atb.buildType(), name, crs, min, max, nillable, userData);
+        }
+        add(desc);
+        return desc;
+    }
+    
+    public AttributeDescriptor add(final String typeNamespace, final String typeName, final Class binding, final Name name, final CoordinateReferenceSystem crs,
+            final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
+        return add(typeNamespace, typeName, binding, name, crs, min, max, nillable, null, userData);
+    }
+    
+    public AttributeDescriptor add(final String typeNamespace, final String typeName, final Class binding, final Name name, final CoordinateReferenceSystem crs,
+            final int min, final int max, final boolean nillable, final Object defaultValue, final Map<Object,Object> userData){
+        AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        atb.setName(typeNamespace, typeName);
+        atb.setBinding(binding);
+        atb.setCRS(crs);
+        final AttributeDescriptor desc;
+        if (Geometry.class.isAssignableFrom(binding)) {
+            desc = attributeDescBuilder.create(atb.buildGeometryType(), name, crs, min, max, nillable, defaultValue, userData);
+        } else {
+            desc = attributeDescBuilder.create(atb.buildType(), name, crs, min, max, nillable, defaultValue, userData);
+        }
         add(desc);
         return desc;
     }

@@ -1053,6 +1053,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                         throw new SchemaException("The attribute : " + attributeElement + " does no have a declared type.");
                     }
                     atb.setBinding(c);
+                    atb.setName(elementType.getNamespaceURI(), elementType.getLocalPart());
                 }else{
                     final PropertyType pt = resolveSimpleType(elementType);
                     adb.setType(pt);

@@ -17,13 +17,6 @@
 
 package org.geotoolkit.feature.xml;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 import java.io.BufferedReader;
 
 import java.io.File;
@@ -32,11 +25,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.Timestamp;
-import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -115,6 +106,15 @@ public class XmlFeatureTypeTest {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType2.xsd"));
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
+        assertEquals(simpleTypeFull.getDescriptors().size(), types.get(0).getDescriptors().size());
+        final int size = simpleTypeFull.getDescriptors().size();
+        Iterator<PropertyDescriptor> expIt = simpleTypeFull.getDescriptors().iterator();
+        Iterator<PropertyDescriptor> resIt = types.get(0).getDescriptors().iterator();
+        for (int i = 0; i < size; i++) {
+            PropertyDescriptor expDesc = expIt.next();
+            PropertyDescriptor resDesc = resIt.next();
+            assertEquals(expDesc, resDesc);
+        }
         assertEquals(simpleTypeFull, types.get(0));
     }
 
@@ -207,6 +207,17 @@ public class XmlFeatureTypeTest {
         }
 
         assertNotNull(type);
+        
+        assertEquals(typeWithAtts.getDescriptors().size(), types.get(0).getDescriptors().size());
+        final int size = typeWithAtts.getDescriptors().size();
+        Iterator<PropertyDescriptor> expIt = typeWithAtts.getDescriptors().iterator();
+        Iterator<PropertyDescriptor> resIt = types.get(0).getDescriptors().iterator();
+        for (int i = 0; i < size; i++) {
+            PropertyDescriptor expDesc = expIt.next();
+            PropertyDescriptor resDesc = resIt.next();
+            assertEquals(expDesc, resDesc);
+        }
+        
         assertEquals(typeWithAtts, types.get(0));
 
     }

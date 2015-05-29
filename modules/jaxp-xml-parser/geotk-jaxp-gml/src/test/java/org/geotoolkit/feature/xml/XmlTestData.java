@@ -53,6 +53,7 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortOrder;
@@ -105,65 +106,65 @@ public class XmlTestData {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(GML_311_NAMESPACE,"TestSimple");
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"ID"),                   Integer.class);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attString"),            String.class);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attShort"),             Short.class);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attInteger"),           Integer.class);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attLong"),              Long.class);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attDouble"),            Double.class);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attDecimal"),           BigDecimal.class);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attDate"),              Date.class);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attDateTime"),          Timestamp.class);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attBoolean"),           Boolean.class);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomPoint"),            Point.class, crs);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomMultiPoint"),       MultiPoint.class, crs);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomLine"),             LineString.class, crs);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomMultiLine"),        MultiLineString.class, crs);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomPolygon"),          Polygon.class, crs);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class,           new DefaultName(GML_311_NAMESPACE,"ID"),         null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class,            new DefaultName(GML_311_NAMESPACE,"attString"),  null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","short",                Short.class,             new DefaultName(GML_311_NAMESPACE,"attShort"),   null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class,           new DefaultName(GML_311_NAMESPACE,"attInteger"), null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","long",                 Long.class,              new DefaultName(GML_311_NAMESPACE,"attLong"),    null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","double",               Double.class,            new DefaultName(GML_311_NAMESPACE,"attDouble"),  null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","decimal",              BigDecimal.class,        new DefaultName(GML_311_NAMESPACE,"attDecimal"), null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","date",                 Date.class,              new DefaultName(GML_311_NAMESPACE,"attDate"),    null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","dateTime",             Timestamp.class,         new DefaultName(GML_311_NAMESPACE,"attDateTime"),null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","boolean",              Boolean.class,           new DefaultName(GML_311_NAMESPACE,"attBoolean"), null, 1,1,true,null);
+        ftb.add(GML_311_NAMESPACE, "Point",           Point.class,              new DefaultName(GML_311_NAMESPACE,"geomPoint"), null, 1, 1, true, null);
+        ftb.add(GML_311_NAMESPACE, "MultiPoint",      MultiPoint.class,         new DefaultName(GML_311_NAMESPACE,"geomMultiPoint"), null, 1, 1, true, null);
+        ftb.add(GML_311_NAMESPACE, "Curve",           LineString.class,         new DefaultName(GML_311_NAMESPACE,"geomLine"), null, 1, 1, true, null);
+        ftb.add(GML_311_NAMESPACE, "CompositeCurve",  MultiLineString.class,    new DefaultName(GML_311_NAMESPACE,"geomMultiLine"), null, 1, 1, true, null);
+        ftb.add(GML_311_NAMESPACE, "Polygon",         Polygon.class,            new DefaultName(GML_311_NAMESPACE,"geomPolygon"), null, 1, 1, true, null);
         //multipolygon does not exist in gml
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomMultiPolygon"),     GeometryCollection.class, crs);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomMultiGeometry"),    GeometryCollection.class, crs);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomAnyGeometry"),      Geometry.class, crs);
+        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, new DefaultName(GML_311_NAMESPACE,"geomMultiPolygon"), null, 1, 1, true, null);
+        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, new DefaultName(GML_311_NAMESPACE,"geomMultiGeometry"), null, 1, 1, true, null);
+        ftb.add(GML_311_NAMESPACE, "GeometryPropertyType",Geometry.class,           new DefaultName(GML_311_NAMESPACE,"geomAnyGeometry"), null, 1, 1, true, null);
         simpleTypeFull = ftb.buildSimpleFeatureType();
 
         ftb.reset();
         ftb.setName(GML_311_NAMESPACE,"TestMultiGeom");
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"ID"),                   Integer.class,           1,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attString"),            String.class,            1,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attShort"),             Short.class,             1,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attInteger"),           Integer.class,           1,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attLong"),              Long.class,              0,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attDouble"),            Double.class,            0,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attDecimal"),           BigDecimal.class,        0,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attDate"),              Date.class,              1,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attDateTime"),          Timestamp.class,         1,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attBoolean"),           Boolean.class,           1,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomPoint"),            Point.class,             crs,0,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomMultiPoint"),       MultiPoint.class,        crs,0,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomLine"),             LineString.class,        crs,0,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomMultiLine"),        MultiLineString.class,   crs,1,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomPolygon"),          Polygon.class,           crs,1,Integer.MAX_VALUE,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class,           new DefaultName(GML_311_NAMESPACE,"ID"),         null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class,            new DefaultName(GML_311_NAMESPACE,"attString"),  null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","short",                Short.class,             new DefaultName(GML_311_NAMESPACE,"attShort"),   null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class,           new DefaultName(GML_311_NAMESPACE,"attInteger"), null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","long",                 Long.class,              new DefaultName(GML_311_NAMESPACE,"attLong"),    null, 0,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","double",               Double.class,            new DefaultName(GML_311_NAMESPACE,"attDouble"),  null, 0,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","decimal",              BigDecimal.class,        new DefaultName(GML_311_NAMESPACE,"attDecimal"), null, 0,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","date",                 Date.class,              new DefaultName(GML_311_NAMESPACE,"attDate"),    null, 1,Integer.MAX_VALUE,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","dateTime",             Timestamp.class,         new DefaultName(GML_311_NAMESPACE,"attDateTime"),null, 1,Integer.MAX_VALUE,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","boolean",              Boolean.class,           new DefaultName(GML_311_NAMESPACE,"attBoolean"), null, 1,Integer.MAX_VALUE,true,null);
+        ftb.add(GML_311_NAMESPACE, "Point",           Point.class,              new DefaultName(GML_311_NAMESPACE,"geomPoint"), null, 0, Integer.MAX_VALUE, true, null);
+        ftb.add(GML_311_NAMESPACE, "MultiPoint",      MultiPoint.class,         new DefaultName(GML_311_NAMESPACE,"geomMultiPoint"), null, 0, Integer.MAX_VALUE, true, null);
+        ftb.add(GML_311_NAMESPACE, "Curve",           LineString.class,         new DefaultName(GML_311_NAMESPACE,"geomLine"), null, 0, Integer.MAX_VALUE, true, null);
+        ftb.add(GML_311_NAMESPACE, "CompositeCurve",  MultiLineString.class,    new DefaultName(GML_311_NAMESPACE,"geomMultiLine"), null, 1, Integer.MAX_VALUE, true, null);
+        ftb.add(GML_311_NAMESPACE, "Polygon",         Polygon.class,            new DefaultName(GML_311_NAMESPACE,"geomPolygon"), null, 1, Integer.MAX_VALUE, true, null);
         //multipolygon does not exist in gml
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomMultiPolygon"),     GeometryCollection.class,crs,1,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomMultiGeometry"),    GeometryCollection.class,crs,1,Integer.MAX_VALUE,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"geomAnyGeometry"),      Geometry.class,          crs,1,Integer.MAX_VALUE,true,null);
+        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, new DefaultName(GML_311_NAMESPACE,"geomMultiPolygon"), null, 1, Integer.MAX_VALUE, true, null);
+        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, new DefaultName(GML_311_NAMESPACE,"geomMultiGeometry"), null, 1, Integer.MAX_VALUE, true, null);
+        ftb.add(GML_311_NAMESPACE, "GeometryPropertyType",Geometry.class,           new DefaultName(GML_311_NAMESPACE,"geomAnyGeometry"), null, 1, Integer.MAX_VALUE, true, null);
         multiGeomType = ftb.buildFeatureType();
 
         ftb.reset();
         ftb.setName(GML_311_NAMESPACE,"TestSimpleBasic");
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attString"),            String.class);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"attDouble"),            Double.class);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class,            new DefaultName(GML_311_NAMESPACE,"attString"),  null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","double",               Double.class,            new DefaultName(GML_311_NAMESPACE,"attDouble"),  null, 1,1,true,null);
         simpleTypeBasic = ftb.buildSimpleFeatureType();
 
 
         ftb.reset();
         ftb.setName(GML_311_NAMESPACE,"AddressType");
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"streetName"),           String.class,            1,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"streetNumber"),         String.class,            1,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"city"),                 String.class,            1,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"province"),             String.class,            1,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"postalCode"),           String.class,            1,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"country"),              String.class,            0,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, new DefaultName(GML_311_NAMESPACE,"streetName"),           null,            1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, new DefaultName(GML_311_NAMESPACE,"streetNumber"),         null,            1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, new DefaultName(GML_311_NAMESPACE,"city"),                 null,            1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, new DefaultName(GML_311_NAMESPACE,"province"),             null,            1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, new DefaultName(GML_311_NAMESPACE,"postalCode"),           null,            1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, new DefaultName(GML_311_NAMESPACE,"country"),              null,            0,1,true,null);
         final ComplexType adress = ftb.buildType();
 
         ftb.reset();
@@ -173,15 +174,15 @@ public class XmlTestData {
 
         ftb.reset();
         ftb.setName(GML_311_NAMESPACE,"Person");
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"insuranceNumber"),      Integer.class,           1,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"lastName"),             String.class,            1,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"firstName"),            String.class,            1,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"age"),                  Integer.class,           1,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"sex"),                  String.class,            1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class,new DefaultName(GML_311_NAMESPACE,"insuranceNumber"),      null,           1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, new DefaultName(GML_311_NAMESPACE,"lastName"),             null,           1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, new DefaultName(GML_311_NAMESPACE,"firstName"),            null,           1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class,new DefaultName(GML_311_NAMESPACE,"age"),                  null,           1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, new DefaultName(GML_311_NAMESPACE,"sex"),                  null,           1,1,true,null);
         //ftb.add(new DefaultName(GML_NAMESPACE,"spouse"),               Person.class,            0,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"position"),             Point.class,        crs, 0,1,true,null);
+        ftb.add(GML_311_NAMESPACE, "Point",                                Point.class,  new DefaultName(GML_311_NAMESPACE,"position"),             null,           0,1,true,null);
         ftb.add(mailadress, new DefaultName(GML_311_NAMESPACE,"mailAddress"),  null,                    0,1,true,null);
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"phone"),                String.class,            0,Integer.MAX_VALUE,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, new DefaultName(GML_311_NAMESPACE,"phone"),                null,           0,Integer.MAX_VALUE,true,null);
 
         complexType = ftb.buildFeatureType();
 
@@ -189,9 +190,9 @@ public class XmlTestData {
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
         ftb.add(new DefaultName(GML_32_NAMESPACE,"@attString"),           String.class,0,1,false,"hello",null);
         ftb.add(new DefaultName(GML_32_NAMESPACE,"@attInteger"),          Integer.class,0,1,false,23,null);
-        ftb.add(new DefaultName(GML_32_NAMESPACE,"ID"),                   Integer.class);
-        ftb.add(new DefaultName(GML_32_NAMESPACE,"eleString"),            String.class);
-        ftb.add(new DefaultName(GML_32_NAMESPACE,"eleInteger"),           Integer.class);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class,           new DefaultName(GML_32_NAMESPACE,"ID"),  null, 1,1,true, null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class,            new DefaultName(GML_32_NAMESPACE,"eleString"),  null, 1,1,true, null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class,           new DefaultName(GML_32_NAMESPACE,"eleInteger"),  null, 1,1,true, null);
         typeWithAtts = ftb.buildFeatureType();
 
         ftb.reset();
@@ -205,7 +206,7 @@ public class XmlTestData {
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"identifier");
-        ftb.add(new DefaultName(GML_32_NAMESPACE,Utils.VALUE_PROPERTY_NAME), String.class,1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class,            new DefaultName(GML_32_NAMESPACE,Utils.VALUE_PROPERTY_NAME),  null, 1,1,true, null);
         ftb.add(new DefaultName(GML_32_NAMESPACE,"@codeBase"), String.class,1,1,true,null);
         final ComplexType identifierType = ftb.buildType();
 
@@ -216,8 +217,8 @@ public class XmlTestData {
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"SubRecordType");
-        ftb.add(new DefaultName(GML_32_NAMESPACE,"@nilReason"), String.class,0,1,false,null,null);
-        ftb.add(new DefaultName(GML_32_NAMESPACE,"attString"), String.class,1,1,false,null,null);
+        ftb.add(new DefaultName(GML_32_NAMESPACE, "@nilReason"), String.class,0,1,false,null,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class,            new DefaultName(GML_32_NAMESPACE,"attString"),  null, 1,1,false, null);
         final ComplexType subRecordType = ftb.buildType();
 
         ftb.reset();
@@ -233,15 +234,25 @@ public class XmlTestData {
         FeatureBuilder sfb = new FeatureBuilder(simpleTypeFull);
 
         final Point pt = GF.createPoint(new Coordinate(5, 10));
+        JTS.setCRS(pt, crs);
         final MultiPoint mpt = GF.createMultiPoint(new Coordinate[]{new Coordinate(5, 10), new Coordinate(15, 20)});
+        JTS.setCRS(mpt, crs);
         final LineString line1 = GF.createLineString(new Coordinate[]{new Coordinate(10, 10), new Coordinate(20, 20), new Coordinate(30, 30)});
+        JTS.setCRS(line1, crs);
         final LineString line2 = GF.createLineString(new Coordinate[]{new Coordinate(11, 11), new Coordinate(21, 21), new Coordinate(31, 31)});
+        JTS.setCRS(line2, crs);
         final MultiLineString mline = GF.createMultiLineString(new LineString[]{line1,line2});
+        JTS.setCRS(mline, crs);
         final LinearRing ring1 = GF.createLinearRing(new Coordinate[]{new Coordinate(0, 0), new Coordinate(10, 0), new Coordinate(10, 10),new Coordinate(0, 0)});
+        JTS.setCRS(ring1, crs);
         final Polygon poly1 = GF.createPolygon(ring1, new LinearRing[0]);
+        JTS.setCRS(poly1, crs);
         final LinearRing ring2 = GF.createLinearRing(new Coordinate[]{new Coordinate(1, 1), new Coordinate(11, 1), new Coordinate(11, 11),new Coordinate(1, 1)});
+        JTS.setCRS(ring2, crs);
         final Polygon poly2 = GF.createPolygon(ring2, new LinearRing[0]);
+        JTS.setCRS(poly2, crs);
         final MultiPolygon mpoly = GF.createMultiPolygon(new Polygon[]{poly1,poly2});
+        JTS.setCRS(mpoly, crs);
 
         final Calendar calendar1 = Calendar.getInstance();
         calendar1.setTimeZone(TimeZone.getTimeZone("GMT+0"));
@@ -321,7 +332,9 @@ public class XmlTestData {
         featureComplex.getProperty("sex").setValue("male");
 
         final Property location = FeatureUtilities.defaultProperty(complexType.getDescriptor("position"));
-        location.setValue(GF.createPoint(new Coordinate(10, 10)));
+        Point pt2 = GF.createPoint(new Coordinate(10, 10));
+        JTS.setCRS(pt2, crs);
+        location.setValue(pt2);
         featureComplex.getProperties().add(location);
 
 
