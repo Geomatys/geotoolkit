@@ -380,7 +380,6 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
      * @throws CoverageStoreException Should not happen.
      */
     @Test
-    @Ignore
     public void writeTwice() throws IOException, CoverageStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(TestData.file(SampleModels.class, "Contour.png"));

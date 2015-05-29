@@ -62,7 +62,6 @@ public final strictfp class XImageIOTest extends ImageTestBase {
      * @throws IOException If an I/O error occurred while writing or reading the image.
      */
     @Test
-    @Ignore
     public void testGetBySuffix() throws IOException {
         /*
          * Use a very small file (about 4 kb), since the purpose

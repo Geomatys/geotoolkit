@@ -18,6 +18,7 @@
 package org.geotoolkit.test;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.channels.Channels;
@@ -26,6 +27,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -166,7 +169,7 @@ public final strictfp class TestData implements Runnable {
         final URL url = url(caller, path);
         final File file = new File(URLDecoder.decode(url.getPath(), ENCODING));
         if (!file.exists()) {
-            throw new FileNotFoundException("Can not locate test-data for \"" + path + '"');
+            throw new FileNotFoundException("Can not locate test-data for \"" + file.getAbsolutePath() + '"');
         }
         return file;
     }
