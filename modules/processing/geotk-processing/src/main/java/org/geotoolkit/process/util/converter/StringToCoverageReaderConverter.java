@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util.converter;
+package org.geotoolkit.process.util.converter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,6 +23,7 @@ import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.feature.util.converter.SimpleConverter;
 
 
 /**

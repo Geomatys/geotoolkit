@@ -14,9 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util.converter;
+package org.geotoolkit.feature.util.converter;
 
-import java.util.Date;
+import java.sql.Date;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 
@@ -26,7 +26,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StringToDateConverter extends SimpleConverter<String, Date>{
+public class StringToDateSQLConverter extends SimpleConverter<String, Date>{
     @Override
     public Class<String> getSourceClass() {
         return String.class;
@@ -39,6 +39,6 @@ public class StringToDateConverter extends SimpleConverter<String, Date>{
 
     @Override
     public Date apply(final String s) throws UnconvertibleObjectException {
-        return TemporalUtilities.parseDateSafe(s,false);
+        return new Date(TemporalUtilities.parseDateSafe(s, true).getTime());
     }
 }

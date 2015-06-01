@@ -18,7 +18,7 @@ package org.geotoolkit.wps.converters.inputs.literal;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.geotoolkit.util.converter.SimpleConverter;
+import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.apache.sis.util.UnconvertibleObjectException;
 
 /**

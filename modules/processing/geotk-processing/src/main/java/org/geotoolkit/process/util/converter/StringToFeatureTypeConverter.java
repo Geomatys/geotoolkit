@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util.converter;
+package org.geotoolkit.process.util.converter;
 
 
 import org.geotoolkit.feature.FeatureTypeUtilities;
@@ -22,6 +22,7 @@ import org.geotoolkit.feature.SchemaException;
 import org.apache.sis.util.UnconvertibleObjectException;
 
 import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.util.converter.SimpleConverter;
 
 
 /**

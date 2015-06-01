@@ -14,38 +14,31 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util.converter;
-
+package org.geotoolkit.feature.util.converter;
 
 import java.util.Date;
-import java.sql.Time;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 
-
 /**
- * Converter from Date to Timestamp
+ * Converter from String to Date
  *
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DateToTimeConverter extends SimpleConverter<Date, Time>{
-
-    private static final long DAY = 24L * 60 * 60 * 1000;
+public class StringToDateConverter extends SimpleConverter<String, Date>{
+    @Override
+    public Class<String> getSourceClass() {
+        return String.class;
+    }
 
     @Override
-    public Class<Date> getSourceClass() {
+    public Class<Date> getTargetClass() {
         return Date.class;
     }
 
     @Override
-    public Class<Time> getTargetClass() {
-        return Time.class;
-    }
-
-    @Override
-    public Time apply(final Date s) throws UnconvertibleObjectException {
-        if (s != null) {
-            return new Time(s.getTime() % DAY);
-        }
-        return null;
+    public Date apply(final String s) throws UnconvertibleObjectException {
+        return TemporalUtilities.parseDateSafe(s,false);
     }
 }

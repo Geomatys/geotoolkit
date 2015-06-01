@@ -20,9 +20,13 @@ import java.util.*;
 import java.util.logging.Logger;
 import javax.measure.unit.Unit;
 
+import org.geotoolkit.feature.util.converter.StringToDateConverter;
 import org.geotoolkit.gml.xml.v311.BoundingShapeType;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
-import org.geotoolkit.util.converter.*;
+import org.geotoolkit.process.util.converter.StringToCRSConverter;
+import org.geotoolkit.process.util.converter.StringToFilterConverter;
+import org.geotoolkit.process.util.converter.StringToNumberRangeConverter;
+import org.geotoolkit.process.util.converter.StringToSortByConverter;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;

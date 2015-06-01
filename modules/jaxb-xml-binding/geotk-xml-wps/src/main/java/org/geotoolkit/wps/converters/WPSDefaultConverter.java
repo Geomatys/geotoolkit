@@ -6,7 +6,7 @@ package org.geotoolkit.wps.converters;
 
 import java.util.logging.Logger;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.SimpleConverter;
+import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;

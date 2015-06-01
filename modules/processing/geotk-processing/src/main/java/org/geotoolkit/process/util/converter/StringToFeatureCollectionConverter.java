@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util.converter;
+package org.geotoolkit.process.util.converter;
 
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -27,6 +27,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.feature.util.converter.SimpleConverter;
 
 /**
  * Implementation of ObjectConverter to convert a path to a file in a String to a

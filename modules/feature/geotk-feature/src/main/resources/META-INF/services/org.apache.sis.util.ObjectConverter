@@ -1,5 +1,5 @@
-org.geotoolkit.util.converter.StringToDateConverter
-org.geotoolkit.util.converter.StringToDateSQLConverter
-org.geotoolkit.util.converter.StringToTimeStampConverter
-org.geotoolkit.util.converter.DateToTimeStampConverter
-org.geotoolkit.util.converter.DateToTimeConverter
+org.geotoolkit.feature.util.converter.StringToDateConverter
+org.geotoolkit.feature.util.converter.StringToDateSQLConverter
+org.geotoolkit.feature.util.converter.StringToTimeStampConverter
+org.geotoolkit.feature.util.converter.DateToTimeStampConverter
+org.geotoolkit.feature.util.converter.DateToTimeConverter

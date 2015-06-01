@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util.converter;
+package org.geotoolkit.process.util.converter;
 
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -23,6 +23,7 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 
 import org.apache.sis.util.UnconvertibleObjectException;
+import org.geotoolkit.feature.util.converter.SimpleConverter;
 
 /**
  * Implementation of ObjectConverter to convert a String in WKT format into an Geometry

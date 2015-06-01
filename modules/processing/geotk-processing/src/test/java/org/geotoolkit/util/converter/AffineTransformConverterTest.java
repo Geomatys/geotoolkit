@@ -16,9 +16,8 @@
  */
 package org.geotoolkit.util.converter;
 
-import org.geotoolkit.util.converter.StringToAffineTransformConverter;
+import org.geotoolkit.process.util.converter.StringToAffineTransformConverter;
 import java.awt.geom.AffineTransform;
-import junit.framework.AssertionFailedError;
 
 
 import org.apache.sis.util.UnconvertibleObjectException;

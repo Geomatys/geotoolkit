@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wps.converters.outputs.literal;
 
-import org.geotoolkit.util.converter.SimpleConverter;
+import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.apache.sis.util.UnconvertibleObjectException;
 
 /**

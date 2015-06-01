@@ -19,6 +19,7 @@ package org.geotoolkit.util.converter;
 import com.vividsolutions.jts.geom.Point;
 
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.process.util.converter.StringToFeatureTypeConverter;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.ObjectConverter;

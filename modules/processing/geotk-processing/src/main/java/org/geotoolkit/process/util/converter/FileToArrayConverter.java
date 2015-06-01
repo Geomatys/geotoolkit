@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2014, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,34 +14,32 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util.converter;
 
-import java.util.Date;
-import java.sql.Timestamp;
+package org.geotoolkit.process.util.converter;
+
+import java.io.File;
 import org.apache.sis.util.UnconvertibleObjectException;
-
+import org.geotoolkit.feature.util.converter.SimpleConverter;
 
 /**
- * Converter from Date to Timestamp
  *
- * @module pending
+ * @author guilhem
  */
-public class DateToTimeStampConverter extends SimpleConverter<Date, Timestamp>{
+public class FileToArrayConverter extends SimpleConverter<File, File[]> {
+
     @Override
-    public Class<Date> getSourceClass() {
-        return Date.class;
+    public Class<File> getSourceClass() {
+        return File.class;
     }
 
     @Override
-    public Class<Timestamp> getTargetClass() {
-        return Timestamp.class;
+    public Class<File[]> getTargetClass() {
+        return File[].class;
     }
 
     @Override
-    public Timestamp apply(final Date s) throws UnconvertibleObjectException {
-        if (s != null) {
-            return new Timestamp(s.getTime());
-        }
-        return null;
+    public File[] apply(File object) throws UnconvertibleObjectException {
+        return new File[]{object};
     }
+    
 }

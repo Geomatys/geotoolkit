@@ -14,13 +14,14 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util.converter;
+package org.geotoolkit.process.util.converter;
 
 
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.sort.DefaultSortBy;
 import org.apache.sis.util.UnconvertibleObjectException;
 
+import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;

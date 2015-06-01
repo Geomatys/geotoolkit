@@ -14,9 +14,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util.converter;
+package org.geotoolkit.style.util.converter;
 
 import java.awt.Color;
+
+import org.geotoolkit.feature.util.converter.SimpleConverter;
 import org.geotoolkit.internal.InternalUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 
