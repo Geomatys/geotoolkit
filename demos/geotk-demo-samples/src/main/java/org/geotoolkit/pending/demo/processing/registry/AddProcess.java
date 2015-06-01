@@ -1,7 +1,7 @@
 
 package org.geotoolkit.pending.demo.processing.registry;
 
-import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 

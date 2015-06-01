@@ -37,7 +37,7 @@ import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
+import org.geotoolkit.processing.coverage.coveragetovector.CoverageToVectorDescriptor;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;

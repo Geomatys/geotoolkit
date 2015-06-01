@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.util.converter;
 
-import org.geotoolkit.process.util.converter.StringToGeometryConverter;
+import org.geotoolkit.processing.util.converter.StringToGeometryConverter;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;

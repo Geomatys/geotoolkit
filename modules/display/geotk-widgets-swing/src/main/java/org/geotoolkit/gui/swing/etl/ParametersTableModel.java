@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import org.geotoolkit.process.chain.model.Parameter;
-import org.geotoolkit.process.chain.model.Parameterized;
+import org.geotoolkit.processing.chain.model.Parameter;
+import org.geotoolkit.processing.chain.model.Parameterized;
 
 /**
  *

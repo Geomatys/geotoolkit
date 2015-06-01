@@ -21,7 +21,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.function.other.OtherFunctionFactory;
-import org.geotoolkit.process.coverage.isoline2.Isoline2;
+import org.geotoolkit.processing.coverage.isoline2.Isoline2;
 import org.geotoolkit.se.xml.v110.*;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.geotoolkit.style.StyleConstants;

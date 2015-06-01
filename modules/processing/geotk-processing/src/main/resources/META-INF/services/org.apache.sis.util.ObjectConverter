@@ -1,3 +1,3 @@
-org.geotoolkit.process.util.converter.StringToCRSConverter
-org.geotoolkit.process.util.converter.StringToFilterConverter
-org.geotoolkit.process.util.converter.FileToArrayConverter
+org.geotoolkit.processing.util.converter.StringToCRSConverter
+org.geotoolkit.processing.util.converter.StringToFilterConverter
+org.geotoolkit.processing.util.converter.FileToArrayConverter

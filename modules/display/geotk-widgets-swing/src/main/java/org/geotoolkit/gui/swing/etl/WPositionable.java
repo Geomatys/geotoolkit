@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.gui.swing.etl;
 
-import org.geotoolkit.process.chain.model.Positionable;
+import org.geotoolkit.processing.chain.model.Positionable;
 
 
 /**

@@ -34,7 +34,7 @@ import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRendere
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.math.Histogram;
 import org.geotoolkit.metadata.DefaultSampleDimensionExt;
-import org.geotoolkit.process.image.dynamicrange.DynamicRangeStretchProcess;
+import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
 import org.opengis.filter.expression.Expression;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.CoverageDescription;

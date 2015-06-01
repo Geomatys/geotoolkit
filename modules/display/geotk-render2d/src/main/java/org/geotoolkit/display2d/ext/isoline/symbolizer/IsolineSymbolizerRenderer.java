@@ -41,9 +41,9 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.process.*;
-import org.geotoolkit.process.coverage.isoline2.IsolineDescriptor2;
-import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
-import org.geotoolkit.process.coverage.resample.ResampleProcess;
+import org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2;
+import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
+import org.geotoolkit.processing.coverage.resample.ResampleProcess;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.function.Jenks;
 

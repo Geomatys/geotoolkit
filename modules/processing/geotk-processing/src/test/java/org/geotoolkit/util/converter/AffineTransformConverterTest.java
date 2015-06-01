@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.util.converter;
 
-import org.geotoolkit.process.util.converter.StringToAffineTransformConverter;
+import org.geotoolkit.processing.util.converter.StringToAffineTransformConverter;
 import java.awt.geom.AffineTransform;
 
 

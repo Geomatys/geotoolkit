@@ -104,7 +104,7 @@ import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.coverage.resample.ResampleDescriptor;
+import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
 import org.geotoolkit.feature.Feature;

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.util.converter;
 
-import org.geotoolkit.process.util.converter.StringToSortByConverter;
+import org.geotoolkit.processing.util.converter.StringToSortByConverter;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.sort.DefaultSortBy;
 import org.opengis.filter.sort.SortOrder;

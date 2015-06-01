@@ -22,7 +22,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.process.chain.model.ClassFull;
+import org.geotoolkit.processing.chain.model.ClassFull;
 import org.opengis.filter.Filter;
 import org.opengis.metadata.Metadata;
 

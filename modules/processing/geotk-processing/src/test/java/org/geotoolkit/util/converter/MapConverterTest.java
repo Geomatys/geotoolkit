@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.util.converter;
 
-import org.geotoolkit.process.util.converter.StringToMapConverter;
+import org.geotoolkit.processing.util.converter.StringToMapConverter;
 import java.util.Map;
 
 import org.apache.sis.util.UnconvertibleObjectException;

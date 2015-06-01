@@ -25,7 +25,7 @@ import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import static org.geotoolkit.gui.swing.etl.ChainEditorConstants.*;
-import org.geotoolkit.process.chain.model.DataLink;
+import org.geotoolkit.processing.chain.model.DataLink;
 
 /**
  *

@@ -24,9 +24,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.process.chain.model.Constant;
-import org.geotoolkit.process.chain.model.ElementCondition;
-import org.geotoolkit.process.chain.model.ElementManual;
+import org.geotoolkit.processing.chain.model.Constant;
+import org.geotoolkit.processing.chain.model.ElementCondition;
+import org.geotoolkit.processing.chain.model.ElementManual;
 
 /**
  *

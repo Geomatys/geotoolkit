@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.process.quartz.ProcessJobDetail;
+import org.geotoolkit.processing.quartz.ProcessJobDetail;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 import org.quartz.JobExecutionContext;

@@ -18,9 +18,9 @@ package org.geotoolkit.gui.swing.etl;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import org.geotoolkit.process.chain.model.Constant;
-import org.geotoolkit.process.chain.model.ElementCondition;
-import org.geotoolkit.process.chain.model.ElementManual;
+import org.geotoolkit.processing.chain.model.Constant;
+import org.geotoolkit.processing.chain.model.ElementCondition;
+import org.geotoolkit.processing.chain.model.ElementManual;
 
 /**
  *

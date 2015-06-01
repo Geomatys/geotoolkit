@@ -93,7 +93,7 @@ import org.opengis.util.FactoryException;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataStack;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.image.replace.ReplaceProcess;
+import org.geotoolkit.processing.image.replace.ReplaceProcess;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 

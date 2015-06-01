@@ -17,7 +17,7 @@
 package org.geotoolkit.gui.swing.etl;
 
 import java.util.List;
-import org.geotoolkit.process.chain.model.Parameter;
+import org.geotoolkit.processing.chain.model.Parameter;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.Widget;

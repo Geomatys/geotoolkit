@@ -70,8 +70,8 @@ import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.coverage.shadedrelief.ShadedReliefDescriptor;
-import org.geotoolkit.process.image.bandselect.BandSelectDescriptor;
+import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;
+import org.geotoolkit.processing.image.bandselect.BandSelectDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.EarthGravitationalModel;
@@ -114,8 +114,8 @@ import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.metadata.ImageStatistics;
-import org.geotoolkit.process.coverage.statistics.StatisticOp;
-import org.geotoolkit.process.coverage.statistics.Statistics;
+import org.geotoolkit.processing.coverage.statistics.StatisticOp;
+import org.geotoolkit.processing.coverage.statistics.Statistics;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 
@@ -386,7 +386,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final GridCoverage2D ti = gcb.getGridCoverage2D();
 
             final MathTransform1D trs = (MathTransform1D) MathTransforms.linear(factor, 0);
-            final org.geotoolkit.process.coverage.shadedrelief.ShadedRelief proc = new org.geotoolkit.process.coverage.shadedrelief.ShadedRelief(
+            final org.geotoolkit.processing.coverage.shadedrelief.ShadedRelief proc = new org.geotoolkit.processing.coverage.shadedrelief.ShadedRelief(
                     ti, mntCoverage, trs);
             final ParameterValueGroup res = proc.call();
             final GridCoverage2D shaded = (GridCoverage2D) res.parameter(ShadedReliefDescriptor.OUT_COVERAGE_PARAM_NAME).getValue();

@@ -8,7 +8,7 @@ import org.geotoolkit.db.postgres.PostgresFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.process.datastore.copy.CopyDescriptor;
+import org.geotoolkit.processing.datastore.copy.CopyDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**

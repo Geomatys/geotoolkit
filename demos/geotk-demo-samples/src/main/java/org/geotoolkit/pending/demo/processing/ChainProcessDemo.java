@@ -4,12 +4,12 @@ package org.geotoolkit.pending.demo.processing;
 import org.apache.sis.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.chain.ChainProcessDescriptor;
-import org.geotoolkit.process.chain.model.Chain;
-import org.geotoolkit.process.chain.model.Constant;
-import org.geotoolkit.process.chain.model.Element;
-import org.geotoolkit.process.chain.model.ElementProcess;
-import org.geotoolkit.process.chain.model.Parameter;
+import org.geotoolkit.processing.chain.ChainProcessDescriptor;
+import org.geotoolkit.processing.chain.model.Chain;
+import org.geotoolkit.processing.chain.model.Constant;
+import org.geotoolkit.processing.chain.model.Element;
+import org.geotoolkit.processing.chain.model.ElementProcess;
+import org.geotoolkit.processing.chain.model.Parameter;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**

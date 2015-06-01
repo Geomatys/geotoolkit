@@ -17,7 +17,7 @@
 package org.geotoolkit.gui.swing.etl;
 
 import java.awt.Point;
-import org.geotoolkit.process.chain.model.FlowLink;
+import org.geotoolkit.processing.chain.model.FlowLink;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.action.ReconnectProvider;
 import org.netbeans.api.visual.widget.ConnectionWidget;

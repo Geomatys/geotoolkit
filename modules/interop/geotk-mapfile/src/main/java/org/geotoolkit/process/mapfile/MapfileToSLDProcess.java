@@ -27,7 +27,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.sld.DefaultSLDFactory;

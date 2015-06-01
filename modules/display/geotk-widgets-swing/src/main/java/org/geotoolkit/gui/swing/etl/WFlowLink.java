@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.gui.swing.etl;
 
-import org.geotoolkit.process.chain.model.FlowLink;
+import org.geotoolkit.processing.chain.model.FlowLink;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.anchor.AnchorShape;
 import org.netbeans.api.visual.anchor.PointShape;

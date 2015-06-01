@@ -30,7 +30,7 @@ import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.Widget;
 import static org.geotoolkit.gui.swing.etl.ChainEditorConstants.*;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.process.chain.model.ElementManual;
+import org.geotoolkit.processing.chain.model.ElementManual;
 import org.netbeans.api.visual.action.EditProvider;
 
 /**

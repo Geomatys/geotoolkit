@@ -18,10 +18,10 @@ package org.geotoolkit.gui.swing.etl;
 
 import java.awt.Color;
 import org.geotoolkit.parameter.ExtendedParameterDescriptor;
-import org.geotoolkit.process.chain.ChainProcessDescriptor;
-import org.geotoolkit.process.chain.model.ClassFull;
-import org.geotoolkit.process.chain.model.ElementProcess;
-import org.geotoolkit.process.chain.model.Parameter;
+import org.geotoolkit.processing.chain.ChainProcessDescriptor;
+import org.geotoolkit.processing.chain.model.ClassFull;
+import org.geotoolkit.processing.chain.model.ElementProcess;
+import org.geotoolkit.processing.chain.model.Parameter;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Widget;

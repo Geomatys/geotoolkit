@@ -1,0 +1,171 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2011, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.processing.vector.centroid;
+
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.vector.AbstractProcessTest;
+import org.opengis.util.NoSuchIdentifierException;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Point;
+
+import org.geotoolkit.data.FeatureStoreUtilities;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureBuilder;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.referencing.CRS;
+
+import org.junit.Test;
+import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.util.FactoryException;
+
+import static org.junit.Assert.*;
+
+/**
+ * JUnit test of Centroid process
+ *
+ * @author Quentin Boileau @module pending
+ */
+public class CentroidTest extends AbstractProcessTest {
+
+    private static FeatureBuilder sfb;
+    private static GeometryFactory geometryFactory;
+    private static FeatureType type;
+
+    public CentroidTest() {
+        super("centroid");
+    }
+
+    @Test
+    public void testCentroid() throws ProcessException, NoSuchIdentifierException, FactoryException {
+
+        // Features in
+        final FeatureCollection featureList = buildFeatureList();
+
+        // Process
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "centroid");
+
+        ParameterValueGroup in = desc.getInputDescriptor().createValue();
+        in.parameter("feature_in").setValue(featureList);
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
+
+
+        //Features out
+        final FeatureCollection featureListOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
+        //Expected Features out
+        final FeatureCollection featureListResult = buildResultList();
+
+        assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
+        assertEquals(featureListOut.getID(), featureListResult.getID());
+        assertEquals(featureListOut.size(), featureListResult.size());
+        assertTrue(featureListOut.containsAll(featureListResult));
+    }
+
+    private static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("Building");
+        ftb.add("name", String.class);
+        ftb.add("position", LinearRing.class, CRS.decode("EPSG:3395"));
+        ftb.add("height", Integer.class);
+
+        ftb.setDefaultGeometry("position");
+        final FeatureType sft = ftb.buildFeatureType();
+        return sft;
+    }
+
+    private static FeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("Building");
+        ftb.add("name", String.class);
+        ftb.add("position", Point.class, CRS.decode("EPSG:3395"));
+        ftb.add("height", Integer.class);
+
+        ftb.setDefaultGeometry("position");
+        final FeatureType sft = ftb.buildFeatureType();
+        return sft;
+    }
+
+    private static FeatureCollection buildFeatureList() throws FactoryException {
+
+        type = createSimpleType();
+
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+
+        for (int i = 0; i < 5; i++) {
+
+            Feature myFeature;
+            geometryFactory = new GeometryFactory();
+
+
+
+            sfb = new FeatureBuilder(type);
+            sfb.setPropertyValue("name", "Building" + i);
+            sfb.setPropertyValue("height", 12);
+            sfb.setPropertyValue("position", geometryFactory.createLinearRing(
+                    new Coordinate[]{
+                        new Coordinate(5.0, 18.0),
+                        new Coordinate(10.0, 23.0),
+                        new Coordinate(10.0, 26.0),
+                        new Coordinate(5.0, 18.0)
+                    }));
+
+            myFeature = sfb.buildFeature("id-0" + i);
+
+            featureList.add(myFeature);
+        }
+
+        return featureList;
+    }
+
+    private static FeatureCollection buildResultList() throws FactoryException {
+
+        type = createSimpleResultType();
+
+        final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
+
+        for (int i = 0; i < 5; i++) {
+
+            Feature myFeature;
+            geometryFactory = new GeometryFactory();
+
+            LinearRing ring = geometryFactory.createLinearRing(
+                    new Coordinate[]{
+                        new Coordinate(5.0, 18.0),
+                        new Coordinate(10.0, 23.0),
+                        new Coordinate(10.0, 26.0),
+                        new Coordinate(5.0, 18.0)
+                    });
+
+
+            sfb = new FeatureBuilder(type);
+            sfb.setPropertyValue("name", "Building" + i);
+            sfb.setPropertyValue("height", 12);
+            sfb.setPropertyValue("position", ring.getCentroid());
+            myFeature = sfb.buildFeature("id-0" + i);
+
+            featureList.add(myFeature);
+        }
+
+        return featureList;
+    }
+}

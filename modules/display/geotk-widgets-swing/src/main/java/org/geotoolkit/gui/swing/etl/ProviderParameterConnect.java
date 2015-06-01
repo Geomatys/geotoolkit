@@ -17,7 +17,7 @@
 package org.geotoolkit.gui.swing.etl;
 
 import java.awt.Point;
-import org.geotoolkit.process.chain.model.DataLink;
+import org.geotoolkit.processing.chain.model.DataLink;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Scene;

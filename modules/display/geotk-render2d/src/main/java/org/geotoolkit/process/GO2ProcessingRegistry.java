@@ -22,6 +22,7 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescriptor;
+import org.geotoolkit.processing.AbstractProcessingRegistry;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 
@@ -32,7 +33,7 @@ import org.opengis.metadata.identification.Identification;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class GO2ProcessingRegistry extends AbstractProcessingRegistry{
+public class GO2ProcessingRegistry extends AbstractProcessingRegistry {
 
     public static final String NAME = "engine2d";
     public static final DefaultServiceIdentification IDENTIFICATION;

@@ -17,7 +17,6 @@
 package org.geotoolkit.wps;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
@@ -46,6 +45,8 @@ import org.geotoolkit.process.*;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessingRegistry;
+import org.geotoolkit.processing.AbstractProcess;
+import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.util.ArgumentChecks;

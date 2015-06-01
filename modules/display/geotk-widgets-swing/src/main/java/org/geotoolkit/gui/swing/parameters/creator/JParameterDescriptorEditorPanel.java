@@ -33,7 +33,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.propertyedit.JAttributeEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.process.chain.model.ChainDataTypes;
+import org.geotoolkit.processing.chain.model.ChainDataTypes;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.parameter.ParameterDescriptor;
 

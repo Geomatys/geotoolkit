@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 import org.geotoolkit.process.mapfile.MapfileExpressionTokenizer.Token;
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
