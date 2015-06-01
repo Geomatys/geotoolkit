@@ -40,7 +40,7 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.Errors;
 
 
@@ -140,11 +140,11 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
                 return Citations.EPSG;
             }
         }
-        return Citations.UNKNOWN;
+        return org.geotoolkit.metadata.Citations.UNKNOWN;
     }
 
     /**
-     * Returns the authority or the vendor, or {@link Citations#UNKNOWN} if the information
+     * Returns the authority or the vendor, or {@link org.geotoolkit.metadata.Citations#UNKNOWN} if the information
      * is not available. For the vendor case we are not allowed to use the heuristic defined
      * in the super-class {@link ReferencingFactory#getVendor()} method, because this method
      * is typically invoked by wrappers. We want the citation of the wrapped factory, not
@@ -164,7 +164,7 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
      */
     Citation getCitation(final String method) {
         if (method.equals("getAuthority")) return getAuthority(getClass());
-        if (method.equals("getVendor"))    return Citations.UNKNOWN; // See javadoc
+        if (method.equals("getVendor"))    return org.geotoolkit.metadata.Citations.UNKNOWN; // See javadoc
         throw new IllegalArgumentException(method);
     }
 
@@ -961,7 +961,7 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
         final GenericName name  = nameFactory.parseGenericName(null, code);
         if (name instanceof ScopedName) {
             final GenericName scope = ((ScopedName) name).path();
-            if (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(getAuthority(), scope.toString())) {
+            if (Citations.identifierMatches(getAuthority(), scope.toString())) {
                 return name.tip().toString().trim();
             }
         }

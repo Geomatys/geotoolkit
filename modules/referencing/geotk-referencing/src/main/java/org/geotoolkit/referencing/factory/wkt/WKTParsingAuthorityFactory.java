@@ -22,9 +22,7 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Collections;
-import java.text.ParseException;
 import java.awt.RenderingHints;
-
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
@@ -36,21 +34,19 @@ import org.opengis.metadata.Identifier;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import org.geotoolkit.factory.Hints;
-import org.apache.sis.io.wkt.Symbols;
 import org.geotoolkit.io.wkt.WKTFormat;
-import org.geotoolkit.io.wkt.ReferencingParser;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.util.collection.DerivedSet;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.util.collection.BackingStoreException;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.referencing.factory.GeodeticObjectFactory;
 import org.apache.sis.util.ArraysExt;
 
 
@@ -245,7 +241,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
                 }
             }
             switch (authorities.length) {
-                case 0: authority = Citations.UNKNOWN; break;
+                case 0: authority = org.geotoolkit.metadata.Citations.UNKNOWN; break;
                 case 1: authority = authorities[0]; break;
                 default: {
                     final DefaultCitation c = new DefaultCitation(authorities[0]);
@@ -474,7 +470,6 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
     private Parser getParser() {
         if (parser == null) {
             parser = new Parser();
-            parser.setAxisIgnored(Boolean.TRUE.equals(hints.get(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER)));
         }
         return parser;
     }
@@ -491,13 +486,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
     public synchronized IdentifiedObject createObject(final String code)
             throws NoSuchAuthorityCodeException, FactoryException
     {
-        final Parser parser = getParser();
-        final String wkt = getWKT(IdentifiedObject.class, code, parser);
-        try {
-            return (IdentifiedObject) parser.parseObject(wkt);
-        } catch (ParseException exception) {
-            throw new FactoryException(exception);
-        }
+        return createCoordinateReferenceSystem(code);
     }
 
     /**
@@ -514,12 +503,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
     {
         final Parser parser = getParser();
         final String wkt = getWKT(CoordinateReferenceSystem.class, code, parser);
-        try {
-            // parseCoordinateReferenceSystem provides a slightly faster path than parseObject.
-            return parser.parseCoordinateReferenceSystem(wkt);
-        } catch (ParseException exception) {
-            throw new FactoryException(exception);
-        }
+        return parser.createFromWKT(wkt);
     }
 
     /**
@@ -539,7 +523,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
             final String candidate = scope.toString();
             final Citation[] authorities = getAuthorities();
             for (int i=0; i<authorities.length; i++) {
-                if (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authorities[i], candidate)) {
+                if (Citations.identifierMatches(authorities[i], candidate)) {
                     return name.tip().toString().trim();
                 }
             }
@@ -574,65 +558,14 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
             final Class<? extends IdentifiedObject> type) throws FactoryException
     {
         final Parser parser = getParser();
-        if (!parser.isAxisIgnored()) {
-            return super.getIdentifiedObjectFinder(type);
-        }
-        return new Finder(type);
-    }
-
-    /**
-     * A {@link IdentifiedObjectFinder} which tests CRS in standard axis order in addition
-     * of the "longitude first" axis order.
-     */
-    private final class Finder extends IdentifiedObjectFinder {
-        /**
-         * Creates a finder for the enclosing backing store.
-         */
-        Finder(final Class<? extends IdentifiedObject> type) {
-            super(WKTParsingAuthorityFactory.this, type);
-        }
-
-        /**
-         * Creates an object from the given code.
-         *
-         * @throws FactoryException if an error occurred while creating the object.
-         */
-        @Override
-        protected final IdentifiedObject create(final String code, final int attempt) throws FactoryException {
-            switch (attempt) {
-                case 0: {
-                    return super.create(code, attempt);
-                }
-                case 1: {
-                    synchronized (WKTParsingAuthorityFactory.this) {
-                        final Parser parser = getParser();
-                        assert parser.isAxisIgnored();
-                        try {
-                            parser.setAxisIgnored(false);
-                            return super.create(code, 0);
-                        } finally {
-                            parser.setAxisIgnored(true);
-                        }
-                    }
-
-                }
-                default: {
-                    return null;
-                }
-            }
-        }
+        return super.getIdentifiedObjectFinder(type);
     }
 
     /**
      * The WKT parser for this authority factory. This parser add automatically the authority
      * code if it was not explicitly specified in the WKT.
      */
-    private final class Parser extends ReferencingParser {
-        /**
-         * For cross-version compatibility.
-         */
-        private static final long serialVersionUID = -5910561042299146066L;
-
+    private final class Parser extends GeodeticObjectFactory {
         /**
          * The authority code for the WKT to be parsed. This is the code provided by the user to
          * the {@link WKTParsingAuthorityFactory#createCoordinateReferenceSystem(String)} method.
@@ -650,8 +583,6 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
          * Creates the parser.
          */
         public Parser() {
-            super(Symbols.getDefault(), factories);
-            setISOConform(true);
         }
 
         /**
@@ -660,7 +591,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
          * primary key to the list of identifiers.
          */
         @Override
-        protected Map<String,Object> alterProperties(Map<String,Object> properties) {
+        protected Map<String,?> complete(Map<String,?> properties) {
             final Citation pkAuthority = getPrimaryKeyAuthority();
             final Citation[] authorities;
             final Identifier[] identifiers;
@@ -706,10 +637,11 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
                     }
                     identifiers[i + offset] = new NamedIdentifier(authority, ci);
                 }
-                properties = new HashMap<>(properties);
-                properties.put(IdentifiedObject.IDENTIFIERS_KEY, identifiers);
+                final Map<String,Object> modified = new HashMap<>(properties);
+                modified.put(IdentifiedObject.IDENTIFIERS_KEY, identifiers);
+                properties = modified;
             }
-            return super.alterProperties(properties);
+            return super.complete(properties);
         }
     }
 

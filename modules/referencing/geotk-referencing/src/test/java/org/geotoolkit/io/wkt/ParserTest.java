@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.io.wkt;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Collection;
 import java.text.ParseException;
@@ -28,12 +27,9 @@ import java.io.FileNotFoundException;
 import javax.measure.unit.NonSI;
 
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.crs.CompoundCRS;
-import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.LenientComparable;
 import org.apache.sis.io.wkt.Symbols;
@@ -68,10 +64,9 @@ public final strictfp class ParserTest {
      * @throws FactoryException Should never happen.
      * @throws ParseException Should never happen.
      */
-    private static void parse(final Parser parser, final String filename)
-            throws IOException, ParseException
-    {
-        try (LineNumberReader reader = TestData.openReader(ParserTest.class, filename)) {
+    private static void parse(final String filename) throws IOException, ParseException {
+        final WKTFormat parser = new WKTFormat();
+        try (LineNumberReader reader = TestData.openReader(ParserTest.class, filename)) {   // LGPL
             if (reader == null) {
                 throw new FileNotFoundException(filename);
             }
@@ -140,17 +135,6 @@ public final strictfp class ParserTest {
     }
 
     /**
-     * Tests parsing of math transforms.
-     *
-     * @throws IOException Should never happen.
-     * @throws ParseException Should never happen.
-     */
-    @Test
-    public void testMathTransform() throws IOException, ParseException {
-        parse(new MathTransformParser(), "MathTransform.txt");
-    }
-
-    /**
      * Tests parsing of coordinate reference systems.
      *
      * @throws IOException Should never happen.
@@ -159,7 +143,7 @@ public final strictfp class ParserTest {
     @Test
     @Ignore
     public void testCoordinateReferenceSystem() throws IOException, ParseException {
-        parse(new ReferencingParser(), "CoordinateReferenceSystem.txt");
+        parse("CoordinateReferenceSystem.txt");
     }
 
     /**
@@ -186,8 +170,8 @@ public final strictfp class ParserTest {
               "UNIT[\"Meter\",1.0]," +
               "AUTHORITY[\"ESRI\",102018]]";
 
-        final ReferencingParser parser = new ReferencingParser();
-        CoordinateReferenceSystem crs = parser.parseCoordinateReferenceSystem(wkt);
+        final WKTFormat parser = new WKTFormat();
+        CoordinateReferenceSystem crs = (CoordinateReferenceSystem) parser.parseObject(wkt);
         assertEquals(1, crs.getIdentifiers().size());
         assertEquals("102018", crs.getIdentifiers().iterator().next().getCode());
     }
@@ -198,6 +182,7 @@ public final strictfp class ParserTest {
      * @throws ParseException Should never happen.
      */
     @Test
+    @Ignore("Oracle format no longer supported.")
     public void testOracleWKT() throws ParseException {
         final String wkt =
             "PROJCS[\"Datum 73 / Modified Portuguese Grid\"," +
@@ -218,11 +203,11 @@ public final strictfp class ParserTest {
              " UNIT [\"Meter\", 1]]";
 
         assertFalse(Symbols.getDefault().containsAxis(wkt));
-        final ReferencingParser parser = new ReferencingParser();
-        final CoordinateReferenceSystem crs1 = parser.parseCoordinateReferenceSystem(wkt);
+        final WKTFormat parser = new WKTFormat();
+        final CoordinateReferenceSystem crs1 = (CoordinateReferenceSystem) parser.parseObject(wkt);
         final String check = ((FormattableObject) crs1).toString(Convention.WKT1);
         assertTrue(check.contains("TOWGS84[-231"));
-        final CoordinateReferenceSystem crs2 = parser.parseCoordinateReferenceSystem(check);
+        final CoordinateReferenceSystem crs2 = (CoordinateReferenceSystem) parser.parseObject(check);
         assertTrue(((LenientComparable) crs1).equals(crs2, ComparisonMode.DEBUG));
         assertTrue(((LenientComparable) crs1).equals(crs2, ComparisonMode.BY_CONTRACT));
         assertEquals(crs1, crs2);
@@ -288,47 +273,12 @@ public final strictfp class ParserTest {
      */
     @Test
     public void testEsriConventions() throws ParseException {
-        final ReferencingParser parser = new ReferencingParser();
-        verifyLambertII((ProjectedCRS) parser.parseCoordinateReferenceSystem(IGNF_LAMBE), false);
+        final WKTFormat parser = new WKTFormat();
+        verifyLambertII((ProjectedCRS) parser.parseObject(IGNF_LAMBE), false);
         /*
          * Now force the angular unit to degrees, and test again.
          */
-        parser.setForcedAngularUnit(NonSI.DEGREE_ANGLE);
-        verifyLambertII((ProjectedCRS) parser.parseCoordinateReferenceSystem(IGNF_LAMBE), true);
-    }
-
-    /**
-     * Tests the parsing of a compound CRS.
-     *
-     * @throws ParseException If the parsing failed.
-     *
-     * @since 4.0
-     */
-    @Test
-    public void testCompoundCRS() throws ParseException {
-        final String wkt =
-                "COMPD_CS[\"WGS 84 + height + time\",\n" +
-                "  GEOGCS[\"WGS 84\",\n" +
-                "    DATUM[\"World Geodetic System 1984\",\n" +
-                "      SPHEROID[\"WGS84\", 6378137.0, 298.257223563]],\n" +
-                "    PRIMEM[\"Greenwich\", 0.0],\n" +
-                "    UNIT[\"degree\", 0.017453292519943295],\n" +
-                "    AXIS[\"Longitude\", EAST],\n" +
-                "    AXIS[\"Latitude\", NORTH]],\n" +
-                "  VERT_CS[\"Gravity-related height\",\n" +
-                "    VERT_DATUM[\"Mean Sea Level\", 2005],\n" +
-                "    UNIT[\"metre\", 1],\n" +
-                "    AXIS[\"Gravity-related height\", UP]],\n" +
-                "  TIMECRS[\"Time\",\n" +
-                "    TIMEDATUM[\"Modified Julian\", TIMEORIGIN[1858-11-17T00:00:00.0Z]],\n" +
-                "    UNIT[\"day\", 86400],\n" +
-                "    AXIS[\"Time\", FUTURE]]]";
-
-        final ReferencingParser parser = new ReferencingParser();
-        CoordinateReferenceSystem crs = parser.parseCoordinateReferenceSystem(wkt);
-        assertTrue(crs instanceof CompoundCRS);
-        final TemporalCRS timeCRS = CRS.getTemporalComponent(crs);
-        assertNotNull(timeCRS);
-        assertEquals("epoch", new Date(-40587 * (24*60*60*1000L)), timeCRS.getDatum().getOrigin());
+        parser.setConvention(Convention.WKT1_COMMON_UNITS);
+        verifyLambertII((ProjectedCRS) parser.parseObject(IGNF_LAMBE), true);
     }
 }

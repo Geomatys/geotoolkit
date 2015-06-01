@@ -26,7 +26,6 @@ import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 
-import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.FactoryDependencies;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
@@ -138,7 +137,7 @@ public class ReferencingCommands extends CommandLine {
      * The indentation to use for WKT formatting.
      */
     @Option
-    int indent = WKTFormat.getDefaultIndentation();
+    int indent = 2;
 
     /**
      * Whatever to force "longitude first" axis order.

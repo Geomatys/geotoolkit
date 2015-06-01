@@ -72,6 +72,9 @@ final class IdentifierCode extends ImmutableIdentifier {
      * Returns the code space for the given authority.
      */
     private static String codespace(final Citation authority) {
+        if (authority == org.apache.sis.metadata.iso.citation.Citations.EPSG) { // Temporary hack.
+            return "EPSG";
+        }
         return authority.getIdentifiers().iterator().next().getCode();
     }
 

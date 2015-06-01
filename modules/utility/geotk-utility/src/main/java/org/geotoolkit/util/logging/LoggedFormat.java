@@ -48,8 +48,6 @@ import org.apache.sis.util.logging.Logging;
  * @param <T> The expected type of values to be parsed.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
  * @since 2.4
  * @module
  */

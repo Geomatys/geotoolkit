@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.Set;
-import org.apache.sis.internal.util.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.internal.util.LazySet;
 import org.geotoolkit.lang.Static;
@@ -162,7 +162,7 @@ public final class FeatureStoreFinder extends Static {
      */
     public static synchronized FeatureStoreFactory getFactoryById(final String identifier) {
         for (final FeatureStoreFactory factory : loader) {
-            if (Citations.identifierMatches(factory.getIdentification().getCitation(), null, identifier)) {
+            if (Citations.identifierMatches(factory.getIdentification().getCitation(), identifier)) {
                 return factory;
             }
         }

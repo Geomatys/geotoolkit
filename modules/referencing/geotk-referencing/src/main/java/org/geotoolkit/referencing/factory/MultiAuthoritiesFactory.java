@@ -31,7 +31,7 @@ import org.opengis.metadata.citation.Citation;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
-import org.geotoolkit.metadata.Citations;
+import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.util.iso.DefaultNameSpace;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -188,7 +188,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
             int authorityIndex;
             for (authorityIndex=0; authorityIndex<authorityCount; authorityIndex++) {
                 final Citation candidate = authorities[authorityIndex];
-                if (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(candidate, authority)) {
+                if (Citations.identifierMatches(candidate, authority)) {
                     authority = candidate;
                     break;
                 }
@@ -311,11 +311,12 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
 
     /**
      * Returns the vendor responsible for creating this factory implementation.
-     * The default implementation returns {@linkplain Citations#GEOTOOLKIT Geotoolkit.org}.
+     * The default implementation returns
+     * {@linkplain org.geotoolkit.metadata.Citations#GEOTOOLKIT Geotoolkit.org}.
      */
     @Override
     public Citation getVendor() {
-        return Citations.GEOTOOLKIT;
+        return org.geotoolkit.metadata.Citations.GEOTOOLKIT;
     }
 
     /**
@@ -343,7 +344,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
         final Set<String> names = new HashSet<>();
         if (factories != null) {
             for (final AuthorityFactory factory : factories) {
-                names.add(org.apache.sis.metadata.iso.citation.Citations.getIdentifier(factory.getAuthority()));
+                names.add(Citations.getIdentifier(factory.getAuthority()));
             }
         }
         return names;
@@ -478,7 +479,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
             if (factories != null) {
                 for (final AuthorityFactory factory : factories) {
                     if (type.isAssignableFrom(factory.getClass())) {
-                        if (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(factory.getAuthority(), authority)) {
+                        if (Citations.identifierMatches(factory.getAuthority(), authority)) {
                             return type.cast(factory);
                         }
                     }

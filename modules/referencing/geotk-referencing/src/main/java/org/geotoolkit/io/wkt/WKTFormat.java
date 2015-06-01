@@ -26,27 +26,21 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.EOFException;
 import java.text.ParseException;
-import java.text.ParsePosition;
-
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-
 import org.apache.sis.io.wkt.Symbols;
 import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.io.wkt.Convention;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Strings;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.io.ContentFormatException;
-import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.resources.Errors;
 
-import javax.measure.unit.NonSI;
 import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
@@ -141,29 +135,11 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
     private Definitions definitions;
 
     /**
-     * The parser. Will be created when first needed.
-     */
-    private transient Parser parser;
-
-    /**
      * Constructs a format using the default factories.
      */
     public WKTFormat() {
         super(null, null);
         super.setConvention(Convention.WKT1);
-    }
-
-    /**
-     * Constructs a format using the given factories for creating parsed objects.
-     *
-     * @param hints The hints to be used for fetching the factories, or
-     *              {@code null} for the system-wide default hints.
-     */
-    public WKTFormat(final Hints hints) {
-        this();
-        if (!isNullOrEmpty(hints)) {
-            parser = new ReferencingParser(super.getSymbols(), hints);
-        }
     }
 
     /**
@@ -176,64 +152,10 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
         final Symbols old = super.getSymbols();
         super.setSymbols(symbols);
         if (!symbols.equals(old)) {
-            if (parser != null) {
-                parser.setSymbols(symbols);
-            }
             if (definitions != null) {
                 definitions.quote = (char) symbols.getOpeningQuote(0); // TODO (need also close quote).
             }
         }
-    }
-
-    /**
-     * Sets the convention for parsing and formatting WKT entities.
-     * The convention given to this method can not be null.
-     *
-     * @param convention The new convention to use for formatting WKT entities.
-     *
-     * @since 3.20
-     */
-    @Override
-    public void setConvention(final Convention convention) {
-        super.setConvention(convention);
-        updateParser();
-    }
-
-    /**
-     * Updates the parser convention according the current state of this {@code WKTFormat}.
-     */
-    private void updateParser() {
-        final ReferencingParser parser = (ReferencingParser) this.parser;
-        if (parser instanceof ReferencingParser) {
-            final Convention convention = super.getConvention();
-            parser.setForcedAngularUnit((convention == Convention.WKT1_COMMON_UNITS) ? NonSI.DEGREE_ANGLE : null);
-        }
-    }
-
-    /**
-     * Returns the system-wide default indentation. The default value can be modified
-     * by a call to {@link #setDefaultIndentation(int)}.
-     *
-     * @return The system-wide default indentation.
-     *
-     * @since 3.20 (derived from 3.00)
-     */
-    public static int getDefaultIndentation() {
-// TODO return FormattableObject.defaultIndentation;
-        return 2;
-    }
-
-    /**
-     * Sets the system-wide default value for indentation.
-     *
-     * @param indentation The new system-wide default value for indentation.
-     *
-     * @since 3.20 (derived from 3.00)
-     */
-    @Configuration
-    public static void setDefaultIndentation(final int indentation) {
-        // No need to synchronize since setting a 32 bits integer is an atomic operation.
-// TODO FormattableObject.defaultIndentation = indentation;
     }
 
     /**
@@ -307,15 +229,8 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
             if (definitions != null) {
                 text = definitions.substitute(text);
             }
-            final Parser parser = getParser();
             try {
-                if (MathTransform.class.isAssignableFrom(type) && parser instanceof MathTransformParser) {
-                    value = ((MathTransformParser) parser).parseMathTransform(text);
-                } else if (CoordinateReferenceSystem.class.isAssignableFrom(type) && parser instanceof ReferencingParser) {
-                    value = ((ReferencingParser) parser).parseCoordinateReferenceSystem(text);
-                } else {
-                    value = parser.parseObject(text);
-                }
+                value = parseObject(text);
             } catch (ParseException exception) {
                 if (definitions != null) {
                     exception = definitions.adjustErrorOffset(exception, offset);
@@ -329,57 +244,6 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
         }
         throw new ParseException(Errors.format(
                 Errors.Keys.ILLEGAL_CLASS_2, actualType, type), 0);
-    }
-
-    /**
-     * Parses the specified <cite>Well Know Text</cite> (WKT). The default implementation delegates
-     * the work to <code>{@link #parse(String,int,Class) parse}(text, 0, Object.class)</code>.
-     *
-     * @param  text The text to be parsed.
-     * @return The parsed object.
-     * @throws ParseException if the string can't be parsed.
-     */
-    @Override
-    public Object parseObject(final String text) throws ParseException {
-        return parse(text, 0, Object.class);
-    }
-
-    /**
-     * Parses the specified <cite>Well Know Text</cite> starting at the specified position.
-     * The default implementation delegates the work to <code>{@link #parseObject(String)
-     * parseObject}(wkt.substring(position.getIndex()))</code>.
-     *
-     * {@note The other way around (<code>parseObject(String)</code> invoking
-     *        <code>parseObject(String,ParsePosition)</code> as in the default
-     *        <code>Format</code> implementation) is not pratical in the context
-     *        of <code>WKTFormat</code>. Among other problems, it doesn't provide
-     *        any accurate error message.}
-     *
-     * @param  text The text to parse.
-     * @param  position The index of the first character to parse.
-     * @return The parsed object, or {@code null} in case of failure.
-     */
-    @Override
-    public Object parseObject(final String text, final ParsePosition position) {
-        final int start = position.getIndex();
-        try {
-            return parseObject(text.substring(start));
-        } catch (ParseException exception) {
-            position.setIndex(start);
-            position.setErrorIndex(exception.getErrorOffset() + start);
-            return null;
-        }
-    }
-
-    /**
-     * Returns the parser, creating it if needed.
-     */
-    private Parser getParser() {
-        if (parser == null) {
-            parser = new ReferencingParser(super.getSymbols(), (Hints) null);
-            updateParser();
-        }
-        return parser;
     }
 
     /**

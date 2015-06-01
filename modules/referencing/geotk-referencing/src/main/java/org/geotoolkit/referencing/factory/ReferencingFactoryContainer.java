@@ -80,6 +80,8 @@ import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
  * @module
  */
 public class ReferencingFactoryContainer extends ReferencingFactory {
+    // "ReferencingFactoryContainer" name is LGPL.
+
     /**
      * A factory registry used as a cache for factory groups created up to date.
      */

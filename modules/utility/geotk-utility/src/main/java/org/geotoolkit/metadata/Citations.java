@@ -441,15 +441,15 @@ public final class Citations extends Static {
      * @see org.geotoolkit.io.wkt.Convention#EPSG
      * @category Code space
      */
-    public static final IdentifierSpace<Integer> EPSG;
-    static {
-        final CitationConstant.Authority<Integer> c = new CitationConstant.Authority<>(
-                PartyConstant.EPSG, "EPSG", "EPSG");
-        setAlternateTitle(c, "EPSG");
-        setPresentationForm(c, PresentationForm.TABLE_DIGITAL);
-        c.freeze();
-        EPSG = c;
-    }
+    public static final IdentifierSpace<Integer> EPSG = org.apache.sis.metadata.iso.citation.Citations.EPSG;
+//    static {
+//        final CitationConstant.Authority<Integer> c = new CitationConstant.Authority<>(
+//                PartyConstant.EPSG, "EPSG", "EPSG");
+//        setAlternateTitle(c, "EPSG");
+//        setPresentationForm(c, PresentationForm.TABLE_DIGITAL);
+//        c.freeze();
+//        EPSG = c;
+//    }
 
     /**
      * The French mapping agency (<A HREF="http://www.ign.fr">Institut Géographique National</A>).
