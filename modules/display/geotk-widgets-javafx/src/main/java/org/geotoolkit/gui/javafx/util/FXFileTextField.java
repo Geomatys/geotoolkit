@@ -21,9 +21,11 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.stage.FileChooser;
+import org.geotoolkit.internal.Loggers;
 
 /**
  * Allow user to specify a file path using an auto-completed text field.
@@ -82,7 +84,7 @@ public class FXFileTextField extends AbstractPathTextField {
                 chooser.setInitialDirectory(basePath.getParent().toFile());
             }
         } catch (Exception e) {
-            // Well, we'll try without it...
+            Loggers.JAVAFX.log(Level.FINE, "Root path cannot be decoded.", e);
         }
         File returned = chooser.showOpenDialog(null);
         if (returned == null) {
@@ -96,7 +98,7 @@ public class FXFileTextField extends AbstractPathTextField {
     @Override
     protected URI getURIForText(String inputText) throws Exception {
         if (rootPath.get() == null) {
-            return new URI(inputText.matches("[A-Za-z]+://.+")? inputText : "file://"+inputText);
+            return inputText.matches("[A-Za-z]+://.+")? new URI(inputText) : Paths.get(inputText).toUri();
         } else {
             return Paths.get(rootPath.get(), inputText == null? "" : inputText).toUri();
         }
