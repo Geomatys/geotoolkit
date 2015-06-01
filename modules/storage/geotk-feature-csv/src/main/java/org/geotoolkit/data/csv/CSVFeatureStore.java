@@ -148,7 +148,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     private static ParameterValueGroup toParameters(final File f,
             final String namespace, final Character separator) throws MalformedURLException{
         final ParameterValueGroup params = CSVFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(CSVFeatureStoreFactory.URLP, params).setValue(f.toURL());
+        Parameters.getOrCreate(CSVFeatureStoreFactory.URLP, params).setValue(f.toURI().toURL());
         Parameters.getOrCreate(CSVFeatureStoreFactory.NAMESPACE, params).setValue(namespace);
         Parameters.getOrCreate(CSVFeatureStoreFactory.SEPARATOR, params).setValue(separator);
         return params;
