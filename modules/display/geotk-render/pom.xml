@@ -86,7 +86,7 @@
   <dependencies>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverageio</artifactId>
+      <artifactId>geotk-coverage</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

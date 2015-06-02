@@ -75,7 +75,7 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverageio</artifactId>
+      <artifactId>geotk-coverage</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -119,29 +119,6 @@
         </excludes>
       </resource>
     </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>test-resources</id>
-            <goals>
-              <goal>add-test-resource</goal>
-            </goals>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>../geotk-coverageio/src/test/resources</directory>
-                  <includes>
-                    <include>**/matrix.*</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+
   </build>
 </project>
