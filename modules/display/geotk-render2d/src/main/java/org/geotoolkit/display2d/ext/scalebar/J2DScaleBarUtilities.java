@@ -77,9 +77,10 @@ public class J2DScaleBarUtilities {
      * @param g2d : Graphics2D used to render
      * @param bounds : Rectangle where the scale must be painted
      * @param template : scalebar template
+     * @return length in given unit of the scale bar
      * @throws org.geotoolkit.display.exception.PortrayalException
      */
-    public static void paint(CoordinateReferenceSystem objectiveCRS,
+    public static double paint(CoordinateReferenceSystem objectiveCRS,
                               final CoordinateReferenceSystem displayCRS,
                               final Point2D geoPosition,
                               final Graphics2D g2d,
@@ -236,16 +237,12 @@ public class J2DScaleBarUtilities {
             String text = template.getNumberFormat().format(logicalLength * i, buffer, pos).toString();
             GlyphVector glyphs = font.createGlyphVector(fontContext, text);
             Rectangle2D rect = glyphs.getVisualBounds();
-            rect.setRect(visualLength * i, thickness + 3, rect.getWidth(), rect.getHeight());
+            rect.setRect(0, thickness + 5, rect.getWidth(), rect.getHeight());
             if (i == n) {
                 buffer.append(' ');
                 buffer.append(scaleUnit);
-                final double anchorX = rect.getMinX();
-                final double anchorY = rect.getMinY();
                 text = buffer.toString();
                 glyphs = font.createGlyphVector(fontContext, text);
-                rect = glyphs.getVisualBounds();
-                rect.setRect(anchorX, anchorY, rect.getWidth(), rect.getHeight());
             }
             tickBounds[i] = rect;
             tickGlyphs[i] = glyphs;
@@ -261,6 +258,8 @@ public class J2DScaleBarUtilities {
         g2d.setStroke(new BasicStroke(1));
 
         final Rectangle2D.Double rect = new Rectangle2D.Double(0, 0, visualLength, thickness);
+        //apply an offset of half the width of the first text
+        rect.x = tickBounds[0].getWidth()/2.0;
         for (int i=0,n=template.getDivisionCount(); i<n; i++) {
 
             final Paint fill = ((i & 1) != 0) ? template.getFirstRectanglePaint() :
@@ -275,14 +274,17 @@ public class J2DScaleBarUtilities {
         /*
          * Writes tick labels, units and map scale legend.
          */
+        double tickX = tickBounds[0].getWidth()/2.0;
         g2d.setPaint(template.getForeground());
         for (int i = 0; i < tickGlyphs.length; i++) {
             if (tickGlyphs[i] != null) {
                 final Rectangle2D tick = tickBounds[i];
-                g2d.drawGlyphVector(tickGlyphs[i], (float) tick.getMinX(),(float) tick.getMaxY());
+                g2d.drawGlyphVector(tickGlyphs[i], (float)(tickX - (tick.getWidth()/2.0)),(float) tick.getMaxY());
             }
+            tickX += visualLength;
         }
 
+        return logicalLength * template.getDivisionCount();
     }
 
     public static Dimension estimate(final Graphics2D g, final ScaleBarTemplate template, final boolean considerBackground){

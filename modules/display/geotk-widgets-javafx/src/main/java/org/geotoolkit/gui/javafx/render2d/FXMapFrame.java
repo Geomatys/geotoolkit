@@ -85,6 +85,9 @@ public class FXMapFrame {
         navBar = new FXNavigationBar(map);
         geotoolBar = new FXGeoToolBar(map);
         coordBar = new FXCoordinateBar(map);
+
+
+        map.addDecoration(new FXScaleBarDecoration());
         
         final GridPane topgrid = new GridPane();
         contextBar.setMaxHeight(Double.MAX_VALUE);
