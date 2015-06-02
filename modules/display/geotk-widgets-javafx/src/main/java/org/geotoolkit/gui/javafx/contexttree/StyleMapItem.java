@@ -22,6 +22,8 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -34,6 +36,7 @@ import javafx.scene.layout.BorderPane;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendService;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendTemplate;
+import org.geotoolkit.display2d.ext.legend.LegendTemplate;
 import org.geotoolkit.gui.javafx.util.TaskManager;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
@@ -47,7 +50,7 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 public class StyleMapItem extends TreeItem implements LayerListener {
 
     //generate a template for the legend
-    private static final DefaultLegendTemplate legendTemplate = new DefaultLegendTemplate(
+    private static final LegendTemplate legendTemplate = new DefaultLegendTemplate(
             new DefaultBackgroundTemplate( //legend background
                     new BasicStroke(0), //stroke
                     Color.BLACK, //stroke paint
@@ -93,8 +96,12 @@ public class StyleMapItem extends TreeItem implements LayerListener {
     @Override
     public void styleChange(MapLayer source, EventObject event) {
         TaskManager.INSTANCE.submit("Calcul d'une légende", () -> {
-            final WritableImage legend = SwingFXUtils.toFXImage(DefaultLegendService.portray(legendTemplate, source, null), null);
-            Platform.runLater(() -> imageProperty.set(legend));
+            try{
+                final WritableImage legend = SwingFXUtils.toFXImage(DefaultLegendService.portray(legendTemplate, source, null), null);
+                Platform.runLater(() -> imageProperty.set(legend));
+            } catch (Exception e){
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Cannot build legend for mapItem "+source.getName(), e);
+            }
             return null;
         });
     }
