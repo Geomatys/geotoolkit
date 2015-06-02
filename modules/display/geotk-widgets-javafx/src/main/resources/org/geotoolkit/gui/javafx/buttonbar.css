@@ -2,14 +2,29 @@
 .buttongroup-left {
     -fx-background-radius: 3 0 0 3;
     -fx-background-insets: -2 0 -2 -2, 0, 1 0 1 1, 2 0 2 2;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
 }
 
 .buttongroup-right {
     -fx-background-radius: 0 3 3 0;
     -fx-background-insets: -2 -2 -2 0, 0, 1 1 1 0, 2 2 2 0;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
 }
 
 .buttongroup-center {
     -fx-background-radius: 0;
     -fx-background-insets: -2 0 -2 0, 0, 1 0 1 0, 2 0 2 0;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+}
+
+.buttongroup-single {
+}
+
+.buttongroup-single:focused {
+    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 5, 4, 3;
 }
