@@ -73,10 +73,11 @@ public class MapItemVisibleColumn extends TreeTableColumn{
         }
 
         private void mouseClick(MouseEvent event){
-            if(isEditing() && getText()!=null){
-                final Boolean val = FontAwesomeIcons.ICON_EYE_SLASH.equals(getText());
-                commitEdit(val);
+            event.consume();
+            if(!isEditing()){
+                getTreeTableView().edit(getTreeTableRow().getIndex(), getTableColumn());
             }
+            commitEdit(!Boolean.TRUE.equals(getItem()));
         }
         
         @Override
@@ -94,8 +95,8 @@ public class MapItemVisibleColumn extends TreeTableColumn{
             }else{
                 setText(null);
             }
-            
         }
+
     }
     
 }
