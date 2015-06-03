@@ -21,7 +21,7 @@ xmlns = {
     @XmlJavaTypeAdapter(GO_Integer64.class),
     @XmlJavaTypeAdapter(type=long.class, value=GO_Integer64.class)
 })
-package org.geotoolkit.util;
+package org.geotoolkit.feature.catalog.util;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

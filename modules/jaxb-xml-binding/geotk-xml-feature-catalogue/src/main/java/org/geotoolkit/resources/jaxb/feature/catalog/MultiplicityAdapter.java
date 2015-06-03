@@ -18,7 +18,8 @@ package org.geotoolkit.resources.jaxb.feature.catalog;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import org.geotoolkit.util.*;
+
+import org.geotoolkit.feature.catalog.util.Multiplicity;
 
 /**
  * JAXB adapter in order to map implementing class with the Types Multiplicity. See

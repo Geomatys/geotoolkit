@@ -11,11 +11,9 @@
 package org.opengis.feature.catalog;
 
 import java.util.List;
-import org.opengis.annotation.UML;
+
 import org.opengis.util.LocalName;
-import org.geotoolkit.util.Multiplicity;
-import static org.opengis.annotation.Obligation.*;
-import static org.opengis.annotation.Specification.*;
+import org.geotoolkit.feature.catalog.util.Multiplicity;
 
 /**
  *

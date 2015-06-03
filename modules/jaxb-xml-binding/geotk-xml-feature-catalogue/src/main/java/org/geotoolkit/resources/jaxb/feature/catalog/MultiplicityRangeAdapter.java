@@ -16,7 +16,8 @@
  */
 package org.geotoolkit.resources.jaxb.feature.catalog;
 
-import org.geotoolkit.util.*;
+import org.geotoolkit.feature.catalog.util.MultiplicityRange;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 

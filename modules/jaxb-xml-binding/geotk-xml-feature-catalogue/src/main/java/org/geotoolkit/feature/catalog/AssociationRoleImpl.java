@@ -32,7 +32,7 @@ import org.opengis.feature.catalog.FeatureAssociation;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.RoleType;
 import org.opengis.util.LocalName;
-import org.geotoolkit.util.Multiplicity;
+import org.geotoolkit.feature.catalog.util.Multiplicity;
 
 
 /**

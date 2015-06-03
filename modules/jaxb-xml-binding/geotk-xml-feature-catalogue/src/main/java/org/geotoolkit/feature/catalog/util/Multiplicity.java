@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.util;
+package org.geotoolkit.feature.catalog.util;
 
 import java.util.ArrayList;
 import java.util.List;

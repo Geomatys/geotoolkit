@@ -15,7 +15,9 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.util;
+package org.geotoolkit.feature.catalog.util;
+
+import org.geotoolkit.util.UnlimitedInteger;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

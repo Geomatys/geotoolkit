@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.util;
+package org.geotoolkit.feature.catalog.util;
 
 import java.util.Objects;
 import org.geotoolkit.resources.jaxb.feature.catalog.UnlimitedIntegerAdapter;
@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.internal.jaxb.gco.GO_Integer;
+import org.geotoolkit.util.UnlimitedInteger;
 
 
 /**

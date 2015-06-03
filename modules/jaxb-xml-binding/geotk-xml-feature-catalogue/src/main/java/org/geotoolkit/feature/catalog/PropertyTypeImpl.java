@@ -40,7 +40,7 @@ import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.DefinitionReference;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.PropertyType;
-import org.geotoolkit.util.Multiplicity;
+import org.geotoolkit.feature.catalog.util.Multiplicity;
 
 /**
  * Abstract class for feature properties.

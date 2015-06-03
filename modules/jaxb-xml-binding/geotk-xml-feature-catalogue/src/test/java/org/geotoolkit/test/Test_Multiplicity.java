@@ -23,8 +23,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.util.Multiplicity;
-import org.geotoolkit.util.MultiplicityRange;
+import org.geotoolkit.feature.catalog.util.Multiplicity;
+import org.geotoolkit.feature.catalog.util.MultiplicityRange;
 import org.junit.Ignore;
 import org.geotoolkit.util.UnlimitedInteger;
 
