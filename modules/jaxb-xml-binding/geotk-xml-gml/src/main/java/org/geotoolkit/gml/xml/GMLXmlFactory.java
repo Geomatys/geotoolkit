@@ -119,7 +119,8 @@ public class GMLXmlFactory {
     public static LinearRing buildLinearRing(final String version,  final List<Double> coordList, final String srsName) {
         if ("3.2.1".equals(version)) {
             final org.geotoolkit.gml.xml.v321.DirectPositionListType dpList = new org.geotoolkit.gml.xml.v321.DirectPositionListType(coordList);
-            return new org.geotoolkit.gml.xml.v321.LinearRingType(srsName, dpList);
+            //no srsName on linear ring in this version
+            return new org.geotoolkit.gml.xml.v321.LinearRingType(null, dpList);
         } else if ("3.1.1".equals(version)) {
             final org.geotoolkit.gml.xml.v311.DirectPositionListType dpList = new org.geotoolkit.gml.xml.v311.DirectPositionListType(coordList);
             return new org.geotoolkit.gml.xml.v311.LinearRingType(srsName, dpList);
