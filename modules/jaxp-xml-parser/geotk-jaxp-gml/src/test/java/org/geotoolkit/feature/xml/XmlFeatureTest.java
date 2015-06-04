@@ -209,6 +209,23 @@ public class XmlFeatureTest {
     }
 
     @Test
+    public void testWriteSimpleFeature321() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException{
+        final File temp = File.createTempFile("gml", ".xml");
+        temp.deleteOnExit();
+        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter("3.2.1", "1.1.0", null);
+        writer.write(simpleFeatureFull, temp);
+        writer.dispose();
+
+        String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature321.xml"));
+        expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
+        org.apache.sis.test.Assert.assertXmlEquals(expResult, temp,
+                "http://www.w3.org/2000/xmlns:*",
+                "http://www.w3.org/2001/XMLSchema-instance:schemaLocation"
+        );
+    }
+
+    @Test
     public void testWriteSimpleFeatureWithAtts() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException{
         final File temp = File.createTempFile("gml", ".xml");

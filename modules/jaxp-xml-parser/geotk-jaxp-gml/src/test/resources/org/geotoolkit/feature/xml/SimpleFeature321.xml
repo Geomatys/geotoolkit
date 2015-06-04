@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<gml:TestSimple xmlns:gml="http://www.opengis.net/gml"
+                xmlns:gml32="http://www.opengis.net/gml/3.2"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:gmd="http://www.isotc211.org/2005/gmd"
+                xmlns:gmi="http://www.isotc211.org/2005/gmi"
+                xmlns:gmx="http://www.isotc211.org/2005/gmx"
+                xmlns:gco="http://www.isotc211.org/2005/gco"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                gml32:id="id-156">
+  <gml:ID>36</gml:ID>
+  <gml:attString>stringValue</gml:attString>
+  <gml:attShort>12</gml:attShort>
+  <gml:attInteger>24</gml:attInteger>
+  <gml:attLong>48</gml:attLong>
+  <gml:attDouble>96.12</gml:attDouble>
+  <gml:attDecimal>456789</gml:attDecimal>
+  <gml:attDate>2005-08-21Z</gml:attDate>
+  <gml:attDateTime>2005-08-21T15:43:12.052Z</gml:attDateTime>
+  <gml:attBoolean>true</gml:attBoolean>
+  <gml:geomPoint>
+    <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156">
+      <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">5.0 10.0</gml32:pos>
+    </gml32:Point>
+  </gml:geomPoint>
+  <gml:geomMultiPoint>
+    <gml32:MultiPoint srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156">
+      <gml32:pointMember>
+        <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326">
+          <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">5.0 10.0</gml32:pos>
+        </gml32:Point>
+      </gml32:pointMember>
+      <gml32:pointMember>
+        <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326">
+          <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">15.0 20.0</gml32:pos>
+        </gml32:Point>
+      </gml32:pointMember>
+    </gml32:MultiPoint>
+  </gml:geomMultiPoint>
+  <gml:geomLine>
+    <gml32:LineString srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156">
+      <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">10.0 10.0</gml32:pos>
+      <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">20.0 20.0</gml32:pos>
+      <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">30.0 30.0</gml32:pos>
+    </gml32:LineString>
+  </gml:geomLine>
+  <gml:geomMultiLine>
+    <gml32:MultiCurve srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156">
+      <gml32:curveMember>
+        <gml32:LineString srsName="urn:ogc:def:crs:epsg:7.9:4326">
+          <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">10.0 10.0</gml32:pos>
+          <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">20.0 20.0</gml32:pos>
+          <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">30.0 30.0</gml32:pos>
+        </gml32:LineString>
+      </gml32:curveMember>
+      <gml32:curveMember>
+        <gml32:LineString srsName="urn:ogc:def:crs:epsg:7.9:4326">
+          <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">11.0 11.0</gml32:pos>
+          <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">21.0 21.0</gml32:pos>
+          <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">31.0 31.0</gml32:pos>
+        </gml32:LineString>
+      </gml32:curveMember>
+    </gml32:MultiCurve>
+  </gml:geomMultiLine>
+  <gml:geomPolygon>
+    <gml32:Polygon srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156">
+      <gml32:exterior>
+        <gml32:LinearRing>
+          <gml32:posList>0.0 0.0 10.0 0.0 10.0 10.0 0.0 0.0</gml32:posList>
+        </gml32:LinearRing>
+      </gml32:exterior>
+    </gml32:Polygon>
+  </gml:geomPolygon>
+  <gml:geomMultiPolygon>
+    <gml32:MultiSurface srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156">
+      <gml32:surfaceMember>
+        <gml32:Polygon srsName="urn:ogc:def:crs:epsg:7.9:4326">
+          <gml32:exterior>
+            <gml32:LinearRing>
+              <gml32:posList>0.0 0.0 10.0 0.0 10.0 10.0 0.0 0.0</gml32:posList>
+            </gml32:LinearRing>
+          </gml32:exterior>
+        </gml32:Polygon>
+      </gml32:surfaceMember>
+      <gml32:surfaceMember>
+        <gml32:Polygon srsName="urn:ogc:def:crs:epsg:7.9:4326">
+          <gml32:exterior>
+            <gml32:LinearRing>
+              <gml32:posList>1.0 1.0 11.0 1.0 11.0 11.0 1.0 1.0</gml32:posList>
+            </gml32:LinearRing>
+          </gml32:exterior>
+        </gml32:Polygon>
+      </gml32:surfaceMember>
+    </gml32:MultiSurface>
+  </gml:geomMultiPolygon>
+  <gml:geomMultiGeometry>
+    <gml32:MultiPoint srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156">
+      <gml32:pointMember>
+        <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326">
+          <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">5.0 10.0</gml32:pos>
+        </gml32:Point>
+      </gml32:pointMember>
+      <gml32:pointMember>
+        <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326">
+          <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">15.0 20.0</gml32:pos>
+        </gml32:Point>
+      </gml32:pointMember>
+    </gml32:MultiPoint>
+  </gml:geomMultiGeometry>
+  <gml:geomAnyGeometry>
+    <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156">
+      <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">5.0 10.0</gml32:pos>
+    </gml32:Point>
+  </gml:geomAnyGeometry>
+</gml:TestSimple>

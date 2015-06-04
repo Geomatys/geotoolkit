@@ -218,10 +218,27 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
         }
 
-        writeComplexProperties(feature);
+        writeComplexProperties(feature, getId(feature, null));
 
         writer.writeEndElement();
         writer.flush();
+    }
+
+    private static String getId(ComplexAttribute att, String fallback){
+        final Identifier attId = att.getIdentifier();
+        if(attId==null) return fallback;
+        final Object id = attId.getID();
+        if(id==null) return fallback;
+
+        if(id instanceof String){
+            if(((String)id).isEmpty()){
+                return fallback;
+            }else{
+                return (String) id;
+            }
+        }else{
+            return String.valueOf(id);
+        }
     }
 
     /**
@@ -286,7 +303,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         return nil;
     }
 
-    private void writeComplexProperties(final ComplexAttribute feature) throws XMLStreamException {
+    private void writeComplexProperties(final ComplexAttribute feature, String id) throws XMLStreamException {
 
         final ComplexType type = feature.getType();
 
@@ -331,20 +348,20 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
                 final Collection<Property> props = feature.getProperties(desc.getName());
                 for (Property a : props) {
-                    writeProperty(feature,a,false);
+                    writeProperty(feature,a,false, id);
                     allProps.remove(a);
                 }
             }
 
             //write remaining properties
             for(Property a : allProps){
-                writeProperty(feature,a,false);
+                writeProperty(feature,a,false, id);
             }
 
         }
     }
 
-    private void writeProperty(ComplexAttribute parent, Property a, boolean isSubstitute) throws XMLStreamException{
+    private void writeProperty(ComplexAttribute parent, Property a, boolean isSubstitute, String id) throws XMLStreamException{
         final ComplexType parentType = parent.getType();
         final Object valueA = a.getValue();
         final PropertyType typeA = a.getType();
@@ -370,7 +387,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         }
 
                         //valid substitute, we write it instead of the current property
-                        writeProperty(parent, p, true);
+                        writeProperty(parent, p, true, id);
                         return;
                     }
                 }
@@ -385,7 +402,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             } else {
                 writer.writeStartElement(nameProperty);
             }
-            writeComplexProperties((ComplexAttribute)a);
+            final ComplexAttribute ca = (ComplexAttribute) a;
+            writeComplexProperties(ca, getId(ca, id));
             writer.writeEndElement();
 
         } else if (valueA instanceof Collection && !(typeA instanceof GeometryType)) {
@@ -476,7 +494,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                             writer.writeStartElement(localPart);
                         }
                         if(prop instanceof ComplexAttribute){
-                            writeComplexProperties((ComplexAttribute)prop);
+                            final ComplexAttribute ca = (ComplexAttribute)prop;
+                            writeComplexProperties(ca, getId(ca, id));
                         }else{
                             value = Utils.getStringValue(prop.getValue());
                             if(value!=null){
@@ -518,6 +537,12 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         gmlGeometry = JTStoGeometry.toGML(gmlVersion, (com.vividsolutions.jts.geom.Geometry) valueA,  crs);
                     } catch (FactoryException ex) {
                         LOGGER.log(Level.WARNING, "Factory exception when transforming JTS geometry to GML binding", ex);
+                    }
+                    if(gmlGeometry!=null){
+                        //id is requiered in version 3.2.1
+                        //NOTE we often see gml where the geometry id is the same as the feature
+                        // we use the last parent with an id, seems acceptable.
+                        gmlGeometry.setId(id);
                     }
                     element = GML32_FACTORY.buildAnyGeometry(gmlGeometry);
                     POOL = GML_32_POOL;
