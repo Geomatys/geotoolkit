@@ -37,7 +37,7 @@ public class Font implements MIFSymbolizer {
 
     public static final Name NAME = DefaultName.create("FONT");
 
-    public static final Pattern PATTERN = Pattern.compile(NAME.getLocalPart()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
+    public static final Pattern PATTERN = Pattern.compile(NAME.tip().toString()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 
     private String fontName = null;
     private int fontStyle = 0;
@@ -91,7 +91,7 @@ public class Font implements MIFSymbolizer {
 
     @Override
     public String toMIFText() {
-        return NAME.getLocalPart()+"("+fontName+","+fontStyle+","+fontColorCode+((backColorCode>=0)? ","+backColorCode : "")+")";
+        return NAME.tip().toString()+"("+fontName+","+fontStyle+","+fontColorCode+((backColorCode>=0)? ","+backColorCode : "")+")";
     }
 
     @Override

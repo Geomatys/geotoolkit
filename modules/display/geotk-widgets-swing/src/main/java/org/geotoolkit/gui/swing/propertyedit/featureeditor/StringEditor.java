@@ -48,7 +48,7 @@ public class StringEditor extends PropertyValueEditor implements DocumentListene
     @Override
     public void setValue(PropertyType propertyType, Object value) {
         removeAll();
-        if(propertyType != null && propertyType.getName().getLocalPart().startsWith("pass")){
+        if(propertyType != null && propertyType.getName().tip().toString().startsWith("pass")){
             add(BorderLayout.CENTER, passwordField);
             current = passwordField;
         }else{

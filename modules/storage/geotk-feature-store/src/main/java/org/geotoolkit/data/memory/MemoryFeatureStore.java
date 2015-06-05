@@ -80,7 +80,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
             while(true){
                 final long c = incId.incrementAndGet();
                 final String strc = new StringBuilder(getFeatureType().getName()
-                        .getLocalPart()).append('.').append(c).toString();
+                        .tip().toString()).append('.').append(c).toString();
                 if(!features.containsKey(strc)){
                     return strc;
                 }

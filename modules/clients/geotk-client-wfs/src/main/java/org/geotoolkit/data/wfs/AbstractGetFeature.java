@@ -218,7 +218,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             for(final Name prop : propertyNames){
                 if(typeName != null && prop.getNamespaceURI() != null
                    && prop.getNamespaceURI().equals(typeName.getNamespaceURI())){
-                    sb.append(typeName.getPrefix()).append(':').append(prop.getLocalPart()).append(',');
+                    sb.append(typeName.getPrefix()).append(':').append(prop.tip().toString()).append(',');
                 }else{
                     sb.append(DefaultName.toExtendedForm(prop)).append(',');
                 }
@@ -267,7 +267,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
         if(propertyNames != null){
             // TODO handle prefix/namespace
             for(final Name prop : propertyNames){
-                propName.add(prop.getLocalPart());
+                propName.add(prop.tip().toString());
             }
         }
 

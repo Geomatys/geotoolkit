@@ -259,7 +259,7 @@ public class MapfileReader {
         if(desc == null){
             //search ignoring case
             for(PropertyDescriptor d : parent.getDescriptors()){
-                if(d.getName().getLocalPart().equalsIgnoreCase(name)){
+                if(d.getName().tip().toString().equalsIgnoreCase(name)){
                     desc = d;
                     break;
                 }

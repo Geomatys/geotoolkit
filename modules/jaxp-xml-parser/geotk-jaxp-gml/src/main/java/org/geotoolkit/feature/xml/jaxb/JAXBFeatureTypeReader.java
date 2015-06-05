@@ -497,7 +497,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                         result.add(ft);
 
                         //if the type name is not the same as the element name, make a copy of the type renaming it
-                        if(!ft.getName().getLocalPart().equals(element.getName())){
+                        if(!ft.getName().tip().toString().equals(element.getName())){
                             final Name name = DefaultName.create(ft.getName().getNamespaceURI(), element.getName());
                             final ModifiableFeaturetype renamed = new ModifiableFeaturetype(name,new ArrayList(), null, type.isAbstract(), null, ft, null);
                             uncompleted.add(renamed);
@@ -593,11 +593,11 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     }
 
     public org.geotoolkit.feature.type.ComplexType getComplexType(Name name) throws SchemaException{
-        return getType(new QName(name.getNamespaceURI(), name.getLocalPart()));
+        return getType(new QName(name.getNamespaceURI(), name.tip().toString()));
     }
 
     public PropertyDescriptor getElementType(Name name) throws SchemaException{
-        final Element parentElement = findGlobalElement(new QName(name.getNamespaceURI(), name.getLocalPart()));
+        final Element parentElement = findGlobalElement(new QName(name.getNamespaceURI(), name.tip().toString()));
         return elementToAttribute(parentElement, name.getNamespaceURI()).get(0);
     }
 
@@ -923,7 +923,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             final Attribute attRef = findGlobalAttribute(att.getRef());
             final AttributeDescriptor atDesc = getAnnotatedAttributes(namespace, attRef);
             adb.copy(atDesc);
-            adb.setName(namespace, atDesc.getName().getLocalPart());
+            adb.setName(namespace, atDesc.getName().tip().toString());
             atb.copy(atDesc.getType());
         } else {
             namespace = null;

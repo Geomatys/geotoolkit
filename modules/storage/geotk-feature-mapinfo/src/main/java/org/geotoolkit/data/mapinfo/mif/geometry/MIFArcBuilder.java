@@ -127,7 +127,7 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
             throw new DataStoreException("Not enough information to build an arc (missing angle).");
         }
 
-        StringBuilder builder = new StringBuilder(NAME.getLocalPart()).append(' ');
+        StringBuilder builder = new StringBuilder(NAME.tip().toString()).append(' ');
         Object value = source.getDefaultGeometryProperty().getValue();
         if(value instanceof Envelope) {
             Envelope env = (Envelope) value;

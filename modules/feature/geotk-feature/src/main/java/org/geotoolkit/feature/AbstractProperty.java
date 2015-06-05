@@ -128,7 +128,7 @@ public abstract class AbstractProperty implements Property,Serializable {
         final StringBuilder sb = new StringBuilder(getClass().getSimpleName()).append(":");
         sb.append(getName());
         sb.append("<");
-        sb.append(getType().getName().getLocalPart());
+        sb.append(getType().getName().tip().toString());
         sb.append(">=");
         sb.append(value);
         return sb.toString();

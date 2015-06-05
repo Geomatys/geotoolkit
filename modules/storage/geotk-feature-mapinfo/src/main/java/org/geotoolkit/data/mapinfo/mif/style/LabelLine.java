@@ -37,7 +37,7 @@ import org.opengis.filter.expression.Expression;
 public class LabelLine implements MIFSymbolizer {
 
     public static final Name NAME = DefaultName.create("LABEL");
-    public static final Pattern PATTERN = Pattern.compile(NAME.getLocalPart(), Pattern.CASE_INSENSITIVE);
+    public static final Pattern PATTERN = Pattern.compile(NAME.tip().toString(), Pattern.CASE_INSENSITIVE);
 
     private String type = "simple";
     private Coordinate point;
@@ -49,7 +49,7 @@ public class LabelLine implements MIFSymbolizer {
 
     @Override
     public String toMIFText() {
-        return NAME.getLocalPart()+' '+type+' '+point.x+' '+point.y;
+        return NAME.tip().toString()+' '+type+' '+point.x+' '+point.y;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class LabelLine implements MIFSymbolizer {
     
     @Override
     public String getName() {
-        return NAME.getLocalPart();
+        return NAME.tip().toString();
     }
 
     @Override

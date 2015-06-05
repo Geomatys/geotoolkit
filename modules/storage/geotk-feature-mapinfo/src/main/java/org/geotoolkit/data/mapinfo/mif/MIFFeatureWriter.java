@@ -101,7 +101,7 @@ public class MIFFeatureWriter implements FeatureWriter {
         // reader has no more (no were are adding to the file)
         // so return an empty feature
         try {
-            final String featureID = getFeatureType().getName().getLocalPart()+"."+(featureCount++);
+            final String featureID = getFeatureType().getName().tip().toString()+"."+(featureCount++);
             return currentFeature = FeatureUtilities.defaultFeature(writeType, featureID);
         } catch (IllegalAttributeException iae) {
             throw new FeatureStoreRuntimeException("Error creating empty Feature", iae);

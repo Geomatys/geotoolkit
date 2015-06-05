@@ -222,7 +222,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 }
                 final StringBuilder expectedFeatureType = new StringBuilder();
 
-                if (name.getLocalPart().equals("FeatureCollection")) {
+                if (name.tip().toString().equals("FeatureCollection")) {
                     final Object coll = readFeatureCollection(id);
                     if (coll == null) {
                         if (featureTypes.size() == 1) {
@@ -233,7 +233,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     }
                     return coll;
 
-                } else if (name.getLocalPart().equals("Transaction")) {
+                } else if (name.tip().toString().equals("Transaction")) {
                     return extractFeatureFromTransaction();
 
                 } else {
@@ -302,10 +302,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     fid = reader.getAttributeValue(0);
                 }
 
-                if (name.getLocalPart().equals("featureMember") || name.getLocalPart().equals("featureMembers")) {
+                if (name.tip().toString().equals("featureMember") || name.tip().toString().equals("featureMembers")) {
                     continue;
 
-                } else if (name.getLocalPart().equals("boundedBy")) {
+                } else if (name.tip().toString().equals("boundedBy")) {
                     while (reader.hasNext()) {
                         event = reader.next();
                         if (event == START_ELEMENT) {
@@ -404,21 +404,21 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     final Name propName = nameCache.get(reader.getName());
 
                     // we skip the boundedby attribute if it's present
-                    if ("boundedBy".equals(propName.getLocalPart())) {
+                    if ("boundedBy".equals(propName.tip().toString())) {
                         toTagEnd("boundedBy");
                         continue;
                     }
 
                     final String nameAttribute = reader.getAttributeValue(null, "name");
-                    final PropertyDescriptor pdesc = featureType.getDescriptor(propName.getLocalPart());
+                    final PropertyDescriptor pdesc = featureType.getDescriptor(propName.tip().toString());
 
                     if (pdesc == null){
                         if (Boolean.TRUE.equals(this.properties.get(SKIP_UNEXPECTED_PROPERTY_TAGS))) {
-                            toTagEnd(propName.getLocalPart());
+                            toTagEnd(propName.tip().toString());
                             continue;
                         } else if(featureType.getDescriptor("_any")!=null){
                             //convert the content ad a dom node
-                            final Document doc = readAsDom(propName.getLocalPart());
+                            final Document doc = readAsDom(propName.tip().toString());
                             final AttributeDescriptor pd = (AttributeDescriptor) featureType.getDescriptor("_any");
                             final Attribute att = FF.createAttribute(doc, pd, null);
                             namedProperties.put(pd.getName(),att);
@@ -641,7 +641,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
             if (event == END_ELEMENT) {
                 Name name  = nameCache.get(reader.getName());
-                if (name.getLocalPart().equals("Insert")) {
+                if (name.tip().toString().equals("Insert")) {
                     insert = false;
                 }
 
@@ -650,13 +650,13 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             } else if (event == START_ELEMENT) {
                 Name name  = nameCache.get(reader.getName());
 
-                if (name.getLocalPart().equals("Insert")) {
+                if (name.tip().toString().equals("Insert")) {
                     insert = true;
                     continue;
 
                 } else if (insert) {
 
-                    if (name.getLocalPart().equals("FeatureCollection")) {
+                    if (name.tip().toString().equals("FeatureCollection")) {
                         return readFeatureCollection("");
                     }
                     boolean find = false;
@@ -784,11 +784,11 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     }
                     final StringBuilder expectedFeatureType = new StringBuilder();
 
-                    if (name.getLocalPart().equals("FeatureCollection")) {
+                    if (name.tip().toString().equals("FeatureCollection")) {
                         singleFeature = false;
                         return;
 
-                    } else if (name.getLocalPart().equals("Transaction")) {
+                    } else if (name.tip().toString().equals("Transaction")) {
                         throw new XMLStreamException("Transaction types are not supported as stream");
 
                     } else {
@@ -855,10 +855,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             fid = reader.getAttributeValue(0);
                         }
 
-                        if (name.getLocalPart().equals("featureMember") || name.getLocalPart().equals("featureMembers")) {
+                        if (name.tip().toString().equals("featureMember") || name.tip().toString().equals("featureMembers")) {
                             continue;
 
-                        } else if (name.getLocalPart().equals("boundedBy")) {
+                        } else if (name.tip().toString().equals("boundedBy")) {
                             while (reader.hasNext()) {
                                 event = reader.next();
                                 if (event == START_ELEMENT) {

@@ -187,7 +187,7 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
      */
     @Override
     public String getTypeName() {
-        return name.getLocalPart();
+        return name.tip().toString();
     }
 
     /**
@@ -207,9 +207,9 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
             final AttributeDescriptor ad = descs.get(i);
             final Name name = ad.getName();
             index.put(name, i);
-            index.put(DefaultName.create(name.getLocalPart()), i);
+            index.put(DefaultName.create(name.tip().toString()), i);
             //must add possible string combinaison
-            index.put(name.getLocalPart(), i);
+            index.put(name.tip().toString(), i);
             index.put(Names.toExpandedString(name), i);
             index.put(DefaultName.toExtendedForm(name), i);
         }

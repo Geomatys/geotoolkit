@@ -117,7 +117,7 @@ public class PyramidalModelReader extends GridCoverageReader{
         final NameFactory dnf = FactoryFinder.getNameFactory(null);
         final String nameSpace = getInput().getName().getNamespaceURI() != null ? getInput().getName().getNamespaceURI() : "http://geotoolkit.org" ;
         final NameSpace ns = dnf.createNameSpace(dnf.createGenericName(null, nameSpace), null);
-        final GenericName gn = dnf.createLocalName(ns, getInput().getName().getLocalPart());
+        final GenericName gn = dnf.createLocalName(ns, getInput().getName().tip().toString());
         return Collections.singletonList(gn);
     }
 
@@ -550,7 +550,7 @@ public class PyramidalModelReader extends GridCoverageReader{
 
         //build the coverage ---------------------------------------------------
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setName(ref.getName().getLocalPart());
+        gcb.setName(ref.getName().tip().toString());
         final List<GridSampleDimension> dimensions = getSampleDimensions(ref.getImageIndex());
         if (dimensions != null) {
             gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[dimensions.size()]));

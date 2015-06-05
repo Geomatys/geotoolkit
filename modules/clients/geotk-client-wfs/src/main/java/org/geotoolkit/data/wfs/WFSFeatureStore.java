@@ -311,7 +311,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
         //will raise an error if typename in unknowned
         final FeatureType sft = getFeatureType(name);
 
-        final QName q = new QName(name.getNamespaceURI(), name.getLocalPart(), prefixes.get(name.getNamespaceURI()));
+        final QName q = new QName(name.getNamespaceURI(), name.tip().toString(), prefixes.get(name.getNamespaceURI()));
         final FeatureCollection collection;
         try {
             collection = requestFeature(q, query);

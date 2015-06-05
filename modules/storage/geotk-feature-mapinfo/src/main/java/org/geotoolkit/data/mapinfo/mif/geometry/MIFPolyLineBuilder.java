@@ -135,7 +135,7 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
             }
         }
 
-        if(scanner.hasNext(Pattern.compile(SMOOTH_NAME.getLocalPart(), Pattern.CASE_INSENSITIVE))) {
+        if(scanner.hasNext(Pattern.compile(SMOOTH_NAME.tip().toString(), Pattern.CASE_INSENSITIVE))) {
             toFill.getProperty(SMOOTH_NAME).setValue(Boolean.TRUE);
         }
 
@@ -148,7 +148,7 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
     public String toMIFSyntax(Feature geometry) throws DataStoreException {
         super.toMIFSyntax(geometry);
 
-        StringBuilder builder = new StringBuilder(NAME.getLocalPart());
+        StringBuilder builder = new StringBuilder(NAME.tip().toString());
 
         MultiLineString polyLine = null;
         Object value = geometry.getDefaultGeometryProperty().getValue();
@@ -181,7 +181,7 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
         if((smooth =geometry.getProperty(SMOOTH_NAME)) != null) {
             Object val = smooth.getValue();
             if(val != null && val instanceof Boolean && val.equals(Boolean.TRUE)) {
-                builder.append(SMOOTH_NAME.getLocalPart()).append('\n');
+                builder.append(SMOOTH_NAME.tip().toString()).append('\n');
             }
         }
 

@@ -165,7 +165,7 @@ public class XmlFeatureTypeTest {
 
         FeatureType type = null;
         for(FeatureType ft : types){
-            if(ft.getName().getLocalPart().equals("SF_SamplingFeature")){
+            if(ft.getName().tip().toString().equals("SF_SamplingFeature")){
                 type = ft;
             }
         }
@@ -183,7 +183,7 @@ public class XmlFeatureTypeTest {
 
         FeatureType type = null;
         for(FeatureType ft : types){
-            if(ft.getName().getLocalPart().equals("SF_SpatialSamplingFeature")){
+            if(ft.getName().tip().toString().equals("SF_SpatialSamplingFeature")){
                 type = ft;
             }
         }
@@ -201,7 +201,7 @@ public class XmlFeatureTypeTest {
 
         FeatureType type = null;
         for(FeatureType ft : types){
-            if(ft.getName().getLocalPart().equals("TestSimple")){
+            if(ft.getName().tip().toString().equals("TestSimple")){
                 type = ft;
             }
         }
@@ -247,7 +247,7 @@ public class XmlFeatureTypeTest {
         assertNotNull(idesc);
         final PropertyType itype = idesc.getType();
         assertTrue(itype instanceof ComplexType);
-        assertEquals("CodeWithAuthorityType", itype.getName().getLocalPart());
+        assertEquals("CodeWithAuthorityType", itype.getName().tip().toString());
         final ComplexType ct = (ComplexType) itype;
         assertEquals(2, ct.getDescriptors().size());
         
@@ -271,7 +271,7 @@ public class XmlFeatureTypeTest {
         removeGMLBaseTypes(types);
         assertEquals(1, types.size());
         final FeatureType type = types.get(0);
-        assertEquals("TestSimple", type.getName().getLocalPart());
+        assertEquals("TestSimple", type.getName().tip().toString());
         assertEquals(29, type.getDescriptors().size());
         //28 substitutiongroups
     }

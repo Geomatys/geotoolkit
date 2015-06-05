@@ -68,7 +68,7 @@ public class JCQLEditor extends javax.swing.JPanel{
             public void valueChanged(ListSelectionEvent e) {
                 Object ob = guiProperties.getSelectedValue();
                 if(ob != null){
-                    final String name = ((PropertyDescriptor)ob).getName().getLocalPart();
+                    final String name = ((PropertyDescriptor)ob).getName().tip().toString();
                     guiCQL.insertText(" "+name);
                     guiProperties.clearSelection();
                 }
@@ -265,7 +265,7 @@ public class JCQLEditor extends javax.swing.JPanel{
             final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             if(value instanceof PropertyDescriptor){
                 final PropertyDescriptor desc = (PropertyDescriptor) value;
-                String text = desc.getName().getLocalPart().toString();
+                String text = desc.getName().tip().toString().toString();
 
                 final InternationalString is = desc.getType().getDescription();
                 if(is!=null && !is.toString().isEmpty()){

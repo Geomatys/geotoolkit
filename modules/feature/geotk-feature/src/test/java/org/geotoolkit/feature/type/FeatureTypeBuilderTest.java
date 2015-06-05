@@ -449,7 +449,7 @@ public class FeatureTypeBuilderTest {
         assertTrue(!ft.equals(ftb.buildSimpleFeatureType()));
 
         ftb.copy(ft);
-        ftb.setName(DefaultName.create("http://www.somewhereelse.net", ftb.getName().getLocalPart()));
+        ftb.setName(DefaultName.create("http://www.somewhereelse.net", ftb.getName().tip().toString()));
 
         assertTrue(!ft.equals(ftb.buildSimpleFeatureType()));
         assertTrue(!ft.equals(null));

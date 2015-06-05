@@ -101,7 +101,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(1,names.size());
         Name n = names.iterator().next();
 
-        assertEquals(n.getLocalPart(), "TestSchema1");
+        assertEquals(n.tip().toString(), "TestSchema1");
         assertEquals(n.getNamespaceURI(), "http://test.com");
 
         FeatureType t = store.getFeatureType(n);
@@ -127,7 +127,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(1,names.size());
         n = names.iterator().next();
 
-        assertEquals(n.getLocalPart(), "TestSchema1");
+        assertEquals(n.tip().toString(), "TestSchema1");
         assertEquals(n.getNamespaceURI(), "http://test.com");
 
         t = store.getFeatureType(n);
@@ -677,7 +677,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(1,names.size());
         Name n = names.iterator().next();
 
-        assertEquals(n.getLocalPart(), "TestSchema1");
+        assertEquals(n.tip().toString(), "TestSchema1");
         assertEquals(n.getNamespaceURI(), "http://test.com");
 
 
@@ -726,7 +726,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(1,names.size());
         Name n = names.iterator().next();
 
-        assertEquals(n.getLocalPart(), "TestSchema1");
+        assertEquals(n.tip().toString(), "TestSchema1");
         assertEquals(n.getNamespaceURI(), "http://test.com");
 
         //try to insert features -----------------------------------------------

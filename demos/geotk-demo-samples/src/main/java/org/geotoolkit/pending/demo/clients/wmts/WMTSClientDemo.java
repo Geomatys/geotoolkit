@@ -49,7 +49,7 @@ public class WMTSClientDemo {
             PyramidalCoverageReference model = (PyramidalCoverageReference) ref;
             System.out.println(model.getPyramidSet());
 
-            layer.setDescription(SF.description(n.getLocalPart(), n.getLocalPart()));
+            layer.setDescription(SF.description(n.tip().toString(), n.tip().toString()));
             context.layers().add(layer);
 
         }

@@ -697,7 +697,7 @@ final class PostgresDialect extends AbstractSQLDialect{
         if (schemaName == null) {
             schemaName = "public";
         }
-        final String tableName = featureType.getName().getLocalPart();
+        final String tableName = featureType.getName().tip().toString();
 
         Statement st = null;
         try {
@@ -732,9 +732,9 @@ final class PostgresDialect extends AbstractSQLDialect{
                         sb.append("select addrasterconstraints('");
                         sb.append(schemaName);
                         sb.append("', '");
-                        sb.append(featureType.getName().getLocalPart());
+                        sb.append(featureType.getName().tip().toString());
                         sb.append("', '");
-                        sb.append(att.getName().getLocalPart());
+                        sb.append(att.getName().tip().toString());
                         sb.append("', ");
                         sb.append("true"); 
                         sb.append(", false, false, false, false, false, false, false, false, false, false, false);");
@@ -744,7 +744,7 @@ final class PostgresDialect extends AbstractSQLDialect{
                         
                         //add the srid in the comments
                         //the view crs is not set until a first raster in added, so we store it in the comments
-                        st.execute("COMMENT ON COLUMN \""+schemaName+"\".\""+featureType.getName().getLocalPart()+"\".\""+att.getName().getLocalPart()+"\" IS '"+srid+"';");
+                        st.execute("COMMENT ON COLUMN \""+schemaName+"\".\""+featureType.getName().tip().toString()+"\".\""+att.getName().tip().toString()+"\" IS '"+srid+"';");
                         
                         continue;
                     }

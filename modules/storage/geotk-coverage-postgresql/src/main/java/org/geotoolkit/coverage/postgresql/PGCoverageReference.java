@@ -126,7 +126,7 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
 
             stmt = cnx.createStatement();
 
-            final int layerId = pgstore.getLayerId(cnx,name.getLocalPart());
+            final int layerId = pgstore.getLayerId(cnx,name.tip().toString());
 
             StringBuilder query = new StringBuilder();
             query.append("INSERT INTO ");
@@ -455,7 +455,7 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
             cnx = pgstore.getDataSource().getConnection();
             cnx.setReadOnly(false);
 
-            final int layerId = pgstore.getLayerId(cnx,name.getLocalPart());
+            final int layerId = pgstore.getLayerId(cnx,name.tip().toString());
             String versionStr;
             if (version != null && !version.getLabel().equals(PGVersionControl.UNSET)) {
                 versionStr = TemporalUtilities.toISO8601Z(version.getDate(), TimeZone.getTimeZone("GMT+0"));
@@ -607,7 +607,7 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
                 cnx = pgstore.getDataSource().getConnection();
                 cnx.setReadOnly(false);
 
-                final int layerId = pgstore.getLayerId(cnx,name.getLocalPart());
+                final int layerId = pgstore.getLayerId(cnx,name.tip().toString());
                 for (int i = 0; i < dimensions.size(); i++) {
 
                     final GridSampleDimension dim = dimensions.get(i);

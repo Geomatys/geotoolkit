@@ -64,7 +64,7 @@ public class DefaultAttributeDescriptor<T extends AttributeType> extends Default
      */
     @Override
     public String getLocalName() {
-        return getName().getLocalPart();
+        return getName().tip().toString();
     }
 
     /**
@@ -108,7 +108,7 @@ public class DefaultAttributeDescriptor<T extends AttributeType> extends Default
         sb.append(getName());
         if (type != null) {
             sb.append(" <");
-            sb.append(type.getName().getLocalPart());
+            sb.append(type.getName().tip().toString());
             sb.append(":");
             sb.append(Classes.getShortName(type.getBinding()));
             sb.append(">");

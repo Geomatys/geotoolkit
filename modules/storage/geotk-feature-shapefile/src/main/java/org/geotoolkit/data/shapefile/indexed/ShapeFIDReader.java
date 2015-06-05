@@ -45,7 +45,7 @@ public class ShapeFIDReader implements FeatureIDReader {
 
     public ShapeFIDReader(final FeatureType featureType,
             final IndexedShapefileAttributeReader reader) {
-        this(featureType.getName().getLocalPart(), reader);
+        this(featureType.getName().tip().toString(), reader);
     }
 
     /**

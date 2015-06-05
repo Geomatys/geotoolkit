@@ -94,19 +94,4 @@ public interface Name extends org.opengis.util.TypeName {
     @UML(identifier = "scope", obligation = MANDATORY, specification = ISO_19103)
     String getNamespaceURI();
 
-    /**
-     * Retrieve the "local" name.
-     * <p>
-     * This mechanism captures the following ISO 19103 concerns:
-     * <ul>
-     * <li>GenericName.depth(): this concept is not interesting, we assume a
-     * namespace would be able to navigate through contained namespace on its
-     * own based on this local part.
-     * <li>GenericName.asLocalName()
-     * <li>GenericName.name()
-     * </ul>
-     * @return local name (can be used in namespace lookup)
-     */
-    String getLocalPart();
-
 }

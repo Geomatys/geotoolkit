@@ -221,7 +221,7 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
         final CoordinateReferenceSystem crs = getType().getCoordinateReferenceSystem();
         if (id != null || crs != null) {
             sb.append("<");
-            sb.append(getType().getName().getLocalPart());
+            sb.append(getType().getName().tip().toString());
             if (id != null) {
                 sb.append(" id=");
                 sb.append(id);

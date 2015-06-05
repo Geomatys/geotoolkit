@@ -91,7 +91,7 @@ public class PostgresVersionControl extends AbstractVersionControl{
         if(visited.contains(type)) return;
         visited.add(type);
         
-        final String tableName = type.getName().getLocalPart();
+        final String tableName = type.getName().tip().toString();
         
         final StringBuilder sb = new StringBuilder("SELECT \"HS_CreateHistory\"(");
         sb.append('\'');
@@ -108,7 +108,7 @@ public class PostgresVersionControl extends AbstractVersionControl{
                 //complex type, create sub table history
                 createVersioningTable(schemaName, (ComplexType)desc.getType(), visited);
             }else{
-                hsColumnNames.add("'"+desc.getName().getLocalPart()+"'");
+                hsColumnNames.add("'"+desc.getName().tip().toString()+"'");
             }
         }
         
@@ -155,7 +155,7 @@ public class PostgresVersionControl extends AbstractVersionControl{
         if(visited.contains(type)) return;
         visited.add(type);
         
-        final String tableName = type.getName().getLocalPart();
+        final String tableName = type.getName().tip().toString();
         
         //drop complex properties versioning
         for(PropertyDescriptor desc : type.getDescriptors()){
@@ -208,7 +208,7 @@ public class PostgresVersionControl extends AbstractVersionControl{
         if(visited.contains(type)) return;
         visited.add(type);
         
-        final String tableName  = type.getName().getLocalPart();
+        final String tableName  = type.getName().tip().toString();
         
         //trim complex properties versioning
         for(PropertyDescriptor desc : type.getDescriptors()){
@@ -264,7 +264,7 @@ public class PostgresVersionControl extends AbstractVersionControl{
         if(visited.contains(type)) return;
         visited.add(type);
         
-        final String tableName  = type.getName().getLocalPart();
+        final String tableName  = type.getName().tip().toString();
         
         //revert complex properties versioning
         for(PropertyDescriptor desc : type.getDescriptors()){
@@ -384,7 +384,7 @@ public class PostgresVersionControl extends AbstractVersionControl{
      * @return String
      */
     public String getHSTableName(){
-        return "HS_TBL_"+featureType.getName().getLocalPart();
+        return "HS_TBL_"+featureType.getName().tip().toString();
     }
     
 }

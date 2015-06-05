@@ -69,7 +69,7 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
      */
     public AbstractCoverageReference(CoverageStore store, Name name) {
         ArgumentChecks.ensureNonNull("name",name);
-        setValue(TableColumn.NAME, name.getLocalPart());
+        setValue(TableColumn.NAME, name.tip().toString());
         this.store = store;
         this.name = name;
     }

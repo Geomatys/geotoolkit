@@ -125,7 +125,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
                 final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
                 try{
                     for(FeatureType ft : reader.read(new URL(xsd))){
-                        if(ft.getName().getLocalPart().equalsIgnoreCase(xsdTypeName)){
+                        if(ft.getName().tip().toString().equalsIgnoreCase(xsdTypeName)){
                             featureType = ft;
                         }
                     }

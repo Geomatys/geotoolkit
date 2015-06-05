@@ -92,7 +92,7 @@ public class ShapefileAttributeReader {
             final DbaseFileHeader header = dbf.getHeader();
             attLoop:
             for(int i=0;i<atts.length;i++){
-                final String attName = atts[i].getName().getLocalPart();
+                final String attName = atts[i].getName().tip().toString();
                 //attribut field
                 for(int k=0;k<header.getNumFields();k++){
                     final String fieldName = header.getFieldName(k);

@@ -88,7 +88,7 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
     public String toMIFSyntax(Feature geometry) throws DataStoreException {
         super.toMIFSyntax(geometry);
 
-        StringBuilder builder = new StringBuilder(NAME.getLocalPart()).append(' ');
+        StringBuilder builder = new StringBuilder(NAME.tip().toString()).append(' ');
         if(geometry.getProperty(GEOM_NAME) != null) {
             Object value = geometry.getProperty(GEOM_NAME).getValue();
             if(value instanceof Feature) {

@@ -338,7 +338,7 @@ public class JFeatureOutLine extends Outline{
 
             String text;
             if(name != null){
-                text = name.getLocalPart();
+                text = name.tip().toString();
             }else{
                 text = "";
             }

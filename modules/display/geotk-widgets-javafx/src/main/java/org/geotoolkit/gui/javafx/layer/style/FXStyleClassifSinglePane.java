@@ -339,7 +339,7 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
             for(PropertyDescriptor desc : schema.getDescriptors()){
                 final Class<?> type = desc.getType().getBinding();
                 if(!Geometry.class.isAssignableFrom(type)){
-                    properties.add(GeotkFX.getFilterFactory().property(desc.getName().getLocalPart()));
+                    properties.add(GeotkFX.getFilterFactory().property(desc.getName().tip().toString()));
                 }
             }
         }

@@ -41,7 +41,7 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
 
     public DefaultCoverageReference(final CoverageStore store, final GridCoverage2D coverage, Name name) {
         super(store,name);
-        setValue(TableColumn.NAME, name.getLocalPart());
+        setValue(TableColumn.NAME, name.tip().toString());
         this.coverage = coverage;
         this.input = null;
         this.imageIndex = 0;
@@ -49,7 +49,7 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
 
     public DefaultCoverageReference(final GridCoverage2D coverage, Name name) {
         super(null,name);
-        setValue(TableColumn.NAME, name.getLocalPart());
+        setValue(TableColumn.NAME, name.tip().toString());
         this.coverage = coverage;
         this.input = null;
         this.imageIndex = 0;

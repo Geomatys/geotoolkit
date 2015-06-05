@@ -539,7 +539,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
                 props.add(FF.createAttribute(tn, (AttributeDescriptor) type.getDescriptor(ATT_SMLTYPE), null));
             }
             rset.close();
-            if (!tn.equals(typeName.getLocalPart())) {
+            if (!tn.equals(typeName.tip().toString())) {
                 return null;
             }
 

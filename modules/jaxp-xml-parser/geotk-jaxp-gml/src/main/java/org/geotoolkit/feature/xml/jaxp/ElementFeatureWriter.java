@@ -158,7 +158,7 @@ public class ElementFeatureWriter {
         final FeatureType type = feature.getType();
         final Name typeName    = type.getName();
         final String namespace = typeName.getNamespaceURI();
-        final String localPart = typeName.getLocalPart();
+        final String localPart = typeName.tip().toString();
 
         final Element rootElement;
         final Prefix prefix;
@@ -190,7 +190,7 @@ public class ElementFeatureWriter {
                 final Object valueA = a.getValue();
                 final PropertyType typeA = a.getType();
                 final Name nameA = a.getName();
-                final String nameProperty = nameA.getLocalPart();
+                final String nameProperty = nameA.tip().toString();
                 String namespaceProperty = nameA.getNamespaceURI();
                 if (valueA instanceof Collection && !(typeA instanceof GeometryType)) {
                     for (Object value : (Collection)valueA) {

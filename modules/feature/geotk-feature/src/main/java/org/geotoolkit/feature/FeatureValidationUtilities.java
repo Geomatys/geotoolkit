@@ -265,18 +265,18 @@ public final class FeatureValidationUtilities {
      */
     public static void assertNameAssignable(final FeatureType expected, final FeatureType actual) throws SimpleIllegalAttributeException{
         // check feature type name
-        String expectedName = expected.getName().getLocalPart();
-        final String actualName = actual.getName().getLocalPart();
+        String expectedName = expected.getName().tip().toString();
+        final String actualName = actual.getName().tip().toString();
         if (!expectedName.equals(actualName)) {
             throw new SimpleIllegalAttributeException("Expected '" + expectedName + "' but was supplied '" + actualName + "'.");
         }
         // check attributes names
         final Set<String> names = new TreeSet<String>();
         for (PropertyDescriptor descriptor : actual.getDescriptors()) {
-            names.add(descriptor.getName().getLocalPart());
+            names.add(descriptor.getName().tip().toString());
         }
         for (PropertyDescriptor descriptor : expected.getDescriptors()) {
-            expectedName = descriptor.getName().getLocalPart();
+            expectedName = descriptor.getName().tip().toString();
             if (names.contains(expectedName)) {
                 names.remove(expectedName); // only use once!
             } else {
@@ -289,7 +289,7 @@ public final class FeatureValidationUtilities {
 
         // check attribute bindings
         for (PropertyDescriptor expectedDescriptor : expected.getDescriptors()) {
-            expectedName = expectedDescriptor.getName().getLocalPart();
+            expectedName = expectedDescriptor.getName().tip().toString();
             final PropertyDescriptor actualDescriptor = actual.getDescriptor(expectedName);
 
             final Class<?> expectedBinding = expectedDescriptor.getType().getBinding();

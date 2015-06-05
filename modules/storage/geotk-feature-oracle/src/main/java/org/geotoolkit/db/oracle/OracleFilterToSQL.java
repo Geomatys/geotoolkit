@@ -289,7 +289,7 @@ public class OracleFilterToSQL implements FilterToSQL {
         final StringBuilder sb = toStringBuilder(o);
         final Name name = DefaultName.valueOf(candidate.getPropertyName());
         sb.append('"');
-        sb.append(name.getLocalPart());
+        sb.append(name.tip().toString());
         sb.append('"');
         return sb;
     }

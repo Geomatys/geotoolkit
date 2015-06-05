@@ -95,10 +95,10 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
 
     @Override
     public FeatureType getFeatureType(Name typeName) throws DataStoreException {
-        if (typeName.getLocalPart().equalsIgnoreCase(TYPE_NAME.getLocalPart())) {
+        if (typeName.tip().toString().equalsIgnoreCase(TYPE_NAME.tip().toString())) {
             return NMEA_TYPE;
         }
-        throw new DataStoreException("NMEA Feature store manage only data of type "+TYPE_NAME.getLocalPart());
+        throw new DataStoreException("NMEA Feature store manage only data of type "+TYPE_NAME.tip().toString());
     }
 
     @Override
@@ -122,12 +122,12 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
 
     @Override
     public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("NMEA Feature Store is read only, and can process only data of type :"+TYPE_NAME.getLocalPart());
+        throw new DataStoreException("NMEA Feature Store is read only, and can process only data of type :"+TYPE_NAME.tip().toString());
     }
 
     @Override
     public void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("NMEA Feature Store is read only, and can process only data of type :"+TYPE_NAME.getLocalPart());
+        throw new DataStoreException("NMEA Feature Store is read only, and can process only data of type :"+TYPE_NAME.tip().toString());
     }
 
     @Override

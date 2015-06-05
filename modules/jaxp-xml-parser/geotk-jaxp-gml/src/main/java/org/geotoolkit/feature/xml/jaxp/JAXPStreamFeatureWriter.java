@@ -193,7 +193,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         final ComplexType type = feature.getType();
         final Name typeName    = type.getName();
         final String namespace = typeName.getNamespaceURI();
-        final String localPart = typeName.getLocalPart();
+        final String localPart = typeName.tip().toString();
         final Identifier featureId = feature.getIdentifier();
         if (namespace != null && !namespace.isEmpty()) {
             final Prefix prefix = getPrefix(namespace);
@@ -274,7 +274,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             for (Property a : props) {
                 final Object valueA = a.getValue();
                 final Name nameA = a.getName();
-                String nameProperty = nameA.getLocalPart();
+                String nameProperty = nameA.tip().toString();
                 String namespaceProperty = nameA.getNamespaceURI();
 
                 if(!isAttributeProperty(nameA)) continue;
@@ -315,7 +315,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             //write the value
             Object value = "";
             for(Property prop : feature.getProperties()){
-                if(Utils.VALUE_PROPERTY_NAME.equals(prop.getName().getLocalPart())){
+                if(Utils.VALUE_PROPERTY_NAME.equals(prop.getName().tip().toString())){
                     value = prop.getValue();
                     break;
                 }
@@ -366,7 +366,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         final Object valueA = a.getValue();
         final PropertyType typeA = a.getType();
         final Name nameA = a.getDescriptor().getName();
-        final String nameProperty = nameA.getLocalPart();
+        final String nameProperty = nameA.tip().toString();
         String namespaceProperty = nameA.getNamespaceURI();
 
         if(isAttributeProperty(nameA)) return;
@@ -487,7 +487,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         final Property prop = (Property) valueA;
                         final Name propName = prop.getName();
                         final String namespaceURI = propName.getNamespaceURI();
-                        final String localPart = propName.getLocalPart();
+                        final String localPart = propName.tip().toString();
                         if (namespaceURI != null && !namespaceURI.isEmpty()) {
                             writer.writeStartElement(namespaceURI, localPart);
                         } else {
@@ -710,7 +710,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * @return true if property is an atribute, starts by a @
      */
     public static boolean isAttributeProperty(Name name){
-        final String localPart = name.getLocalPart();
+        final String localPart = name.tip().toString();
         return !localPart.isEmpty() && localPart.charAt(0) == '@';
     }
 
@@ -723,7 +723,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      */
     public static boolean isPrimitiveType(ComplexType type){
         for(PropertyDescriptor desc : type.getDescriptors()){
-            if(Utils.VALUE_PROPERTY_NAME.equals(desc.getName().getLocalPart())){
+            if(Utils.VALUE_PROPERTY_NAME.equals(desc.getName().tip().toString())){
                 return true;
             }
         }

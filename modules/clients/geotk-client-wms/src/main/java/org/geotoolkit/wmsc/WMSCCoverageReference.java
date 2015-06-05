@@ -35,7 +35,7 @@ public class WMSCCoverageReference extends AbstractPyramidalCoverageReference {
     public WMSCCoverageReference(final WebMapClientCached server,
             final Name name) throws CapabilitiesException{
         super(server, name, 0);
-        set = new WMSCPyramidSet(server, name.getLocalPart());
+        set = new WMSCPyramidSet(server, name.tip().toString());
     }
 
     @Override

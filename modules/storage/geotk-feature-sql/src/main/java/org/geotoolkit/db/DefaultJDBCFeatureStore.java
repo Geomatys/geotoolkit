@@ -255,7 +255,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                 cnx = getDataSource().getConnection();
                 stmt = cnx.createStatement();
                 rs = stmt.executeQuery(sql);
-                return getDatabaseModel().analyzeResult(rs, query.getTypeName().getLocalPart());
+                return getDatabaseModel().analyzeResult(rs, query.getTypeName().tip().toString());
             } catch (SQLException ex) {
                 throw new DataStoreException(ex);
             }finally{
@@ -307,7 +307,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         }
 
         final String dbSchemaName = getDatabaseSchema();
-        final String tableName = query.getTypeName().getLocalPart();
+        final String tableName = query.getTypeName().tip().toString();
         TableMetaModel tableMeta = null;
         if (dbSchemaName == null) {
             // Try to handle empty schema name given at configuration
@@ -376,7 +376,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             for(ColumnMetaModel pkc : pkey.getColumns()){
                 final String pkcName = pkc.getName();
                 for(Name n : allAttributes){
-                    if(n.getLocalPart().equals(pkcName)){
+                    if(n.tip().toString().equals(pkcName)){
                         continue pkLoop;
                      }
                  }
@@ -669,18 +669,18 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                 dbmodel.clearCache();
                 
                 for(TypeRelation relation : relations){
-                    final String baseTypeName = relation.type.getLocalPart();
-                    final String propertyName = relation.property.getName().getLocalPart();
+                    final String baseTypeName = relation.type.tip().toString();
+                    final String propertyName = relation.property.getName().tip().toString();
                     final int minOccurs = relation.property.getMinOccurs();
                     final int maxOccurs = relation.property.getMaxOccurs();
 
                     if(relation.property.getType() instanceof AssociationType){
                         final AssociationType assType = (AssociationType) relation.property.getType();
-                        final String targetTypeName = assType.getRelatedType().getName().getLocalPart();
+                        final String targetTypeName = assType.getRelatedType().getName().tip().toString();
                         throw new DataStoreException("Association property not supported");
                         
                     }else if(relation.property.getType() instanceof ComplexType){
-                        final String targetTypeName = relation.property.getType().getName().getLocalPart();
+                        final String targetTypeName = relation.property.getType().getName().tip().toString();
                         final PrimaryKey targetKey = dbmodel.getPrimaryKey(DefaultName.create(getDefaultNamespace(), targetTypeName));
                         final PrimaryKey sourceKey = dbmodel.getPrimaryKey(relation.type);
                         if(targetKey.getColumns().size() != 1 || sourceKey.getColumns().size() != 1){
@@ -732,7 +732,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                     getLogger().log(Level.WARNING, ex1.getMessage(), ex1);
                 }
             }
-            throw new DataStoreException("Failed to create table "+typeName.getLocalPart()+","+ex.getMessage()+"\n Query : "+sql, ex);
+            throw new DataStoreException("Failed to create table "+typeName.tip().toString()+","+ex.getMessage()+"\n Query : "+sql, ex);
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),cnx,stmt,null);
         }
@@ -781,7 +781,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             }
 
         } catch (final SQLException ex) {
-            throw new DataStoreException("Failed updating table "+typeName.getLocalPart()+", "+ex.getMessage(), ex);
+            throw new DataStoreException("Failed updating table "+typeName.tip().toString()+", "+ex.getMessage(), ex);
         } finally{
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),cnx);
         }
@@ -825,7 +825,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             dbmodel.clearCache();
 
         } catch (SQLException ex) {
-            throw new DataStoreException("Failed to drop table "+typeName.getLocalPart()+","+ex.getMessage()+"\n Query : "+sql, ex);
+            throw new DataStoreException("Failed to drop table "+typeName.tip().toString()+","+ex.getMessage()+"\n Query : "+sql, ex);
         } finally {
             JDBCFeatureStoreUtilities.closeSafe(getLogger(),cnx,stmt,null);
         }
@@ -842,7 +842,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      */
     private void decompose(ComplexType type, List<FeatureType> types, List<TypeRelation> relations) throws DataStoreException{
         
-        final Name dbName = DefaultName.create(getDefaultNamespace(), type.getName().getLocalPart());
+        final Name dbName = DefaultName.create(getDefaultNamespace(), type.getName().tip().toString());
         
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(dbName);
@@ -1018,7 +1018,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                 }
 
                 //report the feature id as user data since we cant set the fid
-                final String fid = featureType.getName().getLocalPart() + "." + PrimaryKey.encodeFID(nextKeyValues);
+                final String fid = featureType.getName().tip().toString() + "." + PrimaryKey.encodeFID(nextKeyValues);
                 feature.getUserData().put("fid", fid);
 
                 if (cx.getAutoCommit()) {
@@ -1048,7 +1048,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             RelationMetaModel relation, List<InsertRelation> flats) throws DataStoreException{
         //decompose main type
         final ComplexType featuretype = candidate.getType();
-        final TableMetaModel table = dbmodel.getSchemaMetaModel(getDatabaseSchema()).getTable(featuretype.getName().getLocalPart());
+        final TableMetaModel table = dbmodel.getSchemaMetaModel(getDatabaseSchema()).getTable(featuretype.getName().tip().toString());
         final ComplexType flatType = table.getType(TableMetaModel.View.SIMPLE_FEATURE_TYPE);
         final ComplexAttribute flat = FeatureUtilities.defaultProperty(flatType);
         FeatureUtilities.copy(candidate, flat, false);

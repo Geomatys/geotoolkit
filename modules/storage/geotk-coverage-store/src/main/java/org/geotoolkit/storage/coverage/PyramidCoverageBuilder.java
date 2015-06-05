@@ -924,7 +924,7 @@ public class PyramidCoverageBuilder {
     private CoverageReference getOrCreateCRef(CoverageStore coverageStore, Name coverageName) throws DataStoreException {
         CoverageReference cv = null;
         for (Name n : coverageStore.getNames()) {
-            if (n.getLocalPart().equals(coverageName.getLocalPart())) {
+            if (n.tip().toString().equals(coverageName.tip().toString())) {
                 cv = coverageStore.getCoverageReference(n);
             }
         }

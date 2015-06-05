@@ -130,7 +130,7 @@ public class MIFFeatureStoreTest {
         for(Name n : ds.getNames()){
             FeatureType ft = ds.getFeatureType(n);
             for(PropertyDescriptor desc : featureType.getDescriptors()){
-                PropertyDescriptor td = ft.getDescriptor(desc.getName().getLocalPart());
+                PropertyDescriptor td = ft.getDescriptor(desc.getName().tip().toString());
                 assertNotNull(td);
                 assertEquals(td.getType().getBinding(), desc.getType().getBinding());
             }

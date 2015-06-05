@@ -138,7 +138,7 @@ public final class VectorProcessUtils extends Static {
 
         //if keepedGeometry is null we use the default Geometry
         if (keepedGeometry == null) {
-            keepedGeometry = oldFeatureType.getGeometryDescriptor().getName().getLocalPart();
+            keepedGeometry = oldFeatureType.getGeometryDescriptor().getName().tip().toString();
         }
 
         final Collection<String> listToRemove = new ArrayList<String>();
@@ -151,7 +151,7 @@ public final class VectorProcessUtils extends Static {
 
                 final GeometryType type = (GeometryType) desc.getType();
 
-                if (desc.getName().getLocalPart().equals(keepedGeometry)) {
+                if (desc.getName().tip().toString().equals(keepedGeometry)) {
                     descBuilder = new AttributeDescriptorBuilder();
                     typeBuilder = new AttributeTypeBuilder();
                     descBuilder.copy((AttributeDescriptor) desc);
@@ -161,7 +161,7 @@ public final class VectorProcessUtils extends Static {
                     final PropertyDescriptor newDesc = descBuilder.buildDescriptor();
                     ite.set(newDesc);
                 } else {
-                    listToRemove.add(desc.getName().getLocalPart());
+                    listToRemove.add(desc.getName().tip().toString());
                 }
             }
         }
@@ -372,7 +372,7 @@ public final class VectorProcessUtils extends Static {
         // found used input geometry with CRS
         for (Property inputProperty : sourceFeature.getProperties()) {
             if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
-                if (inputProperty.getName().getLocalPart().equals(sourceGeomName)) {
+                if (inputProperty.getName().tip().toString().equals(sourceGeomName)) {
                     sourceGeometry = (Geometry) inputProperty.getValue();
                     final GeometryDescriptor geomDesc = (GeometryDescriptor) inputProperty.getDescriptor();
                     sourceCRS = geomDesc.getCoordinateReferenceSystem();
@@ -386,7 +386,7 @@ public final class VectorProcessUtils extends Static {
         // found used target geometry with CRS
         for (Property inputProperty : targetFeature.getProperties()) {
             if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
-                if (inputProperty.getName().getLocalPart().equals(targetGeomName)) {
+                if (inputProperty.getName().tip().toString().equals(targetGeomName)) {
                     targetGeometry = (Geometry) inputProperty.getValue();
                     final GeometryDescriptor geomDesc = (GeometryDescriptor) inputProperty.getDescriptor();
                     targetCRS = geomDesc.getCoordinateReferenceSystem();
@@ -417,7 +417,7 @@ public final class VectorProcessUtils extends Static {
 
         //if the wanted feature geometry is null, we use the default geometry
         if (geometryName == null) {
-            geometryName = inputFeature.getDefaultGeometryProperty().getName().getLocalPart();
+            geometryName = inputFeature.getDefaultGeometryProperty().getName().tip().toString();
         }
 
         //create the new FeatureType with only one geometry property
@@ -433,7 +433,7 @@ public final class VectorProcessUtils extends Static {
         // found used input geometry with CRS
         for (Property inputProperty : inputFeature.getProperties()) {
             if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
-                if (inputProperty.getName().getLocalPart().equals(geometryName)) {
+                if (inputProperty.getName().tip().toString().equals(geometryName)) {
                     inputGeometry = (Geometry) inputProperty.getValue();
                     final GeometryDescriptor geomDesc = (GeometryDescriptor) inputProperty.getDescriptor();
                     inputCRS = geomDesc.getCoordinateReferenceSystem();
@@ -517,7 +517,7 @@ public final class VectorProcessUtils extends Static {
 
                     for (Property property : inputFeature.getProperties()) {
                         if (property.getDescriptor() instanceof GeometryDescriptor) {
-                            if (property.getName().getLocalPart().equals(geometryName)) {
+                            if (property.getName().tip().toString().equals(geometryName)) {
                                 //set the intersection as the feature Geometry
                                 resultFeature.getProperty(property.getName()).setValue(interGeom);
                             }

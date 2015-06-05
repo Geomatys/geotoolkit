@@ -310,7 +310,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
         final FeatureIDReader fidReader;
         if (!indexUseable(FIX)) {
-            fidReader = new ShapeFIDReader(getName().getLocalPart(), r);
+            fidReader = new ShapeFIDReader(getName().tip().toString(), r);
         } else {
             fidReader = r.getLocker().getFIXReader(r);
         }
@@ -610,7 +610,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         try{
             final FeatureReader reader = createFeatureReader(attReader, schema, null);
             FeatureWriter writer = new IndexedShapefileFeatureWriter(
-                    typeName.getLocalPart(), shpFiles, attReader, reader, this, dbfCharset);
+                    typeName.tip().toString(), shpFiles, attReader, reader, this, dbfCharset);
             return handleRemaining(writer, filter);
         } catch (IOException ex) {
             throw new DataStoreException(ex);

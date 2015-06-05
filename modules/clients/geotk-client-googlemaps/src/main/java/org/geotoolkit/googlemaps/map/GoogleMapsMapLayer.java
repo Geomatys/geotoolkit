@@ -50,7 +50,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
     private static CoverageReference getReference(StaticGoogleMapsClient server, String mapType){
         try {
             for(Name n : server.getNames()){
-                if(n.getLocalPart().equalsIgnoreCase(mapType)){
+                if(n.tip().toString().equalsIgnoreCase(mapType)){
                     return server.getCoverageReference(n);
                 }
             }

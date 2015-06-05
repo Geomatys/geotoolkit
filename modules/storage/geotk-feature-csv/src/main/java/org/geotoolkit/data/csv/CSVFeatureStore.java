@@ -125,7 +125,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         this(toParameters(f, namespace, separator));
         if(ft!=null){
             this.featureType = ft;
-            name = featureType.getName().getLocalPart();
+            name = featureType.getName().tip().toString();
         }
     }
 
@@ -270,7 +270,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                 sb.append(separator);
             }
 
-            sb.append(desc.getName().getLocalPart());
+            sb.append(desc.getName().tip().toString());
             sb.append('(');
             final Class clazz = desc.getType().getBinding();
             if(Number.class.isAssignableFrom(clazz) || float.class.equals(clazz) 
@@ -303,7 +303,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     private void writeType(final FeatureType type) throws DataStoreException {
         defaultNamespace = type.getName().getNamespaceURI();
         Parameters.getOrCreate(CSVFeatureStoreFactory.NAMESPACE, parameters).setValue(defaultNamespace);
-        name = type.getName().getLocalPart();
+        name = type.getName().tip().toString();
 
         fileLock.writeLock().lock();
         try (final Writer output = new BufferedWriter(new FileWriter(file))) {

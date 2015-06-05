@@ -74,7 +74,7 @@ public class PGPyramidSet extends DefaultPyramidSet{
         try{
             cnx = store.getDataSource().getConnection();
             stmt = cnx.createStatement();
-            final int layerId = store.getLayerId(cnx,ref.getName().getLocalPart());
+            final int layerId = store.getLayerId(cnx,ref.getName().tip().toString());
             
             final StringBuilder query = new StringBuilder();        
             query.append("SELECT p.id, p.epsg, pp.value FROM ");

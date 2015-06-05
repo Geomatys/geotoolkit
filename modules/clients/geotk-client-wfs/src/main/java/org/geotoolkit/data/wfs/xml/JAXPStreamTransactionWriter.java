@@ -276,9 +276,9 @@ public class JAXPStreamTransactionWriter {
         if (typeName.getNamespaceURI() != null && !typeName.getNamespaceURI().isEmpty()) {
             final String prefix = "geons"+inc.incrementAndGet();
             writer.writeAttribute("xmlns:"+prefix, typeName.getNamespaceURI());
-            writer.writeAttribute(PROP_TYPENAME, prefix+":"+typeName.getLocalPart());
+            writer.writeAttribute(PROP_TYPENAME, prefix+":"+typeName.tip().toString());
         } else {
-            writer.writeAttribute(PROP_TYPENAME, typeName.getLocalPart());
+            writer.writeAttribute(PROP_TYPENAME, typeName.tip().toString());
         }
 
         //write crs-------------------------------------------------------------
@@ -328,9 +328,9 @@ public class JAXPStreamTransactionWriter {
             //write name
             writer.writeStartElement(WFS_PREFIX, TAG_NAME, WFS_NAMESPACE);
             if (pref != null) {
-                writer.writeCharacters(pref+":"+name.getLocalPart());
+                writer.writeCharacters(pref+":"+name.tip().toString());
             } else {
-                writer.writeCharacters(name.getLocalPart());
+                writer.writeCharacters(name.tip().toString());
             }
             writer.writeEndElement();
 
@@ -386,9 +386,9 @@ public class JAXPStreamTransactionWriter {
         if (typeName.getNamespaceURI() != null && !typeName.getNamespaceURI().isEmpty()) {
             final String prefix = "geons"+inc.incrementAndGet();
             writer.writeAttribute("xmlns:"+prefix, typeName.getNamespaceURI());
-            writer.writeAttribute(PROP_TYPENAME, prefix+":"+typeName.getLocalPart());
+            writer.writeAttribute(PROP_TYPENAME, prefix+":"+typeName.tip().toString());
         } else {
-            writer.writeAttribute(PROP_TYPENAME, typeName.getLocalPart());
+            writer.writeAttribute(PROP_TYPENAME, typeName.tip().toString());
         }
 
 

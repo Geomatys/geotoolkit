@@ -212,7 +212,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
 
     private void fillSchemaWithFeatureType(final FeatureType featureType, final Schema schema, boolean addTopElement, Set<String> alreadyWritten) {
         final String typeNamespace    = featureType.getName().getNamespaceURI();
-        final String elementName      = featureType.getName().getLocalPart();
+        final String elementName      = featureType.getName().tip().toString();
         final String typeName         = elementName + "Type";
         
         if (addTopElement) {
@@ -244,7 +244,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
         
         // PropertyType
         
-        final String nameWithSuffix = Utils.getNameWithTypeSuffix(ptypeName.getLocalPart());
+        final String nameWithSuffix = Utils.getNameWithTypeSuffix(ptypeName.tip().toString());
 
         boolean write = schema.getTargetNamespace().equals(ptypeName.getNamespaceURI());
         
@@ -274,7 +274,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
         }
 
         final PropertyType pType = pdesc.getType();
-        final String name        = pdesc.getName().getLocalPart();
+        final String name        = pdesc.getName().tip().toString();
         final QName type         = Utils.getQNameFromType(pType, gmlVersion);
         final int minOccurs      = pdesc.getMinOccurs();
         final int maxOccurs      = pdesc.getMaxOccurs();

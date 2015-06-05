@@ -105,7 +105,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
             final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
             leftDesc = adb.create(leftType,leftAttName,null,0,1,false,null);
             rightDesc = adb.create(rightType,rightAttName,null,0,1,false,null);
-            ftb.setName(leftAttName.getLocalPart()+'-'+rightAttName.getLocalPart());
+            ftb.setName(leftAttName.tip().toString()+'-'+rightAttName.tip().toString());
             ftb.add(leftDesc);
             ftb.add(rightDesc);
             type = ftb.buildFeatureType();

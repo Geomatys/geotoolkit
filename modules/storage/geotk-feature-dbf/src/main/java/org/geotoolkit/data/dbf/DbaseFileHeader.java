@@ -771,7 +771,7 @@ public class DbaseFileHeader {
 
         for(PropertyDescriptor type : featureType.getDescriptors()){
             final Class<?> colType = type.getType().getBinding();
-            final String colName = type.getName().getLocalPart();
+            final String colName = type.getName().tip().toString();
 
             int fieldLen = FeatureTypeUtilities.getFieldLength((AttributeDescriptor) type);
             if (fieldLen == FeatureTypeUtilities.ANY_LENGTH)

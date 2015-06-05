@@ -163,7 +163,7 @@ public class WPSConvertersUtils {
         //Fetch each geometry, get his CRS and
         for (Property property : featureIN.getProperties()) {
             if (property.getDescriptor() instanceof GeometryDescriptor) {
-                final String propertyName = property.getName().getLocalPart();
+                final String propertyName = property.getName().tip().toString();
                 final Geometry propertyGeom = (Geometry) property.getValue();
                 final CoordinateReferenceSystem extractCRS = JTS.findCoordinateReferenceSystem(propertyGeom);
 
@@ -172,7 +172,7 @@ public class WPSConvertersUtils {
                 while (ite.hasNext()) {
                     final DefaultPropertyDescriptor propertyDesc = (DefaultPropertyDescriptor) ite.next();
 
-                    if (propertyDesc.getName().getLocalPart().equals(propertyName)) {
+                    if (propertyDesc.getName().tip().toString().equals(propertyName)) {
                         final DefaultGeometryType geomType = (DefaultGeometryType) propertyDesc.getType();
                         geomType.setCoordinateReferenceSystem(extractCRS);
                         break;
@@ -645,7 +645,7 @@ public class WPSConvertersUtils {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.copy(ct);
         if(ftb.getName().getNamespaceURI() == null) {
-            ftb.setName("constellation-sdi/WS/wps", ftb.getName().getLocalPart());
+            ftb.setName("constellation-sdi/WS/wps", ftb.getName().tip().toString());
         }
         List<PropertyDescriptor> properties = ftb.getProperties();
 

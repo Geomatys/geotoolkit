@@ -99,7 +99,7 @@ public class RelationMetaModel {
         int i=0;
         for(PropertyDescriptor desc : descs){
             if(!Boolean.TRUE.equals(desc.getUserData().get(HintsPending.PROPERTY_IS_IDENTIFIER))){
-                fields[i] = desc.getName().getLocalPart();
+                fields[i] = desc.getName().tip().toString();
                 i++;
             }
         }

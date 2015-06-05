@@ -216,7 +216,7 @@ public class GeoJSONReader implements FeatureReader {
 
                 Property property;
                 if (isSimple) {
-                    property = attribute.getProperty(desc.getName().getLocalPart());
+                    property = attribute.getProperty(desc.getName().tip().toString());
                 } else {
                     property = FeatureUtilities.defaultProperty(desc);
                 }
@@ -260,7 +260,7 @@ public class GeoJSONReader implements FeatureReader {
             }
         } catch (UnconvertibleObjectException e1) {
             throw new FeatureStoreRuntimeException(String.format("Inconvertible property %s : %s",
-                    prop.getName().getLocalPart(), e1.getMessage()), e1);
+                    prop.getName().tip().toString(), e1.getMessage()), e1);
         }
 
         prop.setValue(convertValue);

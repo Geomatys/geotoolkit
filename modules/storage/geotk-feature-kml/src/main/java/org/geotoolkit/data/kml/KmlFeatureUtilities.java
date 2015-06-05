@@ -419,7 +419,7 @@ public class KmlFeatureUtilities {
         final Collection<Property> placemarkProperties = placemark.getProperties();
         final AbstractGeometry ag = buildKMLGeometry((Geometry) noKmlFeature.getDefaultGeometryProperty().getValue());
         placemarkProperties.add(FF.createAttribute(ag, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
-        final String geoColumn = noKmlFeature.getDefaultGeometryProperty().getName().getLocalPart();
+        final String geoColumn = noKmlFeature.getDefaultGeometryProperty().getName().tip().toString();
 
         URI styleURI = null;
         try {
@@ -440,7 +440,7 @@ public class KmlFeatureUtilities {
             ExtendedData extendedData = kmlFactory.createExtendedData();
 
             for (Property property : properties) {
-                String localPartName = property.getName().getLocalPart();
+                String localPartName = property.getName().tip().toString();
                 if(localPartName.equalsIgnoreCase("NAME")){
                     placemarkProperties.add(FF.createAttribute(property.getValue(), KmlModelConstants.ATT_NAME, null));
                 }else if(!(localPartName.equalsIgnoreCase(geoColumn) || localPartName.equalsIgnoreCase("fid"))){

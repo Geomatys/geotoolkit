@@ -147,7 +147,7 @@ public abstract class AbstractReadingTests{
         check:
         for(String typeName : typeNames){
             for(Name n : founds){
-                if(n.getLocalPart().equals(typeName)){
+                if(n.tip().toString().equals(typeName)){
                     assertNotNull(typeName);
                     FeatureType type1 = store.getFeatureType(typeName);
                     FeatureType type2 = store.getFeatureType(n);
@@ -250,7 +250,7 @@ public abstract class AbstractReadingTests{
             //ok
         }
 
-        query = QueryBuilder.all(DefaultName.create(candidate.name.getNamespaceURI(), candidate.name.getLocalPart()+"fgresfds_not_exist"));
+        query = QueryBuilder.all(DefaultName.create(candidate.name.getNamespaceURI(), candidate.name.tip().toString()+"fgresfds_not_exist"));
         try{
             store.getFeatureReader(query);
             throw new Exception("Asking for a reader without a wrong name should raise a featurestore exception.");
@@ -258,7 +258,7 @@ public abstract class AbstractReadingTests{
             //ok
         }
 
-        query = QueryBuilder.all(DefaultName.create(candidate.name.getNamespaceURI()+"resfsdfsdf_not_exist", candidate.name.getLocalPart()));
+        query = QueryBuilder.all(DefaultName.create(candidate.name.getNamespaceURI()+"resfsdfsdf_not_exist", candidate.name.tip().toString()));
         try{
             store.getFeatureReader(query);
             throw new Exception("Asking for a reader without a wrong namespace should raise a featurestore exception.");
@@ -337,7 +337,7 @@ public abstract class AbstractReadingTests{
         for(final PropertyDescriptor desc : properties){
             qb.reset();
             qb.setTypeName(candidate.name);
-            qb.setProperties(new String[]{desc.getName().getLocalPart()});
+            qb.setProperties(new String[]{desc.getName().tip().toString()});
             query = qb.buildQuery();
 
             ite = store.getFeatureReader(query);
@@ -369,7 +369,7 @@ public abstract class AbstractReadingTests{
 
             qb.reset();
             qb.setTypeName(candidate.name);
-            qb.setSortBy(new SortBy[]{FF.sort(desc.getName().getLocalPart(), SortOrder.ASCENDING)});
+            qb.setSortBy(new SortBy[]{FF.sort(desc.getName().tip().toString(), SortOrder.ASCENDING)});
             query = qb.buildQuery();
 
             //count should not change with a sort by
@@ -401,7 +401,7 @@ public abstract class AbstractReadingTests{
 
             qb.reset();
             qb.setTypeName(candidate.name);
-            qb.setSortBy(new SortBy[]{FF.sort(desc.getName().getLocalPart(), SortOrder.DESCENDING)});
+            qb.setSortBy(new SortBy[]{FF.sort(desc.getName().tip().toString(), SortOrder.DESCENDING)});
             query = qb.buildQuery();
 
             //count should not change with a sort by

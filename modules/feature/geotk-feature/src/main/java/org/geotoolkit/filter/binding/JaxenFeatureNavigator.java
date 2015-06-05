@@ -97,10 +97,10 @@ final class JaxenFeatureNavigator implements Navigator{
             str = candidate.getName().toString();
         }else if(o instanceof PropertyDescriptor){
             final PropertyDescriptor candidate = (PropertyDescriptor) o;
-            str = candidate.getName().getLocalPart();
+            str = candidate.getName().tip().toString();
         }else if(o instanceof PropertyType){
             final PropertyType candidate = (PropertyType) o;
-            str = candidate.getName().getLocalPart();
+            str = candidate.getName().tip().toString();
         }
         if(str!=null && str.startsWith("@")){
             str = str.substring(1);
@@ -136,10 +136,10 @@ final class JaxenFeatureNavigator implements Navigator{
             str = candidate.getName().toString();
         }else if(o instanceof PropertyDescriptor){
             final PropertyDescriptor candidate = (PropertyDescriptor) o;
-            str = candidate.getName().getLocalPart();
+            str = candidate.getName().tip().toString();
         }else if(o instanceof PropertyType){
             final PropertyType candidate = (PropertyType) o;
-            str = candidate.getName().getLocalPart();
+            str = candidate.getName().tip().toString();
         }
         if(str!=null && str.startsWith("@")){
             str = str.substring(1);
@@ -443,9 +443,9 @@ final class JaxenFeatureNavigator implements Navigator{
 
                 if(name!=null){
                     if(attributes){
-                        next = name.getLocalPart().startsWith("@") ? candidate : null;
+                        next = name.tip().toString().startsWith("@") ? candidate : null;
                     }else{
-                        next = !name.getLocalPart().startsWith("@") ? candidate : null;
+                        next = !name.tip().toString().startsWith("@") ? candidate : null;
                     }
                 }
 

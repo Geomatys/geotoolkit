@@ -321,7 +321,7 @@ public class GeoJSONWriteTest {
                                 propFound = true;
                             }
                         }
-                        assertTrue("Property "+propName.getLocalPart()+" not found.",propFound);
+                        assertTrue("Property "+propName.tip().toString()+" not found.",propFound);
                     }
                 }
             }

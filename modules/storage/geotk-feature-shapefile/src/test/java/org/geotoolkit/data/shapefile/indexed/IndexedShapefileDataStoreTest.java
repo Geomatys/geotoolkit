@@ -759,7 +759,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         Filter fidFilter = ff.id(ids);
 
         final FeatureType schema = ds.getFeatureType();
-        final String typeName = schema.getName().getLocalPart();
+        final String typeName = schema.getName().tip().toString();
         //get a property of type String to update its value by the given filter
         final AttributeDescriptor attribute = (AttributeDescriptor) schema.getDescriptor("f");
 

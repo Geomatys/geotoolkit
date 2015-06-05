@@ -144,7 +144,7 @@ public class DefaultPropertyDescriptor<T extends PropertyType> implements Proper
         sb.append(getName());
         if (type != null) {
             sb.append(" <");
-            sb.append(type.getName().getLocalPart());
+            sb.append(type.getName().tip().toString());
             sb.append(":");
             sb.append(Classes.getShortName(type.getBinding()));
             sb.append(">");

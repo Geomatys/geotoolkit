@@ -361,7 +361,7 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
 
             if(value instanceof CoverageReference){
                 final CoverageReference ref = (CoverageReference) value;
-                lbl.setText(ref.getName().getLocalPart());
+                lbl.setText(ref.getName().tip().toString());
             }else if(value instanceof MapItem){
                 final MapItem mapitem = (MapItem) value;
                 String txt = mapitem.getName();

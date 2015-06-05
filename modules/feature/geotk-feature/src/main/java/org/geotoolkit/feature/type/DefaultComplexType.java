@@ -86,7 +86,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
                 }
                 final Name pn = pd.getName();
                 this.propertyMap.put(pn, pd);
-                this.propertyMap.put(pn.getLocalPart(), pd);
+                this.propertyMap.put(pn.tip().toString(), pd);
                 this.propertyMap.put(DefaultName.toExtendedForm(pn), pd);
                 this.propertyMap.put(Names.toExpandedString(pn), pd);
             }
@@ -105,7 +105,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             }
             final Name pn = pd.getName();
             this.propertyMap.put(pn, pd);
-            this.propertyMap.put(pn.getLocalPart(), pd);
+            this.propertyMap.put(pn.tip().toString(), pd);
             this.propertyMap.put(DefaultName.toExtendedForm(pn), pd);
             this.propertyMap.put(Names.toExpandedString(pn), pd);
         }
@@ -202,7 +202,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         }
         if (superType != null) {
             sb.append(" extends ");
-            sb.append(superType.getName().getLocalPart());
+            sb.append(superType.getName().tip().toString());
         }
         sb.append('\n');
 
@@ -272,11 +272,11 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         builder.append("\t");
         final PropertyType pt = property.getType();
         if(pt instanceof ComplexType){
-            builder.append("CX:").append( ((ComplexType)pt).getName().getLocalPart() );
+            builder.append("CX:").append( ((ComplexType)pt).getName().tip().toString() );
         }if(pt instanceof OperationType){
             builder.append("OP:").append( ((OperationType)pt).getClass().getSimpleName().replaceAll("Operation", "") );
         }else if(pt instanceof AssociationType){
-            builder.append("AS:").append( ((AssociationType)pt).getRelatedType().getName().getLocalPart() );
+            builder.append("AS:").append( ((AssociationType)pt).getRelatedType().getName().tip().toString() );
         }else{
             builder.append(pt.getBinding().getSimpleName());
         }

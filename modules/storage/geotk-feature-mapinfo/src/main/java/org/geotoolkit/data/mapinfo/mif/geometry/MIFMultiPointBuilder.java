@@ -101,7 +101,7 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
     public String toMIFSyntax(Feature geometry) throws DataStoreException {
         super.toMIFSyntax(geometry);
 
-        final StringBuilder builder = new StringBuilder(NAME.getLocalPart());
+        final StringBuilder builder = new StringBuilder(NAME.tip().toString());
         final Object value = geometry.getDefaultGeometryProperty().getValue();
         final MultiPoint multiPt;
         if(value instanceof CoordinateSequence) {

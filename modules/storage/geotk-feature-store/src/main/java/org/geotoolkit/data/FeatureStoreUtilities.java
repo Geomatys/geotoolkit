@@ -388,7 +388,7 @@ public class FeatureStoreUtilities {
             //retype the collection
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.copy(baseType);
-            ftb.setName(DefaultName.create(name.getNamespaceURI(), name.getLocalPart()+"_"+geomClass.getSimpleName()));
+            ftb.setName(DefaultName.create(name.getNamespaceURI(), name.tip().toString()+"_"+geomClass.getSimpleName()));
             ftb.remove(geomPropName.tip().toString());
             ftb.add(geomPropName, geomClasses[i], geomDesc.getCoordinateReferenceSystem());
             ftb.setDefaultGeometry(geomPropName);

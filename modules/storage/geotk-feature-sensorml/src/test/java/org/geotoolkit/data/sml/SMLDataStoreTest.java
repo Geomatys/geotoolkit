@@ -170,7 +170,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
             featureTypeBuilder.add(outList, ATT_OUTPUTS,     null, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_PRODUCER,    Map.class, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_COMPONENTS,  Map.class, 0, Integer.MAX_VALUE, true, null);
-            featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
+            featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.tip().toString());
             final FeatureType typeSystem = featureTypeBuilder.buildFeatureType();
 
             // Feature type sml:Component
@@ -185,7 +185,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
             featureTypeBuilder.add(ATT_SMLREF,      String.class, 1, 1, true, null);
             featureTypeBuilder.add(inList, ATT_INPUTS,      null, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(outList, ATT_OUTPUTS,     null, 0, Integer.MAX_VALUE, true, null);
-            featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
+            featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.tip().toString());
             final FeatureType typeComponent = featureTypeBuilder.buildFeatureType();
 
             // Feature type sml:ProcessChain
@@ -202,7 +202,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
             featureTypeBuilder.add(outList, ATT_OUTPUTS,     null, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_PRODUCER,    Map.class, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_COMPONENTS,  Map.class, 0, Integer.MAX_VALUE, true, null);
-            featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
+            featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.tip().toString());
             final FeatureType typeProcessChain = featureTypeBuilder.buildFeatureType();
 
             // Feature type sml:ProcessModel
@@ -218,7 +218,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
             featureTypeBuilder.add(inList, ATT_INPUTS,      null, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(outList, ATT_OUTPUTS,     null, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_METHOD,      String.class, 0, Integer.MAX_VALUE, true, null);
-            featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
+            featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.tip().toString());
             final FeatureType typeProcess = featureTypeBuilder.buildFeatureType();
 
             // Feature type sml:DataSourceType
@@ -234,7 +234,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
             featureTypeBuilder.add(inList, ATT_INPUTS,      null, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(outList, ATT_OUTPUTS,     null, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_CHARACTERISTICS,Map.class, 0, Integer.MAX_VALUE, true, null);
-            featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.getLocalPart());
+            featureTypeBuilder.setDefaultGeometry(ATT_LOCATION.tip().toString());
             final FeatureType typeDataSource = featureTypeBuilder.buildFeatureType();
 
             names.add(typeSystem.getName());

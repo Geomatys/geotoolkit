@@ -80,12 +80,12 @@ public class ConvexHullProcess extends AbstractProcess {
 
                 //in the first pass, if the geometry attribute name is null, we use the default geometry attribute name
                 if (geometryName == null) {
-                    geometryName = feature.getDefaultGeometryProperty().getName().getLocalPart();
+                    geometryName = feature.getDefaultGeometryProperty().getName().tip().toString();
                 }
                 for (Property property : feature.getProperties()) {
                     if (property.getDescriptor() instanceof GeometryDescriptor) {
                         final GeometryDescriptor desc = (GeometryDescriptor) property.getDescriptor();
-                        if (desc.getName().getLocalPart().equals(geometryName)) {
+                        if (desc.getName().tip().toString().equals(geometryName)) {
                             crs = desc.getCoordinateReferenceSystem();
 
                             final Geometry tmpGeom = (Geometry) property.getValue();

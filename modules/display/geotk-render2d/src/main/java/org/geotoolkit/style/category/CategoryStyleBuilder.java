@@ -117,7 +117,7 @@ public class CategoryStyleBuilder extends Factory {
                 Class<?> type = desc.getType().getBinding();
 
                 if(!Geometry.class.isAssignableFrom(type)){
-                    properties.add(ff.property(desc.getName().getLocalPart()));
+                    properties.add(ff.property(desc.getName().tip().toString()));
                 }
             }
 

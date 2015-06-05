@@ -388,7 +388,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
         // reader has no more (no were are adding to the file)
         // so return an empty feature
         try {
-            final String featureID = getFeatureType().getName().getLocalPart()+"."+(records+1);
+            final String featureID = getFeatureType().getName().tip().toString()+"."+(records+1);
             originalFeature = null;
             return currentFeature = (SimpleFeature) FeatureTypeUtilities.template(getFeatureType(),featureID,emptyAtts);
         } catch (IllegalAttributeException iae) {
@@ -402,7 +402,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
      * @return a fid for the new feature
      */
     protected String nextFeatureId() {
-        return getFeatureType().getName().getLocalPart()+"."+(records+1);
+        return getFeatureType().getName().tip().toString()+"."+(records+1);
     }
 
     /**

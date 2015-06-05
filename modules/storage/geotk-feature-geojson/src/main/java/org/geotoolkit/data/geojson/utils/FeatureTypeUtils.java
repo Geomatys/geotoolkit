@@ -103,7 +103,7 @@ public final class FeatureTypeUtils extends Static {
 
         //start write feature collection.
         writer.writeStartObject();
-        writer.writeStringField(TITLE, ft.getName().getLocalPart());
+        writer.writeStringField(TITLE, ft.getName().tip().toString());
         writer.writeStringField(TYPE, OBJECT);
         writer.writeStringField(JAVA_TYPE, "FeatureType");
         if (ft.getDescription() != null) {
@@ -161,7 +161,7 @@ public final class FeatureTypeUtils extends Static {
 
         //start write feature collection.
         writer.writeStartObject();
-        writer.writeStringField(TITLE, ft.getName().getLocalPart());
+        writer.writeStringField(TITLE, ft.getName().tip().toString());
         writer.writeStringField(TYPE, OBJECT);
         writer.writeStringField(JAVA_TYPE, "FeatureType");
         if (ft.getDescription() != null) {
@@ -196,7 +196,7 @@ public final class FeatureTypeUtils extends Static {
                 }
             }
             if (isRequired) {
-                required.add(descriptor.getName().getLocalPart());
+                required.add(descriptor.getName().tip().toString());
             }
         }
 
@@ -213,7 +213,7 @@ public final class FeatureTypeUtils extends Static {
     private static boolean writeComplexType(PropertyDescriptor descriptor, ComplexType complex, JsonGenerator writer)
             throws IOException {
 
-        writer.writeObjectFieldStart(descriptor.getName().getLocalPart());
+        writer.writeObjectFieldStart(descriptor.getName().tip().toString());
         writer.writeStringField(TYPE, OBJECT);
         writer.writeStringField(JAVA_TYPE, "ComplexType");
         if (complex.getDescription() != null) {

@@ -34,7 +34,7 @@ public class WMTSCoverageReference extends AbstractPyramidalCoverageReference {
 
     WMTSCoverageReference(WebMapTileClient server, Name name, boolean cacheImage){
         super(server,name,0);
-        set = new WMTSPyramidSet(server, name.getLocalPart(), cacheImage);
+        set = new WMTSPyramidSet(server, name.tip().toString(), cacheImage);
     }
 
     @Override

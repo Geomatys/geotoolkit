@@ -61,9 +61,9 @@ public class IGNClientDemo {
                 new URL("http://wxs.ign.fr/inspire/wmsc?"), tokenAndReferer,true);
         
         for(Name name : server.getNames()){
-            if(name.getLocalPart().contains("ELEVATION.SLOPES") || name.getLocalPart().contains("ORTHOIMAGERY.ORTHOPHOTOS")){
+            if(name.tip().toString().contains("ELEVATION.SLOPES") || name.tip().toString().contains("ORTHOIMAGERY.ORTHOPHOTOS")){
                 final WMSCMapLayer sloplayer = new WMSCMapLayer(server, name);
-                sloplayer.setDescription(SF.description(name.getLocalPart(), ""));
+                sloplayer.setDescription(SF.description(name.tip().toString(), ""));
                 context.layers().add(sloplayer);
             }
         }

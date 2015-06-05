@@ -578,7 +578,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
             if (component instanceof JAttributeEditor) {
                 final JAttributeEditor editor = (JAttributeEditor) component;
                 if (editor.getProperty() != null) {
-                    final String editorParameterName = editor.getProperty().getDescriptor().getName().getLocalPart();
+                    final String editorParameterName = editor.getProperty().getDescriptor().getName().tip().toString();
                     if (parameterActivated.contains(editorParameterName) && !notSupportedInput.contains(editorParameterName)) {
                         setRecursivelyEnable(editor, true);
                     } else {
@@ -854,7 +854,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
         public void focusGained(FocusEvent e) {
             final JAttributeEditor editor = findAttributEditor((JComponent)e.getSource());
             if (editor != null) {
-                final String parameterName = editor.getProperty().getDescriptor().getName().getLocalPart();
+                final String parameterName = editor.getProperty().getDescriptor().getName().tip().toString();
 
                 // update help panel
                 final ParameterDescriptor paramDesc = (ParameterDescriptor)descriptor.getInputDescriptor().descriptor(parameterName);
@@ -880,7 +880,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
         public void focusLost(FocusEvent e) {
             final JAttributeEditor editor = findAttributEditor((JComponent)e.getSource());
             if (editor != null) {
-                final String parameterName = editor.getProperty().getDescriptor().getName().getLocalPart();
+                final String parameterName = editor.getProperty().getDescriptor().getName().tip().toString();
 
                 // update help panel
                 final ParameterDescriptor paramDesc = (ParameterDescriptor)descriptor.getInputDescriptor().descriptor(parameterName);

@@ -132,8 +132,8 @@ public class FidQueryTest extends FIDTestCase {
         try {
             feature = features.next();
             for(PropertyDescriptor desc : schema.getDescriptors()){
-                final Object value = feature.getPropertyValue(desc.getName().getLocalPart());
-                final Object newValue = newFeature.getPropertyValue(desc.getName().getLocalPart());
+                final Object value = feature.getPropertyValue(desc.getName().tip().toString());
+                final Object newValue = newFeature.getPropertyValue(desc.getName().tip().toString());
 
                 if (value instanceof Geometry) {
                     assertTrue(((Geometry) newValue).equals((Geometry) value));

@@ -40,22 +40,22 @@ public class DefaultNameTest {
 
         name = DefaultName.create(new QName(uri, local));
         assertEquals(name.getNamespaceURI(), uri);
-        assertEquals(name.getLocalPart(), local);
+        assertEquals(name.tip().toString(), local);
         assertEquals(name.scope().isGlobal(), false);
 
         name = DefaultName.create(local);
         assertEquals(name.getNamespaceURI(), null);
-        assertEquals(name.getLocalPart(), local);
+        assertEquals(name.tip().toString(), local);
         assertEquals(name.scope().isGlobal(), true);
 
         name = DefaultName.create(uri, local);
         assertEquals(name.getNamespaceURI(), uri);
-        assertEquals(name.getLocalPart(), local);
+        assertEquals(name.tip().toString(), local);
         assertEquals(name.scope().isGlobal(), false);
 
         name = DefaultName.create(uri, local);
         assertEquals(name.getNamespaceURI(), uri);
-        assertEquals(name.getLocalPart(), local);
+        assertEquals(name.tip().toString(), local);
         assertEquals(name.scope().isGlobal(), false);
     }
 
@@ -70,17 +70,17 @@ public class DefaultNameTest {
 
         name = DefaultName.valueOf("{"+uri+"}"+local);
         assertEquals(name.getNamespaceURI(), uri);
-        assertEquals(name.getLocalPart(), local);
+        assertEquals(name.tip().toString(), local);
         assertEquals(name.scope().isGlobal(), false);
 
         name = DefaultName.valueOf(uri+":"+local);
         assertEquals(name.getNamespaceURI(), uri);
-        assertEquals(name.getLocalPart(), local);
+        assertEquals(name.tip().toString(), local);
         assertEquals(name.scope().isGlobal(), false);
 
         name = DefaultName.valueOf(local);
         assertEquals(name.getNamespaceURI(), null);
-        assertEquals(name.getLocalPart(), local);
+        assertEquals(name.tip().toString(), local);
         assertEquals(name.scope().isGlobal(), true);
 
     }

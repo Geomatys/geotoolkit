@@ -43,13 +43,13 @@ public class Symbol implements MIFSymbolizer, PointSymbolizer {
 
     public static final Name NAME = DefaultName.create("SYMBOL");
 
-    public final static Pattern SYMBOL_PATTERN = Pattern.compile(NAME.getLocalPart()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
+    public final static Pattern SYMBOL_PATTERN = Pattern.compile(NAME.tip().toString()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 
     private int shape  = 0;
     private int colorCode = 0;
     private int size = 0;
 
-    private String geometryName= MIFPointBuilder.NAME.getLocalPart();
+    private String geometryName= MIFPointBuilder.NAME.tip().toString();
     private transient Graphics2D graphic;
 
     public Symbol() { }
@@ -90,7 +90,7 @@ public class Symbol implements MIFSymbolizer, PointSymbolizer {
     
     @Override
     public String toMIFText() {
-        return NAME.getLocalPart()+"("+shape+","+colorCode+","+size+")";
+        return NAME.tip().toString()+"("+shape+","+colorCode+","+size+")";
     }
 
     @Override
@@ -105,12 +105,12 @@ public class Symbol implements MIFSymbolizer, PointSymbolizer {
 
     @Override
     public String getName() {
-        return NAME.getLocalPart();
+        return NAME.tip().toString();
     }
 
     @Override
     public Description getDescription() {
-        return new DefaultDescription(new SimpleInternationalString(NAME.getLocalPart()),new SimpleInternationalString(toMIFText()));
+        return new DefaultDescription(new SimpleInternationalString(NAME.tip().toString()),new SimpleInternationalString(toMIFText()));
     }
 
     @Override

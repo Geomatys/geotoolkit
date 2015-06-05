@@ -162,7 +162,7 @@ public final class DataBaseModel {
             final Set<Name> names = new HashSet<Name>();
             for(Entry<Name,FeatureType> entry : typeIndex.entrySet()){
                 if(Boolean.TRUE.equals(entry.getValue().getUserData().get("subtype"))) continue;
-                if(store.getDialect().ignoreTable(entry.getKey().getLocalPart())) continue;
+                if(store.getDialect().ignoreTable(entry.getKey().tip().toString())) continue;
                 names.add(entry.getKey());
             }
             ref = Collections.unmodifiableSet(names);
@@ -490,7 +490,7 @@ public final class DataBaseModel {
                 if(columns.size() == 1){
                     String columnName = columns.get(0);
                     for(PropertyDescriptor desc : ftb.getProperties()){
-                        if(desc.getName().getLocalPart().equals(columnName)){
+                        if(desc.getName().tip().toString().equals(columnName)){
                             desc.getUserData().put(JDBCFeatureStore.JDBC_PROPERTY_UNIQUE, Boolean.TRUE);
                         }
                     }
@@ -516,7 +516,7 @@ public final class DataBaseModel {
 
                     //set the information
                     for(PropertyDescriptor desc : ftb.getProperties()){
-                        if(desc.getName().getLocalPart().equals(columnName)){
+                        if(desc.getName().tip().toString().equals(columnName)){
                             desc.getUserData().put(HintsPending.PROPERTY_IS_IDENTIFIER,Boolean.TRUE);
                             break;
                         }
@@ -535,7 +535,7 @@ public final class DataBaseModel {
             //mark primary key columns
             for(PropertyDescriptor desc : ftb.getProperties()){
                 for(ColumnMetaModel col : cols){
-                    if(desc.getName().getLocalPart().equals(col.getName())){
+                    if(desc.getName().tip().toString().equals(col.getName())){
                         desc.getUserData().put(HintsPending.PROPERTY_IS_IDENTIFIER, Boolean.TRUE);
                         break;
                     }
@@ -561,7 +561,7 @@ public final class DataBaseModel {
 
                 //set the information
                 for(PropertyDescriptor desc : ftb.getProperties()){
-                    if(desc.getName().getLocalPart().equals(localColumn)){
+                    if(desc.getName().tip().toString().equals(localColumn)){
                         desc.getUserData().put(JDBCFeatureStore.JDBC_PROPERTY_RELATION,relation);
                         break;
                     }
@@ -757,14 +757,14 @@ public final class DataBaseModel {
                 ftb.reset();
                 ftb.copy(table.tableType);
                 final String namespace = store.getDefaultNamespace();
-                ftb.setName(namespace, ftb.getName().getLocalPart());
+                ftb.setName(namespace, ftb.getName().tip().toString());
 
                 final List<PropertyDescriptor> descs = ftb.getProperties();
 
                 for(int i=0,n=descs.size(); i<n; i++){
                     final PropertyDescriptor desc = descs.get(i);
                     final PropertyType type = desc.getType();
-                    final String name = desc.getName().getLocalPart();
+                    final String name = desc.getName().tip().toString();
 
                     adb.reset();
                     adb.copy((AttributeDescriptor) desc);
@@ -848,7 +848,7 @@ public final class DataBaseModel {
                     int index = -1;
                     for(int i=0,n=descs.size();i<n;i++){
                         final PropertyDescriptor pd = descs.get(i);
-                        if(pd.getName().getLocalPart().equals(relation.getCurrentColumn())){
+                        if(pd.getName().tip().toString().equals(relation.getCurrentColumn())){
                             index = i;
                         }
                     }
@@ -873,7 +873,7 @@ public final class DataBaseModel {
                     //find an appropriate name
                     Name n = DefaultName.create(store.getDefaultNamespace(), relation.getForeignColumn());
                     for(PropertyDescriptor dpd : ftb.getProperties()){
-                        if(n.getLocalPart().equals(dpd.getName().getLocalPart())){
+                        if(n.tip().toString().equals(dpd.getName().tip().toString())){
                             //name already used, make it unique by including reference table name
                             n = DefaultName.create(store.getDefaultNamespace(), relation.getForeignTable()+ASSOCIATION_SEPARATOR+relation.getForeignColumn());
                             break;
@@ -962,7 +962,7 @@ public final class DataBaseModel {
         String searchedName = relation.isImported() ? relation.getCurrentColumn() : relation.getForeignTable()+ASSOCIATION_SEPARATOR+relation.getForeignColumn();
         for (int i = 0, n = descs.size(); i < n; i++) {
             final PropertyDescriptor pd = descs.get(i);
-            if(pd.getName().getLocalPart().equals(searchedName)){
+            if(pd.getName().tip().toString().equals(searchedName)){
                 index = i;
                 break;
             }
@@ -973,7 +973,7 @@ public final class DataBaseModel {
             searchedName = relation.getForeignColumn();
             for (int i = 0, n = descs.size(); i < n; i++) {
                 final PropertyDescriptor pd = descs.get(i);
-                if (pd.getName().getLocalPart().equals(searchedName)) {
+                if (pd.getName().tip().toString().equals(searchedName)) {
                     index = i;
                     break;
                 }

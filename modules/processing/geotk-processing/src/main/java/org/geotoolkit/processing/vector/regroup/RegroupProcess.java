@@ -91,7 +91,7 @@ public class RegroupProcess extends AbstractProcess {
 
         //if keepedGeometry is null we use the default Geometry
         if (geometryName == null) {
-            geometryName = oldFeatureType.getGeometryDescriptor().getName().getLocalPart();
+            geometryName = oldFeatureType.getGeometryDescriptor().getName().tip().toString();
         }
 
         final Collection<String> listToRemove = new ArrayList<String>();
@@ -105,7 +105,7 @@ public class RegroupProcess extends AbstractProcess {
 
                 final GeometryType type = (GeometryType) desc.getType();
 
-                if (desc.getName().getLocalPart().equals(geometryName)) {
+                if (desc.getName().tip().toString().equals(geometryName)) {
                     descBuilder = new AttributeDescriptorBuilder();
                     typeBuilder = new AttributeTypeBuilder();
                     descBuilder.copy((AttributeDescriptor) desc);
@@ -115,19 +115,19 @@ public class RegroupProcess extends AbstractProcess {
                     final PropertyDescriptor newDesc = descBuilder.buildDescriptor();
                     ite.set(newDesc);
                 } else {
-                    listToRemove.add(desc.getName().getLocalPart());
+                    listToRemove.add(desc.getName().tip().toString());
                 }
             } else {//other properties
 
                 if(regroupAttribute != null) {
                      //if it's a different property than we wanted
-                    if (!(desc.getName().getLocalPart().equals(regroupAttribute))) {
-                        listToRemove.add(desc.getName().getLocalPart());
+                    if (!(desc.getName().tip().toString().equals(regroupAttribute))) {
+                        listToRemove.add(desc.getName().tip().toString());
                     }
 
                 // If regroup attribut is null, we return a feature with only one geometry
                 }else{
-                    listToRemove.add(desc.getName().getLocalPart());
+                    listToRemove.add(desc.getName().tip().toString());
                 }
             }
         }
@@ -162,13 +162,13 @@ public class RegroupProcess extends AbstractProcess {
             while (featureIter.hasNext()) {
                 final Feature feature = featureIter.next();
                 if (geometryName == null) {
-                    geometryName = feature.getDefaultGeometryProperty().getName().getLocalPart();
+                    geometryName = feature.getDefaultGeometryProperty().getName().tip().toString();
                 }
                 for (final Property property : feature.getProperties()) {
                     //if property is a geometry
                     if (property.getDescriptor() instanceof GeometryDescriptor) {
                         //if it's the property we needed
-                        if (property.getName().getLocalPart().equals(geometryName)) {
+                        if (property.getName().tip().toString().equals(geometryName)) {
                             Geometry candidate = (Geometry) property.getValue();
                             geoms.add(candidate);
                         }
@@ -219,7 +219,7 @@ public class RegroupProcess extends AbstractProcess {
                         //if property is not a geometry
                         if (!(property.getDescriptor() instanceof GeometryDescriptor)) {
                             //it's the property we needed
-                            if (property.getName().getLocalPart().equals(regroupAttribute)) {
+                            if (property.getName().tip().toString().equals(regroupAttribute)) {
                                 //if property value isn't already in our collection, we add it.
                                 if (!values.contains(property.getValue())) {
                                     values.add(property.getValue());

@@ -66,7 +66,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
          */
         CoordinateReferenceSystem geometryCRS;
         if (inputGeomName == null) {
-            this.inputGeomName = inputFC.getFeatureType().getGeometryDescriptor().getName().getLocalPart();
+            this.inputGeomName = inputFC.getFeatureType().getGeometryDescriptor().getName().tip().toString();
             geometryCRS = inputFC.getFeatureType().getGeometryDescriptor().getCoordinateReferenceSystem();
         } else {
             this.inputGeomName = inputGeomName;
@@ -75,7 +75,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
         }
 
         if (unionGeomName == null) {
-            this.unionGeomName = unionFC.getFeatureType().getGeometryDescriptor().getName().getLocalPart();
+            this.unionGeomName = unionFC.getFeatureType().getGeometryDescriptor().getName().tip().toString();
         } else {
             this.unionGeomName = unionGeomName;
         }

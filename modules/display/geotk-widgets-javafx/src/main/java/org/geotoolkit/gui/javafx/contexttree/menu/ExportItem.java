@@ -141,7 +141,7 @@ public class ExportItem extends TreeMenuItem {
                             for(FeatureCollection col : cols){
 
                                 final FeatureType inType = col.getFeatureType();
-                                final String inTypeName = inType.getName().getLocalPart();
+                                final String inTypeName = inType.getName().tip().toString();
                                 
                                 //output file path
                                 final File file= new File(folder, inTypeName+factory.getFileExtensions()[0]);

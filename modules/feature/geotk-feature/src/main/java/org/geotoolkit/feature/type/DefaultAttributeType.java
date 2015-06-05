@@ -187,7 +187,7 @@ public class DefaultAttributeType<T extends AttributeType> extends DefaultProper
         }
         if (superType != null) {
             sb.append(" extends ");
-            sb.append(superType.getName().getLocalPart());
+            sb.append(superType.getName().tip().toString());
         }
         if (binding != null) {
             sb.append("<");

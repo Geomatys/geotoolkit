@@ -227,7 +227,7 @@ public final class FeatureTypeUtilities {
             }
         }
 
-        return createSubType(featureType, properties, override, featureType.getName().getLocalPart(), namespaceURI);
+        return createSubType(featureType, properties, override, featureType.getName().tip().toString(), namespaceURI);
     }
 
     public static FeatureType createSubType(final FeatureType featureType,
@@ -251,7 +251,7 @@ public final class FeatureTypeUtilities {
 
         final String namespaceURI = namespace != null ? namespace.toString() : null;
         boolean same = (propCount == properties.length) &&
-                featureType.getName().getLocalPart().equals(typeName) &&
+                featureType.getName().tip().toString().equals(typeName) &&
                 Objects.equals(featureType.getName().getNamespaceURI(), namespaceURI);
 
 
@@ -298,7 +298,7 @@ public final class FeatureTypeUtilities {
         }
 
         if (typeName == null) {
-            typeName = featureType.getName().getLocalPart();
+            typeName = featureType.getName().tip().toString();
         }
         if (namespace == null && featureType.getName().getNamespaceURI() != null) {
             try {
@@ -356,7 +356,7 @@ public final class FeatureTypeUtilities {
             int i=0;
             for(PropertyDescriptor desc : featureType.getDescriptors()){
                 if(properties[i].getNamespaceURI() == null){
-                    same = desc.getName().getLocalPart().equals(properties[i].getLocalPart());
+                    same = desc.getName().tip().toString().equals(properties[i].tip().toString());
                 }else{
                     same = desc.getName().equals(properties[i]);
                 }
@@ -977,12 +977,12 @@ public final class FeatureTypeUtilities {
         for (PropertyType superType : ancestors) {
             if (namespace == null) {
                 // dont match on namespace
-                if (Objects.equals(superType.getName().getLocalPart(), typeName)) {
+                if (Objects.equals(superType.getName().tip().toString(), typeName)) {
                     return true;
                 }
             } else {
                 if (Objects.equals(superType.getName().getNamespaceURI(), namespace.toString()) &&
-                    Objects.equals(superType.getName().getLocalPart(), typeName)){
+                    Objects.equals(superType.getName().tip().toString(), typeName)){
                     return true;
                 }
             }
@@ -992,7 +992,7 @@ public final class FeatureTypeUtilities {
 
     public static boolean isDecendedFrom(final PropertyType featureType, final PropertyType isParentType) {
         final Name n = isParentType.getName();
-        return isDecendedFrom(featureType, n.getNamespaceURI(), n.getLocalPart());
+        return isDecendedFrom(featureType, n.getNamespaceURI(), n.tip().toString());
     }
 
     public static boolean isSimple(FeatureType type){
@@ -1098,8 +1098,8 @@ public final class FeatureTypeUtilities {
             return false;
         }
 
-        final String typeNameA = typeA.getName().getLocalPart();
-        final String typeNameB = typeB.getName().getLocalPart();
+        final String typeNameA = typeA.getName().tip().toString();
+        final String typeNameB = typeB.getName().tip().toString();
         if (typeNameA == null && typeNameB != null) {
             return false;
         } else if (!typeNameA.equals(typeNameB)) {
@@ -1339,7 +1339,7 @@ public final class FeatureTypeUtilities {
         final Iterator<PropertyDescriptor> ite = featureType.getDescriptors().iterator();
         for (int i = 0; i < numAtts; i++) {
             final PropertyDescriptor curAttType = ite.next();
-            xpath = curAttType.getName().getLocalPart();
+            xpath = curAttType.getName().tip().toString();
             attributes[i] = FeatureUtilities.duplicate(feature.getPropertyValue(xpath));
         }
 
@@ -1442,7 +1442,7 @@ public final class FeatureTypeUtilities {
         final ArrayList<Name> names = new ArrayList<>();
         for (final PropertyDescriptor desc : toSearchIn.getDescriptors()) {
             final Name name = desc.getName();
-            if (name != null && name.getLocalPart().matches(regex)) {
+            if (name != null && name.tip().toString().matches(regex)) {
                 names.add(name);
             }
         }

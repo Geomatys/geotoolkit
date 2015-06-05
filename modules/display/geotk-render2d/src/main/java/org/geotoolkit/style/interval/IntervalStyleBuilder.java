@@ -342,7 +342,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
             if(Number.class.isAssignableFrom(type) || type == byte.class || type==short.class ||
                type==int.class || type==long.class || type==float.class || type == double.class){
-                properties.add(ff.property(desc.getName().getLocalPart()));
+                properties.add(ff.property(desc.getName().tip().toString()));
             }
         }
 

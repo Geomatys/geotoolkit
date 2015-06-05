@@ -39,7 +39,7 @@ public class Brush implements MIFSymbolizer, PolygonSymbolizer {
 
     public static final Name NAME = DefaultName.create("BRUSH");
 
-    public static final Pattern BRUSH_PATTERN = Pattern.compile(NAME.getLocalPart()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
+    public static final Pattern BRUSH_PATTERN = Pattern.compile(NAME.tip().toString()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 
     public int pattern = 0;
     public int foregroundCC = 0;
@@ -49,7 +49,7 @@ public class Brush implements MIFSymbolizer, PolygonSymbolizer {
     private transient Stroke stroke = null;
     private transient Expression perpendicularOffset = null;
     private transient Displacement displacement = null;
-    private String geometryName= MIFLineBuilder.NAME.getLocalPart();
+    private String geometryName= MIFLineBuilder.NAME.tip().toString();
 
     public Brush(int pattern, int foregroundCC) {
         this.pattern = pattern;
@@ -64,7 +64,7 @@ public class Brush implements MIFSymbolizer, PolygonSymbolizer {
 
     @Override
     public String toMIFText() {
-        return NAME.getLocalPart()+"("+pattern+","+foregroundCC+ ((backgroundCC>-1)? ","+backgroundCC : "")+")";
+        return NAME.tip().toString()+"("+pattern+","+foregroundCC+ ((backgroundCC>-1)? ","+backgroundCC : "")+")";
     }
 
     @Override
@@ -84,12 +84,12 @@ public class Brush implements MIFSymbolizer, PolygonSymbolizer {
 
     @Override
     public String getName() {
-        return NAME.getLocalPart();
+        return NAME.tip().toString();
     }
 
     @Override
     public Description getDescription() {
-        return new DefaultDescription(new SimpleInternationalString(NAME.getLocalPart()),new SimpleInternationalString(toMIFText()));
+        return new DefaultDescription(new SimpleInternationalString(NAME.tip().toString()),new SimpleInternationalString(toMIFText()));
     }
 
     @Override

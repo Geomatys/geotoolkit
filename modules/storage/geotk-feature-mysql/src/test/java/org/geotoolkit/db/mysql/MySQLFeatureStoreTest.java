@@ -280,35 +280,35 @@ public class MySQLFeatureStoreTest {
         assertEquals(1, store.getNames().size());
         
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
-        assertEquals(resType.getName().getLocalPart(), refType.getName().getLocalPart());
+        assertEquals(resType.getName().tip().toString(), refType.getName().tip().toString());
         //we expect one more field for id
         final List<PropertyDescriptor> descs = new ArrayList<PropertyDescriptor>(resType.getDescriptors());
         
         int index=1;
         PropertyDescriptor desc;
         desc = descs.get(index++);
-        assertEquals("boolean", desc.getName().getLocalPart()); 
+        assertEquals("boolean", desc.getName().tip().toString()); 
         assertEquals(Boolean.class, desc.getType().getBinding());
         desc = descs.get(index++);
-        assertEquals("byte", desc.getName().getLocalPart()); 
+        assertEquals("byte", desc.getName().tip().toString()); 
         assertEquals(Short.class, desc.getType().getBinding());
         desc = descs.get(index++);
-        assertEquals("short", desc.getName().getLocalPart()); 
+        assertEquals("short", desc.getName().tip().toString()); 
         assertEquals(Short.class, desc.getType().getBinding());
         desc = descs.get(index++);
-        assertEquals("integer", desc.getName().getLocalPart()); 
+        assertEquals("integer", desc.getName().tip().toString()); 
         assertEquals(Integer.class, desc.getType().getBinding());
         desc = descs.get(index++);
-        assertEquals("long", desc.getName().getLocalPart()); 
+        assertEquals("long", desc.getName().tip().toString()); 
         assertEquals(Long.class, desc.getType().getBinding());
         desc = descs.get(index++);
-        assertEquals("float", desc.getName().getLocalPart()); 
+        assertEquals("float", desc.getName().tip().toString()); 
         assertEquals(Float.class, desc.getType().getBinding());
         desc = descs.get(index++);
-        assertEquals("double", desc.getName().getLocalPart()); 
+        assertEquals("double", desc.getName().tip().toString()); 
         assertEquals(Double.class, desc.getType().getBinding());
         desc = descs.get(index++);
-        assertEquals("string", desc.getName().getLocalPart()); 
+        assertEquals("string", desc.getName().tip().toString()); 
         assertEquals(String.class, desc.getType().getBinding());
         
     }
@@ -323,49 +323,49 @@ public class MySQLFeatureStoreTest {
         assertEquals(1, store.getNames().size());
         
         final FeatureType resType = store.getFeatureType(store.getNames().iterator().next());
-        assertEquals(resType.getName().getLocalPart(), refType.getName().getLocalPart());
+        assertEquals(resType.getName().tip().toString(), refType.getName().tip().toString());
         //we expect one more field for id
         final List<PropertyDescriptor> descs = new ArrayList<PropertyDescriptor>(resType.getDescriptors());
         
         int index=1;
         PropertyDescriptor desc;
         desc = descs.get(index++);
-        assertEquals("geometry", desc.getName().getLocalPart()); 
+        assertEquals("geometry", desc.getName().tip().toString()); 
         assertEquals(Geometry.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
         assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
-        assertEquals("point", desc.getName().getLocalPart()); 
+        assertEquals("point", desc.getName().tip().toString()); 
         assertEquals(Point.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
         assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
-        assertEquals("multipoint", desc.getName().getLocalPart()); 
+        assertEquals("multipoint", desc.getName().tip().toString()); 
         assertEquals(MultiPoint.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
         assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
-        assertEquals("linestring", desc.getName().getLocalPart()); 
+        assertEquals("linestring", desc.getName().tip().toString()); 
         assertEquals(LineString.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
         assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
-        assertEquals("multilinestring", desc.getName().getLocalPart()); 
+        assertEquals("multilinestring", desc.getName().tip().toString()); 
         assertEquals(MultiLineString.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
         assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
-        assertEquals("polygon", desc.getName().getLocalPart()); 
+        assertEquals("polygon", desc.getName().tip().toString()); 
         assertEquals(Polygon.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
         assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
-        assertEquals("multipolygon", desc.getName().getLocalPart()); 
+        assertEquals("multipolygon", desc.getName().tip().toString()); 
         assertEquals(MultiPolygon.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
         assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
         desc = descs.get(index++);
-        assertEquals("geometrycollection", desc.getName().getLocalPart()); 
+        assertEquals("geometrycollection", desc.getName().tip().toString()); 
         assertEquals(GeometryCollection.class, desc.getType().getBinding());
         assertTrue(desc instanceof GeometryDescriptor);
         assertEquals(CRS_4326, ((GeometryDescriptor)desc).getCoordinateReferenceSystem());
@@ -417,7 +417,7 @@ public class MySQLFeatureStoreTest {
     
     private void lazyCompare(final PropertyType refType, final PropertyType candidate){
         final Name name = refType.getName();
-        assertEquals(refType.getName().getLocalPart(), name.getLocalPart());
+        assertEquals(refType.getName().tip().toString(), name.tip().toString());
         
         if(refType instanceof ComplexType){
             final ComplexType ct = (ComplexType) refType;
@@ -425,7 +425,7 @@ public class MySQLFeatureStoreTest {
             assertEquals(ct.getDescriptors().size()+1, cct.getDescriptors().size());// +1 for generated fid field
 
             for(PropertyDescriptor desc : ct.getDescriptors()){
-                final PropertyDescriptor cdesc = cct.getDescriptor(desc.getName().getLocalPart());
+                final PropertyDescriptor cdesc = cct.getDescriptor(desc.getName().tip().toString());
                 assertEquals(desc.getMaxOccurs(), cdesc.getMaxOccurs());
                 assertNotNull(cdesc);
                 lazyCompare(desc.getType(), cdesc.getType());

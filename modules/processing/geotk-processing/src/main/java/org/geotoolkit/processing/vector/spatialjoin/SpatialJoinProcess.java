@@ -197,8 +197,8 @@ public class SpatialJoinProcess extends AbstractProcess {
         //copy source Feature except geometry descriptor
         for (final Property sourceProperty : source.getProperties()) {
             if (!(sourceProperty.getDescriptor() instanceof GeometryDescriptor)) {
-                resultFeature.getProperty(sourceProperty.getName().getLocalPart() + "_"
-                        + source.getType().getName().getLocalPart()).setValue(sourceProperty.getValue());
+                resultFeature.getProperty(sourceProperty.getName().tip().toString() + "_"
+                        + source.getType().getName().tip().toString()).setValue(sourceProperty.getValue());
             }
         }
 
@@ -264,7 +264,7 @@ public class SpatialJoinProcess extends AbstractProcess {
         //copy targetType into a FeatureTypeBuilder and change Name to targetName+sourceName
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.copy(targetType);
-        ftb.setName(targetType.getName().getLocalPart() + "_" + sourceType.getName().getLocalPart());
+        ftb.setName(targetType.getName().tip().toString() + "_" + sourceType.getName().tip().toString());
 
         //each source descriptor
         final Iterator<PropertyDescriptor> iteSource = sourceType.getDescriptors().iterator();
@@ -291,7 +291,7 @@ public class SpatialJoinProcess extends AbstractProcess {
                     }
                 }
                 if (isSameName) {
-                    final String newName = sourceDesc.getName().getLocalPart() + "_" + sourceType.getName().getLocalPart();
+                    final String newName = sourceDesc.getName().tip().toString() + "_" + sourceType.getName().tip().toString();
                     typeBuilder.setName(newName);
                     descBuilder.setName(newName);
                 }

@@ -239,7 +239,7 @@ public class J2DLegendUtilities {
             if (layer instanceof DefaultCoverageMapLayer) {
                 final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
                 // Get the image from the ones previously stored, to not resend a get legend graphic request.
-                final BufferedImage image = legendResults.get(covLayer.getCoverageReference().getName().getLocalPart());
+                final BufferedImage image = legendResults.get(covLayer.getCoverageReference().getName().tip().toString());
                 if (image == null) {
                     break wmscase;
                 }
@@ -542,7 +542,7 @@ public class J2DLegendUtilities {
                         sb.append("?");
                     }
                     sb.append("request=GetLegendGraphic&service=WMS&format=image/png&layer=")
-                      .append(covLayer.getCoverageReference().getName().getLocalPart());
+                      .append(covLayer.getCoverageReference().getName().tip().toString());
 
                     try {
                         final URL getLegendUrl = new URL(sb.toString());

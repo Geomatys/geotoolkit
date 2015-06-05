@@ -26,6 +26,7 @@ import org.apache.sis.util.iso.Names;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
+import org.opengis.util.ScopedName;
 
 
 /**
@@ -79,8 +80,6 @@ public class DefaultName extends DefaultTypeName implements Name {
      */
     private final String local;
 
-    private final String separator;
-
     /**
      * Constructs an instance with the local part set. Namespace / scope is
      * set to null.
@@ -103,36 +102,20 @@ public class DefaultName extends DefaultTypeName implements Name {
      *
      */
     private DefaultName(final String namespace, final String local) {
-        this(namespace, ":", local);
-    }
-
-    /**
-     * Constructs an instance with the local part and namespace set.
-     *
-     * @param namespace The namespace or scope of the name.
-     * @param local The local part of the name.
-     *
-     */
-    private DefaultName(final String namespace, final String separator, final String local) {
 
         // WARNING: DefaultFactories.NAMES is not a public API and may change in any future SIS version.
 
         super(namespace == null ? null : DefaultFactories.forBuildin(NameFactory.class).createNameSpace(
                 DefaultFactories.forBuildin(NameFactory.class).createGenericName(null, namespace),
-                Collections.singletonMap("separator.head", separator)), local != null ? local : "unnamed");
+                Collections.singletonMap("separator.head", ":")), local != null ? local : "unnamed");
         this.namespace = namespace;
-        this.separator = separator;
         this.local = local;
+        //return DefaultFactories.forBuildin(NameFactory.class).createGenericName(null, namespace, local);
     }
 
     @Override
     public String getNamespaceURI() {
         return namespace;
-    }
-
-    @Override
-    public String getLocalPart() {
-        return local;
     }
 
     /**
@@ -161,7 +144,7 @@ public class DefaultName extends DefaultTypeName implements Name {
                     return false;
                 }
             }
-            if (!Objects.equals(this.local, other.getLocalPart())) {
+            if (!Objects.equals(this.local, other.tip().toString())) {
                 return false;
             }
             return true;
@@ -253,6 +236,10 @@ public class DefaultName extends DefaultTypeName implements Name {
             return name.scope().equals(candidate.scope())
                 && name.toString().equals(candidate.toString());
         }
+    }
+
+    public static String getNamespace(GenericName name){
+        return (name instanceof ScopedName) ? ((ScopedName)name).path().toString() : null;
     }
 
 }

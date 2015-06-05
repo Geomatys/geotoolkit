@@ -41,7 +41,7 @@ public class DefaultFeatureIDReader implements FeatureIDReader {
      * @param type the feature type
      */
     public DefaultFeatureIDReader(final FeatureType type) {
-        this(type.getName().getLocalPart());
+        this(type.getName().tip().toString());
     }
 
     /**

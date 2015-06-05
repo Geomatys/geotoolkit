@@ -152,7 +152,7 @@ public class FXCQLEditor extends BorderPane {
         final ObservableList properties = FXCollections.observableArrayList();
         if(ft!=null){
             for(PropertyDescriptor desc : ft.getDescriptors()){
-                properties.add(desc.getName().getLocalPart());
+                properties.add(desc.getName().tip().toString());
             }
         }
         

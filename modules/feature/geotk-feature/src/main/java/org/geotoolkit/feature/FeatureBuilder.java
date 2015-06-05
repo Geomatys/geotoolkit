@@ -149,7 +149,7 @@ public class FeatureBuilder {
         descs = featureType.getDescriptors().toArray(new PropertyDescriptor[0]);
         for(int i=0;i<descs.length;i++){
             final Name name = descs[i].getName();
-            names.put(name.getLocalPart(),i);
+            names.put(name.tip().toString(),i);
             names.put(Names.toExpandedString(name),i);
             names.put(DefaultName.toExtendedForm(name),i);
         }

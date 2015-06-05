@@ -746,7 +746,7 @@ public final class MapfileTypes {
 
     public static FeatureType getType(final String name){
         for(FeatureType ft : ALL_TYPES){
-            if(ft.getName().getLocalPart().equalsIgnoreCase(name)){
+            if(ft.getName().tip().toString().equalsIgnoreCase(name)){
                 return ft;
             }
         }

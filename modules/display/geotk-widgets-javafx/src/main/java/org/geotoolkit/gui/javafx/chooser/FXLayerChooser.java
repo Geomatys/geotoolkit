@@ -80,17 +80,17 @@ public class FXLayerChooser extends BorderPane{
             final String str2;
 
             if(o1 instanceof FeatureType){
-                str1 = ((FeatureType)o1).getName().getLocalPart();
+                str1 = ((FeatureType)o1).getName().tip().toString();
             }else if(o1 instanceof Name){
-                str1 = ((Name)o1).getLocalPart();
+                str1 = ((Name)o1).tip().toString();
             }else{
                 str1 = o1.toString();
             }
 
             if(o2 instanceof FeatureType){
-                str2 = ((FeatureType)o2).getName().getLocalPart();
+                str2 = ((FeatureType)o2).getName().tip().toString();
             }else if(o2 instanceof Name){
-                str2 = ((Name)o2).getLocalPart();
+                str2 = ((Name)o2).tip().toString();
             }else{
                 str2 = o2.toString();
             }
@@ -150,8 +150,8 @@ public class FXLayerChooser extends BorderPane{
                     }
                     
                     final FeatureMapLayer layer = MapBuilder.createFeatureLayer(collection, style);
-                    layer.setName(name.getLocalPart());
-                    layer.setDescription(styleFactory.description(name.getLocalPart(), name.toString()));
+                    layer.setName(name.tip().toString());
+                    layer.setDescription(styleFactory.description(name.tip().toString(), name.toString()));
                     layer.setUserProperty(MapLayer.USERKEY_STYLED_FEATURE, factory.getMetadata().produceStyledFeature());
                     layers.add(layer);                    
 
@@ -160,8 +160,8 @@ public class FXLayerChooser extends BorderPane{
                     final CoverageReference ref = store.getCoverageReference(name);
                     final MutableStyle style = styleFactory.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
                     final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref, style);
-                    layer.setName(name.getLocalPart());
-                    layer.setDescription(styleFactory.description(name.getLocalPart(), name.toString()));
+                    layer.setName(name.tip().toString());
+                    layer.setDescription(styleFactory.description(name.tip().toString(), name.toString()));
                     layers.add(layer);
                 }
             }
@@ -273,7 +273,7 @@ public class FXLayerChooser extends BorderPane{
 
             if(value instanceof Name){
                 final Name name = (Name) value;
-                setText(name.getLocalPart());
+                setText(name.tip().toString());
                 setTooltip(new Tooltip(Names.toExpandedString(name)));
             }
 

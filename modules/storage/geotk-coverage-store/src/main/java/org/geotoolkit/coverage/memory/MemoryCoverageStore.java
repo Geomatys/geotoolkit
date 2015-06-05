@@ -175,7 +175,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
             final NameFactory dnf = FactoryFinder.getNameFactory(null);
             final String nameSpace = "http://geotoolkit.org" ;
             final NameSpace ns = dnf.createNameSpace(dnf.createGenericName(null, nameSpace), null);
-            final String covName = ref.getName().getLocalPart();
+            final String covName = ref.getName().tip().toString();
             final GenericName gn = dnf.createLocalName(ns, covName);
             return Collections.singletonList(gn);
         }

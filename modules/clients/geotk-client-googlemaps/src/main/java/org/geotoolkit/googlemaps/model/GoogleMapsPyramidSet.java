@@ -88,7 +88,7 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
     public GoogleMapsPyramidSet(final GoogleCoverageReference ref, final boolean cacheImage) throws DataStoreException{
         super((StaticGoogleMapsClient)ref.getStore(),true,cacheImage);
         this.ref = ref;
-        this.mapType = ref.getName().getLocalPart();
+        this.mapType = ref.getName().tip().toString();
 
         final int maxScale;
         if (GetMapRequest.TYPE_HYBRID.equalsIgnoreCase(mapType)) {

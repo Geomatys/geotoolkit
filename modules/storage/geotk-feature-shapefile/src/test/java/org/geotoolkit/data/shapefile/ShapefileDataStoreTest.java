@@ -260,7 +260,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         ds.createFeatureType(featureType.getName(),featureType);
 
-        assertEquals("test", ds.getFeatureType(ds.getTypeNames()[0]).getName().getLocalPart());
+        assertEquals("test", ds.getFeatureType(ds.getTypeNames()[0]).getName().tip().toString());
 
         CoordinateReferenceSystem crs2 = ds.getFeatureType("test").getGeometryDescriptor().getCoordinateReferenceSystem();
         assertNotNull( crs2 );
@@ -541,7 +541,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
          FeatureReader reader = s.getFeatureReader(query);
         assertEquals(1, reader.getFeatureType().getDescriptors().size());
-        assertEquals("the_geom", reader.getFeatureType().getDescriptors().iterator().next().getName().getLocalPart());
+        assertEquals("the_geom", reader.getFeatureType().getDescriptors().iterator().next().getName().tip().toString());
 
         // here too, the filter is using the geometry only
         GeometryFactory gc = new GeometryFactory();
@@ -564,7 +564,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         reader.close();
         reader = s.getFeatureReader(query);
         assertEquals(1, reader.getFeatureType().getDescriptors().size());
-        assertEquals("the_geom", reader.getFeatureType().getDescriptors().iterator().next().getName().getLocalPart());
+        assertEquals("the_geom", reader.getFeatureType().getDescriptors().iterator().next().getName().tip().toString());
 
         reader.close();
 
@@ -581,7 +581,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         reader = s.getFeatureReader(query);
         assertEquals(1, reader.getFeatureType().getDescriptors().size());
-        assertEquals("the_geom", reader.getFeatureType().getDescriptors().iterator().next().getName().getLocalPart());
+        assertEquals("the_geom", reader.getFeatureType().getDescriptors().iterator().next().getName().tip().toString());
         reader.close();
     }
 

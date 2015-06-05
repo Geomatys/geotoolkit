@@ -215,7 +215,7 @@ class GeoJSONWriter implements Closeable, Flushable {
 
             if (!properties.isEmpty()) {
                 if (properties.size() > 1) { //array of properties objects
-                    writer.writeArrayFieldStart(propDesc.getName().getLocalPart());
+                    writer.writeArrayFieldStart(propDesc.getName().tip().toString());
                     for (Property property : properties) {
                         writeProperty(property, false);
                     }
@@ -237,7 +237,7 @@ class GeoJSONWriter implements Closeable, Flushable {
      */
     private void writeProperty(Property property, boolean writeFieldName) throws IOException, IllegalAttributeException {
         if (property instanceof ComplexAttribute) {
-            writeProperties((ComplexAttribute) property, property.getName().getLocalPart(), writeFieldName);
+            writeProperties((ComplexAttribute) property, property.getName().tip().toString(), writeFieldName);
         } else {
             if (property instanceof GeometryAttribute) {
                 //do nothing

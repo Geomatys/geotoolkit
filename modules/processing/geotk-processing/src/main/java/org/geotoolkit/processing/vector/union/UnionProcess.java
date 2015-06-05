@@ -111,7 +111,7 @@ public class UnionProcess extends AbstractProcess {
         Geometry inputGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
         for (final Property inputProperty : inputFeature.getProperties()) {
             if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
-                if (inputProperty.getName().getLocalPart().equals(inputGeomName)) {
+                if (inputProperty.getName().tip().toString().equals(inputGeomName)) {
                     inputGeometry = (Geometry) inputProperty.getValue();
                 }
             }
@@ -282,7 +282,7 @@ public class UnionProcess extends AbstractProcess {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
 
         // Name of the new FeatureType.
-        ftb.setName(type1.getName().getLocalPart() + "-" + type2.getName().getLocalPart());
+        ftb.setName(type1.getName().tip().toString() + "-" + type2.getName().tip().toString());
 
         //Copy all properties from type1
         Iterator<PropertyDescriptor> iteSource = type1.getDescriptors().iterator();

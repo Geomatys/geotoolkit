@@ -176,7 +176,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
         final String[] locals = new String[names.size()];
         int i=0;
         while(ite.hasNext()){
-            locals[i] = ite.next().getLocalPart();
+            locals[i] = ite.next().tip().toString();
             i++;
         }
         return locals;
@@ -188,7 +188,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     @Override
     public FeatureType getFeatureType(final String typeName) throws DataStoreException {
         for(final Name n : getNames()){
-            if(n.getLocalPart().equals(typeName)){
+            if(n.tip().toString().equals(typeName)){
                 return getFeatureType(n);
             }
         }
@@ -293,7 +293,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
                     for (SortBy sortBy : query.getSortBy()) {
                         final String propName = sortBy.getPropertyName().getPropertyName();
                         if (desc.getName().toString().equals(propName) ||
-                            desc.getName().getLocalPart().equals(propName)) {
+                            desc.getName().tip().toString().equals(propName)) {
                             names.add(desc.getName());
                         }
                     }
@@ -627,10 +627,10 @@ public abstract class AbstractFeatureStore extends FeatureStore {
         for(PropertyDescriptor desc : type.getDescriptors()){
             adb.reset();
             adb.copy((AttributeDescriptor) desc);
-            if(desc.getName().getLocalPart().equals(GML_NAME)){
+            if(desc.getName().tip().toString().equals(GML_NAME)){
                 adb.setName(GML_311_NAMESPACE, GML_NAME);
                 ftb.add(adb.buildDescriptor());
-            }else if(desc.getName().getLocalPart().equals(GML_DESCRIPTION)){
+            }else if(desc.getName().tip().toString().equals(GML_DESCRIPTION)){
                 adb.setName(GML_311_NAMESPACE, GML_DESCRIPTION);
                 ftb.add(adb.buildDescriptor());
             }else{

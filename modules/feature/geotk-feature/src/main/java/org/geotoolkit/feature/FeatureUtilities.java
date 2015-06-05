@@ -613,7 +613,7 @@ public final class FeatureUtilities {
         ArgumentChecks.ensureNonNull("att", att);
         final Map<String,Object> map = new HashMap<String, Object>();
         for(final Property prop : att.getProperties()){
-            map.put(prop.getName().getLocalPart(), prop.getValue());
+            map.put(prop.getName().tip().toString(), prop.getValue());
         }
         return map;
     }
@@ -748,7 +748,7 @@ public final class FeatureUtilities {
             if(desc.getType() instanceof ComplexType){
 
                 try{
-                    final List<ParameterValueGroup> groups = source.groups(desc.getName().getLocalPart());
+                    final List<ParameterValueGroup> groups = source.groups(desc.getName().tip().toString());
                     if(groups != null){
                         for(ParameterValueGroup gr : groups){
                             final ComplexAttribute att = (ComplexAttribute) FeatureUtilities.defaultProperty(desc);
@@ -761,7 +761,7 @@ public final class FeatureUtilities {
                 }
 
             }else if(desc.getType() instanceof AttributeType){
-                final String code = desc.getName().getLocalPart();
+                final String code = desc.getName().tip().toString();
                 final GeneralParameterValue gpv = searchParameter(source, code);
 
                 if(gpv instanceof ParameterValue){

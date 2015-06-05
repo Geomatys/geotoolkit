@@ -166,9 +166,9 @@ public class Utils {
     public static QName getQnameFromName(final Name name) {
         QName qname;
         if (name.getNamespaceURI() == null || "".equals(name.getNamespaceURI())) {
-            qname = new QName(name.getLocalPart());
+            qname = new QName(name.tip().toString());
         } else {
-            qname = new QName(name.getNamespaceURI(), name.getLocalPart());
+            qname = new QName(name.getNamespaceURI(), name.tip().toString());
         }
         return qname;
     }
@@ -272,7 +272,7 @@ public class Utils {
 
     public static boolean isGeometricType(final Name elementType) {
         if (elementType != null && elementType.getNamespaceURI()!=null && elementType.getNamespaceURI().contains(GML_311_NAMESPACE)) {
-            return GEOMETRIC_NAME.contains(elementType.getLocalPart());
+            return GEOMETRIC_NAME.contains(elementType.tip().toString());
         }
         return false;
     }
@@ -392,7 +392,7 @@ public class Utils {
      */
     public static QName getQNameFromType(final PropertyType type, final String gmlVersion) {
         if (type instanceof ComplexType) {
-            return new QName(type.getName().getNamespaceURI(), getNameWithTypeSuffix(type.getName().getLocalPart()));
+            return new QName(type.getName().getNamespaceURI(), getNameWithTypeSuffix(type.getName().tip().toString()));
         } else {
             final Class binding = type.getBinding();
             if (binding != null) {

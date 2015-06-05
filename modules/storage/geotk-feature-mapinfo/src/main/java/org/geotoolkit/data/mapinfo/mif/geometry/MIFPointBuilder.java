@@ -113,7 +113,7 @@ public final class MIFPointBuilder extends MIFGeometryBuilder {
     @Override
     public String toMIFSyntax(Feature geometry) throws DataStoreException {
         super.toMIFSyntax(geometry);
-        StringBuilder builder = new StringBuilder(NAME.getLocalPart());
+        StringBuilder builder = new StringBuilder(NAME.tip().toString());
         final Point pt;
         final Object value = (Point) geometry.getDefaultGeometryProperty().getValue();
         if(value instanceof Point) {

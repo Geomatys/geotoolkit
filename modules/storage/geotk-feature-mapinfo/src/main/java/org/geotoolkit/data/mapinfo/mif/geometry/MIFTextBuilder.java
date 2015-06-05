@@ -62,9 +62,9 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
     public static final AttributeDescriptor ANGLE_DESCRIPTOR;
     public static final AttributeDescriptor LABEL_DESCRIPTOR;
 
-    public static final Pattern SPACING_PATTERN = Pattern.compile(SPACING_NAME.getLocalPart()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
-    public static final Pattern JUSTIFY_PATTERN = Pattern.compile(JUSTIFY_NAME.getLocalPart(), Pattern.CASE_INSENSITIVE);
-    public static final Pattern ANGLE_PATTERN = Pattern.compile(ANGLE_NAME.getLocalPart()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
+    public static final Pattern SPACING_PATTERN = Pattern.compile(SPACING_NAME.tip().toString()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
+    public static final Pattern JUSTIFY_PATTERN = Pattern.compile(JUSTIFY_NAME.tip().toString(), Pattern.CASE_INSENSITIVE);
+    public static final Pattern ANGLE_PATTERN = Pattern.compile(ANGLE_NAME.tip().toString()+"\\s*\\([^\\)]+\\)", Pattern.CASE_INSENSITIVE);
 
     static {
         final DefaultAttributeType textType = new DefaultAttributeType(TEXT_NAME, String.class, true, false, null, null, null);
@@ -98,7 +98,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
 
         try {
             String geomText = scanner.next("\\w+");
-            if (TEXT_NAME.getLocalPart().equalsIgnoreCase(geomText)) {
+            if (TEXT_NAME.tip().toString().equalsIgnoreCase(geomText)) {
                 geomText = scanner.next("\\w+");
             }
             toFill.getProperty(TEXT_NAME).setValue(geomText);
@@ -201,7 +201,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
             throw new DataStoreException("Not enough information to build an arc (missing text).");
         }
 
-        StringBuilder builder = new StringBuilder(TEXT_NAME.getLocalPart()).append(' ');
+        StringBuilder builder = new StringBuilder(TEXT_NAME.tip().toString()).append(' ');
         builder.append(' ').append(source.getProperty(TEXT_NAME).getValue()).append('\n');
         Object value = source.getDefaultGeometryProperty().getValue();
         if(value instanceof Envelope) {

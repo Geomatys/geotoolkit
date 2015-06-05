@@ -212,12 +212,12 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
             final Object attValue = att.getValue();
             if (attValue instanceof Collection) {
                 for (Object o : (Collection) attValue) {
-                    writer.writeStartElement(att.getName().getNamespaceURI(), att.getName().getLocalPart());
+                    writer.writeStartElement(att.getName().getNamespaceURI(), att.getName().tip().toString());
                     writer.writeCharacters(Utils.getStringValue(o));
                     writer.writeEndElement();
                 }
             } else {
-                writer.writeStartElement(att.getName().getNamespaceURI(), att.getName().getLocalPart());
+                writer.writeStartElement(att.getName().getNamespaceURI(), att.getName().tip().toString());
                 writer.writeCharacters(Utils.getStringValue(attValue));
                 writer.writeEndElement();
             }

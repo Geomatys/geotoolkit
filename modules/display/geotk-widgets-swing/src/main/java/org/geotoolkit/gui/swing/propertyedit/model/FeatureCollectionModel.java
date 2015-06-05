@@ -160,7 +160,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
     public String getColumnName(final int column) {
         if(column == 0) return "";//versioning
         if(column == 1) return "id";
-        return columns.get(column-2).getName().getLocalPart();
+        return columns.get(column-2).getName().tip().toString();
     }
     
     public PropertyDescriptor getColumnDesc(final int column) {

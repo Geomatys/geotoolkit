@@ -98,7 +98,7 @@ public class Copy extends AbstractProcess {
 
         final String queryName;
         if (queryParam != null) {
-            queryName = queryParam.getTypeName().getLocalPart();
+            queryName = queryParam.getTypeName().tip().toString();
             reBuildQuery = true;
         } else if (typenameParam != null) {
             queryName = typenameParam;
@@ -209,7 +209,7 @@ public class Copy extends AbstractProcess {
         }
 
         //get the created name, namespace might change
-        name = targetSS.getFeatureStore().getFeatureType(type.getName().getLocalPart()).getName();
+        name = targetSS.getFeatureStore().getFeatureType(type.getName().tip().toString()).getName();
 
         if (targetSS.getFeatureStore().getQueryCapabilities().handleVersioning()) {
             try {
@@ -227,7 +227,7 @@ public class Copy extends AbstractProcess {
         //Logging
         final StringBuilder logMsg = new StringBuilder("Insert ");
         logMsg.append(collection.size()).append(" features ");
-        logMsg.append("in type ").append(name.getLocalPart());
+        logMsg.append("in type ").append(name.tip().toString());
         logMsg.append(" [");
         if (erase) {
             logMsg.append("ERASE");
@@ -248,7 +248,7 @@ public class Copy extends AbstractProcess {
         @Override
         public Object visit(PropertyName expression, Object extraData) {
             if ("*".equals(expression.getPropertyName()) && extraData instanceof FeatureType) {
-                return new DefaultPropertyName(((FeatureType)extraData).getGeometryDescriptor().getType().getName().getLocalPart());
+                return new DefaultPropertyName(((FeatureType)extraData).getGeometryDescriptor().getType().getName().tip().toString());
             }
             return super.visit(expression, extraData);
         }

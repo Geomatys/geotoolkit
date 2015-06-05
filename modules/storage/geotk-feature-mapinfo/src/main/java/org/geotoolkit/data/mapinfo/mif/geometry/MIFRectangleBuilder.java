@@ -143,7 +143,7 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
             throw new DataStoreException("Input feature does not contain any geometry.");
         }
 
-        StringBuilder builder = new StringBuilder(NAME.getLocalPart()).append(' ');
+        StringBuilder builder = new StringBuilder(NAME.tip().toString()).append(' ');
         Object value = source.getDefaultGeometryProperty().getValue();
         if(value instanceof Envelope) {
             Envelope env = (Envelope) value;

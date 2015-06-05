@@ -381,7 +381,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
             throw new DataStoreException("Can only have one feature type in GeoJSON dataStore.");
         }
 
-        if (!typeName.getLocalPart().equals(GeoJSONUtils.getNameWithoutExt(jsonFile))) {
+        if (!typeName.tip().toString().equals(GeoJSONUtils.getNameWithoutExt(jsonFile))) {
             throw new DataStoreException("New type name should be equals to file name.");
         }
 
@@ -422,7 +422,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
             throw new DataStoreException("Type name can not be null.");
         }
 
-        if (!typeName.getLocalPart().equals(GeoJSONUtils.getNameWithoutExt(jsonFile))) {
+        if (!typeName.tip().toString().equals(GeoJSONUtils.getNameWithoutExt(jsonFile))) {
             throw new DataStoreException("New type name should be equals to file name.");
         }
 

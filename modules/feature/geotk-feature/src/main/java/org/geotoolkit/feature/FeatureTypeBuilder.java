@@ -271,7 +271,7 @@ public class FeatureTypeBuilder {
      */
     public void setDefaultGeometry(final String defaultGeometryName) {
         for(PropertyDescriptor desc : properties){
-            if(desc.getName().getLocalPart().equals(defaultGeometryName)){
+            if(desc.getName().tip().toString().equals(defaultGeometryName)){
                 this.defaultGeometry = desc.getName();
                 return;
             }
@@ -595,7 +595,7 @@ public class FeatureTypeBuilder {
      */
     public PropertyDescriptor remove(final String attributeName) {
         for(final PropertyDescriptor att : properties){
-            if(att.getName().getLocalPart().equals(attributeName)){
+            if(att.getName().tip().toString().equals(attributeName)){
                 properties.remove(att);
                 return att;
             }

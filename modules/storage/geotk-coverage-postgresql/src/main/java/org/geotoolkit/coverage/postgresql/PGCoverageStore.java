@@ -136,7 +136,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         query.append("INSERT INTO ");
         query.append(encodeTableName("Layer"));
         query.append("(name) VALUES ('");
-        query.append(name.getLocalPart());
+        query.append(name.tip().toString());
         query.append("')");
 
         Connection cnx = null;
@@ -154,7 +154,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
 
         fireCoverageAdded(name);
-        return getCoverageReference(DefaultName.create(getDefaultNamespace(), name.getLocalPart()));
+        return getCoverageReference(DefaultName.create(getDefaultNamespace(), name.tip().toString()));
     }
 
     @Override
@@ -163,7 +163,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         query.append("DELETE FROM ");
         query.append(encodeTableName("Layer"));
         query.append(" WHERE name='");
-        query.append(name.getLocalPart());
+        query.append(name.tip().toString());
         query.append("'");
 
         Connection cnx = null;

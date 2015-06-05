@@ -43,7 +43,7 @@ public class Pen implements MIFSymbolizer, LineSymbolizer {
 
     public static final Name NAME = DefaultName.create("PEN");
 
-    public static final Pattern PEN_PATTERN = Pattern.compile(NAME.getLocalPart()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
+    public static final Pattern PEN_PATTERN = Pattern.compile(NAME.tip().toString()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 
     private int widthCode;
     private int pattern;
@@ -52,7 +52,7 @@ public class Pen implements MIFSymbolizer, LineSymbolizer {
     private transient Stroke stroke = null;
     private transient Expression perpendicularOffset = null;
     private transient Graphics2D graphic =null;
-    private String geometryName= MIFLineBuilder.NAME.getLocalPart();
+    private String geometryName= MIFLineBuilder.NAME.tip().toString();
 
     public Pen(int widthCode, int pattern, int colorCode) {
         this.widthCode = widthCode;
@@ -117,7 +117,7 @@ public class Pen implements MIFSymbolizer, LineSymbolizer {
 
     @Override
     public String toMIFText() {
-        return NAME.getLocalPart()+"("+widthCode+","+pattern+","+colorCode+")";
+        return NAME.tip().toString()+"("+widthCode+","+pattern+","+colorCode+")";
     }
 
     @Override
@@ -132,12 +132,12 @@ public class Pen implements MIFSymbolizer, LineSymbolizer {
 
     @Override
     public String getName() {
-        return NAME.getLocalPart();
+        return NAME.tip().toString();
     }
 
     @Override
     public Description getDescription() {
-        return new DefaultDescription(new SimpleInternationalString(NAME.getLocalPart()),new SimpleInternationalString(toMIFText()));
+        return new DefaultDescription(new SimpleInternationalString(NAME.tip().toString()),new SimpleInternationalString(toMIFText()));
     }
 
     @Override

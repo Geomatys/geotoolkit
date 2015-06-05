@@ -129,7 +129,7 @@ public class MIFRegionBuilder extends MIFGeometryBuilder {
     @Override
     public String toMIFSyntax(Feature geometry) throws DataStoreException {
         super.toMIFSyntax(geometry);
-        StringBuilder builder = new StringBuilder(NAME.getLocalPart());
+        StringBuilder builder = new StringBuilder(NAME.tip().toString());
 
         MultiPolygon multiPolygon = null;
         Object value = geometry.getDefaultGeometryProperty().getValue();

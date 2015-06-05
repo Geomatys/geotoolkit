@@ -136,21 +136,21 @@ public class GenericIteratorTest extends TestCase{
         sf1.setPropertyValue("att_string", "bbb");
         sf1.setPropertyValue("att_double", 3d);
         collection.add(sf1);
-        id1 = name.getLocalPart()+"."+0;
+        id1 = name.tip().toString()+"."+0;
 
         sf2 = FeatureUtilities.defaultFeature(originalType, "");
         sf2.setPropertyValue("att_geom", GF.createPoint(new Coordinate(1, 0)));
         sf2.setPropertyValue("att_string", "ccc");
         sf2.setPropertyValue("att_double", 1d);
         collection.add(sf2);
-        id2 = name.getLocalPart()+"."+1;
+        id2 = name.tip().toString()+"."+1;
 
         sf3 = FeatureUtilities.defaultFeature(originalType, "");
         sf3.setPropertyValue("att_geom", GF.createPoint(new Coordinate(2, 0)));
         sf3.setPropertyValue("att_string", "aaa");
         sf3.setPropertyValue("att_double", 2d);
         collection.add(sf3);
-        id3 = name.getLocalPart()+"."+2;
+        id3 = name.tip().toString()+"."+2;
 
         builder.reset();
         builder.setName(name);

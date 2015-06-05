@@ -55,6 +55,6 @@ public class DefaultGeometryDescriptor extends DefaultAttributeDescriptor<Geomet
      */
     @Override
     public String getLocalName() {
-        return name.getLocalPart();
+        return name.tip().toString();
     }
 }

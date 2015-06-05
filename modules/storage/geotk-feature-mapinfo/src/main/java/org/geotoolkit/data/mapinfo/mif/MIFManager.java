@@ -315,7 +315,7 @@ public class MIFManager {
                 }
             }
         } else {
-            throw new DataStoreException("Unable to delete the feature type named " + typeName.getLocalPart() + "because it does not exists in this data store.");
+            throw new DataStoreException("Unable to delete the feature type named " + typeName.tip().toString() + "because it does not exists in this data store.");
         }
     }
 
@@ -582,7 +582,7 @@ public class MIFManager {
                 if (bind != null) {
                     FeatureTypeBuilder builder = new FeatureTypeBuilder();
                     builder.copy(bind);
-                    builder.setName(bind.getName().getNamespaceURI(), mifBaseType.getName().getLocalPart()+"_"+bind.getName().getLocalPart());
+                    builder.setName(bind.getName().getNamespaceURI(), mifBaseType.getName().tip().toString()+"_"+bind.getName().tip().toString());
                     mifChildTypes.add(builder.buildFeatureType());
                 }
             }

@@ -40,7 +40,7 @@ public class GoogleMapsClientDemo {
 
         for(Name name : store.getNames()){
             final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageReference(name));
-            layer.setDescription(SF.description(name.getLocalPart(), ""));
+            layer.setDescription(SF.description(name.tip().toString(), ""));
             context.layers().add(layer);
         }
 

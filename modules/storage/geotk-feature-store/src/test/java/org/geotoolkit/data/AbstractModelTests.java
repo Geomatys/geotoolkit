@@ -112,7 +112,7 @@ public abstract class AbstractModelTests {
             //delete the created schema ----------------------------------------
             Name nsname = null;
             for(Name n : store.getNames()){
-                if(n.getLocalPart().equalsIgnoreCase(name)){
+                if(n.tip().toString().equalsIgnoreCase(name)){
                     nsname = n;
                     break;
                 }

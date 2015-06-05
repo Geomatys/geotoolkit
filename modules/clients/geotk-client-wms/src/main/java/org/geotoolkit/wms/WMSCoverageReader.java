@@ -90,7 +90,7 @@ public class WMSCoverageReader extends GridCoverageReader{
         if (name.getNamespaceURI() != null) {
             ns = dnf.createNameSpace(dnf.createGenericName(null, name.getNamespaceURI()), null);
         }
-        final GenericName gn = dnf.createLocalName(ns, name.getLocalPart());
+        final GenericName gn = dnf.createLocalName(ns, name.tip().toString());
         return Collections.singletonList(gn);
     }
 

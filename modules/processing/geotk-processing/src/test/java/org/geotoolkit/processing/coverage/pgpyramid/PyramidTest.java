@@ -104,7 +104,7 @@ public class PyramidTest {
         input.parameter("in_coverage_store").setValue(store);
         input.parameter("tile_size").setValue(new Dimension(tileSize, tileSize));
         input.parameter("interpolation_type").setValue(InterpolationCase.NEIGHBOR);
-        input.parameter("pyramid_name").setValue(name.getLocalPart());
+        input.parameter("pyramid_name").setValue(name.tip().toString());
         input.parameter("resolution_per_envelope").setValue(res);
         final org.geotoolkit.process.Process p = desc.createProcess(input);
         p.call();

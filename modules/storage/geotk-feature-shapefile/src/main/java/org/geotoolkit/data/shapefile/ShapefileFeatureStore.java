@@ -298,7 +298,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         typeCheck(query.getTypeName());
 
         final Hints hints = query.getHints();
-        final String typeName = query.getTypeName().getLocalPart();
+        final String typeName = query.getTypeName().tip().toString();
         final Name[] propertyNames = query.getPropertyNames();
         final Name defaultGeomName = schema.getGeometryDescriptor().getName();
         final double[] resample = query.getResolution();
@@ -318,9 +318,9 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         // to return attribute _and_ to run the query filter
         if (   propertyNames != null
             && propertyNames.length == 1
-            && propertyNames[0].getLocalPart().equals(defaultGeomName.getLocalPart())
-            && (filterAttnames.length == 0 || (filterAttnames.length == 1 && filterAttnames[0].getLocalPart()
-                        .equals(defaultGeomName.getLocalPart())))) {
+            && propertyNames[0].tip().toString().equals(defaultGeomName.tip().toString())
+            && (filterAttnames.length == 0 || (filterAttnames.length == 1 && filterAttnames[0].tip().toString()
+                        .equals(defaultGeomName.tip().toString())))) {
             try {
                 final FeatureType newSchema = FeatureTypeUtilities.createSubType(schema, propertyNames);
 
@@ -380,7 +380,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         typeCheck(typeName);
 
         final ShapefileAttributeReader attReader = getAttributesReader(true,true,null);
-        final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName.getLocalPart());
+        final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName.tip().toString());
         FeatureReader featureReader;
         try {
             featureReader = ShapefileFeatureReader.create(attReader,idReader, schema, hints);
@@ -388,7 +388,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             featureReader = GenericEmptyFeatureIterator.createReader(schema);
         }
         try {
-            return new ShapefileFeatureWriter(this,typeName.getLocalPart(), shpFiles, attReader, featureReader, dbfCharset);
+            return new ShapefileFeatureWriter(this,typeName.tip().toString(), shpFiles, attReader, featureReader, dbfCharset);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }

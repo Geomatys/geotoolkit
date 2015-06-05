@@ -208,7 +208,7 @@ public class CoverageSQLStore extends AbstractCoverageStore {
 
         @Override
         public GridCoverageReader acquireReader() throws CoverageStoreException {
-            final LayerCoverageReader reader = CoverageSQLStore.this.db.createGridCoverageReader(name.getLocalPart());
+            final LayerCoverageReader reader = CoverageSQLStore.this.db.createGridCoverageReader(name.tip().toString());
             return reader;
         }
 

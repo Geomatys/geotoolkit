@@ -204,7 +204,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
         final ParameterValueGroup params = singleFileDefaultParameters.clone();
         try {
             final File folder = getFolder(folderParameters);
-            final File newFile = new File(folder, typeName.getLocalPart()+singleFileFactory.getFileExtensions()[0]);
+            final File newFile = new File(folder, typeName.tip().toString()+singleFileFactory.getFileExtensions()[0]);
             Parameters.getOrCreate(URLP, params).setValue(newFile.toURI().toURL());
         } catch (MalformedURLException ex) {
             throw new DataStoreException(ex);

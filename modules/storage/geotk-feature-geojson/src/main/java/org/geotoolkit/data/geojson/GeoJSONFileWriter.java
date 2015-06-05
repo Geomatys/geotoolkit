@@ -51,7 +51,7 @@ class GeoJSONFileWriter extends GeoJSONReader implements FeatureWriter {
 
         tmpLock.writeLock().lock();
         try {
-            final String name = featureType.getName().getLocalPart();
+            final String name = featureType.getName().tip().toString();
             tmpFile = new File(jsonFile.getParent(), name + ".wjson");
             writer = new GeoJSONWriter(tmpFile, jsonEncoding, doubleAccuracy, false);
 

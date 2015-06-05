@@ -213,7 +213,7 @@ public class MIFFeatureReader implements FeatureReader {
             }
 
         } catch (Exception ex) {
-            throw new FeatureStoreRuntimeException("Can't reach next feature with type name " + readType.getName().getLocalPart(), ex);
+            throw new FeatureStoreRuntimeException("Can't reach next feature with type name " + readType.getName().tip().toString(), ex);
         }
 
         return resFeature;

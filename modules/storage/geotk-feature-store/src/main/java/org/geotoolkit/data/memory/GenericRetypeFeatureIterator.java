@@ -87,7 +87,7 @@ public abstract class GenericRetypeFeatureIterator<R extends FeatureIterator> im
 
         //verify types binding
         for (PropertyDescriptor attrib : types) {
-            final String xpath = attrib.getName().getLocalPart();
+            final String xpath = attrib.getName().tip().toString();
             final PropertyDescriptor check = original.getDescriptor(xpath);
             final Class<?> targetBinding = attrib.getType().getBinding();
             final Class<?> checkBinding = check.getType().getBinding();
@@ -131,7 +131,7 @@ public abstract class GenericRetypeFeatureIterator<R extends FeatureIterator> im
 
         int i=0;
         for (PropertyDescriptor attrib : targetDesc) {
-            final String xpath = attrib.getName().getLocalPart();
+            final String xpath = attrib.getName().tip().toString();
             final PropertyDescriptor check = original.getDescriptor(xpath);
             types[i] = originalDesc.indexOf(check);
 

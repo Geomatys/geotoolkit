@@ -333,7 +333,7 @@ public final class MIFUtils {
             if( mifType == null) {
                 throw new DataStoreException("Type "+desc.getType().getBinding()+" has no equivalent in MIF format.");
             }
-            builder.append('\t').append(desc.getName().getLocalPart()).append(' ').append(mifType.toLowerCase()).append('\n');
+            builder.append('\t').append(desc.getName().tip().toString()).append(' ').append(mifType.toLowerCase()).append('\n');
         }
     }
 

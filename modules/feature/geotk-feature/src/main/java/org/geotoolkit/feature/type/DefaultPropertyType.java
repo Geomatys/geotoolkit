@@ -215,7 +215,7 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
         }
         if (superType != null) {
             sb.append(" extends ");
-            sb.append(superType.getName().getLocalPart());
+            sb.append(superType.getName().tip().toString());
         }
         if (binding != null) {
             sb.append("<");

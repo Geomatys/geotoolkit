@@ -290,7 +290,7 @@ public class GeoJSONReadTest {
 
     private void testFeatureTypes(FeatureType expected, FeatureType result) {
         for(PropertyDescriptor desc : expected.getDescriptors()){
-            PropertyDescriptor td = result.getDescriptor(desc.getName().getLocalPart());
+            PropertyDescriptor td = result.getDescriptor(desc.getName().tip().toString());
             assertNotNull(td);
             assertEquals(td.getType().getBinding(), desc.getType().getBinding());
         }
