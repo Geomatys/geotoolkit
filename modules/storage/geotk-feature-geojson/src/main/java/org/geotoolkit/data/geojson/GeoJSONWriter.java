@@ -3,7 +3,6 @@ package org.geotoolkit.data.geojson;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.vividsolutions.jts.geom.Geometry;
-import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.data.geojson.binding.GeoJSONGeometry;
 import org.geotoolkit.data.geojson.utils.GeoJSONParser;
@@ -14,18 +13,13 @@ import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.feature.IllegalAttributeException;
-import org.geotoolkit.feature.*;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
-import org.opengis.feature.*;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import java.io.*;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -168,8 +162,10 @@ class GeoJSONWriter implements Closeable, Flushable {
         }
 
         //write geometry
-        writer.writeFieldName(GEOMETRY);
-        writeFeatureGeometry(feature.getDefaultGeometryProperty());
+        if (feature.getDefaultGeometryProperty() != null) {
+            writer.writeFieldName(GEOMETRY);
+            writeFeatureGeometry(feature.getDefaultGeometryProperty());
+        }
 
         //write properties
         writeProperties(feature, PROPERTIES, true);
