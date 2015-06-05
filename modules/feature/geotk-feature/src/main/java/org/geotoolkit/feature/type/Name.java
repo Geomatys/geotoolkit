@@ -78,13 +78,6 @@ import org.opengis.annotation.UML;
 public interface Name extends org.opengis.util.TypeName {
 
     /**
-     * Returns <code>true</code> if getNamespaceURI is <code>null</code>
-     *
-     * @return Returns <code>true</code> if getNamespaceURI is <code>null</code>
-     */
-    boolean isGlobal();
-
-    /**
      * Returns the URI of the namespace for this name.
      * <p>
      * In ISO 19103 this is known as <b>scope</b> and containes a backpointer
@@ -102,20 +95,6 @@ public interface Name extends org.opengis.util.TypeName {
     String getNamespaceURI();
 
     /**
-     * Separator to use between getNamespaceURI() and getLocalPart() when
-     * constructing getURI().
-     * <p>
-     * This separator is only used to construct a visually pleasing getURI()
-     * result. The value to use as a separator depends on the registry
-     * or namespace you are working with. JNDI naming services have
-     * been known to use "/" and ":". Referring to an element in an XMLSchema
-     * document has been represented with a "#" symbol.
-     * <p>
-     * @return A separator (such as "/" or ":").
-     */
-    String getSeparator();
-
-    /**
      * Retrieve the "local" name.
      * <p>
      * This mechanism captures the following ISO 19103 concerns:
@@ -130,51 +109,4 @@ public interface Name extends org.opengis.util.TypeName {
      */
     String getLocalPart();
 
-    /**
-     * Convert this name to a complete URI.
-     * <p>
-     * This URI is constructed with the getNamespaceURI(), getSeparator() and getLocalPart().
-     * </p>
-     * <p>
-     * This method captures the following concerns of ISO 19103 concerns:
-     * <ul>
-     * <li>GenericName.getParsedNames()
-     * <li>toFullyQuantifiedName()
-     * </ul>
-     * <p>
-     * As an example:
-     * <ul>
-     * <li>namespace: "gopher://localhost/example" separator: "/" local: "name"
-     * <li>namespace: "gopher://localhost" separator: "/" local: "example/name"
-     * </ul>
-     * Both return: "gopher://localhost/example/name" as they indicate the same entry
-     * in the namespace system (such as a Registry or JNDI naming service).
-     * </p>
-     * @return a complete URI constructed of namespace URI and the local part.
-     */
-    @UML(identifier = "parsedName", obligation = MANDATORY, specification = ISO_19103)
-    String getURI();
-
-    /**
-     * Must be based on getURI().
-     *
-     * @return a hash code based on getURI()
-     */
-    @Override
-    int hashCode();
-
-    /**
-     * <code>true</code> if getURI is equal.
-     *
-     * @param other
-     * @return <code>true</code> if getURI is equal.
-     */
-    @Override
-    boolean equals(Object obj);
-
-    /**
-     * A local-independent representation of this name, see getURI().
-     */
-    @Override
-    String toString();
 }

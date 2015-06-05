@@ -219,10 +219,6 @@ public class AttributeTypeBuilder {
         this.name = DefaultName.create(namespace, localPart);
     }
 
-    public void setName(final String namespace, final String separator, final String localPart){
-        this.name = DefaultName.create(namespace, separator, localPart);
-    }
-
     public Name getName() {
         return name;
     }

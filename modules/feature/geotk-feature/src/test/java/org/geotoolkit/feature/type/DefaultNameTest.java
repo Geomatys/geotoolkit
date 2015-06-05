@@ -20,7 +20,6 @@ package org.geotoolkit.feature.type;
 import javax.xml.namespace.QName;
 import org.junit.Test;
 import static org.geotoolkit.test.Assert.*;
-import org.geotoolkit.feature.type.Name;
 
 /**
  * Test Name.
@@ -36,33 +35,28 @@ public class DefaultNameTest {
     @Test
     public void testParameter() {
         final String uri = "http://test.com";
-        final String separator = "!";
         final String local = "localpart";
         DefaultName name;
 
         name = DefaultName.create(new QName(uri, local));
         assertEquals(name.getNamespaceURI(), uri);
-        assertEquals(name.getSeparator(), ":");
         assertEquals(name.getLocalPart(), local);
-        assertEquals(name.isGlobal(), false);
+        assertEquals(name.scope().isGlobal(), false);
 
         name = DefaultName.create(local);
         assertEquals(name.getNamespaceURI(), null);
-        assertEquals(name.getSeparator(), ":");
         assertEquals(name.getLocalPart(), local);
-        assertEquals(name.isGlobal(), true);
+        assertEquals(name.scope().isGlobal(), true);
 
         name = DefaultName.create(uri, local);
         assertEquals(name.getNamespaceURI(), uri);
-        assertEquals(name.getSeparator(), ":");
         assertEquals(name.getLocalPart(), local);
-        assertEquals(name.isGlobal(), false);
+        assertEquals(name.scope().isGlobal(), false);
 
-        name = DefaultName.create(uri, separator, local);
+        name = DefaultName.create(uri, local);
         assertEquals(name.getNamespaceURI(), uri);
-        assertEquals(name.getSeparator(), separator);
         assertEquals(name.getLocalPart(), local);
-        assertEquals(name.isGlobal(), false);
+        assertEquals(name.scope().isGlobal(), false);
     }
 
     /**
@@ -76,21 +70,18 @@ public class DefaultNameTest {
 
         name = DefaultName.valueOf("{"+uri+"}"+local);
         assertEquals(name.getNamespaceURI(), uri);
-        assertEquals(name.getSeparator(), ":");
         assertEquals(name.getLocalPart(), local);
-        assertEquals(name.isGlobal(), false);
+        assertEquals(name.scope().isGlobal(), false);
 
         name = DefaultName.valueOf(uri+":"+local);
         assertEquals(name.getNamespaceURI(), uri);
-        assertEquals(name.getSeparator(), ":");
         assertEquals(name.getLocalPart(), local);
-        assertEquals(name.isGlobal(), false);
+        assertEquals(name.scope().isGlobal(), false);
 
         name = DefaultName.valueOf(local);
         assertEquals(name.getNamespaceURI(), null);
-        assertEquals(name.getSeparator(), ":");
         assertEquals(name.getLocalPart(), local);
-        assertEquals(name.isGlobal(), true);
+        assertEquals(name.scope().isGlobal(), true);
 
     }
 
@@ -100,18 +91,14 @@ public class DefaultNameTest {
         Name n2 = DefaultName.create("http://test.com", "test");
         assertEquals(n1, n2);
 
-        n1 = DefaultName.create("http://test.com", ":", "test1");
-        n2 = DefaultName.create("http://test.com", ":", "test2");
+        n1 = DefaultName.create("http://test.com", "test1");
+        n2 = DefaultName.create("http://test.com", "test2");
         assertFalse( n1.equals(n2) );
 
-        n1 = DefaultName.create("http://test.com1", ":", "test");
-        n2 = DefaultName.create("http://test.com2", ":", "test");
+        n1 = DefaultName.create("http://test.com1", "test");
+        n2 = DefaultName.create("http://test.com2", "test");
         assertFalse( n1.equals(n2) );
 
-        //separator must not be used for equals
-        n1 = DefaultName.create("http://test.com", ":", "test");
-        n2 = DefaultName.create("http://test.com", "/", "test");
-        assertEquals(n1, n2);
     }
 
     @Test

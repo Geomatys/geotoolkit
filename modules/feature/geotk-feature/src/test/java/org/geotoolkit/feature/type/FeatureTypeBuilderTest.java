@@ -139,10 +139,6 @@ public class FeatureTypeBuilderTest {
         sft = ftb.buildSimpleFeatureType();
         assertEquals(DefaultName.create(ns, "test"), sft.getName());
 
-        ftb.setName(ns,":","test");
-        sft = ftb.buildSimpleFeatureType();
-        assertEquals(DefaultName.create(ns, "test"), sft.getName());
-
 
         ftb.add("att_String1", String.class);
         ftb.add(ns+":att_String2", String.class);

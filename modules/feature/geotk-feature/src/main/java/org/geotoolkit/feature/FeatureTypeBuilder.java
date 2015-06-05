@@ -235,10 +235,6 @@ public class FeatureTypeBuilder {
         setName(DefaultName.create(namespace, localPart));
     }
 
-    public void setName(final String namespace, final String separator, final String localPart){
-        setName(DefaultName.create(namespace, separator, localPart));
-    }
-
     /**
      * Sets the local name and namespace uri of the built type.
      */

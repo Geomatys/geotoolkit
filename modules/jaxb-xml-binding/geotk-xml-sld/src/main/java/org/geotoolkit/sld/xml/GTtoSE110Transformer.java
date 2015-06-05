@@ -976,9 +976,8 @@ public class GTtoSE110Transformer implements StyleVisitor {
                 if (!fts.featureTypeNames().isEmpty()) {
                     final GenericName name = fts.featureTypeNames().iterator().next();
                     final String pre = name.scope().isGlobal() ? null : name.scope().name().toString();
-                    final String sep = ((Name) name).getSeparator();
                     final String local = name.toString();
-                    ftst.setFeatureTypeName(new QName(pre + sep, local));
+                    ftst.setFeatureTypeName(new QName(pre + ':', local));
                 }
 
                 ftst.setDescription(visit(fts.getDescription(), null));

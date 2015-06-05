@@ -69,9 +69,6 @@ public class DefaultName extends DefaultTypeName implements Name {
         return new DefaultName(local);
     }
 
-    public static DefaultName create(final String namespace, final String separator, final String local) {
-        return new DefaultName(namespace, separator, local);
-    }
     /**
      * Namespace / scope
      */
@@ -129,16 +126,6 @@ public class DefaultName extends DefaultTypeName implements Name {
     }
 
     @Override
-    public boolean isGlobal() {
-        return getNamespaceURI() == null;
-    }
-
-    @Override
-    public String getSeparator() {
-        return separator;
-    }
-
-    @Override
     public String getNamespaceURI() {
         return namespace;
     }
@@ -146,20 +133,6 @@ public class DefaultName extends DefaultTypeName implements Name {
     @Override
     public String getLocalPart() {
         return local;
-    }
-
-    @Override
-    public String getURI() {
-        if ((namespace == null) && (local == null)) {
-            return null;
-        }
-        if (namespace == null) {
-            return local;
-        }
-        if (local == null) {
-            return namespace;
-        }
-        return new StringBuilder(namespace).append(separator).append(local).toString();
     }
 
     /**
