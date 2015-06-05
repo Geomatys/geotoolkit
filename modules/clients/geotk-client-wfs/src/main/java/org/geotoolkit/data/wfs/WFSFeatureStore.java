@@ -123,7 +123,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                 prefix = "geotk" + NS_INC.incrementAndGet();
             }
 
-            Name name = new DefaultName(uri, localpart);
+            Name name = DefaultName.create(uri, localpart);
             typeName = new QName(uri, localpart, prefix);
 
             //extract the feature type -----------------------------------------
@@ -489,7 +489,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
     }
 
     private FeatureCollection requestFeature(final QName typeName, final Query query) throws IOException {
-        final Name name = new DefaultName(typeName);
+        final Name name = DefaultName.create(typeName);
         FeatureType sft = types.get(name);
         sft = FeatureTypeUtilities.createSubType(sft, query.getPropertyNames());
 

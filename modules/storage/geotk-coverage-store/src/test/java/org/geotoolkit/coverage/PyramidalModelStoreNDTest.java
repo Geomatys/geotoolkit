@@ -84,7 +84,7 @@ public abstract class PyramidalModelStoreNDTest {
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         crs = new DefaultCompoundCRS(Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "3dcrs"), horizontal,vertical);
 
-        final DefaultName name = new DefaultName("test");
+        final DefaultName name = DefaultName.create("test");
         ref = (PyramidalCoverageReference) store.create(name);
 
         //prepare expected colors

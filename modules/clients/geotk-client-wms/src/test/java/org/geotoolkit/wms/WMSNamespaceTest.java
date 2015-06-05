@@ -55,8 +55,8 @@ public class WMSNamespaceTest {
         final Set<Name> names = SERVER_111.getNames();
         
         assertEquals(3, names.size());
-        assertTrue(names.contains(new DefaultName("ns1","Sample")));
-        assertTrue(names.contains(new DefaultName("ns2","Sample")));
+        assertTrue(names.contains(DefaultName.create("ns1", "Sample")));
+        assertTrue(names.contains(DefaultName.create("ns2", "Sample")));
         
     }
     
@@ -69,8 +69,8 @@ public class WMSNamespaceTest {
         final Set<Name> names = SERVER_130.getNames();
         
         assertEquals(3, names.size());
-        assertTrue(names.contains(new DefaultName("ns1","Sample")));
-        assertTrue(names.contains(new DefaultName("ns2","Sample")));
+        assertTrue(names.contains(DefaultName.create("ns1", "Sample")));
+        assertTrue(names.contains(DefaultName.create("ns2", "Sample")));
         
     }
 

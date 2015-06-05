@@ -88,8 +88,7 @@ public final class DataBaseModel {
     /**
      * Dummy type which will be replaced dynamically in the reverse engineering process.
      */
-    private static final ComplexType FLAG_TYPE = FTF.createComplexType(
-            new DefaultName("flag"), Collections.EMPTY_LIST, false, false, Collections.EMPTY_LIST, null, null);
+    private static final ComplexType FLAG_TYPE = FTF.createComplexType(DefaultName.create("flag"), Collections.EMPTY_LIST, false, false, Collections.EMPTY_LIST, null, null);
 
     private final JDBCFeatureStore store;
     private final Map<Name,PrimaryKey> pkIndex = new HashMap<Name, PrimaryKey>();
@@ -872,12 +871,11 @@ public final class DataBaseModel {
                 for(final RelationMetaModel relation : table.exportedKeys){
 
                     //find an appropriate name
-                    Name n = new DefaultName(store.getDefaultNamespace(),relation.getForeignColumn());
+                    Name n = DefaultName.create(store.getDefaultNamespace(), relation.getForeignColumn());
                     for(PropertyDescriptor dpd : ftb.getProperties()){
                         if(n.getLocalPart().equals(dpd.getName().getLocalPart())){
                             //name already used, make it unique by including reference table name
-                            n = new DefaultName(store.getDefaultNamespace(),
-                                relation.getForeignTable()+ASSOCIATION_SEPARATOR+relation.getForeignColumn());
+                            n = DefaultName.create(store.getDefaultNamespace(), relation.getForeignTable()+ASSOCIATION_SEPARATOR+relation.getForeignColumn());
                             break;
                         }
                     }

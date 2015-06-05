@@ -117,7 +117,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
             stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
             while (rs.next()){
-                final Name n = new DefaultName(ns,rs.getString(1));
+                final Name n = DefaultName.create(ns, rs.getString(1));
                 final CoverageReference ref = createCoverageReference(n, null);
                 root.getChildren().add(ref);
             }
@@ -154,7 +154,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
 
         fireCoverageAdded(name);
-        return getCoverageReference(new DefaultName(getDefaultNamespace(), name.getLocalPart()));
+        return getCoverageReference(DefaultName.create(getDefaultNamespace(), name.getLocalPart()));
     }
 
     @Override

@@ -547,7 +547,7 @@ public class OGC110toGTTransformer {
      */
     public Name visitQName(final QName qname){
         if(qname == null) {return null;}
-        return new DefaultName(qname);
+        return DefaultName.create(qname);
     }
 
 }

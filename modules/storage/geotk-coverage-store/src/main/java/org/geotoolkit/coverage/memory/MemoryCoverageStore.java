@@ -77,7 +77,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     public MemoryCoverageStore(final GridCoverage2D gridCov, final String name) {
         this();
         try {
-            final CoverageReference ref = create(new DefaultName(getDefaultNamespace(), name));
+            final CoverageReference ref = create(DefaultName.create(getDefaultNamespace(), name));
             final GridCoverageWriter writer = ref.acquireWriter();
             writer.write(gridCov, null);
             ref.recycle(writer);

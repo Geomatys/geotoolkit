@@ -94,9 +94,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                     final Object key = rs.getObject(template.getCurrentColumn());
                     
                     final QueryBuilder qb = new QueryBuilder();
-                    qb.setTypeName(new DefaultName(
-                            store.getDefaultNamespace(), 
-                            template.getForeignTable()));
+                    qb.setTypeName(DefaultName.create(store.getDefaultNamespace(), template.getForeignTable()));
                     qb.setFilter(template.toFilter(key));
 
                     prop = GenericAssociationIterator.wrap(
@@ -115,9 +113,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                     
                     //create the filter, excluding relation and id fields                    
                     final QueryBuilder qb = new QueryBuilder();
-                    qb.setTypeName(new DefaultName(
-                            store.getDefaultNamespace(), 
-                            template.getForeignTable()));
+                    qb.setTypeName(DefaultName.create(store.getDefaultNamespace(), template.getForeignTable()));
                     qb.setFilter(template.toFilter(key));
                     qb.setProperties(template.getSubTypeFields(store.getDatabaseModel()));
 
@@ -157,7 +153,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
 
     @Override
     public Collection<Property> getProperties(final String name) {
-        return getProperties(new DefaultName(null, name));
+        return getProperties(DefaultName.create(null, name));
     }
 
     @Override
@@ -205,7 +201,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
     
     @Override
     public Property getProperty(final String name) {
-        return getProperty(new DefaultName(null, name));
+        return getProperty(DefaultName.create(null, name));
     }
 
     public void updateResultSet(final ResultSet rs) {

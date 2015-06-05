@@ -148,7 +148,7 @@ public class NearestProcess extends AbstractProcess {
         }
 
         final Filter filter = FF.id(setID);
-        return QueryBuilder.filtered(new DefaultName("nearest"), filter);
+        return QueryBuilder.filtered(DefaultName.create("nearest"), filter);
 
     }
 }

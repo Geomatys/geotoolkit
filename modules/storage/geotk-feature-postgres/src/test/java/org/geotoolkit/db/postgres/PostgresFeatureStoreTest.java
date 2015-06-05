@@ -1174,7 +1174,7 @@ public class PostgresFeatureStoreTest {
         assertEquals(1, addedIds.size());
         assertEquals(new DefaultFeatureId("Voyage.1"), addedIds.get(0));
         
-        final Query query = QueryBuilder.language(JDBCFeatureStore.CUSTOM_SQL, "SELECT * FROM \"Stop\"", new DefaultName("s1"));        
+        final Query query = QueryBuilder.language(JDBCFeatureStore.CUSTOM_SQL, "SELECT * FROM \"Stop\"", DefaultName.create("s1"));        
         final FeatureReader ite = store.getFeatureReader(query);
         final boolean[] found = new boolean[3];
         try{

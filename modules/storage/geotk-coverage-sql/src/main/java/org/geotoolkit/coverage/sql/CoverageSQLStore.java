@@ -101,7 +101,7 @@ public class CoverageSQLStore extends AbstractCoverageStore {
         final DataNode dn = new DefaultDataNode();
         final Set<String> layers = db.getLayers().result();
         for (String layer : layers) {
-            dn.getChildren().add(new CoverageSQLLayerReference(new DefaultName(layer)));
+            dn.getChildren().add(new CoverageSQLLayerReference(DefaultName.create(layer)));
         }
         return dn;
     }

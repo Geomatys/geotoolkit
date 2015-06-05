@@ -53,7 +53,7 @@ public abstract class AbstractCoverageStoreEventTest {
 
         assertEquals(0, store.getNames().size());
 
-        final DefaultName name = new DefaultName(store.getDefaultNamespace(), "test");
+        final DefaultName name = DefaultName.create(store.getDefaultNamespace(), "test");
         final CoverageReference ref = store.create(name);
         assertNotNull(ref);
         assertEquals(1, storelistener.numManageEvent);

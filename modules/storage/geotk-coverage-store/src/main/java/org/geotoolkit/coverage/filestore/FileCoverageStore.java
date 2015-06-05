@@ -183,7 +183,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
                 final List<String> imageNames = nis.getImageNames();
                 for (int i = 0, n = imageNames.size(); i < n; i++) {
                     final String in = imageNames.get(i);
-                    final Name name = new DefaultName(nmsp, filename + "." + in);
+                    final Name name = DefaultName.create(nmsp, filename + "." + in);
                     final FileCoverageReference fcr = new FileCoverageReference(this, name, candidate, i);
                     rootNode.getChildren().add(fcr);
                 }
@@ -193,9 +193,9 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
                     final Name name;
                     if (nbImage == 1) {
                         //don't number it if there is only one
-                        name = new DefaultName(nmsp, filename);
+                        name = DefaultName.create(nmsp, filename);
                     } else {
-                        name = new DefaultName(nmsp, filename + "." + i);
+                        name = DefaultName.create(nmsp, filename + "." + i);
                     }
 
                     final FileCoverageReference fcr = new FileCoverageReference(this, name, candidate, i);

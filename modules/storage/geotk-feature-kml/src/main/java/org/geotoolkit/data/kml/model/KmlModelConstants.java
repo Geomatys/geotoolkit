@@ -114,42 +114,24 @@ public final class KmlModelConstants {
 //        final FeatureTypeFactory ftf = ftb.getFeatureTypeFactory();
 
         //-------------------- GENERIC KML ENTITY ------------------------------
-        ATT_ID_ATTRIBUTES = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.ATT_ID), IdAttributes.class,0,1,false,null);
-        ATT_NAME = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_NAME), String.class,0,1,false,null);
-        ATT_VISIBILITY = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_VISIBILITY), Boolean.class,0,1,false,null);
-        ATT_OPEN = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_OPEN), Boolean.class,0,1,false,null);
-        ATT_AUTHOR = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ATOM_AUTHOR), AtomPersonConstruct.class,0,1,false,null);
-        ATT_LINK = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ATOM_LINK), AtomLink.class,0,1,false,null);
-        ATT_ADDRESS = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ADDRESS), String.class,0,1,false,null);
-        ATT_ADDRESS_DETAILS = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_XAL_ADDRESS_DETAILS), AddressDetails.class,0,1,false,null);
-        ATT_PHONE_NUMBER = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_PHONE_NUMBER), String.class,0,1,false,null);
-        ATT_SNIPPET = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_SNIPPET), Object.class,0,1,false,null);
-        ATT_DESCRIPTION = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_DESCRIPTION), Object.class,0,1,false,null);
-        ATT_VIEW = adb.create(
-                new DefaultName(KML_NAMESPACE, "View"), AbstractView.class,0,1,false,null);
-        ATT_TIME_PRIMITIVE = adb.create(
-                new DefaultName(KML_NAMESPACE, "TimePrimitive"), AbstractTimePrimitive.class,0,1,false,null);
-        ATT_STYLE_URL = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_STYLE_URL), URI.class,0,1,false,null);
-        ATT_STYLE_SELECTOR = adb.create(
-                new DefaultName(KML_NAMESPACE, "StyleSelector"), AbstractStyleSelector.class,0,Integer.MAX_VALUE,false,null);
-        ATT_REGION = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_REGION), Region.class,0,1,false,null);
-        ATT_EXTENDED_DATA = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_EXTENDED_DATA), Object.class,0,Integer.MAX_VALUE,false,null);
-        ATT_EXTENSIONS = adb.create(
-                new DefaultName(KML_NAMESPACE, "Extensions"), Extensions.class,1,1,false,null);
+        ATT_ID_ATTRIBUTES = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.ATT_ID), IdAttributes.class,0,1,false,null);
+        ATT_NAME = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_NAME), String.class,0,1,false,null);
+        ATT_VISIBILITY = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_VISIBILITY), Boolean.class,0,1,false,null);
+        ATT_OPEN = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_OPEN), Boolean.class,0,1,false,null);
+        ATT_AUTHOR = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_ATOM_AUTHOR), AtomPersonConstruct.class,0,1,false,null);
+        ATT_LINK = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_ATOM_LINK), AtomLink.class,0,1,false,null);
+        ATT_ADDRESS = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_ADDRESS), String.class,0,1,false,null);
+        ATT_ADDRESS_DETAILS = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_XAL_ADDRESS_DETAILS), AddressDetails.class,0,1,false,null);
+        ATT_PHONE_NUMBER = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_PHONE_NUMBER), String.class,0,1,false,null);
+        ATT_SNIPPET = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_SNIPPET), Object.class,0,1,false,null);
+        ATT_DESCRIPTION = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_DESCRIPTION), Object.class,0,1,false,null);
+        ATT_VIEW = adb.create(DefaultName.create(KML_NAMESPACE, "View"), AbstractView.class,0,1,false,null);
+        ATT_TIME_PRIMITIVE = adb.create(DefaultName.create(KML_NAMESPACE, "TimePrimitive"), AbstractTimePrimitive.class,0,1,false,null);
+        ATT_STYLE_URL = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_STYLE_URL), URI.class,0,1,false,null);
+        ATT_STYLE_SELECTOR = adb.create(DefaultName.create(KML_NAMESPACE, "StyleSelector"), AbstractStyleSelector.class,0,Integer.MAX_VALUE,false,null);
+        ATT_REGION = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_REGION), Region.class,0,1,false,null);
+        ATT_EXTENDED_DATA = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_EXTENDED_DATA), Object.class,0,Integer.MAX_VALUE,false,null);
+        ATT_EXTENSIONS = adb.create(DefaultName.create(KML_NAMESPACE, "Extensions"), Extensions.class,1,1,false,null);
         ftb.reset();
         ftb.setName(KML_NAMESPACE, "KMLEntity");
         ftb.setAbstract(true);
@@ -176,8 +158,7 @@ public final class KmlModelConstants {
         //-------------------- PLACEMARK ------------------------------
 //        ATT_PLACEMARK_GEOMETRY = (GeometryDescriptor) adb.create(
 //                new DefaultName(KML_NAMESPACE, "geometry"), Geometry.class,KML_CRS,0,1,false,null);
-        ATT_PLACEMARK_GEOMETRY = adb.create(
-                new DefaultName(KML_NAMESPACE, "geometry"), AbstractGeometry.class,0,1,false,null);
+        ATT_PLACEMARK_GEOMETRY = adb.create(DefaultName.create(KML_NAMESPACE, "geometry"), AbstractGeometry.class,0,1,false,null);
 
         ftb.reset();
         ftb.setName(KML_NAMESPACE, KmlConstants.TAG_PLACEMARK);
@@ -204,12 +185,9 @@ public final class KmlModelConstants {
         TYPE_PLACEMARK = ftb.buildFeatureType();
 
         //-------------------- NETWORK_LINK ------------------------------
-        ATT_NETWORK_LINK_REFRESH_VISIBILITY = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_REFRESH_VISIBILITY), Boolean.class,0,1,false,null);
-        ATT_NETWORK_LINK_FLY_TO_VIEW = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_FLY_TO_VIEW), Boolean.class,0,1,false,null);
-        ATT_NETWORK_LINK_LINK = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_LINK), Link.class,0,1,false,null);
+        ATT_NETWORK_LINK_REFRESH_VISIBILITY = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_REFRESH_VISIBILITY), Boolean.class,0,1,false,null);
+        ATT_NETWORK_LINK_FLY_TO_VIEW = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_FLY_TO_VIEW), Boolean.class,0,1,false,null);
+        ATT_NETWORK_LINK_LINK = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_LINK), Link.class,0,1,false,null);
 
         ftb.reset();
         ftb.setName(KML_NAMESPACE, KmlConstants.TAG_DOCUMENT);
@@ -265,8 +243,7 @@ public final class KmlModelConstants {
 
 
         //-------------------- FOLDER ------------------------------
-        ATT_FOLDER_FEATURES = adb.create(
-                TYPE_KML_ENTITY, new DefaultName(KML_NAMESPACE, "features"),0,Integer.MAX_VALUE,false,null);
+        ATT_FOLDER_FEATURES = adb.create(TYPE_KML_ENTITY, DefaultName.create(KML_NAMESPACE, "features"),0,Integer.MAX_VALUE,false,null);
 
         ftb.reset();
         ftb.setName(KML_NAMESPACE, KmlConstants.TAG_FOLDER);
@@ -293,10 +270,8 @@ public final class KmlModelConstants {
         TYPE_FOLDER = ftb.buildFeatureType();
 
         //-------------------- DOCUMENT ------------------------------
-        ATT_DOCUMENT_FEATURES = adb.create(
-                TYPE_KML_ENTITY, new DefaultName(KML_NAMESPACE, "features"),0,Integer.MAX_VALUE,false,null);
-        ATT_DOCUMENT_SCHEMAS = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_SCHEMA), Schema.class,0,Integer.MAX_VALUE,false,null);
+        ATT_DOCUMENT_FEATURES = adb.create(TYPE_KML_ENTITY, DefaultName.create(KML_NAMESPACE, "features"),0,Integer.MAX_VALUE,false,null);
+        ATT_DOCUMENT_SCHEMAS = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_SCHEMA), Schema.class,0,Integer.MAX_VALUE,false,null);
 
         ftb.reset();
         ftb.setName(KML_NAMESPACE, KmlConstants.TAG_DOCUMENT);
@@ -325,12 +300,9 @@ public final class KmlModelConstants {
 
 
         //-------------------- GENERIC OVERLAY ------------------------------
-        ATT_OVERLAY_COLOR = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_COLOR), Color.class,0,1,false,null);
-        ATT_OVERLAY_DRAW_ORDER = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_DRAW_ORDER), Integer.class,0,1,false,null);
-        ATT_OVERLAY_ICON = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ICON), Link.class,0,1,false,null);
+        ATT_OVERLAY_COLOR = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_COLOR), Color.class,0,1,false,null);
+        ATT_OVERLAY_DRAW_ORDER = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_DRAW_ORDER), Integer.class,0,1,false,null);
+        ATT_OVERLAY_ICON = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_ICON), Link.class,0,1,false,null);
 
         ftb.reset();
         ftb.setName(KML_NAMESPACE, "Overlay");
@@ -360,12 +332,9 @@ public final class KmlModelConstants {
         TYPE_OVERLAY = ftb.buildFeatureType();
 
         //-------------------- GROUND OVERLAY ------------------------------
-        ATT_GROUND_OVERLAY_ALTITUDE = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ALTITUDE), Double.class,0,1,false,null);
-        ATT_GROUND_OVERLAY_ALTITUDE_MODE = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ALTITUDE_MODE), EnumAltitudeMode.class,0,1,false,null);
-        ATT_GROUND_OVERLAY_LAT_LON_BOX = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_LAT_LON_BOX), LatLonBox.class,0,1,false,null);
+        ATT_GROUND_OVERLAY_ALTITUDE = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_ALTITUDE), Double.class,0,1,false,null);
+        ATT_GROUND_OVERLAY_ALTITUDE_MODE = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_ALTITUDE_MODE), EnumAltitudeMode.class,0,1,false,null);
+        ATT_GROUND_OVERLAY_LAT_LON_BOX = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_LAT_LON_BOX), LatLonBox.class,0,1,false,null);
 
         ftb.reset();
         ftb.setName(KML_NAMESPACE, "Overlay");
@@ -398,16 +367,11 @@ public final class KmlModelConstants {
         TYPE_GROUND_OVERLAY = ftb.buildFeatureType();
 
         //-------------------- SCREEN OVERLAY ------------------------------
-        ATT_SCREEN_OVERLAY_ROTATIONXY = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ROTATION_XY), Vec2.class,0,1,false,null);
-        ATT_SCREEN_OVERLAY_OVERLAYXY = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_OVERLAY_XY), Vec2.class,0,1,false,null);
-        ATT_SCREEN_OVERLAY_SCREENXY = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_SCREEN_XY), Vec2.class,0,1,false,null);
-        ATT_SCREEN_OVERLAY_SIZE = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_SIZE), Vec2.class,0,1,false,null);
-        ATT_SCREEN_OVERLAY_ROTATION = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ROTATION), Double.class,0,1,false,null);
+        ATT_SCREEN_OVERLAY_ROTATIONXY = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_ROTATION_XY), Vec2.class,0,1,false,null);
+        ATT_SCREEN_OVERLAY_OVERLAYXY = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_OVERLAY_XY), Vec2.class,0,1,false,null);
+        ATT_SCREEN_OVERLAY_SCREENXY = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_SCREEN_XY), Vec2.class,0,1,false,null);
+        ATT_SCREEN_OVERLAY_SIZE = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_SIZE), Vec2.class,0,1,false,null);
+        ATT_SCREEN_OVERLAY_ROTATION = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_ROTATION), Double.class,0,1,false,null);
 
         ftb.reset();
         ftb.setName(KML_NAMESPACE, "Overlay");
@@ -442,16 +406,11 @@ public final class KmlModelConstants {
         TYPE_SCREEN_OVERLAY = ftb.buildFeatureType();
 
         //-------------------- PHOTO OVERLAY ------------------------------
-        ATT_PHOTO_OVERLAY_ROTATION = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_ROTATION), Double.class,0,1,false,null);
-        ATT_PHOTO_OVERLAY_VIEW_VOLUME = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_VIEW_VOLUME), ViewVolume.class,0,1,false,null);
-        ATT_PHOTO_OVERLAY_IMAGE_PYRAMID = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_IMAGE_PYRAMID), ImagePyramid.class,0,1,false,null);
-        ATT_PHOTO_OVERLAY_POINT = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_POINT), Point.class,0,1,false,null);
-        ATT_PHOTO_OVERLAY_SHAPE = adb.create(
-                new DefaultName(KML_NAMESPACE, KmlConstants.TAG_SHAPE), Shape.class,0,1,false,null);
+        ATT_PHOTO_OVERLAY_ROTATION = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_ROTATION), Double.class,0,1,false,null);
+        ATT_PHOTO_OVERLAY_VIEW_VOLUME = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_VIEW_VOLUME), ViewVolume.class,0,1,false,null);
+        ATT_PHOTO_OVERLAY_IMAGE_PYRAMID = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_IMAGE_PYRAMID), ImagePyramid.class,0,1,false,null);
+        ATT_PHOTO_OVERLAY_POINT = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_POINT), Point.class,0,1,false,null);
+        ATT_PHOTO_OVERLAY_SHAPE = adb.create(DefaultName.create(KML_NAMESPACE, KmlConstants.TAG_SHAPE), Shape.class,0,1,false,null);
 
         ftb.reset();
         ftb.setName(KML_NAMESPACE, "Overlay");

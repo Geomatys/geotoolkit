@@ -56,6 +56,22 @@ import org.opengis.util.NameSpace;
  */
 @Deprecated
 public class DefaultName extends DefaultTypeName implements Name {
+
+    public static DefaultName create(final QName qname) {
+        return new DefaultName(qname);
+    }
+
+    public static DefaultName create(final String namespace, final String local) {
+        return new DefaultName(namespace, local);
+    }
+
+    public static DefaultName create(final String local) {
+        return new DefaultName(local);
+    }
+
+    public static DefaultName create(final String namespace, final String separator, final String local) {
+        return new DefaultName(namespace, separator, local);
+    }
     /**
      * Namespace / scope
      */
@@ -74,11 +90,11 @@ public class DefaultName extends DefaultTypeName implements Name {
      *
      * @param local The local part of the name.
      */
-    public DefaultName(final String local) {
+    private DefaultName(final String local) {
         this(null, local);
     }
 
-    public DefaultName(final QName qname) {
+    private DefaultName(final QName qname) {
         this(qname.getNamespaceURI(), qname.getLocalPart());
     }
 
@@ -89,7 +105,7 @@ public class DefaultName extends DefaultTypeName implements Name {
      * @param local The local part of the name.
      *
      */
-    public DefaultName(final String namespace, final String local) {
+    private DefaultName(final String namespace, final String local) {
         this(namespace, ":", local);
     }
 
@@ -100,7 +116,7 @@ public class DefaultName extends DefaultTypeName implements Name {
      * @param local The local part of the name.
      *
      */
-    public DefaultName(final String namespace, final String separator, final String local) {
+    private DefaultName(final String namespace, final String separator, final String local) {
 
         // WARNING: DefaultFactories.NAMES is not a public API and may change in any future SIS version.
 
@@ -201,11 +217,11 @@ public class DefaultName extends DefaultTypeName implements Name {
         int index = candidate.lastIndexOf(':');
 
         if(index <= 0){
-            return new DefaultName(null, candidate);
+            return DefaultName.create(null, candidate);
         }else{
             final String uri = candidate.substring(0,index);
             final String name = candidate.substring(index+1,candidate.length());
-            return new DefaultName(uri, name);
+            return DefaultName.create(uri, name);
         }
 
     }
@@ -218,7 +234,7 @@ public class DefaultName extends DefaultTypeName implements Name {
         final String uri = candidate.substring(1, index);
         final String name = candidate.substring(index+1, candidate.length());
 
-        return new DefaultName(uri, name);
+        return DefaultName.create(uri, name);
     }
 
     public static String toExtendedForm(final GenericName name){

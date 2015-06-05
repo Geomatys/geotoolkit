@@ -58,9 +58,9 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
      */
     @Test
     public void testCreateComplexType() {
-        final Name name = new DefaultName("point");
-        final Name strName = new DefaultName("String");
-        final Name ctName = new DefaultName("complexTypeName");
+        final Name name = DefaultName.create("point");
+        final Name strName = DefaultName.create("String");
+        final Name ctName = DefaultName.create("complexTypeName");
         final Map crsInfo = new HashMap<String, String>();
         crsInfo.put("name", "myCRS");
         crsInfo.put("first", "one");
@@ -118,7 +118,7 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
             res.getDescriptor("non-existant");
         } catch (Exception e) {
         }
-        Name tmpName = new DefaultName("non-existant");
+        Name tmpName = DefaultName.create("non-existant");
         try {
             res.getDescriptor(tmpName);
         } catch (Exception e) {
@@ -131,9 +131,9 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
      */
     @Test
     public void createFeatureType() {
-        final Name name = new DefaultName("point");
-        final Name strName = new DefaultName("String");
-        final Name fName = new DefaultName("featureTypeName");
+        final Name name = DefaultName.create("point");
+        final Name strName = DefaultName.create("String");
+        final Name fName = DefaultName.create("featureTypeName");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         //types and descriptors
@@ -170,7 +170,7 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
             res.getDescriptor("non-existant");
         } catch (Exception e) {
         }
-        Name tmpName = new DefaultName("non-existant");
+        Name tmpName = DefaultName.create("non-existant");
         try {
             res.getDescriptor(tmpName);
         } catch (Exception e) {

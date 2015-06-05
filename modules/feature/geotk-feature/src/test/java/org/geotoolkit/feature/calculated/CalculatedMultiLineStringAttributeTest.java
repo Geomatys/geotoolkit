@@ -86,9 +86,9 @@ public class CalculatedMultiLineStringAttributeTest {
         final Feature feature = FF.createFeature(props, sft, "id");
 
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final GeometryDescriptor desc = (GeometryDescriptor) adb.create(new DefaultName("calc"), MultiLineString.class, 1, 1, false, null);
+        final GeometryDescriptor desc = (GeometryDescriptor) adb.create(DefaultName.create("calc"), MultiLineString.class, 1, 1, false, null);
 
-        final CalculatedMultiLineStringAttribute att = new CalculatedMultiLineStringAttribute(desc, new DefaultName("lines"));
+        final CalculatedMultiLineStringAttribute att = new CalculatedMultiLineStringAttribute(desc, DefaultName.create("lines"));
 
         //test related correctly set
         assertNull(att.getRelated());
@@ -120,7 +120,7 @@ public class CalculatedMultiLineStringAttributeTest {
 
         ftb.reset();
         ftb.setName("test");
-        ftb.add(ct, new DefaultName("subAtts"), null, 0, Integer.MAX_VALUE, true, null);
+        ftb.add(ct, DefaultName.create("subAtts"), null, 0, Integer.MAX_VALUE, true, null);
         final FeatureType ft = ftb.buildFeatureType();
         final AttributeDescriptor sebDesc = (AttributeDescriptor) ft.getDescriptor("subAtts");
 
@@ -143,11 +143,9 @@ public class CalculatedMultiLineStringAttributeTest {
         final Feature feature = FF.createFeature(props, ft, "id");
 
 
-        final GeometryDescriptor desc = (GeometryDescriptor) adb.create(
-                new DefaultName("calc"), MultiLineString.class, 1, 1, false, null);
+        final GeometryDescriptor desc = (GeometryDescriptor) adb.create(DefaultName.create("calc"), MultiLineString.class, 1, 1, false, null);
 
-        final CalculatedMultiLineStringAttribute att = new CalculatedMultiLineStringAttribute(desc,
-                new DefaultName("subAtts"), new DefaultName("line"));
+        final CalculatedMultiLineStringAttribute att = new CalculatedMultiLineStringAttribute(desc, DefaultName.create("subAtts"), DefaultName.create("line"));
 
         //test related correctly set
         assertNull(att.getRelated());

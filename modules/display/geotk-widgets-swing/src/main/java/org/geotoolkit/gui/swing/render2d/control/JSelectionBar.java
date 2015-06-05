@@ -188,7 +188,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
                     final FeatureMapLayer fml = (FeatureMapLayer) layer;
                     final Filter selection = fml.getSelectionFilter();
                     if(selection != null && selection != Filter.EXCLUDE){
-                        final Query sub = QueryUtilities.subQuery(fml.getQuery(), QueryBuilder.filtered(new DefaultName("select"), selection));
+                        final Query sub = QueryUtilities.subQuery(fml.getQuery(), QueryBuilder.filtered(DefaultName.create("select"), selection));
                         FeatureIterator ite = null;
                         try {
                             final FeatureCollection col = fml.getCollection().subCollection(sub);

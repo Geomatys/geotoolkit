@@ -289,7 +289,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         
         //take care of potential hints, like removing primary keys
         final QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(new DefaultName("remaining"));
+        qb.setTypeName(DefaultName.create("remaining"));
         qb.setHints(query.getHints());
         return handleRemaining(reader, qb.buildQuery());
     }
@@ -681,15 +681,14 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                         
                     }else if(relation.property.getType() instanceof ComplexType){
                         final String targetTypeName = relation.property.getType().getName().getLocalPart();
-                        final PrimaryKey targetKey = dbmodel.getPrimaryKey(new DefaultName(getDefaultNamespace(), targetTypeName));
+                        final PrimaryKey targetKey = dbmodel.getPrimaryKey(DefaultName.create(getDefaultNamespace(), targetTypeName));
                         final PrimaryKey sourceKey = dbmodel.getPrimaryKey(relation.type);
                         if(targetKey.getColumns().size() != 1 || sourceKey.getColumns().size() != 1){
                             throw new DataStoreException("Multiple key column relations not supported.");
                         }
                         final ColumnMetaModel sourceColumnMeta = sourceKey.getColumns().get(0);
                         final ColumnMetaModel targetColumnMeta = targetKey.getColumns().get(0);
-                        final FeatureType targetType = dbmodel.getFeatureType(
-                                new DefaultName(getDefaultNamespace(), targetColumnMeta.getTable()));
+                        final FeatureType targetType = dbmodel.getFeatureType(DefaultName.create(getDefaultNamespace(), targetColumnMeta.getTable()));
                         
                         
                         //we create an relation in the opposite direction
@@ -843,7 +842,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      */
     private void decompose(ComplexType type, List<FeatureType> types, List<TypeRelation> relations) throws DataStoreException{
         
-        final Name dbName = new DefaultName(getDefaultNamespace(), type.getName().getLocalPart());
+        final Name dbName = DefaultName.create(getDefaultNamespace(), type.getName().getLocalPart());
         
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(dbName);

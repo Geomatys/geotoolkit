@@ -162,7 +162,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverage2D grid, final MutableStyle style, final String name){
-        final CoverageReference ref = new DefaultCoverageReference(grid, new DefaultName(name));
+        final CoverageReference ref = new DefaultCoverageReference(grid, DefaultName.create(name));
         return createCoverageLayer(ref, style);
     }
 
@@ -174,7 +174,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final Object input){
-        final CoverageReference reference = new DefaultCoverageReference(input, new DefaultName("image"));
+        final CoverageReference reference = new DefaultCoverageReference(input, DefaultName.create("image"));
         return createCoverageLayer(reference);
     }
 

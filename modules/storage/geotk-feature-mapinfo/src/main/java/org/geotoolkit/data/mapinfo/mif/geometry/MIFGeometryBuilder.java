@@ -49,7 +49,7 @@ public abstract class MIFGeometryBuilder {
 
 
     protected static final AttributeType STRING_TYPE =
-            new DefaultAttributeType(new DefaultName("TEXT"), String.class, false, false, null, null, null);
+            new DefaultAttributeType(DefaultName.create("TEXT"), String.class, false, false, null, null, null);
     /**
      * Parse an input file to build a JTS Geometry with its data.
      *

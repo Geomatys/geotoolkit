@@ -65,13 +65,13 @@ public class CSVReadingTest extends AbstractReadingTests{
 
         final String namespace = "http://test.com";
         
-        Name name = new DefaultName("http://test.com", "TestSchema3");
+        Name name = DefaultName.create("http://test.com", "TestSchema3");
         builder.reset();
         builder.setName(name);
-        builder.add(new DefaultName(namespace,"geometry"), Geometry.class, CRS.decode("EPSG:27582"));
-        builder.add(new DefaultName(namespace,"stringProp"), String.class);
-        builder.add(new DefaultName(namespace,"intProp"), Integer.class);
-        builder.add(new DefaultName(namespace,"doubleProp"), Double.class);
+        builder.add(DefaultName.create(namespace, "geometry"), Geometry.class, CRS.decode("EPSG:27582"));
+        builder.add(DefaultName.create(namespace, "stringProp"), String.class);
+        builder.add(DefaultName.create(namespace, "intProp"), Integer.class);
+        builder.add(DefaultName.create(namespace, "doubleProp"), Double.class);
         final FeatureType type3 = builder.buildFeatureType();
         store.createFeatureType(name,type3);
 

@@ -909,7 +909,7 @@ public class MySQLFeatureStoreTest {
         
         store.addFeatures(resType.getName(), Collections.singleton(voyage));
         
-        final Query query = QueryBuilder.language(JDBCFeatureStore.CUSTOM_SQL, "SELECT * FROM \"Stop\"", new DefaultName("s1"));        
+        final Query query = QueryBuilder.language(JDBCFeatureStore.CUSTOM_SQL, "SELECT * FROM \"Stop\"", DefaultName.create("s1"));        
         final FeatureReader ite = store.getFeatureReader(query);
         final boolean[] found = new boolean[3];
         try{

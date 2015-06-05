@@ -611,11 +611,11 @@ public abstract class AbstractFeatureStore extends FeatureStore {
 
     public static Name ensureGMLNS(final String namespace, final String local){
         if(local.equals(GML_NAME)){
-            return new DefaultName(GML_311_NAMESPACE, GML_NAME);
+            return DefaultName.create(GML_311_NAMESPACE, GML_NAME);
         }else if(local.equals(GML_DESCRIPTION)){
-            return new DefaultName(GML_311_NAMESPACE, GML_DESCRIPTION);
+            return DefaultName.create(GML_311_NAMESPACE, GML_DESCRIPTION);
         }else{
-            return new DefaultName(namespace, local);
+            return DefaultName.create(namespace, local);
         }
     }
 

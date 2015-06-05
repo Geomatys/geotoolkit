@@ -28,8 +28,8 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
  */
 public class MIFDefaultGeometryBuilder extends MIFGeometryBuilder{
 
-    public static final Name NAME = new DefaultName("GEOMETRY");
-    public static final Name GEOM_NAME = new DefaultName("GEOMETRY");
+    public static final Name NAME = DefaultName.create("GEOMETRY");
+    public static final Name GEOM_NAME = DefaultName.create("GEOMETRY");
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {

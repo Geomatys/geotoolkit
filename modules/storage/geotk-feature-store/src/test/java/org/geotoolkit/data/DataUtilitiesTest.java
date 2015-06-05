@@ -46,9 +46,9 @@ public class DataUtilitiesTest {
         store = new MemoryFeatureStore();
 
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        name1 = new DefaultName("http://test.com", "type1");
-        name2 = new DefaultName("http://test.com", "type2");
-        name3 = new DefaultName("http://test.com", "type3");
+        name1 = DefaultName.create("http://test.com", "type1");
+        name2 = DefaultName.create("http://test.com", "type2");
+        name3 = DefaultName.create("http://test.com", "type3");
         builder.reset();
         builder.setName(name1);
         builder.add("att_string", String.class);

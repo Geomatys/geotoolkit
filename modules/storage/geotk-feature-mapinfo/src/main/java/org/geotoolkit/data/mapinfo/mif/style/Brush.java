@@ -37,7 +37,7 @@ import org.geotoolkit.factory.FactoryFinder;
  */
 public class Brush implements MIFSymbolizer, PolygonSymbolizer {
 
-    public static final Name NAME = new DefaultName("BRUSH");
+    public static final Name NAME = DefaultName.create("BRUSH");
 
     public static final Pattern BRUSH_PATTERN = Pattern.compile(NAME.getLocalPart()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 

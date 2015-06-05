@@ -69,7 +69,7 @@ public class BasicFeatureTypes {
     static {
         // Feature is the base of everything else, must be created directly instead
         // of going thru the builder because the builder assumes it as the default base type
-        FEATURE = new DefaultSimpleFeatureType(new DefaultName("Feature"),
+        FEATURE = new DefaultSimpleFeatureType(DefaultName.create("Feature"),
                 Collections.EMPTY_LIST, null, true,
                 Collections.EMPTY_LIST, null, null);
     }

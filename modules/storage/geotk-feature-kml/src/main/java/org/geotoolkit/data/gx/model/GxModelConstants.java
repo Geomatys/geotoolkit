@@ -49,8 +49,7 @@ public class GxModelConstants {
         final FeatureTypeFactory ftf = ftb.getFeatureTypeFactory();
 
         //-------------------- TOUR ------------------------------
-        ATT_TOUR_PLAY_LIST = adb.create(
-                new DefaultName(GX_NAMESPACE, "playList"), PlayList.class,0,1,false,null);
+        ATT_TOUR_PLAY_LIST = adb.create(DefaultName.create(GX_NAMESPACE, "playList"), PlayList.class,0,1,false,null);
 
         ftb.reset();
         ftb.setName(GX_NAMESPACE, GxConstants.TAG_TOUR);

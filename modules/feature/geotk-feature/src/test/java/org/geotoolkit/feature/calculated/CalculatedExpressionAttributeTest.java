@@ -67,7 +67,7 @@ public class CalculatedExpressionAttributeTest {
         final Feature sf = sfb.buildFeature("id");
 
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final AttributeDescriptor desc = adb.create(new DefaultName("calc"), Long.class, 1, 1, false, null);
+        final AttributeDescriptor desc = adb.create(DefaultName.create("calc"), Long.class, 1, 1, false, null);
         final Expression exp = FF.add(FF.property("att1"), FF.property("att2"));
         CalculatedExpressionAttribute att = new CalculatedExpressionAttribute(desc, exp);
 

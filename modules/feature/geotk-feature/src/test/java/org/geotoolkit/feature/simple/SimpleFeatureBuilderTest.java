@@ -217,7 +217,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         FeatureType abstractType = tb.buildFeatureType();
         tb.setName("http://www.nowhereinparticular.net", "AbstractType2");
         tb.setSuperType(abstractType);
-        tb.add(new DefaultName("X"), String.class);
+        tb.add(DefaultName.create("X"), String.class);
         FeatureType abstractType2 = tb.buildFeatureType();
 
         try {
@@ -251,7 +251,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         AttributeTypeBuilder ab = new AttributeTypeBuilder();
         AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         ab.setBinding(Object.class);
-        adb.setName(new DefaultName("test"));
+        adb.setName(DefaultName.create("test"));
         adb.setType(ab.buildType());
         AttributeDescriptor testType = adb.buildDescriptor();
 

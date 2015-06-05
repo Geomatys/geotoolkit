@@ -36,7 +36,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class LabelLine implements MIFSymbolizer {
 
-    public static final Name NAME = new DefaultName("LABEL");
+    public static final Name NAME = DefaultName.create("LABEL");
     public static final Pattern PATTERN = Pattern.compile(NAME.getLocalPart(), Pattern.CASE_INSENSITIVE);
 
     private String type = "simple";

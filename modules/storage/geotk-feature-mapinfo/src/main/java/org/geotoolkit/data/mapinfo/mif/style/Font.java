@@ -35,7 +35,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class Font implements MIFSymbolizer {
 
-    public static final Name NAME = new DefaultName("FONT");
+    public static final Name NAME = DefaultName.create("FONT");
 
     public static final Pattern PATTERN = Pattern.compile(NAME.getLocalPart()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 

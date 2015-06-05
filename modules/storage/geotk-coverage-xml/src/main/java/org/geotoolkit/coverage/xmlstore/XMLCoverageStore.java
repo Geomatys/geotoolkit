@@ -123,7 +123,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         try {
             //TODO useless copy here
             final XMLCoverageReference set = XMLCoverageReference.read(refDescriptor);
-            final Name name = new DefaultName(getDefaultNamespace(), set.getId());
+            final Name name = DefaultName.create(getDefaultNamespace(), set.getId());
             final XMLCoverageReference ref = new XMLCoverageReference(this,name,set.getPyramidSet());
             ref.copy(set);
             rootNode.getChildren().add(ref);
@@ -157,7 +157,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         if (root.isFile()) {
             throw new DataStoreException("Store root is a file, not a directory, no reference creation allowed.");
         }
-        name = new DefaultName(getDefaultNamespace(), name.getLocalPart());
+        name = DefaultName.create(getDefaultNamespace(), name.getLocalPart());
         final Set<Name> names = getNames();
         if(names.contains(name)){
             throw new DataStoreException("Name already used in store : " + name.getLocalPart());

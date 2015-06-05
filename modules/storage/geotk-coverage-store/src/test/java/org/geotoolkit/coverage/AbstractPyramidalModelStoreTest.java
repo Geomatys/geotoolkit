@@ -84,7 +84,7 @@ public abstract class AbstractPyramidalModelStoreTest {
         ////////////////////////////////////////////////////////////////////////
         //create a small RGBA pyramid //////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
-        final DefaultName rgbaName = new DefaultName("rgba");
+        final DefaultName rgbaName = DefaultName.create("rgba");
         rgbaCoverageRef = (PyramidalCoverageReference) store.create(rgbaName);
         rgbaCoverageRef.setPackMode(ViewType.RENDERED);
         
@@ -130,7 +130,7 @@ public abstract class AbstractPyramidalModelStoreTest {
         ////////////////////////////////////////////////////////////////////////
         //create a small Float 1 band pyramid //////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
-        final DefaultName float1bName = new DefaultName("float1b");
+        final DefaultName float1bName = DefaultName.create("float1b");
         float1bCoverageRef = (PyramidalCoverageReference) store.create(float1bName);
         float1bCoverageRef.setPackMode(ViewType.GEOPHYSICS);
         

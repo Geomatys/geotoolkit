@@ -43,7 +43,7 @@ import java.util.logging.Level;
  */
 public class MIFMultiPointBuilder extends MIFGeometryBuilder {
 
-    public static final Name NAME = new DefaultName("MULTIPOINT");
+    public static final Name NAME = DefaultName.create("MULTIPOINT");
 
     public static final AttributeDescriptor SYMBOL_DESCRIPTOR;
 

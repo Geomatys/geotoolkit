@@ -128,7 +128,7 @@ public class PGPyramidTest {
         GridMosaic mosaic;
         BufferedImage image;
         
-        final Name name = new DefaultName(null, "versLayer");        
+        final Name name = DefaultName.create(null, "versLayer");        
         store.create(name);
         
         //create version 1 -----------------------------------------------------
@@ -193,7 +193,7 @@ public class PGPyramidTest {
         GridMosaic mosaic;
         BufferedImage image;
 
-        final Name name = new DefaultName(null, "sampleTestLayer");
+        final Name name = DefaultName.create(null, "sampleTestLayer");
         store.create(name);
 
         //create version 1 -----------------------------------------------------

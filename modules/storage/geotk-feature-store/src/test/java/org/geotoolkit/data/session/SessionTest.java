@@ -82,7 +82,7 @@ public class SessionTest{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //create the schema
-        final Name name = new DefaultName("http://test.com", "TestSchema1");
+        final Name name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());

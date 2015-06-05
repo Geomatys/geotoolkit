@@ -84,13 +84,13 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
             final ObservationCollection collection = (ObservationCollection)obj;
             for (Observation obs : collection.getMember()) {
                 final Process process = (Process)obs.getProcedure();
-                names.add(new DefaultName(process.getHref()));
+                names.add(DefaultName.create(process.getHref()));
             }
             
         } else if (obj instanceof Observation) {
             final Observation obs = (Observation)obj;
             final Process process = (Process)obs.getProcedure();
-            names.add(new DefaultName(process.getHref()));
+            names.add(DefaultName.create(process.getHref()));
         }
         return names;
     }

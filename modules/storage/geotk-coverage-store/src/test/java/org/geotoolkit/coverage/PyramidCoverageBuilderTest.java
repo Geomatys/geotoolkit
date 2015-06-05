@@ -47,7 +47,7 @@ import org.opengis.referencing.datum.PixelInCell;
  */
 public class PyramidCoverageBuilderTest {
 
-    private static final Name NAME = new DefaultName("test");
+    private static final Name NAME = DefaultName.create("test");
     private static final CoordinateReferenceSystem CRS84 = CommonCRS.WGS84.normalizedGeographic();
     private static final CoordinateReferenceSystem EPSG4326;
     static {
@@ -76,7 +76,7 @@ public class PyramidCoverageBuilderTest {
         final Map<Envelope, double[]> map = new HashMap<>();
         map.put(env1, scales);
 
-        final Name name = new DefaultName("memory_store_test");
+        final Name name = DefaultName.create("memory_store_test");
         pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
 
         //test reference
@@ -156,7 +156,7 @@ public class PyramidCoverageBuilderTest {
         final Map<Envelope, double[]> map = new HashMap<>();
         map.put(env, scales);
 
-        final Name name = new DefaultName("memory_store_test");
+        final Name name = DefaultName.create("memory_store_test");
         //pyramid 1st coverage
         pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
         //append 2nd coverage
@@ -285,7 +285,7 @@ public class PyramidCoverageBuilderTest {
         final Map<Envelope, double[]> map = new HashMap<>();
         map.put(env, scales);
 
-        final Name name = new DefaultName("memory_store_test");
+        final Name name = DefaultName.create("memory_store_test");
         //pyramid 1st coverage
         pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
 

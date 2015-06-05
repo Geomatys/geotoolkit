@@ -109,7 +109,7 @@ public class MapLayerTest extends TestCase{
             //ok
         }
 
-        final Name name = new DefaultName("test");
+        final Name name = DefaultName.create("test");
         FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.setName(name);
         FeatureType type = builder.buildFeatureType();

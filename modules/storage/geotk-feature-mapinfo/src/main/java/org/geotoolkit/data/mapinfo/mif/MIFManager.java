@@ -611,12 +611,12 @@ public class MIFManager {
                         "The typename " + tmpType + "(from " + attName + " attribute) is an unknown attribute type.");
             }
             /** todo : instantiate filters for String & Double type (length limitations). */
-            final Name name = new DefaultName(attName);
+            final Name name = DefaultName.create(attName);
             final DefaultAttributeType attType = new DefaultAttributeType(name, binding, true, false, null, null, null);
             final DefaultAttributeDescriptor desc = new DefaultAttributeDescriptor(attType, name, 1, 1, true, null);
             schema.add(desc);
         }
-        Name name = new DefaultName(mifName);
+        Name name = DefaultName.create(mifName);
         mifBaseType = new DefaultFeatureType(name, schema, null, false, null, null, null);
     }
 

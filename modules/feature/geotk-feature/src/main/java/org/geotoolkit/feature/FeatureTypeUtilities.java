@@ -175,14 +175,14 @@ public final class FeatureTypeUtilities {
 
     /** default feature collection name */
     public static final DefaultName DEFAULT_TYPENAME =
-            new DefaultName("AbstractFeatureCollectionType", DEFAULT_NAMESPACE.toString());
+            DefaultName.create("AbstractFeatureCollectionType", DEFAULT_NAMESPACE.toString());
 
     /** represent an unbounded field length */
     public static final int ANY_LENGTH = -1;
 
     /** An feature type with no attributes */
     public static final FeatureType EMPTY = new DefaultSimpleFeatureType(
-            new DefaultName("Empty"), Collections.EMPTY_LIST, null, false, Collections.EMPTY_LIST, null, null);
+            DefaultName.create("Empty"), Collections.EMPTY_LIST, null, false, Collections.EMPTY_LIST, null, null);
 
 
     private FeatureTypeUtilities() {}
@@ -310,7 +310,7 @@ public final class FeatureTypeUtilities {
 
 
 
-        tb.setName(new DefaultName(namespaceURI, typeName));
+        tb.setName(DefaultName.create(namespaceURI, typeName));
         tb.addAll(types);
 
         FeatureType result = tb.buildFeatureType();
@@ -457,7 +457,7 @@ public final class FeatureTypeUtilities {
             final String typeSpec) throws SchemaException
     {
         final FeatureTypeBuilder tb = new FeatureTypeBuilder();
-        tb.setName(new DefaultName(namespace, typeName));
+        tb.setName(DefaultName.create(namespace, typeName));
 
         final String[] types = typeSpec.split(",");
 
@@ -579,13 +579,13 @@ public final class FeatureTypeUtilities {
 
             final Class clazz = type(type);
             if (Geometry.class.isAssignableFrom(clazz)) {
-                final GeometryType at = new DefaultGeometryType(new DefaultName(namespace,name), clazz, crs, false, false,
+                final GeometryType at = new DefaultGeometryType(DefaultName.create(namespace, name), clazz, crs, false, false,
                                                                 Collections.EMPTY_LIST, null, null);
-                return new DefaultGeometryDescriptor(at, new DefaultName(namespace,name), 1, 1, nillable, null);
+                return new DefaultGeometryDescriptor(at, DefaultName.create(namespace, name), 1, 1, nillable, null);
             } else {
-                final AttributeType at = new DefaultAttributeType(new DefaultName(namespace,name), clazz, false, false,
+                final AttributeType at = new DefaultAttributeType(DefaultName.create(namespace, name), clazz, false, false,
                                                                   Collections.EMPTY_LIST, null, null);
-                return new DefaultAttributeDescriptor(at, new DefaultName(namespace,name), 1, 1, nillable, null);
+                return new DefaultAttributeDescriptor(at, DefaultName.create(namespace, name), 1, 1, nillable, null);
             }
         } catch (ClassNotFoundException e) {
             throw new SchemaException("Could not type " + name + " as:" + type, e);
@@ -833,7 +833,7 @@ public final class FeatureTypeUtilities {
             final AttributeDescriptor defaultGeometry) throws FactoryRegistryException, SchemaException{
 
         final FeatureTypeBuilder tb = new FeatureTypeBuilder();
-        tb.setName(new DefaultName(ns.toString(), name));
+        tb.setName(DefaultName.create(ns.toString(), name));
         tb.setAbstract(isAbstract);
         tb.addAll(types);
 

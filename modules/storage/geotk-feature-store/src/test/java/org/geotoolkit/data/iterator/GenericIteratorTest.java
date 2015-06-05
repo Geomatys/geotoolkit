@@ -106,7 +106,7 @@ public class GenericIteratorTest extends TestCase{
 
     public GenericIteratorTest() throws NoSuchAuthorityCodeException, FactoryException{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        name = new DefaultName("http://test.com", "TestSchema");
+        name = DefaultName.create("http://test.com", "TestSchema");
         builder.reset();
         builder.setName(name);
         builder.add("att_geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
@@ -466,7 +466,7 @@ public class GenericIteratorTest extends TestCase{
     @Test
     public void testTransformFeatureIterator() throws DataStoreException{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        final DefaultName name = new DefaultName("http://test.com", "TestSchema");
+        final DefaultName name = DefaultName.create("http://test.com", "TestSchema");
         builder.reset();
         builder.setName(name);
         builder.add("att_geom", LineString.class, CommonCRS.WGS84.normalizedGeographic());

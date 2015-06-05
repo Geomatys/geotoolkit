@@ -54,7 +54,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //first schema----------------------------------------------------------
-        Name name = new DefaultName("http://test.com", "TestSchema1");
+        Name name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
@@ -66,7 +66,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         store.createFeatureType(name,type1);
 
         //second schema --------------------------------------------------------
-        name = new DefaultName("http://test.com", "TestSchema2");
+        name = DefaultName.create("http://test.com", "TestSchema2");
         builder.reset();
         builder.setName(name);
         builder.add("string", String.class);
@@ -104,7 +104,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         expecteds.add(new ExpectedResult(name,type2,3,null));
 
         //third schema ---------------------------------------------------------
-        name = new DefaultName("http://test.com", "TestSchema3");
+        name = DefaultName.create("http://test.com", "TestSchema3");
         builder.reset();
         builder.setName(name);
         builder.add("geometry", Point.class, CRS.decode("EPSG:27582"));

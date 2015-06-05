@@ -56,7 +56,7 @@ public class PyramidReaderTest {
         final int width = 28;
         final int height = 13;
 
-        final PyramidalCoverageReference ref1 = (PyramidalCoverageReference) store.create(new DefaultName("test1"));
+        final PyramidalCoverageReference ref1 = (PyramidalCoverageReference) store.create(DefaultName.create("test1"));
         create4DPyramid(ref1, crs, width, height, new double[][]{
             {-5,-9,  12},
             {-5, 0,  -7},

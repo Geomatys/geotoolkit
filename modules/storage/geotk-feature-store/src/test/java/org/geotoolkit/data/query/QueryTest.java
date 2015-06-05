@@ -71,11 +71,11 @@ public class QueryTest extends TestCase{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //----------------------------------------------------------------------
-        name1 = new DefaultName("http://type1.com", "Type1");
+        name1 = DefaultName.create("http://type1.com", "Type1");
         builder.reset();
         builder.setName(name1);
-        builder.add(new DefaultName("http://type1.com", "att1"), String.class);
-        builder.add(new DefaultName("http://type1.com", "att2"), Integer.class);
+        builder.add(DefaultName.create("http://type1.com", "att1"), String.class);
+        builder.add(DefaultName.create("http://type1.com", "att2"), Integer.class);
         final FeatureType sft1 = builder.buildFeatureType();
         store.createFeatureType(name1,sft1);
 
@@ -114,11 +114,11 @@ public class QueryTest extends TestCase{
 
 
         //----------------------------------------------------------------------
-        name2 = new DefaultName("http://type2.com", "Type2");
+        name2 = DefaultName.create("http://type2.com", "Type2");
         builder.reset();
         builder.setName(name2);
-        builder.add(new DefaultName("http://type2.com", "att3"), Integer.class);
-        builder.add(new DefaultName("http://type2.com", "att4"), Double.class);
+        builder.add(DefaultName.create("http://type2.com", "att3"), Integer.class);
+        builder.add(DefaultName.create("http://type2.com", "att4"), Double.class);
         final FeatureType sft2 = builder.buildFeatureType();
         store.createFeatureType(name2,sft2);
 
@@ -169,7 +169,7 @@ public class QueryTest extends TestCase{
     @Test
     public void testStaticQueryBuilder() throws Exception {
         Query query = null;
-        Name name = new DefaultName("http://test.org","testLocal");
+        Name name = DefaultName.create("http://test.org", "testLocal");
 
         //test null values------------------------------------------------------
         try{
@@ -257,7 +257,7 @@ public class QueryTest extends TestCase{
      */
     @Test
     public void testQueryBuilder() throws Exception {
-        Name name = new DefaultName("http://test.org","testLocal");
+        Name name = DefaultName.create("http://test.org", "testLocal");
         Query query = null;
         Query query2 = null;
 

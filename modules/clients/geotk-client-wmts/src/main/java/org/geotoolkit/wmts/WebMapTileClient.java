@@ -267,7 +267,7 @@ public class WebMapTileClient extends AbstractCoverageClient {
             final List<LayerType> layers = capa.getContents().getLayers();
             for(LayerType lt : layers){
                 final String name = lt.getIdentifier().getValue();
-                final Name nn = new DefaultName(name);
+                final Name nn = DefaultName.create(name);
                 final CoverageReference ref = new WMTSCoverageReference(this,nn,getImageCache());
                 rootNode.getChildren().add(ref);
             }

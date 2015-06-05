@@ -157,15 +157,15 @@ public class AttributeDescriptorBuilder {
     }
 
     public void setName(final String localPart){
-        this.name = new DefaultName(localPart);
+        this.name = DefaultName.create(localPart);
     }
 
     public void setName(final String namespace, final String localPart){
-        this.name = new DefaultName(namespace,localPart);
+        this.name = DefaultName.create(namespace, localPart);
     }
 
     public void setName(final String namespace, final String separator, final String localPart){
-        this.name = new DefaultName(namespace,separator,localPart);
+        this.name = DefaultName.create(namespace, separator, localPart);
     }
 
     public Name getName() {

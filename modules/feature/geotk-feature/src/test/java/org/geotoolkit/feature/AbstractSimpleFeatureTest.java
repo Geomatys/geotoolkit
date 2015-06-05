@@ -81,8 +81,8 @@ public abstract class AbstractSimpleFeatureTest {
     public void testCreateSimpleAttribute() {
         final FeatureFactory FF = getFeatureFactory();
         final Object value = new MockDirectPosition2D(50, 60);
-        final Name nm = new DefaultName("point");
-        final Name finalNm = new DefaultName("pointAsso");
+        final Name nm = DefaultName.create("point");
+        final Name finalNm = DefaultName.create("pointAsso");
         final String id = "id-0";
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
@@ -122,7 +122,7 @@ public abstract class AbstractSimpleFeatureTest {
     public void testCreateGeometryAttribute() {
         final FeatureFactory FF = getFeatureFactory();
         final Object value = new MockDirectPosition2D(50, 60);
-        final Name nm = new DefaultName("point");
+        final Name nm = DefaultName.create("point");
         final String id = "id-0";
         final Map crsInfo = new HashMap<String, String>();
         crsInfo.put("name", "myCRS");
@@ -167,8 +167,8 @@ public abstract class AbstractSimpleFeatureTest {
     public void testCreateAssociation() {
         //initialisation
         final FeatureFactory FF = getFeatureFactory();
-        final Name nm = new DefaultName("point");
-        final Name finalNm = new DefaultName("pointAsso");
+        final Name nm = DefaultName.create("point");
+        final Name finalNm = DefaultName.create("pointAsso");
         final String id = "id-0";
         final Object value = new MockDirectPosition2D(50, 60);
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
@@ -216,8 +216,8 @@ public abstract class AbstractSimpleFeatureTest {
     @Test
     public void testCreateSimpleFeature() {
         final FeatureFactory FF = getFeatureFactory();
-        final Name nm = new DefaultName("point");
-        final Name strNm = new DefaultName("String");
+        final Name nm = DefaultName.create("point");
+        final Name strNm = DefaultName.create("String");
         Object geomValue = new MockDirectPosition2D(50, 60);
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
@@ -340,7 +340,7 @@ public abstract class AbstractSimpleFeatureTest {
         } catch (Exception e) {
         }
         assertNull("Trying to access non existant value, method getProperty should have returned null", feature.getProperty("non_existant"));
-        Name tmpName = new DefaultName("non-existant");
+        Name tmpName = DefaultName.create("non-existant");
         assertNull("Trying to access non existant value, method getProperty should have returned null", feature.getProperty(tmpName));
     }
 }

@@ -82,7 +82,7 @@ public class OSMTileMapClient extends AbstractCoverageClient {
 
     public OSMTileMapClient(ParameterValueGroup params){
         super(params);
-        final Name name = new DefaultName(serverURL.toString(),"main");
+        final Name name = DefaultName.create(serverURL.toString(), "main");
         pyramidSet = new OSMTMSPyramidSet(this,getMaxZoomLevel(),getCacheImage());
         final OSMTMSCoverageReference ref = new OSMTMSCoverageReference(this,name);
         rootNode.getChildren().add(ref);

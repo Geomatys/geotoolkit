@@ -27,6 +27,6 @@ import org.geotoolkit.feature.type.DefaultName;
 public class MIFEllipseBuilder extends MIFRectangleBuilder {
 
     public MIFEllipseBuilder() {
-        NAME = new DefaultName("ELLIPSE");
+        NAME = DefaultName.create("ELLIPSE");
     }
 }

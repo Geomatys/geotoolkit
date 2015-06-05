@@ -232,11 +232,11 @@ public class FeatureTypeBuilder {
     }
 
     public void setName(final String namespace, final String localPart){
-        setName(new DefaultName(namespace,localPart));
+        setName(DefaultName.create(namespace, localPart));
     }
 
     public void setName(final String namespace, final String separator, final String localPart){
-        setName(new DefaultName(namespace,separator,localPart));
+        setName(DefaultName.create(namespace, separator, localPart));
     }
 
     /**

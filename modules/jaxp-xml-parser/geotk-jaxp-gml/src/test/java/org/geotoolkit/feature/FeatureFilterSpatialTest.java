@@ -65,20 +65,20 @@ public class FeatureFilterSpatialTest {
          *                            AggregateGeoFeature                                            *
          *                                                                                           *
          *********************************************************************************************/
-        final Name description = new DefaultName("http://www.opengis.net/gml", "description");
-        final Name name = new DefaultName("http://www.opengis.net/gml", "name");
-        final Name multiPointProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "multiPointProperty");
-        final Name multiCurveProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "multiCurveProperty");
-        final Name multiSurfaceProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "multiSurfaceProperty");
-        final Name doubleProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "doubleProperty");
-        final Name intRangeProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "intRangeProperty");
-        final Name strProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "strProperty");
-        final Name featureCode = new DefaultName("http://cite.opengeospatial.org/gmlsf", "featureCode");
-        final Name id = new DefaultName("http://cite.opengeospatial.org/gmlsf", "id");
+        final Name description = DefaultName.create("http://www.opengis.net/gml", "description");
+        final Name name = DefaultName.create("http://www.opengis.net/gml", "name");
+        final Name multiPointProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "multiPointProperty");
+        final Name multiCurveProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "multiCurveProperty");
+        final Name multiSurfaceProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "multiSurfaceProperty");
+        final Name doubleProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "doubleProperty");
+        final Name intRangeProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "intRangeProperty");
+        final Name strProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "strProperty");
+        final Name featureCode = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "featureCode");
+        final Name id = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "id");
 
 
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
-        sftb.setName(new DefaultName("http://cite.opengeospatial.org/gmlsf", "AggregateGeoFeature"));
+        sftb.setName(DefaultName.create("http://cite.opengeospatial.org/gmlsf", "AggregateGeoFeature"));
         sftb.add(description, String.class);
         sftb.add(name, String.class);
         sftb.add(multiPointProperty, MultiPoint.class, CRS.decode("EPSG:4326"));
@@ -116,14 +116,14 @@ public class FeatureFilterSpatialTest {
          *                            EntitéGénérique                                                *
          *                                                                                           *
          *********************************************************************************************/
-        final Name attributGeometrie  = new DefaultName("http://cite.opengeospatial.org/gmlsf", "attribut.Géométrie");
-        final Name boolProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "boolProperty");
-        final Name str4Property = new DefaultName("http://cite.opengeospatial.org/gmlsf", "str4Property");
-        final Name featureRef = new DefaultName("http://cite.opengeospatial.org/gmlsf", "featureRef");
+        final Name attributGeometrie  = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "attribut.Géométrie");
+        final Name boolProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "boolProperty");
+        final Name str4Property = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "str4Property");
+        final Name featureRef = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "featureRef");
 
         sftb.reset();
 
-        sftb.setName(new DefaultName("http://cite.opengeospatial.org/gmlsf", "EntitéGénérique"));
+        sftb.setName(DefaultName.create("http://cite.opengeospatial.org/gmlsf", "EntitéGénérique"));
         sftb.add(description, String.class);
         sftb.add(name, String.class);
         sftb.add(attributGeometrie, Geometry.class, CRS.decode("EPSG:4326"));

@@ -162,7 +162,7 @@ public abstract class AbstractReadingTests{
 
         //check error on wrong type names---------------------------------------
         try{
-            store.getFeatureType(new DefaultName("http://not", "exist"));
+            store.getFeatureType(DefaultName.create("http://not", "exist"));
             throw new Exception("Asking for a schema that doesnt exist should have raised a featurestore exception.");
         }catch(DataStoreException ex){
             //ok
@@ -250,7 +250,7 @@ public abstract class AbstractReadingTests{
             //ok
         }
 
-        query = QueryBuilder.all(new DefaultName(candidate.name.getNamespaceURI(), candidate.name.getLocalPart()+"fgresfds_not_exist"));
+        query = QueryBuilder.all(DefaultName.create(candidate.name.getNamespaceURI(), candidate.name.getLocalPart()+"fgresfds_not_exist"));
         try{
             store.getFeatureReader(query);
             throw new Exception("Asking for a reader without a wrong name should raise a featurestore exception.");
@@ -258,7 +258,7 @@ public abstract class AbstractReadingTests{
             //ok
         }
 
-        query = QueryBuilder.all(new DefaultName(candidate.name.getNamespaceURI()+"resfsdfsdf_not_exist", candidate.name.getLocalPart()));
+        query = QueryBuilder.all(DefaultName.create(candidate.name.getNamespaceURI()+"resfsdfsdf_not_exist", candidate.name.getLocalPart()));
         try{
             store.getFeatureReader(query);
             throw new Exception("Asking for a reader without a wrong namespace should raise a featurestore exception.");

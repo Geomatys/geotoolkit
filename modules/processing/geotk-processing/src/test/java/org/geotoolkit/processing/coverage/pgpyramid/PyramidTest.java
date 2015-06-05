@@ -71,7 +71,7 @@ public class PyramidTest {
         upperLeft.setCoordinate(-180,90);
 
         final MPCoverageStore store = new MPCoverageStore();
-        final Name name = new DefaultName(null, "test");
+        final Name name = DefaultName.create(null, "test");
         final PyramidalCoverageReference pcr = (PyramidalCoverageReference) store.create(name);
         final List<GridSampleDimension> dims = new ArrayList<GridSampleDimension>();
         final GridSampleDimension dim1 = new GridSampleDimension("sampleDesc1");

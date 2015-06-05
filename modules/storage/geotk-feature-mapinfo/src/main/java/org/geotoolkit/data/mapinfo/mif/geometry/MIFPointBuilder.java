@@ -41,7 +41,7 @@ import java.util.logging.Level;
  */
 public final class MIFPointBuilder extends MIFGeometryBuilder {
 
-    public static final Name NAME = new DefaultName("POINT");
+    public static final Name NAME = DefaultName.create("POINT");
 
     public static final AttributeDescriptor SYMBOL_DESCRIPTOR;
 

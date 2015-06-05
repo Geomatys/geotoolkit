@@ -212,15 +212,15 @@ public class AttributeTypeBuilder {
     }
 
     public void setName(final String localPart){
-        this.name = new DefaultName(localPart);
+        this.name = DefaultName.create(localPart);
     }
 
     public void setName(final String namespace, final String localPart){
-        this.name = new DefaultName(namespace,localPart);
+        this.name = DefaultName.create(namespace, localPart);
     }
 
     public void setName(final String namespace, final String separator, final String localPart){
-        this.name = new DefaultName(namespace,separator,localPart);
+        this.name = DefaultName.create(namespace, separator, localPart);
     }
 
     public Name getName() {
@@ -300,7 +300,7 @@ public class AttributeTypeBuilder {
     public AttributeType buildType() {
         final Name name;
         if(this.name == null){
-            name = new DefaultName(binding.getSimpleName());
+            name = DefaultName.create(binding.getSimpleName());
         }else{
             name = this.name;
         }
@@ -327,7 +327,7 @@ public class AttributeTypeBuilder {
     public GeometryType buildGeometryType() {
         final Name name;
         if(this.name == null){
-            name = new DefaultName(binding.getSimpleName());
+            name = DefaultName.create(binding.getSimpleName());
         }else{
             name = this.name;
         }
@@ -342,7 +342,7 @@ public class AttributeTypeBuilder {
     public AssociationType buildAssociationType(final AttributeType distType){
         final Name name;
         if(this.name == null){
-            name = new DefaultName(binding.getSimpleName());
+            name = DefaultName.create(binding.getSimpleName());
         }else{
             name = this.name;
         }

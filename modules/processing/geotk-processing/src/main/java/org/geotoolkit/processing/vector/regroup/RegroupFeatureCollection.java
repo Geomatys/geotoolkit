@@ -131,7 +131,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
                 new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
         final Filter filter = ff.equals(ff.property(regroupAttribute), ff.literal(attributeValue));
-        return QueryBuilder.filtered(new DefaultName("filter"), filter);
+        return QueryBuilder.filtered(DefaultName.create("filter"), filter);
 
     }
 

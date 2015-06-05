@@ -453,7 +453,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             fts.semanticTypeIdentifiers().addAll( visitSemantics(cst.getSemanticTypeIdentifier()));
 
             if(cst.getCoverageName() != null){
-                fts.featureTypeNames().add(new DefaultName(cst.getCoverageName()));
+                fts.featureTypeNames().add(DefaultName.create(cst.getCoverageName()));
             }
 
             if(cst.getRuleOrOnlineResource() == null || cst.getRuleOrOnlineResource().isEmpty()){
@@ -473,7 +473,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             fts.semanticTypeIdentifiers().addAll( visitSemantics(ftst.getSemanticTypeIdentifier()));
 
             if(ftst.getFeatureTypeName() != null){
-                fts.featureTypeNames().add(new DefaultName(ftst.getFeatureTypeName()));
+                fts.featureTypeNames().add(DefaultName.create(ftst.getFeatureTypeName()));
             }
 
             if(ftst.getRuleOrOnlineResource() == null || ftst.getRuleOrOnlineResource().isEmpty()){

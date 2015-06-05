@@ -65,7 +65,7 @@ public class PGCoverageDemo {
             throw new DataStoreException("Wrong parameters");
         }
 
-        final CoverageReference ref = store.getCoverageReference(new DefaultName(LAYER_NAME));
+        final CoverageReference ref = store.getCoverageReference(DefaultName.create(LAYER_NAME));
         final CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref,
                 new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER));
 

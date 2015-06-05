@@ -111,7 +111,7 @@ public class SampleFeatureFixtures {
         ab.reset();
         ab.setBinding(Byte.class);
         adb.reset();
-        adb.setName(new DefaultName("testByte"));
+        adb.setName(DefaultName.create("testByte"));
         adb.setType(ab.buildType());
 
         choices[0] = adb.buildDescriptor();
@@ -119,14 +119,14 @@ public class SampleFeatureFixtures {
         ab.reset();
         ab.setBinding(Double.class);
         adb.reset();
-        adb.setName(new DefaultName("testDouble"));
+        adb.setName(DefaultName.create("testDouble"));
         adb.setType(ab.buildType());
         choices[1] = adb.buildDescriptor();
 
         ab.reset();
         ab.setBinding(String.class);
         adb.reset();
-        adb.setName(new DefaultName("testString"));
+        adb.setName(DefaultName.create("testString"));
         adb.setType(ab.buildType());
         choices[2] = adb.buildDescriptor();
 
@@ -141,14 +141,14 @@ public class SampleFeatureFixtures {
         ab.reset();
         ab.setBinding(String.class);
         adb.reset();
-        adb.setName(new DefaultName("testString"));
+        adb.setName(DefaultName.create("testString"));
         adb.setType(ab.buildType());
         choices[0] = adb.buildDescriptor();
 
         ab.reset();
         ab.setBinding(Integer.class);
         adb.reset();
-        adb.setName(new DefaultName("testInt"));
+        adb.setName(DefaultName.create("testInt"));
         adb.setType(ab.buildType());
         choices[1] = adb.buildDescriptor();
 
@@ -202,18 +202,18 @@ public class SampleFeatureFixtures {
      */
     public static FeatureType createTestType() throws SchemaException {
         FeatureTypeBuilder tb = new FeatureTypeBuilder();
-        tb.setName(new DefaultName("test"));
+        tb.setName(DefaultName.create("test"));
 
-        tb.add(new DefaultName("testGeometry"), Point.class, CommonCRS.WGS84.normalizedGeographic());
-        tb.add(new DefaultName("testBoolean"), Boolean.class);
-        tb.add(new DefaultName("testCharacter"), Character.class);
-        tb.add(new DefaultName("testByte"), Byte.class);
-        tb.add(new DefaultName("testShort"), Short.class);
-        tb.add(new DefaultName("testInteger"), Integer.class);
-        tb.add(new DefaultName("testLong"), Long.class);
-        tb.add(new DefaultName("testFloat"), Float.class);
-        tb.add(new DefaultName("testDouble"), Double.class);
-        tb.add(new DefaultName("testString"), String.class);
+        tb.add(DefaultName.create("testGeometry"), Point.class, CommonCRS.WGS84.normalizedGeographic());
+        tb.add(DefaultName.create("testBoolean"), Boolean.class);
+        tb.add(DefaultName.create("testCharacter"), Character.class);
+        tb.add(DefaultName.create("testByte"), Byte.class);
+        tb.add(DefaultName.create("testShort"), Short.class);
+        tb.add(DefaultName.create("testInteger"), Integer.class);
+        tb.add(DefaultName.create("testLong"), Long.class);
+        tb.add(DefaultName.create("testFloat"), Float.class);
+        tb.add(DefaultName.create("testDouble"), Double.class);
+        tb.add(DefaultName.create("testString"), String.class);
 
         tb.setDefaultGeometry("testGeometry");
         return tb.buildSimpleFeatureType();

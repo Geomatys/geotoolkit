@@ -134,7 +134,7 @@ public class PGCVersioningTest {
         GridMosaic mosaic;
         GridCoverage2D coverage;
 
-        final Name name = new DefaultName(null, "versLayer");
+        final Name name = DefaultName.create(null, "versLayer");
         store.create(name);
         final VersionControl vc = store.getVersioning(name);
         versions = vc.list();

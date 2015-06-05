@@ -64,7 +64,7 @@ public class DBFReadingTest extends AbstractReadingTests{
         final AttributeTypeBuilder buildAtt = new AttributeTypeBuilder();
         final AttributeDescriptorBuilder buildDesc = new AttributeDescriptorBuilder();
         
-        Name name = new DefaultName("http://test.com", "sample");
+        Name name = DefaultName.create("http://test.com", "sample");
         builder.reset();
         builder.setName(name);
         

@@ -299,7 +299,7 @@ public class JFeatureOutLine extends Outline{
                         final GeneralParameterDescriptor pd = (GeneralParameterDescriptor) origin;
                         if(pd.getAlias() != null && !pd.getAlias().isEmpty()){
                             final GenericName gn = pd.getAlias().iterator().next();
-                            name = new DefaultName(null, gn.toInternationalString().toString());
+                            name = DefaultName.create(null, gn.toInternationalString().toString());
                         }else{
                             name = prop.getName();
                         }
@@ -321,7 +321,7 @@ public class JFeatureOutLine extends Outline{
                         final GeneralParameterDescriptor pd = (GeneralParameterDescriptor) origin;
                         if(pd.getAlias() != null && !pd.getAlias().isEmpty()){
                             final GenericName gn = pd.getAlias().iterator().next();
-                            name = new DefaultName(null, gn.toInternationalString().toString());
+                            name = DefaultName.create(null, gn.toInternationalString().toString());
                         }else{
                             name = desc.getName();
                         }

@@ -50,8 +50,8 @@ import org.geotoolkit.feature.type.FeatureType;
  */
 public class MIFPolyLineBuilder extends MIFGeometryBuilder {
 
-    public static final Name NAME = new DefaultName("PLINE");
-    public static final Name SMOOTH_NAME = new DefaultName("SMOOTH");
+    public static final Name NAME = DefaultName.create("PLINE");
+    public static final Name SMOOTH_NAME = DefaultName.create("SMOOTH");
 
     private static final AttributeDescriptor SMOOTH;
     private static final AttributeDescriptor PEN;

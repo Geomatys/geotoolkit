@@ -44,7 +44,7 @@ import java.util.logging.Level;
  */
 public class MIFLineBuilder extends MIFGeometryBuilder {
 
-    public static final Name NAME = new DefaultName("LINE");
+    public static final Name NAME = DefaultName.create("LINE");
 
     private static final AttributeDescriptor PEN;
     static {

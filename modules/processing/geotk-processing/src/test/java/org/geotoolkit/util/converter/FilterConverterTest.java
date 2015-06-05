@@ -55,8 +55,8 @@ public class FilterConverterTest {
         FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(
             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
-        final Filter filter1 = ff.equals(ff.property(new DefaultName("name")), ff.literal("Smith"));
-        final Filter filter2 = ff.equals(ff.property(new DefaultName("age")), ff.literal(30));
+        final Filter filter1 = ff.equals(ff.property(DefaultName.create("name")), ff.literal("Smith"));
+        final Filter filter2 = ff.equals(ff.property(DefaultName.create("age")), ff.literal(30));
         return ff.and(filter1, filter2);
 
     }

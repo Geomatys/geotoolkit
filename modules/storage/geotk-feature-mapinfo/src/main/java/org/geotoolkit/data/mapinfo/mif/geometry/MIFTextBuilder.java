@@ -49,11 +49,11 @@ import org.apache.sis.util.ArgumentChecks;
  *         Date : 26/02/13
  */
 public class MIFTextBuilder extends MIFGeometryBuilder {
-    public static final Name NAME = new DefaultName("ENVELOPE");
-    public static final Name TEXT_NAME = new DefaultName("TEXT");
-    public static final Name SPACING_NAME = new DefaultName("SPACING");
-    public static final Name JUSTIFY_NAME = new DefaultName("JUSTIFY");
-    public static final Name ANGLE_NAME = new DefaultName("ANGLE");
+    public static final Name NAME = DefaultName.create("ENVELOPE");
+    public static final Name TEXT_NAME = DefaultName.create("TEXT");
+    public static final Name SPACING_NAME = DefaultName.create("SPACING");
+    public static final Name JUSTIFY_NAME = DefaultName.create("JUSTIFY");
+    public static final Name ANGLE_NAME = DefaultName.create("ANGLE");
 
     public static final AttributeDescriptor TEXT_DESCRIPTOR;
     public static final AttributeDescriptor FONT_DESCRIPTOR;

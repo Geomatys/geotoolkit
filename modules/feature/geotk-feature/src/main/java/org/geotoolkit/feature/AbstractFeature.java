@@ -41,7 +41,7 @@ import org.opengis.geometry.Envelope;
  */
 public abstract class AbstractFeature<C extends Collection<Property>> extends AbstractComplexAttribute<C,FeatureId> implements Feature {
 
-    private static final Name NOT_FOUND = new DefaultName("notfound");
+    private static final Name NOT_FOUND = DefaultName.create("notfound");
 
     /**
      * Default geometry attribute name

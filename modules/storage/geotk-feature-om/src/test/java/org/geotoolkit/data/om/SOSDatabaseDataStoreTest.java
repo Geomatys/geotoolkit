@@ -74,16 +74,16 @@ public class SOSDatabaseDataStoreTest extends AbstractReadingTests{
 
             final String nsOM = "http://www.opengis.net/sampling/1.0";
             final String nsGML = "http://www.opengis.net/gml";
-            final Name name = new DefaultName(nsOM, "SamplingPoint");
+            final Name name = DefaultName.create(nsOM, "SamplingPoint");
             names.add(name);
 
             final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
             featureTypeBuilder.setName(name);
-            featureTypeBuilder.add(new DefaultName(nsGML, "description"),String.class,0,1,true,null);
-            featureTypeBuilder.add(new DefaultName(nsGML, "name"),String.class,1,Integer.MAX_VALUE,false,null);
-            featureTypeBuilder.add(new DefaultName(nsOM, "sampledFeature"),String.class,0,Integer.MAX_VALUE,true,null);
-            featureTypeBuilder.add(new DefaultName(nsOM, "position"),Geometry.class,1,1,false,null);
-            featureTypeBuilder.setDefaultGeometry(new DefaultName(nsOM, "position"));
+            featureTypeBuilder.add(DefaultName.create(nsGML, "description"),String.class,0,1,true,null);
+            featureTypeBuilder.add(DefaultName.create(nsGML, "name"),String.class,1,Integer.MAX_VALUE,false,null);
+            featureTypeBuilder.add(DefaultName.create(nsOM, "sampledFeature"),String.class,0,Integer.MAX_VALUE,true,null);
+            featureTypeBuilder.add(DefaultName.create(nsOM, "position"),Geometry.class,1,1,false,null);
+            featureTypeBuilder.setDefaultGeometry(DefaultName.create(nsOM, "position"));
 
             int size = 6;
             GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:27582"));

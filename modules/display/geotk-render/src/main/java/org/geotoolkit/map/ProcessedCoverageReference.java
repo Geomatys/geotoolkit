@@ -48,7 +48,7 @@ public class ProcessedCoverageReference extends DefaultCoverageReference{
     private long lastCall = 0;
 
     public ProcessedCoverageReference(){
-        super(null, new DefaultName("Processed"));
+        super(null, DefaultName.create("Processed"));
     }
 
     /**

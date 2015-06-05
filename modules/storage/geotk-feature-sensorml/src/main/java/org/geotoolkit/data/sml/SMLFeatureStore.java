@@ -90,18 +90,18 @@ public class SMLFeatureStore extends AbstractFeatureStore {
     private static final String SML_NAMESPACE = "http://www.opengis.net/sml/1.0";
 
     //Root types
-    private final static Name SML_TN_SYSTEM         = new DefaultName(SML_NAMESPACE, "System");
-    private final static Name SML_TN_COMPONENT      = new DefaultName(SML_NAMESPACE, "Component");
-    private final static Name SML_TN_PROCESSCHAIN   = new DefaultName(SML_NAMESPACE, "ProcessChain");
-    private final static Name SML_TN_PROCESSMODEL   = new DefaultName(SML_NAMESPACE, "ProcessModel");
-    private final static Name SML_TN_DATASOURCETYPE = new DefaultName(SML_NAMESPACE, "DataSourceType");
+    private final static Name SML_TN_SYSTEM         = DefaultName.create(SML_NAMESPACE, "System");
+    private final static Name SML_TN_COMPONENT      = DefaultName.create(SML_NAMESPACE, "Component");
+    private final static Name SML_TN_PROCESSCHAIN   = DefaultName.create(SML_NAMESPACE, "ProcessChain");
+    private final static Name SML_TN_PROCESSMODEL   = DefaultName.create(SML_NAMESPACE, "ProcessModel");
+    private final static Name SML_TN_DATASOURCETYPE = DefaultName.create(SML_NAMESPACE, "DataSourceType");
 
     //subTypes
-    private final static Name SML_KEYWORD_LIST      = new DefaultName(SML_NAMESPACE, "KeywordList");
-    private final static Name SML_INPUT_LIST        = new DefaultName(SML_NAMESPACE, "InputList");
-    private final static Name SML_OUTPUT_LIST       = new DefaultName(SML_NAMESPACE, "OutputList");
-    private final static Name SML_INPUT             = new DefaultName(SML_NAMESPACE, "Input");
-    private final static Name SML_OUTPUT            = new DefaultName(SML_NAMESPACE, "Output");
+    private final static Name SML_KEYWORD_LIST      = DefaultName.create(SML_NAMESPACE, "KeywordList");
+    private final static Name SML_INPUT_LIST        = DefaultName.create(SML_NAMESPACE, "InputList");
+    private final static Name SML_OUTPUT_LIST       = DefaultName.create(SML_NAMESPACE, "OutputList");
+    private final static Name SML_INPUT             = DefaultName.create(SML_NAMESPACE, "Input");
+    private final static Name SML_OUTPUT            = DefaultName.create(SML_NAMESPACE, "Output");
 
     private static final String pathDescription        = "SensorML:SensorML:member:description";
     private static final String pathName               = "SensorML:SensorML:member:name";
@@ -140,26 +140,26 @@ public class SMLFeatureStore extends AbstractFeatureStore {
 
 
     // Shared attributes
-    private static final Name ATT_DESC        = new DefaultName(GML_311_NAMESPACE, "description");
-    private static final Name ATT_NAME        = new DefaultName(GML_311_NAMESPACE, "name");
-    private static final Name ATT_CODESPACE   = new DefaultName(GML_311_NAMESPACE, "codespace");
-    private static final Name ATT_KEYWORDS    = new DefaultName(SML_NAMESPACE, "keywords");
-    private static final Name ATT_KEYWORD     = new DefaultName(SML_NAMESPACE, "keyword");
-    private static final Name ATT_LOCATION    = new DefaultName(SML_NAMESPACE, "location");
-    private static final Name ATT_PHENOMENONS = new DefaultName(SML_NAMESPACE, "phenomenons");
-    private static final Name ATT_SMLTYPE     = new DefaultName(SML_NAMESPACE, "smltype");
-    private static final Name ATT_SMLREF      = new DefaultName(SML_NAMESPACE, "smlref");
-    private static final Name ATT_INPUTS      = new DefaultName(SML_NAMESPACE, "inputs");
-    private static final Name ATT_INPUT       = new DefaultName(SML_NAMESPACE, "input");
-    private static final Name ATT_OUTPUTS     = new DefaultName(SML_NAMESPACE, "outputs");
-    private static final Name ATT_OUTPUT      = new DefaultName(SML_NAMESPACE, "output");
+    private static final Name ATT_DESC        = DefaultName.create(GML_311_NAMESPACE, "description");
+    private static final Name ATT_NAME        = DefaultName.create(GML_311_NAMESPACE, "name");
+    private static final Name ATT_CODESPACE   = DefaultName.create(GML_311_NAMESPACE, "codespace");
+    private static final Name ATT_KEYWORDS    = DefaultName.create(SML_NAMESPACE, "keywords");
+    private static final Name ATT_KEYWORD     = DefaultName.create(SML_NAMESPACE, "keyword");
+    private static final Name ATT_LOCATION    = DefaultName.create(SML_NAMESPACE, "location");
+    private static final Name ATT_PHENOMENONS = DefaultName.create(SML_NAMESPACE, "phenomenons");
+    private static final Name ATT_SMLTYPE     = DefaultName.create(SML_NAMESPACE, "smltype");
+    private static final Name ATT_SMLREF      = DefaultName.create(SML_NAMESPACE, "smlref");
+    private static final Name ATT_INPUTS      = DefaultName.create(SML_NAMESPACE, "inputs");
+    private static final Name ATT_INPUT       = DefaultName.create(SML_NAMESPACE, "input");
+    private static final Name ATT_OUTPUTS     = DefaultName.create(SML_NAMESPACE, "outputs");
+    private static final Name ATT_OUTPUT      = DefaultName.create(SML_NAMESPACE, "output");
     // attribute for sml:System or sml:ProcessChain
-    private static final Name ATT_PRODUCER = new DefaultName(SML_NAMESPACE, "producer");
-    private static final Name ATT_COMPONENTS = new DefaultName(SML_NAMESPACE, "components");
+    private static final Name ATT_PRODUCER = DefaultName.create(SML_NAMESPACE, "producer");
+    private static final Name ATT_COMPONENTS = DefaultName.create(SML_NAMESPACE, "components");
     // attribute for sml:ProccessModel
-    private static final Name ATT_METHOD = new DefaultName(SML_NAMESPACE, "method");
+    private static final Name ATT_METHOD = DefaultName.create(SML_NAMESPACE, "method");
     // attribute for sml:DatasourceType
-    private static final Name ATT_CHARACTERISTICS = new DefaultName(SML_NAMESPACE, "characteristics");
+    private static final Name ATT_CHARACTERISTICS = DefaultName.create(SML_NAMESPACE, "characteristics");
 
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);

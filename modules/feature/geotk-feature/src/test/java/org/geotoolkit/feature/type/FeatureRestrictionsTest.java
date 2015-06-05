@@ -49,7 +49,7 @@ public class FeatureRestrictionsTest {
         atb.setName("name");
         atb.setBinding(String.class);
         atb.addRestriction(FF.equals(FF.property("."), FF.literal("correct")));
-        ftb.add(atb.buildType(), new DefaultName("name"), null, 1, 1, false, null);
+        ftb.add(atb.buildType(), DefaultName.create("name"), null, 1, 1, false, null);
         
         final FeatureType ft = ftb.buildFeatureType();
         final Feature feature = FeatureUtilities.defaultFeature(ft, "-1");

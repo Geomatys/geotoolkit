@@ -202,7 +202,7 @@ public class CoverageImageTest {
         final double[] scales = new double[]{1.40625, 2.8125};
         final Map<Envelope, double[]> map = new HashMap<>();
         map.put(env, scales);
-        final Name name = new DefaultName("memory_store_test");
+        final Name name = DefaultName.create("memory_store_test");
         pcb.create(reader, mpCovStore, name, map, fillValue);
 
         final GridCoverage2D gridcov = (GridCoverage2D) reader.read(0, null);

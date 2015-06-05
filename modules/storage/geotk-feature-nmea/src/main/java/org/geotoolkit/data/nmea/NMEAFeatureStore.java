@@ -58,12 +58,12 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class NMEAFeatureStore extends AbstractFeatureStore {
 
-    public final static Name TYPE_NAME  = new DefaultName(null, "NMEA POINT");
-    public final static Name GEOM_NAME  = new DefaultName(null, "Location");
-    public final static Name ALT_NAME   = new DefaultName(null, "Altitude");
-    public final static Name DEPTH_NAME = new DefaultName(null, "Sea-depth");
-    public final static Name DATE_NAME  = new DefaultName(null, "Date");
-    public final static Name SPEED_NAME = new DefaultName(null, "Speed");
+    public final static Name TYPE_NAME  = DefaultName.create(null, "NMEA POINT");
+    public final static Name GEOM_NAME  = DefaultName.create(null, "Location");
+    public final static Name ALT_NAME   = DefaultName.create(null, "Altitude");
+    public final static Name DEPTH_NAME = DefaultName.create(null, "Sea-depth");
+    public final static Name DATE_NAME  = DefaultName.create(null, "Date");
+    public final static Name SPEED_NAME = DefaultName.create(null, "Speed");
 
     /** Feature type to use for nmea data encapsulation */
     public static final FeatureType NMEA_TYPE;

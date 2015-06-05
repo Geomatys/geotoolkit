@@ -41,7 +41,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class Symbol implements MIFSymbolizer, PointSymbolizer {
 
-    public static final Name NAME = new DefaultName("SYMBOL");
+    public static final Name NAME = DefaultName.create("SYMBOL");
 
     public final static Pattern SYMBOL_PATTERN = Pattern.compile(NAME.getLocalPart()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 

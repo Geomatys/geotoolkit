@@ -207,7 +207,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             CoordinateReferenceSystem crs = null;
             // Check non-empty parenthesis
             if (dep > 0 && fin > dep + 1) {
-                fieldName = new DefaultName(getDefaultNamespace(), field.substring(0, dep));
+                fieldName = DefaultName.create(getDefaultNamespace(), field.substring(0, dep));
                 //there is a defined type
                 final String name = field.substring(dep + 1, fin);
                 /* Check if it's a java lang class (number, string, etc.). If it's a fail, maybe it's just
@@ -245,7 +245,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                     }
                 }
             } else {
-                fieldName = new DefaultName(getDefaultNamespace(), field);
+                fieldName = DefaultName.create(getDefaultNamespace(), field);
                 type = String.class;
             }
 

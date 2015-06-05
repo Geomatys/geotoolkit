@@ -498,7 +498,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
                         //if the type name is not the same as the element name, make a copy of the type renaming it
                         if(!ft.getName().getLocalPart().equals(element.getName())){
-                            final Name name = new DefaultName(ft.getName().getNamespaceURI(), element.getName());
+                            final Name name = DefaultName.create(ft.getName().getNamespaceURI(), element.getName());
                             final ModifiableFeaturetype renamed = new ModifiableFeaturetype(name,new ArrayList(), null, type.isAbstract(), null, ft, null);
                             uncompleted.add(renamed);
                             result.add(renamed);
@@ -640,7 +640,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             if (isFeatureType && properName.endsWith("Type")) {
                 properName = properName.substring(0, properName.lastIndexOf("Type"));
             }
-            final Name ftypeName = new DefaultName(namespace, properName);
+            final Name ftypeName = DefaultName.create(namespace, properName);
             builder.setName(ftypeName);
             finalType = (ModifiableType) ((isFeatureType) ?
                     new ModifiableFeaturetype(ftypeName,new ArrayList(), null, type.isAbstract(), null, ct, null)
@@ -758,7 +758,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                     addOrReplace(finalType.getDescriptors(), ((org.geotoolkit.feature.type.ComplexType)st).getDescriptors());
                 }else{
                     final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                    finalType.getDescriptors().add(adb.create(st, new DefaultName(namespace, Utils.VALUE_PROPERTY_NAME), 0, 1, false, null));
+                    finalType.getDescriptors().add(adb.create(st, DefaultName.create(namespace, Utils.VALUE_PROPERTY_NAME), 0, 1, false, null));
                 }
 
                 //read attributes
@@ -785,7 +785,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                     }else{
                         final PropertyType restType = resolveSimpleType(base);
                         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-                        addOrReplace(finalType.getDescriptors(), adb.create(restType,new DefaultName(namespace, Utils.VALUE_PROPERTY_NAME), 0, 1, false, null));
+                        addOrReplace(finalType.getDescriptors(), adb.create(restType, DefaultName.create(namespace, Utils.VALUE_PROPERTY_NAME), 0, 1, false, null));
                     }
                 }
 
@@ -937,7 +937,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
         if(id!=null || name!=null){
             //find name
-            final Name attName = new DefaultName(namespace,"@"+ ((name==null) ? id : name));
+            final Name attName = DefaultName.create(namespace, "@"+ ((name==null) ? id : name));
             adb.setName(attName);
             atb.setName(attName);
         }
@@ -1017,7 +1017,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
         final String elementName = attributeElement.getName();
         if(elementName!=null){
-            final Name attName = new DefaultName(namespace, elementName);
+            final Name attName = DefaultName.create(namespace, elementName);
             adb.setName(attName);
             if(atb.getName()==null){
                 atb.setName(attName);
@@ -1275,7 +1275,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         if(Utils.existPrimitiveType(name.getLocalPart())){
             final Class valueType = Utils.getTypeFromQName(name);
             final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-            atb.setName(new DefaultName(name));
+            atb.setName(DefaultName.create(name));
             atb.setBinding(valueType);
             return atb.buildType();
         }

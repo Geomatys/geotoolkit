@@ -129,31 +129,31 @@ public class FeatureTypeBuilderTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(ns,"test");
         SimpleFeatureType sft = ftb.buildSimpleFeatureType();
-        assertEquals(new DefaultName(ns, "test"), sft.getName());
+        assertEquals(DefaultName.create(ns, "test"), sft.getName());
 
         ftb.setName("test");
         sft = ftb.buildSimpleFeatureType();
-        assertEquals(new DefaultName(null, "test"), sft.getName());
+        assertEquals(DefaultName.create(null, "test"), sft.getName());
 
-        ftb.setName(new DefaultName(ns,"test"));
+        ftb.setName(DefaultName.create(ns, "test"));
         sft = ftb.buildSimpleFeatureType();
-        assertEquals(new DefaultName(ns, "test"), sft.getName());
+        assertEquals(DefaultName.create(ns, "test"), sft.getName());
 
         ftb.setName(ns,":","test");
         sft = ftb.buildSimpleFeatureType();
-        assertEquals(new DefaultName(ns, "test"), sft.getName());
+        assertEquals(DefaultName.create(ns, "test"), sft.getName());
 
 
         ftb.add("att_String1", String.class);
         ftb.add(ns+":att_String2", String.class);
         ftb.add("{"+ns+"}att_String3", String.class);
-        ftb.add(new DefaultName(ns,"att_String4"), String.class);
+        ftb.add(DefaultName.create(ns, "att_String4"), String.class);
         sft = ftb.buildSimpleFeatureType();
 
-        assertEquals(new DefaultName("att_String1"), sft.getDescriptor(0).getName());
-        assertEquals(new DefaultName(ns,"att_String2"), sft.getDescriptor(1).getName());
-        assertEquals(new DefaultName(ns,"att_String3"), sft.getDescriptor(2).getName());
-        assertEquals(new DefaultName(ns,"att_String4"), sft.getDescriptor(3).getName());
+        assertEquals(DefaultName.create("att_String1"), sft.getDescriptor(0).getName());
+        assertEquals(DefaultName.create(ns, "att_String2"), sft.getDescriptor(1).getName());
+        assertEquals(DefaultName.create(ns, "att_String3"), sft.getDescriptor(2).getName());
+        assertEquals(DefaultName.create(ns, "att_String4"), sft.getDescriptor(3).getName());
 
     }
 
@@ -233,47 +233,47 @@ public class FeatureTypeBuilderTest {
         assertEquals(DefaultName.valueOf("{http://test.com}att_String"), sft.getDescriptor("att_String").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_String"), sft.getDescriptor("http://test.com:att_String").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_String"), sft.getDescriptor("{http://test.com}att_String").getName());
-        assertEquals(DefaultName.valueOf("{http://test.com}att_String"), sft.getDescriptor(new DefaultName("http://test.com", "att_String")).getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_String"), sft.getDescriptor(DefaultName.create("http://test.com", "att_String")).getName());
 
         assertEquals(DefaultName.valueOf("{http://test2.com}att_String"), sft.getAttributeDescriptors().get(1).getName());
         assertEquals(DefaultName.valueOf("{http://test2.com}att_String"), sft.getDescriptor(1).getName());
         assertEquals(DefaultName.valueOf("{http://test2.com}att_String"), sft.getDescriptor("http://test2.com:att_String").getName());
         assertEquals(DefaultName.valueOf("{http://test2.com}att_String"), sft.getDescriptor("{http://test2.com}att_String").getName());
-        assertEquals(DefaultName.valueOf("{http://test2.com}att_String"), sft.getDescriptor(new DefaultName("http://test2.com", "att_String")).getName());
+        assertEquals(DefaultName.valueOf("{http://test2.com}att_String"), sft.getDescriptor(DefaultName.create("http://test2.com", "att_String")).getName());
 
         assertEquals(DefaultName.valueOf("{http://test3.com}att_String"), sft.getAttributeDescriptors().get(2).getName());
         assertEquals(DefaultName.valueOf("{http://test3.com}att_String"), sft.getDescriptor(2).getName());
         assertEquals(DefaultName.valueOf("{http://test3.com}att_String"), sft.getDescriptor("http://test3.com:att_String").getName());
         assertEquals(DefaultName.valueOf("{http://test3.com}att_String"), sft.getDescriptor("{http://test3.com}att_String").getName());
-        assertEquals(DefaultName.valueOf("{http://test3.com}att_String"), sft.getDescriptor(new DefaultName("http://test3.com", "att_String")).getName());
+        assertEquals(DefaultName.valueOf("{http://test3.com}att_String"), sft.getDescriptor(DefaultName.create("http://test3.com", "att_String")).getName());
 
         assertEquals(DefaultName.valueOf("{http://test.com}att_Integer"), sft.getAttributeDescriptors().get(3).getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Integer"), sft.getDescriptor(3).getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Integer"), sft.getDescriptor("att_Integer").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Integer"), sft.getDescriptor("http://test.com:att_Integer").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Integer"), sft.getDescriptor("{http://test.com}att_Integer").getName());
-        assertEquals(DefaultName.valueOf("{http://test.com}att_Integer"), sft.getDescriptor(new DefaultName("http://test.com", "att_Integer")).getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Integer"), sft.getDescriptor(DefaultName.create("http://test.com", "att_Integer")).getName());
 
         assertEquals(DefaultName.valueOf("{http://test.com}att_Double"), sft.getAttributeDescriptors().get(4).getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Double"), sft.getDescriptor(4).getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Double"), sft.getDescriptor("att_Double").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Double"), sft.getDescriptor("http://test.com:att_Double").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Double"), sft.getDescriptor("{http://test.com}att_Double").getName());
-        assertEquals(DefaultName.valueOf("{http://test.com}att_Double"), sft.getDescriptor(new DefaultName("http://test.com", "att_Double")).getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Double"), sft.getDescriptor(DefaultName.create("http://test.com", "att_Double")).getName());
 
         assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), sft.getAttributeDescriptors().get(5).getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), sft.getDescriptor(5).getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), sft.getDescriptor("att_Date").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), sft.getDescriptor("http://test.com:att_Date").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), sft.getDescriptor("{http://test.com}att_Date").getName());
-        assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), sft.getDescriptor(new DefaultName("http://test.com", "att_Date")).getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), sft.getDescriptor(DefaultName.create("http://test.com", "att_Date")).getName());
 
         assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getAttributeDescriptors().get(6).getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getDescriptor(6).getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getDescriptor("att_Geom").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getDescriptor("http://test.com:att_Geom").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getDescriptor("{http://test.com}att_Geom").getName());
-        assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getDescriptor(new DefaultName("http://test.com", "att_Geom")).getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getDescriptor(DefaultName.create("http://test.com", "att_Geom")).getName());
 
         //geometry attribut
         assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), sft.getGeometryDescriptor().getName());
@@ -299,30 +299,30 @@ public class FeatureTypeBuilderTest {
         assertEquals(DefaultName.valueOf("{http://test.com}att_String"), ft.getDescriptor("att_String").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_String"), ft.getDescriptor("http://test.com:att_String").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_String"), ft.getDescriptor("{http://test.com}att_String").getName());
-        assertEquals(DefaultName.valueOf("{http://test.com}att_String"), ft.getDescriptor(new DefaultName("http://test.com", "att_String")).getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_String"), ft.getDescriptor(DefaultName.create("http://test.com", "att_String")).getName());
 
         assertEquals(DefaultName.valueOf("{http://test2.com}att_String"), ft.getDescriptor("http://test2.com:att_String").getName());
         assertEquals(DefaultName.valueOf("{http://test2.com}att_String"), ft.getDescriptor("{http://test2.com}att_String").getName());
-        assertEquals(DefaultName.valueOf("{http://test2.com}att_String"), ft.getDescriptor(new DefaultName("http://test2.com", "att_String")).getName());
+        assertEquals(DefaultName.valueOf("{http://test2.com}att_String"), ft.getDescriptor(DefaultName.create("http://test2.com", "att_String")).getName());
 
         assertEquals(DefaultName.valueOf("{http://test3.com}att_String"), ft.getDescriptor("http://test3.com:att_String").getName());
         assertEquals(DefaultName.valueOf("{http://test3.com}att_String"), ft.getDescriptor("{http://test3.com}att_String").getName());
-        assertEquals(DefaultName.valueOf("{http://test3.com}att_String"), ft.getDescriptor(new DefaultName("http://test3.com", "att_String")).getName());
+        assertEquals(DefaultName.valueOf("{http://test3.com}att_String"), ft.getDescriptor(DefaultName.create("http://test3.com", "att_String")).getName());
 
         assertEquals(DefaultName.valueOf("{http://test.com}att_Integer"), ft.getDescriptor("att_Integer").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Integer"), ft.getDescriptor("http://test.com:att_Integer").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Integer"), ft.getDescriptor("{http://test.com}att_Integer").getName());
-        assertEquals(DefaultName.valueOf("{http://test.com}att_Integer"), ft.getDescriptor(new DefaultName("http://test.com", "att_Integer")).getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Integer"), ft.getDescriptor(DefaultName.create("http://test.com", "att_Integer")).getName());
 
         assertEquals(DefaultName.valueOf("{http://test.com}att_Double"), ft.getDescriptor("att_Double").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Double"), ft.getDescriptor("http://test.com:att_Double").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Double"), ft.getDescriptor("{http://test.com}att_Double").getName());
-        assertEquals(DefaultName.valueOf("{http://test.com}att_Double"), ft.getDescriptor(new DefaultName("http://test.com", "att_Double")).getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Double"), ft.getDescriptor(DefaultName.create("http://test.com", "att_Double")).getName());
 
         assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), ft.getDescriptor("att_Date").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), ft.getDescriptor("http://test.com:att_Date").getName());
         assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), ft.getDescriptor("{http://test.com}att_Date").getName());
-        assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), ft.getDescriptor(new DefaultName("http://test.com", "att_Date")).getName());
+        assertEquals(DefaultName.valueOf("{http://test.com}att_Date"), ft.getDescriptor(DefaultName.create("http://test.com", "att_Date")).getName());
 
         //geometry attribut
         assertEquals(DefaultName.valueOf("{http://test.com}att_Geom"), ft.getGeometryDescriptor().getName());
@@ -424,7 +424,7 @@ public class FeatureTypeBuilderTest {
         SimpleFeatureType abstractType = ftb.buildSimpleFeatureType();
         ftb.setName("http://www.nowhereinparticular.net", "AbstractType2");
         ftb.setSuperType(abstractType);
-        ftb.add(new DefaultName("X"), String.class);
+        ftb.add(DefaultName.create("X"), String.class);
         SimpleFeatureType abstractType2 = ftb.buildSimpleFeatureType();
 
         assertTrue(abstractType.isAbstract());
@@ -438,22 +438,22 @@ public class FeatureTypeBuilderTest {
     @Test
     public void testEquals() throws Exception {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(new DefaultName("http://www.nowhereinparticular.net", "Thing"));
-        ftb.add(new DefaultName("X"), String.class);
+        ftb.setName(DefaultName.create("http://www.nowhereinparticular.net", "Thing"));
+        ftb.add(DefaultName.create("X"), String.class);
         final SimpleFeatureType ft = ftb.buildSimpleFeatureType();
 
         ftb.reset();
-        ftb.setName(new DefaultName("http://www.nowhereinparticular.net", "Thing"));
-        ftb.add(new DefaultName("X"), String.class);
+        ftb.setName(DefaultName.create("http://www.nowhereinparticular.net", "Thing"));
+        ftb.add(DefaultName.create("X"), String.class);
         SimpleFeatureType ft2 = ftb.buildSimpleFeatureType();
 
         assertEquals(ft, ft2);
 
-        ftb.setName(new DefaultName("Thingee"));
+        ftb.setName(DefaultName.create("Thingee"));
         assertTrue(!ft.equals(ftb.buildSimpleFeatureType()));
 
         ftb.copy(ft);
-        ftb.setName(new DefaultName("http://www.somewhereelse.net", ftb.getName().getLocalPart()));
+        ftb.setName(DefaultName.create("http://www.somewhereelse.net", ftb.getName().getLocalPart()));
 
         assertTrue(!ft.equals(ftb.buildSimpleFeatureType()));
         assertTrue(!ft.equals(null));
@@ -474,19 +474,19 @@ public class FeatureTypeBuilderTest {
         String uri = "http://www.geotoolkit.org/example";
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(new DefaultName(uri, "A"));
+        ftb.setName(DefaultName.create(uri, "A"));
         final SimpleFeatureType typeA = ftb.buildSimpleFeatureType();
 
         ftb.reset();
-        ftb.setName(new DefaultName(uri, "B"));
+        ftb.setName(DefaultName.create(uri, "B"));
         ftb.setSuperType(typeA);
-        ftb.add(new DefaultName("b"), String.class);
+        ftb.add(DefaultName.create("b"), String.class);
         final SimpleFeatureType typeB = ftb.buildSimpleFeatureType();
 
         ftb.reset();
-        ftb.setName(new DefaultName(uri, "C"));
+        ftb.setName(DefaultName.create(uri, "C"));
         ftb.setSuperType(typeB);
-        ftb.add(new DefaultName("c"), Integer.class);
+        ftb.add(DefaultName.create("c"), Integer.class);
         final SimpleFeatureType typeC = ftb.buildSimpleFeatureType();
 
         // base type should have no ancestors

@@ -89,7 +89,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(0,names.size());
 
         //test creation of one schema ------------------------------------------
-        Name name = new DefaultName("http://test.com", "TestSchema1");
+        Name name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
@@ -108,7 +108,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(t, type1);
 
         try{
-            store.getFeatureType(new DefaultName("http://not", "exist"));
+            store.getFeatureType(DefaultName.create("http://not", "exist"));
             throw new Exception("Asking for a schema that doesnt exist should have raised an error");
         }catch(Exception ex){
             //ok
@@ -135,7 +135,7 @@ public class MemoryDatastoreTest extends TestCase{
 
 
         try{
-            store.updateFeatureType(new DefaultName("http://not", "exist"),type2);
+            store.updateFeatureType(DefaultName.create("http://not", "exist"),type2);
             throw new Exception("Updating a schema that doesnt exist should have raised an error");
         }catch(Exception ex){
             //ok
@@ -152,7 +152,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(0,names.size());
 
         try{
-            store.deleteFeatureType(new DefaultName("http://not", "exist"));
+            store.deleteFeatureType(DefaultName.create("http://not", "exist"));
             throw new Exception("Deleting a schema that doesnt exist should have raised an error");
         }catch(Exception ex){
             //ok
@@ -166,7 +166,7 @@ public class MemoryDatastoreTest extends TestCase{
         final MemoryFeatureStore store = new MemoryFeatureStore();
 
         //create the schema
-        Name name = new DefaultName("http://test.com", "TestSchema1");
+        Name name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
@@ -192,7 +192,7 @@ public class MemoryDatastoreTest extends TestCase{
 
         //test a non existant type
         try{
-            FeatureReader reader2 = store.getFeatureReader(QueryBuilder.all(new DefaultName("http://not", "exist")));
+            FeatureReader reader2 = store.getFeatureReader(QueryBuilder.all(DefaultName.create("http://not", "exist")));
             throw new Exception("Deleting a schema that doesnt exist should have raised an error");
         }catch(Exception ex){
             //ok
@@ -285,7 +285,7 @@ public class MemoryDatastoreTest extends TestCase{
         final MemoryFeatureStore store = new MemoryFeatureStore();
 
         //create the schema
-        final Name name = new DefaultName("http://test.com", "TestSchema1");
+        final Name name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("string", String.class);
@@ -574,7 +574,7 @@ public class MemoryDatastoreTest extends TestCase{
         final GeometryFactory gf = new GeometryFactory();
 
         //create the schema
-        final Name name = new DefaultName("http://test.com", "TestSchema1");
+        final Name name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("geometry", Point.class, CRS.decode("EPSG:27582"));
@@ -665,7 +665,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(0,names.size());
 
         //test creation of one schema ------------------------------------------
-        Name name = new DefaultName("http://test.com", "TestSchema1");
+        Name name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
@@ -712,7 +712,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(0,names.size());
 
         //test creation of one schema ------------------------------------------
-        Name name = new DefaultName("http://test.com", "TestSchema1");
+        Name name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("ListAtt", List.class);
@@ -796,7 +796,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(0,names.size());
 
         //test creation of one schema ------------------------------------------
-        Name name = new DefaultName("http://test.com", "TestSchema1");
+        Name name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("ListAtt", List.class);

@@ -93,7 +93,7 @@ public class XmlFeatureTypeTest {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(GML_311_NAMESPACE,"TestSimple");
-        ftb.add(new DefaultName(GML_311_NAMESPACE,"_any"),Object.class,0,1,true,null);
+        ftb.add(DefaultName.create(GML_311_NAMESPACE, "_any"),Object.class,0,1,true,null);
         final FeatureType simpleTypeAny = ftb.buildFeatureType();
 
         assertEquals(simpleTypeAny, types.get(0));

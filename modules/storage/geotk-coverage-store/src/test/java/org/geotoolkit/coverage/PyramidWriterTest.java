@@ -55,7 +55,7 @@ import org.apache.sis.referencing.CommonCRS;
  */
 public class PyramidWriterTest {
 
-    private static final Name NAME = new DefaultName("test");
+    private static final Name NAME = DefaultName.create("test");
     private static final CoordinateReferenceSystem CRS84 = CommonCRS.WGS84.normalizedGeographic();
     private static final CoordinateReferenceSystem EPSG4326;
     private static final GeneralDirectPosition UL84;

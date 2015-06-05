@@ -48,8 +48,8 @@ import org.geotoolkit.feature.type.FeatureType;
  *         Date : 27/02/13
  */
 public class MIFRectangleBuilder extends MIFGeometryBuilder {
-    public Name NAME = new DefaultName("RECTANGLE");
-    public static final Name ROUND_NAME = new DefaultName("ROUNDING");
+    public Name NAME = DefaultName.create("RECTANGLE");
+    public static final Name ROUND_NAME = DefaultName.create("ROUNDING");
 
     private static final AttributeDescriptor ROUNDING;
     private static final AttributeDescriptor PEN;

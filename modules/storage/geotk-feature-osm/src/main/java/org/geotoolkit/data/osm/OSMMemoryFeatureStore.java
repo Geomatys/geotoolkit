@@ -85,9 +85,8 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
     static{
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ATT_WAY_GEOMETRY = (GeometryDescriptor) adb.create(
-                new DefaultName(OSM_NAMESPACE, "geometry_calculated"), LineString.class, OSM_CRS, 1, 1, false, null);
-        ATT_NODES_LINK = adb.create(TYPE_NODE,new DefaultName(OSM_NAMESPACE, "nodes_link"), null,0,Integer.MAX_VALUE,false,null);
+        ATT_WAY_GEOMETRY = (GeometryDescriptor) adb.create(DefaultName.create(OSM_NAMESPACE, "geometry_calculated"), LineString.class, OSM_CRS, 1, 1, false, null);
+        ATT_NODES_LINK = adb.create(TYPE_NODE, DefaultName.create(OSM_NAMESPACE, "nodes_link"), null,0,Integer.MAX_VALUE,false,null);
 
         ftb.copy(TYPE_WAY);
         ftb.add(ATT_WAY_GEOMETRY);

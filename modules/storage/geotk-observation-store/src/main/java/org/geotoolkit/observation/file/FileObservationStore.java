@@ -67,7 +67,7 @@ public class FileObservationStore extends AbstractObservationStore implements Da
     @Override
     public Set<Name> getProcedureNames() {
         final Set<Name> names = new HashSet<>();
-        names.add(new DefaultName(getProcedureID()));
+        names.add(DefaultName.create(getProcedureID()));
         return names;
     }
     

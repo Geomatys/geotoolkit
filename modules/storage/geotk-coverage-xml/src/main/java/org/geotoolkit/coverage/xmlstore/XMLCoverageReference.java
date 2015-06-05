@@ -72,7 +72,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         return POOL;
     }
 
-    private static final Name DEFAULT_NAME = new DefaultName("default");
+    private static final Name DEFAULT_NAME = DefaultName.create("default");
 
     @XmlElement(name="Version")
     private String version = CURRENT_VERSION;

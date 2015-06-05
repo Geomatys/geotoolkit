@@ -42,7 +42,7 @@ import java.util.logging.Level;
  */
 public class MIFRegionBuilder extends MIFGeometryBuilder {
 
-    public static final Name NAME = new DefaultName("REGION");
+    public static final Name NAME = DefaultName.create("REGION");
 
     private static final AttributeDescriptor BRUSH;
     private static final AttributeDescriptor PEN;

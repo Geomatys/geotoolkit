@@ -45,8 +45,8 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
  *         Date : 27/02/13
  */
 public class MIFCollectionBuilder extends MIFGeometryBuilder {
-    public static final Name NAME = new DefaultName("COLLECTION");
-    public static final Name GEOM_NAME = new DefaultName("GEOMETRY");
+    public static final Name NAME = DefaultName.create("COLLECTION");
+    public static final Name GEOM_NAME = DefaultName.create("GEOMETRY");
 
     private CoordinateReferenceSystem collectionCRS = null;
     @Override
