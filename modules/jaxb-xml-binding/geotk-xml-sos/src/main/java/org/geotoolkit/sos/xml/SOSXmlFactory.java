@@ -866,8 +866,10 @@ public class SOSXmlFactory {
             final org.geotoolkit.gml.xml.v311.MeasureType length;
             if (lengthValue != null) {
                 length = new org.geotoolkit.gml.xml.v311.MeasureType(lengthValue, uom);
-            } else {
+            } else  if (uom != null) {
                 length = new org.geotoolkit.gml.xml.v311.MeasureType(0.0, uom);
+            } else {
+                length = null;
             }
             return new org.geotoolkit.sampling.xml.v100.SamplingCurveType(id, name, description, 
                                                                           (org.geotoolkit.gml.xml.v311.FeaturePropertyType)sampledFeature, 

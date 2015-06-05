@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Envelope;
-import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
@@ -82,12 +81,18 @@ import org.opengis.util.FactoryException;
     EnvelopeWithTimePeriodType.class
 })
 @XmlRootElement(name="Envelope")
-public class EnvelopeType implements Entry, Envelope, Expression {
+public class EnvelopeType implements Envelope, Expression {
 
     private static final Logger LOGGER = Logging.getLogger(EnvelopeType.class);
 
+    /**
+     * this attribute do not exist. Must be removed
+     * @deprecated
+     */
     @XmlAttribute(namespace="http://www.opengis.net/gml")
+    @Deprecated
     private String id;
+    
     private DirectPositionType lowerCorner;
     private DirectPositionType upperCorner;
     @XmlAttribute
@@ -112,17 +117,38 @@ public class EnvelopeType implements Entry, Envelope, Expression {
 
     /**
      * build a new envelope.
+     * 
+     * @param id This parameter is deprecated. it will no ne used.
+     * @param lowerCorner 
+     * @param upperCorner
+     * @param srsName CRS identifier name.
+     * 
+     * @deprecated use the constrcutor without id.
      */
+    @Deprecated
     public EnvelopeType(final String id, final DirectPositionType lowerCorner, final DirectPositionType upperCorner, final String srsName) {
+        this(lowerCorner, upperCorner, srsName);
+    }
+    
+    /**
+     * build a new GML envelope.
+     * 
+     * @param lowerCorner
+     * @param upperCorner
+     * @param srsName CRS identifier name.
+     */
+    public EnvelopeType(final DirectPositionType lowerCorner, final DirectPositionType upperCorner, final String srsName) {
         this.lowerCorner = lowerCorner;
         this.upperCorner = upperCorner;
-        this.id          = id;
         this.srsName     = srsName;
     }
 
     /**
      * build a new envelope.
+     * @param pos
+     * @param srsName
      */
+    @Deprecated
     public EnvelopeType(final List<DirectPositionType> pos, final String srsName) {
         this.srsName      = srsName;
         this.pos          = pos;
@@ -130,7 +156,7 @@ public class EnvelopeType implements Entry, Envelope, Expression {
     }
 
     public EnvelopeType(final org.opengis.geometry.Envelope env) {
-        this.pos = new ArrayList<DirectPositionType>();
+        this.pos = new ArrayList<>();
         if (env != null) {
             this.pos.add(new DirectPositionType(env.getLowerCorner(), false));
             this.pos.add(new DirectPositionType(env.getUpperCorner(), false));
@@ -143,33 +169,6 @@ public class EnvelopeType implements Entry, Envelope, Expression {
                 }
             }
         }
-    }
-
-    /**
-     * Return the gml identifier of the envelope
-     * @return
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Ihnerited from Entry
-     *
-     * @return id
-     */
-    @Override
-    public Comparable<?> getIdentifier() {
-        return id;
-    }
-
-    /**
-     * used for Entry
-     *
-     * @return id
-     */
-    public String getName() {
-        return id;
     }
 
     /**
@@ -279,7 +278,7 @@ public class EnvelopeType implements Entry, Envelope, Expression {
     @Override
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
-            axisLabels = new ArrayList<String>();
+            axisLabels = new ArrayList<>();
         }
         return this.axisLabels;
     }
@@ -292,7 +291,7 @@ public class EnvelopeType implements Entry, Envelope, Expression {
     public void setAxisLabels(final String axisLabel) {
         if (axisLabel != null) {
             if (axisLabels == null) {
-                axisLabels = new ArrayList<String>();
+                axisLabels = new ArrayList<>();
             }
             this.axisLabels.add(axisLabel);
         }
@@ -304,7 +303,7 @@ public class EnvelopeType implements Entry, Envelope, Expression {
     @Override
     public List<String> getUomLabels() {
         if (uomLabels == null) {
-            uomLabels = new ArrayList<String>();
+            uomLabels = new ArrayList<>();
         }
         return this.uomLabels;
     }
@@ -327,7 +326,7 @@ public class EnvelopeType implements Entry, Envelope, Expression {
     @Override
     public List<DirectPositionType> getPos() {
         if (pos == null) {
-            pos = new ArrayList<DirectPositionType>();
+            pos = new ArrayList<>();
         }
         return this.pos;
     }
@@ -363,6 +362,7 @@ public class EnvelopeType implements Entry, Envelope, Expression {
 
     /**
      * Verify if this entry est identical to the specified object.
+     * @param object
      */
     @Override
     public boolean equals(final Object object) {
