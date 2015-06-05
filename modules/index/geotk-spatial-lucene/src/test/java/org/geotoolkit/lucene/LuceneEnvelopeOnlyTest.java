@@ -49,6 +49,8 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
+import org.geotoolkit.index.tree.manager.SQLRtreeManager;
+import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
@@ -115,6 +117,13 @@ public class LuceneEnvelopeOnlyTest {
 
     @AfterClass
     public static void tearDownMethod() throws Exception {
+        // postgres
+        if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY) != null) {
+            if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY).equals("postgres")) {
+                if (directory.exists() && directory.listFiles().length > 0)
+                    LucenePostgresSQLTreeEltMapper.resetDB(directory.listFiles()[0]);
+            }
+        }
         FileUtilities.deleteDirectory(directory);
     }
 

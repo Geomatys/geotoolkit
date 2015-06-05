@@ -16,22 +16,9 @@
  */
 package org.geotoolkit.lucene;
 
-import java.util.logging.Level;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-import java.io.File;
-
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import com.vividsolutions.jts.geom.*;
 import org.apache.lucene.analysis.Analyzer;
-
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
@@ -40,17 +27,14 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TopDocs;
-
-import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.apache.lucene.search.*;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
+import org.geotoolkit.index.tree.manager.SQLRtreeManager;
+import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.DocumentIndexer.DocumentEnvelope;
 import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
@@ -58,13 +42,21 @@ import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.referencing.CRS;
-import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
 import org.geotoolkit.util.FileUtilities;
-
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.junit.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static org.geotoolkit.lucene.filter.LuceneOGCFilter.GEOMETRY_PROPERTY;
+import static org.geotoolkit.lucene.filter.LuceneOGCFilter.wrap;
 import static org.junit.Assert.*;
 
 /**
@@ -117,6 +109,14 @@ public class LuceneTest {
 
     @AfterClass
     public static void tearDownMethod() throws Exception {
+        // postgres
+        if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY) != null) {
+            if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY).equals("postgres")) {
+                if (directory.exists() && directory.listFiles().length > 0)
+                LucenePostgresSQLTreeEltMapper.resetDB(directory.listFiles()[0]);
+            }
+        }
+
         FileUtilities.deleteDirectory(directory);
     }
 

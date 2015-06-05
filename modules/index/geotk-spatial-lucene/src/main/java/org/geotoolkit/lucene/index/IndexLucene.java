@@ -18,6 +18,7 @@ package org.geotoolkit.lucene.index;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -155,7 +156,7 @@ public abstract class IndexLucene {
         }
     }
 
-    protected void resetTree() throws StoreIndexException, IOException {
+    protected void resetTree() throws StoreIndexException, IOException, SQLException {
         rTree = SQLRtreeManager.resetTree(getFileDirectory(), rTree, this);
     }
 

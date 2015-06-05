@@ -17,24 +17,35 @@
 
 package org.geotoolkit.index.tree.manager;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sql.DataSource;
+
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.TreeElementMapper;
 import org.geotoolkit.internal.sql.DefaultDataSource;
+import org.geotoolkit.util.sql.DerbySqlScriptRunner;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope> {
+public class LuceneDerbySQLTreeEltMapper implements TreeElementMapper<NamedEnvelope>{
 
      /**
      * Mutual Coordinate Reference System from all stored NamedEnvelopes.
@@ -46,7 +57,10 @@ public class LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope> 
     private Connection conRO;
     private Connection conT;
 
-    public LuceneSQLTreeEltMapper(final CoordinateReferenceSystem crs, final DataSource source) throws IOException {
+    protected static final Logger LOGGER = Logging.getLogger(LuceneDerbySQLTreeEltMapper.class);
+
+
+    public LuceneDerbySQLTreeEltMapper(final CoordinateReferenceSystem crs, final DataSource source) throws IOException {
         this.crs    = crs;
         this.source = source;
         try {
@@ -59,6 +73,74 @@ public class LuceneSQLTreeEltMapper implements TreeElementMapper<NamedEnvelope> 
             throw new IOException("Error while trying to connect the treemap datasource", ex);
         }
     }
+
+    static DataSource getDataSource(File directory) {
+
+        final String dbUrl = "jdbc:derby:" + directory.getPath() + "/treemap-db;";
+        LOGGER.log(Level.INFO, "connecting to datasource {0}", dbUrl);
+        return new DefaultDataSource(dbUrl);
+
+    }
+
+    public static TreeElementMapper createTreeEltMapperWithDB(File directory) throws SQLException, IOException {
+        final String dbUrl = "jdbc:derby:" + directory.getPath() + "/treemap-db;create=true;";
+        LOGGER.log(Level.INFO, "creating datasource {0}", dbUrl);
+        final DataSource source = new DefaultDataSource(dbUrl);
+        // Establish connection and create schema if does not exist.
+        Connection con = null;
+        try {
+            con = source.getConnection();
+
+            if (!schemaExists(con, "treemap")) {
+                // Load database schema SQL stream.
+                final InputStream stream = getResourceAsStream("org/geotoolkit/index/tree/create-derby-treemap-db.sql");
+
+                // Create schema.
+                final DerbySqlScriptRunner runner = new DerbySqlScriptRunner(con);
+                runner.run(stream);
+                runner.close(false);
+            }
+        } catch (IOException ex) {
+            throw new IllegalStateException("Unexpected error occurred while trying to create treemap database schema.", ex);
+        } finally {
+            if (con != null) {
+                con.close();
+            }
+        }
+        return new LuceneDerbySQLTreeEltMapper(SQLRtreeManager.DEFAULT_CRS, source);
+    }
+
+    private static boolean schemaExists(final Connection connect, final String schemaName) throws SQLException {
+        ensureNonNull("schemaName", schemaName);
+        final ResultSet schemas = connect.getMetaData().getSchemas();
+        while (schemas.next()) {
+            if (schemaName.equals(schemas.getString(1))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return an input stream of the specified resource.
+     */
+    private static InputStream getResourceAsStream(final String url) {
+        final ClassLoader cl = getContextClassLoader();
+        return cl.getResourceAsStream(url);
+    }
+
+    /**
+     * Obtain the Thread Context ClassLoader.
+     */
+    private static ClassLoader getContextClassLoader() {
+        return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+            @Override
+            public ClassLoader run() {
+                return Thread.currentThread().getContextClassLoader();
+            }
+        });
+    }
+
 
 
     @Override

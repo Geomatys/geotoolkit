@@ -20,6 +20,7 @@ package org.geotoolkit.lucene;
 import java.io.File;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.manager.SQLRtreeManager;
+import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper;
 import org.geotoolkit.util.FileUtilities;
 
 import org.junit.*;
@@ -33,16 +34,23 @@ public class TreeManagerTest {
 
     public static File directory = new File("TreeManagerTest");
     
-    @Before
-    public void setUpMethod() throws Exception {
+    @BeforeClass
+    public static void setUpMethod() throws Exception {
         if (directory.exists()) {
             FileUtilities.deleteDirectory(directory);
         }
         directory.mkdir();
     }
 
-    @After
-    public void tearDownMethod() throws Exception {
+    @AfterClass
+    public static void tearDownMethod() throws Exception {
+        // postgres
+        if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY) != null) {
+            if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY).equals("postgres")) {
+                if (directory.exists() && directory.listFiles().length > 0)
+                    LucenePostgresSQLTreeEltMapper.resetDB(directory);
+            }
+        }
         FileUtilities.deleteDirectory(directory);
     }
 

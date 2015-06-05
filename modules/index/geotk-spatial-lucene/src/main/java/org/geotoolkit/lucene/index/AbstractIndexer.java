@@ -19,6 +19,7 @@ package org.geotoolkit.lucene.index;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -208,7 +209,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             // we store the numeric fields in a properties file int the index directory
             storeNumericFieldsFile();
             
-        } catch (IOException | StoreIndexException ex) {
+        } catch (IOException | StoreIndexException | SQLException ex) {
             LOGGER.log(Level.WARNING, IO_SINGLE_MSG, ex);
         }
         LOGGER.log(logLevel, "Index creation process in " + (System.currentTimeMillis() - time) + " ms\n" +
@@ -279,7 +280,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             // we store the numeric fields in a properties file int the index directory
             storeNumericFieldsFile();
 
-        } catch (IOException | StoreIndexException ex) {
+        } catch (IOException | StoreIndexException | SQLException ex) {
             LOGGER.log(Level.SEVERE,IO_SINGLE_MSG + "{0}", ex.getMessage());
             throw new IndexingException("IOException while indexing documents:" + ex.getMessage(), ex);
         }
