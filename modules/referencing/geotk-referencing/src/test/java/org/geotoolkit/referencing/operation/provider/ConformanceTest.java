@@ -210,6 +210,10 @@ skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(Single
     private static void assertNameIsKnown(final String message, final OperationMethod geotkMethod,
             final Map<OperationMethod,OperationMethod> operationsForName, final boolean clean)
     {
+        // Temporary patch because Apache SIS does not duplicate name in aliases anymore.
+        if (operationsForName == null) return;
+
+
         assertNotNull(message + ": name is undeclared.", operationsForName);
         final OperationMethod opForName;
         if (clean) {

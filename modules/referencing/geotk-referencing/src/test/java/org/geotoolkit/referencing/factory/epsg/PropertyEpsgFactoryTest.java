@@ -36,7 +36,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
-import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactoryTest;
 
 import org.apache.sis.test.DependsOn;
@@ -146,8 +146,8 @@ public final strictfp class PropertyEpsgFactoryTest extends ReferencingTestBase 
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("27572");
         assertTrue(crs instanceof ProjectedCRS);
         final Collection<Identifier> ids = crs.getIdentifiers();
-        assertTrue (ids.contains(new NamedIdentifier(Citations.EPSG, "27572")));
-        assertFalse(ids.contains(new NamedIdentifier(Citations.ESRI, "27572")));
+        assertTrue (ids.contains(new ImmutableIdentifier(Citations.EPSG, "EPSG", "27572")));
+        assertFalse(ids.contains(new ImmutableIdentifier(Citations.ESRI, "EPSG", "27572")));
         assertSame("Should be able to trim the authority namespace",
                 crs, factory.createCoordinateReferenceSystem("EPSG:27572"));
     }

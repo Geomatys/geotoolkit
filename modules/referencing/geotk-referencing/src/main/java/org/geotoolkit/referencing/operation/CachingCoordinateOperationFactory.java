@@ -181,7 +181,9 @@ public class CachingCoordinateOperationFactory extends AbstractCoordinateOperati
      */
     private static CoordinateOperationFactory getBackingFactory(final Hints hints) {
         for (final CoordinateOperationFactory candidate : FactoryFinder.getCoordinateOperationFactories(hints)) {
-            if (!(candidate instanceof CachingCoordinateOperationFactory)) {
+            if (!(candidate instanceof CachingCoordinateOperationFactory)
+                && !candidate.getClass().getName().startsWith("org.apache.sis."))   // TODO: temporary patch.
+            {
                 return candidate;
             }
         }

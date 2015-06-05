@@ -57,7 +57,7 @@ public final strictfp class DefaultCitationTest {
                 new DefaultIdentifier(Citations.OGC,  "MyOGC"),
                 new DefaultIdentifier(Citations.EPSG, "MyEPSG")));
         assertNull(map.put(IdentifierSpace.ID, "MyID"));
-        assertEquals("{OGC=“MyOGC”, IOGP=“MyEPSG”, ISBN=“MyISBN”, ISSN=“MyISSN”, gml:id=“MyID”}", map.toString());
+        assertEquals("{OGC=“MyOGC”, EPSG=“MyEPSG”, ISBN=“MyISBN”, ISSN=“MyISSN”, gml:id=“MyID”}", map.toString());
         final String xml = XML.marshal(citation);
         /*
          * We don't compare the full XML tree, since this is a bit tedious.
