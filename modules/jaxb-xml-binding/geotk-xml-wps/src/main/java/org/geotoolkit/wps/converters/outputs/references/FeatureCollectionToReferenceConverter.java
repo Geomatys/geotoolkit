@@ -99,7 +99,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
         reference.setEncoding((String) params.get(ENCODING));
 
         final FeatureType ft = source.getFeatureType();
-        final String namespace = ft.getName().getURI();
+        final String namespace = ft.getName().getNamespaceURI();
         final Map<String, String> schemaLocation = new HashMap<String, String>();
 
         final String randomFileName = UUID.randomUUID().toString();

@@ -82,7 +82,7 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
         complex.setEncoding((String) params.get(ENCODING));
 
         final FeatureType ft = source.getType();
-        final String namespace = ft.getName().getURI();
+        final String namespace = ft.getName().getNamespaceURI();
         final Map<String, String> schemaLocation = new HashMap<String, String>();
 
         if(WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(complex.getMimeType())) {

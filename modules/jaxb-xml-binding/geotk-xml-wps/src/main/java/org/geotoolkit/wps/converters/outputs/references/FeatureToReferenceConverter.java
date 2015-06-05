@@ -99,7 +99,7 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));
 
-        final String namespace = ft.getName().getURI();
+        final String namespace = ft.getName().getNamespaceURI();
         final Map <String, String> schemaLocation = new HashMap<String, String>();
 
         final String randomFileName = UUID.randomUUID().toString();
