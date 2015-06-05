@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -51,6 +52,7 @@ import org.geotoolkit.gml.GMLStandard;
 import org.apache.sis.xml.IdentifiedObject;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -93,6 +95,8 @@ import org.opengis.util.InternationalString;
     DefinitionBaseType.class
 })
 public abstract class AbstractGMLType extends AbstractMetadata implements AbstractGML, Serializable, Entry, IdentifiedObject {
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml.xml.v321");
+
     /**
      * The value to be returned by {@link #getStandard()}.
      */
@@ -388,7 +392,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
          */
         return new IdentifierMapWithSpecialCases(identifiers);
     }
-    
+
     public Collection<GenericName> getAlias() {
         return null;
     }
@@ -409,7 +413,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
         // do nothing TODO implements for each subtype
     }
 
-    
+
     @Override
     public int hashCode() {
         int hash = 5;

@@ -94,7 +94,7 @@ import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.Version;
 
 import static org.geotoolkit.internal.InternalUtilities.COMPARISON_THRESHOLD;
-import static org.apache.sis.internal.referencing.OperationMethods.PARAMETERS_KEY;
+import static org.apache.sis.internal.metadata.ReferencingServices.PARAMETERS_KEY;
 
 
 /**

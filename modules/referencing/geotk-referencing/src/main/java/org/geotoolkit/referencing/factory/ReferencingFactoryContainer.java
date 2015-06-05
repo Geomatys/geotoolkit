@@ -47,6 +47,7 @@ import org.geotoolkit.referencing.cs.Axes;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.cs.AxesConvention;
 import org.apache.sis.referencing.cs.CoordinateSystems;
 
 import org.apache.sis.referencing.operation.DefaultConversion;
@@ -511,7 +512,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
         Exception failure;
         try {
             final CoordinateSystem sourceCS = crs.getCoordinateSystem();
-            final CoordinateSystem targetCS = CoordinateSystems.normalize(sourceCS);
+            final CoordinateSystem targetCS = CoordinateSystems.replaceAxes(sourceCS, AxesConvention.NORMALIZED);
             if (inverse) {
                 return CoordinateSystems.swapAndScaleAxes(targetCS, sourceCS);
             } else {
