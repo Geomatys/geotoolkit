@@ -79,6 +79,7 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
      * @throws FactoryException Should not happen.
      */
     @Test
+    @Ignore("CachingCoordinateOperationFactory is (for now) hidden by SIS factory.")
     public final void testGeographicBacked() throws FactoryException {
         assumeNotNull(factory);
 
