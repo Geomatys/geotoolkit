@@ -48,7 +48,6 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
-import javax.imageio.stream.ImageOutputStream;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
@@ -316,9 +315,7 @@ public final class DefaultPortrayalService implements PortrayalService{
     /**
      * Manipulate a MapContext as if it was an ARGB coverage of infinite resolution.
      *
-     * @param canvasDef
      * @param sceneDef
-     * @param viewDef
      * @return GridCoverageReader, never null
      */
     public static GridCoverageReader asCoverageReader(final SceneDef sceneDef){
@@ -656,9 +653,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         if(strechImage) canvas.setAxisProportions(Double.NaN);
         try {
             canvas.setVisibleArea(contextEnv);
-        } catch (NoninvertibleTransformException ex) {
-            throw new PortrayalException(ex);
-        } catch (TransformException ex) {
+        } catch (NoninvertibleTransformException | TransformException ex) {
             throw new PortrayalException(ex);
         }
 
@@ -707,6 +702,24 @@ public final class DefaultPortrayalService implements PortrayalService{
      * @return The image with the exception in it.
      */
     public static BufferedImage writeException(final Exception e, final Dimension dim, final boolean opaque){
+        return writeException(e, dim, opaque, null);
+    }
+
+        
+    /**
+     * Write an exception in an image. It is possible to set the image as transparent or
+     * opaque.
+     *
+     * @param e The exception to write.
+     * @param dim The dimension of the image.
+     * @param opaque If true, the exception will be written on an opaque white background.
+     *               Otherwise the image will be transparent, only the exception trace will
+     *               be displayed.
+     * @param writingColor the color of the error message. if null, {@code Color.RED} will be used.
+     * 
+     * @return The image with the exception in it.
+     */
+    public static BufferedImage writeException(final Exception e, final Dimension dim, final boolean opaque, final Color writingColor){
 
         final BufferedImage img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = img.createGraphics();
@@ -720,11 +733,17 @@ public final class DefaultPortrayalService implements PortrayalService{
             g.setColor(Color.WHITE);
             g.fillRect(0, 0, dim.width, dim.height);
         }
-
-        g.setColor(Color.RED);
+        Color writeColor;
+        if (writingColor == null) {
+            writeColor = Color.RED;
+        } else {
+            writeColor = writingColor;
+        }
+        
+        g.setColor(writeColor);
         if(maxCharPerLine < 1){
             //not enough space to draw error, simply use a red background
-            g.setColor(Color.RED);
+            g.setColor(writeColor);
             g.fillRect(0, 0, dim.width, dim.height);
         }else{
             int y = fontHeight;
