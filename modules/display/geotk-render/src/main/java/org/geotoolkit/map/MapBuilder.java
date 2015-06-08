@@ -24,7 +24,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -162,7 +162,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverage2D grid, final MutableStyle style, final String name){
-        final CoverageReference ref = new DefaultCoverageReference(grid, DefaultName.create(name));
+        final CoverageReference ref = new DefaultCoverageReference(grid, NamesExt.create(name));
         return createCoverageLayer(ref, style);
     }
 
@@ -174,7 +174,7 @@ public final class MapBuilder {
      * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final Object input){
-        final CoverageReference reference = new DefaultCoverageReference(input, DefaultName.create("image"));
+        final CoverageReference reference = new DefaultCoverageReference(input, NamesExt.create("image"));
         return createCoverageLayer(reference);
     }
 

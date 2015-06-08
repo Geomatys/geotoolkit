@@ -43,7 +43,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
@@ -128,7 +128,7 @@ public class PGPyramidTest {
         GridMosaic mosaic;
         BufferedImage image;
         
-        final GenericName name = DefaultName.create(null, "versLayer");        
+        final GenericName name = NamesExt.create(null, "versLayer");        
         store.create(name);
         
         //create version 1 -----------------------------------------------------
@@ -193,7 +193,7 @@ public class PGPyramidTest {
         GridMosaic mosaic;
         BufferedImage image;
 
-        final GenericName name = DefaultName.create(null, "sampleTestLayer");
+        final GenericName name = NamesExt.create(null, "sampleTestLayer");
         store.create(name);
 
         //create version 1 -----------------------------------------------------

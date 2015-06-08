@@ -20,7 +20,7 @@ package org.geotoolkit.filter.visitor;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
@@ -96,10 +96,10 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
             if(type != null) {
                attributeNames.add( type.getName() );
             }else{
-               attributeNames.add( DefaultName.valueOf(expression.getPropertyName()) );
+               attributeNames.add(NamesExt.valueOf(expression.getPropertyName()) );
             }
         }else{
-            attributeNames.add( DefaultName.valueOf(expression.getPropertyName()) );
+            attributeNames.add(NamesExt.valueOf(expression.getPropertyName()) );
         }
 
         return attributeNames;

@@ -17,7 +17,7 @@
 
 package org.geotoolkit.filter.visitor;
 
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
@@ -173,7 +173,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     }
 
     private GenericName getNameFromString(final String fullName) {
-        return DefaultName.valueOf(fullName);
+        return NamesExt.valueOf(fullName);
     }
 
     @Override

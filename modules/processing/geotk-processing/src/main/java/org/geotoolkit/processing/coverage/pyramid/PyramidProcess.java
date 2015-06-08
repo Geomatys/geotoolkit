@@ -22,7 +22,7 @@ import java.util.concurrent.CancellationException;
 import javax.swing.JLabel;
 import javax.swing.ProgressMonitor;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.storage.coverage.PyramidCoverageBuilder;
 import static org.geotoolkit.parameter.Parameters.*;
@@ -82,7 +82,7 @@ public class PyramidProcess extends AbstractProcess implements ProcessListener {
             throw new CancellationException();
         }
         try {
-            pgcb.create(coverageref, coverageStore, DefaultName.create(pyramid_name), resolution_per_envelope, fillvalue,
+            pgcb.create(coverageref, coverageStore, NamesExt.create(pyramid_name), resolution_per_envelope, fillvalue,
                     this, new PyramidMonitor(this));
         } catch (Exception ex) {
             throw new ProcessException(ex.getMessage(), this, ex);

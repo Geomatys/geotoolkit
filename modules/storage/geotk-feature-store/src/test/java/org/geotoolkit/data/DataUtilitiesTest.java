@@ -21,7 +21,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 
 import org.junit.Test;
@@ -46,9 +46,9 @@ public class DataUtilitiesTest {
         store = new MemoryFeatureStore();
 
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        name1 = DefaultName.create("http://test.com", "type1");
-        name2 = DefaultName.create("http://test.com", "type2");
-        name3 = DefaultName.create("http://test.com", "type3");
+        name1 = NamesExt.create("http://test.com", "type1");
+        name2 = NamesExt.create("http://test.com", "type2");
+        name3 = NamesExt.create("http://test.com", "type3");
         builder.reset();
         builder.setName(name1);
         builder.add("att_string", String.class);

@@ -29,7 +29,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
@@ -109,7 +109,7 @@ public class GenericQueryFeatureIterator {
             loop:
             for(GenericName n : properties){
                 for(GenericName dn : names){
-                    if(DefaultName.match(n, dn)) continue loop;
+                    if(NamesExt.match(n, dn)) continue loop;
                 }
                 names.add(n);
             }

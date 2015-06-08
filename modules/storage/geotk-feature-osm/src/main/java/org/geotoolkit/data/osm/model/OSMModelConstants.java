@@ -20,7 +20,7 @@ package org.geotoolkit.data.osm.model;
 import com.vividsolutions.jts.geom.Point;
 
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.FeatureFactory;
@@ -79,32 +79,32 @@ public final class OSMModelConstants {
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
 
-        ATT_ID = adb.create(DefaultName.create(OSM_NAMESPACE, "id"), Long.class,1,1,false,null);
-        ATT_VERSION = adb.create(DefaultName.create(OSM_NAMESPACE, "version"), Integer.class,1,1,false,null);
-        ATT_CHANGESET = adb.create(DefaultName.create(OSM_NAMESPACE, "changeset"), Integer.class,1,1,false,null);
-        ATT_TIMESTAMP = adb.create(DefaultName.create(OSM_NAMESPACE, "timestamp"), Integer.class,1,1,false,null);
+        ATT_ID = adb.create(NamesExt.create(OSM_NAMESPACE, "id"), Long.class,1,1,false,null);
+        ATT_VERSION = adb.create(NamesExt.create(OSM_NAMESPACE, "version"), Integer.class,1,1,false,null);
+        ATT_CHANGESET = adb.create(NamesExt.create(OSM_NAMESPACE, "changeset"), Integer.class,1,1,false,null);
+        ATT_TIMESTAMP = adb.create(NamesExt.create(OSM_NAMESPACE, "timestamp"), Integer.class,1,1,false,null);
 
         //------------------- USER TYPE ----------------------------------------
-        ATT_USER_ID = adb.create(DefaultName.create(OSM_NAMESPACE, "id"), Integer.class, 1,1,false,null);
-        ATT_USER_NAME = adb.create(DefaultName.create(OSM_NAMESPACE, "name"), String.class, 1,1,true,null);
+        ATT_USER_ID = adb.create(NamesExt.create(OSM_NAMESPACE, "id"), Integer.class, 1,1,false,null);
+        ATT_USER_NAME = adb.create(NamesExt.create(OSM_NAMESPACE, "name"), String.class, 1,1,true,null);
 
         ftb.reset();
         ftb.setName(OSM_NAMESPACE, "User");
         ftb.add(ATT_USER_ID);
         ftb.add(ATT_USER_NAME);
         TYPE_USER = ftb.buildType();
-        ATT_USER = adb.create(TYPE_USER, DefaultName.create(OSM_NAMESPACE, "user"),null,1,1,false,null);
+        ATT_USER = adb.create(TYPE_USER, NamesExt.create(OSM_NAMESPACE, "user"),null,1,1,false,null);
 
         //------------------- TAG TYPE -----------------------------------------
-        ATT_K = adb.create(DefaultName.create(OSM_NAMESPACE, "k"), String.class, 1,1,true,null);
-        ATT_V = adb.create(DefaultName.create(OSM_NAMESPACE, "v"), String.class, 1,1,true,null);
+        ATT_K = adb.create(NamesExt.create(OSM_NAMESPACE, "k"), String.class, 1,1,true,null);
+        ATT_V = adb.create(NamesExt.create(OSM_NAMESPACE, "v"), String.class, 1,1,true,null);
 
         ftb.reset();
         ftb.setName(OSM_NAMESPACE, "Tag");
         ftb.add(ATT_K);
         ftb.add(ATT_V);
         TYPE_TAG = ftb.buildType();
-        ATT_TAG = adb.create(TYPE_TAG, DefaultName.create(OSM_NAMESPACE, "tags"),null,0,Integer.MAX_VALUE,true,null);
+        ATT_TAG = adb.create(TYPE_TAG, NamesExt.create(OSM_NAMESPACE, "tags"),null,0,Integer.MAX_VALUE,true,null);
 
         //------------------- IDENTIFIED TYPE ----------------------------------
         ftb.reset();
@@ -118,7 +118,7 @@ public final class OSMModelConstants {
         TYPE_IDENTIFIED = ftb.buildFeatureType();
 
         //------------------- NODE TYPE ----------------------------------------
-        ATT_NODE_POINT = (GeometryDescriptor) adb.create(DefaultName.create(OSM_NAMESPACE, "point"), Point.class, OSM_CRS,1,1,false,null);
+        ATT_NODE_POINT = (GeometryDescriptor) adb.create(NamesExt.create(OSM_NAMESPACE, "point"), Point.class, OSM_CRS,1,1,false,null);
         ftb.reset();
         ftb.setSuperType(TYPE_IDENTIFIED);
         ftb.setName(OSM_NAMESPACE, "Node");
@@ -134,7 +134,7 @@ public final class OSMModelConstants {
 
 
         //------------------- WAY TYPE -----------------------------------------
-        ATT_WAY_NODES = adb.create(DefaultName.create(OSM_NAMESPACE, "nodes"),Long.class,0,Integer.MAX_VALUE,true,null);
+        ATT_WAY_NODES = adb.create(NamesExt.create(OSM_NAMESPACE, "nodes"),Long.class,0,Integer.MAX_VALUE,true,null);
 
         ftb.reset();
         ftb.setSuperType(TYPE_IDENTIFIED);
@@ -149,9 +149,9 @@ public final class OSMModelConstants {
         TYPE_WAY = ftb.buildFeatureType();
 
         //------------------- RELATION MEMBER TYPE -----------------------------
-        ATT_MEMBER_ROLE = adb.create(DefaultName.create(OSM_NAMESPACE, "role"),String.class,1,1,true,null);
-        ATT_MEMBER_TYPE = adb.create(DefaultName.create(OSM_NAMESPACE, "type"),MemberType.class,1,1,true,null);
-        ATT_MEMBER_REF = adb.create(DefaultName.create(OSM_NAMESPACE, "ref"),Long.class,1,1,false,null);
+        ATT_MEMBER_ROLE = adb.create(NamesExt.create(OSM_NAMESPACE, "role"),String.class,1,1,true,null);
+        ATT_MEMBER_TYPE = adb.create(NamesExt.create(OSM_NAMESPACE, "type"),MemberType.class,1,1,true,null);
+        ATT_MEMBER_REF = adb.create(NamesExt.create(OSM_NAMESPACE, "ref"),Long.class,1,1,false,null);
 
         ftb.reset();
         ftb.setName(OSM_NAMESPACE, "Member");
@@ -161,7 +161,7 @@ public final class OSMModelConstants {
         TYPE_RELATION_MEMBER = ftb.buildType();
 
         //------------------- RELATION TYPE ------------------------------------
-        ATT_RELATION_MEMBER = adb.create(TYPE_RELATION_MEMBER, DefaultName.create(OSM_NAMESPACE, "members"),0,Integer.MAX_VALUE,true,null);
+        ATT_RELATION_MEMBER = adb.create(TYPE_RELATION_MEMBER, NamesExt.create(OSM_NAMESPACE, "members"),0,Integer.MAX_VALUE,true,null);
 
         ftb.reset();
         ftb.setSuperType(TYPE_IDENTIFIED);

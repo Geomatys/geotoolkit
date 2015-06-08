@@ -29,7 +29,7 @@ import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
@@ -267,7 +267,7 @@ public class WebMapTileClient extends AbstractCoverageClient {
             final List<LayerType> layers = capa.getContents().getLayers();
             for(LayerType lt : layers){
                 final String name = lt.getIdentifier().getValue();
-                final GenericName nn = DefaultName.create(name);
+                final GenericName nn = NamesExt.create(name);
                 final CoverageReference ref = new WMTSCoverageReference(this,nn,getImageCache());
                 rootNode.getChildren().add(ref);
             }

@@ -32,7 +32,7 @@ import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.feature.Feature;
@@ -65,13 +65,13 @@ public class CSVReadingTest extends AbstractReadingTests{
 
         final String namespace = "http://test.com";
         
-        GenericName name = DefaultName.create("http://test.com", "TestSchema3");
+        GenericName name = NamesExt.create("http://test.com", "TestSchema3");
         builder.reset();
         builder.setName(name);
-        builder.add(DefaultName.create(namespace, "geometry"), Geometry.class, CRS.decode("EPSG:27582"));
-        builder.add(DefaultName.create(namespace, "stringProp"), String.class);
-        builder.add(DefaultName.create(namespace, "intProp"), Integer.class);
-        builder.add(DefaultName.create(namespace, "doubleProp"), Double.class);
+        builder.add(NamesExt.create(namespace, "geometry"), Geometry.class, CRS.decode("EPSG:27582"));
+        builder.add(NamesExt.create(namespace, "stringProp"), String.class);
+        builder.add(NamesExt.create(namespace, "intProp"), Integer.class);
+        builder.add(NamesExt.create(namespace, "doubleProp"), Double.class);
         final FeatureType type3 = builder.buildFeatureType();
         store.createFeatureType(name,type3);
 

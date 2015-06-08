@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.mapinfo.mif.style;
 
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.opengis.util.GenericName;
 import org.opengis.style.Description;
 import org.opengis.style.StyleVisitor;
@@ -35,7 +35,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class Font implements MIFSymbolizer {
 
-    public static final GenericName NAME = DefaultName.create("FONT");
+    public static final GenericName NAME = NamesExt.create("FONT");
 
     public static final Pattern PATTERN = Pattern.compile(NAME.tip().toString()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 

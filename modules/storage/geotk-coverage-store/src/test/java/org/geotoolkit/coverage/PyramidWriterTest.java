@@ -33,7 +33,7 @@ import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.opengis.util.GenericName;
 import org.geotoolkit.referencing.CRS;
 import static org.junit.Assert.*;
@@ -55,7 +55,7 @@ import org.apache.sis.referencing.CommonCRS;
  */
 public class PyramidWriterTest {
 
-    private static final GenericName NAME = DefaultName.create("test");
+    private static final GenericName NAME = NamesExt.create("test");
     private static final CoordinateReferenceSystem CRS84 = CommonCRS.WGS84.normalizedGeographic();
     private static final CoordinateReferenceSystem EPSG4326;
     private static final GeneralDirectPosition UL84;

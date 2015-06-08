@@ -37,7 +37,7 @@ import org.geotoolkit.storage.coverage.AbstractCoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -213,7 +213,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
             if(str != null && str.contains(",")){
                 throw new IllegalArgumentException("invalid layer, name must not contain ',' caractere : " + str);
             }
-            ns[i] = DefaultName.valueOf(str);
+            ns[i] = NamesExt.valueOf(str);
         }
         return ns;
     }
@@ -255,7 +255,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
     public String[] getLayerNames() {
         final String[] ns = new String[layers.length];
         for(int i=0;i<layers.length;i++){
-            ns[i] = DefaultName.toExtendedForm(layers[i]);
+            ns[i] = NamesExt.toExtendedForm(layers[i]);
         }
         return ns;
     }

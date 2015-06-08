@@ -30,7 +30,7 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.lang.Static;
 
@@ -419,7 +419,7 @@ public final class FeatureTypeUtils extends Static {
             throw new DataStoreException("Geometry crs or binding not found.");
         }
 
-        GenericName name = geometryName != null ? DefaultName.create(geometryName) : DefaultName.create(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
+        GenericName name = geometryName != null ? NamesExt.create(geometryName) : NamesExt.create(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
         PropertyType prop = FT_FACTORY.createGeometryType(name, binding, crs, false, false, null, null, description);
         return (GeometryDescriptor) adb.create((org.geotoolkit.feature.type.PropertyType) prop, name, crs, 1, 1, false, null);
     }
@@ -508,7 +508,7 @@ public final class FeatureTypeUtils extends Static {
             userData.put(HintsPending.PROPERTY_IS_IDENTIFIER, Boolean.TRUE);
         }
 
-        GenericName name = DefaultName.valueOf(attributeName);
+        GenericName name = NamesExt.valueOf(attributeName);
         InternationalString desc = description != null ? new SimpleInternationalString(description) : null;
         if (descs.isEmpty()) {
             //build AttributeDescriptor

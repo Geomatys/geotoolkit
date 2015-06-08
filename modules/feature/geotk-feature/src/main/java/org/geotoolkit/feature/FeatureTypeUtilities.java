@@ -175,14 +175,14 @@ public final class FeatureTypeUtilities {
 
     /** default feature collection name */
     public static final GenericName DEFAULT_TYPENAME =
-            DefaultName.create("AbstractFeatureCollectionType", DEFAULT_NAMESPACE.toString());
+            NamesExt.create("AbstractFeatureCollectionType", DEFAULT_NAMESPACE.toString());
 
     /** represent an unbounded field length */
     public static final int ANY_LENGTH = -1;
 
     /** An feature type with no attributes */
     public static final FeatureType EMPTY = new DefaultSimpleFeatureType(
-            DefaultName.create("Empty"), Collections.EMPTY_LIST, null, false, Collections.EMPTY_LIST, null, null);
+            NamesExt.create("Empty"), Collections.EMPTY_LIST, null, false, Collections.EMPTY_LIST, null, null);
 
 
     private FeatureTypeUtilities() {}
@@ -219,7 +219,7 @@ public final class FeatureTypeUtilities {
     public static FeatureType createSubType(final FeatureType featureType,
             final GenericName[] properties, final CoordinateReferenceSystem override) throws SchemaException{
         URI namespaceURI = null;
-        final String ns = DefaultName.getNamespace(featureType.getName());
+        final String ns = NamesExt.getNamespace(featureType.getName());
         if (ns != null) {
             try {
                 namespaceURI = new URI(ns);
@@ -253,7 +253,7 @@ public final class FeatureTypeUtilities {
         final String namespaceURI = namespace != null ? namespace.toString() : null;
         boolean same = (propCount == properties.length) &&
                 featureType.getName().tip().toString().equals(typeName) &&
-                Objects.equals(DefaultName.getNamespace(featureType.getName()), namespaceURI);
+                Objects.equals(NamesExt.getNamespace(featureType.getName()), namespaceURI);
 
 
         int i=0;
@@ -301,9 +301,9 @@ public final class FeatureTypeUtilities {
         if (typeName == null) {
             typeName = featureType.getName().tip().toString();
         }
-        if (namespace == null && DefaultName.getNamespace(featureType.getName()) != null) {
+        if (namespace == null && NamesExt.getNamespace(featureType.getName()) != null) {
             try {
-                namespace = new URI(DefaultName.getNamespace(featureType.getName()));
+                namespace = new URI(NamesExt.getNamespace(featureType.getName()));
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
@@ -311,7 +311,7 @@ public final class FeatureTypeUtilities {
 
 
 
-        tb.setName(DefaultName.create(namespaceURI, typeName));
+        tb.setName(NamesExt.create(namespaceURI, typeName));
         tb.addAll(types);
 
         FeatureType result = tb.buildFeatureType();
@@ -329,7 +329,7 @@ public final class FeatureTypeUtilities {
         }
         final GenericName[] props = new GenericName[properties.length];
         for(int i=0; i<properties.length; i++){
-            props[i] = DefaultName.valueOf(properties[i]);
+            props[i] = NamesExt.valueOf(properties[i]);
         }
         return createSubType(featureType, props);
     }
@@ -356,7 +356,7 @@ public final class FeatureTypeUtilities {
         if(same){
             int i=0;
             for(PropertyDescriptor desc : featureType.getDescriptors()){
-                if(DefaultName.getNamespace(properties[i]) == null){
+                if(NamesExt.getNamespace(properties[i]) == null){
                     same = desc.getName().tip().toString().equals(properties[i].tip().toString());
                 }else{
                     same = desc.getName().equals(properties[i]);
@@ -458,7 +458,7 @@ public final class FeatureTypeUtilities {
             final String typeSpec) throws SchemaException
     {
         final FeatureTypeBuilder tb = new FeatureTypeBuilder();
-        tb.setName(DefaultName.create(namespace, typeName));
+        tb.setName(NamesExt.create(namespace, typeName));
 
         final String[] types = typeSpec.split(",");
 
@@ -580,13 +580,13 @@ public final class FeatureTypeUtilities {
 
             final Class clazz = type(type);
             if (Geometry.class.isAssignableFrom(clazz)) {
-                final GeometryType at = new DefaultGeometryType(DefaultName.create(namespace, name), clazz, crs, false, false,
+                final GeometryType at = new DefaultGeometryType(NamesExt.create(namespace, name), clazz, crs, false, false,
                                                                 Collections.EMPTY_LIST, null, null);
-                return new DefaultGeometryDescriptor(at, DefaultName.create(namespace, name), 1, 1, nillable, null);
+                return new DefaultGeometryDescriptor(at, NamesExt.create(namespace, name), 1, 1, nillable, null);
             } else {
-                final AttributeType at = new DefaultAttributeType(DefaultName.create(namespace, name), clazz, false, false,
+                final AttributeType at = new DefaultAttributeType(NamesExt.create(namespace, name), clazz, false, false,
                                                                   Collections.EMPTY_LIST, null, null);
-                return new DefaultAttributeDescriptor(at, DefaultName.create(namespace, name), 1, 1, nillable, null);
+                return new DefaultAttributeDescriptor(at, NamesExt.create(namespace, name), 1, 1, nillable, null);
             }
         } catch (ClassNotFoundException e) {
             throw new SchemaException("Could not type " + name + " as:" + type, e);
@@ -834,7 +834,7 @@ public final class FeatureTypeUtilities {
             final AttributeDescriptor defaultGeometry) throws FactoryRegistryException, SchemaException{
 
         final FeatureTypeBuilder tb = new FeatureTypeBuilder();
-        tb.setName(DefaultName.create(ns.toString(), name));
+        tb.setName(NamesExt.create(ns.toString(), name));
         tb.setAbstract(isAbstract);
         tb.addAll(types);
 
@@ -982,7 +982,7 @@ public final class FeatureTypeUtilities {
                     return true;
                 }
             } else {
-                if (Objects.equals(DefaultName.getNamespace(superType.getName()), namespace.toString()) &&
+                if (Objects.equals(NamesExt.getNamespace(superType.getName()), namespace.toString()) &&
                     Objects.equals(superType.getName().tip().toString(), typeName)){
                     return true;
                 }
@@ -993,7 +993,7 @@ public final class FeatureTypeUtilities {
 
     public static boolean isDecendedFrom(final PropertyType featureType, final PropertyType isParentType) {
         final GenericName n = isParentType.getName();
-        return isDecendedFrom(featureType, DefaultName.getNamespace(n), n.tip().toString());
+        return isDecendedFrom(featureType, NamesExt.getNamespace(n), n.tip().toString());
     }
 
     public static boolean isSimple(FeatureType type){
@@ -1107,8 +1107,8 @@ public final class FeatureTypeUtilities {
             return false;
         }
 
-        final String namespaceA = DefaultName.getNamespace(typeA.getName());
-        final String namespaceB = DefaultName.getNamespace(typeB.getName());
+        final String namespaceA = NamesExt.getNamespace(typeA.getName());
+        final String namespaceB = NamesExt.getNamespace(typeB.getName());
 
         if (namespaceA == null && namespaceB == null) {
             return true;
@@ -1125,7 +1125,7 @@ public final class FeatureTypeUtilities {
         int i=0;
         for(PropertyDescriptor descriptor : type.getDescriptors()){
             final GenericName dname = descriptor.getName();
-            if (DefaultName.match(name, dname)) {
+            if (NamesExt.match(name, dname)) {
                 return i;
             }
             i++;
@@ -1137,7 +1137,7 @@ public final class FeatureTypeUtilities {
         int i=0;
         for(PropertyDescriptor descriptor : type.getDescriptors()){
             final GenericName dname = descriptor.getName();
-            if (DefaultName.match(dname, name)) {
+            if (NamesExt.match(dname, name)) {
                 return i;
             }
             i++;
@@ -1376,7 +1376,7 @@ public final class FeatureTypeUtilities {
             final ParameterDescriptor desc = (ParameterDescriptor) descriptor;
 
             final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-            atb.setName(DefaultName.valueOf(desc.getName().getCode()));
+            atb.setName(NamesExt.valueOf(desc.getName().getCode()));
             atb.setDescription(desc.getRemarks());
             atb.setBinding(desc.getValueClass());
             final Set validValues = desc.getValidValues();
@@ -1401,7 +1401,7 @@ public final class FeatureTypeUtilities {
             final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) descriptor;
 
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(DefaultName.valueOf(desc.getName().getCode()));
+            ftb.setName(NamesExt.valueOf(desc.getName().getCode()));
 
             for(GeneralParameterDescriptor sd : desc.descriptors()){
                 final PropertyType pt = toPropertyType(sd);

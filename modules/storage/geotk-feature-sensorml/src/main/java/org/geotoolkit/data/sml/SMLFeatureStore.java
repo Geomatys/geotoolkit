@@ -46,7 +46,7 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
@@ -90,18 +90,18 @@ public class SMLFeatureStore extends AbstractFeatureStore {
     private static final String SML_NAMESPACE = "http://www.opengis.net/sml/1.0";
 
     //Root types
-    private final static GenericName SML_TN_SYSTEM         = DefaultName.create(SML_NAMESPACE, "System");
-    private final static GenericName SML_TN_COMPONENT      = DefaultName.create(SML_NAMESPACE, "Component");
-    private final static GenericName SML_TN_PROCESSCHAIN   = DefaultName.create(SML_NAMESPACE, "ProcessChain");
-    private final static GenericName SML_TN_PROCESSMODEL   = DefaultName.create(SML_NAMESPACE, "ProcessModel");
-    private final static GenericName SML_TN_DATASOURCETYPE = DefaultName.create(SML_NAMESPACE, "DataSourceType");
+    private final static GenericName SML_TN_SYSTEM         = NamesExt.create(SML_NAMESPACE, "System");
+    private final static GenericName SML_TN_COMPONENT      = NamesExt.create(SML_NAMESPACE, "Component");
+    private final static GenericName SML_TN_PROCESSCHAIN   = NamesExt.create(SML_NAMESPACE, "ProcessChain");
+    private final static GenericName SML_TN_PROCESSMODEL   = NamesExt.create(SML_NAMESPACE, "ProcessModel");
+    private final static GenericName SML_TN_DATASOURCETYPE = NamesExt.create(SML_NAMESPACE, "DataSourceType");
 
     //subTypes
-    private final static GenericName SML_KEYWORD_LIST      = DefaultName.create(SML_NAMESPACE, "KeywordList");
-    private final static GenericName SML_INPUT_LIST        = DefaultName.create(SML_NAMESPACE, "InputList");
-    private final static GenericName SML_OUTPUT_LIST       = DefaultName.create(SML_NAMESPACE, "OutputList");
-    private final static GenericName SML_INPUT             = DefaultName.create(SML_NAMESPACE, "Input");
-    private final static GenericName SML_OUTPUT            = DefaultName.create(SML_NAMESPACE, "Output");
+    private final static GenericName SML_KEYWORD_LIST      = NamesExt.create(SML_NAMESPACE, "KeywordList");
+    private final static GenericName SML_INPUT_LIST        = NamesExt.create(SML_NAMESPACE, "InputList");
+    private final static GenericName SML_OUTPUT_LIST       = NamesExt.create(SML_NAMESPACE, "OutputList");
+    private final static GenericName SML_INPUT             = NamesExt.create(SML_NAMESPACE, "Input");
+    private final static GenericName SML_OUTPUT            = NamesExt.create(SML_NAMESPACE, "Output");
 
     private static final String pathDescription        = "SensorML:SensorML:member:description";
     private static final String pathName               = "SensorML:SensorML:member:name";
@@ -140,26 +140,26 @@ public class SMLFeatureStore extends AbstractFeatureStore {
 
 
     // Shared attributes
-    private static final GenericName ATT_DESC        = DefaultName.create(GML_311_NAMESPACE, "description");
-    private static final GenericName ATT_NAME        = DefaultName.create(GML_311_NAMESPACE, "name");
-    private static final GenericName ATT_CODESPACE   = DefaultName.create(GML_311_NAMESPACE, "codespace");
-    private static final GenericName ATT_KEYWORDS    = DefaultName.create(SML_NAMESPACE, "keywords");
-    private static final GenericName ATT_KEYWORD     = DefaultName.create(SML_NAMESPACE, "keyword");
-    private static final GenericName ATT_LOCATION    = DefaultName.create(SML_NAMESPACE, "location");
-    private static final GenericName ATT_PHENOMENONS = DefaultName.create(SML_NAMESPACE, "phenomenons");
-    private static final GenericName ATT_SMLTYPE     = DefaultName.create(SML_NAMESPACE, "smltype");
-    private static final GenericName ATT_SMLREF      = DefaultName.create(SML_NAMESPACE, "smlref");
-    private static final GenericName ATT_INPUTS      = DefaultName.create(SML_NAMESPACE, "inputs");
-    private static final GenericName ATT_INPUT       = DefaultName.create(SML_NAMESPACE, "input");
-    private static final GenericName ATT_OUTPUTS     = DefaultName.create(SML_NAMESPACE, "outputs");
-    private static final GenericName ATT_OUTPUT      = DefaultName.create(SML_NAMESPACE, "output");
+    private static final GenericName ATT_DESC        = NamesExt.create(GML_311_NAMESPACE, "description");
+    private static final GenericName ATT_NAME        = NamesExt.create(GML_311_NAMESPACE, "name");
+    private static final GenericName ATT_CODESPACE   = NamesExt.create(GML_311_NAMESPACE, "codespace");
+    private static final GenericName ATT_KEYWORDS    = NamesExt.create(SML_NAMESPACE, "keywords");
+    private static final GenericName ATT_KEYWORD     = NamesExt.create(SML_NAMESPACE, "keyword");
+    private static final GenericName ATT_LOCATION    = NamesExt.create(SML_NAMESPACE, "location");
+    private static final GenericName ATT_PHENOMENONS = NamesExt.create(SML_NAMESPACE, "phenomenons");
+    private static final GenericName ATT_SMLTYPE     = NamesExt.create(SML_NAMESPACE, "smltype");
+    private static final GenericName ATT_SMLREF      = NamesExt.create(SML_NAMESPACE, "smlref");
+    private static final GenericName ATT_INPUTS      = NamesExt.create(SML_NAMESPACE, "inputs");
+    private static final GenericName ATT_INPUT       = NamesExt.create(SML_NAMESPACE, "input");
+    private static final GenericName ATT_OUTPUTS     = NamesExt.create(SML_NAMESPACE, "outputs");
+    private static final GenericName ATT_OUTPUT      = NamesExt.create(SML_NAMESPACE, "output");
     // attribute for sml:System or sml:ProcessChain
-    private static final GenericName ATT_PRODUCER = DefaultName.create(SML_NAMESPACE, "producer");
-    private static final GenericName ATT_COMPONENTS = DefaultName.create(SML_NAMESPACE, "components");
+    private static final GenericName ATT_PRODUCER = NamesExt.create(SML_NAMESPACE, "producer");
+    private static final GenericName ATT_COMPONENTS = NamesExt.create(SML_NAMESPACE, "components");
     // attribute for sml:ProccessModel
-    private static final GenericName ATT_METHOD = DefaultName.create(SML_NAMESPACE, "method");
+    private static final GenericName ATT_METHOD = NamesExt.create(SML_NAMESPACE, "method");
     // attribute for sml:DatasourceType
-    private static final GenericName ATT_CHARACTERISTICS = DefaultName.create(SML_NAMESPACE, "characteristics");
+    private static final GenericName ATT_CHARACTERISTICS = NamesExt.create(SML_NAMESPACE, "characteristics");
 
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);

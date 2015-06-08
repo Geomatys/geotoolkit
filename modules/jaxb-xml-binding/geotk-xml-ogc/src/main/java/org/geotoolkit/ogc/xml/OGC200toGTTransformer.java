@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
@@ -524,7 +524,7 @@ public class OGC200toGTTransformer {
      */
     public GenericName visitQName(final QName qname){
         if(qname == null) {return null;}
-        return DefaultName.create(qname);
+        return NamesExt.create(qname);
     }
 
 }

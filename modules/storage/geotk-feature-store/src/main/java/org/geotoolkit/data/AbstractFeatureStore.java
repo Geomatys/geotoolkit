@@ -41,7 +41,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
@@ -137,7 +137,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     
     @Override
     public VersionControl getVersioning(String typeName) throws VersioningException{
-        final GenericName n = DefaultName.valueOf(typeName);
+        final GenericName n = NamesExt.valueOf(typeName);
         return getVersioning(n);
     }
 
@@ -611,11 +611,11 @@ public abstract class AbstractFeatureStore extends FeatureStore {
 
     public static GenericName ensureGMLNS(final String namespace, final String local){
         if(local.equals(GML_NAME)){
-            return DefaultName.create(GML_311_NAMESPACE, GML_NAME);
+            return NamesExt.create(GML_311_NAMESPACE, GML_NAME);
         }else if(local.equals(GML_DESCRIPTION)){
-            return DefaultName.create(GML_311_NAMESPACE, GML_DESCRIPTION);
+            return NamesExt.create(GML_311_NAMESPACE, GML_DESCRIPTION);
         }else{
-            return DefaultName.create(namespace, local);
+            return NamesExt.create(namespace, local);
         }
     }
 

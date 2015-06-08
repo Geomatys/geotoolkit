@@ -31,7 +31,7 @@ import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.geotoolkit.storage.StorageListener;
@@ -101,7 +101,7 @@ public class CoverageSQLStore extends AbstractCoverageStore {
         final DataNode dn = new DefaultDataNode();
         final Set<String> layers = db.getLayers().result();
         for (String layer : layers) {
-            dn.getChildren().add(new CoverageSQLLayerReference(DefaultName.create(layer)));
+            dn.getChildren().add(new CoverageSQLLayerReference(NamesExt.create(layer)));
         }
         return dn;
     }

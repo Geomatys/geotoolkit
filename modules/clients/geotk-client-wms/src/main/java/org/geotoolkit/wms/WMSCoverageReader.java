@@ -41,7 +41,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
@@ -88,8 +88,8 @@ public class WMSCoverageReader extends GridCoverageReader{
         final NameFactory dnf = FactoryFinder.getNameFactory(null);
         final GenericName name = getInput().getName();
         NameSpace ns = null;
-        if (DefaultName.getNamespace(name) != null) {
-            ns = dnf.createNameSpace(dnf.createGenericName(null, DefaultName.getNamespace(name)), null);
+        if (NamesExt.getNamespace(name) != null) {
+            ns = dnf.createNameSpace(dnf.createGenericName(null, NamesExt.getNamespace(name)), null);
         }
         final GenericName gn = dnf.createLocalName(ns, name.tip().toString());
         return Collections.singletonList(gn);

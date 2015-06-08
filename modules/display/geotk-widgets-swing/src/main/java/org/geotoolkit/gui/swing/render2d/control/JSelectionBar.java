@@ -44,7 +44,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.render2d.control.selection.DefaultSelectionHandler;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -188,7 +188,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
                     final FeatureMapLayer fml = (FeatureMapLayer) layer;
                     final Filter selection = fml.getSelectionFilter();
                     if(selection != null && selection != Filter.EXCLUDE){
-                        final Query sub = QueryUtilities.subQuery(fml.getQuery(), QueryBuilder.filtered(DefaultName.create("select"), selection));
+                        final Query sub = QueryUtilities.subQuery(fml.getQuery(), QueryBuilder.filtered(NamesExt.create("select"), selection));
                         FeatureIterator ite = null;
                         try {
                             final FeatureCollection col = fml.getCollection().subCollection(sub);

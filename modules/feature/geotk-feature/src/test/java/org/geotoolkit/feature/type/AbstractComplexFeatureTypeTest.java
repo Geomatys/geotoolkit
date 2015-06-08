@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.feature.MockCRS;
 import org.geotoolkit.feature.MockDirectPosition2D;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.geotoolkit.feature.type.*;
@@ -59,9 +59,9 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
      */
     @Test
     public void testCreateComplexType() {
-        final GenericName name = DefaultName.create("point");
-        final GenericName strName = DefaultName.create("String");
-        final GenericName ctName = DefaultName.create("complexTypeName");
+        final GenericName name = NamesExt.create("point");
+        final GenericName strName = NamesExt.create("String");
+        final GenericName ctName = NamesExt.create("complexTypeName");
         final Map crsInfo = new HashMap<String, String>();
         crsInfo.put("name", "myCRS");
         crsInfo.put("first", "one");
@@ -119,7 +119,7 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
             res.getDescriptor("non-existant");
         } catch (Exception e) {
         }
-        GenericName tmpName = DefaultName.create("non-existant");
+        GenericName tmpName = NamesExt.create("non-existant");
         try {
             res.getDescriptor(tmpName);
         } catch (Exception e) {
@@ -132,9 +132,9 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
      */
     @Test
     public void createFeatureType() {
-        final GenericName name = DefaultName.create("point");
-        final GenericName strName = DefaultName.create("String");
-        final GenericName fName = DefaultName.create("featureTypeName");
+        final GenericName name = NamesExt.create("point");
+        final GenericName strName = NamesExt.create("String");
+        final GenericName fName = NamesExt.create("featureTypeName");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         //types and descriptors
@@ -171,7 +171,7 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
             res.getDescriptor("non-existant");
         } catch (Exception e) {
         }
-        GenericName tmpName = DefaultName.create("non-existant");
+        GenericName tmpName = NamesExt.create("non-existant");
         try {
             res.getDescriptor(tmpName);
         } catch (Exception e) {

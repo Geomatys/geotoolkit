@@ -34,7 +34,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.image.BufferedImages;
 
@@ -85,7 +85,7 @@ public abstract class AbstractPyramidalModelStoreTest {
         ////////////////////////////////////////////////////////////////////////
         //create a small RGBA pyramid //////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
-        final GenericName rgbaName = DefaultName.create("rgba");
+        final GenericName rgbaName = NamesExt.create("rgba");
         rgbaCoverageRef = (PyramidalCoverageReference) store.create(rgbaName);
         rgbaCoverageRef.setPackMode(ViewType.RENDERED);
         
@@ -131,7 +131,7 @@ public abstract class AbstractPyramidalModelStoreTest {
         ////////////////////////////////////////////////////////////////////////
         //create a small Float 1 band pyramid //////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
-        final GenericName float1bName = DefaultName.create("float1b");
+        final GenericName float1bName = NamesExt.create("float1b");
         float1bCoverageRef = (PyramidalCoverageReference) store.create(float1bName);
         float1bCoverageRef.setPackMode(ViewType.GEOPHYSICS);
         

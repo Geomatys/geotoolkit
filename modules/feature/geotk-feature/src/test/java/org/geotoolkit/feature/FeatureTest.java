@@ -36,7 +36,7 @@ import org.junit.Test;
 
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 
 import static org.geotoolkit.test.Assert.*;
@@ -188,7 +188,7 @@ public class FeatureTest {
         assertEquals(pt, ite.next().getValue());
         assertFalse(ite.hasNext());
 
-        attributs = feature.getProperties(DefaultName.create("http://test.com", "geom"));
+        attributs = feature.getProperties(NamesExt.create("http://test.com", "geom"));
         assertNotNull(attributs);
         assertEquals(1, attributs.size());
         ite = attributs.iterator();
@@ -207,7 +207,7 @@ public class FeatureTest {
         assertNotNull(attribut);
         assertEquals(pt, attribut.getValue());
 
-        attribut = feature.getProperty(DefaultName.create("http://test.com", "geom"));
+        attribut = feature.getProperty(NamesExt.create("http://test.com", "geom"));
         assertNotNull(attribut);
         assertEquals(pt, attribut.getValue());
 
@@ -221,7 +221,7 @@ public class FeatureTest {
         assertEquals(pt, attributValue);
         attributValue = feature.getAttribute("http://test.com:geom");
         assertEquals(pt, attributValue);
-        attributValue = feature.getAttribute(DefaultName.create("http://test.com", "geom"));
+        attributValue = feature.getAttribute(NamesExt.create("http://test.com", "geom"));
         assertEquals(pt, attributValue);
 
 
@@ -249,7 +249,7 @@ public class FeatureTest {
         assertEquals("line1", ite.next().getValue());
         assertFalse(ite.hasNext());
 
-        attributs = feature.getProperties(DefaultName.create("http://test.com", "att_String"));
+        attributs = feature.getProperties(NamesExt.create("http://test.com", "att_String"));
         assertNotNull(attributs);
         assertEquals(1, attributs.size());
         ite = attributs.iterator();
@@ -268,7 +268,7 @@ public class FeatureTest {
         assertNotNull(attribut);
         assertEquals("line1", attribut.getValue());
 
-        attribut = feature.getProperty(DefaultName.create("http://test.com", "att_String"));
+        attribut = feature.getProperty(NamesExt.create("http://test.com", "att_String"));
         assertNotNull(attribut);
         assertEquals("line1", attribut.getValue());
 
@@ -282,7 +282,7 @@ public class FeatureTest {
         assertEquals("line1", attributValue);
         attributValue = feature.getAttribute("http://test.com:att_String");
         assertEquals("line1", attributValue);
-        attributValue = feature.getAttribute(DefaultName.create("http://test.com", "att_String"));
+        attributValue = feature.getAttribute(NamesExt.create("http://test.com", "att_String"));
         assertEquals("line1", attributValue);
 
     }
@@ -334,7 +334,7 @@ public class FeatureTest {
         assertEquals(pt, ite.next().getValue());
         assertFalse(ite.hasNext());
 
-        attributs = feature.getProperties(DefaultName.create("http://test.com", "geom"));
+        attributs = feature.getProperties(NamesExt.create("http://test.com", "geom"));
         assertNotNull(attributs);
         assertEquals(1, attributs.size());
         ite = attributs.iterator();
@@ -353,7 +353,7 @@ public class FeatureTest {
         assertNotNull(attribut);
         assertEquals(pt, attribut.getValue());
 
-        attribut = feature.getProperty(DefaultName.create("http://test.com", "geom"));
+        attribut = feature.getProperty(NamesExt.create("http://test.com", "geom"));
         assertNotNull(attribut);
         assertEquals(pt, attribut.getValue());
 
@@ -387,7 +387,7 @@ public class FeatureTest {
         assertEquals("line3", ite.next().getValue());
         assertFalse(ite.hasNext());
 
-        attributs = feature.getProperties(DefaultName.create("http://test.com", "att_String"));
+        attributs = feature.getProperties(NamesExt.create("http://test.com", "att_String"));
         assertNotNull(attributs);
         assertEquals(3, attributs.size());
         ite = attributs.iterator();
@@ -408,7 +408,7 @@ public class FeatureTest {
         assertNotNull(attribut);
         assertEquals("line1", attribut.getValue());
 
-        attribut = feature.getProperty(DefaultName.create("http://test.com", "att_String"));
+        attribut = feature.getProperty(NamesExt.create("http://test.com", "att_String"));
         assertNotNull(attribut);
         assertEquals("line1", attribut.getValue());
 

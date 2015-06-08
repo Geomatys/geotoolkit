@@ -35,7 +35,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.opengis.util.GenericName;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -113,7 +113,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         if(ff!=null){
             final FeatureStore store = ff.open(params);
             final Session session = store.createSession(true);
-            final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(DefaultName.valueOf(typeName)));
+            final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(NamesExt.valueOf(typeName)));
             final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col);
             return layer;
         }
@@ -121,7 +121,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         final CoverageStoreFactory cf = CoverageStoreFinder.getFactoryById(factoryName);
         if(cf!=null){
             final CoverageStore store = cf.open(params);
-            final CoverageReference covref = store.getCoverageReference(DefaultName.valueOf(typeName));
+            final CoverageReference covref = store.getCoverageReference(NamesExt.valueOf(typeName));
             final CoverageMapLayer layer = MapBuilder.createCoverageLayer(covref);
             return layer;
         }
@@ -139,7 +139,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         final List<Object> fieldList = offering.getOperationOrContentOrStyleSet();
         final GenericName typeName = getTypeName(mapLayer);
         if(typeName!=null){
-            fieldList.add(new ParameterType(KEY_DATANAME,String.class.getName(),DefaultName.toExpandedString(typeName)));
+            fieldList.add(new ParameterType(KEY_DATANAME,String.class.getName(),NamesExt.toExpandedString(typeName)));
         }
                        
         //write store creation parameters

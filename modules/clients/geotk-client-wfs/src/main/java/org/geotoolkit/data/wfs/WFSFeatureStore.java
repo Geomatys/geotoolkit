@@ -54,7 +54,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
@@ -123,7 +123,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                 prefix = "geotk" + NS_INC.incrementAndGet();
             }
 
-            GenericName name = DefaultName.create(uri, localpart);
+            GenericName name = NamesExt.create(uri, localpart);
             typeName = new QName(uri, localpart, prefix);
 
             //extract the feature type -----------------------------------------
@@ -169,7 +169,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
             sft = sftb.buildFeatureType();
             name = sft.getName();
             types.put(name, sft);
-            prefixes.put(DefaultName.getNamespace(name), prefix);
+            prefixes.put(NamesExt.getNamespace(name), prefix);
             typeNames.add(name);
 
             final GeometryDescriptor geomDesc = sft.getGeometryDescriptor();
@@ -311,7 +311,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
         //will raise an error if typename in unknowned
         final FeatureType sft = getFeatureType(name);
 
-        final QName q = new QName(DefaultName.getNamespace(name), name.tip().toString(), prefixes.get(DefaultName.getNamespace(name)));
+        final QName q = new QName(NamesExt.getNamespace(name), name.tip().toString(), prefixes.get(NamesExt.getNamespace(name)));
         final FeatureCollection collection;
         try {
             collection = requestFeature(q, query);
@@ -489,7 +489,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
     }
 
     private FeatureCollection requestFeature(final QName typeName, final Query query) throws IOException {
-        final GenericName name = DefaultName.create(typeName);
+        final GenericName name = NamesExt.create(typeName);
         FeatureType sft = types.get(name);
         sft = FeatureTypeUtilities.createSubType(sft, query.getPropertyNames());
 

@@ -56,7 +56,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
 import net.iharder.Base64;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.xsd.xml.v2001.Import;
 import org.geotoolkit.xsd.xml.v2001.Include;
 import org.geotoolkit.xsd.xml.v2001.Schema;
@@ -101,40 +101,40 @@ public class Utils {
         GML_FEATURE_TYPES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new GenericName[]{
             //3.1.1
             //3.1.1
-        DefaultName.create(GML_311_NAMESPACE, "AbstractFeatureType"), DefaultName.create(GML_311_NAMESPACE, "AbstractFeatureCollection"), DefaultName.create(GML_311_NAMESPACE, "FeatureCollection"), DefaultName.create(GML_311_NAMESPACE, "AbstractCoverage"), DefaultName.create(GML_311_NAMESPACE, "AbstractContinuousCoverage"), DefaultName.create(GML_311_NAMESPACE, "AbstractDiscreteCoverage"), DefaultName.create(GML_311_NAMESPACE, "Observation"), DefaultName.create(GML_311_NAMESPACE, "DirectedObservation"), DefaultName.create(GML_311_NAMESPACE, "DirectedObservationAtDistance"), DefaultName.create(GML_311_NAMESPACE, "MultiPointCoverage"), DefaultName.create(GML_311_NAMESPACE, "MultiCurveCoverage"), DefaultName.create(GML_311_NAMESPACE, "MultiSurfaceCoverage"), DefaultName.create(GML_311_NAMESPACE, "MultiSolidCoverage"), DefaultName.create(GML_311_NAMESPACE, "GridCoverage"), DefaultName.create(GML_311_NAMESPACE, "_FeatureCollection"), DefaultName.create(GML_311_NAMESPACE, "_Coverage"), DefaultName.create(GML_311_NAMESPACE, "_ContinuousCoverage"), DefaultName.create(GML_311_NAMESPACE, "_DiscreteCoverage"), //3.2.1
-        DefaultName.create(GML_321_NAMESPACE, "AbstractFeatureType"), DefaultName.create(GML_321_NAMESPACE, "AbstractFeatureCollection"), DefaultName.create(GML_321_NAMESPACE, "FeatureCollection"), DefaultName.create(GML_321_NAMESPACE, "AbstractCoverage"), DefaultName.create(GML_321_NAMESPACE, "AbstractContinuousCoverage"), DefaultName.create(GML_321_NAMESPACE, "AbstractDiscreteCoverage"), DefaultName.create(GML_321_NAMESPACE, "Observation"), DefaultName.create(GML_321_NAMESPACE, "DirectedObservation"), DefaultName.create(GML_321_NAMESPACE, "DirectedObservationAtDistance"), DefaultName.create(GML_321_NAMESPACE, "DynamicFeatureCollection"), DefaultName.create(GML_321_NAMESPACE, "DynamicFeature"), DefaultName.create(GML_321_NAMESPACE, "DiscreteCoverage"), DefaultName.create(GML_321_NAMESPACE, "MultiPointCoverage"), DefaultName.create(GML_321_NAMESPACE, "MultiCurveCoverage"), DefaultName.create(GML_321_NAMESPACE, "MultiSurfaceCoverage"), DefaultName.create(GML_321_NAMESPACE, "MultiSolidCoverage"), DefaultName.create(GML_321_NAMESPACE, "GridCoverage"), DefaultName.create(GML_321_NAMESPACE, "RectifiedGridCoverage")
+        NamesExt.create(GML_311_NAMESPACE, "AbstractFeatureType"), NamesExt.create(GML_311_NAMESPACE, "AbstractFeatureCollection"), NamesExt.create(GML_311_NAMESPACE, "FeatureCollection"), NamesExt.create(GML_311_NAMESPACE, "AbstractCoverage"), NamesExt.create(GML_311_NAMESPACE, "AbstractContinuousCoverage"), NamesExt.create(GML_311_NAMESPACE, "AbstractDiscreteCoverage"), NamesExt.create(GML_311_NAMESPACE, "Observation"), NamesExt.create(GML_311_NAMESPACE, "DirectedObservation"), NamesExt.create(GML_311_NAMESPACE, "DirectedObservationAtDistance"), NamesExt.create(GML_311_NAMESPACE, "MultiPointCoverage"), NamesExt.create(GML_311_NAMESPACE, "MultiCurveCoverage"), NamesExt.create(GML_311_NAMESPACE, "MultiSurfaceCoverage"), NamesExt.create(GML_311_NAMESPACE, "MultiSolidCoverage"), NamesExt.create(GML_311_NAMESPACE, "GridCoverage"), NamesExt.create(GML_311_NAMESPACE, "_FeatureCollection"), NamesExt.create(GML_311_NAMESPACE, "_Coverage"), NamesExt.create(GML_311_NAMESPACE, "_ContinuousCoverage"), NamesExt.create(GML_311_NAMESPACE, "_DiscreteCoverage"), //3.2.1
+NamesExt.create(GML_321_NAMESPACE, "AbstractFeatureType"), NamesExt.create(GML_321_NAMESPACE, "AbstractFeatureCollection"), NamesExt.create(GML_321_NAMESPACE, "FeatureCollection"), NamesExt.create(GML_321_NAMESPACE, "AbstractCoverage"), NamesExt.create(GML_321_NAMESPACE, "AbstractContinuousCoverage"), NamesExt.create(GML_321_NAMESPACE, "AbstractDiscreteCoverage"), NamesExt.create(GML_321_NAMESPACE, "Observation"), NamesExt.create(GML_321_NAMESPACE, "DirectedObservation"), NamesExt.create(GML_321_NAMESPACE, "DirectedObservationAtDistance"), NamesExt.create(GML_321_NAMESPACE, "DynamicFeatureCollection"), NamesExt.create(GML_321_NAMESPACE, "DynamicFeature"), NamesExt.create(GML_321_NAMESPACE, "DiscreteCoverage"), NamesExt.create(GML_321_NAMESPACE, "MultiPointCoverage"), NamesExt.create(GML_321_NAMESPACE, "MultiCurveCoverage"), NamesExt.create(GML_321_NAMESPACE, "MultiSurfaceCoverage"), NamesExt.create(GML_321_NAMESPACE, "MultiSolidCoverage"), NamesExt.create(GML_321_NAMESPACE, "GridCoverage"), NamesExt.create(GML_321_NAMESPACE, "RectifiedGridCoverage")
         })));
 
         GML_STANDARD_OBJECT_PROPERTIES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new GenericName[]{
             //3.1.1
             //3.1.1
-        DefaultName.create(GML_311_NAMESPACE, "metaDataProperty"), DefaultName.create(GML_311_NAMESPACE, "description"), DefaultName.create(GML_311_NAMESPACE, "name"), DefaultName.create(GML_311_NAMESPACE, "csName"), //substitution group of name
-        DefaultName.create(GML_311_NAMESPACE, "srsName"), //substitution group of name
-        DefaultName.create(GML_311_NAMESPACE, "datumName"), //substitution group of name
-        DefaultName.create(GML_311_NAMESPACE, "meridianName"), //substitution group of name
-        DefaultName.create(GML_311_NAMESPACE, "ellipsoidName"), //substitution group of name
-        DefaultName.create(GML_311_NAMESPACE, "coordinateOperationName"), //substitution group of name
-        DefaultName.create(GML_311_NAMESPACE, "methodName"), //substitution group of name
-        DefaultName.create(GML_311_NAMESPACE, "parameterName"), //substitution group of name
-        DefaultName.create(GML_311_NAMESPACE, "groupName"), //substitution group of name
+        NamesExt.create(GML_311_NAMESPACE, "metaDataProperty"), NamesExt.create(GML_311_NAMESPACE, "description"), NamesExt.create(GML_311_NAMESPACE, "name"), NamesExt.create(GML_311_NAMESPACE, "csName"), //substitution group of name
+NamesExt.create(GML_311_NAMESPACE, "srsName"), //substitution group of name
+NamesExt.create(GML_311_NAMESPACE, "datumName"), //substitution group of name
+NamesExt.create(GML_311_NAMESPACE, "meridianName"), //substitution group of name
+NamesExt.create(GML_311_NAMESPACE, "ellipsoidName"), //substitution group of name
+NamesExt.create(GML_311_NAMESPACE, "coordinateOperationName"), //substitution group of name
+NamesExt.create(GML_311_NAMESPACE, "methodName"), //substitution group of name
+NamesExt.create(GML_311_NAMESPACE, "parameterName"), //substitution group of name
+NamesExt.create(GML_311_NAMESPACE, "groupName"), //substitution group of name
         //3.2.1
-        DefaultName.create(GML_321_NAMESPACE, "metaDataProperty"), DefaultName.create(GML_321_NAMESPACE, "description"), DefaultName.create(GML_321_NAMESPACE, "descriptionReference"), DefaultName.create(GML_321_NAMESPACE, "name"), DefaultName.create(GML_321_NAMESPACE, "csName"), //substitution group of name
-        DefaultName.create(GML_321_NAMESPACE, "srsName"), //substitution group of name
-        DefaultName.create(GML_321_NAMESPACE, "datumName"), //substitution group of name
-        DefaultName.create(GML_321_NAMESPACE, "meridianName"), //substitution group of name
-        DefaultName.create(GML_321_NAMESPACE, "ellipsoidName"), //substitution group of name
-        DefaultName.create(GML_321_NAMESPACE, "coordinateOperationName"), //substitution group of name
-        DefaultName.create(GML_321_NAMESPACE, "methodName"), //substitution group of name
-        DefaultName.create(GML_321_NAMESPACE, "parameterName"), //substitution group of name
-        DefaultName.create(GML_321_NAMESPACE, "groupName"), //substitution group of name
-        DefaultName.create(GML_321_NAMESPACE, "identifier")})));
+NamesExt.create(GML_321_NAMESPACE, "metaDataProperty"), NamesExt.create(GML_321_NAMESPACE, "description"), NamesExt.create(GML_321_NAMESPACE, "descriptionReference"), NamesExt.create(GML_321_NAMESPACE, "name"), NamesExt.create(GML_321_NAMESPACE, "csName"), //substitution group of name
+NamesExt.create(GML_321_NAMESPACE, "srsName"), //substitution group of name
+NamesExt.create(GML_321_NAMESPACE, "datumName"), //substitution group of name
+NamesExt.create(GML_321_NAMESPACE, "meridianName"), //substitution group of name
+NamesExt.create(GML_321_NAMESPACE, "ellipsoidName"), //substitution group of name
+NamesExt.create(GML_321_NAMESPACE, "coordinateOperationName"), //substitution group of name
+NamesExt.create(GML_321_NAMESPACE, "methodName"), //substitution group of name
+NamesExt.create(GML_321_NAMESPACE, "parameterName"), //substitution group of name
+NamesExt.create(GML_321_NAMESPACE, "groupName"), //substitution group of name
+NamesExt.create(GML_321_NAMESPACE, "identifier")})));
 
         GML_ABSTRACT_FEATURE_PROPERTIES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new GenericName[]{
             //3.1.1
             //3.1.1
-        DefaultName.create(GML_311_NAMESPACE, "@id"), DefaultName.create(GML_311_NAMESPACE, "boundedBy"), DefaultName.create(GML_311_NAMESPACE, "location"), DefaultName.create(GML_311_NAMESPACE, "priorityLocation"), //substitution group of location
+        NamesExt.create(GML_311_NAMESPACE, "@id"), NamesExt.create(GML_311_NAMESPACE, "boundedBy"), NamesExt.create(GML_311_NAMESPACE, "location"), NamesExt.create(GML_311_NAMESPACE, "priorityLocation"), //substitution group of location
         //3.2.1
-        DefaultName.create(GML_321_NAMESPACE, "@id"), DefaultName.create(GML_321_NAMESPACE, "boundedBy"), DefaultName.create(GML_321_NAMESPACE, "location"), DefaultName.create(GML_321_NAMESPACE, "priorityLocation") //substitution group of location
+NamesExt.create(GML_321_NAMESPACE, "@id"), NamesExt.create(GML_321_NAMESPACE, "boundedBy"), NamesExt.create(GML_321_NAMESPACE, "location"), NamesExt.create(GML_321_NAMESPACE, "priorityLocation") //substitution group of location
         })));
 
     }
@@ -150,9 +150,9 @@ public class Utils {
     public static GenericName getNameFromQname(final QName qname) {
         GenericName name;
         if (qname.getNamespaceURI() == null || qname.getNamespaceURI().isEmpty()) {
-            name = DefaultName.create(qname.getLocalPart());
+            name = NamesExt.create(qname.getLocalPart());
         } else {
-            name = DefaultName.create(qname);
+            name = NamesExt.create(qname);
         }
         return name;
     }
@@ -165,7 +165,7 @@ public class Utils {
      */
     public static QName getQnameFromName(final GenericName name) {
         QName qname;
-        final String ns = DefaultName.getNamespace(name);
+        final String ns = NamesExt.getNamespace(name);
         if (ns == null || ns.isEmpty()) {
             qname = new QName(name.tip().toString());
         } else {
@@ -272,7 +272,7 @@ public class Utils {
     }
 
     public static boolean isGeometricType(final GenericName elementType) {
-        if (elementType != null && DefaultName.getNamespace(elementType)!=null && DefaultName.getNamespace(elementType).contains(GML_311_NAMESPACE)) {
+        if (elementType != null && NamesExt.getNamespace(elementType)!=null && NamesExt.getNamespace(elementType).contains(GML_311_NAMESPACE)) {
             return GEOMETRIC_NAME.contains(elementType.tip().toString());
         }
         return false;
@@ -393,7 +393,7 @@ public class Utils {
      */
     public static QName getQNameFromType(final PropertyType type, final String gmlVersion) {
         if (type instanceof ComplexType) {
-            return new QName(DefaultName.getNamespace(type.getName()), getNameWithTypeSuffix(type.getName().tip().toString()));
+            return new QName(NamesExt.getNamespace(type.getName()), getNameWithTypeSuffix(type.getName().tip().toString()));
         } else {
             final Class binding = type.getBinding();
             if (binding != null) {
@@ -652,14 +652,14 @@ public class Utils {
             return;
         }
         visited.add(name);
-        String typeUri = DefaultName.getNamespace(type.getName());
+        String typeUri = NamesExt.getNamespace(type.getName());
         //if(nsuri!=null) ns.add(nsuri);
 
         if(type instanceof ComplexType){
             final ComplexType ct = (ComplexType) type;
             for(PropertyDescriptor pd : ct.getDescriptors()){
                 if (typeUri.equals(namespace)) {
-                    String nsuri = DefaultName.getNamespace(pd.getName());
+                    String nsuri = NamesExt.getNamespace(pd.getName());
                     if(nsuri!=null) ns.add(nsuri);
                 }
                 listAllSubNamespaces(pd.getType(), ns, visited, namespace);
@@ -681,13 +681,13 @@ public class Utils {
             return;
         }
         visited.add(name);
-        String nsuri = DefaultName.getNamespace(type.getName());
+        String nsuri = NamesExt.getNamespace(type.getName());
         if(nsuri!=null) ns.add(nsuri);
 
         if(type instanceof ComplexType){
             final ComplexType ct = (ComplexType) type;
             for(PropertyDescriptor pd : ct.getDescriptors()){
-                nsuri = DefaultName.getNamespace(pd.getName());
+                nsuri = NamesExt.getNamespace(pd.getName());
                 if(nsuri!=null) ns.add(nsuri);
                 listAllNamespaces(pd.getType(), ns, visited);
             }

@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.observation.AbstractObservationStore;
 import org.geotoolkit.observation.ObservationReader;
 import static org.geotoolkit.observation.file.FileObservationStoreFactory.FILE_PATH;
@@ -67,7 +67,7 @@ public class FileObservationStore extends AbstractObservationStore implements Da
     @Override
     public Set<GenericName> getProcedureNames() {
         final Set<GenericName> names = new HashSet<>();
-        names.add(DefaultName.create(getProcedureID()));
+        names.add(NamesExt.create(getProcedureID()));
         return names;
     }
     

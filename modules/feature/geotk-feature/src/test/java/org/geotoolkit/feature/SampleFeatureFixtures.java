@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 
@@ -111,7 +111,7 @@ public class SampleFeatureFixtures {
         ab.reset();
         ab.setBinding(Byte.class);
         adb.reset();
-        adb.setName(DefaultName.create("testByte"));
+        adb.setName(NamesExt.create("testByte"));
         adb.setType(ab.buildType());
 
         choices[0] = adb.buildDescriptor();
@@ -119,14 +119,14 @@ public class SampleFeatureFixtures {
         ab.reset();
         ab.setBinding(Double.class);
         adb.reset();
-        adb.setName(DefaultName.create("testDouble"));
+        adb.setName(NamesExt.create("testDouble"));
         adb.setType(ab.buildType());
         choices[1] = adb.buildDescriptor();
 
         ab.reset();
         ab.setBinding(String.class);
         adb.reset();
-        adb.setName(DefaultName.create("testString"));
+        adb.setName(NamesExt.create("testString"));
         adb.setType(ab.buildType());
         choices[2] = adb.buildDescriptor();
 
@@ -141,14 +141,14 @@ public class SampleFeatureFixtures {
         ab.reset();
         ab.setBinding(String.class);
         adb.reset();
-        adb.setName(DefaultName.create("testString"));
+        adb.setName(NamesExt.create("testString"));
         adb.setType(ab.buildType());
         choices[0] = adb.buildDescriptor();
 
         ab.reset();
         ab.setBinding(Integer.class);
         adb.reset();
-        adb.setName(DefaultName.create("testInt"));
+        adb.setName(NamesExt.create("testInt"));
         adb.setType(ab.buildType());
         choices[1] = adb.buildDescriptor();
 
@@ -202,18 +202,18 @@ public class SampleFeatureFixtures {
      */
     public static FeatureType createTestType() throws SchemaException {
         FeatureTypeBuilder tb = new FeatureTypeBuilder();
-        tb.setName(DefaultName.create("test"));
+        tb.setName(NamesExt.create("test"));
 
-        tb.add(DefaultName.create("testGeometry"), Point.class, CommonCRS.WGS84.normalizedGeographic());
-        tb.add(DefaultName.create("testBoolean"), Boolean.class);
-        tb.add(DefaultName.create("testCharacter"), Character.class);
-        tb.add(DefaultName.create("testByte"), Byte.class);
-        tb.add(DefaultName.create("testShort"), Short.class);
-        tb.add(DefaultName.create("testInteger"), Integer.class);
-        tb.add(DefaultName.create("testLong"), Long.class);
-        tb.add(DefaultName.create("testFloat"), Float.class);
-        tb.add(DefaultName.create("testDouble"), Double.class);
-        tb.add(DefaultName.create("testString"), String.class);
+        tb.add(NamesExt.create("testGeometry"), Point.class, CommonCRS.WGS84.normalizedGeographic());
+        tb.add(NamesExt.create("testBoolean"), Boolean.class);
+        tb.add(NamesExt.create("testCharacter"), Character.class);
+        tb.add(NamesExt.create("testByte"), Byte.class);
+        tb.add(NamesExt.create("testShort"), Short.class);
+        tb.add(NamesExt.create("testInteger"), Integer.class);
+        tb.add(NamesExt.create("testLong"), Long.class);
+        tb.add(NamesExt.create("testFloat"), Float.class);
+        tb.add(NamesExt.create("testDouble"), Double.class);
+        tb.add(NamesExt.create("testString"), String.class);
 
         tb.setDefaultGeometry("testGeometry");
         return tb.buildSimpleFeatureType();

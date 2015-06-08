@@ -35,7 +35,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DataTestCase;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.FeatureValidationUtilities;
@@ -217,7 +217,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         FeatureType abstractType = tb.buildFeatureType();
         tb.setName("http://www.nowhereinparticular.net", "AbstractType2");
         tb.setSuperType(abstractType);
-        tb.add(DefaultName.create("X"), String.class);
+        tb.add(NamesExt.create("X"), String.class);
         FeatureType abstractType2 = tb.buildFeatureType();
 
         try {
@@ -251,7 +251,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         AttributeTypeBuilder ab = new AttributeTypeBuilder();
         AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         ab.setBinding(Object.class);
-        adb.setName(DefaultName.create("test"));
+        adb.setName(NamesExt.create("test"));
         adb.setType(ab.buildType());
         AttributeDescriptor testType = adb.buildDescriptor();
 

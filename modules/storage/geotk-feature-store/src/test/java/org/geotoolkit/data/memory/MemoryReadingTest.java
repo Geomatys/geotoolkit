@@ -29,7 +29,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.feature.Feature;
@@ -54,7 +54,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //first schema----------------------------------------------------------
-        GenericName name = DefaultName.create("http://test.com", "TestSchema1");
+        GenericName name = NamesExt.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
@@ -66,7 +66,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         store.createFeatureType(name,type1);
 
         //second schema --------------------------------------------------------
-        name = DefaultName.create("http://test.com", "TestSchema2");
+        name = NamesExt.create("http://test.com", "TestSchema2");
         builder.reset();
         builder.setName(name);
         builder.add("string", String.class);
@@ -104,7 +104,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         expecteds.add(new ExpectedResult(name,type2,3,null));
 
         //third schema ---------------------------------------------------------
-        name = DefaultName.create("http://test.com", "TestSchema3");
+        name = NamesExt.create("http://test.com", "TestSchema3");
         builder.reset();
         builder.setName(name);
         builder.add("geometry", Point.class, CRS.decode("EPSG:27582"));

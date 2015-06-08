@@ -54,7 +54,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.version.VersionControl;
@@ -160,8 +160,8 @@ public class MySQLFeatureStoreTest {
         ftb.reset();
         ftb.setName("Voyage");
         ftb.add("identifier", Long.class);
-        AttributeDescriptor elementDesc = adb.create(driverType, DefaultName.valueOf("driver"),1,1,false,null);
-        AttributeDescriptor stepDesc = adb.create(stopType, DefaultName.valueOf("stops"),0,Integer.MAX_VALUE,false,null);
+        AttributeDescriptor elementDesc = adb.create(driverType, NamesExt.valueOf("driver"),1,1,false,null);
+        AttributeDescriptor stepDesc = adb.create(stopType, NamesExt.valueOf("stops"),0,Integer.MAX_VALUE,false,null);
         ftb.add(elementDesc);
         ftb.add(stepDesc);
         FTYPE_COMPLEX = ftb.buildFeatureType();
@@ -179,14 +179,14 @@ public class MySQLFeatureStoreTest {
         ftb.reset();
         ftb.setName("Record");
         ftb.add("time", Date.class);
-        AttributeDescriptor dataDesc = adb.create(dataType, DefaultName.valueOf("datas"),0,Integer.MAX_VALUE,false,null);
+        AttributeDescriptor dataDesc = adb.create(dataType, NamesExt.valueOf("datas"),0,Integer.MAX_VALUE,false,null);
         ftb.add(dataDesc);
         final ComplexType recordType = ftb.buildType();
 
         ftb.reset();
         ftb.setName("Sounding");
         ftb.add("identifier", Long.class);
-        AttributeDescriptor recordDesc = adb.create(recordType, DefaultName.valueOf("records"),0,Integer.MAX_VALUE,false,null);
+        AttributeDescriptor recordDesc = adb.create(recordType, NamesExt.valueOf("records"),0,Integer.MAX_VALUE,false,null);
         ftb.add(recordDesc);
         FTYPE_COMPLEX2 = ftb.buildFeatureType();
         
@@ -203,9 +203,9 @@ public class MySQLFeatureStoreTest {
         ftb.reset();
         ftb.setName("Record");
         ftb.add("identifier", Long.class);
-        AttributeDescriptor sdata1Desc = adb.create(sdataType, DefaultName.valueOf("data1"),0,1,false,null);
-        AttributeDescriptor sdata2Desc = adb.create(sdataType, DefaultName.valueOf("data2"),0,1,false,null);
-        AttributeDescriptor sdata3Desc = adb.create(sdataType, DefaultName.valueOf("data3"),0,1,false,null);
+        AttributeDescriptor sdata1Desc = adb.create(sdataType, NamesExt.valueOf("data1"),0,1,false,null);
+        AttributeDescriptor sdata2Desc = adb.create(sdataType, NamesExt.valueOf("data2"),0,1,false,null);
+        AttributeDescriptor sdata3Desc = adb.create(sdataType, NamesExt.valueOf("data3"),0,1,false,null);
         ftb.add(sdata1Desc);
         ftb.add(sdata2Desc);
         ftb.add(sdata3Desc);
@@ -909,7 +909,7 @@ public class MySQLFeatureStoreTest {
         
         store.addFeatures(resType.getName(), Collections.singleton(voyage));
         
-        final Query query = QueryBuilder.language(JDBCFeatureStore.CUSTOM_SQL, "SELECT * FROM \"Stop\"", DefaultName.create("s1"));        
+        final Query query = QueryBuilder.language(JDBCFeatureStore.CUSTOM_SQL, "SELECT * FROM \"Stop\"", NamesExt.create("s1"));        
         final FeatureReader ite = store.getFeatureReader(query);
         final boolean[] found = new boolean[3];
         try{

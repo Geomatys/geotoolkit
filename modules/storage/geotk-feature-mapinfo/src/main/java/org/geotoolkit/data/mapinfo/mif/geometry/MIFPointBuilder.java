@@ -21,7 +21,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Symbol;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -41,7 +41,7 @@ import java.util.logging.Level;
  */
 public final class MIFPointBuilder extends MIFGeometryBuilder {
 
-    public static final GenericName NAME = DefaultName.create("POINT");
+    public static final GenericName NAME = NamesExt.create("POINT");
 
     public static final AttributeDescriptor SYMBOL_DESCRIPTOR;
 

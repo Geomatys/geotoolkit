@@ -28,7 +28,7 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.report.JRFieldRenderer;
 import org.geotoolkit.report.graphic.EmptyRenderable;
@@ -64,7 +64,7 @@ public class MapFieldRenderer implements JRFieldRenderer{
     @Override
     public PropertyDescriptor createDescriptor(final JRField field) {
         final String name = field.getName();
-        return new DefaultAttributeDescriptor(TYPE, DefaultName.valueOf(name), 1, 1, true, null);
+        return new DefaultAttributeDescriptor(TYPE, NamesExt.valueOf(name), 1, 1, true, null);
     }
 
     @Override

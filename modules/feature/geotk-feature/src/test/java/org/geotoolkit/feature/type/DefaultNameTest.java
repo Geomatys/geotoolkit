@@ -39,20 +39,20 @@ public class DefaultNameTest {
         final String local = "localpart";
         GenericName name;
 
-        name = DefaultName.create(new QName(uri, local));
-        assertEquals(DefaultName.getNamespace(name), uri);
+        name = NamesExt.create(new QName(uri, local));
+        assertEquals(NamesExt.getNamespace(name), uri);
         assertEquals(name.tip().toString(), local);
 
-        name = DefaultName.create(local);
-        assertEquals(DefaultName.getNamespace(name), null);
+        name = NamesExt.create(local);
+        assertEquals(NamesExt.getNamespace(name), null);
         assertEquals(name.tip().toString(), local);
 
-        name = DefaultName.create(uri, local);
-        assertEquals(DefaultName.getNamespace(name), uri);
+        name = NamesExt.create(uri, local);
+        assertEquals(NamesExt.getNamespace(name), uri);
         assertEquals(name.tip().toString(), local);
 
-        name = DefaultName.create(uri, local);
-        assertEquals(DefaultName.getNamespace(name), uri);
+        name = NamesExt.create(uri, local);
+        assertEquals(NamesExt.getNamespace(name), uri);
         assertEquals(name.tip().toString(), local);
         
     }
@@ -66,39 +66,39 @@ public class DefaultNameTest {
         final String local = "localpart";
         GenericName name;
 
-        name = DefaultName.valueOf("{"+uri+"}"+local);
-        assertEquals(DefaultName.getNamespace(name), uri);
+        name = NamesExt.valueOf("{"+uri+"}"+local);
+        assertEquals(NamesExt.getNamespace(name), uri);
         assertEquals(name.tip().toString(), local);
 
-        name = DefaultName.valueOf(uri+":"+local);
-        assertEquals(DefaultName.getNamespace(name), uri);
+        name = NamesExt.valueOf(uri+":"+local);
+        assertEquals(NamesExt.getNamespace(name), uri);
         assertEquals(name.tip().toString(), local);
 
-        name = DefaultName.valueOf(local);
-        assertEquals(DefaultName.getNamespace(name), null);
+        name = NamesExt.valueOf(local);
+        assertEquals(NamesExt.getNamespace(name), null);
         assertEquals(name.tip().toString(), local);
 
     }
 
     @Test
     public void testEquals(){
-        GenericName n1 = DefaultName.create("http://test.com", "test");
-        GenericName n2 = DefaultName.create("http://test.com", "test");
+        GenericName n1 = NamesExt.create("http://test.com", "test");
+        GenericName n2 = NamesExt.create("http://test.com", "test");
         assertEquals(n1, n2);
 
-        n1 = DefaultName.create("http://test.com", "test1");
-        n2 = DefaultName.create("http://test.com", "test2");
+        n1 = NamesExt.create("http://test.com", "test1");
+        n2 = NamesExt.create("http://test.com", "test2");
         assertFalse( n1.equals(n2) );
 
-        n1 = DefaultName.create("http://test.com1", "test");
-        n2 = DefaultName.create("http://test.com2", "test");
+        n1 = NamesExt.create("http://test.com1", "test");
+        n2 = NamesExt.create("http://test.com2", "test");
         assertFalse( n1.equals(n2) );
 
     }
 
     @Test
     public void testSerialize(){
-        GenericName name = DefaultName.valueOf("{geotk}test");
+        GenericName name = NamesExt.valueOf("{geotk}test");
         assertSerializedEquals(name);
     }
 

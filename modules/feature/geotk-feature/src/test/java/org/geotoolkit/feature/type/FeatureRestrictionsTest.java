@@ -18,7 +18,7 @@ package org.geotoolkit.feature.type;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.filter.DefaultFilterFactory2;
@@ -49,7 +49,7 @@ public class FeatureRestrictionsTest {
         atb.setName("name");
         atb.setBinding(String.class);
         atb.addRestriction(FF.equals(FF.property("."), FF.literal("correct")));
-        ftb.add(atb.buildType(), DefaultName.create("name"), null, 1, 1, false, null);
+        ftb.add(atb.buildType(), NamesExt.create("name"), null, 1, 1, false, null);
         
         final FeatureType ft = ftb.buildFeatureType();
         final Feature feature = FeatureUtilities.defaultFeature(ft, "-1");

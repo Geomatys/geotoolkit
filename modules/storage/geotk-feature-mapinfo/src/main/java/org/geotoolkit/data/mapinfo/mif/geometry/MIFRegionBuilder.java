@@ -22,7 +22,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Brush;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -42,7 +42,7 @@ import java.util.logging.Level;
  */
 public class MIFRegionBuilder extends MIFGeometryBuilder {
 
-    public static final GenericName NAME = DefaultName.create("REGION");
+    public static final GenericName NAME = NamesExt.create("REGION");
 
     private static final AttributeDescriptor BRUSH;
     private static final AttributeDescriptor PEN;

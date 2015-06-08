@@ -19,7 +19,7 @@ package org.geotoolkit.data.mapinfo.mif.geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.Feature;
@@ -49,7 +49,7 @@ public abstract class MIFGeometryBuilder {
 
 
     protected static final AttributeType STRING_TYPE =
-            new DefaultAttributeType(DefaultName.create("TEXT"), String.class, false, false, null, null, null);
+            new DefaultAttributeType(NamesExt.create("TEXT"), String.class, false, false, null, null, null);
     /**
      * Parse an input file to build a JTS Geometry with its data.
      *

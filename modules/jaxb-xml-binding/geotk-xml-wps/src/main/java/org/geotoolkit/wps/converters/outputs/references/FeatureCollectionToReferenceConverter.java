@@ -38,7 +38,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 
 /**
@@ -100,7 +100,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
         reference.setEncoding((String) params.get(ENCODING));
 
         final FeatureType ft = source.getFeatureType();
-        final String namespace = DefaultName.getNamespace(ft.getName());
+        final String namespace = NamesExt.getNamespace(ft.getName());
         final Map<String, String> schemaLocation = new HashMap<String, String>();
 
         final String randomFileName = UUID.randomUUID().toString();

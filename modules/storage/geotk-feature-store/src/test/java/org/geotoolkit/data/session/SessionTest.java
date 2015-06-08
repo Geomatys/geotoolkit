@@ -34,7 +34,7 @@ import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.referencing.CRS;
@@ -82,7 +82,7 @@ public class SessionTest{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //create the schema
-        final GenericName name = DefaultName.create("http://test.com", "TestSchema1");
+        final GenericName name = NamesExt.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());

@@ -34,7 +34,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import static org.geotoolkit.data.AbstractFeatureStore.GML_311_NAMESPACE;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.xml.DomCompare;
@@ -93,7 +93,7 @@ public class XmlFeatureTypeTest {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(GML_311_NAMESPACE,"TestSimple");
-        ftb.add(DefaultName.create(GML_311_NAMESPACE, "_any"),Object.class,0,1,true,null);
+        ftb.add(NamesExt.create(GML_311_NAMESPACE, "_any"),Object.class,0,1,true,null);
         final FeatureType simpleTypeAny = ftb.buildFeatureType();
 
         assertEquals(simpleTypeAny, types.get(0));

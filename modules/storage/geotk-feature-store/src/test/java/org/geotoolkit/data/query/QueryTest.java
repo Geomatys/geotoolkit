@@ -26,7 +26,7 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 
@@ -71,11 +71,11 @@ public class QueryTest extends TestCase{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //----------------------------------------------------------------------
-        name1 = DefaultName.create("http://type1.com", "Type1");
+        name1 = NamesExt.create("http://type1.com", "Type1");
         builder.reset();
         builder.setName(name1);
-        builder.add(DefaultName.create("http://type1.com", "att1"), String.class);
-        builder.add(DefaultName.create("http://type1.com", "att2"), Integer.class);
+        builder.add(NamesExt.create("http://type1.com", "att1"), String.class);
+        builder.add(NamesExt.create("http://type1.com", "att2"), Integer.class);
         final FeatureType sft1 = builder.buildFeatureType();
         store.createFeatureType(name1,sft1);
 
@@ -114,11 +114,11 @@ public class QueryTest extends TestCase{
 
 
         //----------------------------------------------------------------------
-        name2 = DefaultName.create("http://type2.com", "Type2");
+        name2 = NamesExt.create("http://type2.com", "Type2");
         builder.reset();
         builder.setName(name2);
-        builder.add(DefaultName.create("http://type2.com", "att3"), Integer.class);
-        builder.add(DefaultName.create("http://type2.com", "att4"), Double.class);
+        builder.add(NamesExt.create("http://type2.com", "att3"), Integer.class);
+        builder.add(NamesExt.create("http://type2.com", "att4"), Double.class);
         final FeatureType sft2 = builder.buildFeatureType();
         store.createFeatureType(name2,sft2);
 
@@ -169,7 +169,7 @@ public class QueryTest extends TestCase{
     @Test
     public void testStaticQueryBuilder() throws Exception {
         Query query = null;
-        GenericName name = DefaultName.create("http://test.org", "testLocal");
+        GenericName name = NamesExt.create("http://test.org", "testLocal");
 
         //test null values------------------------------------------------------
         try{
@@ -257,7 +257,7 @@ public class QueryTest extends TestCase{
      */
     @Test
     public void testQueryBuilder() throws Exception {
-        GenericName name = DefaultName.create("http://test.org", "testLocal");
+        GenericName name = NamesExt.create("http://test.org", "testLocal");
         Query query = null;
         Query query2 = null;
 
@@ -287,8 +287,8 @@ public class QueryTest extends TestCase{
         assertEquals(query.getResolution()[1], 31d);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
-        assertEquals(query.getPropertyNames()[0], DefaultName.valueOf("att1"));
-        assertEquals(query.getPropertyNames()[1], DefaultName.valueOf("att2"));
+        assertEquals(query.getPropertyNames()[0], NamesExt.valueOf("att1"));
+        assertEquals(query.getPropertyNames()[1], NamesExt.valueOf("att2"));
         assertEquals(query.getSortBy()[0], FF.sort("att1", SortOrder.DESCENDING));
         assertEquals(query.getStartIndex(), 5);
 
@@ -318,8 +318,8 @@ public class QueryTest extends TestCase{
         assertEquals(query.getResolution()[1], 31d);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
-        assertEquals(query.getPropertyNames()[0], DefaultName.valueOf("att1"));
-        assertEquals(query.getPropertyNames()[1], DefaultName.valueOf("att2"));
+        assertEquals(query.getPropertyNames()[0], NamesExt.valueOf("att1"));
+        assertEquals(query.getPropertyNames()[1], NamesExt.valueOf("att2"));
         assertEquals(query.getSortBy()[0], FF.sort("att1", SortOrder.DESCENDING));
         assertEquals(query.getStartIndex(), 5);
 
@@ -333,8 +333,8 @@ public class QueryTest extends TestCase{
         assertEquals(query.getResolution()[1], 31d);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
-        assertEquals(query.getPropertyNames()[0], DefaultName.valueOf("att1"));
-        assertEquals(query.getPropertyNames()[1], DefaultName.valueOf("att2"));
+        assertEquals(query.getPropertyNames()[0], NamesExt.valueOf("att1"));
+        assertEquals(query.getPropertyNames()[1], NamesExt.valueOf("att2"));
         assertEquals(query.getSortBy()[0], FF.sort("att1", SortOrder.DESCENDING));
         assertEquals(query.getStartIndex(), 5);
 

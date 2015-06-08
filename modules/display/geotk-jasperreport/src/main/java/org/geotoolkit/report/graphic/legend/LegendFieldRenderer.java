@@ -22,7 +22,7 @@ package org.geotoolkit.report.graphic.legend;
 import net.sf.jasperreports.engine.JRField;
 
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.report.JRFieldRenderer;
 import org.geotoolkit.report.graphic.EmptyRenderable;
@@ -67,7 +67,7 @@ public class LegendFieldRenderer implements JRFieldRenderer{
         }
 
         final DefaultAttributeDescriptor attDesc = new DefaultAttributeDescriptor(
-                  TYPE, DefaultName.valueOf(name), 1, 1, true, null);
+                  TYPE, NamesExt.valueOf(name), 1, 1, true, null);
         attDesc.getUserData().put(MAP_ATTRIBUTE, relatedMap);
         return attDesc;
     }

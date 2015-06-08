@@ -20,7 +20,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.DefaultOperationDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.OperationType;
@@ -41,8 +41,8 @@ public class AliasOperationTest {
         ftb.setName("TypeWithAlias");
         final AttributeDescriptor attDesc = ftb.add("name",String.class);
 
-        final OperationType opType = new AliasOperation(DefaultName.valueOf("substitute"), DefaultName.valueOf("name"), attDesc);
-        final PropertyDescriptor pd = new DefaultOperationDescriptor(opType, DefaultName.valueOf("substitute"), 1, 1, true);
+        final OperationType opType = new AliasOperation(NamesExt.valueOf("substitute"), NamesExt.valueOf("name"), attDesc);
+        final PropertyDescriptor pd = new DefaultOperationDescriptor(opType, NamesExt.valueOf("substitute"), 1, 1, true);
         ftb.add(pd);
 
         TYPE = ftb.buildFeatureType();

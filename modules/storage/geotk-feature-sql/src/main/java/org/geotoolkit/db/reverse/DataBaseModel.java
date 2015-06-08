@@ -54,7 +54,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.ModifiableFeatureTypeFactory;
 import org.geotoolkit.feature.type.ModifiableType;
@@ -89,7 +89,7 @@ public final class DataBaseModel {
     /**
      * Dummy type which will be replaced dynamically in the reverse engineering process.
      */
-    private static final ComplexType FLAG_TYPE = FTF.createComplexType(DefaultName.create("flag"), Collections.EMPTY_LIST, false, false, Collections.EMPTY_LIST, null, null);
+    private static final ComplexType FLAG_TYPE = FTF.createComplexType(NamesExt.create("flag"), Collections.EMPTY_LIST, false, false, Collections.EMPTY_LIST, null, null);
 
     private final JDBCFeatureStore store;
     private final Map<GenericName,PrimaryKey> pkIndex = new HashMap<GenericName, PrimaryKey>();
@@ -872,11 +872,11 @@ public final class DataBaseModel {
                 for(final RelationMetaModel relation : table.exportedKeys){
 
                     //find an appropriate name
-                    GenericName n = DefaultName.create(store.getDefaultNamespace(), relation.getForeignColumn());
+                    GenericName n = NamesExt.create(store.getDefaultNamespace(), relation.getForeignColumn());
                     for(PropertyDescriptor dpd : ftb.getProperties()){
                         if(n.tip().toString().equals(dpd.getName().tip().toString())){
                             //name already used, make it unique by including reference table name
-                            n = DefaultName.create(store.getDefaultNamespace(), relation.getForeignTable()+ASSOCIATION_SEPARATOR+relation.getForeignColumn());
+                            n = NamesExt.create(store.getDefaultNamespace(), relation.getForeignTable()+ASSOCIATION_SEPARATOR+relation.getForeignColumn());
                             break;
                         }
                     }

@@ -36,7 +36,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.geotoolkit.feature.type.GeometryDescriptor;
@@ -228,11 +228,11 @@ public class FeatureTypeBuilder {
     }
 
     public void setName(final String name){
-        setName(DefaultName.valueOf(name));
+        setName(NamesExt.valueOf(name));
     }
 
     public void setName(final String namespace, final String localPart){
-        setName(DefaultName.create(namespace, localPart));
+        setName(NamesExt.create(namespace, localPart));
     }
 
     /**
@@ -334,7 +334,7 @@ public class FeatureTypeBuilder {
      * @return the created AttributeDescriptor
      */
     public AttributeDescriptor add(final String name, final Class binding){
-        return add(DefaultName.valueOf(name),binding);
+        return add(NamesExt.valueOf(name),binding);
     }
 
     /**
@@ -349,7 +349,7 @@ public class FeatureTypeBuilder {
      */
     public AttributeDescriptor add(final String name, final Class binding, final int min, final int max,
             final boolean nillable, final Map<Object,Object> userData) {
-        return add(DefaultName.valueOf(name),binding,min,max,nillable,userData);
+        return add(NamesExt.valueOf(name),binding,min,max,nillable,userData);
     }
     /**
      *
@@ -359,7 +359,7 @@ public class FeatureTypeBuilder {
      * @return the created AttributeDescriptor
      */
     public AttributeDescriptor add(final String name, final Class binding, final CoordinateReferenceSystem crs){
-        return add(DefaultName.valueOf(name),binding,crs);
+        return add(NamesExt.valueOf(name),binding,crs);
     }
 
     /**
@@ -375,7 +375,7 @@ public class FeatureTypeBuilder {
      */
     public AttributeDescriptor add(final String name, final Class binding, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData) {
-        return add(DefaultName.valueOf(name),binding,crs,min,max,nillable,userData);
+        return add(NamesExt.valueOf(name),binding,crs,min,max,nillable,userData);
     }
 
     /**

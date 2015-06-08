@@ -60,8 +60,8 @@ public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTe
     public void testCreateComplexAttribute() {
         final FeatureFactory FF = getFeatureFactory();
         //complex type creation
-        final GenericName strName = DefaultName.create("string");
-        final GenericName fName = DefaultName.create("featureTypeName");
+        final GenericName strName = NamesExt.create("string");
+        final GenericName fName = NamesExt.create("featureTypeName");
         final AttributeType attrType = getFeatureTypeFactory().createAttributeType(strName, String.class, true, false, null, null, null);
         final AttributeDescriptor descriptor = getFeatureTypeFactory().createAttributeDescriptor(attrType, strName, 0, Integer.MAX_VALUE, false, "line");
         final List<PropertyDescriptor> attrList = new ArrayList<PropertyDescriptor>();
@@ -123,7 +123,7 @@ public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTe
         //access to non existant name
         assertNull("Trying to access non existant value, method getProperty should have returned null", complex.getProperty("non_existant"));
         assertTrue("Trying to access non existant value, method getProperties should have returned an empty list", complex.getProperties("non_existant").isEmpty());
-        GenericName tmpName = DefaultName.create("non-existant");
+        GenericName tmpName = NamesExt.create("non-existant");
         assertNull("Trying to access non existant value, method getProperty should have returned null", complex.getProperty(tmpName));
         assertTrue("Trying to access non existant value, method getProperties should have returned an empty list", complex.getProperties(tmpName).isEmpty());
     }
@@ -135,9 +135,9 @@ public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTe
     @Test
     public void testCreateComplexFeature() {
         final FeatureFactory FF = getFeatureFactory();
-        final GenericName name = DefaultName.create("point");
-        final GenericName strName = DefaultName.create("string");
-        final GenericName fName = DefaultName.create("featureTypeName");
+        final GenericName name = NamesExt.create("point");
+        final GenericName strName = NamesExt.create("string");
+        final GenericName fName = NamesExt.create("featureTypeName");
 
         //types and descriptors
         final GeometryType geoType = getFeatureTypeFactory().createGeometryType(name, MockDirectPosition2D.class, null, true, false, null, null, null);
@@ -230,7 +230,7 @@ public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTe
         //access test (to non existant attribute)
         assertNull("Trying to access non existant value, method getProperty should have returned null", feature.getProperty("non_existant"));
         assertTrue("Trying to access non existant value, method getProperties should have returned an empty list", feature.getProperties("non_existant").isEmpty());
-        GenericName tmpName = DefaultName.create("non-existant");
+        GenericName tmpName = NamesExt.create("non-existant");
         assertNull("Trying to access non existant value, method getProperty should have returned null", feature.getProperty(tmpName));
         assertTrue("Trying to access non existant value, method getProperties should have returned an empty list", feature.getProperties(tmpName).isEmpty());
     }

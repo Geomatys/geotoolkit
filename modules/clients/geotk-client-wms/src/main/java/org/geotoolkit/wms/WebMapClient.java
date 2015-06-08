@@ -23,7 +23,7 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataNode;
@@ -394,7 +394,7 @@ public class WebMapClient extends AbstractCoverageClient {
             for(AbstractLayer al : layers){
                 final String name = al.getName();
                 if(name != null){
-                    final GenericName nn = DefaultName.valueOf(name);
+                    final GenericName nn = NamesExt.valueOf(name);
                     final CoverageReference ref = createReference(nn);
                     rootNode.getChildren().add(ref);
                 }

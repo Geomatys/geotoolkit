@@ -33,7 +33,7 @@ import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.apache.sis.util.ArgumentChecks;
@@ -117,7 +117,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
             stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
             while (rs.next()){
-                final GenericName n = DefaultName.create(ns, rs.getString(1));
+                final GenericName n = NamesExt.create(ns, rs.getString(1));
                 final CoverageReference ref = createCoverageReference(n, null);
                 root.getChildren().add(ref);
             }
@@ -154,7 +154,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
         }
 
         fireCoverageAdded(name);
-        return getCoverageReference(DefaultName.create(getDefaultNamespace(), name.tip().toString()));
+        return getCoverageReference(NamesExt.create(getDefaultNamespace(), name.tip().toString()));
     }
 
     @Override

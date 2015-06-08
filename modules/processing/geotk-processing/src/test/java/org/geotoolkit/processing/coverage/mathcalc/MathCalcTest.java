@@ -40,7 +40,7 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.opengis.util.GenericName;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
@@ -78,7 +78,7 @@ public class MathCalcTest {
 
 
         //create output coverage ref
-        final GenericName n = DefaultName.create("test");
+        final GenericName n = NamesExt.create("test");
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageReference outRef = (PyramidalCoverageReference) store.create(n);
         outRef.setPackMode(ViewType.GEOPHYSICS);
@@ -130,7 +130,7 @@ public class MathCalcTest {
 
 
         //create output coverage ref
-        final GenericName n = DefaultName.create("test");
+        final GenericName n = NamesExt.create("test");
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageReference outRef = (PyramidalCoverageReference) store.create(n);
         outRef.setPackMode(ViewType.GEOPHYSICS);
@@ -183,7 +183,7 @@ public class MathCalcTest {
 
 
         //create output coverage ref
-        final GenericName n = DefaultName.create("test");
+        final GenericName n = NamesExt.create("test");
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageReference outRef = (PyramidalCoverageReference) store.create(n);
         outRef.setPackMode(ViewType.GEOPHYSICS);
@@ -235,7 +235,7 @@ public class MathCalcTest {
         final int width = 28;
         final int height = 13;
 
-        final PyramidalCoverageReference ref1 = (PyramidalCoverageReference) store.create(DefaultName.create("test1"));
+        final PyramidalCoverageReference ref1 = (PyramidalCoverageReference) store.create(NamesExt.create("test1"));
         create4DPyramid(ref1, crs, width, height, new double[][]{
                 {-5,-9,  12},
                 {-5, 0,  -7},
@@ -245,7 +245,7 @@ public class MathCalcTest {
                 {62,21,  17},
         });
 
-        final PyramidalCoverageReference ref2 = (PyramidalCoverageReference) store.create(DefaultName.create("test2"));
+        final PyramidalCoverageReference ref2 = (PyramidalCoverageReference) store.create(NamesExt.create("test2"));
         create4DPyramid(ref2, crs, width, height, new double[][]{
                 {-5,-9,  -4},
                 {-5, 0,  32},
@@ -255,7 +255,7 @@ public class MathCalcTest {
                 {62,21,  41},
         });
 
-        final PyramidalCoverageReference outRef = (PyramidalCoverageReference) store.create(DefaultName.create("result"));
+        final PyramidalCoverageReference outRef = (PyramidalCoverageReference) store.create(NamesExt.create("result"));
         create4DPyramid(outRef, crs, width, height, new double[][]{
                 {-5,-9,   0},
                 {-5, 0,   0},

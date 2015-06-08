@@ -28,7 +28,7 @@ import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.Feature;
@@ -109,7 +109,7 @@ public class MapLayerTest extends TestCase{
             //ok
         }
 
-        final GenericName name = DefaultName.create("test");
+        final GenericName name = NamesExt.create("test");
         FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.setName(name);
         FeatureType type = builder.buildFeatureType();

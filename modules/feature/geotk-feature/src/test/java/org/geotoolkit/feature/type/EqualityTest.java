@@ -20,7 +20,7 @@ package org.geotoolkit.feature.type;
 
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.junit.Assert;
@@ -61,23 +61,23 @@ public class EqualityTest {
 
         //track point type
         ftb.setName(ns,"FishTrackPoint");
-        ftb.add(DefaultName.create(ns, "location"), Point.class, CRS.decode("EPSG:3395"));
-        ftb.add(DefaultName.create(ns, "time"), Date.class);
+        ftb.add(NamesExt.create(ns, "location"), Point.class, CRS.decode("EPSG:3395"));
+        ftb.add(NamesExt.create(ns, "time"), Date.class);
         final ComplexType trackPointType = ftb.buildType();
 
         //fish type
         ftb.reset();
         ftb.setName(ns,"Fish");
-        ftb.add(DefaultName.create(ns, "name"), String.class);
-        ftb.add(DefaultName.create(ns, "code"), String.class);
+        ftb.add(NamesExt.create(ns, "name"), String.class);
+        ftb.add(NamesExt.create(ns, "code"), String.class);
         final ComplexType fishType = ftb.buildType();
 
         //fish track type
         ftb.reset();
         ftb.setName(ns,"FishTrack");
-        ftb.add(DefaultName.create(ns, "trackNumber"), Long.class);
-        AttributeDescriptor fishDesc = adb.create(fishType, DefaultName.create(ns, "fish"),0,1,true,null);
-        AttributeDescriptor trackpointsDesc = adb.create(trackPointType, DefaultName.create(ns, "trackpoints"),0,Integer.MAX_VALUE,true,null);
+        ftb.add(NamesExt.create(ns, "trackNumber"), Long.class);
+        AttributeDescriptor fishDesc = adb.create(fishType, NamesExt.create(ns, "fish"),0,1,true,null);
+        AttributeDescriptor trackpointsDesc = adb.create(trackPointType, NamesExt.create(ns, "trackpoints"),0,Integer.MAX_VALUE,true,null);
         ftb.add(fishDesc);
         ftb.add(trackpointsDesc);
         final FeatureType ft = ftb.buildFeatureType();
@@ -91,23 +91,23 @@ public class EqualityTest {
 
         //track point type
         ftb.setName(ns,"FishTrackPoint");
-        ftb.add(DefaultName.create(ns, "location"), Point.class, CRS.decode("EPSG:3395"));
-        ftb.add(DefaultName.create(ns, "time"), Date.class);
+        ftb.add(NamesExt.create(ns, "location"), Point.class, CRS.decode("EPSG:3395"));
+        ftb.add(NamesExt.create(ns, "time"), Date.class);
         final ComplexType trackPointType = ftb.buildType();
 
         //fish type
         ftb.reset();
         ftb.setName(ns,"Fish");
-        ftb.add(DefaultName.create(ns, "name"), String.class);
-        ftb.add(DefaultName.create(ns, "code"), String.class);
+        ftb.add(NamesExt.create(ns, "name"), String.class);
+        ftb.add(NamesExt.create(ns, "code"), String.class);
         final ComplexType fishType = ftb.buildType();
 
         //fish track type
         ftb.reset();
         ftb.setName(ns,"FishTrack");
-        ftb.add(DefaultName.create(ns, "trackNumber"), Long.class);
-        AttributeDescriptor fishDesc = adb.create(fishType, DefaultName.create(ns, "fish"),0,1,true,null);
-        AttributeDescriptor trackpointsDesc = adb.create(trackPointType, DefaultName.create(ns, "trackpoints"),0,Integer.MAX_VALUE,true,null);
+        ftb.add(NamesExt.create(ns, "trackNumber"), Long.class);
+        AttributeDescriptor fishDesc = adb.create(fishType, NamesExt.create(ns, "fish"),0,1,true,null);
+        AttributeDescriptor trackpointsDesc = adb.create(trackPointType, NamesExt.create(ns, "trackpoints"),0,Integer.MAX_VALUE,true,null);
         ftb.add(fishDesc);
         ftb.add(trackpointsDesc);
         final FeatureType ft = ftb.buildFeatureType();

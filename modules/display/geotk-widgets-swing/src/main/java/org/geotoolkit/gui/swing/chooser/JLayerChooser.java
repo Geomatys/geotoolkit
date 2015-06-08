@@ -50,7 +50,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -299,7 +299,7 @@ public class JLayerChooser extends javax.swing.JPanel {
             if(value instanceof GenericName){
                 final GenericName name = (GenericName) value;
                 lbl.setText(name.tip().toString());
-                lbl.setToolTipText(DefaultName.toExpandedString(name));
+                lbl.setToolTipText(NamesExt.toExpandedString(name));
             }
 
             return lbl;

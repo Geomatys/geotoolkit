@@ -29,7 +29,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
@@ -148,7 +148,7 @@ public class NearestProcess extends AbstractProcess {
         }
 
         final Filter filter = FF.id(setID);
-        return QueryBuilder.filtered(DefaultName.create("nearest"), filter);
+        return QueryBuilder.filtered(NamesExt.create("nearest"), filter);
 
     }
 }

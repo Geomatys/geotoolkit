@@ -48,7 +48,7 @@ import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.version.Version;

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.mapinfo.mif.geometry;
 
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 
 /**
  * A class to build feature from MIF ellipse object.
@@ -27,6 +27,6 @@ import org.geotoolkit.feature.type.DefaultName;
 public class MIFEllipseBuilder extends MIFRectangleBuilder {
 
     public MIFEllipseBuilder() {
-        NAME = DefaultName.create("ELLIPSE");
+        NAME = NamesExt.create("ELLIPSE");
     }
 }

@@ -7,7 +7,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.coverage.memory.MemoryCoverageStore;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.opengis.util.GenericName;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.referencing.CRS;
@@ -47,7 +47,7 @@ import org.opengis.referencing.datum.PixelInCell;
  */
 public class PyramidCoverageBuilderTest {
 
-    private static final GenericName NAME = DefaultName.create("test");
+    private static final GenericName NAME = NamesExt.create("test");
     private static final CoordinateReferenceSystem CRS84 = CommonCRS.WGS84.normalizedGeographic();
     private static final CoordinateReferenceSystem EPSG4326;
     static {
@@ -76,7 +76,7 @@ public class PyramidCoverageBuilderTest {
         final Map<Envelope, double[]> map = new HashMap<>();
         map.put(env1, scales);
 
-        final GenericName name = DefaultName.create("memory_store_test");
+        final GenericName name = NamesExt.create("memory_store_test");
         pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
 
         //test reference
@@ -156,7 +156,7 @@ public class PyramidCoverageBuilderTest {
         final Map<Envelope, double[]> map = new HashMap<>();
         map.put(env, scales);
 
-        final GenericName name = DefaultName.create("memory_store_test");
+        final GenericName name = NamesExt.create("memory_store_test");
         //pyramid 1st coverage
         pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
         //append 2nd coverage
@@ -285,7 +285,7 @@ public class PyramidCoverageBuilderTest {
         final Map<Envelope, double[]> map = new HashMap<>();
         map.put(env, scales);
 
-        final GenericName name = DefaultName.create("memory_store_test");
+        final GenericName name = NamesExt.create("memory_store_test");
         //pyramid 1st coverage
         pcb.create(ref1, mpCovStore, name, map, fillValue, null, null);
 

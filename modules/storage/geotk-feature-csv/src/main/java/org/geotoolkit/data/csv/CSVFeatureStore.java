@@ -47,7 +47,7 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.internal.io.IOUtilities;
@@ -207,7 +207,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             CoordinateReferenceSystem crs = null;
             // Check non-empty parenthesis
             if (dep > 0 && fin > dep + 1) {
-                fieldName = DefaultName.create(getDefaultNamespace(), field.substring(0, dep));
+                fieldName = NamesExt.create(getDefaultNamespace(), field.substring(0, dep));
                 //there is a defined type
                 final String name = field.substring(dep + 1, fin);
                 /* Check if it's a java lang class (number, string, etc.). If it's a fail, maybe it's just
@@ -245,7 +245,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                     }
                 }
             } else {
-                fieldName = DefaultName.create(getDefaultNamespace(), field);
+                fieldName = NamesExt.create(getDefaultNamespace(), field);
                 type = String.class;
             }
 
@@ -301,7 +301,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     private void writeType(final FeatureType type) throws DataStoreException {
-        defaultNamespace = DefaultName.getNamespace(type.getName());
+        defaultNamespace = NamesExt.getNamespace(type.getName());
         Parameters.getOrCreate(CSVFeatureStoreFactory.NAMESPACE, parameters).setValue(defaultNamespace);
         name = type.getName().tip().toString();
 

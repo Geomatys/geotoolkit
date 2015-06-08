@@ -51,7 +51,7 @@ import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
@@ -106,98 +106,98 @@ public class XmlTestData {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(GML_311_NAMESPACE,"TestSimple");
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, DefaultName.create(GML_311_NAMESPACE, "ID"),         null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, DefaultName.create(GML_311_NAMESPACE, "attString"),  null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","short",                Short.class, DefaultName.create(GML_311_NAMESPACE, "attShort"),   null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, DefaultName.create(GML_311_NAMESPACE, "attInteger"), null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","long",                 Long.class, DefaultName.create(GML_311_NAMESPACE, "attLong"),    null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","double",               Double.class, DefaultName.create(GML_311_NAMESPACE, "attDouble"),  null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","decimal",              BigDecimal.class, DefaultName.create(GML_311_NAMESPACE, "attDecimal"), null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","date",                 Date.class, DefaultName.create(GML_311_NAMESPACE, "attDate"),    null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","dateTime",             Timestamp.class, DefaultName.create(GML_311_NAMESPACE, "attDateTime"),null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","boolean",              Boolean.class, DefaultName.create(GML_311_NAMESPACE, "attBoolean"), null, 1,1,true,null);
-        ftb.add(GML_311_NAMESPACE, "Point",           Point.class, DefaultName.create(GML_311_NAMESPACE, "geomPoint"), null, 1, 1, true, null);
-        ftb.add(GML_311_NAMESPACE, "MultiPoint",      MultiPoint.class, DefaultName.create(GML_311_NAMESPACE, "geomMultiPoint"), null, 1, 1, true, null);
-        ftb.add(GML_311_NAMESPACE, "Curve",           LineString.class, DefaultName.create(GML_311_NAMESPACE, "geomLine"), null, 1, 1, true, null);
-        ftb.add(GML_311_NAMESPACE, "CompositeCurve",  MultiLineString.class, DefaultName.create(GML_311_NAMESPACE, "geomMultiLine"), null, 1, 1, true, null);
-        ftb.add(GML_311_NAMESPACE, "Polygon",         Polygon.class, DefaultName.create(GML_311_NAMESPACE, "geomPolygon"), null, 1, 1, true, null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_311_NAMESPACE, "ID"),         null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "attString"),  null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","short",                Short.class, NamesExt.create(GML_311_NAMESPACE, "attShort"),   null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_311_NAMESPACE, "attInteger"), null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","long",                 Long.class, NamesExt.create(GML_311_NAMESPACE, "attLong"),    null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","double",               Double.class, NamesExt.create(GML_311_NAMESPACE, "attDouble"),  null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","decimal",              BigDecimal.class, NamesExt.create(GML_311_NAMESPACE, "attDecimal"), null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","date",                 Date.class, NamesExt.create(GML_311_NAMESPACE, "attDate"),    null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","dateTime",             Timestamp.class, NamesExt.create(GML_311_NAMESPACE, "attDateTime"),null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","boolean",              Boolean.class, NamesExt.create(GML_311_NAMESPACE, "attBoolean"), null, 1,1,true,null);
+        ftb.add(GML_311_NAMESPACE, "Point",           Point.class, NamesExt.create(GML_311_NAMESPACE, "geomPoint"), null, 1, 1, true, null);
+        ftb.add(GML_311_NAMESPACE, "MultiPoint",      MultiPoint.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiPoint"), null, 1, 1, true, null);
+        ftb.add(GML_311_NAMESPACE, "Curve",           LineString.class, NamesExt.create(GML_311_NAMESPACE, "geomLine"), null, 1, 1, true, null);
+        ftb.add(GML_311_NAMESPACE, "CompositeCurve",  MultiLineString.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiLine"), null, 1, 1, true, null);
+        ftb.add(GML_311_NAMESPACE, "Polygon",         Polygon.class, NamesExt.create(GML_311_NAMESPACE, "geomPolygon"), null, 1, 1, true, null);
         //multipolygon does not exist in gml
-        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, DefaultName.create(GML_311_NAMESPACE, "geomMultiPolygon"), null, 1, 1, true, null);
-        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, DefaultName.create(GML_311_NAMESPACE, "geomMultiGeometry"), null, 1, 1, true, null);
-        ftb.add(GML_311_NAMESPACE, "GeometryPropertyType",Geometry.class, DefaultName.create(GML_311_NAMESPACE, "geomAnyGeometry"), null, 1, 1, true, null);
+        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiPolygon"), null, 1, 1, true, null);
+        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiGeometry"), null, 1, 1, true, null);
+        ftb.add(GML_311_NAMESPACE, "GeometryPropertyType",Geometry.class, NamesExt.create(GML_311_NAMESPACE, "geomAnyGeometry"), null, 1, 1, true, null);
         simpleTypeFull = ftb.buildSimpleFeatureType();
 
         ftb.reset();
         ftb.setName(GML_311_NAMESPACE,"TestMultiGeom");
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, DefaultName.create(GML_311_NAMESPACE, "ID"),         null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, DefaultName.create(GML_311_NAMESPACE, "attString"),  null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","short",                Short.class, DefaultName.create(GML_311_NAMESPACE, "attShort"),   null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, DefaultName.create(GML_311_NAMESPACE, "attInteger"), null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","long",                 Long.class, DefaultName.create(GML_311_NAMESPACE, "attLong"),    null, 0,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","double",               Double.class, DefaultName.create(GML_311_NAMESPACE, "attDouble"),  null, 0,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","decimal",              BigDecimal.class, DefaultName.create(GML_311_NAMESPACE, "attDecimal"), null, 0,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","date",                 Date.class, DefaultName.create(GML_311_NAMESPACE, "attDate"),    null, 1,Integer.MAX_VALUE,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","dateTime",             Timestamp.class, DefaultName.create(GML_311_NAMESPACE, "attDateTime"),null, 1,Integer.MAX_VALUE,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","boolean",              Boolean.class, DefaultName.create(GML_311_NAMESPACE, "attBoolean"), null, 1,Integer.MAX_VALUE,true,null);
-        ftb.add(GML_311_NAMESPACE, "Point",           Point.class, DefaultName.create(GML_311_NAMESPACE, "geomPoint"), null, 0, Integer.MAX_VALUE, true, null);
-        ftb.add(GML_311_NAMESPACE, "MultiPoint",      MultiPoint.class, DefaultName.create(GML_311_NAMESPACE, "geomMultiPoint"), null, 0, Integer.MAX_VALUE, true, null);
-        ftb.add(GML_311_NAMESPACE, "Curve",           LineString.class, DefaultName.create(GML_311_NAMESPACE, "geomLine"), null, 0, Integer.MAX_VALUE, true, null);
-        ftb.add(GML_311_NAMESPACE, "CompositeCurve",  MultiLineString.class, DefaultName.create(GML_311_NAMESPACE, "geomMultiLine"), null, 1, Integer.MAX_VALUE, true, null);
-        ftb.add(GML_311_NAMESPACE, "Polygon",         Polygon.class, DefaultName.create(GML_311_NAMESPACE, "geomPolygon"), null, 1, Integer.MAX_VALUE, true, null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_311_NAMESPACE, "ID"),         null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "attString"),  null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","short",                Short.class, NamesExt.create(GML_311_NAMESPACE, "attShort"),   null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_311_NAMESPACE, "attInteger"), null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","long",                 Long.class, NamesExt.create(GML_311_NAMESPACE, "attLong"),    null, 0,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","double",               Double.class, NamesExt.create(GML_311_NAMESPACE, "attDouble"),  null, 0,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","decimal",              BigDecimal.class, NamesExt.create(GML_311_NAMESPACE, "attDecimal"), null, 0,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","date",                 Date.class, NamesExt.create(GML_311_NAMESPACE, "attDate"),    null, 1,Integer.MAX_VALUE,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","dateTime",             Timestamp.class, NamesExt.create(GML_311_NAMESPACE, "attDateTime"),null, 1,Integer.MAX_VALUE,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","boolean",              Boolean.class, NamesExt.create(GML_311_NAMESPACE, "attBoolean"), null, 1,Integer.MAX_VALUE,true,null);
+        ftb.add(GML_311_NAMESPACE, "Point",           Point.class, NamesExt.create(GML_311_NAMESPACE, "geomPoint"), null, 0, Integer.MAX_VALUE, true, null);
+        ftb.add(GML_311_NAMESPACE, "MultiPoint",      MultiPoint.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiPoint"), null, 0, Integer.MAX_VALUE, true, null);
+        ftb.add(GML_311_NAMESPACE, "Curve",           LineString.class, NamesExt.create(GML_311_NAMESPACE, "geomLine"), null, 0, Integer.MAX_VALUE, true, null);
+        ftb.add(GML_311_NAMESPACE, "CompositeCurve",  MultiLineString.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiLine"), null, 1, Integer.MAX_VALUE, true, null);
+        ftb.add(GML_311_NAMESPACE, "Polygon",         Polygon.class, NamesExt.create(GML_311_NAMESPACE, "geomPolygon"), null, 1, Integer.MAX_VALUE, true, null);
         //multipolygon does not exist in gml
-        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, DefaultName.create(GML_311_NAMESPACE, "geomMultiPolygon"), null, 1, Integer.MAX_VALUE, true, null);
-        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, DefaultName.create(GML_311_NAMESPACE, "geomMultiGeometry"), null, 1, Integer.MAX_VALUE, true, null);
-        ftb.add(GML_311_NAMESPACE, "GeometryPropertyType",Geometry.class, DefaultName.create(GML_311_NAMESPACE, "geomAnyGeometry"), null, 1, Integer.MAX_VALUE, true, null);
+        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiPolygon"), null, 1, Integer.MAX_VALUE, true, null);
+        ftb.add(GML_311_NAMESPACE, "MultiGeometry",   GeometryCollection.class, NamesExt.create(GML_311_NAMESPACE, "geomMultiGeometry"), null, 1, Integer.MAX_VALUE, true, null);
+        ftb.add(GML_311_NAMESPACE, "GeometryPropertyType",Geometry.class, NamesExt.create(GML_311_NAMESPACE, "geomAnyGeometry"), null, 1, Integer.MAX_VALUE, true, null);
         multiGeomType = ftb.buildFeatureType();
 
         ftb.reset();
         ftb.setName(GML_311_NAMESPACE,"TestSimpleBasic");
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, DefaultName.create(GML_311_NAMESPACE, "attString"),  null, 1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","double",               Double.class, DefaultName.create(GML_311_NAMESPACE, "attDouble"),  null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "attString"),  null, 1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","double",               Double.class, NamesExt.create(GML_311_NAMESPACE, "attDouble"),  null, 1,1,true,null);
         simpleTypeBasic = ftb.buildSimpleFeatureType();
 
 
         ftb.reset();
         ftb.setName(GML_311_NAMESPACE,"AddressType");
-        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, DefaultName.create(GML_311_NAMESPACE, "streetName"),           null,            1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, DefaultName.create(GML_311_NAMESPACE, "streetNumber"),         null,            1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, DefaultName.create(GML_311_NAMESPACE, "city"),                 null,            1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, DefaultName.create(GML_311_NAMESPACE, "province"),             null,            1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, DefaultName.create(GML_311_NAMESPACE, "postalCode"),           null,            1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, DefaultName.create(GML_311_NAMESPACE, "country"),              null,            0,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, NamesExt.create(GML_311_NAMESPACE, "streetName"),           null,            1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, NamesExt.create(GML_311_NAMESPACE, "streetNumber"),         null,            1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, NamesExt.create(GML_311_NAMESPACE, "city"),                 null,            1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, NamesExt.create(GML_311_NAMESPACE, "province"),             null,            1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, NamesExt.create(GML_311_NAMESPACE, "postalCode"),           null,            1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string", String.class, NamesExt.create(GML_311_NAMESPACE, "country"),              null,            0,1,true,null);
         final ComplexType adress = ftb.buildType();
 
         ftb.reset();
         ftb.setName(GML_311_NAMESPACE,"AddressPropertyType");
-        ftb.add(adress, DefaultName.create(GML_311_NAMESPACE, "Address"),  null,                    1,1,false,null);
+        ftb.add(adress, NamesExt.create(GML_311_NAMESPACE, "Address"),  null,                    1,1,false,null);
         final ComplexType mailadress = ftb.buildType();
 
         ftb.reset();
         ftb.setName(GML_311_NAMESPACE,"Person");
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, DefaultName.create(GML_311_NAMESPACE, "insuranceNumber"),      null,           1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, DefaultName.create(GML_311_NAMESPACE, "lastName"),             null,           1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, DefaultName.create(GML_311_NAMESPACE, "firstName"),            null,           1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, DefaultName.create(GML_311_NAMESPACE, "age"),                  null,           1,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, DefaultName.create(GML_311_NAMESPACE, "sex"),                  null,           1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_311_NAMESPACE, "insuranceNumber"),      null,           1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "lastName"),             null,           1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "firstName"),            null,           1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_311_NAMESPACE, "age"),                  null,           1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "sex"),                  null,           1,1,true,null);
         //ftb.add(new DefaultName(GML_NAMESPACE,"spouse"),               Person.class,            0,1,true,null);
-        ftb.add(GML_311_NAMESPACE, "Point",                                Point.class, DefaultName.create(GML_311_NAMESPACE, "position"),             null,           0,1,true,null);
-        ftb.add(mailadress, DefaultName.create(GML_311_NAMESPACE, "mailAddress"),  null,                    0,1,true,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, DefaultName.create(GML_311_NAMESPACE, "phone"),                null,           0,Integer.MAX_VALUE,true,null);
+        ftb.add(GML_311_NAMESPACE, "Point",                                Point.class, NamesExt.create(GML_311_NAMESPACE, "position"),             null,           0,1,true,null);
+        ftb.add(mailadress, NamesExt.create(GML_311_NAMESPACE, "mailAddress"),  null,                    0,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_311_NAMESPACE, "phone"),                null,           0,Integer.MAX_VALUE,true,null);
 
         complexType = ftb.buildFeatureType();
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
-        ftb.add(DefaultName.create(GML_32_NAMESPACE, "@attString"),           String.class,0,1,false,"hello",null);
-        ftb.add(DefaultName.create(GML_32_NAMESPACE, "@attInteger"),          Integer.class,0,1,false,23,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, DefaultName.create(GML_32_NAMESPACE, "ID"),  null, 1,1,true, null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, DefaultName.create(GML_32_NAMESPACE, "eleString"),  null, 1,1,true, null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, DefaultName.create(GML_32_NAMESPACE, "eleInteger"),  null, 1,1,true, null);
+        ftb.add(NamesExt.create(GML_32_NAMESPACE, "@attString"),           String.class,0,1,false,"hello",null);
+        ftb.add(NamesExt.create(GML_32_NAMESPACE, "@attInteger"),          Integer.class,0,1,false,23,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_32_NAMESPACE, "ID"),  null, 1,1,true, null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_32_NAMESPACE, "eleString"),  null, 1,1,true, null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_32_NAMESPACE, "eleInteger"),  null, 1,1,true, null);
         typeWithAtts = ftb.buildFeatureType();
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
-        ftb.add(DefaultName.create(GML_32_NAMESPACE, "value"),                Object.class);
+        ftb.add(NamesExt.create(GML_32_NAMESPACE, "value"),                Object.class);
         typeWithObject = ftb.buildFeatureType();
 
         ftb.reset();
@@ -206,24 +206,24 @@ public class XmlTestData {
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"identifier");
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, DefaultName.create(GML_32_NAMESPACE, Utils.VALUE_PROPERTY_NAME),  null, 1,1,true, null);
-        ftb.add(DefaultName.create(GML_32_NAMESPACE, "@codeBase"), String.class,1,1,true,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_32_NAMESPACE, Utils.VALUE_PROPERTY_NAME),  null, 1,1,true, null);
+        ftb.add(NamesExt.create(GML_32_NAMESPACE, "@codeBase"), String.class,1,1,true,null);
         final ComplexType identifierType = ftb.buildType();
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
-        ftb.add(identifierType, DefaultName.create(GML_32_NAMESPACE, "identifier"), null, 0, 1, true, null);
+        ftb.add(identifierType, NamesExt.create(GML_32_NAMESPACE, "identifier"), null, 0, 1, true, null);
         typeEmpty2 = ftb.buildFeatureType();
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"SubRecordType");
-        ftb.add(DefaultName.create(GML_32_NAMESPACE, "@nilReason"), String.class,0,1,false,null,null);
-        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, DefaultName.create(GML_32_NAMESPACE, "attString"),  null, 1,1,false, null);
+        ftb.add(NamesExt.create(GML_32_NAMESPACE, "@nilReason"), String.class,0,1,false,null,null);
+        ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_32_NAMESPACE, "attString"),  null, 1,1,false, null);
         final ComplexType subRecordType = ftb.buildType();
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
-        ftb.add(subRecordType, DefaultName.create(GML_32_NAMESPACE, "record"), null, 0, 1, true, null);
+        ftb.add(subRecordType, NamesExt.create(GML_32_NAMESPACE, "record"), null, 0, 1, true, null);
         typeWithNil = ftb.buildFeatureType();
 
         ////////////////////////////////////////////////////////////////////////
@@ -375,9 +375,9 @@ public class XmlTestData {
         //feature with object
         final FeatureTypeBuilder ctb = new FeatureTypeBuilder();
         ctb.setName("http://www.opengis.net/gml/3.2","quantityType");
-        ctb.add(DefaultName.create("http://www.opengis.net/gml/3.2", "scale"), double.class);
+        ctb.add(NamesExt.create("http://www.opengis.net/gml/3.2", "scale"), double.class);
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final AttributeDescriptor adesc = adb.create(ctb.buildType(), DefaultName.create("http://www.opengis.net/gml/3.2", "quantity"), 1, 1, true, null);
+        final AttributeDescriptor adesc = adb.create(ctb.buildType(), NamesExt.create("http://www.opengis.net/gml/3.2", "quantity"), 1, 1, true, null);
 
         final ComplexAttribute propQuantity = (ComplexAttribute) FeatureUtilities.defaultProperty(adesc);
         propQuantity.getProperty("scale").setValue(3.14);

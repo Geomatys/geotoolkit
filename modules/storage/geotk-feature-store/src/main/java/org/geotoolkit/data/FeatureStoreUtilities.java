@@ -54,7 +54,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
@@ -388,7 +388,7 @@ public class FeatureStoreUtilities {
             //retype the collection
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.copy(baseType);
-            ftb.setName(DefaultName.create(DefaultName.getNamespace(name), name.tip().toString()+"_"+geomClass.getSimpleName()));
+            ftb.setName(NamesExt.create(NamesExt.getNamespace(name), name.tip().toString()+"_"+geomClass.getSimpleName()));
             ftb.remove(geomPropName.tip().toString());
             ftb.add(geomPropName, geomClasses[i], geomDesc.getCoordinateReferenceSystem());
             ftb.setDefaultGeometry(geomPropName);

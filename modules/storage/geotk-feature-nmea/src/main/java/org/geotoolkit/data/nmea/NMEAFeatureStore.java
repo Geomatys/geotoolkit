@@ -37,7 +37,7 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.Feature;
@@ -58,12 +58,12 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class NMEAFeatureStore extends AbstractFeatureStore {
 
-    public final static GenericName TYPE_NAME  = DefaultName.create(null, "NMEA POINT");
-    public final static GenericName GEOM_NAME  = DefaultName.create(null, "Location");
-    public final static GenericName ALT_NAME   = DefaultName.create(null, "Altitude");
-    public final static GenericName DEPTH_NAME = DefaultName.create(null, "Sea-depth");
-    public final static GenericName DATE_NAME  = DefaultName.create(null, "Date");
-    public final static GenericName SPEED_NAME = DefaultName.create(null, "Speed");
+    public final static GenericName TYPE_NAME  = NamesExt.create(null, "NMEA POINT");
+    public final static GenericName GEOM_NAME  = NamesExt.create(null, "Location");
+    public final static GenericName ALT_NAME   = NamesExt.create(null, "Altitude");
+    public final static GenericName DEPTH_NAME = NamesExt.create(null, "Sea-depth");
+    public final static GenericName DATE_NAME  = NamesExt.create(null, "Date");
+    public final static GenericName SPEED_NAME = NamesExt.create(null, "Speed");
 
     /** Feature type to use for nmea data encapsulation */
     public static final FeatureType NMEA_TYPE;

@@ -28,7 +28,7 @@ import org.geotoolkit.factory.Hints;
 
 import org.geotoolkit.feature.type.AssociationType;
 import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.geotoolkit.feature.type.GeometryType;
 import org.opengis.util.GenericName;
@@ -212,11 +212,11 @@ public class AttributeTypeBuilder {
     }
 
     public void setName(final String localPart){
-        this.name = DefaultName.create(localPart);
+        this.name = NamesExt.create(localPart);
     }
 
     public void setName(final String namespace, final String localPart){
-        this.name = DefaultName.create(namespace, localPart);
+        this.name = NamesExt.create(namespace, localPart);
     }
 
     public GenericName getName() {
@@ -296,7 +296,7 @@ public class AttributeTypeBuilder {
     public AttributeType buildType() {
         final GenericName name;
         if(this.name == null){
-            name = DefaultName.create(binding.getSimpleName());
+            name = NamesExt.create(binding.getSimpleName());
         }else{
             name = this.name;
         }
@@ -323,7 +323,7 @@ public class AttributeTypeBuilder {
     public GeometryType buildGeometryType() {
         final GenericName name;
         if(this.name == null){
-            name = DefaultName.create(binding.getSimpleName());
+            name = NamesExt.create(binding.getSimpleName());
         }else{
             name = this.name;
         }
@@ -338,7 +338,7 @@ public class AttributeTypeBuilder {
     public AssociationType buildAssociationType(final AttributeType distType){
         final GenericName name;
         if(this.name == null){
-            name = DefaultName.create(binding.getSimpleName());
+            name = NamesExt.create(binding.getSimpleName());
         }else{
             name = this.name;
         }

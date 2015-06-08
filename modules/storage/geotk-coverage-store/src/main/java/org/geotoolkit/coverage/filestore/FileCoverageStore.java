@@ -33,7 +33,7 @@ import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
@@ -183,7 +183,7 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
                 final List<String> imageNames = nis.getImageNames();
                 for (int i = 0, n = imageNames.size(); i < n; i++) {
                     final String in = imageNames.get(i);
-                    final GenericName name = DefaultName.create(nmsp, filename + "." + in);
+                    final GenericName name = NamesExt.create(nmsp, filename + "." + in);
                     final FileCoverageReference fcr = new FileCoverageReference(this, name, candidate, i);
                     rootNode.getChildren().add(fcr);
                 }
@@ -193,9 +193,9 @@ public class FileCoverageStore extends AbstractCoverageStore implements DataFile
                     final GenericName name;
                     if (nbImage == 1) {
                         //don't number it if there is only one
-                        name = DefaultName.create(nmsp, filename);
+                        name = NamesExt.create(nmsp, filename);
                     } else {
-                        name = DefaultName.create(nmsp, filename + "." + i);
+                        name = NamesExt.create(nmsp, filename + "." + i);
                     }
 
                     final FileCoverageReference fcr = new FileCoverageReference(this, name, candidate, i);

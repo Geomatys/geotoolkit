@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.version.Version;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
@@ -132,7 +132,7 @@ public final class QueryBuilder {
         }else{
             this.properties = new GenericName[properties.length];
             for(int i=0;i<properties.length;i++){
-                this.properties[i] = DefaultName.valueOf(properties[i]);
+                this.properties[i] = NamesExt.valueOf(properties[i]);
             }
         }
     }

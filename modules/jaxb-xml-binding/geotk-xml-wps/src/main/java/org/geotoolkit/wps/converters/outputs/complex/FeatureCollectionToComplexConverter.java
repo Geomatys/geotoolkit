@@ -30,7 +30,7 @@ import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.feature.type.FeatureType;
@@ -79,7 +79,7 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
         complex.setMimeType((String) params.get(MIME));
 
         final FeatureType ft = source.getFeatureType();
-        final String namespace = DefaultName.getNamespace(ft.getName());
+        final String namespace = NamesExt.getNamespace(ft.getName());
         final Map<String, String> schemaLocation = new HashMap<String, String>();
 
         if(WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(complex.getMimeType())) {

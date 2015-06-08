@@ -49,7 +49,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -116,7 +116,7 @@ public class PyramidalModelReader extends GridCoverageReader{
     @Override
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
         final NameFactory dnf = FactoryFinder.getNameFactory(null);
-        final String nss = DefaultName.getNamespace(getInput().getName());
+        final String nss = NamesExt.getNamespace(getInput().getName());
         final String nameSpace = nss != null ? nss : "http://geotoolkit.org" ;
         final NameSpace ns = dnf.createNameSpace(dnf.createGenericName(null, nameSpace), null);
         final GenericName gn = dnf.createLocalName(ns, getInput().getName().tip().toString());

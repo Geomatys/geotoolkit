@@ -19,7 +19,7 @@ package org.geotoolkit.feature.type;
 import java.util.Collections;
 import java.util.logging.Level;
 
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 
@@ -69,7 +69,7 @@ public class BasicFeatureTypes {
     static {
         // Feature is the base of everything else, must be created directly instead
         // of going thru the builder because the builder assumes it as the default base type
-        FEATURE = new DefaultSimpleFeatureType(DefaultName.create("Feature"),
+        FEATURE = new DefaultSimpleFeatureType(NamesExt.create("Feature"),
                 Collections.EMPTY_LIST, null, true,
                 Collections.EMPTY_LIST, null, null);
     }

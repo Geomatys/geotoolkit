@@ -32,7 +32,7 @@ import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreePath;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.util.EmptyCellRenderer;
 import org.geotoolkit.gui.swing.util.JOptionDialog;
@@ -299,7 +299,7 @@ public class JFeatureOutLine extends Outline{
                         final GeneralParameterDescriptor pd = (GeneralParameterDescriptor) origin;
                         if(pd.getAlias() != null && !pd.getAlias().isEmpty()){
                             final GenericName gn = pd.getAlias().iterator().next();
-                            name = DefaultName.create(null, gn.toInternationalString().toString());
+                            name = NamesExt.create(null, gn.toInternationalString().toString());
                         }else{
                             name = prop.getName();
                         }
@@ -321,7 +321,7 @@ public class JFeatureOutLine extends Outline{
                         final GeneralParameterDescriptor pd = (GeneralParameterDescriptor) origin;
                         if(pd.getAlias() != null && !pd.getAlias().isEmpty()){
                             final GenericName gn = pd.getAlias().iterator().next();
-                            name = DefaultName.create(null, gn.toInternationalString().toString());
+                            name = NamesExt.create(null, gn.toInternationalString().toString());
                         }else{
                             name = desc.getName();
                         }

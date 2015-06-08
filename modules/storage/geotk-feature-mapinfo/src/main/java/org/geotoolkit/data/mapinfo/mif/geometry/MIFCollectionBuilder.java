@@ -19,7 +19,7 @@ package org.geotoolkit.data.mapinfo.mif.geometry;
 import com.vividsolutions.jts.geom.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
@@ -45,8 +45,8 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
  *         Date : 27/02/13
  */
 public class MIFCollectionBuilder extends MIFGeometryBuilder {
-    public static final GenericName NAME = DefaultName.create("COLLECTION");
-    public static final GenericName GEOM_NAME = DefaultName.create("GEOMETRY");
+    public static final GenericName NAME = NamesExt.create("COLLECTION");
+    public static final GenericName GEOM_NAME = NamesExt.create("GEOMETRY");
 
     private CoordinateReferenceSystem collectionCRS = null;
     @Override

@@ -36,7 +36,7 @@ import org.apache.sis.util.Utilities;
 import org.geotoolkit.feature.type.AssociationType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.OperationType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
@@ -82,7 +82,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      */
     @Override
     public Collection<Property> getProperties(final GenericName name) {
-        final String ns = DefaultName.getNamespace(name);
+        final String ns = NamesExt.getNamespace(name);
         if(ns==null || ns.isEmpty()){
             return getProperties(name.toString());
         }
@@ -105,7 +105,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         //we size it to 1, in most of the cases there is always a single property for a name.
         final List<Property> matches = new ArrayList<Property>(1);
         for(Property prop : getProperties()){
-            if(DefaultName.match(prop.getName(),name)){
+            if(NamesExt.match(prop.getName(),name)){
                 matches.add(prop);
             }
         }
@@ -117,7 +117,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      */
     @Override
     public Property getProperty(final GenericName name) {
-        final String ns = DefaultName.getNamespace(name);
+        final String ns = NamesExt.getNamespace(name);
         if(ns==null || ns.isEmpty()){
             return getProperty(name.toString());
         }
@@ -145,7 +145,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
     public Property getProperty(final String name) {
         //TODO find a faster way, hashmap ?
         for(Property prop : getProperties()){
-            if(DefaultName.match(prop.getName(),name)){
+            if(NamesExt.match(prop.getName(),name)){
                 return prop;
             }
         }
@@ -313,7 +313,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         }
 
         if(name != null){
-            tablewriter.append(DefaultName.toExpandedString(name));
+            tablewriter.append(NamesExt.toExpandedString(name));
         }
 
         //write the index if one

@@ -44,39 +44,39 @@ public class SerializationTest {
     public void testSerialize() {
 
         //test attribut type
-        AttributeType attType = new DefaultAttributeType(DefaultName.valueOf("attType"),
+        AttributeType attType = new DefaultAttributeType(NamesExt.valueOf("attType"),
                 String.class, true, true, null, null, new SimpleInternationalString("i18n"));
         assertSerializedEquals(attType);
 
         //test association type
         AssociationType assoType = new DefaultAssociationType(
-                DefaultName.valueOf("asso"), attType, true,
+                NamesExt.valueOf("asso"), attType, true,
                 null, null, new SimpleInternationalString("i18n"));
         assertSerializedEquals(assoType);
 
         //test association type
         AssociationDescriptor assoDesc = new DefaultAssociationDescriptor(
-                assoType, DefaultName.valueOf("assoDesc"), 0, 1, false);
+                assoType, NamesExt.valueOf("assoDesc"), 0, 1, false);
         assertSerializedEquals(assoDesc);
 
         //test attribute descriptor
         AttributeDescriptor attDesc = new DefaultAttributeDescriptor(
-                attType, DefaultName.valueOf("attDesc"), 0, 1, true, null);
+                attType, NamesExt.valueOf("attDesc"), 0, 1, true, null);
         assertSerializedEquals(attDesc);
 
         //test geometry type
-        GeometryType geomtype = new DefaultGeometryType(DefaultName.valueOf("geomType"),
+        GeometryType geomtype = new DefaultGeometryType(NamesExt.valueOf("geomType"),
                 Geometry.class, CommonCRS.WGS84.normalizedGeographic(), true, true, null,
                 attType, new SimpleInternationalString("i18n"));
         assertSerializedEquals(geomtype);
 
         //test property descriptor
         GeometryDescriptor geomDesc = new DefaultGeometryDescriptor(geomtype,
-                DefaultName.valueOf("geomdesc"), 0, 1, true, null);
+                NamesExt.valueOf("geomdesc"), 0, 1, true, null);
         assertSerializedEquals(geomDesc);
 
         //test complexe type
-        ComplexType comType = new DefaultComplexType(DefaultName.valueOf("comType"),
+        ComplexType comType = new DefaultComplexType(NamesExt.valueOf("comType"),
                 (Collection)Collections.singleton(geomDesc), true, true, null, attType, null);
         assertSerializedEquals(comType);
 

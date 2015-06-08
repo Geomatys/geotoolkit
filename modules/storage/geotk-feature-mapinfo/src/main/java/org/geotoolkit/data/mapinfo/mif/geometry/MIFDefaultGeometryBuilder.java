@@ -3,7 +3,7 @@ package org.geotoolkit.data.mapinfo.mif.geometry;
 import com.vividsolutions.jts.geom.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.Feature;
@@ -28,8 +28,8 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
  */
 public class MIFDefaultGeometryBuilder extends MIFGeometryBuilder{
 
-    public static final GenericName NAME = DefaultName.create("GEOMETRY");
-    public static final GenericName GEOM_NAME = DefaultName.create("GEOMETRY");
+    public static final GenericName NAME = NamesExt.create("GEOMETRY");
+    public static final GenericName GEOM_NAME = NamesExt.create("GEOMETRY");
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {

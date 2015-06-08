@@ -49,7 +49,7 @@ import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
@@ -157,7 +157,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
             String typeNamespace = null;
             int i = 0;
             while (typeNamespace == null && i < featureTypes.size()) {
-                typeNamespace = DefaultName.getNamespace(featureTypes.get(i).getName());
+                typeNamespace = NamesExt.getNamespace(featureTypes.get(i).getName());
                 i++;
             }
             schema.setTargetNamespace(typeNamespace);
@@ -180,7 +180,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
     @Override
     public Schema getSchemaFromFeatureType(final FeatureType featureType) {
         if (featureType != null) {
-            final String typeNamespace = DefaultName.getNamespace(featureType.getName());
+            final String typeNamespace = NamesExt.getNamespace(featureType.getName());
             final Schema schema = new Schema(FormChoice.QUALIFIED, typeNamespace);
             if ("3.2.1".equals(gmlVersion)) {
                 schema.addImport(GML_IMPORT_321);
@@ -212,7 +212,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
     }
 
     private void fillSchemaWithFeatureType(final FeatureType featureType, final Schema schema, boolean addTopElement, Set<String> alreadyWritten) {
-        final String typeNamespace    = DefaultName.getNamespace(featureType.getName());
+        final String typeNamespace    = NamesExt.getNamespace(featureType.getName());
         final String elementName      = featureType.getName().tip().toString();
         final String typeName         = elementName + "Type";
         
@@ -247,7 +247,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
         
         final String nameWithSuffix = Utils.getNameWithTypeSuffix(ptypeName.tip().toString());
 
-        boolean write = schema.getTargetNamespace().equals(DefaultName.getNamespace(ptypeName));
+        boolean write = schema.getTargetNamespace().equals(NamesExt.getNamespace(ptypeName));
         
         //search if this type has already been written
         if(alreadyWritten.contains(nameWithSuffix)) return;

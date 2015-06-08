@@ -22,7 +22,7 @@ import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.Feature;
@@ -48,16 +48,16 @@ import org.apache.sis.util.ArgumentChecks;
  */
 public class MIFArcBuilder extends MIFGeometryBuilder {
 
-    public static final GenericName NAME = DefaultName.create("ARC");
-    public static final GenericName BEGIN_ANGLE_NAME = DefaultName.create("BEGIN_ANGLE");
-    public static final GenericName END_ANGLE_NAME = DefaultName.create("END_ANGLE");
+    public static final GenericName NAME = NamesExt.create("ARC");
+    public static final GenericName BEGIN_ANGLE_NAME = NamesExt.create("BEGIN_ANGLE");
+    public static final GenericName END_ANGLE_NAME = NamesExt.create("END_ANGLE");
 
     public static final AttributeDescriptor BEGIN_ANGLE;
     public static final AttributeDescriptor END_ANGLE;
     private static final AttributeDescriptor PEN;
 
     static {
-        final AttributeType angleType = new DefaultAttributeType(DefaultName.create("ANGLE"), Double.class,false, false, null, null, null);
+        final AttributeType angleType = new DefaultAttributeType(NamesExt.create("ANGLE"), Double.class,false, false, null, null, null);
 
         BEGIN_ANGLE = new DefaultAttributeDescriptor(angleType, BEGIN_ANGLE_NAME, 1, 1, false, null);
         END_ANGLE = new DefaultAttributeDescriptor(angleType, END_ANGLE_NAME, 1, 1, false, null);

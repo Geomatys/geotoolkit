@@ -40,7 +40,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
@@ -77,7 +77,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     public MemoryCoverageStore(final GridCoverage2D gridCov, final String name) {
         this();
         try {
-            final CoverageReference ref = create(DefaultName.create(getDefaultNamespace(), name));
+            final CoverageReference ref = create(NamesExt.create(getDefaultNamespace(), name));
             final GridCoverageWriter writer = ref.acquireWriter();
             writer.write(gridCov, null);
             ref.recycle(writer);

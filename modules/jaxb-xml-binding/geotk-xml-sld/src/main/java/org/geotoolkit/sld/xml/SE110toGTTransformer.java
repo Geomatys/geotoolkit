@@ -42,7 +42,7 @@ import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 
 import org.geotoolkit.ogc.xml.OGC110toGTTransformer;
 
@@ -453,7 +453,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             fts.semanticTypeIdentifiers().addAll( visitSemantics(cst.getSemanticTypeIdentifier()));
 
             if(cst.getCoverageName() != null){
-                fts.featureTypeNames().add(DefaultName.create(cst.getCoverageName()));
+                fts.featureTypeNames().add(NamesExt.create(cst.getCoverageName()));
             }
 
             if(cst.getRuleOrOnlineResource() == null || cst.getRuleOrOnlineResource().isEmpty()){
@@ -473,7 +473,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             fts.semanticTypeIdentifiers().addAll( visitSemantics(ftst.getSemanticTypeIdentifier()));
 
             if(ftst.getFeatureTypeName() != null){
-                fts.featureTypeNames().add(DefaultName.create(ftst.getFeatureTypeName()));
+                fts.featureTypeNames().add(NamesExt.create(ftst.getFeatureTypeName()));
             }
 
             if(ftst.getRuleOrOnlineResource() == null || ftst.getRuleOrOnlineResource().isEmpty()){

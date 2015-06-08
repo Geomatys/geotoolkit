@@ -29,7 +29,7 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
@@ -157,11 +157,11 @@ public class AttributeDescriptorBuilder {
     }
 
     public void setName(final String localPart){
-        this.name = DefaultName.create(localPart);
+        this.name = NamesExt.create(localPart);
     }
 
     public void setName(final String namespace, final String localPart){
-        this.name = DefaultName.create(namespace, localPart);
+        this.name = NamesExt.create(namespace, localPart);
     }
 
     public GenericName getName() {

@@ -22,7 +22,7 @@ import java.util.Set;
 import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
 
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.apache.sis.storage.DataStoreException;
 
@@ -55,8 +55,8 @@ public class WMSNamespaceTest {
         final Set<GenericName> names = SERVER_111.getNames();
         
         assertEquals(3, names.size());
-        assertTrue(names.contains(DefaultName.create("ns1", "Sample")));
-        assertTrue(names.contains(DefaultName.create("ns2", "Sample")));
+        assertTrue(names.contains(NamesExt.create("ns1", "Sample")));
+        assertTrue(names.contains(NamesExt.create("ns2", "Sample")));
         
     }
     
@@ -69,8 +69,8 @@ public class WMSNamespaceTest {
         final Set<GenericName> names = SERVER_130.getNames();
         
         assertEquals(3, names.size());
-        assertTrue(names.contains(DefaultName.create("ns1", "Sample")));
-        assertTrue(names.contains(DefaultName.create("ns2", "Sample")));
+        assertTrue(names.contains(NamesExt.create("ns1", "Sample")));
+        assertTrue(names.contains(NamesExt.create("ns2", "Sample")));
         
     }
 

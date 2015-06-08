@@ -26,7 +26,7 @@ import org.geotoolkit.feature.type.DefaultFeatureType;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -151,7 +151,7 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
      */
     @Override
     public int indexOf(final GenericName name) {
-        final String ns = DefaultName.getNamespace(name);
+        final String ns = NamesExt.getNamespace(name);
         if(ns==null || ns.isEmpty()){
             return indexOf(name.toString());
         }
@@ -207,11 +207,11 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
             final AttributeDescriptor ad = descs.get(i);
             final GenericName name = ad.getName();
             index.put(name, i);
-            index.put(DefaultName.create(name.tip().toString()), i);
+            index.put(NamesExt.create(name.tip().toString()), i);
             //must add possible string combinaison
             index.put(name.tip().toString(), i);
-            index.put(DefaultName.toExpandedString(name), i);
-            index.put(DefaultName.toExtendedForm(name), i);
+            index.put(NamesExt.toExpandedString(name), i);
+            index.put(NamesExt.toExtendedForm(name), i);
         }
 
         final GeometryDescriptor geomDesc = featureType.getGeometryDescriptor();

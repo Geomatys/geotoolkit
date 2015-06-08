@@ -32,7 +32,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.security.ClientSecurity;
@@ -216,12 +216,12 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             final StringBuilder sb = new StringBuilder();
 
             for(final GenericName prop : propertyNames){
-                final String propNs = DefaultName.getNamespace(prop);
+                final String propNs = NamesExt.getNamespace(prop);
                 if(typeName != null && propNs != null
                    && propNs.equals(typeName.getNamespaceURI())){
                     sb.append(typeName.getPrefix()).append(':').append(prop.tip().toString()).append(',');
                 }else{
-                    sb.append(DefaultName.toExtendedForm(prop)).append(',');
+                    sb.append(NamesExt.toExtendedForm(prop)).append(',');
                 }
             }
 

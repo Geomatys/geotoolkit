@@ -33,7 +33,7 @@ import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.reverse.ColumnMetaModel;
 import org.geotoolkit.db.reverse.PrimaryKey;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -288,7 +288,7 @@ public class MySQLFilterToSQL implements FilterToSQL {
     @Override
     public StringBuilder visit(PropertyName candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        final GenericName name = DefaultName.valueOf(candidate.getPropertyName());
+        final GenericName name = NamesExt.valueOf(candidate.getPropertyName());
         sb.append('"');
         sb.append(name.tip().toString());
         sb.append('"');

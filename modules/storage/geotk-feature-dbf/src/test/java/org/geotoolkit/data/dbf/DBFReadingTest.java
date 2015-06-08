@@ -28,7 +28,7 @@ import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import static org.junit.Assert.assertNotNull;
@@ -64,7 +64,7 @@ public class DBFReadingTest extends AbstractReadingTests{
         final AttributeTypeBuilder buildAtt = new AttributeTypeBuilder();
         final AttributeDescriptorBuilder buildDesc = new AttributeDescriptorBuilder();
         
-        GenericName name = DefaultName.create("http://test.com", "sample");
+        GenericName name = NamesExt.create("http://test.com", "sample");
         builder.reset();
         builder.setName(name);
         

@@ -22,7 +22,7 @@ import org.geotoolkit.storage.coverage.DefaultCoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageReader;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.apache.sis.util.logging.Logging;
@@ -49,7 +49,7 @@ public class ProcessedCoverageReference extends DefaultCoverageReference{
     private long lastCall = 0;
 
     public ProcessedCoverageReference(){
-        super(null, DefaultName.create("Processed"));
+        super(null, NamesExt.create("Processed"));
     }
 
     /**

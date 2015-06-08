@@ -86,8 +86,8 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
                 final GenericName pn = pd.getName();
                 this.propertyMap.put(pn, pd);
                 this.propertyMap.put(pn.tip().toString(), pd);
-                this.propertyMap.put(DefaultName.toExtendedForm(pn), pd);
-                this.propertyMap.put(DefaultName.toExpandedString(pn), pd);
+                this.propertyMap.put(NamesExt.toExtendedForm(pn), pd);
+                this.propertyMap.put(NamesExt.toExpandedString(pn), pd);
             }
 
         }
@@ -105,8 +105,8 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             final GenericName pn = pd.getName();
             this.propertyMap.put(pn, pd);
             this.propertyMap.put(pn.tip().toString(), pd);
-            this.propertyMap.put(DefaultName.toExtendedForm(pn), pd);
-            this.propertyMap.put(DefaultName.toExpandedString(pn), pd);
+            this.propertyMap.put(NamesExt.toExtendedForm(pn), pd);
+            this.propertyMap.put(NamesExt.toExpandedString(pn), pd);
         }
     }
 
@@ -131,7 +131,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
      */
     @Override
     public PropertyDescriptor getDescriptor(final GenericName name) {
-        final String ns = DefaultName.getNamespace(name);
+        final String ns = NamesExt.getNamespace(name);
         if(ns==null || ns.isEmpty()){
             return getDescriptor(name.toString());
         }else{
@@ -258,7 +258,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         final PropertyType type = property.getType();
         final boolean inCycle = visited.contains(type.getName());
 
-        builder.append(DefaultName.toExpandedString(property.getName()));
+        builder.append(NamesExt.toExpandedString(property.getName()));
         if(inCycle){
             builder.append(" <...CYCLIC...>");
         }

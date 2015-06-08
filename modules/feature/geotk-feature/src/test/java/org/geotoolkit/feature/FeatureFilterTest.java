@@ -35,7 +35,7 @@ import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -63,9 +63,9 @@ public class FeatureFilterTest {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("testing");
-        ftb.add(DefaultName.create("http://test1.com", "att_string"), String.class);
-        ftb.add(DefaultName.create("http://test2.com", "att_string"), String.class);
-        ftb.add(DefaultName.create(null, "att_double"), String.class);
+        ftb.add(NamesExt.create("http://test1.com", "att_string"), String.class);
+        ftb.add(NamesExt.create("http://test2.com", "att_string"), String.class);
+        ftb.add(NamesExt.create(null, "att_double"), String.class);
 
         final FeatureType sft = ftb.buildSimpleFeatureType();
 
@@ -75,7 +75,7 @@ public class FeatureFilterTest {
         AttributeDescriptor desc = (AttributeDescriptor) accessor.get(sft, "att_double", AttributeDescriptor.class);
 
         assertNotNull(desc);
-        assertEquals(desc.getName(), DefaultName.create(null, "att_double"));
+        assertEquals(desc.getName(), NamesExt.create(null, "att_double"));
 
         //test a namespace property without namespace
         accessor = Bindings.getBinding(FeatureType.class, "att_string");
@@ -83,28 +83,28 @@ public class FeatureFilterTest {
         desc = (AttributeDescriptor) accessor.get(sft, "att_string", AttributeDescriptor.class);
 
         assertNotNull(desc);
-        assertEquals(desc.getName(), DefaultName.create("http://test1.com", "att_string"));
+        assertEquals(desc.getName(), NamesExt.create("http://test1.com", "att_string"));
 
         //test a namespace property with namespace
         accessor = Bindings.getBinding(FeatureType.class, "http://test1.com:att_string");
         assertNotNull(accessor);
         desc = (AttributeDescriptor) accessor.get(sft, "http://test1.com:att_string", AttributeDescriptor.class);
         assertNotNull(desc);
-        assertEquals(desc.getName(), DefaultName.create("http://test1.com", "att_string"));
+        assertEquals(desc.getName(), NamesExt.create("http://test1.com", "att_string"));
 
         accessor = Bindings.getBinding(FeatureType.class, "http://test2.com:att_string");
         assertNotNull(accessor);
         desc = (AttributeDescriptor) accessor.get(sft, "http://test2.com:att_string", AttributeDescriptor.class);
         assertNotNull(desc);
-        assertEquals(desc.getName(), DefaultName.create("http://test2.com", "att_string"));
+        assertEquals(desc.getName(), NamesExt.create("http://test2.com", "att_string"));
 
     }
 
     @Test
     public void testPropertyNameFeatureTypeAcces(){
-        final GenericName att_1 = DefaultName.create("http://test1.com", "att_string");
-        final GenericName att_2 = DefaultName.create("http://test2.com", "att_string");
-        final GenericName att_3 = DefaultName.create(null, "att_double");
+        final GenericName att_1 = NamesExt.create("http://test1.com", "att_string");
+        final GenericName att_2 = NamesExt.create("http://test2.com", "att_string");
+        final GenericName att_3 = NamesExt.create(null, "att_double");
 
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -167,9 +167,9 @@ public class FeatureFilterTest {
 
     @Test
     public void testPropertyNameFeatureAcces(){
-        final GenericName att_1 = DefaultName.create("http://test1.com", "att_string");
-        final GenericName att_2 = DefaultName.create("http://test2.com", "att_string");
-        final GenericName att_3 = DefaultName.create(null, "att_double");
+        final GenericName att_1 = NamesExt.create("http://test1.com", "att_string");
+        final GenericName att_2 = NamesExt.create("http://test2.com", "att_string");
+        final GenericName att_3 = NamesExt.create(null, "att_double");
 
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -274,20 +274,20 @@ public class FeatureFilterTest {
          *                                                                                           *
          *********************************************************************************************/
 
-        final GenericName description = DefaultName.create("http://www.opengis.net/gml", "description");
-        final GenericName name = DefaultName.create("http://www.opengis.net/gml", "name");
-        final GenericName multiPointProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "multiPointProperty");
-        final GenericName multiCurveProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "multiCurveProperty");
-        final GenericName multiSurfaceProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "multiSurfaceProperty");
-        final GenericName doubleProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "doubleProperty");
-        final GenericName intRangeProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "intRangeProperty");
-        final GenericName strProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "strProperty");
-        final GenericName featureCode = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "featureCode");
-        final GenericName id = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "id");
+        final GenericName description = NamesExt.create("http://www.opengis.net/gml", "description");
+        final GenericName name = NamesExt.create("http://www.opengis.net/gml", "name");
+        final GenericName multiPointProperty = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "multiPointProperty");
+        final GenericName multiCurveProperty = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "multiCurveProperty");
+        final GenericName multiSurfaceProperty = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "multiSurfaceProperty");
+        final GenericName doubleProperty = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "doubleProperty");
+        final GenericName intRangeProperty = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "intRangeProperty");
+        final GenericName strProperty = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "strProperty");
+        final GenericName featureCode = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "featureCode");
+        final GenericName id = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "id");
 
 
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
-        sftb.setName(DefaultName.create("http://cite.opengeospatial.org/gmlsf", "AggregateGeoFeature"));
+        sftb.setName(NamesExt.create("http://cite.opengeospatial.org/gmlsf", "AggregateGeoFeature"));
         sftb.add(description, String.class);
         sftb.add(name, String.class);
         sftb.add(multiPointProperty, MultiPoint.class, CRS.decode("EPSG:4326"));
@@ -325,14 +325,14 @@ public class FeatureFilterTest {
          *                            EntitéGénérique                                                *
          *                                                                                           *
          *********************************************************************************************/
-        final GenericName attributGeometrie  = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "attribut.Géométrie");
-        final GenericName boolProperty = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "boolProperty");
-        final GenericName str4Property = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "str4Property");
-        final GenericName featureRef = DefaultName.create("http://cite.opengeospatial.org/gmlsf", "featureRef");
+        final GenericName attributGeometrie  = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "attribut.Géométrie");
+        final GenericName boolProperty = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "boolProperty");
+        final GenericName str4Property = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "str4Property");
+        final GenericName featureRef = NamesExt.create("http://cite.opengeospatial.org/gmlsf", "featureRef");
 
         sftb.reset();
 
-        sftb.setName(DefaultName.create("http://cite.opengeospatial.org/gmlsf", "EntitéGénérique"));
+        sftb.setName(NamesExt.create("http://cite.opengeospatial.org/gmlsf", "EntitéGénérique"));
         sftb.add(description, String.class);
         sftb.add(name, String.class);
         sftb.add(attributGeometrie, Geometry.class, CRS.decode("EPSG:4326"));

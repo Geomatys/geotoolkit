@@ -23,7 +23,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Brush;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
@@ -48,8 +48,8 @@ import org.geotoolkit.feature.type.FeatureType;
  *         Date : 27/02/13
  */
 public class MIFRectangleBuilder extends MIFGeometryBuilder {
-    public GenericName NAME = DefaultName.create("RECTANGLE");
-    public static final GenericName ROUND_NAME = DefaultName.create("ROUNDING");
+    public GenericName NAME = NamesExt.create("RECTANGLE");
+    public static final GenericName ROUND_NAME = NamesExt.create("ROUNDING");
 
     private static final AttributeDescriptor ROUNDING;
     private static final AttributeDescriptor PEN;

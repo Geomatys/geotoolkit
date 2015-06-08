@@ -52,7 +52,7 @@ import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
@@ -274,7 +274,7 @@ public class JAXPStreamTransactionWriter {
 
         //write typename--------------------------------------------------------
         final GenericName typeName = element.getTypeName();
-        final String ns = DefaultName.getNamespace(typeName);
+        final String ns = NamesExt.getNamespace(typeName);
         if (ns != null && !ns.isEmpty()) {
             final String prefix = "geons"+inc.incrementAndGet();
             writer.writeAttribute("xmlns:"+prefix, ns);
@@ -320,7 +320,7 @@ public class JAXPStreamTransactionWriter {
 
             //write namespace
             final GenericName name = entry.getKey().getName();
-            final String ns2 = DefaultName.getNamespace(name);
+            final String ns2 = NamesExt.getNamespace(name);
             String pref = writer.getNamespaceContext().getPrefix(ns2);
             if(pref == null && ns2 != null && !ns2.isEmpty()){
                 pref = "geons"+inc.incrementAndGet();
@@ -385,7 +385,7 @@ public class JAXPStreamTransactionWriter {
 
         //write typename--------------------------------------------------------
         final GenericName typeName = element.getTypeName();
-        final String ns = DefaultName.getNamespace(typeName);
+        final String ns = NamesExt.getNamespace(typeName);
         if (ns != null && !ns.isEmpty()) {
             final String prefix = "geons"+inc.incrementAndGet();
             writer.writeAttribute("xmlns:"+prefix, ns);

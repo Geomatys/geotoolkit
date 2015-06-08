@@ -18,7 +18,7 @@ package org.geotoolkit.util.converter;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.ObjectConverter;
@@ -55,8 +55,8 @@ public class FilterConverterTest {
         FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(
             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
-        final Filter filter1 = ff.equals(ff.property(DefaultName.create("name")), ff.literal("Smith"));
-        final Filter filter2 = ff.equals(ff.property(DefaultName.create("age")), ff.literal(30));
+        final Filter filter1 = ff.equals(ff.property(NamesExt.create("name")), ff.literal("Smith"));
+        final Filter filter2 = ff.equals(ff.property(NamesExt.create("age")), ff.literal(30));
         return ff.and(filter1, filter2);
 
     }

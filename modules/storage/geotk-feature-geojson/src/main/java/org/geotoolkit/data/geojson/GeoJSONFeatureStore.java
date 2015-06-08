@@ -196,7 +196,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
                 } else if (obj instanceof GeoJSONGeometry) {
                     HashMap<Object, Object> userData = new HashMap<>();
                     userData.put(HintsPending.PROPERTY_IS_IDENTIFIER,Boolean.TRUE);
-                    ftb.add(atb.create(DefaultName.create("fid"), String.class, 1, 1, true, userData));
+                    ftb.add(atb.create(NamesExt.create("fid"), String.class, 1, 1, true, userData));
                     ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, findBinding((GeoJSONGeometry) obj), crs);
                 }
 
@@ -220,12 +220,12 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
             Object value = property.getValue();
             Class binding = value != null ? value.getClass() : String.class;
 
-            GenericName name = DefaultName.create(property.getKey());
+            GenericName name = NamesExt.create(property.getKey());
             HashMap<Object, Object> userData = null;
             if ("id".equals(property.getKey()) || "fid".equals(property.getKey())) {
                 userData = new HashMap<>();
                 userData.put(HintsPending.PROPERTY_IS_IDENTIFIER,Boolean.TRUE);
-                name = DefaultName.create("fid");
+                name = NamesExt.create("fid");
             }
 
             final PropertyDescriptor propDesc = atb.create(name, binding, 1, 1, true, userData);

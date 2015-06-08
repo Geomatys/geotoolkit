@@ -34,7 +34,7 @@ import java.util.Map;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.ValidatingFeatureFactory;
 import org.geotoolkit.referencing.CRS;
@@ -197,7 +197,7 @@ public class FilterTestConstants {
         ftb.add("{http://test2.com}attString", String.class,0,12,true,null);
         ftb.add("{http://test.com}attDouble", Double.class,0,12,true,null);
         ftb.add("{http://test.com}attDate", Date.class,0,12,true,null);
-        ftb.add(ct,DefaultName.valueOf("{http://test.com}attCpx"),null,0,10,true,null);
+        ftb.add(ct,NamesExt.valueOf("{http://test.com}attCpx"),null,0,10,true,null);
 
         CX_FEATURE_TYPE = ftb.buildFeatureType();
 

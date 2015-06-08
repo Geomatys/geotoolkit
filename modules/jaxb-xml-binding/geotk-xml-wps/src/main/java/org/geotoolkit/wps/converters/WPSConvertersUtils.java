@@ -77,7 +77,7 @@ import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
@@ -645,7 +645,7 @@ public class WPSConvertersUtils {
         final ComplexType ct = FeatureTypeUtilities.toPropertyType(toConvert);
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.copy(ct);
-        if(DefaultName.getNamespace(ftb.getName()) == null) {
+        if(NamesExt.getNamespace(ftb.getName()) == null) {
             ftb.setName("constellation-sdi/WS/wps", ftb.getName().tip().toString());
         }
         List<PropertyDescriptor> properties = ftb.getProperties();

@@ -31,7 +31,7 @@ import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataNode;
@@ -123,7 +123,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         try {
             //TODO useless copy here
             final XMLCoverageReference set = XMLCoverageReference.read(refDescriptor);
-            final GenericName name = DefaultName.create(getDefaultNamespace(), set.getId());
+            final GenericName name = NamesExt.create(getDefaultNamespace(), set.getId());
             final XMLCoverageReference ref = new XMLCoverageReference(this,name,set.getPyramidSet());
             ref.copy(set);
             rootNode.getChildren().add(ref);
@@ -157,7 +157,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         if (root.isFile()) {
             throw new DataStoreException("Store root is a file, not a directory, no reference creation allowed.");
         }
-        name = DefaultName.create(getDefaultNamespace(), name.tip().toString());
+        name = NamesExt.create(getDefaultNamespace(), name.tip().toString());
         final Set<GenericName> names = getNames();
         if(names.contains(name)){
             throw new DataStoreException("Name already used in store : " + name.tip().toString());

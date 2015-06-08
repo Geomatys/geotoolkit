@@ -22,7 +22,7 @@ import org.geotoolkit.coverage.memory.MemoryCoverageStore;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
@@ -54,7 +54,7 @@ public abstract class AbstractCoverageStoreEventTest {
 
         assertEquals(0, store.getNames().size());
 
-        final GenericName name = DefaultName.create(store.getDefaultNamespace(), "test");
+        final GenericName name = NamesExt.create(store.getDefaultNamespace(), "test");
         final CoverageReference ref = store.create(name);
         assertNotNull(ref);
         assertEquals(1, storelistener.numManageEvent);

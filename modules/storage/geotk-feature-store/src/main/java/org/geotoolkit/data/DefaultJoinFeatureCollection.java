@@ -31,7 +31,7 @@ import org.geotoolkit.data.query.Source;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
@@ -95,10 +95,10 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
             final FeatureType leftType = leftCollection.getFeatureType();
             final FeatureType rightType = rightCollection.getFeatureType();
             final GenericName leftAttName = (leftCollection.getSource() instanceof Selector) ?
-                    DefaultName.valueOf(((Selector)leftCollection.getSource()).getSelectorName()) :
+                    NamesExt.valueOf(((Selector)leftCollection.getSource()).getSelectorName()) :
                     leftType.getName();
             final GenericName rightAttName = (rightCollection.getSource() instanceof Selector) ?
-                    DefaultName.valueOf(((Selector)rightCollection.getSource()).getSelectorName()) :
+                    NamesExt.valueOf(((Selector)rightCollection.getSource()).getSelectorName()) :
                     rightType.getName();
 
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();

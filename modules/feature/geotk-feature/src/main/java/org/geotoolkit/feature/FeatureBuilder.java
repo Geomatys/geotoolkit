@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -148,8 +148,8 @@ public class FeatureBuilder {
         for(int i=0;i<descs.length;i++){
             final GenericName name = descs[i].getName();
             names.put(name.tip().toString(),i);
-            names.put(DefaultName.toExpandedString(name),i);
-            names.put(DefaultName.toExtendedForm(name),i);
+            names.put(NamesExt.toExpandedString(name),i);
+            names.put(NamesExt.toExtendedForm(name),i);
         }
         reset();
     }
@@ -228,7 +228,7 @@ public class FeatureBuilder {
      *             If no such attribute with teh specified name exists.
      */
     public void setPropertyValue(final GenericName name, final Object value) {
-        FeatureBuilder.this.setPropertyValue(DefaultName.toExtendedForm(name), value);
+        FeatureBuilder.this.setPropertyValue(NamesExt.toExtendedForm(name), value);
     }
 
     /**

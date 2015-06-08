@@ -29,7 +29,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStore;
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.test.TestData;
 
 import org.junit.Before;
@@ -94,7 +94,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         String typeName = IndexedShapefileDataStoreTest.STATE_POP.substring(
                 IndexedShapefileDataStoreTest.STATE_POP.indexOf('/') + 1,
                 IndexedShapefileDataStoreTest.STATE_POP.lastIndexOf('.'));
-        assertEquals("http://jesse.com", DefaultName.getNamespace(store.getFeatureType(typeName).getName()));
+        assertEquals("http://jesse.com", NamesExt.getNamespace(store.getFeatureType(typeName).getName()));
     }
 
     private ShapefileFeatureStore testCreateDataStore(final boolean newDS,

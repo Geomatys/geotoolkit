@@ -42,7 +42,7 @@ import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
@@ -77,7 +77,7 @@ final class JaxenFeatureNavigator implements Navigator{
     }
 
     private String getNamespace(GenericName candidate){
-        final String ns = DefaultName.getNamespace(candidate);
+        final String ns = NamesExt.getNamespace(candidate);
         if(ns==null || ns.isEmpty()){
             return null;
         }else{
@@ -108,13 +108,13 @@ final class JaxenFeatureNavigator implements Navigator{
     public String getElementQName(final Object o) {
         if(o instanceof Property){
             final Property candidate = (Property) o;
-            return DefaultName.toExpandedString(candidate.getName());
+            return NamesExt.toExpandedString(candidate.getName());
         }else if(o instanceof PropertyDescriptor){
             final PropertyDescriptor candidate = (PropertyDescriptor) o;
-            return DefaultName.toExpandedString(candidate.getName());
+            return NamesExt.toExpandedString(candidate.getName());
         }else if(o instanceof PropertyType){
             final PropertyType candidate = (PropertyType) o;
-            return DefaultName.toExpandedString(candidate.getName());
+            return NamesExt.toExpandedString(candidate.getName());
         }
         return null;
     }
@@ -197,10 +197,10 @@ final class JaxenFeatureNavigator implements Navigator{
             return (value==null)? EMPTY : value.toString();
         }else if(o instanceof PropertyDescriptor){
             final PropertyDescriptor candidate = (PropertyDescriptor) o;
-            return DefaultName.toExpandedString(candidate.getName());
+            return NamesExt.toExpandedString(candidate.getName());
         }else if(o instanceof PropertyType){
             final PropertyType candidate = (PropertyType) o;
-            return DefaultName.toExpandedString(candidate.getName());
+            return NamesExt.toExpandedString(candidate.getName());
         }
         return null;
     }

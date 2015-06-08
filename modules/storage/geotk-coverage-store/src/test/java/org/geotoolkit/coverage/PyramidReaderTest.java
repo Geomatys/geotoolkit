@@ -13,7 +13,7 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.image.BufferedImages;
@@ -56,7 +56,7 @@ public class PyramidReaderTest {
         final int width = 28;
         final int height = 13;
 
-        final PyramidalCoverageReference ref1 = (PyramidalCoverageReference) store.create(DefaultName.create("test1"));
+        final PyramidalCoverageReference ref1 = (PyramidalCoverageReference) store.create(NamesExt.create("test1"));
         create4DPyramid(ref1, crs, width, height, new double[][]{
             {-5,-9,  12},
             {-5, 0,  -7},

@@ -36,7 +36,7 @@ public class GeoJSONReadTest {
 
         assertEquals(1, store.getNames().size());
         GenericName name = store.getNames().iterator().next();
-        assertEquals(DefaultName.create("point"), name);
+        assertEquals(NamesExt.create("point"), name);
 
         FeatureType ft = store.getFeatureType(name);
         testFeatureTypes(buildGeometryFeatureType("point", Point.class), ft);
@@ -57,7 +57,7 @@ public class GeoJSONReadTest {
 
         assertEquals(1, store.getNames().size());
         GenericName name = store.getNames().iterator().next();
-        assertEquals(DefaultName.create("multipoint"), name);
+        assertEquals(NamesExt.create("multipoint"), name);
 
         FeatureType ft = store.getFeatureType(name);
         testFeatureTypes(buildGeometryFeatureType("multipoint", MultiPoint.class), ft);
@@ -78,7 +78,7 @@ public class GeoJSONReadTest {
 
         assertEquals(1, store.getNames().size());
         GenericName name = store.getNames().iterator().next();
-        assertEquals(DefaultName.create("linestring"), name);
+        assertEquals(NamesExt.create("linestring"), name);
 
         FeatureType ft = store.getFeatureType(name);
         testFeatureTypes(buildGeometryFeatureType("linestring", LineString.class), ft);
@@ -99,7 +99,7 @@ public class GeoJSONReadTest {
 
         assertEquals(1, store.getNames().size());
         GenericName name = store.getNames().iterator().next();
-        assertEquals(DefaultName.create("multilinestring"), name);
+        assertEquals(NamesExt.create("multilinestring"), name);
 
         FeatureType ft = store.getFeatureType(name);
         testFeatureTypes(buildGeometryFeatureType("multilinestring", MultiLineString.class), ft);
@@ -120,7 +120,7 @@ public class GeoJSONReadTest {
 
         assertEquals(1, store.getNames().size());
         GenericName name = store.getNames().iterator().next();
-        assertEquals(DefaultName.create("polygon"), name);
+        assertEquals(NamesExt.create("polygon"), name);
 
         FeatureType ft = store.getFeatureType(name);
         testFeatureTypes(buildGeometryFeatureType("polygon", Polygon.class), ft);
@@ -141,7 +141,7 @@ public class GeoJSONReadTest {
 
         assertEquals(1, store.getNames().size());
         GenericName name = store.getNames().iterator().next();
-        assertEquals(DefaultName.create("multipolygon"), name);
+        assertEquals(NamesExt.create("multipolygon"), name);
 
         FeatureType ft = store.getFeatureType(name);
         testFeatureTypes(buildGeometryFeatureType("multipolygon", MultiPolygon.class), ft);
@@ -162,7 +162,7 @@ public class GeoJSONReadTest {
 
         assertEquals(1, store.getNames().size());
         GenericName name = store.getNames().iterator().next();
-        assertEquals(DefaultName.create("geometrycollection"), name);
+        assertEquals(NamesExt.create("geometrycollection"), name);
 
         FeatureType ft = store.getFeatureType(name);
         testFeatureTypes(buildGeometryFeatureType("geometrycollection", GeometryCollection.class), ft);
@@ -184,7 +184,7 @@ public class GeoJSONReadTest {
 
         assertEquals(1, store.getNames().size());
         GenericName name = store.getNames().iterator().next();
-        assertEquals(DefaultName.create("feature"), name);
+        assertEquals(NamesExt.create("feature"), name);
 
         FeatureType ft = store.getFeatureType(name);
         testFeatureTypes(buildSimpleFeatureType("feature"), ft);
@@ -205,7 +205,7 @@ public class GeoJSONReadTest {
 
         assertEquals(1, store.getNames().size());
         GenericName name = store.getNames().iterator().next();
-        assertEquals(DefaultName.create("featurecollection"), name);
+        assertEquals(NamesExt.create("featurecollection"), name);
 
         FeatureType ft = store.getFeatureType(name);
         testFeatureTypes(buildFCFeatureType("featurecollection"), ft);
@@ -230,7 +230,7 @@ public class GeoJSONReadTest {
 
         assertEquals(1, store.getNames().size());
         GenericName name = store.getNames().iterator().next();
-        assertEquals(DefaultName.create("f_prop_array"), name);
+        assertEquals(NamesExt.create("f_prop_array"), name);
 
         FeatureType ft = store.getFeatureType(name);
         testFeatureTypes(buildPropertyArrayFeatureType("f_prop_array", Geometry.class), ft);

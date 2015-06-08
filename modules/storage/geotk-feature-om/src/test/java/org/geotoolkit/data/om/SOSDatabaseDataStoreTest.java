@@ -33,7 +33,7 @@ import java.util.Set;
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.sql.DefaultDataSource;
@@ -74,16 +74,16 @@ public class SOSDatabaseDataStoreTest extends AbstractReadingTests{
 
             final String nsOM = "http://www.opengis.net/sampling/1.0";
             final String nsGML = "http://www.opengis.net/gml";
-            final GenericName name = DefaultName.create(nsOM, "SamplingPoint");
+            final GenericName name = NamesExt.create(nsOM, "SamplingPoint");
             names.add(name);
 
             final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
             featureTypeBuilder.setName(name);
-            featureTypeBuilder.add(DefaultName.create(nsGML, "description"),String.class,0,1,true,null);
-            featureTypeBuilder.add(DefaultName.create(nsGML, "name"),String.class,1,Integer.MAX_VALUE,false,null);
-            featureTypeBuilder.add(DefaultName.create(nsOM, "sampledFeature"),String.class,0,Integer.MAX_VALUE,true,null);
-            featureTypeBuilder.add(DefaultName.create(nsOM, "position"),Geometry.class,1,1,false,null);
-            featureTypeBuilder.setDefaultGeometry(DefaultName.create(nsOM, "position"));
+            featureTypeBuilder.add(NamesExt.create(nsGML, "description"),String.class,0,1,true,null);
+            featureTypeBuilder.add(NamesExt.create(nsGML, "name"),String.class,1,Integer.MAX_VALUE,false,null);
+            featureTypeBuilder.add(NamesExt.create(nsOM, "sampledFeature"),String.class,0,Integer.MAX_VALUE,true,null);
+            featureTypeBuilder.add(NamesExt.create(nsOM, "position"),Geometry.class,1,1,false,null);
+            featureTypeBuilder.setDefaultGeometry(NamesExt.create(nsOM, "position"));
 
             int size = 6;
             GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:27582"));

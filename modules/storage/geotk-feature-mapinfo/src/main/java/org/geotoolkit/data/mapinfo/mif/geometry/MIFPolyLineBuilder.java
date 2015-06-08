@@ -24,7 +24,7 @@ import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Pen;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.Feature;
@@ -50,8 +50,8 @@ import org.geotoolkit.feature.type.FeatureType;
  */
 public class MIFPolyLineBuilder extends MIFGeometryBuilder {
 
-    public static final GenericName NAME = DefaultName.create("PLINE");
-    public static final GenericName SMOOTH_NAME = DefaultName.create("SMOOTH");
+    public static final GenericName NAME = NamesExt.create("PLINE");
+    public static final GenericName SMOOTH_NAME = NamesExt.create("SMOOTH");
 
     private static final AttributeDescriptor SMOOTH;
     private static final AttributeDescriptor PEN;

@@ -41,7 +41,7 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
@@ -202,7 +202,7 @@ public class CoverageImageTest {
         final double[] scales = new double[]{1.40625, 2.8125};
         final Map<Envelope, double[]> map = new HashMap<>();
         map.put(env, scales);
-        final GenericName name = DefaultName.create("memory_store_test");
+        final GenericName name = NamesExt.create("memory_store_test");
         pcb.create(reader, mpCovStore, name, map, fillValue);
 
         final GridCoverage2D gridcov = (GridCoverage2D) reader.read(0, null);

@@ -55,7 +55,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.SchemaException;
@@ -289,7 +289,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         
         //take care of potential hints, like removing primary keys
         final QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(DefaultName.create("remaining"));
+        qb.setTypeName(NamesExt.create("remaining"));
         qb.setHints(query.getHints());
         return handleRemaining(reader, qb.buildQuery());
     }
@@ -681,14 +681,14 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                         
                     }else if(relation.property.getType() instanceof ComplexType){
                         final String targetTypeName = relation.property.getType().getName().tip().toString();
-                        final PrimaryKey targetKey = dbmodel.getPrimaryKey(DefaultName.create(getDefaultNamespace(), targetTypeName));
+                        final PrimaryKey targetKey = dbmodel.getPrimaryKey(NamesExt.create(getDefaultNamespace(), targetTypeName));
                         final PrimaryKey sourceKey = dbmodel.getPrimaryKey(relation.type);
                         if(targetKey.getColumns().size() != 1 || sourceKey.getColumns().size() != 1){
                             throw new DataStoreException("Multiple key column relations not supported.");
                         }
                         final ColumnMetaModel sourceColumnMeta = sourceKey.getColumns().get(0);
                         final ColumnMetaModel targetColumnMeta = targetKey.getColumns().get(0);
-                        final FeatureType targetType = dbmodel.getFeatureType(DefaultName.create(getDefaultNamespace(), targetColumnMeta.getTable()));
+                        final FeatureType targetType = dbmodel.getFeatureType(NamesExt.create(getDefaultNamespace(), targetColumnMeta.getTable()));
                         
                         
                         //we create an relation in the opposite direction
@@ -842,7 +842,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      */
     private void decompose(ComplexType type, List<FeatureType> types, List<TypeRelation> relations) throws DataStoreException{
         
-        final GenericName dbName = DefaultName.create(getDefaultNamespace(), type.getName().tip().toString());
+        final GenericName dbName = NamesExt.create(getDefaultNamespace(), type.getName().tip().toString());
         
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(dbName);

@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.calculated.CalculatedLineStringAttribute;
 import org.geotoolkit.feature.calculated.CalculatedMultiLineStringAttribute;
@@ -118,8 +118,8 @@ public final class GPXModelConstants {
         final FeatureTypeFactory ftf = ftb.getFeatureTypeFactory();
 
         //-------------------- GENERIC GPX ENTITY ------------------------------
-        ATT_INDEX = adb.create(DefaultName.create(GPX_NAMESPACE, "index"),      Integer.class,1,1,false,null);
-        ATT_GEOMETRY = (GeometryDescriptor) adb.create(DefaultName.create(GPX_NAMESPACE, GPX_GEOMETRY), Geometry.class,GPX_CRS,1,1,false,null);
+        ATT_INDEX = adb.create(NamesExt.create(GPX_NAMESPACE, "index"),      Integer.class,1,1,false,null);
+        ATT_GEOMETRY = (GeometryDescriptor) adb.create(NamesExt.create(GPX_NAMESPACE, GPX_GEOMETRY), Geometry.class,GPX_CRS,1,1,false,null);
 
         ftb.reset();
         ftb.setName(GPX_NAMESPACE, "GPXEntity");
@@ -150,25 +150,25 @@ public final class GPXModelConstants {
         //<ageofdgpsdata> xsd:decimal </ageofdgpsdata> [0..1] ?
         //<dgpsid> dgpsStationType </dgpsid> [0..1] ?
         //<extensions> extensionsType </extensions> [0..1] ?
-        ATT_POINT_GEOMETRY =    (GeometryDescriptor) adb.create(DefaultName.create(GPX_NAMESPACE, GPX_GEOMETRY),     Point.class,GPX_CRS,1,1,false,null);
-        ATT_WPT_ELE =           adb.create(DefaultName.create(GPX_NAMESPACE, TAG_WPT_ELE),    Double.class,0,1,true,null);
-        ATT_WPT_TIME =          adb.create(DefaultName.create(GPX_NAMESPACE, TAG_WPT_TIME),   Date.class,0,1,true,null);
-        ATT_WPT_MAGVAR =        adb.create(DefaultName.create(GPX_NAMESPACE, TAG_WPT_MAGVAR),Double.class,0,1,true,null);
-        ATT_WPT_GEOIHEIGHT =    adb.create(DefaultName.create(GPX_NAMESPACE, TAG_WPT_GEOIHEIGHT),Double.class,0,1,true,null);
-        ATT_NAME =              adb.create(DefaultName.create(GPX_NAMESPACE, TAG_NAME),       String.class,0,1,true,null);
-        ATT_CMT =               adb.create(DefaultName.create(GPX_NAMESPACE, TAG_CMT),        String.class,0,1,true,null);
-        ATT_DESC =              adb.create(DefaultName.create(GPX_NAMESPACE, TAG_DESC),       String.class,0,1,true,null);
-        ATT_SRC =               adb.create(DefaultName.create(GPX_NAMESPACE, TAG_SRC),        String.class,0,1,true,null);
-        ATT_LINK =              adb.create(DefaultName.create(GPX_NAMESPACE, TAG_LINK),       URI.class,0,Integer.MAX_VALUE,true,null);
-        ATT_WPT_SYM =           adb.create(DefaultName.create(GPX_NAMESPACE, TAG_WPT_SYM),   String.class,0,1,true,null);
-        ATT_TYPE =              adb.create(DefaultName.create(GPX_NAMESPACE, TAG_TYPE),       String.class,0,1,true,null);
-        ATT_WPT_FIX =           adb.create(DefaultName.create(GPX_NAMESPACE, TAG_WPT_FIX),    String.class,0,1,true,null);
-        ATT_WPT_SAT =           adb.create(DefaultName.create(GPX_NAMESPACE, TAG_WPT_SAT),    Integer.class,0,1,true,null);
-        ATT_WPT_HDOP =          adb.create(DefaultName.create(GPX_NAMESPACE, TAG_WPT_HDOP),   Double.class,0,1,true,null);
-        ATT_WPT_VDOP =          adb.create(DefaultName.create(GPX_NAMESPACE, TAG_WPT_VDOP),   Double.class,0,1,true,null);
-        ATT_WPT_PDOP =          adb.create(DefaultName.create(GPX_NAMESPACE, TAG_WPT_PDOP),   Double.class,0,1,true,null);
-        ATT_WPT_AGEOFGPSDATA =  adb.create(DefaultName.create(GPX_NAMESPACE, TAG_WPT_AGEOFGPSDATA),Double.class,0,1,true,null);
-        ATT_WPT_DGPSID =        adb.create(DefaultName.create(GPX_NAMESPACE, TAG_WPT_DGPSID), Integer.class,0,1,true,null);
+        ATT_POINT_GEOMETRY =    (GeometryDescriptor) adb.create(NamesExt.create(GPX_NAMESPACE, GPX_GEOMETRY),     Point.class,GPX_CRS,1,1,false,null);
+        ATT_WPT_ELE =           adb.create(NamesExt.create(GPX_NAMESPACE, TAG_WPT_ELE),    Double.class,0,1,true,null);
+        ATT_WPT_TIME =          adb.create(NamesExt.create(GPX_NAMESPACE, TAG_WPT_TIME),   Date.class,0,1,true,null);
+        ATT_WPT_MAGVAR =        adb.create(NamesExt.create(GPX_NAMESPACE, TAG_WPT_MAGVAR),Double.class,0,1,true,null);
+        ATT_WPT_GEOIHEIGHT =    adb.create(NamesExt.create(GPX_NAMESPACE, TAG_WPT_GEOIHEIGHT),Double.class,0,1,true,null);
+        ATT_NAME =              adb.create(NamesExt.create(GPX_NAMESPACE, TAG_NAME),       String.class,0,1,true,null);
+        ATT_CMT =               adb.create(NamesExt.create(GPX_NAMESPACE, TAG_CMT),        String.class,0,1,true,null);
+        ATT_DESC =              adb.create(NamesExt.create(GPX_NAMESPACE, TAG_DESC),       String.class,0,1,true,null);
+        ATT_SRC =               adb.create(NamesExt.create(GPX_NAMESPACE, TAG_SRC),        String.class,0,1,true,null);
+        ATT_LINK =              adb.create(NamesExt.create(GPX_NAMESPACE, TAG_LINK),       URI.class,0,Integer.MAX_VALUE,true,null);
+        ATT_WPT_SYM =           adb.create(NamesExt.create(GPX_NAMESPACE, TAG_WPT_SYM),   String.class,0,1,true,null);
+        ATT_TYPE =              adb.create(NamesExt.create(GPX_NAMESPACE, TAG_TYPE),       String.class,0,1,true,null);
+        ATT_WPT_FIX =           adb.create(NamesExt.create(GPX_NAMESPACE, TAG_WPT_FIX),    String.class,0,1,true,null);
+        ATT_WPT_SAT =           adb.create(NamesExt.create(GPX_NAMESPACE, TAG_WPT_SAT),    Integer.class,0,1,true,null);
+        ATT_WPT_HDOP =          adb.create(NamesExt.create(GPX_NAMESPACE, TAG_WPT_HDOP),   Double.class,0,1,true,null);
+        ATT_WPT_VDOP =          adb.create(NamesExt.create(GPX_NAMESPACE, TAG_WPT_VDOP),   Double.class,0,1,true,null);
+        ATT_WPT_PDOP =          adb.create(NamesExt.create(GPX_NAMESPACE, TAG_WPT_PDOP),   Double.class,0,1,true,null);
+        ATT_WPT_AGEOFGPSDATA =  adb.create(NamesExt.create(GPX_NAMESPACE, TAG_WPT_AGEOFGPSDATA),Double.class,0,1,true,null);
+        ATT_WPT_DGPSID =        adb.create(NamesExt.create(GPX_NAMESPACE, TAG_WPT_DGPSID), Integer.class,0,1,true,null);
 
         ftb.reset();
         ftb.setName(GPX_NAMESPACE, "WayPoint");
@@ -207,9 +207,9 @@ public final class GPXModelConstants {
         //<type> xsd:string </type> [0..1] ?
         //<extensions> extensionsType </extensions> [0..1] ?
         //<rtept> wptType </rtept> [0..*] ?
-        ATT_ROUTE_GEOMETRY  = (GeometryDescriptor) adb.create(DefaultName.create(GPX_NAMESPACE, GPX_GEOMETRY),     LineString.class,GPX_CRS,1,1,false,null);
-        ATT_NUMBER          = adb.create(DefaultName.create(GPX_NAMESPACE, TAG_NUMBER),    Integer.class,0,1,true,null);
-        ATT_WAYPOINTS       = adb.create(TYPE_WAYPOINT, DefaultName.create(GPX_NAMESPACE, TAG_RTE_RTEPT),null,0,Integer.MAX_VALUE,true,null);
+        ATT_ROUTE_GEOMETRY  = (GeometryDescriptor) adb.create(NamesExt.create(GPX_NAMESPACE, GPX_GEOMETRY),     LineString.class,GPX_CRS,1,1,false,null);
+        ATT_NUMBER          = adb.create(NamesExt.create(GPX_NAMESPACE, TAG_NUMBER),    Integer.class,0,1,true,null);
+        ATT_WAYPOINTS       = adb.create(TYPE_WAYPOINT, NamesExt.create(GPX_NAMESPACE, TAG_RTE_RTEPT),null,0,Integer.MAX_VALUE,true,null);
 
         ftb.reset();
         ftb.setName(GPX_NAMESPACE, "Route");
@@ -231,8 +231,8 @@ public final class GPXModelConstants {
         //------------------- TRACK SEGMENT TYPE -------------------------------
         //<trkpt> wptType </trkpt> [0..*] ?
         //<extensions> extensionsType </extensions> [0..1] ?
-        ATT_TRACKSEG_GEOMETRY  = (GeometryDescriptor) adb.create(DefaultName.create(GPX_NAMESPACE, GPX_GEOMETRY),     LineString.class,GPX_CRS,1,1,false,null);
-        ATT_TRACKPOINTS     = adb.create(TYPE_WAYPOINT, DefaultName.create(GPX_NAMESPACE, TAG_TRK_SEG_PT),null,0,Integer.MAX_VALUE,true,null);
+        ATT_TRACKSEG_GEOMETRY  = (GeometryDescriptor) adb.create(NamesExt.create(GPX_NAMESPACE, GPX_GEOMETRY),     LineString.class,GPX_CRS,1,1,false,null);
+        ATT_TRACKPOINTS     = adb.create(TYPE_WAYPOINT, NamesExt.create(GPX_NAMESPACE, TAG_TRK_SEG_PT),null,0,Integer.MAX_VALUE,true,null);
 
         ftb.reset();
         ftb.setName(GPX_NAMESPACE, "TrackSegment");
@@ -252,8 +252,8 @@ public final class GPXModelConstants {
         //<type> xsd:string </type> [0..1] ?
         //<extensions> extensionsType </extensions> [0..1] ?
         //<trkseg> trksegType </trkseg> [0..*] ?
-        ATT_TRACK_GEOMETRY  = (GeometryDescriptor) adb.create(DefaultName.create(GPX_NAMESPACE, GPX_GEOMETRY),     MultiLineString.class,GPX_CRS,1,1,false,null);
-        ATT_TRACKSEGMENTS   = adb.create(TYPE_TRACK_SEGMENT, DefaultName.create(GPX_NAMESPACE, TAG_TRK_SEG),null,0,Integer.MAX_VALUE,true,null);
+        ATT_TRACK_GEOMETRY  = (GeometryDescriptor) adb.create(NamesExt.create(GPX_NAMESPACE, GPX_GEOMETRY),     MultiLineString.class,GPX_CRS,1,1,false,null);
+        ATT_TRACKSEGMENTS   = adb.create(TYPE_TRACK_SEGMENT, NamesExt.create(GPX_NAMESPACE, TAG_TRK_SEG),null,0,Integer.MAX_VALUE,true,null);
 
         ftb.reset();
         ftb.setName(GPX_NAMESPACE, "Track");

@@ -19,7 +19,7 @@ package org.geotoolkit.data.mapinfo.mif;
 import org.opengis.util.GenericName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
@@ -583,7 +583,7 @@ public class MIFManager {
                 if (bind != null) {
                     FeatureTypeBuilder builder = new FeatureTypeBuilder();
                     builder.copy(bind);
-                    builder.setName(DefaultName.getNamespace(bind.getName()), mifBaseType.getName().tip().toString()+"_"+bind.getName().tip().toString());
+                    builder.setName(NamesExt.getNamespace(bind.getName()), mifBaseType.getName().tip().toString()+"_"+bind.getName().tip().toString());
                     mifChildTypes.add(builder.buildFeatureType());
                 }
             }
@@ -612,12 +612,12 @@ public class MIFManager {
                         "The typename " + tmpType + "(from " + attName + " attribute) is an unknown attribute type.");
             }
             /** todo : instantiate filters for String & Double type (length limitations). */
-            final GenericName name = DefaultName.create(attName);
+            final GenericName name = NamesExt.create(attName);
             final DefaultAttributeType attType = new DefaultAttributeType(name, binding, true, false, null, null, null);
             final DefaultAttributeDescriptor desc = new DefaultAttributeDescriptor(attType, name, 1, 1, true, null);
             schema.add(desc);
         }
-        GenericName name = DefaultName.create(mifName);
+        GenericName name = NamesExt.create(mifName);
         mifBaseType = new DefaultFeatureType(name, schema, null, false, null, null, null);
     }
 

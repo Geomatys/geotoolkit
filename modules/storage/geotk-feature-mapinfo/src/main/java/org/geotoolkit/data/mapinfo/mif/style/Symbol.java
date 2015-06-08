@@ -17,7 +17,7 @@
 package org.geotoolkit.data.mapinfo.mif.style;
 
 import org.geotoolkit.data.mapinfo.mif.geometry.MIFPointBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.style.DefaultDescription;
 import org.opengis.util.GenericName;
 import org.opengis.style.Description;
@@ -41,7 +41,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class Symbol implements MIFSymbolizer, PointSymbolizer {
 
-    public static final GenericName NAME = DefaultName.create("SYMBOL");
+    public static final GenericName NAME = NamesExt.create("SYMBOL");
 
     public final static Pattern SYMBOL_PATTERN = Pattern.compile(NAME.tip().toString()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 

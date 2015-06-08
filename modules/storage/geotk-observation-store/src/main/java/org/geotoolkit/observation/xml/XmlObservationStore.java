@@ -27,7 +27,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.gml.GMLUtilities;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.AbstractRing;
@@ -84,13 +84,13 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
             final ObservationCollection collection = (ObservationCollection)obj;
             for (Observation obs : collection.getMember()) {
                 final Process process = (Process)obs.getProcedure();
-                names.add(DefaultName.create(process.getHref()));
+                names.add(NamesExt.create(process.getHref()));
             }
             
         } else if (obj instanceof Observation) {
             final Observation obs = (Observation)obj;
             final Process process = (Process)obs.getProcedure();
-            names.add(DefaultName.create(process.getHref()));
+            names.add(NamesExt.create(process.getHref()));
         }
         return names;
     }

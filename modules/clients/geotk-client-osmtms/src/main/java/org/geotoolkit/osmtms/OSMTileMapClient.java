@@ -23,7 +23,7 @@ import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.storage.coverage.PyramidSet;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
@@ -82,7 +82,7 @@ public class OSMTileMapClient extends AbstractCoverageClient {
 
     public OSMTileMapClient(ParameterValueGroup params){
         super(params);
-        final GenericName name = DefaultName.create(serverURL.toString(), "main");
+        final GenericName name = NamesExt.create(serverURL.toString(), "main");
         pyramidSet = new OSMTMSPyramidSet(this,getMaxZoomLevel(),getCacheImage());
         final OSMTMSCoverageReference ref = new OSMTMSCoverageReference(this,name);
         rootNode.getChildren().add(ref);

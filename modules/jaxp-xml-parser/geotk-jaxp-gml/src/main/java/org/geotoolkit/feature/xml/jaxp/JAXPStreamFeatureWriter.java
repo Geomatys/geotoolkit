@@ -43,7 +43,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.op.AliasOperation;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryType;
 import org.opengis.util.GenericName;
@@ -193,7 +193,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         //the root element of the xml document (type of the feature)
         final ComplexType type = feature.getType();
         final GenericName typeName    = type.getName();
-        final String namespace = DefaultName.getNamespace(typeName);
+        final String namespace = NamesExt.getNamespace(typeName);
         final String localPart = typeName.tip().toString();
         final Identifier featureId = feature.getIdentifier();
         if (namespace != null && !namespace.isEmpty()) {
@@ -276,7 +276,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 final Object valueA = a.getValue();
                 final GenericName nameA = a.getName();
                 String nameProperty = nameA.tip().toString();
-                String namespaceProperty = DefaultName.getNamespace(nameA);
+                String namespaceProperty = NamesExt.getNamespace(nameA);
 
                 if(!isAttributeProperty(nameA)) continue;
 
@@ -368,7 +368,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         final PropertyType typeA = a.getType();
         final GenericName nameA = a.getDescriptor().getName();
         final String nameProperty = nameA.tip().toString();
-        String namespaceProperty = DefaultName.getNamespace(nameA);
+        String namespaceProperty = NamesExt.getNamespace(nameA);
 
         if(isAttributeProperty(nameA)) return;
 
@@ -487,7 +487,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         //properties again, we ensure to write then as proper xml tags
                         final Property prop = (Property) valueA;
                         final GenericName propName = prop.getName();
-                        final String namespaceURI = DefaultName.getNamespace(propName);
+                        final String namespaceURI = NamesExt.getNamespace(propName);
                         final String localPart = propName.tip().toString();
                         if (namespaceURI != null && !namespaceURI.isEmpty()) {
                             writer.writeStartElement(namespaceURI, localPart);

@@ -34,7 +34,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.DefaultPropertyType;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -55,7 +55,7 @@ import org.openide.util.Exceptions;
  */
 public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
 
-    private static final PropertyType URLTYPE = new DefaultPropertyType(DefaultName.valueOf(""), 
+    private static final PropertyType URLTYPE = new DefaultPropertyType(NamesExt.valueOf(""), 
             URL.class, false, null, null, new SimpleInternationalString(""));
     private static final FileFilter IMAGES_FILTER = new FileNameExtensionFilter("Images", "jpg", "gif", "png", "ico", "bmp", "svg");
     

@@ -41,7 +41,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.reverse.RelationMetaModel;
 import org.geotoolkit.feature.AbstractFeature;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.storage.DataStoreException;
@@ -94,7 +94,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                     final Object key = rs.getObject(template.getCurrentColumn());
                     
                     final QueryBuilder qb = new QueryBuilder();
-                    qb.setTypeName(DefaultName.create(store.getDefaultNamespace(), template.getForeignTable()));
+                    qb.setTypeName(NamesExt.create(store.getDefaultNamespace(), template.getForeignTable()));
                     qb.setFilter(template.toFilter(key));
 
                     prop = GenericAssociationIterator.wrap(
@@ -113,7 +113,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                     
                     //create the filter, excluding relation and id fields                    
                     final QueryBuilder qb = new QueryBuilder();
-                    qb.setTypeName(DefaultName.create(store.getDefaultNamespace(), template.getForeignTable()));
+                    qb.setTypeName(NamesExt.create(store.getDefaultNamespace(), template.getForeignTable()));
                     qb.setFilter(template.toFilter(key));
                     qb.setProperties(template.getSubTypeFields(store.getDatabaseModel()));
 
@@ -153,7 +153,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
 
     @Override
     public Collection<Property> getProperties(final String name) {
-        return getProperties(DefaultName.create(null, name));
+        return getProperties(NamesExt.create(null, name));
     }
 
     @Override
@@ -162,7 +162,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
         if(name.scope().isGlobal()){
             obj = null;
             for(Entry<GenericName,Object> entry : progressiveMap.entrySet()){
-                if(DefaultName.match(name, entry.getKey())){
+                if(NamesExt.match(name, entry.getKey())){
                     obj = entry.getValue();
                     break;
                 }
@@ -201,7 +201,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
     
     @Override
     public Property getProperty(final String name) {
-        return getProperty(DefaultName.create(null, name));
+        return getProperty(NamesExt.create(null, name));
     }
 
     public void updateResultSet(final ResultSet rs) {

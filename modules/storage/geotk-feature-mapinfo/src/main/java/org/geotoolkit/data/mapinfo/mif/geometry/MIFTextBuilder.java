@@ -24,7 +24,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.data.mapinfo.mif.style.Font;
 import org.geotoolkit.data.mapinfo.mif.style.LabelLine;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.Feature;
@@ -49,11 +49,11 @@ import org.apache.sis.util.ArgumentChecks;
  *         Date : 26/02/13
  */
 public class MIFTextBuilder extends MIFGeometryBuilder {
-    public static final GenericName NAME = DefaultName.create("ENVELOPE");
-    public static final GenericName TEXT_NAME = DefaultName.create("TEXT");
-    public static final GenericName SPACING_NAME = DefaultName.create("SPACING");
-    public static final GenericName JUSTIFY_NAME = DefaultName.create("JUSTIFY");
-    public static final GenericName ANGLE_NAME = DefaultName.create("ANGLE");
+    public static final GenericName NAME = NamesExt.create("ENVELOPE");
+    public static final GenericName TEXT_NAME = NamesExt.create("TEXT");
+    public static final GenericName SPACING_NAME = NamesExt.create("SPACING");
+    public static final GenericName JUSTIFY_NAME = NamesExt.create("JUSTIFY");
+    public static final GenericName ANGLE_NAME = NamesExt.create("ANGLE");
 
     public static final AttributeDescriptor TEXT_DESCRIPTOR;
     public static final AttributeDescriptor FONT_DESCRIPTOR;

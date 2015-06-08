@@ -50,7 +50,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.SchemaException;
@@ -106,7 +106,7 @@ public class GenericIteratorTest extends TestCase{
 
     public GenericIteratorTest() throws NoSuchAuthorityCodeException, FactoryException{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        name = DefaultName.create("http://test.com", "TestSchema");
+        name = NamesExt.create("http://test.com", "TestSchema");
         builder.reset();
         builder.setName(name);
         builder.add("att_geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
@@ -466,7 +466,7 @@ public class GenericIteratorTest extends TestCase{
     @Test
     public void testTransformFeatureIterator() throws DataStoreException{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        final GenericName name = DefaultName.create("http://test.com", "TestSchema");
+        final GenericName name = NamesExt.create("http://test.com", "TestSchema");
         builder.reset();
         builder.setName(name);
         builder.add("att_geom", LineString.class, CommonCRS.WGS84.normalizedGeographic());

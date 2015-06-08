@@ -24,7 +24,7 @@ import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.ClientFinder;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageType;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
@@ -80,10 +80,10 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient {
         super(params);
 
         final boolean cache = getCacheImage();
-        final GoogleCoverageReference ref1 = new GoogleCoverageReference(this,DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_HYBRID),cache);
-        final GoogleCoverageReference ref2 = new GoogleCoverageReference(this,DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_ROADMAP),cache);
-        final GoogleCoverageReference ref3 = new GoogleCoverageReference(this,DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_SATELLITE),cache);
-        final GoogleCoverageReference ref4 = new GoogleCoverageReference(this,DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_TERRAIN),cache);
+        final GoogleCoverageReference ref1 = new GoogleCoverageReference(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_HYBRID),cache);
+        final GoogleCoverageReference ref2 = new GoogleCoverageReference(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_ROADMAP),cache);
+        final GoogleCoverageReference ref3 = new GoogleCoverageReference(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_SATELLITE),cache);
+        final GoogleCoverageReference ref4 = new GoogleCoverageReference(this,NamesExt.valueOf("{http://google.com}"+GetMapRequest.TYPE_TERRAIN),cache);
 
         rootNode.getChildren().add(ref1);
         rootNode.getChildren().add(ref2);

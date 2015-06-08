@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.sld.xml.v100.LayerFeatureConstraints;
 import org.geotoolkit.sld.xml.v100.NamedLayer;
 import org.geotoolkit.sld.xml.v100.StyledLayerDescriptor;
@@ -132,7 +132,7 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
             final Collection<FeatureTypeConstraint> constraints = new ArrayList<FeatureTypeConstraint>();
             
             for(final org.geotoolkit.sld.xml.v100.FeatureTypeConstraint aftc : ftc.getFeatureTypeConstraint()){
-                final GenericName name = DefaultName.create(aftc.getFeatureTypeName());
+                final GenericName name = NamesExt.create(aftc.getFeatureTypeName());
                 final Filter filter = visitFilter(aftc.getFilter());
                 final List<Extent> extents = visitExtents(aftc.getExtent());
                 final FeatureTypeConstraint cons = sldFactory.createFeatureTypeConstraint(name, filter, extents);

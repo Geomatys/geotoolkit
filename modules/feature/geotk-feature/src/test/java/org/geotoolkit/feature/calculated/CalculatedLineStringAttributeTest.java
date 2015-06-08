@@ -25,7 +25,7 @@ import com.vividsolutions.jts.geom.LineString;
 import java.util.Collection;
 import java.util.ArrayList;
 
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 
@@ -81,9 +81,9 @@ public class CalculatedLineStringAttributeTest {
         final Feature feature = FF.createFeature(props, sft, "id");
 
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final GeometryDescriptor desc = (GeometryDescriptor) adb.create(DefaultName.create("calc"), LineString.class, 1, 1, false, null);
+        final GeometryDescriptor desc = (GeometryDescriptor) adb.create(NamesExt.create("calc"), LineString.class, 1, 1, false, null);
 
-        final CalculatedLineStringAttribute att = new CalculatedLineStringAttribute(desc, DefaultName.create("points"));
+        final CalculatedLineStringAttribute att = new CalculatedLineStringAttribute(desc, NamesExt.create("points"));
 
         //test related correctly set
         assertNull(att.getRelated());
@@ -114,7 +114,7 @@ public class CalculatedLineStringAttributeTest {
 
         ftb.reset();
         ftb.setName("test");
-        ftb.add(ct, DefaultName.create("subAtts"), null, 0, Integer.MAX_VALUE, true, null);
+        ftb.add(ct, NamesExt.create("subAtts"), null, 0, Integer.MAX_VALUE, true, null);
         final FeatureType ft = ftb.buildFeatureType();
         final AttributeDescriptor attDesc = (AttributeDescriptor) ft.getDescriptor("subAtts");
 
@@ -137,9 +137,9 @@ public class CalculatedLineStringAttributeTest {
         final Feature feature = FF.createFeature(props, ft, "id");
 
 
-        final GeometryDescriptor desc = (GeometryDescriptor) adb.create(DefaultName.create("calc"), LineString.class, 1, 1, false, null);
+        final GeometryDescriptor desc = (GeometryDescriptor) adb.create(NamesExt.create("calc"), LineString.class, 1, 1, false, null);
 
-        final CalculatedLineStringAttribute att = new CalculatedLineStringAttribute(desc, DefaultName.create("subAtts"), DefaultName.create("point"));
+        final CalculatedLineStringAttribute att = new CalculatedLineStringAttribute(desc, NamesExt.create("subAtts"), NamesExt.create("point"));
 
         //test related correctly set
         assertNull(att.getRelated());

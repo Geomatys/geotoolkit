@@ -31,7 +31,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.referencing.CRS;
 import org.junit.After;
 import org.junit.Before;
@@ -162,7 +162,7 @@ public abstract class AbstractReadingTests{
 
         //check error on wrong type names---------------------------------------
         try{
-            store.getFeatureType(DefaultName.create("http://not", "exist"));
+            store.getFeatureType(NamesExt.create("http://not", "exist"));
             throw new Exception("Asking for a schema that doesnt exist should have raised a featurestore exception.");
         }catch(DataStoreException ex){
             //ok
@@ -250,7 +250,7 @@ public abstract class AbstractReadingTests{
             //ok
         }
 
-        query = QueryBuilder.all(DefaultName.create(DefaultName.getNamespace(candidate.name), candidate.name.tip().toString()+"fgresfds_not_exist"));
+        query = QueryBuilder.all(NamesExt.create(NamesExt.getNamespace(candidate.name), candidate.name.tip().toString()+"fgresfds_not_exist"));
         try{
             store.getFeatureReader(query);
             throw new Exception("Asking for a reader without a wrong name should raise a featurestore exception.");
@@ -258,7 +258,7 @@ public abstract class AbstractReadingTests{
             //ok
         }
 
-        query = QueryBuilder.all(DefaultName.create(DefaultName.getNamespace(candidate.name)+"resfsdfsdf_not_exist", candidate.name.tip().toString()));
+        query = QueryBuilder.all(NamesExt.create(NamesExt.getNamespace(candidate.name)+"resfsdfsdf_not_exist", candidate.name.tip().toString()));
         try{
             store.getFeatureReader(query);
             throw new Exception("Asking for a reader without a wrong namespace should raise a featurestore exception.");

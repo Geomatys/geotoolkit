@@ -19,7 +19,7 @@ package org.geotoolkit.data.gx.model;
 
 import org.geotoolkit.data.gx.xml.GxConstants;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 
 import org.geotoolkit.feature.FeatureFactory;
@@ -49,7 +49,7 @@ public class GxModelConstants {
         final FeatureTypeFactory ftf = ftb.getFeatureTypeFactory();
 
         //-------------------- TOUR ------------------------------
-        ATT_TOUR_PLAY_LIST = adb.create(DefaultName.create(GX_NAMESPACE, "playList"), PlayList.class,0,1,false,null);
+        ATT_TOUR_PLAY_LIST = adb.create(NamesExt.create(GX_NAMESPACE, "playList"), PlayList.class,0,1,false,null);
 
         ftb.reset();
         ftb.setName(GX_NAMESPACE, GxConstants.TAG_TOUR);

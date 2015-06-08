@@ -20,7 +20,7 @@ package org.geotoolkit.feature.calculated;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureBuilder;
 import org.junit.AfterClass;
@@ -67,7 +67,7 @@ public class CalculatedExpressionAttributeTest {
         final Feature sf = sfb.buildFeature("id");
 
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final AttributeDescriptor desc = adb.create(DefaultName.create("calc"), Long.class, 1, 1, false, null);
+        final AttributeDescriptor desc = adb.create(NamesExt.create("calc"), Long.class, 1, 1, false, null);
         final Expression exp = FF.add(FF.property("att1"), FF.property("att2"));
         CalculatedExpressionAttribute att = new CalculatedExpressionAttribute(desc, exp);
 

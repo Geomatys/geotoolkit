@@ -4,7 +4,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
@@ -125,8 +125,8 @@ public class FeatureTypeUtilsTest {
         ftb.add("booleanProp", Boolean.class);
         ftb.add("dateProp", Date.class);
 
-        AttributeDescriptor complexAtt1Desc = adb.create(complexAtt1, DefaultName.valueOf("complexAtt1"),1,1,false,null);
-        AttributeDescriptor complexAtt2Desc = adb.create(complexAtt2, DefaultName.valueOf("complexAtt2"),0,Integer.MAX_VALUE,false,userMap);
+        AttributeDescriptor complexAtt1Desc = adb.create(complexAtt1, NamesExt.valueOf("complexAtt1"),1,1,false,null);
+        AttributeDescriptor complexAtt2Desc = adb.create(complexAtt2, NamesExt.valueOf("complexAtt2"),0,Integer.MAX_VALUE,false,userMap);
         ftb.add(complexAtt1Desc);
         ftb.add(complexAtt2Desc);
         ftb.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, Polygon.class, CommonCRS.WGS84.geographic());

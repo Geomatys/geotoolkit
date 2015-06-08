@@ -10,7 +10,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 
 import org.geotoolkit.coverage.filestore.*;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.ProgressWindow;
 import org.geotoolkit.image.jai.Registry;
@@ -67,7 +67,7 @@ public class MapTilingDemo {
         //create a coverage store where the pyramid wil be stored
         final XMLCoverageStoreFactory factory = new XMLCoverageStoreFactory();
         final CoverageStore store = factory.create(Collections.singletonMap("path", new URL("file:/media/terra/GIS_DATA/wmts_bluemarble")));
-        final GenericName name = DefaultName.create("bluemarble");
+        final GenericName name = NamesExt.create("bluemarble");
         final CoverageReference ref = store.create(name);
 
 

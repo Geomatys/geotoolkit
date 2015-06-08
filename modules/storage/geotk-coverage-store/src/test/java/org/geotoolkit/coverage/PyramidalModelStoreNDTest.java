@@ -30,7 +30,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
@@ -85,7 +85,7 @@ public abstract class PyramidalModelStoreNDTest {
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         crs = new DefaultCompoundCRS(Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "3dcrs"), horizontal,vertical);
 
-        final GenericName name = DefaultName.create("test");
+        final GenericName name = NamesExt.create("test");
         ref = (PyramidalCoverageReference) store.create(name);
 
         //prepare expected colors

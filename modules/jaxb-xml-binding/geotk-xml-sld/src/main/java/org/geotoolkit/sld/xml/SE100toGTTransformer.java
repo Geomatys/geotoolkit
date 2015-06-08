@@ -29,7 +29,7 @@ import javax.measure.unit.Unit;
 import javax.swing.Icon;
 import javax.xml.bind.JAXBElement;
 
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.feature.type.NamesExt;
 
 import org.geotoolkit.ogc.xml.OGC100toGTTransformer;
 
@@ -285,7 +285,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         fts.semanticTypeIdentifiers().addAll(visitSemantics(ftst.getSemanticTypeIdentifier()));
 
         if(ftst.getFeatureTypeName() != null){
-            fts.featureTypeNames().add(DefaultName.create(ftst.getFeatureTypeName()));
+            fts.featureTypeNames().add(NamesExt.create(ftst.getFeatureTypeName()));
         }
 
         if(ftst.getRule() == null || ftst.getRule().isEmpty()){

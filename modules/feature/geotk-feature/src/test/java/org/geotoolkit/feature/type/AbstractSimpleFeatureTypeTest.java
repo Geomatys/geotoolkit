@@ -76,8 +76,8 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void testCreateAttributeType() {
-        final GenericName name = DefaultName.create("objectName");
-        final GenericName name2 = DefaultName.create("objectName2");
+        final GenericName name = NamesExt.create("objectName");
+        final GenericName name2 = NamesExt.create("objectName2");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         AttributeType res = FTF.createAttributeType(name, String.class, true, false, null, null, null);
@@ -116,8 +116,8 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void testCreateGeometryType() {
-        final GenericName name = DefaultName.create("objectName");
-        final GenericName name2 = DefaultName.create("objectName2");
+        final GenericName name = NamesExt.create("objectName");
+        final GenericName name2 = NamesExt.create("objectName2");
         final Map crsInfo = new HashMap<String, String>();
         crsInfo.put("name", "myCRS");
         crsInfo.put("first", "one");
@@ -165,10 +165,10 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void testCreateAssociationType() {
-        final GenericName name = DefaultName.create("lines");
-        final GenericName name2 = DefaultName.create("lines2");
-        final GenericName asName = DefaultName.create("Association");
-        final GenericName asName2 = DefaultName.create("Association2");
+        final GenericName name = NamesExt.create("lines");
+        final GenericName name2 = NamesExt.create("lines2");
+        final GenericName asName = NamesExt.create("Association");
+        final GenericName asName2 = NamesExt.create("Association2");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         final AttributeType attrType = FTF.createAttributeType(name, String.class, true, false, null, null, null);
@@ -211,8 +211,8 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void testCreateAttributeDescriptor() {
-        final GenericName name = DefaultName.create("lines");
-        final GenericName adName = DefaultName.create("lines descriptor");
+        final GenericName name = NamesExt.create("lines");
+        final GenericName adName = NamesExt.create("lines descriptor");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         final AttributeType attrType = FTF.createAttributeType(name, String.class, true, false, null, null, null);
@@ -254,8 +254,8 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void testCreateGeometryDescriptor() {
-        final GenericName name = DefaultName.create("geometry");
-        final GenericName gdName = DefaultName.create("geomatry descriptor");
+        final GenericName name = NamesExt.create("geometry");
+        final GenericName gdName = NamesExt.create("geomatry descriptor");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         final GeometryType attrType = FTF.createGeometryType(name, MockDirectPosition2D.class, null, true, false, null, null, null);
@@ -299,9 +299,9 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void testCreateAssociationDescriptor() {
-        final GenericName name = DefaultName.create("lines");
-        final GenericName asName = DefaultName.create("Association");
-        final GenericName adName = DefaultName.create("descriptor");
+        final GenericName name = NamesExt.create("lines");
+        final GenericName asName = NamesExt.create("Association");
+        final GenericName adName = NamesExt.create("descriptor");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         final AttributeType attrType = FTF.createAttributeType(name, String.class, true, false, null, null, null);
@@ -343,9 +343,9 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void createSimpleFeatureType() {
-        final GenericName name = DefaultName.create("point");
-        final GenericName strName = DefaultName.create("String");
-        final GenericName fName = DefaultName.create("featureTypeName");
+        final GenericName name = NamesExt.create("point");
+        final GenericName strName = NamesExt.create("String");
+        final GenericName fName = NamesExt.create("featureTypeName");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         //types and descriptors
@@ -385,7 +385,7 @@ public abstract class AbstractSimpleFeatureTypeTest  {
             fType.getDescriptor("non-existant");
         } catch (Exception e) {
         }
-        GenericName tmpName = DefaultName.create("non-existant");
+        GenericName tmpName = NamesExt.create("non-existant");
         try {
             fType.getDescriptor(tmpName);
         } catch (Exception e) {
