@@ -37,6 +37,7 @@ import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 import org.geotoolkit.data.*;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
@@ -85,6 +86,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  * CSV DataStore, holds a single feature type which name match the file name.
  *
+ * Specification :
+ * https://www.ietf.org/rfc/rfc4180.txt
+ *
  * @author Johann Sorel (Geomatys)
  * @author Alexis Manin (Geomatys)
  */
@@ -95,6 +99,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
 
     public static final String COMMENT_STRING = "#";
+    private static final Pattern ESCAPE_PATTERN = Pattern.compile("\"");
 
     private final ReadWriteLock fileLock = new ReentrantReadWriteLock();
 
@@ -508,7 +513,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
 
             final String line = getNextLine(scanner);
             if (line != null) {
-                final List<String> fields = StringUtilities.toStringList(line, separator);
+                final List<String> fields = toStringList(scanner, line, separator);
 
                 current = null;
                 if (reuse == null) {
@@ -634,7 +639,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                 for(PropertyDescriptor att : atts){
                     final Object value = edited.getPropertyValue(att.getName().toString());
 
-                    final String str;
+                    String str;
                     if(value == null){
                         str = "";
                     }else if(att instanceof GeometryDescriptor){
@@ -644,8 +649,18 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
                             str = TemporalUtilities.toISO8601((Date)value);
                         }else if(value instanceof Boolean){
                             str = value.toString();
+                        }else if(value instanceof CharSequence){
+                            str = value.toString();
+                            //escape strings
                         }else{
                             str = ObjectConverters.convert(value, String.class);
+                        }
+
+                        if(str!=null){
+                            final boolean escape = str.indexOf('"')>=0 || str.indexOf(';')>=0 || str.indexOf('\n')>=0;
+                            if(escape){
+                                str = "\""+str.replace("\"", "\"\"")+"\"";
+                            }
                         }
                     }
                     writer.append(str);
@@ -754,5 +769,70 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
         }
         return new DefaultFeature(props, type, new DefaultFeatureId(id));
     }
-    
+
+    /**
+     *
+     * @param toSplit
+     * @param separator
+     * @return
+     */
+    private static List<String> toStringList(Scanner scanner, String toSplit, final char separator) {
+        if (toSplit == null) {
+            return Collections.emptyList();
+        }
+        final List<String> strings = new ArrayList<>();
+        int last = 0;
+        toSplit = toSplit.trim();
+        
+        String currentValue = null;
+        boolean inEscape = false;
+        for(;;){
+            if(inEscape){
+
+                int end = toSplit.indexOf('\"',last);
+                while(end>=0){
+                    if(end>=toSplit.length()){
+                        //found escape end
+                        break;
+                    }else if(toSplit.charAt(end+1)=='\"'){
+                        //double quote, not an escape
+                        end = toSplit.indexOf('\"',end+2);
+                    }else{
+                        break;
+                    }
+                }
+
+                if(end>=0){
+                    currentValue += toSplit.substring(last, end);
+                    currentValue = currentValue.replace("\"\"", "\"");
+                    strings.add(currentValue);
+                    last = end+2;
+                    inEscape = false;
+                }else{
+                    currentValue += toSplit.substring(last);
+                    currentValue += "\n";
+                    last = 0;
+                    toSplit = scanner.nextLine();
+                }
+
+            }else if(last>=toSplit.length()){
+                break;
+            }else if(toSplit.charAt(last)=='\"'){
+                inEscape = true;
+                last++;
+                currentValue = "";
+            }else{
+                final int end = toSplit.indexOf(separator, last);
+                if(end>=0){
+                    strings.add(toSplit.substring(last, end).trim());
+                    last = end+1;
+                }else{
+                    strings.add(toSplit.substring(last).trim());
+                    break;
+                }
+            }
+        }
+        return strings;
+    }
+
 }

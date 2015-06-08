@@ -31,15 +31,20 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.util.FileUtilities;
 import static org.junit.Assert.*;
 
 /**
@@ -141,6 +146,60 @@ public class CSVDataStoreTest {
         }
 
         assertEquals(3, number);
+
+    }
+
+    @Test
+    public void testReadEscape() throws Exception{
+
+        final FeatureStore store = new CSVFeatureStore(new File("./src/test/resources/org/geotoolkit/csv/escaped.csv"), null, ';');
+
+        assertEquals(1, store.getNames().size());
+
+        FeatureCollection col = store.createSession(false).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
+
+        final FeatureIterator ite = col.iterator();
+        Feature next = ite.next();
+        assertEquals("hubert", next.getPropertyValue("name"));
+        assertEquals("someone from the \"big fisher\" corp,\na good guy and\na family \"best\" friend", next.getPropertyValue("comment"));
+        assertEquals(36, next.getPropertyValue("age"));
+        next = ite.next();
+        assertEquals("marc", next.getPropertyValue("name"));
+        assertEquals("lucky luck", next.getPropertyValue("comment"));
+        assertEquals(22, next.getPropertyValue("age"));
+
+
+    }
+
+    @Test
+    public void testWriteEscape() throws Exception{
+
+        final File file = File.createTempFile("test", ".csv");
+        file.deleteOnExit();
+
+        final FeatureStore store = new CSVFeatureStore(file, null, ';');
+
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("test");
+        ftb.add("name", String.class);
+        ftb.add("comment", String.class);
+        ftb.add("age", Integer.class);
+        final FeatureType ft = ftb.buildFeatureType();
+
+        store.createFeatureType(ft.getName(), ft);
+
+        final Feature f = FeatureUtilities.defaultFeature(ft, "id-0");
+        f.setPropertyValue("name", "hubert");
+        f.setPropertyValue("comment", "someone from the \"big fisher\" corp,\na good guy and\na family \"best\" friend");
+        f.setPropertyValue("age", 36);
+        store.addFeatures(ft.getName(), Collections.singleton(f));
+
+        String str = FileUtilities.getStringFromFile(file);
+        assertEquals("name(String);comment(String);age(Integer)\n" +
+                    "hubert;\"someone from the \"\"big fisher\"\" corp,\n" +
+                    "a good guy and\n" +
+                    "a family \"\"best\"\" friend\";36\n", str);
+
 
     }
 
