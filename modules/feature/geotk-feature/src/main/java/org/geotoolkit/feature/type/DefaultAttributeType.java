@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class DefaultAttributeType<T extends AttributeType> extends DefaultProper
 
     private AttributeDescriptor descriptor;
 
-    public DefaultAttributeType(final Name name, final Class<?> binding, final boolean identified,
+    public DefaultAttributeType(final GenericName name, final Class<?> binding, final boolean identified,
             final boolean isAbstract, final List<Filter> restrictions, final T superType,
             final InternationalString description){
         super(name, binding, isAbstract, restrictions, superType, description);

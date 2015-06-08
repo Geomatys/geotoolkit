@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import java.util.List;
 
 import org.opengis.filter.Filter;
@@ -31,7 +32,7 @@ public class DefaultGeometryType extends DefaultAttributeType<AttributeType> imp
 
     protected CoordinateReferenceSystem crs;
 
-    public DefaultGeometryType(final Name name, final Class binding, final CoordinateReferenceSystem crs,
+    public DefaultGeometryType(final GenericName name, final Class binding, final CoordinateReferenceSystem crs,
             final boolean identified, final boolean isAbstract, final List<Filter> restrictions,
             final AttributeType superType, final InternationalString description){
         super(name, binding, identified, isAbstract, restrictions, superType, description);

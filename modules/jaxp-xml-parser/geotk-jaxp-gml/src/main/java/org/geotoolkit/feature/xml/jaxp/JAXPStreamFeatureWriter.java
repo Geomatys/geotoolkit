@@ -43,9 +43,10 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.op.AliasOperation;
 import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.geotoolkit.feature.xml.Utils;
@@ -191,8 +192,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         //the root element of the xml document (type of the feature)
         final ComplexType type = feature.getType();
-        final Name typeName    = type.getName();
-        final String namespace = typeName.getNamespaceURI();
+        final GenericName typeName    = type.getName();
+        final String namespace = DefaultName.getNamespace(typeName);
         final String localPart = typeName.tip().toString();
         final Identifier featureId = feature.getIdentifier();
         if (namespace != null && !namespace.isEmpty()) {
@@ -273,9 +274,9 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             final Collection<Property> props = feature.getProperties(desc.getName());
             for (Property a : props) {
                 final Object valueA = a.getValue();
-                final Name nameA = a.getName();
+                final GenericName nameA = a.getName();
                 String nameProperty = nameA.tip().toString();
-                String namespaceProperty = nameA.getNamespaceURI();
+                String namespaceProperty = DefaultName.getNamespace(nameA);
 
                 if(!isAttributeProperty(nameA)) continue;
 
@@ -365,9 +366,9 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         final ComplexType parentType = parent.getType();
         final Object valueA = a.getValue();
         final PropertyType typeA = a.getType();
-        final Name nameA = a.getDescriptor().getName();
+        final GenericName nameA = a.getDescriptor().getName();
         final String nameProperty = nameA.tip().toString();
-        String namespaceProperty = nameA.getNamespaceURI();
+        String namespaceProperty = DefaultName.getNamespace(nameA);
 
         if(isAttributeProperty(nameA)) return;
 
@@ -485,8 +486,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         //some types, like Observation & Measurement have Object types which can be
                         //properties again, we ensure to write then as proper xml tags
                         final Property prop = (Property) valueA;
-                        final Name propName = prop.getName();
-                        final String namespaceURI = propName.getNamespaceURI();
+                        final GenericName propName = prop.getName();
+                        final String namespaceURI = DefaultName.getNamespace(propName);
                         final String localPart = propName.tip().toString();
                         if (namespaceURI != null && !namespaceURI.isEmpty()) {
                             writer.writeStartElement(namespaceURI, localPart);
@@ -709,7 +710,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * @param name
      * @return true if property is an atribute, starts by a @
      */
-    public static boolean isAttributeProperty(Name name){
+    public static boolean isAttributeProperty(GenericName name){
         final String localPart = name.tip().toString();
         return !localPart.isEmpty() && localPart.charAt(0) == '@';
     }
@@ -730,7 +731,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         return false;
     }
 
-    private static Name getSubtituteRefName(PropertyDescriptor prop){
+    private static GenericName getSubtituteRefName(PropertyDescriptor prop){
         PropertyType type = prop.getType();
         if(type instanceof AliasOperation){
             return ((AliasOperation)type).getRefName();
@@ -739,7 +740,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     }
 
     private static Property getSubstitu(ComplexAttribute parent, PropertyDescriptor prop){
-        final Name name = prop.getName();
+        final GenericName name = prop.getName();
         for(PropertyDescriptor desc : parent.getType().getDescriptors()){
             if(name.equals(getSubtituteRefName(desc))){
                 Property sub = parent.getProperty(desc.getName());

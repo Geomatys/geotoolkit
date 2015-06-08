@@ -41,7 +41,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.opengis.display.primitive.Graphic;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -111,7 +111,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
     @Override
     public void paintLayer(final RenderingContext2D renderingContext) {
 
-        final Name coverageName = item.getCoverageReference().getName();
+        final GenericName coverageName = item.getCoverageReference().getName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 renderingContext.getSEScale(), coverageName,null);
 
@@ -171,7 +171,7 @@ public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
 
         final RenderingContext2D renderingContext = (RenderingContext2D) context;
 
-        final Name coverageName = item.getCoverageReference().getName();
+        final GenericName coverageName = item.getCoverageReference().getName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 renderingContext.getSEScale(), coverageName,null);
 

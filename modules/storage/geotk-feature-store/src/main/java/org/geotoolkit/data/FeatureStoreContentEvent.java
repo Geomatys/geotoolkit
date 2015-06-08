@@ -18,7 +18,7 @@
 package org.geotoolkit.data;
 
 import org.geotoolkit.storage.StorageEvent;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Id;
 
 /**
@@ -43,10 +43,10 @@ public class FeatureStoreContentEvent extends StorageEvent {
     };
 
     private final Type type;
-    private final Name name;
+    private final GenericName name;
     private Id ids;
 
-    public FeatureStoreContentEvent(final Object source, final Type type, final Name name, final Id candidates){
+    public FeatureStoreContentEvent(final Object source, final Type type, final GenericName name, final Id candidates){
         super(source);
 
         this.type = type;
@@ -66,7 +66,7 @@ public class FeatureStoreContentEvent extends StorageEvent {
      * Get the affected type name by this event.
      * @return Name , never null.
      */
-    public Name getFeatureTypeName() {
+    public GenericName getFeatureTypeName() {
         return name;
     }
 
@@ -83,15 +83,15 @@ public class FeatureStoreContentEvent extends StorageEvent {
         return new FeatureStoreContentEvent(source, type, name, ids);
     }
 
-    public static FeatureStoreContentEvent createAddEvent(final Object source, final Name name, final Id ids){
+    public static FeatureStoreContentEvent createAddEvent(final Object source, final GenericName name, final Id ids){
         return new FeatureStoreContentEvent(source, Type.ADD, name, ids);
     }
 
-    public static FeatureStoreContentEvent createUpdateEvent(final Object source, final Name name, final Id ids){
+    public static FeatureStoreContentEvent createUpdateEvent(final Object source, final GenericName name, final Id ids){
         return new FeatureStoreContentEvent(source, Type.UPDATE, name, ids);
     }
 
-    public static FeatureStoreContentEvent createDeleteEvent(final Object source, final Name name, final Id ids){
+    public static FeatureStoreContentEvent createDeleteEvent(final Object source, final GenericName name, final Id ids){
         return new FeatureStoreContentEvent(source, Type.DELETE, name, ids);
     }
 

@@ -32,7 +32,7 @@ import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.geotoolkit.wms.WebMapClient;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 
@@ -103,7 +103,7 @@ public class NcWebMapClient extends WebMapClient{
     }
 
     @Override
-    protected CoverageReference createReference(Name name) throws DataStoreException{
+    protected CoverageReference createReference(GenericName name) throws DataStoreException{
         return new NcWMSCoverageReference(this,name);
     }
 

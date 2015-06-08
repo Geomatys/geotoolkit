@@ -25,7 +25,7 @@ import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
@@ -51,7 +51,7 @@ public class MPCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public CoverageReference create(Name name) throws DataStoreException {
+    public CoverageReference create(GenericName name) throws DataStoreException {
         final MPCoverageReference mpcref = new MPCoverageReference(this, name);
         rootNode.getChildren().add(mpcref);
         return mpcref;

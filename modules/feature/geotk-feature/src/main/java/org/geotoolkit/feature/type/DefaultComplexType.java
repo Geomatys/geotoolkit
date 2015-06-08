@@ -25,7 +25,6 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.io.TableAppender;
-import org.apache.sis.util.iso.Names;
 import org.geotoolkit.feature.ComplexAttribute;
 
 import org.geotoolkit.feature.Property;
@@ -62,7 +61,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
      */
     private final Map<Object, PropertyDescriptor> propertyMap;
 
-    public DefaultComplexType(final Name name, final Collection<PropertyDescriptor> properties,
+    public DefaultComplexType(final GenericName name, final Collection<PropertyDescriptor> properties,
             final boolean identified, final boolean isAbstract, final List<Filter> restrictions,
             final AttributeType superType, final InternationalString description){
         super(name, Collection.class, identified, isAbstract, restrictions, superType, description);
@@ -84,11 +83,11 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
                     // descriptor entry may be null if a request was made for a property that does not exist
                     throw new NullPointerException("PropertyDescriptor is null - did you request a property that does not exist?");
                 }
-                final Name pn = pd.getName();
+                final GenericName pn = pd.getName();
                 this.propertyMap.put(pn, pd);
                 this.propertyMap.put(pn.tip().toString(), pd);
                 this.propertyMap.put(DefaultName.toExtendedForm(pn), pd);
-                this.propertyMap.put(Names.toExpandedString(pn), pd);
+                this.propertyMap.put(DefaultName.toExpandedString(pn), pd);
             }
 
         }
@@ -103,11 +102,11 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
                 // descriptor entry may be null if a request was made for a property that does not exist
                 throw new NullPointerException("PropertyDescriptor is null - did you request a property that does not exist?");
             }
-            final Name pn = pd.getName();
+            final GenericName pn = pd.getName();
             this.propertyMap.put(pn, pd);
             this.propertyMap.put(pn.tip().toString(), pd);
             this.propertyMap.put(DefaultName.toExtendedForm(pn), pd);
-            this.propertyMap.put(Names.toExpandedString(pn), pd);
+            this.propertyMap.put(DefaultName.toExpandedString(pn), pd);
         }
     }
 
@@ -132,7 +131,8 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
      */
     @Override
     public PropertyDescriptor getDescriptor(final GenericName name) {
-        if(name.scope().isGlobal()){
+        final String ns = DefaultName.getNamespace(name);
+        if(ns==null || ns.isEmpty()){
             return getDescriptor(name.toString());
         }else{
             return propertyMap.get(name);
@@ -216,7 +216,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         tablewriter.appendHorizontalSeparator();
 
         final Collection<PropertyDescriptor> descs = getDescriptors();
-        final Set<Name> loops = new HashSet<Name>();
+        final Set<GenericName> loops = new HashSet<GenericName>();
         loops.add(this.getName());
         for (PropertyDescriptor property : descs) {
             tablewriter.append(toString(property,loops));
@@ -251,14 +251,14 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         return sb.toString();
     }
 
-    private static String toString(final PropertyDescriptor property, final Set<Name> visited){
+    private static String toString(final PropertyDescriptor property, final Set<GenericName> visited){
         final StringBuilder builder = new StringBuilder();
 
         //check if we are in a cycle
         final PropertyType type = property.getType();
         final boolean inCycle = visited.contains(type.getName());
 
-        builder.append(Names.toExpandedString(property.getName()));
+        builder.append(DefaultName.toExpandedString(property.getName()));
         if(inCycle){
             builder.append(" <...CYCLIC...>");
         }
@@ -342,7 +342,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
      * @param cycles : descriptors already visited, to avoid infinite cycles
      * @return tree string form
      */
-    private static String toStringTree(final Collection<PropertyDescriptor> objects, final Set<Name> cycles){
+    private static String toStringTree(final Collection<PropertyDescriptor> objects, final Set<GenericName> cycles){
         final StringBuilder sb = new StringBuilder();
 
         final int size = objects.size();

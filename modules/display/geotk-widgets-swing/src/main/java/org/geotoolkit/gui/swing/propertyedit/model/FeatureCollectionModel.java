@@ -43,7 +43,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -114,11 +114,11 @@ public class FeatureCollectionModel extends DefaultTableModel {
 
         FeatureType ft = ((FeatureMapLayer)layer).getCollection().getFeatureType();
 
-        Name[] propNames = query.getPropertyNames();
+        GenericName[] propNames = query.getPropertyNames();
 
-        List<Name> props = new ArrayList<Name>();
+        List<GenericName> props = new ArrayList<GenericName>();
         if(propNames != null){
-            for(Name str : propNames){
+            for(GenericName str : propNames){
                 props.add(str);
             }
             for(PropertyDescriptor desc : ft.getDescriptors()){
@@ -135,7 +135,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
         }
 
         final QueryBuilder builder = new QueryBuilder(query);
-        builder.setProperties(props.toArray(new Name[props.size()]));
+        builder.setProperties(props.toArray(new GenericName[props.size()]));
         if(!selectIds){
             builder.setHints(new Hints(HintsPending.FEATURE_HIDE_ID_PROPERTY, Boolean.TRUE));
         }

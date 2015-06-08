@@ -34,7 +34,7 @@ import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.renderer.*;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -133,7 +133,7 @@ public class IsolineSymbolizerRenderer  extends AbstractCoverageSymbolizerRender
                 final GridCoverage2D resampledCoverage = (GridCoverage2D) output.parameter(ResampleDescriptor.OUT_COVERAGE.getName().getCode()).getValue();
                 final MemoryCoverageStore memoryCoverageStore = new MemoryCoverageStore(resampledCoverage, coverageReference.getName().tip().toString());
 
-                final Name name = memoryCoverageStore.getNames().iterator().next();
+                final GenericName name = memoryCoverageStore.getNames().iterator().next();
                 final CoverageReference resampledCovRef = memoryCoverageStore.getCoverageReference(name);
 
                 /////////////////////

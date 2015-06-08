@@ -34,6 +34,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 
@@ -82,7 +83,7 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
         complex.setEncoding((String) params.get(ENCODING));
 
         final FeatureType ft = source.getType();
-        final String namespace = ft.getName().getNamespaceURI();
+        final String namespace = DefaultName.getNamespace(ft.getName());
         final Map<String, String> schemaLocation = new HashMap<String, String>();
 
         if(WPSMimeType.APP_GEOJSON.val().equalsIgnoreCase(complex.getMimeType())) {

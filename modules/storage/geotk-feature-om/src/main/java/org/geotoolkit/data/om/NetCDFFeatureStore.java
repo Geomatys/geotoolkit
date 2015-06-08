@@ -51,7 +51,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -113,7 +113,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
      * {@inheritDoc }
      */
     @Override
-    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -121,7 +121,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -129,7 +129,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
      * {@inheritDoc }
      */
     @Override
-    public void deleteFeatureType(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -137,7 +137,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
     
@@ -145,7 +145,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
     
@@ -153,7 +153,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
     
@@ -161,7 +161,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
     

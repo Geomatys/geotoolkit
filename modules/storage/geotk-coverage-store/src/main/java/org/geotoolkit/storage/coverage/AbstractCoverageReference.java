@@ -27,11 +27,9 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DefaultDataNode;
-
 import javax.xml.bind.annotation.XmlTransient;
-
 import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -58,7 +56,7 @@ import org.opengis.util.NoSuchIdentifierException;
 public abstract class AbstractCoverageReference extends DefaultDataNode implements CoverageReference {
 
     protected final CoverageStore store;
-    protected final Name name;
+    protected final GenericName name;
 
     private DefaultCoverageDescription desc = null;
 
@@ -67,7 +65,7 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
      * @param store can be null
      * @param name never null
      */
-    public AbstractCoverageReference(CoverageStore store, Name name) {
+    public AbstractCoverageReference(CoverageStore store, GenericName name) {
         ArgumentChecks.ensureNonNull("name",name);
         setValue(TableColumn.NAME, name.tip().toString());
         this.store = store;
@@ -75,7 +73,7 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
     }
 
     @Override
-    public Name getName() {
+    public GenericName getName() {
         return name;
     }
 

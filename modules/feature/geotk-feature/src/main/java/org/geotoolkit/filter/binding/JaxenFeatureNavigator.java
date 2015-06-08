@@ -17,12 +17,9 @@
 
 package org.geotoolkit.filter.binding;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
-import org.apache.sis.util.iso.Names;
 
 import org.jaxen.FunctionCallException;
 import org.jaxen.JaxenConstants;
@@ -45,12 +42,11 @@ import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.util.GenericName;
-import org.opengis.util.NameSpace;
 
 /**
  * xpath navigator for features.
@@ -81,11 +77,11 @@ final class JaxenFeatureNavigator implements Navigator{
     }
 
     private String getNamespace(GenericName candidate){
-        final NameSpace scope = candidate.scope();
-        if(scope.isGlobal()){
+        final String ns = DefaultName.getNamespace(candidate);
+        if(ns==null || ns.isEmpty()){
             return null;
         }else{
-            return scope.name().toString();
+            return ns;
         }
     }
 
@@ -94,7 +90,7 @@ final class JaxenFeatureNavigator implements Navigator{
         String str = null;
         if(o instanceof Property){
             final Property candidate = (Property) o;
-            str = candidate.getName().toString();
+            str = candidate.getName().tip().toString();
         }else if(o instanceof PropertyDescriptor){
             final PropertyDescriptor candidate = (PropertyDescriptor) o;
             str = candidate.getName().tip().toString();
@@ -112,13 +108,13 @@ final class JaxenFeatureNavigator implements Navigator{
     public String getElementQName(final Object o) {
         if(o instanceof Property){
             final Property candidate = (Property) o;
-            return Names.toExpandedString(candidate.getName());
+            return DefaultName.toExpandedString(candidate.getName());
         }else if(o instanceof PropertyDescriptor){
             final PropertyDescriptor candidate = (PropertyDescriptor) o;
-            return Names.toExpandedString(candidate.getName());
+            return DefaultName.toExpandedString(candidate.getName());
         }else if(o instanceof PropertyType){
             final PropertyType candidate = (PropertyType) o;
-            return Names.toExpandedString(candidate.getName());
+            return DefaultName.toExpandedString(candidate.getName());
         }
         return null;
     }
@@ -201,10 +197,10 @@ final class JaxenFeatureNavigator implements Navigator{
             return (value==null)? EMPTY : value.toString();
         }else if(o instanceof PropertyDescriptor){
             final PropertyDescriptor candidate = (PropertyDescriptor) o;
-            return Names.toExpandedString(candidate.getName());
+            return DefaultName.toExpandedString(candidate.getName());
         }else if(o instanceof PropertyType){
             final PropertyType candidate = (PropertyType) o;
-            return Names.toExpandedString(candidate.getName());
+            return DefaultName.toExpandedString(candidate.getName());
         }
         return null;
     }
@@ -434,7 +430,7 @@ final class JaxenFeatureNavigator implements Navigator{
             while(ite.hasNext() && next==null){
                 final Object candidate = ite.next();
 
-                Name name = null;
+                GenericName name = null;
                 if(candidate instanceof PropertyDescriptor){
                     name = ((PropertyDescriptor)candidate).getName();
                 }else if(candidate instanceof Property){

@@ -33,7 +33,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
@@ -58,7 +58,7 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
         Iterable get();
     }
     
-    private final Map<Name,BeanFeatureSupplier> types = new HashMap<>();
+    private final Map<GenericName,BeanFeatureSupplier> types = new HashMap<>();
     
     public BeanStore(BeanFeatureSupplier ... types) {
         super(null);
@@ -73,7 +73,7 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
         return Collections.unmodifiableCollection(types.values());
     }
     
-    public BeanFeatureSupplier getBeanSupplier(Name typeName) throws DataStoreException{
+    public BeanFeatureSupplier getBeanSupplier(GenericName typeName) throws DataStoreException{
         typeCheck(typeName);
         return types.get(typeName);
     }
@@ -84,12 +84,12 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
     }
 
     @Override
-    public Set<Name> getNames() throws DataStoreException {
+    public Set<GenericName> getNames() throws DataStoreException {
         return Collections.unmodifiableSet(types.keySet());
     }
 
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(GenericName typeName) throws DataStoreException {
         typeCheck(typeName);
         return types.get(typeName).mapping.featureType;
     }
@@ -112,22 +112,22 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
     }
     
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(GenericName groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -155,17 +155,17 @@ public class BeanStore extends AbstractFeatureStore implements StorageListener{
     ////////////////////////////////////////////////////////////////////////////
         
     @Override
-    public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void deleteFeatureType(Name typeName) throws DataStoreException {
+    public void deleteFeatureType(GenericName typeName) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
     

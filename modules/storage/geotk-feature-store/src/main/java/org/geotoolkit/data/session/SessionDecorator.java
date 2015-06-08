@@ -29,7 +29,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 
@@ -75,25 +75,25 @@ public class SessionDecorator implements Session{
     }
 
     @Override
-    public void addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures)
+    public void addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures)
             throws DataStoreException {
         wrapped.addFeatures(groupName, newFeatures);
     }
 
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter,
+    public void updateFeatures(final GenericName groupName, final Filter filter,
             final AttributeDescriptor desc, final Object value) throws DataStoreException {
         wrapped.updateFeatures(groupName, filter, desc, value);
     }
 
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter,
+    public void updateFeatures(final GenericName groupName, final Filter filter,
             final Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
         wrapped.updateFeatures(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         wrapped.removeFeatures(groupName, filter);
     }
 

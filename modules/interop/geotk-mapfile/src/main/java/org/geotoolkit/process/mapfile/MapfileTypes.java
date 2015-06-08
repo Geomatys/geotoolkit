@@ -30,7 +30,7 @@ import org.apache.sis.internal.util.UnmodifiableArrayList;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -735,7 +735,7 @@ public final class MapfileTypes {
             CLASS,CLUSTER,FEATURE,GRID,JOIN,LABEL,LAYER,LEGEND,MAP,
             OUTPUTFORMAT,QUERYMAP,REFERENCE,SCALEBAR,STYLE,SYMBOL,WEB});
 
-    public static FeatureType getType(final Name name){
+    public static FeatureType getType(final GenericName name){
         for(FeatureType ft : ALL_TYPES){
             if(ft.getName().equals(name)){
                 return ft;

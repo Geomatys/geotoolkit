@@ -57,7 +57,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
@@ -344,11 +344,11 @@ public class FeatureStoreUtilities {
      * @return splitted collections
      * @throws org.apache.sis.storage.DataStoreException
      */
-    public static FeatureCollection[] decomposeByGeometryType(FeatureCollection col, Name geomPropName, boolean adaptType, Class ... geomClasses) throws DataStoreException{
+    public static FeatureCollection[] decomposeByGeometryType(FeatureCollection col, GenericName geomPropName, boolean adaptType, Class ... geomClasses) throws DataStoreException{
 
         final FilterFactory FF = FactoryFinder.getFilterFactory(null);
         final FeatureType baseType = col.getFeatureType();
-        final Name name = baseType.getName();
+        final GenericName name = baseType.getName();
         final GeometryDescriptor geomDesc = (GeometryDescriptor) baseType.getDescriptor(geomPropName);
 
         final List<Class> lstClasses = Arrays.asList(geomClasses);
@@ -388,7 +388,7 @@ public class FeatureStoreUtilities {
             //retype the collection
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.copy(baseType);
-            ftb.setName(DefaultName.create(name.getNamespaceURI(), name.tip().toString()+"_"+geomClass.getSimpleName()));
+            ftb.setName(DefaultName.create(DefaultName.getNamespace(name), name.tip().toString()+"_"+geomClass.getSimpleName()));
             ftb.remove(geomPropName.tip().toString());
             ftb.add(geomPropName, geomClasses[i], geomDesc.getCoordinateReferenceSystem());
             ftb.setDefaultGeometry(geomPropName);

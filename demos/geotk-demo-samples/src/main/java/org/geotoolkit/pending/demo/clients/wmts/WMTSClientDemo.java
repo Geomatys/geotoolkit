@@ -15,7 +15,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.xml.WMTSVersion;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 
 public class WMTSClientDemo {
@@ -38,7 +38,7 @@ public class WMTSClientDemo {
                 new URL("http://localhost:8080/constellation/WS/wmts/test"),
                 WMTSVersion.v100);
         
-        for(final Name n : server.getNames()){
+        for(final GenericName n : server.getNames()){
             System.out.println(n);
 
             final CoverageReference ref = server.getCoverageReference(n);

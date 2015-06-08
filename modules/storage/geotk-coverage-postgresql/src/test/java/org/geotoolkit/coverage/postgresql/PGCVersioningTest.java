@@ -45,7 +45,7 @@ import org.geotoolkit.coverage.io.CoverageReader;
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultName;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -111,7 +111,7 @@ public class PGCVersioningTest {
         }
 
 
-        for(Name n : store.getNames()){
+        for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             store.delete(n);
         }
@@ -134,7 +134,7 @@ public class PGCVersioningTest {
         GridMosaic mosaic;
         GridCoverage2D coverage;
 
-        final Name name = DefaultName.create(null, "versLayer");
+        final GenericName name = DefaultName.create(null, "versLayer");
         store.create(name);
         final VersionControl vc = store.getVersioning(name);
         versions = vc.list();

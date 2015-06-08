@@ -46,7 +46,7 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.feature.type.DefaultName;
 import org.opengis.coverage.SampleDimensionType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -72,7 +72,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         return POOL;
     }
 
-    private static final Name DEFAULT_NAME = DefaultName.create("default");
+    private static final GenericName DEFAULT_NAME = DefaultName.create("default");
 
     @XmlElement(name="Version")
     private String version = CURRENT_VERSION;
@@ -176,7 +176,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         super(null, DEFAULT_NAME, 0);
     }
 
-    public XMLCoverageReference(XMLCoverageStore store, Name name, XMLPyramidSet set) {
+    public XMLCoverageReference(XMLCoverageStore store, GenericName name, XMLPyramidSet set) {
         super(store,name,0);
         this.set = set;
         this.set.setRef(this);

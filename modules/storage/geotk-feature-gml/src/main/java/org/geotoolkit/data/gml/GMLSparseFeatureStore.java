@@ -46,7 +46,7 @@ import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
@@ -70,7 +70,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     private String gmlVersion = "3.2.1";
 
     //all types
-    private final Map<Name, Object> cache = new HashMap<>();
+    private final Map<GenericName, Object> cache = new HashMap<>();
     private Boolean longitudeFirst;
 
     public GMLSparseFeatureStore(final File f) throws MalformedURLException, DataStoreException{
@@ -115,7 +115,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public synchronized Set<Name> getNames() throws DataStoreException {
+    public synchronized Set<GenericName> getNames() throws DataStoreException {
         if(featureType==null){
             final String xsd = (String) parameters.parameter(GMLFeatureStoreFactory.XSD.getName().toString()).getValue();
             final String xsdTypeName = (String) parameters.parameter(GMLFeatureStoreFactory.XSD_TYPE_NAME.getName().toString()).getValue();
@@ -157,13 +157,13 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(GenericName typeName) throws DataStoreException {
         typeCheck(typeName);
         return featureType;
     }
 
     @Override
-    public List<ComplexType> getFeatureTypeHierarchy(Name typeName) throws DataStoreException {
+    public List<ComplexType> getFeatureTypeHierarchy(GenericName typeName) throws DataStoreException {
         return super.getFeatureTypeHierarchy(typeName);
     }
 
@@ -182,7 +182,7 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public boolean isWritable(Name typeName) throws DataStoreException {
+    public boolean isWritable(GenericName typeName) throws DataStoreException {
         typeCheck(typeName);
         return true;
     }
@@ -195,41 +195,41 @@ public class GMLSparseFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
         typeCheck(typeName);
         final WriterIterator ite = new WriterIterator(featureType, file);
         return handleRemaining(ite, filter);
     }
 
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
 
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(GenericName groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
     // TYPE CREATE/UPDATE NOT SUPPORTED ////////////////////////////////////////
 
     @Override
-    public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 
     @Override
-    public void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 
     @Override
-    public void deleteFeatureType(Name typeName) throws DataStoreException {
+    public void deleteFeatureType(GenericName typeName) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 

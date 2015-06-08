@@ -39,7 +39,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
@@ -58,7 +58,7 @@ public class ModifyDelta extends AbstractDelta{
     protected final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
     protected Id filter;
 
-    public ModifyDelta(final Session session, final Name typeName, final Id filter, final Map<? extends AttributeDescriptor,? extends Object> values){
+    public ModifyDelta(final Session session, final GenericName typeName, final Id filter, final Map<? extends AttributeDescriptor,? extends Object> values){
         super(session,typeName);
         ensureNonNull("type name", typeName);
         if(filter == null){

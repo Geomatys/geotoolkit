@@ -36,7 +36,7 @@ import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.type.DefaultName;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -137,9 +137,9 @@ public class OwcDataStoreExtension extends OwcExtension {
         
         //write the type name
         final List<Object> fieldList = offering.getOperationOrContentOrStyleSet();
-        final Name typeName = getTypeName(mapLayer);
+        final GenericName typeName = getTypeName(mapLayer);
         if(typeName!=null){
-            fieldList.add(new ParameterType(KEY_DATANAME,String.class.getName(),Names.toExpandedString(typeName)));
+            fieldList.add(new ParameterType(KEY_DATANAME,String.class.getName(),DefaultName.toExpandedString(typeName)));
         }
                        
         //write store creation parameters
@@ -218,7 +218,7 @@ public class OwcDataStoreExtension extends OwcExtension {
         return null;
     }
     
-    private static Name getTypeName(MapLayer layer){
+    private static GenericName getTypeName(MapLayer layer){
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
             final Source source = fml.getCollection().getSource();

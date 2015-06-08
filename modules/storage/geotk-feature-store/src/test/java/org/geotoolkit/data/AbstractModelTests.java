@@ -26,7 +26,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
 
 /**
@@ -110,8 +110,8 @@ public abstract class AbstractModelTests {
 
 
             //delete the created schema ----------------------------------------
-            Name nsname = null;
-            for(Name n : store.getNames()){
+            GenericName nsname = null;
+            for(GenericName n : store.getNames()){
                 if(n.tip().toString().equalsIgnoreCase(name)){
                     nsname = n;
                     break;
@@ -161,7 +161,7 @@ public abstract class AbstractModelTests {
 
     }
 
-    private void readAndWriteTest(final FeatureStore store, final Name name){
+    private void readAndWriteTest(final FeatureStore store, final GenericName name){
         //todo test creating a few features
     }
 

@@ -18,6 +18,7 @@
 package org.geotoolkit.db.reverse;
 
 
+import org.opengis.util.GenericName;
 import com.vividsolutions.jts.geom.Geometry;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -91,10 +92,10 @@ public final class DataBaseModel {
     private static final ComplexType FLAG_TYPE = FTF.createComplexType(DefaultName.create("flag"), Collections.EMPTY_LIST, false, false, Collections.EMPTY_LIST, null, null);
 
     private final JDBCFeatureStore store;
-    private final Map<Name,PrimaryKey> pkIndex = new HashMap<Name, PrimaryKey>();
-    private final Map<Name,FeatureType> typeIndex = new HashMap<Name, FeatureType>();
+    private final Map<GenericName,PrimaryKey> pkIndex = new HashMap<GenericName, PrimaryKey>();
+    private final Map<GenericName,FeatureType> typeIndex = new HashMap<GenericName, FeatureType>();
     private Map<String,SchemaMetaModel> schemas = null;
-    private Set<Name> nameCache = null;
+    private Set<GenericName> nameCache = null;
     private final boolean simpleTypes;
 
     //metadata getSuperTable query is not implemented on all databases
@@ -148,19 +149,19 @@ public final class DataBaseModel {
         schemas = null;
     }
 
-    public PrimaryKey getPrimaryKey(final Name featureTypeName) throws DataStoreException{
+    public PrimaryKey getPrimaryKey(final GenericName featureTypeName) throws DataStoreException{
         if(schemas == null){
             analyze();
         }
         return pkIndex.get(featureTypeName);
     }
 
-    public synchronized Set<Name> getNames() throws DataStoreException {
-        Set<Name> ref = nameCache;
+    public synchronized Set<GenericName> getNames() throws DataStoreException {
+        Set<GenericName> ref = nameCache;
         if(ref == null){
             analyze();
-            final Set<Name> names = new HashSet<Name>();
-            for(Entry<Name,FeatureType> entry : typeIndex.entrySet()){
+            final Set<GenericName> names = new HashSet<GenericName>();
+            for(Entry<GenericName,FeatureType> entry : typeIndex.entrySet()){
                 if(Boolean.TRUE.equals(entry.getValue().getUserData().get("subtype"))) continue;
                 if(store.getDialect().ignoreTable(entry.getKey().tip().toString())) continue;
                 names.add(entry.getKey());
@@ -171,7 +172,7 @@ public final class DataBaseModel {
         return ref;
     }
 
-    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
         if(schemas == null){
             analyze();
         }
@@ -340,7 +341,7 @@ public final class DataBaseModel {
                     }else{
                         ft = table.getType(TableMetaModel.View.COMPLEX_FEATURE_TYPE);
                     }
-                    final Name name = ft.getName();
+                    final GenericName name = ft.getName();
                     pkIndex.put(name, table.key);
                     if(table.isSubType()){
                         //we don't show subtype, they are part of other feature types, add a flag to identify then
@@ -871,7 +872,7 @@ public final class DataBaseModel {
                 for(final RelationMetaModel relation : table.exportedKeys){
 
                     //find an appropriate name
-                    Name n = DefaultName.create(store.getDefaultNamespace(), relation.getForeignColumn());
+                    GenericName n = DefaultName.create(store.getDefaultNamespace(), relation.getForeignColumn());
                     for(PropertyDescriptor dpd : ftb.getProperties()){
                         if(n.tip().toString().equals(dpd.getName().tip().toString())){
                             //name already used, make it unique by including reference table name

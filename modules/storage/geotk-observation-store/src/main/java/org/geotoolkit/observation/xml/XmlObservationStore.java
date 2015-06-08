@@ -46,7 +46,7 @@ import org.geotoolkit.sos.netcdf.GeoSpatialBound;
 import org.geotoolkit.sos.xml.SOSMarshallerPool;
 import org.geotoolkit.storage.DataFileStore;
 import org.geotoolkit.swe.xml.PhenomenonProperty;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.geometry.Geometry;
 import org.opengis.observation.AnyFeature;
 import org.opengis.observation.Observation;
@@ -77,8 +77,8 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
     }
 
     @Override
-    public Set<Name> getProcedureNames() {
-        final Set<Name> names = new HashSet<>();
+    public Set<GenericName> getProcedureNames() {
+        final Set<GenericName> names = new HashSet<>();
         final Object obj = readFile();
         if (obj instanceof ObservationCollection) {
             final ObservationCollection collection = (ObservationCollection)obj;

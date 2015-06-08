@@ -54,7 +54,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.wmc.xml.v110.*;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -165,7 +165,7 @@ public class WMCUtilities {
             final ServerType serverType = layerType.getServer();
             final Client server;
             final String serviceId = getServiceId(serverType.getService().value());
-            final Name layerName = DefaultName.valueOf(layerType.getName());
+            final GenericName layerName = DefaultName.valueOf(layerType.getName());
             try {
                 final URL serviceURL = new URL(serverType.getOnlineResource().getHref());
 
@@ -183,7 +183,7 @@ public class WMCUtilities {
             if (server instanceof CoverageStore) {
                 final CoverageStore cs = (CoverageStore) server;
                 try {
-                    for (Name n : cs.getNames()) {
+                    for (GenericName n : cs.getNames()) {
                         if (n.tip().toString().equalsIgnoreCase(layerName.tip().toString())) {
                             final CoverageReference ref = cs.getCoverageReference(n);
                             final CoverageMapLayer mapLayer = MapBuilder.createCoverageLayer(ref,

@@ -27,7 +27,7 @@ import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.Collections;
@@ -44,7 +44,7 @@ import java.util.logging.Level;
  */
 public class MIFLineBuilder extends MIFGeometryBuilder {
 
-    public static final Name NAME = DefaultName.create("LINE");
+    public static final GenericName NAME = DefaultName.create("LINE");
 
     private static final AttributeDescriptor PEN;
     static {
@@ -133,7 +133,7 @@ public class MIFLineBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    public Name getName() {
+    public GenericName getName() {
         return NAME;
     }
 

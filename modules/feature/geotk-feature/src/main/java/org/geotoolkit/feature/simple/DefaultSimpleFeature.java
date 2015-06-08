@@ -29,7 +29,6 @@ import java.util.Map;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.io.TableAppender;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.iso.Names;
 import org.geotoolkit.feature.AbstractFeature;
 
 import org.geotoolkit.feature.DefaultAttribute;
@@ -42,6 +41,7 @@ import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.filter.identity.FeatureId;
@@ -620,7 +620,7 @@ public final class DefaultSimpleFeature extends AbstractFeature<List<Property>> 
         tablewriter.append("@id\t"+getID()+"\n");
 
         for(Property prop : getProperties()){
-            tablewriter.append(Names.toExpandedString(prop.getName()));
+            tablewriter.append(DefaultName.toExpandedString(prop.getName()));
             tablewriter.append("\t");
             Object value = prop.getValue();
             if(value != null && value.getClass().isArray()){

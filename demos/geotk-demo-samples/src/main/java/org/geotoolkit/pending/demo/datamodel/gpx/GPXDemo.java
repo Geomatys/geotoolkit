@@ -10,7 +10,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 public class GPXDemo {
 
@@ -23,8 +23,8 @@ public class GPXDemo {
         final FeatureStore store = FeatureStoreFinder.open(parameters);
 
         System.out.println("=================== Feature types ====================");
-        final Set<Name> names = store.getNames();
-        for(Name name : names){
+        final Set<GenericName> names = store.getNames();
+        for(GenericName name : names){
             System.out.println(store.getFeatureType(name));
         }
 

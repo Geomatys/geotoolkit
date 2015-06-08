@@ -16,13 +16,15 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class DefaultOperationDescriptor extends DefaultPropertyDescriptor<OperationType> implements OperationDescriptor {
 
-    public DefaultOperationDescriptor(OperationType type, Name name, int min, int max, boolean isNillable) {
+    public DefaultOperationDescriptor(OperationType type, GenericName name, int min, int max, boolean isNillable) {
         super(type, name, min, max, isNillable);
     }
 

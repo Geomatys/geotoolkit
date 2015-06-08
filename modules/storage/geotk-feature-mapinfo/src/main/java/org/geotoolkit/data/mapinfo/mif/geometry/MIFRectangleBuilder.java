@@ -28,7 +28,7 @@ import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.awt.geom.Rectangle2D;
@@ -48,8 +48,8 @@ import org.geotoolkit.feature.type.FeatureType;
  *         Date : 27/02/13
  */
 public class MIFRectangleBuilder extends MIFGeometryBuilder {
-    public Name NAME = DefaultName.create("RECTANGLE");
-    public static final Name ROUND_NAME = DefaultName.create("ROUNDING");
+    public GenericName NAME = DefaultName.create("RECTANGLE");
+    public static final GenericName ROUND_NAME = DefaultName.create("ROUNDING");
 
     private static final AttributeDescriptor ROUNDING;
     private static final AttributeDescriptor PEN;
@@ -201,7 +201,7 @@ public class MIFRectangleBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    public Name getName() {
+    public GenericName getName() {
         return NAME;
     }
 

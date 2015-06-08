@@ -27,7 +27,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -45,8 +45,8 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
  *         Date : 27/02/13
  */
 public class MIFCollectionBuilder extends MIFGeometryBuilder {
-    public static final Name NAME = DefaultName.create("COLLECTION");
-    public static final Name GEOM_NAME = DefaultName.create("GEOMETRY");
+    public static final GenericName NAME = DefaultName.create("COLLECTION");
+    public static final GenericName GEOM_NAME = DefaultName.create("GEOMETRY");
 
     private CoordinateReferenceSystem collectionCRS = null;
     @Override
@@ -189,7 +189,7 @@ public class MIFCollectionBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    public Name getName() {
+    public GenericName getName() {
         return NAME;
     }
 

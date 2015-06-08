@@ -37,7 +37,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import static org.junit.Assert.*;
@@ -184,7 +184,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         copyShapefiles(f); // Work on File rather than URL from JAR.
         ShapefileFeatureStore s = new ShapefileFeatureStore(
                 TestData.url(AbstractTestCaseSupport.class, f), null, false, charset);
-        Name typeName = s.getNames().iterator().next();
+        GenericName typeName = s.getNames().iterator().next();
         Session session = s.createSession(true);
         FeatureType type = s.getFeatureType(typeName);
         FeatureCollection one = session.getFeatureCollection(QueryBuilder.all(typeName));
@@ -203,7 +203,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
             throws IOException, MalformedURLException, Exception {
 
         ShapefileFeatureStore shapefile;
-        Name typeName = type.getName();
+        GenericName typeName = type.getName();
         Map params = new HashMap();
         params.put(ShapefileFeatureStoreFactory.URLP.getName().toString(), tmp.toURI().toURL());
         params.put(ShapefileFeatureStoreFactory.MEMORY_MAPPED.getName().toString(), memorymapped);

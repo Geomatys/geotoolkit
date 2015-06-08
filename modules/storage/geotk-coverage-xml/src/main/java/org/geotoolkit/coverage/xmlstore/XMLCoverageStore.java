@@ -36,7 +36,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -123,7 +123,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         try {
             //TODO useless copy here
             final XMLCoverageReference set = XMLCoverageReference.read(refDescriptor);
-            final Name name = DefaultName.create(getDefaultNamespace(), set.getId());
+            final GenericName name = DefaultName.create(getDefaultNamespace(), set.getId());
             final XMLCoverageReference ref = new XMLCoverageReference(this,name,set.getPyramidSet());
             ref.copy(set);
             rootNode.getChildren().add(ref);
@@ -139,7 +139,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public CoverageReference create(Name name) throws DataStoreException {
+    public CoverageReference create(GenericName name) throws DataStoreException {
         return create(name, null, null);
     }
 
@@ -153,12 +153,12 @@ public class XMLCoverageStore extends AbstractCoverageStore {
      * @return new CoverageReference.
      * @throws DataStoreException
      */
-    public CoverageReference create(Name name, ViewType packMode, String preferredFormat) throws DataStoreException {
+    public CoverageReference create(GenericName name, ViewType packMode, String preferredFormat) throws DataStoreException {
         if (root.isFile()) {
             throw new DataStoreException("Store root is a file, not a directory, no reference creation allowed.");
         }
         name = DefaultName.create(getDefaultNamespace(), name.tip().toString());
-        final Set<Name> names = getNames();
+        final Set<GenericName> names = getNames();
         if(names.contains(name)){
             throw new DataStoreException("Name already used in store : " + name.tip().toString());
         }

@@ -22,7 +22,7 @@ import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.StorageListener;
 import org.opengis.metadata.content.CoverageDescription;
@@ -43,7 +43,7 @@ public interface CoverageReference extends DataNode {
      *
      * @return Name
      */
-    Name getName();
+    GenericName getName();
 
     /**
      * @return int image index in reader/writer.

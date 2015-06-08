@@ -11,7 +11,7 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 public class FishDataStoreDemo {
 
@@ -23,7 +23,7 @@ public class FishDataStoreDemo {
 
         FeatureStore store = FeatureStoreFinder.open(params);
 
-        for(Name name : store.getNames()){
+        for(GenericName name : store.getNames()){
             System.out.println(store.getFeatureType(name));
 
             System.out.println("\n---------------------------\n");

@@ -36,7 +36,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
@@ -63,7 +63,7 @@ public class JDBCSession extends DefaultSession {
     }
 
     @Override
-    protected AddDelta createAddDelta(Session session, Name typeName, Collection<? extends Feature> features) {
+    protected AddDelta createAddDelta(Session session, GenericName typeName, Collection<? extends Feature> features) {
         if(isAsynchrone()){
             return new JDBCAddDelta(session, typeName, features);
         }else{
@@ -72,7 +72,7 @@ public class JDBCSession extends DefaultSession {
     }
 
     @Override
-    protected ModifyDelta createModifyDelta(Session session, Name typeName, Id filter, Map<? extends AttributeDescriptor, ? extends Object> values) {
+    protected ModifyDelta createModifyDelta(Session session, GenericName typeName, Id filter, Map<? extends AttributeDescriptor, ? extends Object> values) {
         if(isAsynchrone()){
             return new JDBCModifyDelta(session, typeName, filter, values);
         }else{
@@ -82,7 +82,7 @@ public class JDBCSession extends DefaultSession {
     }
 
     @Override
-    protected RemoveDelta createRemoveDelta(Session session, Name typeName, Id filter) {
+    protected RemoveDelta createRemoveDelta(Session session, GenericName typeName, Id filter) {
         if(isAsynchrone()){
             return new JDBCRemoveDelta(session, typeName, filter);
         }else{
@@ -98,7 +98,7 @@ public class JDBCSession extends DefaultSession {
     @Override
     public synchronized void commit() throws DataStoreException {
         final List<Delta> deltas = getDiff().getDeltas();
-        final Set<Name> deltaChanges = new HashSet<Name>();
+        final Set<GenericName> deltaChanges = new HashSet<GenericName>();
         for (Delta delta : deltas) {
             deltaChanges.add(delta.getType());
         }
@@ -117,7 +117,7 @@ public class JDBCSession extends DefaultSession {
         
         fireSessionChanged();
 
-        for (Name deltaChange : deltaChanges) {
+        for (GenericName deltaChange : deltaChanges) {
             ((DefaultJDBCFeatureStore)store).forwardContentEvent(FeatureStoreContentEvent.createUpdateEvent(store, deltaChange, null));
         }
     }
@@ -163,7 +163,7 @@ public class JDBCSession extends DefaultSession {
      * "stack depth limit exceeded" exception.
      */
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         checkVersion();
         //will raise an error if the name doesn't exist
         store.getFeatureType(groupName);

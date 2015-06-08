@@ -62,7 +62,7 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -83,25 +83,25 @@ public class SMLFeatureStore extends AbstractFeatureStore {
     private static final FeatureTypeFactory FTF = new DefaultFeatureTypeFactory();
     private static final GeometryFactory GF = new GeometryFactory();
 
-    private final Map<Name,FeatureType> types = new HashMap<Name, FeatureType>();
+    private final Map<GenericName,FeatureType> types = new HashMap<GenericName, FeatureType>();
 
     private final ManageableDataSource source;
 
     private static final String SML_NAMESPACE = "http://www.opengis.net/sml/1.0";
 
     //Root types
-    private final static Name SML_TN_SYSTEM         = DefaultName.create(SML_NAMESPACE, "System");
-    private final static Name SML_TN_COMPONENT      = DefaultName.create(SML_NAMESPACE, "Component");
-    private final static Name SML_TN_PROCESSCHAIN   = DefaultName.create(SML_NAMESPACE, "ProcessChain");
-    private final static Name SML_TN_PROCESSMODEL   = DefaultName.create(SML_NAMESPACE, "ProcessModel");
-    private final static Name SML_TN_DATASOURCETYPE = DefaultName.create(SML_NAMESPACE, "DataSourceType");
+    private final static GenericName SML_TN_SYSTEM         = DefaultName.create(SML_NAMESPACE, "System");
+    private final static GenericName SML_TN_COMPONENT      = DefaultName.create(SML_NAMESPACE, "Component");
+    private final static GenericName SML_TN_PROCESSCHAIN   = DefaultName.create(SML_NAMESPACE, "ProcessChain");
+    private final static GenericName SML_TN_PROCESSMODEL   = DefaultName.create(SML_NAMESPACE, "ProcessModel");
+    private final static GenericName SML_TN_DATASOURCETYPE = DefaultName.create(SML_NAMESPACE, "DataSourceType");
 
     //subTypes
-    private final static Name SML_KEYWORD_LIST      = DefaultName.create(SML_NAMESPACE, "KeywordList");
-    private final static Name SML_INPUT_LIST        = DefaultName.create(SML_NAMESPACE, "InputList");
-    private final static Name SML_OUTPUT_LIST       = DefaultName.create(SML_NAMESPACE, "OutputList");
-    private final static Name SML_INPUT             = DefaultName.create(SML_NAMESPACE, "Input");
-    private final static Name SML_OUTPUT            = DefaultName.create(SML_NAMESPACE, "Output");
+    private final static GenericName SML_KEYWORD_LIST      = DefaultName.create(SML_NAMESPACE, "KeywordList");
+    private final static GenericName SML_INPUT_LIST        = DefaultName.create(SML_NAMESPACE, "InputList");
+    private final static GenericName SML_OUTPUT_LIST       = DefaultName.create(SML_NAMESPACE, "OutputList");
+    private final static GenericName SML_INPUT             = DefaultName.create(SML_NAMESPACE, "Input");
+    private final static GenericName SML_OUTPUT            = DefaultName.create(SML_NAMESPACE, "Output");
 
     private static final String pathDescription        = "SensorML:SensorML:member:description";
     private static final String pathName               = "SensorML:SensorML:member:name";
@@ -140,26 +140,26 @@ public class SMLFeatureStore extends AbstractFeatureStore {
 
 
     // Shared attributes
-    private static final Name ATT_DESC        = DefaultName.create(GML_311_NAMESPACE, "description");
-    private static final Name ATT_NAME        = DefaultName.create(GML_311_NAMESPACE, "name");
-    private static final Name ATT_CODESPACE   = DefaultName.create(GML_311_NAMESPACE, "codespace");
-    private static final Name ATT_KEYWORDS    = DefaultName.create(SML_NAMESPACE, "keywords");
-    private static final Name ATT_KEYWORD     = DefaultName.create(SML_NAMESPACE, "keyword");
-    private static final Name ATT_LOCATION    = DefaultName.create(SML_NAMESPACE, "location");
-    private static final Name ATT_PHENOMENONS = DefaultName.create(SML_NAMESPACE, "phenomenons");
-    private static final Name ATT_SMLTYPE     = DefaultName.create(SML_NAMESPACE, "smltype");
-    private static final Name ATT_SMLREF      = DefaultName.create(SML_NAMESPACE, "smlref");
-    private static final Name ATT_INPUTS      = DefaultName.create(SML_NAMESPACE, "inputs");
-    private static final Name ATT_INPUT       = DefaultName.create(SML_NAMESPACE, "input");
-    private static final Name ATT_OUTPUTS     = DefaultName.create(SML_NAMESPACE, "outputs");
-    private static final Name ATT_OUTPUT      = DefaultName.create(SML_NAMESPACE, "output");
+    private static final GenericName ATT_DESC        = DefaultName.create(GML_311_NAMESPACE, "description");
+    private static final GenericName ATT_NAME        = DefaultName.create(GML_311_NAMESPACE, "name");
+    private static final GenericName ATT_CODESPACE   = DefaultName.create(GML_311_NAMESPACE, "codespace");
+    private static final GenericName ATT_KEYWORDS    = DefaultName.create(SML_NAMESPACE, "keywords");
+    private static final GenericName ATT_KEYWORD     = DefaultName.create(SML_NAMESPACE, "keyword");
+    private static final GenericName ATT_LOCATION    = DefaultName.create(SML_NAMESPACE, "location");
+    private static final GenericName ATT_PHENOMENONS = DefaultName.create(SML_NAMESPACE, "phenomenons");
+    private static final GenericName ATT_SMLTYPE     = DefaultName.create(SML_NAMESPACE, "smltype");
+    private static final GenericName ATT_SMLREF      = DefaultName.create(SML_NAMESPACE, "smlref");
+    private static final GenericName ATT_INPUTS      = DefaultName.create(SML_NAMESPACE, "inputs");
+    private static final GenericName ATT_INPUT       = DefaultName.create(SML_NAMESPACE, "input");
+    private static final GenericName ATT_OUTPUTS     = DefaultName.create(SML_NAMESPACE, "outputs");
+    private static final GenericName ATT_OUTPUT      = DefaultName.create(SML_NAMESPACE, "output");
     // attribute for sml:System or sml:ProcessChain
-    private static final Name ATT_PRODUCER = DefaultName.create(SML_NAMESPACE, "producer");
-    private static final Name ATT_COMPONENTS = DefaultName.create(SML_NAMESPACE, "components");
+    private static final GenericName ATT_PRODUCER = DefaultName.create(SML_NAMESPACE, "producer");
+    private static final GenericName ATT_COMPONENTS = DefaultName.create(SML_NAMESPACE, "components");
     // attribute for sml:ProccessModel
-    private static final Name ATT_METHOD = DefaultName.create(SML_NAMESPACE, "method");
+    private static final GenericName ATT_METHOD = DefaultName.create(SML_NAMESPACE, "method");
     // attribute for sml:DatasourceType
-    private static final Name ATT_CHARACTERISTICS = DefaultName.create(SML_NAMESPACE, "characteristics");
+    private static final GenericName ATT_CHARACTERISTICS = DefaultName.create(SML_NAMESPACE, "characteristics");
 
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
@@ -331,7 +331,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public Set<Name> getNames() throws DataStoreException {
+    public Set<GenericName> getNames() throws DataStoreException {
         return types.keySet();
     }
 
@@ -339,7 +339,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
         typeCheck(typeName);
         return types.get(typeName);
     }
@@ -360,7 +360,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -368,7 +368,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -376,7 +376,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void deleteFeatureType(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -384,7 +384,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter, final Hints hints) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -392,7 +392,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
+    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
@@ -401,7 +401,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -409,7 +409,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -525,7 +525,7 @@ public class SMLFeatureStore extends AbstractFeatureStore {
 
         }
 
-        private Feature readFeature(final int formID, final Name typeName) throws SQLException{
+        private Feature readFeature(final int formID, final GenericName typeName) throws SQLException{
             final Collection<Property> props = new ArrayList<Property>();
 
             /*

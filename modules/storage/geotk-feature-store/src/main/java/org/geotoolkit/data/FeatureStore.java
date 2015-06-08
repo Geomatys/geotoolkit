@@ -35,7 +35,7 @@ import org.geotoolkit.version.VersioningException;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -82,7 +82,7 @@ public abstract class FeatureStore extends DataStore{
      * Get version history for given feature type.
      * @return VersionControl for given type.
      */
-    public abstract VersionControl getVersioning(Name typeName) throws VersioningException;
+    public abstract VersionControl getVersioning(GenericName typeName) throws VersioningException;
     
     /**
      * Create a session, that session may be synchrone or asynchrone.
@@ -127,7 +127,7 @@ public abstract class FeatureStore extends DataStore{
      * @return Set<Name> , never null, but can be empty.
      * @throws DataStoreException
      */
-    public abstract Set<Name> getNames() throws DataStoreException;
+    public abstract Set<GenericName> getNames() throws DataStoreException;
 
     /**
      * Create a new feature type.
@@ -136,7 +136,7 @@ public abstract class FeatureStore extends DataStore{
      * @param featureType , new type schema
      * @throws DataStoreException if schema already exist or can not create schema.
      */
-    public abstract void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException;
+    public abstract void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException;
 
     /**
      * Update a feature type, should preserve attribute with the same
@@ -148,7 +148,7 @@ public abstract class FeatureStore extends DataStore{
      * @param featureType , new type schema
      * @throws DataStoreException if schema does not exist or can not be modified.
      */
-    public abstract void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException;
+    public abstract void updateFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException;
 
     /**
      * Delete feature type with given name.
@@ -156,7 +156,7 @@ public abstract class FeatureStore extends DataStore{
      * @param typeName , type name to delete
      * @throws DataStoreException if schema does not exist or can not be deleted.
      */
-    public abstract void deleteFeatureType(Name typeName) throws DataStoreException;
+    public abstract void deleteFeatureType(GenericName typeName) throws DataStoreException;
 
     /**
      * Convenient way to aquire a schema by ignoring the namespace.
@@ -176,7 +176,7 @@ public abstract class FeatureStore extends DataStore{
      * @return FeatureType type for the given name
      * @throws DataStoreException if typeName doesn't exist or feature store internal error.
      */
-    public abstract FeatureType getFeatureType(Name typeName) throws DataStoreException;
+    public abstract FeatureType getFeatureType(GenericName typeName) throws DataStoreException;
 
     /**
      * Get all feature types used for given type name.
@@ -190,7 +190,7 @@ public abstract class FeatureStore extends DataStore{
      * @return List of complextype
      * @throws DataStoreException 
      */
-    public abstract List<ComplexType> getFeatureTypeHierarchy(Name typeName) throws DataStoreException;
+    public abstract List<ComplexType> getFeatureTypeHierarchy(GenericName typeName) throws DataStoreException;
 
     /**
      * Some kind of queries may define a custom language statement.
@@ -209,7 +209,7 @@ public abstract class FeatureStore extends DataStore{
      * @return true if the type features can be edited.
      * @throws DataStoreException if typeName doesn't exist or feature store internal error.
      */
-    public abstract boolean isWritable(Name typeName) throws DataStoreException;
+    public abstract boolean isWritable(GenericName typeName) throws DataStoreException;
 
     /**
      * Retrieve informations about the query capabilites of this feature store.
@@ -250,7 +250,7 @@ public abstract class FeatureStore extends DataStore{
      * if the feature store can not handle persistent ids.
      * @throws DataStoreException
      */
-    public abstract List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
+    public abstract List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
     
     /**
      * Add a collection of features in a group of features.
@@ -262,13 +262,13 @@ public abstract class FeatureStore extends DataStore{
      * if the feature store can not handle persistent ids.
      * @throws DataStoreException
      */
-    public abstract List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException;
+    public abstract List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException;
 
     /**
      * convenient method to update a single attribute.
      * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
      */
-    public abstract void updateFeatures(Name groupName, Filter filter, PropertyDescriptor desc, Object value) throws DataStoreException;
+    public abstract void updateFeatures(GenericName groupName, Filter filter, PropertyDescriptor desc, Object value) throws DataStoreException;
 
     /**
      * Update a set of features that match the given filter and replace
@@ -279,7 +279,7 @@ public abstract class FeatureStore extends DataStore{
      * @param values , map of values to update
      * @throws DataStoreException
      */
-    public abstract void updateFeatures(Name groupName, Filter filter, Map< ? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException;
+    public abstract void updateFeatures(GenericName groupName, Filter filter, Map< ? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException;
 
     /**
      *
@@ -287,7 +287,7 @@ public abstract class FeatureStore extends DataStore{
      * @param filter , deleting filter, all features that match the filter will be removed
      * @throws DataStoreException
      */
-    public abstract void removeFeatures(Name groupName, Filter filter) throws DataStoreException;
+    public abstract void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException;
 
     /**
      * Get a feature reader to iterate on.
@@ -306,7 +306,7 @@ public abstract class FeatureStore extends DataStore{
      * @return FeatureWriter , never null but can be empty.
      * @throws DataStoreException
      */
-    public abstract FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException;
+    public abstract FeatureWriter getFeatureWriter(GenericName typeName, Filter filter) throws DataStoreException;
     
     /**
      * Aquire a writer on a given feature type in modify mode.
@@ -317,7 +317,7 @@ public abstract class FeatureStore extends DataStore{
      * @return FeatureWriter , never null but can be empty.
      * @throws DataStoreException
      */
-    public abstract FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException;
+    public abstract FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException;
 
     /**
      * Aquire a writer on a given feature type in append mode.
@@ -326,7 +326,7 @@ public abstract class FeatureStore extends DataStore{
      * @return FeatureWriter , empty.
      * @throws DataStoreException
      */
-    public abstract FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException;
+    public abstract FeatureWriter getFeatureWriterAppend(GenericName typeName) throws DataStoreException;
     
     /**
      * Aquire a writer on a given feature type in append mode.
@@ -336,7 +336,7 @@ public abstract class FeatureStore extends DataStore{
      * @return FeatureWriter , empty.
      * @throws DataStoreException
      */
-    public abstract FeatureWriter getFeatureWriterAppend(Name typeName, Hints hints) throws DataStoreException;
+    public abstract FeatureWriter getFeatureWriterAppend(GenericName typeName, Hints hints) throws DataStoreException;
 
     /**
      * Add a storage listener which will be notified when schema are added, modified or deleted

@@ -59,7 +59,7 @@ import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import static javax.xml.stream.events.XMLEvent.*;
@@ -107,10 +107,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     protected List<FeatureType> featureTypes;
     private URL base = null;
     //benchmarked 07/04/2015 : reduce by 10% reading time
-    private final Map<QName,Name> nameCache = new HashMap<QName,Name>(){
+    private final Map<QName,GenericName> nameCache = new HashMap<QName,GenericName>(){
         @Override
-        public Name get(Object key) {
-            Name n = super.get(key);
+        public GenericName get(Object key) {
+            GenericName n = super.get(key);
             if(n==null){
                 n = Utils.getNameFromQname(reader.getName());
                 put((QName)key, n);
@@ -211,7 +211,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             if (event == START_ELEMENT) {
                 readFeatureTypes();
 
-                final Name name  = nameCache.get(reader.getName());
+                final GenericName name  = nameCache.get(reader.getName());
                 String id = "no-gml-id";
                 for(int i=0,n=reader.getAttributeCount();i<n;i++){
                     final QName attName = reader.getAttributeName(i);
@@ -295,7 +295,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
             //we are looking for the root mark
             if (event == START_ELEMENT) {
-                final Name name = nameCache.get(reader.getName());
+                final GenericName name = nameCache.get(reader.getName());
 
                 String fid = null;
                 if (reader.getAttributeCount() > 0) {
@@ -352,7 +352,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         return readFeature(id, featureType, featureType.getName());
     }
 
-    private ComplexAttribute readFeature(final String id, final ComplexType featureType, final Name tagName) throws XMLStreamException {
+    private ComplexAttribute readFeature(final String id, final ComplexType featureType, final GenericName tagName) throws XMLStreamException {
 
         /*
          * We create a map and a collection because we can encounter two cases :
@@ -365,7 +365,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
          * we add the all the created properties in it (so we can put multiple
          * properties with the same name).
          */
-        final Map<Name,Property> namedProperties = new LinkedHashMap<>();
+        final Map<GenericName,Property> namedProperties = new LinkedHashMap<>();
         final Collection<Property> propertyContainer = new ArrayList<>();
         final List<Entry<OperationDescriptor,Object>> ops = new ArrayList<>();
 
@@ -401,7 +401,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 int event = reader.getEventType();
 
                 if (event == START_ELEMENT) {
-                    final Name propName = nameCache.get(reader.getName());
+                    final GenericName propName = nameCache.get(reader.getName());
 
                     // we skip the boundedby attribute if it's present
                     if ("boundedBy".equals(propName.tip().toString())) {
@@ -541,7 +541,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     }
 
     private Object readPropertyValue(PropertyType propertyType, boolean skipCurrent) throws XMLStreamException{
-        final Name propName = nameCache.get(reader.getName());
+        final GenericName propName = nameCache.get(reader.getName());
 
         Object value = null;
         if (propertyType instanceof GeometryType) {
@@ -640,7 +640,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             int event = reader.next();
 
             if (event == END_ELEMENT) {
-                Name name  = nameCache.get(reader.getName());
+                GenericName name  = nameCache.get(reader.getName());
                 if (name.tip().toString().equals("Insert")) {
                     insert = false;
                 }
@@ -648,7 +648,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
             //we are looking for the root mark
             } else if (event == START_ELEMENT) {
-                Name name  = nameCache.get(reader.getName());
+                GenericName name  = nameCache.get(reader.getName());
 
                 if (name.tip().toString().equals("Insert")) {
                     insert = true;
@@ -773,7 +773,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 if (event == START_ELEMENT) {
                     readFeatureTypes();
 
-                    final Name name  = nameCache.get(reader.getName());
+                    final GenericName name  = nameCache.get(reader.getName());
                     String id = "no-gml-id";
                     for(int i=0,n=reader.getAttributeCount();i<n;i++){
                         final QName attName = reader.getAttributeName(i);
@@ -848,7 +848,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
                     //we are looking for the root mark
                     if (event == START_ELEMENT) {
-                        final Name name = nameCache.get(reader.getName());
+                        final GenericName name = nameCache.get(reader.getName());
 
                         String fid = null;
                         if (reader.getAttributeCount() > 0) {

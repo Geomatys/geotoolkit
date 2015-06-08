@@ -44,7 +44,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.GeometryAttribute;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -108,13 +108,13 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
             try {
                 param.parameter(URLP.getName().getCode()).setValue(new URL(source.getHref()));
                 FeatureStore store = FeatureStoreFinder.open(param);
-                Iterator<Name> iterator = store.getNames().iterator();
+                Iterator<GenericName> iterator = store.getNames().iterator();
 
                 int typesSize = store.getNames().size();
                 if (typesSize != 1)
                     throw new UnconvertibleObjectException("Expected one Geometry. Found " + typesSize);
 
-                Name name = iterator.next();
+                GenericName name = iterator.next();
 
                 Session session = store.createSession(false);
                 FeatureCollection featureCollection = session.getFeatureCollection(QueryBuilder.all(name));

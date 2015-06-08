@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.Collection;
 import java.util.List;
@@ -49,7 +50,7 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
      */
     @Override
     public AssociationDescriptor createAssociationDescriptor(final AssociationType type,
-            final Name name, final int minOccurs, final int maxOccurs, final boolean isNillable){
+            final GenericName name, final int minOccurs, final int maxOccurs, final boolean isNillable){
         return new DefaultAssociationDescriptor(type, name, minOccurs, maxOccurs, isNillable);
     }
 
@@ -57,7 +58,7 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public AttributeDescriptor createAttributeDescriptor(final AttributeType type, final Name name,
+    public AttributeDescriptor createAttributeDescriptor(final AttributeType type, final GenericName name,
             final int minOccurs, final int maxOccurs, final boolean isNillable, final Object defaultValue){
         if(type instanceof GeometryType){
             return createGeometryDescriptor((GeometryType)type, name, minOccurs, maxOccurs, isNillable, defaultValue);
@@ -70,7 +71,7 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public GeometryDescriptor createGeometryDescriptor(final GeometryType type, final Name name,
+    public GeometryDescriptor createGeometryDescriptor(final GeometryType type, final GenericName name,
             final int minOccurs, final int maxOccurs, final boolean isNillable, final Object defaultValue){
         return new DefaultGeometryDescriptor(type, name, minOccurs, maxOccurs, isNillable, defaultValue);
     }
@@ -79,7 +80,7 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public AssociationType createAssociationType(final Name name, final AttributeType relatedType,
+    public AssociationType createAssociationType(final GenericName name, final AttributeType relatedType,
             final boolean isAbstract, final List restrictions, final AssociationType superType,
             final InternationalString description){
         return new DefaultAssociationType(name, relatedType,
@@ -90,7 +91,7 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public AttributeType createAttributeType(final Name name, final Class binding,
+    public AttributeType createAttributeType(final GenericName name, final Class binding,
             final boolean isIdentifiable, final boolean isAbstract, final List restrictions,
             final AttributeType superType, final InternationalString description){
         if(Geometry.class.isAssignableFrom(binding)
@@ -108,13 +109,13 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public ComplexType createComplexType(final Name name, final Collection schema,
+    public ComplexType createComplexType(final GenericName name, final Collection schema,
             final boolean isIdentifiable, final boolean isAbstract, final List restrictions,
             final AttributeType superType, final InternationalString description) throws IllegalArgumentException{
         AttributeDescriptor[] testNames = new AttributeDescriptor[schema.size()];
         schema.toArray(testNames);
         for(int i = 0 ; i < testNames.length-1 ; i++){
-            final Name toTest = testNames[i].getName();
+            final GenericName toTest = testNames[i].getName();
             for(int j = i+1 ; j < testNames.length ; j++){
                 if(toTest.equals(testNames[j].getName()))
                     throw new IllegalArgumentException("We can't build a complexType with multiple descriptor owning the same name");
@@ -128,7 +129,7 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public GeometryType createGeometryType(final Name name, final Class binding,
+    public GeometryType createGeometryType(final GenericName name, final Class binding,
             final CoordinateReferenceSystem crs, final boolean isIdentifiable,
             final boolean isAbstract, final List restrictions, final AttributeType superType,
             final InternationalString description){
@@ -140,7 +141,7 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType createFeatureType(final Name name, final Collection<PropertyDescriptor> schema,
+    public FeatureType createFeatureType(final GenericName name, final Collection<PropertyDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
             final List<Filter> restrictions, final AttributeType superType, final InternationalString description){
         return new DefaultFeatureType(name, schema, defaultGeometry,
@@ -151,7 +152,7 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeatureType createSimpleFeatureType(final Name name, final List<AttributeDescriptor> schema,
+    public SimpleFeatureType createSimpleFeatureType(final GenericName name, final List<AttributeDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
             final List<Filter> restrictions, final AttributeType superType,
             final InternationalString description){

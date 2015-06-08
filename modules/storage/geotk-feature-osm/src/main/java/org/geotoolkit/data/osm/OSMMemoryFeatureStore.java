@@ -55,7 +55,7 @@ import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -157,8 +157,8 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
     }
     
     @Override
-    public Set<Name> getNames() throws DataStoreException {
-        final Set<Name> names = new HashSet<Name>();
+    public Set<GenericName> getNames() throws DataStoreException {
+        final Set<GenericName> names = new HashSet<GenericName>();
         names.add(TYPE_NODE.getName());
         names.add(TYPE_WAY_EXTENDED.getName());
         names.add(TYPE_RELATION.getName());
@@ -166,7 +166,7 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
         if(TYPE_NODE.getName().equals(typeName)){
             return TYPE_NODE;
         }else if(TYPE_WAY_EXTENDED.getName().equals(typeName)){
@@ -193,7 +193,7 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter, final Hints hints) throws DataStoreException {
         throw new UnsupportedOperationException("Not yet.");
     }
 
@@ -207,33 +207,33 @@ public class OSMMemoryFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("New schema creation not allowed on GPX files.");
     }
 
     @Override
-    public void deleteFeatureType(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
         throw new DataStoreException("Delete schema not allowed on GPX files.");
     }
 
     @Override
-    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Update schema not allowed on GPX files.");
     }
 
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures, 
             final Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
 
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 

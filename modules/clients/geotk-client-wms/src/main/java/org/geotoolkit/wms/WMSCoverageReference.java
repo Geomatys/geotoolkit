@@ -52,7 +52,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wms.xml.WMSVersion;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -127,7 +127,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
     /**
      * The layers to request.
      */
-    private Name[] layers;
+    private GenericName[] layers;
 
     /**
      * The styles associated to the {@link #layers}.
@@ -191,7 +191,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
         this(server,toNames(layers));
     }
 
-    public WMSCoverageReference(final WebMapClient server, final Name ... names) {
+    public WMSCoverageReference(final WebMapClient server, final GenericName ... names) {
         super(server,names[0]);
         this.server = server;
 
@@ -202,12 +202,12 @@ public class WMSCoverageReference extends AbstractCoverageReference{
         this.layers = names;
     }
 
-    private static Name[] toNames(String ... names){
+    private static GenericName[] toNames(String ... names){
         if(names == null || names.length == 0){
-            return new Name[0];
+            return new GenericName[0];
         }
 
-        final Name[] ns = new Name[names.length];
+        final GenericName[] ns = new GenericName[names.length];
         for(int i=0;i<names.length;i++){
             final String str = names[i];
             if(str != null && str.contains(",")){
@@ -221,7 +221,7 @@ public class WMSCoverageReference extends AbstractCoverageReference{
     /**
      * @return array of all layer names
      */
-    public Name[] getNames() throws DataStoreException{
+    public GenericName[] getNames() throws DataStoreException{
         return layers.clone();
     }
 

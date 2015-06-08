@@ -78,7 +78,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -101,7 +101,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
     protected final ShpFiles shpFiles;
     protected final boolean useMemoryMappedBuffer;
     protected final Charset dbfCharset;
-    private Name name;
+    private GenericName name;
     private FeatureType schema;
 
 
@@ -186,11 +186,11 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public boolean isWritable(final Name typeName) throws DataStoreException {
+    public boolean isWritable(final GenericName typeName) throws DataStoreException {
         return shpFiles.isLocal();
     }
 
-    public Name getName() throws DataStoreException{
+    public GenericName getName() throws DataStoreException{
         checkTypeExist();
         return name;
     }
@@ -212,7 +212,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public Set<Name> getNames() throws DataStoreException {
+    public Set<GenericName> getNames() throws DataStoreException {
         return Collections.singleton(getName());
     }
 
@@ -220,7 +220,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
         typeCheck(typeName);
         return schema;
     }
@@ -299,8 +299,8 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
 
         final Hints hints = query.getHints();
         final String typeName = query.getTypeName().tip().toString();
-        final Name[] propertyNames = query.getPropertyNames();
-        final Name defaultGeomName = schema.getGeometryDescriptor().getName();
+        final GenericName[] propertyNames = query.getPropertyNames();
+        final GenericName defaultGeomName = schema.getGeometryDescriptor().getName();
         final double[] resample = query.getResolution();
 
         //check if we must read the 3d values
@@ -312,7 +312,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         final FilterAttributeExtractor extractor = new FilterAttributeExtractor();
         final Filter filter = query.getFilter();
         filter.accept(extractor, null);
-        final Name[] filterAttnames = extractor.getAttributeNames();
+        final GenericName[] filterAttnames = extractor.getAttributeNames();
 
         // check if the geometry is the one and only attribute needed
         // to return attribute _and_ to run the query filter
@@ -376,7 +376,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter, final Hints hints) throws DataStoreException {
         typeCheck(typeName);
 
         final ShapefileAttributeReader attReader = getAttributesReader(true,true,null);
@@ -409,7 +409,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * @todo must synchronize this properly
      */
     @Override
-    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         if (!shpFiles.isLocal()) {
             throw new DataStoreException("Cannot create FeatureType on remote shapefile");
         }
@@ -529,7 +529,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Can not update shapefile schema.");
     }
 
@@ -537,7 +537,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public void deleteFeatureType(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
         throw new DataStoreException("Can not delete shapefile schema.");
     }
 
@@ -663,7 +663,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
+    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         final List<FeatureId> ids = handleAddWithFeatureWriter(groupName, newFeatures, hints);
         return ids;
@@ -673,7 +673,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
@@ -681,7 +681,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 

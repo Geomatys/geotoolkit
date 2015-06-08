@@ -41,7 +41,7 @@ import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSBindingUtilities;
 import org.geotoolkit.wms.xml.WMSVersion;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.net.MalformedURLException;
@@ -394,7 +394,7 @@ public class WebMapClient extends AbstractCoverageClient {
             for(AbstractLayer al : layers){
                 final String name = al.getName();
                 if(name != null){
-                    final Name nn = DefaultName.valueOf(name);
+                    final GenericName nn = DefaultName.valueOf(name);
                     final CoverageReference ref = createReference(nn);
                     rootNode.getChildren().add(ref);
                 }
@@ -410,7 +410,7 @@ public class WebMapClient extends AbstractCoverageClient {
      * @param name
      * @return
      */
-    protected CoverageReference createReference(Name name) throws DataStoreException{
+    protected CoverageReference createReference(GenericName name) throws DataStoreException{
         return new WMSCoverageReference(this,name);
     }
 
@@ -419,12 +419,12 @@ public class WebMapClient extends AbstractCoverageClient {
     }
 
     @Override
-    public CoverageReference create(Name name) throws DataStoreException {
+    public CoverageReference create(GenericName name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
 
     @Override
-    public void delete(Name name) throws DataStoreException {
+    public void delete(GenericName name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
 

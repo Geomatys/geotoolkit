@@ -30,7 +30,7 @@ import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -82,7 +82,7 @@ public class OSMTileMapClient extends AbstractCoverageClient {
 
     public OSMTileMapClient(ParameterValueGroup params){
         super(params);
-        final Name name = DefaultName.create(serverURL.toString(), "main");
+        final GenericName name = DefaultName.create(serverURL.toString(), "main");
         pyramidSet = new OSMTMSPyramidSet(this,getMaxZoomLevel(),getCacheImage());
         final OSMTMSCoverageReference ref = new OSMTMSCoverageReference(this,name);
         rootNode.getChildren().add(ref);
@@ -134,12 +134,12 @@ public class OSMTileMapClient extends AbstractCoverageClient {
     }
 
     @Override
-    public CoverageReference create(Name name) throws DataStoreException {
+    public CoverageReference create(GenericName name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
 
     @Override
-    public void delete(Name name) throws DataStoreException {
+    public void delete(GenericName name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
 

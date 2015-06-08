@@ -41,7 +41,7 @@ import org.junit.Test;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
@@ -66,14 +66,14 @@ public abstract class AbstractReadingTests{
 
     public static class ExpectedResult{
 
-        public ExpectedResult(final Name name, final FeatureType type, final int size, final Envelope env){
+        public ExpectedResult(final GenericName name, final FeatureType type, final int size, final Envelope env){
             this.name = name;
             this.type = type;
             this.size = size;
             this.env = env;
         }
 
-        public Name name;
+        public GenericName name;
         public FeatureType type;
         public int size;
         public Envelope env;
@@ -89,7 +89,7 @@ public abstract class AbstractReadingTests{
 
     protected abstract FeatureStore getDataStore();
 
-    protected abstract Set<Name> getExpectedNames();
+    protected abstract Set<GenericName> getExpectedNames();
 
     protected abstract List<ExpectedResult> getReaderTests();
 
@@ -121,19 +121,19 @@ public abstract class AbstractReadingTests{
     @Test
     public void testSchemas() throws Exception{
         final FeatureStore store = getDataStore();
-        final Set<Name> expectedTypes = getExpectedNames();
+        final Set<GenericName> expectedTypes = getExpectedNames();
 
         //need at least one type to test
         assertTrue(expectedTypes.size() > 0);
 
         //check names-----------------------------------------------------------
-        final Set<Name> founds = store.getNames();
+        final Set<GenericName> founds = store.getNames();
         assertNotNull(founds);
         assertTrue(expectedTypes.size() == founds.size());
         assertTrue(expectedTypes.containsAll(founds));
         assertTrue(founds.containsAll(expectedTypes));
 
-        for(Name name : founds){
+        for(GenericName name : founds){
             assertNotNull(name);
             assertNotNull(store.getFeatureType(name));
         }
@@ -146,7 +146,7 @@ public abstract class AbstractReadingTests{
 
         check:
         for(String typeName : typeNames){
-            for(Name n : founds){
+            for(GenericName n : founds){
                 if(n.tip().toString().equals(typeName)){
                     assertNotNull(typeName);
                     FeatureType type1 = store.getFeatureType(typeName);
@@ -189,7 +189,7 @@ public abstract class AbstractReadingTests{
         assertTrue(candidates.size() > 0);
 
         for(final ExpectedResult candidate : candidates){
-            final Name name = candidate.name;
+            final GenericName name = candidate.name;
             final FeatureType type = store.getFeatureType(name);
             assertNotNull(type);
             assertEquals(candidate.type, type);
@@ -250,7 +250,7 @@ public abstract class AbstractReadingTests{
             //ok
         }
 
-        query = QueryBuilder.all(DefaultName.create(candidate.name.getNamespaceURI(), candidate.name.tip().toString()+"fgresfds_not_exist"));
+        query = QueryBuilder.all(DefaultName.create(DefaultName.getNamespace(candidate.name), candidate.name.tip().toString()+"fgresfds_not_exist"));
         try{
             store.getFeatureReader(query);
             throw new Exception("Asking for a reader without a wrong name should raise a featurestore exception.");
@@ -258,7 +258,7 @@ public abstract class AbstractReadingTests{
             //ok
         }
 
-        query = QueryBuilder.all(DefaultName.create(candidate.name.getNamespaceURI()+"resfsdfsdf_not_exist", candidate.name.tip().toString()));
+        query = QueryBuilder.all(DefaultName.create(DefaultName.getNamespace(candidate.name)+"resfsdfsdf_not_exist", candidate.name.tip().toString()));
         try{
             store.getFeatureReader(query);
             throw new Exception("Asking for a reader without a wrong namespace should raise a featurestore exception.");

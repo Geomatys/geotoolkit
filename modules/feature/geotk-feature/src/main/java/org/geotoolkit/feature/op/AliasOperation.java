@@ -27,7 +27,7 @@ import org.geotoolkit.feature.type.AbstractOperationType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.feature.IdentifiedType;
 import org.opengis.filter.identity.Identifier;
@@ -41,15 +41,15 @@ import org.opengis.util.GenericName;
 public class AliasOperation extends AbstractOperationType {
 
     private final PropertyDescriptor desc;
-    private final Name refName;
+    private final GenericName refName;
 
-    public AliasOperation(Name newName, Name refName, PropertyDescriptor type) {
+    public AliasOperation(GenericName newName, GenericName refName, PropertyDescriptor type) {
         super(newName, null, (AttributeType)type.getType(), EMPTY_PARAMS);
         this.desc = type;
         this.refName = refName;
     }
 
-    public Name getRefName() {
+    public GenericName getRefName() {
         return refName;
     }
 
@@ -126,7 +126,7 @@ public class AliasOperation extends AbstractOperationType {
         }
 
         @Override
-        public Name getName() {
+        public GenericName getName() {
             return desc.getName();
         }
 
@@ -196,7 +196,7 @@ public class AliasOperation extends AbstractOperationType {
         }
 
         @Override
-        public Name getName() {
+        public GenericName getName() {
             return desc.getName();
         }
 

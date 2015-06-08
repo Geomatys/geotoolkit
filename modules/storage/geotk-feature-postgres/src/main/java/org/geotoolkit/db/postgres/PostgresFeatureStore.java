@@ -37,7 +37,7 @@ import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -92,7 +92,7 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
     ////////////////////////////////////////////////////////////////////////////
     
     @Override
-    public VersionControl getVersioning(Name typeName) throws VersioningException {
+    public VersionControl getVersioning(GenericName typeName) throws VersioningException {
         final FeatureType type;
         try {
             type = getFeatureType(typeName);
@@ -173,7 +173,7 @@ public class PostgresFeatureStore extends DefaultJDBCFeatureStore{
     }
 
     @Override
-    public void deleteFeatureType(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
         try {
             getVersioning(typeName).dropVersioning();
         } catch (VersioningException ex) {

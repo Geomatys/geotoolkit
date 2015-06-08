@@ -41,7 +41,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.Filter;
@@ -110,7 +110,7 @@ public class FeatureTypeBuilder {
 
     protected final List<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>(){
 
-        private void checkName(Name n){
+        private void checkName(GenericName n){
             if(nameCheck){
                 for(PropertyDescriptor desc : properties){
                     if(desc.getName().equals(n)){
@@ -154,9 +154,9 @@ public class FeatureTypeBuilder {
 
     };
     protected final List<Filter> restrictions = new ArrayList<Filter>();
-    protected Name name = null;
+    protected GenericName name = null;
     protected InternationalString description;
-    protected Name defaultGeometry;
+    protected GenericName defaultGeometry;
     protected boolean isAbstract = false;
     protected AttributeType superType;
 
@@ -238,14 +238,14 @@ public class FeatureTypeBuilder {
     /**
      * Sets the local name and namespace uri of the built type.
      */
-    public void setName(final Name name) {
+    public void setName(final GenericName name) {
         this.name = name;
     }
 
     /**
      * The name of the built type.
      */
-    public Name getName() {
+    public GenericName getName() {
         return name;
     }
 
@@ -282,7 +282,7 @@ public class FeatureTypeBuilder {
     /**
      * Sets the name of the default geometry attribute of the built type.
      */
-    public void setDefaultGeometry(final Name defaultGeometryName) {
+    public void setDefaultGeometry(final GenericName defaultGeometryName) {
         for(PropertyDescriptor desc : properties){
             if(desc.getName().equals(defaultGeometryName)){
                 this.defaultGeometry = desc.getName();
@@ -295,7 +295,7 @@ public class FeatureTypeBuilder {
     /**
      * The name of the default geometry attribute of the built type.
      */
-    public Name getDefaultGeometry() {
+    public GenericName getDefaultGeometry() {
         return defaultGeometry;
     }
 
@@ -393,7 +393,7 @@ public class FeatureTypeBuilder {
      * @param binding The class the attribute is bound to.
      * @return the created AttributeDescriptor
      */
-    public AttributeDescriptor add(final Name name, final Class binding) {
+    public AttributeDescriptor add(final GenericName name, final Class binding) {
         return add(name,binding,1,1,true,null);
     }
 
@@ -407,7 +407,7 @@ public class FeatureTypeBuilder {
      * @param userData
      * @return the created AttributeDescriptor
      */
-    public AttributeDescriptor add(final Name name, final Class binding, final int min, final int max,
+    public AttributeDescriptor add(final GenericName name, final Class binding, final int min, final int max,
             final boolean nillable, final Map<Object,Object> userData) {
         return add(name,binding,null,min,max,nillable,userData);
     }
@@ -422,7 +422,7 @@ public class FeatureTypeBuilder {
      * @param userData
      * @return the created AttributeDescriptor
      */
-    public AttributeDescriptor add(final Name name, final Class binding, final int min, final int max,
+    public AttributeDescriptor add(final GenericName name, final Class binding, final int min, final int max,
             final boolean nillable, Object defaultValue, final Map<Object,Object> userData) {
         final AttributeDescriptor desc = attributeDescBuilder.create(name, binding, null, min, max, nillable, defaultValue,userData);
         add(desc);
@@ -440,7 +440,7 @@ public class FeatureTypeBuilder {
      * @param srs The srs of of the geometry, can not be <code>null</code>.
      * @return the created AttributeDescriptor
      */
-    public AttributeDescriptor add(final Name name, final Class binding, final String srs) {
+    public AttributeDescriptor add(final GenericName name, final Class binding, final String srs) {
         return add(name, binding, decode(srs));
     }
 
@@ -455,7 +455,7 @@ public class FeatureTypeBuilder {
      * @param srid The srid of of the geometry, may be <code>null</code>.
      * @return the created AttributeDescriptor
      */
-    public AttributeDescriptor add(final Name name, final Class binding, final Integer srid) {
+    public AttributeDescriptor add(final GenericName name, final Class binding, final Integer srid) {
         return add(name, binding, decode("EPSG:" + srid));
     }
 
@@ -470,7 +470,7 @@ public class FeatureTypeBuilder {
      * @param crs The crs of of the geometry, can not be <code>null</code>.
      * @return the created AttributeDescriptor
      */
-    public AttributeDescriptor add(final Name name, final Class binding, final CoordinateReferenceSystem crs) {
+    public AttributeDescriptor add(final GenericName name, final Class binding, final CoordinateReferenceSystem crs) {
         return add(name,binding,crs,1,1,true,null);
     }
 
@@ -485,7 +485,7 @@ public class FeatureTypeBuilder {
      * @param userData
      * @return the created AttributeDescriptor
      */
-    public AttributeDescriptor add(final Name name, final Class binding, final CoordinateReferenceSystem crs,
+    public AttributeDescriptor add(final GenericName name, final Class binding, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData) {
         final AttributeDescriptor desc = attributeDescBuilder.create(name, binding, crs, min, max, nillable, userData);
         add(desc);
@@ -496,14 +496,14 @@ public class FeatureTypeBuilder {
      *
      * @return the created AttributeDescriptor
      */
-    public AttributeDescriptor add(final PropertyType at, final Name name, final CoordinateReferenceSystem crs,
+    public AttributeDescriptor add(final PropertyType at, final GenericName name, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
         final AttributeDescriptor desc = attributeDescBuilder.create(at, name, crs, min, max, nillable, userData);
         add(desc);
         return desc;
     }
     
-    public AttributeDescriptor add(final Name typeName, final Class binding, final Name name, final CoordinateReferenceSystem crs,
+    public AttributeDescriptor add(final GenericName typeName, final Class binding, final GenericName name, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
         AttributeTypeBuilder atb = new AttributeTypeBuilder();
         atb.setName(typeName);
@@ -519,12 +519,12 @@ public class FeatureTypeBuilder {
         return desc;
     }
     
-    public AttributeDescriptor add(final String typeNamespace, final String typeName, final Class binding, final Name name, final CoordinateReferenceSystem crs,
+    public AttributeDescriptor add(final String typeNamespace, final String typeName, final Class binding, final GenericName name, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
         return add(typeNamespace, typeName, binding, name, crs, min, max, nillable, null, userData);
     }
     
-    public AttributeDescriptor add(final String typeNamespace, final String typeName, final Class binding, final Name name, final CoordinateReferenceSystem crs,
+    public AttributeDescriptor add(final String typeNamespace, final String typeName, final Class binding, final GenericName name, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Object defaultValue, final Map<Object,Object> userData){
         AttributeTypeBuilder atb = new AttributeTypeBuilder();
         atb.setName(typeNamespace, typeName);
@@ -765,7 +765,7 @@ public class FeatureTypeBuilder {
      * @param types
      * @return SimpleFeatureType
      */
-    public static <T extends ComplexType> T retype(final T original, final Name[] types) {
+    public static <T extends ComplexType> T retype(final T original, final GenericName[] types) {
         final FeatureTypeBuilder b = new FeatureTypeBuilder();
 
         //initialize the builder

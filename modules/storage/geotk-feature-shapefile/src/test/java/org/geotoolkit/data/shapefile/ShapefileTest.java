@@ -34,7 +34,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 
@@ -151,7 +151,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         ShapefileFeatureStoreFactory make = new ShapefileFeatureStoreFactory();
         FeatureStore s = make.create(Collections.singletonMap("url", tmpFile.toURI().toURL()));
         s.createFeatureType(type.getName(),type);
-        Name typeName = type.getName();
+        GenericName typeName = type.getName();
 
         Session session = s.createSession(true);
         session.addFeatures(typeName,features);

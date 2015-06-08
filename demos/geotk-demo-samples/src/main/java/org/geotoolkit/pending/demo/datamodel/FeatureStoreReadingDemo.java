@@ -20,7 +20,7 @@ import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -37,8 +37,8 @@ public class FeatureStoreReadingDemo {
         final FeatureStore store = createUsingParameterGroup();
 
         //getting all available feature types -----------------------------------------------
-        final Set<Name> typeNames = store.getNames();
-        for(Name name : typeNames){
+        final Set<GenericName> typeNames = store.getNames();
+        for(GenericName name : typeNames){
             System.out.println(store.getFeatureType(name));
         }
 
@@ -48,7 +48,7 @@ public class FeatureStoreReadingDemo {
 
 
         //reading features -------------------------------------------------------------------
-        final Name typeName = typeNames.iterator().next();
+        final GenericName typeName = typeNames.iterator().next();
         FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(typeName));
         //showCollection(collection, 10);
 

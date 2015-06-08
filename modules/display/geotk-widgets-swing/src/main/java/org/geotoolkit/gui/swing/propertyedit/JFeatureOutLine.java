@@ -47,7 +47,7 @@ import org.jdesktop.swingx.table.DatePickerCellEditor;
 import org.netbeans.swing.outline.*;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -287,7 +287,7 @@ public class JFeatureOutLine extends Outline{
 
 
 
-            final Name name;
+            final GenericName name;
             if(candidate instanceof Property){
 
                 Property prop = ((Property)candidate);

@@ -48,6 +48,7 @@ import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  * Pyramid store read and write tests.
@@ -84,7 +85,7 @@ public abstract class AbstractPyramidalModelStoreTest {
         ////////////////////////////////////////////////////////////////////////
         //create a small RGBA pyramid //////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
-        final DefaultName rgbaName = DefaultName.create("rgba");
+        final GenericName rgbaName = DefaultName.create("rgba");
         rgbaCoverageRef = (PyramidalCoverageReference) store.create(rgbaName);
         rgbaCoverageRef.setPackMode(ViewType.RENDERED);
         
@@ -130,7 +131,7 @@ public abstract class AbstractPyramidalModelStoreTest {
         ////////////////////////////////////////////////////////////////////////
         //create a small Float 1 band pyramid //////////////////////////////////
         ////////////////////////////////////////////////////////////////////////
-        final DefaultName float1bName = DefaultName.create("float1b");
+        final GenericName float1bName = DefaultName.create("float1b");
         float1bCoverageRef = (PyramidalCoverageReference) store.create(float1bName);
         float1bCoverageRef.setPackMode(ViewType.GEOPHYSICS);
         

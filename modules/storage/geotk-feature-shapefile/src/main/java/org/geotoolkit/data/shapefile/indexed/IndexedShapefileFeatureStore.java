@@ -66,7 +66,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
@@ -193,8 +193,8 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
     public FeatureReader getFeatureReader(final Query query)
             throws DataStoreException {
         final FeatureType originalSchema = getFeatureType();
-        final Name              queryTypeName = query.getTypeName();
-        final Name[]            queryPropertyNames = query.getPropertyNames();
+        final GenericName              queryTypeName = query.getTypeName();
+        final GenericName[]            queryPropertyNames = query.getPropertyNames();
         final Hints             queryHints = query.getHints();
         final double[]          queryRes = query.getResolution();
         Filter                  queryFilter = query.getFilter();
@@ -218,7 +218,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         }else{
             //return only a subset of properties
             returnedProperties = new ArrayList<>(queryPropertyNames.length);
-            for(Name n : queryPropertyNames){
+            for(GenericName n : queryPropertyNames){
                 final AttributeDescriptor property = (AttributeDescriptor) originalSchema.getDescriptor(n);
                 if(property == null){
                     throw new DataStoreException("Query requieres property : "+ n +
@@ -229,15 +229,15 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
             final FilterAttributeExtractor fae = new FilterAttributeExtractor();
             queryFilter.accept(fae, null);
-            final Set<Name> filterPropertyNames = fae.getAttributeNameSet();
+            final Set<GenericName> filterPropertyNames = fae.getAttributeNameSet();
             if (filterPropertyNames.isEmpty()) {
                 //filter do not requiere attributs
                 readProperties = returnedProperties;
             } else {
-                final Set<Name> attributes = new LinkedHashSet<>(filterPropertyNames);
+                final Set<GenericName> attributes = new LinkedHashSet<>(filterPropertyNames);
                 attributes.addAll(Arrays.asList(queryPropertyNames));
                 readProperties = new ArrayList<>(attributes.size());
-                for (Name n : attributes) {
+                for (GenericName n : attributes) {
                     final AttributeDescriptor property = (AttributeDescriptor) originalSchema.getDescriptor(n);
                     if (property == null) {
                         throw new DataStoreException("Query filter requieres property : " + n
@@ -260,7 +260,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
         final SimpleFeatureType readSchema;
         final FeatureReader reader;
         try {
-            final Name[] readPropertyNames = new Name[readProperties.size()];
+            final GenericName[] readPropertyNames = new GenericName[readProperties.size()];
             for(int i=0;i<readPropertyNames.length;i++){
                 readPropertyNames[i] = readProperties.get(i).getName();
             }
@@ -597,7 +597,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
      * @throws IOException If the typeName is not available or some other error occurs.
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName,
+    public FeatureWriter getFeatureWriter(final GenericName typeName,
             final Filter filter, final Hints hints) throws DataStoreException {
 
         //will raise an error if it does not exist
@@ -706,7 +706,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
     }
 
     @Override
-    public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         super.createFeatureType(typeName, featureType);
 
         //generate proper indexes

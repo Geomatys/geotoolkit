@@ -28,7 +28,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -38,9 +38,9 @@ import org.geotoolkit.feature.type.Name;
 public class DataUtilitiesTest {
 
     private final FeatureStore store;
-    private final Name name1;
-    private final Name name2;
-    private final Name name3;
+    private final GenericName name1;
+    private final GenericName name2;
+    private final GenericName name3;
 
     public DataUtilitiesTest() throws DataStoreException{
         store = new MemoryFeatureStore();

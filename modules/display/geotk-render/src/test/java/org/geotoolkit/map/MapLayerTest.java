@@ -42,7 +42,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 
 /**
@@ -109,7 +109,7 @@ public class MapLayerTest extends TestCase{
             //ok
         }
 
-        final Name name = DefaultName.create("test");
+        final GenericName name = DefaultName.create("test");
         FeatureTypeBuilder builder = new FeatureTypeBuilder();
         builder.setName(name);
         FeatureType type = builder.buildFeatureType();

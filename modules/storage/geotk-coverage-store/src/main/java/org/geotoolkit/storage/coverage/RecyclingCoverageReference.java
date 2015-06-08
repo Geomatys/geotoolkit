@@ -26,7 +26,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * Abstract coverage reference which recycle readers.
@@ -55,7 +55,7 @@ public abstract class RecyclingCoverageReference extends AbstractCoverageReferen
      */
     private final ConcurrentLinkedDeque<CoverageReader> readers = new ConcurrentLinkedDeque<>();
 
-    public RecyclingCoverageReference(CoverageStore store, Name name) {
+    public RecyclingCoverageReference(CoverageStore store, GenericName name) {
         super(store, name);
     }
 

@@ -43,6 +43,7 @@ import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryType;
 import org.opengis.filter.expression.Expression;
@@ -212,12 +213,12 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
             final Object attValue = att.getValue();
             if (attValue instanceof Collection) {
                 for (Object o : (Collection) attValue) {
-                    writer.writeStartElement(att.getName().getNamespaceURI(), att.getName().tip().toString());
+                    writer.writeStartElement(DefaultName.getNamespace(att.getName()), att.getName().tip().toString());
                     writer.writeCharacters(Utils.getStringValue(o));
                     writer.writeEndElement();
                 }
             } else {
-                writer.writeStartElement(att.getName().getNamespaceURI(), att.getName().tip().toString());
+                writer.writeStartElement(DefaultName.getNamespace(att.getName()), att.getName().tip().toString());
                 writer.writeCharacters(Utils.getStringValue(attValue));
                 writer.writeEndElement();
             }
@@ -259,7 +260,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
 
         FeatureType type = featureCollection.getFeatureType();
         if (type != null && type.getName() != null) {
-            String namespace = type.getName().getNamespaceURI();
+            String namespace = DefaultName.getNamespace(type.getName());
             if (namespace != null && !(namespace.equals("http://www.opengis.net/gml") || namespace.equals("http://www.opengis.net/gml/3.2"))) {
                 Prefix prefix    = getPrefix(namespace);
                 writer.writeNamespace(prefix.prefix, namespace);

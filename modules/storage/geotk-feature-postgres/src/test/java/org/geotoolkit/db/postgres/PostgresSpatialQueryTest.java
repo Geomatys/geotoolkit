@@ -37,7 +37,7 @@ import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -96,7 +96,7 @@ public class PostgresSpatialQueryTest {
         //open in complex type to delete all types
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
         store = (PostgresFeatureStore) FeatureStoreFinder.open(params);        
-        for(Name n : store.getNames()){
+        for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             vc.dropVersioning();
             store.deleteFeatureType(n);

@@ -20,7 +20,7 @@ package org.geotoolkit.data.query;
 import java.util.Date;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.version.Version;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -77,7 +77,7 @@ public interface Query {
      * @return the name of the feature type to be returned with this query.
      * @throws IllegalStateException if the query is not simple.
      */
-    Name getTypeName() throws IllegalStateException;
+    GenericName getTypeName() throws IllegalStateException;
 
     /**
      * A query is consider simple when it has a single source which is a selector.
@@ -140,7 +140,7 @@ public interface Query {
      *       I think Query.FIDS fills this role to some degree.
      *       Query.FIDS.equals( filter ) would meet this need?
      */
-    Name[] getPropertyNames();
+    GenericName[] getPropertyNames();
 
     /**
      * Convenience method to determine if the query should use the full schema

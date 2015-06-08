@@ -28,7 +28,7 @@ import org.geotoolkit.ows.xml.RequestBase;
 import org.apache.sis.util.Version;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.sld.StyledLayerDescriptor;
 
@@ -56,7 +56,7 @@ public class GetMap implements RequestBase {
     /**
      * List of layers to request.
      */
-    private final List<Name> layers;
+    private final List<GenericName> layers;
 
     /**
      * List of style names to apply.
@@ -118,7 +118,7 @@ public class GetMap implements RequestBase {
      * Default minimal constructor to generate a {@code GetMap} request.
      */
     public GetMap(final Envelope envelope, final Version version, final String format,
-                  final List<Name> layers, final Dimension size, Object parameters)
+                  final List<GenericName> layers, final Dimension size, Object parameters)
     {
         this(envelope, version, format, layers, new ArrayList<String>(), size, parameters);
     }
@@ -127,7 +127,7 @@ public class GetMap implements RequestBase {
      * GetMap with a list of styles defined.
      */
     public GetMap(final Envelope envelope, final Version version, final String format,
-                  final List<Name> layers, final List<String> styles, final Dimension size,
+                  final List<GenericName> layers, final List<String> styles, final Dimension size,
                   Object parameters)
     {
         this(envelope, version, format, layers, styles, null, null, size, parameters);
@@ -137,7 +137,7 @@ public class GetMap implements RequestBase {
      * GetMap with a list of styles, an elevation and a time value.
      */
     public GetMap(final Envelope envelope, final Version version, final String format,
-                  final List<Name> layers, final List<String> styles, final Double elevation,
+                  final List<GenericName> layers, final List<String> styles, final Double elevation,
                   final List<Date> date, final Dimension size, Object parameters)
     {
         this(envelope, version, format, layers, styles, null, elevation, date, size, null, null, 0, null, parameters);
@@ -147,7 +147,7 @@ public class GetMap implements RequestBase {
      * Constructor which contains all possible parameters in a {@code GetMap} request.
      */
     public GetMap(final Envelope envelope, final Version version, final String format,
-                  final List<Name> layers, final List<String> styles,
+                  final List<GenericName> layers, final List<String> styles,
                   final StyledLayerDescriptor sld, final Double elevation, final List<Date> date,
                   final Dimension size, final Color background,
                   final Boolean transparent, double azimuth, final String exceptions,
@@ -156,7 +156,7 @@ public class GetMap implements RequestBase {
         this.parameters = parameters;
         this.envelope = new ImmutableEnvelope(envelope);
         this.format = format;
-        this.layers = UnmodifiableArrayList.wrap(layers.toArray(new Name[layers.size()]));
+        this.layers = UnmodifiableArrayList.wrap(layers.toArray(new GenericName[layers.size()]));
         this.styles = UnmodifiableArrayList.wrap(styles.toArray(new String[styles.size()]));
         this.sld = sld;
         this.elevation = elevation;
@@ -193,7 +193,7 @@ public class GetMap implements RequestBase {
      * @param getMap A {@link GetMap} request.
      * @param layer  The only layer we want to keep for the {@code WMS GetMap} request.
      */
-    public GetMap(final GetMap getMap, final Name layer) {
+    public GetMap(final GetMap getMap, final GenericName layer) {
         this(   getMap.envelope,
                 getMap.getVersion(),
                 getMap.format,
@@ -219,7 +219,7 @@ public class GetMap implements RequestBase {
      * @param layers A list of layers that will be requested, instead of the ones present in the
      *               GetMap request given.
      */
-    public GetMap(final GetMap getMap, final List<Name> layers) {
+    public GetMap(final GetMap getMap, final List<GenericName> layers) {
         this(   getMap.envelope,
                 getMap.getVersion(),
                 getMap.format,
@@ -311,7 +311,7 @@ public class GetMap implements RequestBase {
      * Returns the list of layers to request. This list may be immutable, depending on the
      * constructor chosen.
      */
-    public List<Name> getLayers() {
+    public List<GenericName> getLayers() {
         return layers;
     }
 

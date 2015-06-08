@@ -17,7 +17,7 @@
 package org.geotoolkit.storage.coverage;
 
 import org.geotoolkit.storage.StorageEvent;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * Coverage store structure change event.
@@ -39,12 +39,12 @@ public class CoverageStoreManagementEvent extends StorageEvent {
     };
 
     private final Type type;    
-    private final Name coverageName;
+    private final GenericName coverageName;
     private final String pyramidId;
     private final String mosaicId;
     
     
-    public CoverageStoreManagementEvent(Object source, Type type, Name name, String pyramidId, String mosaicId) {
+    public CoverageStoreManagementEvent(Object source, Type type, GenericName name, String pyramidId, String mosaicId) {
         super(source);
         this.type = type;
         this.coverageName = name;
@@ -56,7 +56,7 @@ public class CoverageStoreManagementEvent extends StorageEvent {
         return type;
     }
     
-    public Name getCoverageName() {
+    public GenericName getCoverageName() {
         return coverageName;
     }
 
@@ -74,47 +74,47 @@ public class CoverageStoreManagementEvent extends StorageEvent {
     }
     
     public static CoverageStoreManagementEvent createCoverageAddEvent(
-            final Object source, final Name name){
+            final Object source, final GenericName name){
         return new CoverageStoreManagementEvent(source, Type.COVERAGE_ADD, name, null, null);
     }
     
     public static CoverageStoreManagementEvent createCoverageUpdateEvent(
-            final Object source, final Name name){
+            final Object source, final GenericName name){
         return new CoverageStoreManagementEvent(source, Type.COVERAGE_UPDATE, name, null, null);
     }
     
     public static CoverageStoreManagementEvent createCoverageDeleteEvent(
-            final Object source, final Name name){
+            final Object source, final GenericName name){
         return new CoverageStoreManagementEvent(source, Type.COVERAGE_DELETE, name, null, null);
     }
     
     public static CoverageStoreManagementEvent createPyramidAddEvent(
-            final Object source, final Name name, final String pyramidId){
+            final Object source, final GenericName name, final String pyramidId){
         return new CoverageStoreManagementEvent(source, Type.PYRAMID_ADD, name, pyramidId, null);
     }
     
     public static CoverageStoreManagementEvent createPyramidUpdateEvent(
-            final Object source, final Name name, final String pyramidId){
+            final Object source, final GenericName name, final String pyramidId){
         return new CoverageStoreManagementEvent(source, Type.PYRAMID_UPDATE, name, pyramidId, null);
     }
     
     public static CoverageStoreManagementEvent createPyramidDeleteEvent(
-            final Object source, final Name name, final String pyramidId){
+            final Object source, final GenericName name, final String pyramidId){
         return new CoverageStoreManagementEvent(source, Type.PYRAMID_DELETE, name, pyramidId, null);
     }
     
     public static CoverageStoreManagementEvent createMosaicAddEvent(
-            final Object source, final Name name, final String pyramidId, final String mosaicId){
+            final Object source, final GenericName name, final String pyramidId, final String mosaicId){
         return new CoverageStoreManagementEvent(source, Type.PYRAMID_ADD, name, pyramidId, mosaicId);
     }
     
     public static CoverageStoreManagementEvent createMosaicUpdateEvent(
-            final Object source, final Name name, final String pyramidId, final String mosaicId){
+            final Object source, final GenericName name, final String pyramidId, final String mosaicId){
         return new CoverageStoreManagementEvent(source, Type.PYRAMID_UPDATE, name, pyramidId, mosaicId);
     }
     
     public static CoverageStoreManagementEvent createMosaicDeleteEvent(
-            final Object source, final Name name, final String pyramidId, final String mosaicId){
+            final Object source, final GenericName name, final String pyramidId, final String mosaicId){
         return new CoverageStoreManagementEvent(source, Type.PYRAMID_DELETE, name, pyramidId, mosaicId);
     }
     

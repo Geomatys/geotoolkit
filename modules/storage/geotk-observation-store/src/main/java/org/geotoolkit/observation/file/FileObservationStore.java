@@ -32,7 +32,7 @@ import org.geotoolkit.sos.netcdf.NCFieldAnalyze;
 import org.geotoolkit.sos.netcdf.NetCDFExtractor;
 import org.geotoolkit.sos.netcdf.NetCDFParsingException;
 import org.geotoolkit.storage.DataFileStore;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
@@ -65,8 +65,8 @@ public class FileObservationStore extends AbstractObservationStore implements Da
     }
     
     @Override
-    public Set<Name> getProcedureNames() {
-        final Set<Name> names = new HashSet<>();
+    public Set<GenericName> getProcedureNames() {
+        final Set<GenericName> names = new HashSet<>();
         names.add(DefaultName.create(getProcedureID()));
         return names;
     }

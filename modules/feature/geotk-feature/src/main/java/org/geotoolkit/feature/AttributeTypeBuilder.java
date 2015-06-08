@@ -31,7 +31,7 @@ import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyType;
 import org.geotoolkit.filter.function.string.StringFunctionFactory;
 import org.opengis.filter.Filter;
@@ -99,7 +99,7 @@ public class AttributeTypeBuilder {
     /**
      * Local name used to name a descriptor; or combined with namespaceURI to name a type.
      */
-    private Name name;
+    private GenericName name;
     /**
      * abstract flag
      */
@@ -207,7 +207,7 @@ public class AttributeTypeBuilder {
         return binding;
     }
 
-    public void setName(final Name name) {
+    public void setName(final GenericName name) {
         this.name = name;
     }
 
@@ -219,7 +219,7 @@ public class AttributeTypeBuilder {
         this.name = DefaultName.create(namespace, localPart);
     }
 
-    public Name getName() {
+    public GenericName getName() {
         return name;
     }
 
@@ -294,7 +294,7 @@ public class AttributeTypeBuilder {
      * </p>
      */
     public AttributeType buildType() {
-        final Name name;
+        final GenericName name;
         if(this.name == null){
             name = DefaultName.create(binding.getSimpleName());
         }else{
@@ -321,7 +321,7 @@ public class AttributeTypeBuilder {
      * </p>
      */
     public GeometryType buildGeometryType() {
-        final Name name;
+        final GenericName name;
         if(this.name == null){
             name = DefaultName.create(binding.getSimpleName());
         }else{
@@ -336,7 +336,7 @@ public class AttributeTypeBuilder {
     }
 
     public AssociationType buildAssociationType(final AttributeType distType){
-        final Name name;
+        final GenericName name;
         if(this.name == null){
             name = DefaultName.create(binding.getSimpleName());
         }else{

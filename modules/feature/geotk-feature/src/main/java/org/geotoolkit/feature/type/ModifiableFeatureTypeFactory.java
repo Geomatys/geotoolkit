@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import java.util.Collection;
 import java.util.List;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
@@ -35,7 +36,7 @@ public class ModifiableFeatureTypeFactory extends DefaultFeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public ComplexType createComplexType(final Name name, final Collection schema,
+    public ComplexType createComplexType(final GenericName name, final Collection schema,
             final boolean isIdentifiable, final boolean isAbstract, final List restrictions,
             final AttributeType superType, final InternationalString description) {
         return new ModifiableComplexType(name, schema, isIdentifiable,
@@ -46,7 +47,7 @@ public class ModifiableFeatureTypeFactory extends DefaultFeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType createFeatureType(final Name name, final Collection<PropertyDescriptor> schema,
+    public FeatureType createFeatureType(final GenericName name, final Collection<PropertyDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract, final List<Filter> restrictions,
             final AttributeType superType, final InternationalString description) {
         return new ModifiableFeaturetype(name, schema, defaultGeometry,
@@ -57,7 +58,7 @@ public class ModifiableFeatureTypeFactory extends DefaultFeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeatureType createSimpleFeatureType(final Name name, final List<AttributeDescriptor> schema,
+    public SimpleFeatureType createSimpleFeatureType(final GenericName name, final List<AttributeDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
             final List<Filter> restrictions, final AttributeType superType, final InternationalString description) {
         return new ModifiableSimpleFeaturetype(name, schema, defaultGeometry,

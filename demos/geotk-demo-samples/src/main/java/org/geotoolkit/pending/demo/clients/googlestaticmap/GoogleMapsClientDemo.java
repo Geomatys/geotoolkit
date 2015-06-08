@@ -13,7 +13,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 
 public class GoogleMapsClientDemo {
@@ -38,7 +38,7 @@ public class GoogleMapsClientDemo {
 
         final CoverageStore store = CoverageStoreFinder.open(parameters);
 
-        for(Name name : store.getNames()){
+        for(GenericName name : store.getNames()){
             final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageReference(name));
             layer.setDescription(SF.description(name.tip().toString(), ""));
             context.layers().add(layer);

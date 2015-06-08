@@ -67,7 +67,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.FilterUtilities;
@@ -309,7 +309,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         //nothing visible so no possible selection
         if (!item.isVisible()) return graphics;
 
-        final Name featureTypeName = item.getCollection().getFeatureType().getName();
+        final GenericName featureTypeName = item.getCollection().getFeatureType().getName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 c2d.getSEScale(), featureTypeName,null);
 

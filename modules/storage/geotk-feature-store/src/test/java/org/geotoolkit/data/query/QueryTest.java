@@ -35,7 +35,7 @@ import org.geotoolkit.feature.ComplexAttribute;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
@@ -52,8 +52,8 @@ public class QueryTest extends TestCase{
 
 
     private final MemoryFeatureStore store = new MemoryFeatureStore();
-    private final Name name1;
-    private final Name name2;
+    private final GenericName name1;
+    private final GenericName name2;
     
     private final String fid_1_0;
     private final String fid_1_1;
@@ -169,11 +169,11 @@ public class QueryTest extends TestCase{
     @Test
     public void testStaticQueryBuilder() throws Exception {
         Query query = null;
-        Name name = DefaultName.create("http://test.org", "testLocal");
+        GenericName name = DefaultName.create("http://test.org", "testLocal");
 
         //test null values------------------------------------------------------
         try{
-            QueryBuilder.all((Name)null);
+            QueryBuilder.all((GenericName)null);
             throw new Exception("We can not build a query without at least the type name.");
         }catch(NullPointerException ex){
             //ok
@@ -257,7 +257,7 @@ public class QueryTest extends TestCase{
      */
     @Test
     public void testQueryBuilder() throws Exception {
-        Name name = DefaultName.create("http://test.org", "testLocal");
+        GenericName name = DefaultName.create("http://test.org", "testLocal");
         Query query = null;
         Query query2 = null;
 

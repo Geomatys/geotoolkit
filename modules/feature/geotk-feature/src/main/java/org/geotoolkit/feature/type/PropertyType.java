@@ -31,6 +31,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import java.util.List;
 import java.util.Map;
 
@@ -152,7 +153,7 @@ public interface PropertyType extends org.opengis.feature.PropertyType {
      * @deprecated Inherited from {@link org.opengis.feature.PropertyType#getName()}.
      */
     @Override
-    Name getName();
+    GenericName getName();
 
     /**
      * The java class that values of properties of the property type are bound

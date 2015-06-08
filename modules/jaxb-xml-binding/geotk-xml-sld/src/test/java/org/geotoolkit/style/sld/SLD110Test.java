@@ -260,7 +260,7 @@ public class SLD110Test extends TestCase{
         assertEquals(constr.size(), 1);
 
         assertNotNull(cons.get(0).getFilter());
-        assertEquals(cons.get(0).getFeatureTypeName().toString(),"FeatureName");
+        assertEquals(cons.get(0).getFeatureTypeName().tip().toString(),"FeatureName");
         assertEquals(cons.get(0).getExtent().size(), 2);
 
         ext = cons.get(0).getExtent().get(0);

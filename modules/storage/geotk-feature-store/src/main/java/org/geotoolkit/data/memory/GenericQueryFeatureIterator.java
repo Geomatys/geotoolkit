@@ -31,7 +31,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
@@ -50,7 +50,7 @@ public class GenericQueryFeatureIterator {
         final Integer start = remainingParameters.getStartIndex();
         final Integer max = remainingParameters.getMaxFeatures();
         final Filter filter = remainingParameters.getFilter();
-        final Name[] properties = remainingParameters.getPropertyNames();
+        final GenericName[] properties = remainingParameters.getPropertyNames();
         final SortBy[] sorts = remainingParameters.getSortBy();
         final double[] resampling = remainingParameters.getResolution();
         final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
@@ -105,17 +105,17 @@ public class GenericQueryFeatureIterator {
         final FeatureType original = reader.getFeatureType();
         FeatureType mask = original;
         if(properties != null){
-            final List<Name> names = new ArrayList<Name>();
+            final List<GenericName> names = new ArrayList<GenericName>();
             loop:
-            for(Name n : properties){
-                for(Name dn : names){
+            for(GenericName n : properties){
+                for(GenericName dn : names){
                     if(DefaultName.match(n, dn)) continue loop;
                 }
                 names.add(n);
             }
             
             try {
-                mask = FeatureTypeUtilities.createSubType(mask, names.toArray(new Name[0]));
+                mask = FeatureTypeUtilities.createSubType(mask, names.toArray(new GenericName[0]));
             } catch (SchemaException ex) {
                 throw new DataStoreException(ex);
             }

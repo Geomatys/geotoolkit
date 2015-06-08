@@ -22,7 +22,6 @@ import java.util.Objects;
 import javax.xml.namespace.QName;
 import org.apache.sis.util.iso.DefaultTypeName;
 import org.apache.sis.internal.system.DefaultFactories;
-import org.apache.sis.util.iso.Names;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
@@ -56,19 +55,26 @@ import org.opengis.util.ScopedName;
  * @deprecated The GeoAPI {@code Name} interface is expected to be replaced by {@link org.opengis.util.GenericName}.
  */
 @Deprecated
-public class DefaultName extends DefaultTypeName implements Name {
+public class DefaultName extends DefaultTypeName implements GenericName {
 
-    public static DefaultName create(final QName qname) {
-        return new DefaultName(qname);
+    public static GenericName create(final QName qname) {
+        return create(qname.getNamespaceURI(), qname.getLocalPart());
     }
 
-    public static DefaultName create(final String namespace, final String local) {
-        return new DefaultName(namespace, local);
+    public static GenericName create(final String local) {
+        return create(null,local);
+    }
+    
+    public static GenericName create(final String namespace, final String local) {
+
+        // WARNING: DefaultFactories.NAMES is not a public API and may change in any future SIS version.
+        if(namespace==null){
+            return DefaultFactories.forBuildin(NameFactory.class).createGenericName(null, local);
+        }else{
+            return DefaultFactories.forBuildin(NameFactory.class).createGenericName(null, namespace, local);
+        }
     }
 
-    public static DefaultName create(final String local) {
-        return new DefaultName(local);
-    }
 
     /**
      * Namespace / scope
@@ -113,11 +119,6 @@ public class DefaultName extends DefaultTypeName implements Name {
         //return DefaultFactories.forBuildin(NameFactory.class).createGenericName(null, namespace, local);
     }
 
-    @Override
-    public String getNamespaceURI() {
-        return namespace;
-    }
-
     /**
      * Returns a hash code value for this operand.
      */
@@ -136,11 +137,13 @@ public class DefaultName extends DefaultTypeName implements Name {
             return true;
         }
 
-        if (obj instanceof Name) {
-            final Name other = (Name) obj;
-            if( (other.getNamespaceURI() != null && !other.getNamespaceURI().isEmpty()) &&
-                (this.getNamespaceURI() != null  && !this.getNamespaceURI().isEmpty()) ){
-                if (!Objects.equals(this.getNamespaceURI(), other.getNamespaceURI())) {
+        if (obj instanceof GenericName) {
+            final GenericName other = (GenericName) obj;
+            final String ns1 = DefaultName.getNamespace(this);
+            final String ns2 = DefaultName.getNamespace(other);
+            if( (ns2 != null && !ns2.isEmpty()) &&
+                (ns1 != null  && !ns1.isEmpty()) ){
+                if (!Objects.equals(ns1, ns2)) {
                     return false;
                 }
             }
@@ -163,7 +166,7 @@ public class DefaultName extends DefaultTypeName implements Name {
      * @param candidate
      * @return Name
      */
-    public static Name valueOf(final String candidate){
+    public static GenericName valueOf(final String candidate){
 
         if(candidate.startsWith("{")){
             //name is in extended form
@@ -182,7 +185,7 @@ public class DefaultName extends DefaultTypeName implements Name {
 
     }
 
-    private static Name toSessionNamespaceFromExtended(final String candidate) {
+    private static GenericName toSessionNamespaceFromExtended(final String candidate) {
         final int index = candidate.indexOf('}');
 
         if(index == -1) throw new IllegalArgumentException("Invalide extended form : "+ candidate);
@@ -194,11 +197,20 @@ public class DefaultName extends DefaultTypeName implements Name {
     }
 
     public static String toExtendedForm(final GenericName name){
-        final NameSpace uri = name.scope();
-        if(uri==null || uri.isGlobal()){
+        final String ns = DefaultName.getNamespace(name);
+        if(ns==null || ns.isEmpty()){
             return name.toString();
         }else{
-            return new StringBuilder(uri.name().toString()).append(':').append(name.toString()).toString();
+            return new StringBuilder(ns).append(':').append(name.tip().toString()).toString();
+        }
+    }
+
+    public static String toExpandedString(final GenericName name){
+        String ns = getNamespace(name);
+        if(ns==null){
+            return name.tip().toString();
+        }else{
+            return new StringBuilder("{").append(ns).append('}').append(name.tip().toString()).toString();
         }
     }
 
@@ -214,27 +226,28 @@ public class DefaultName extends DefaultTypeName implements Name {
     public static boolean match(final GenericName name, final String candidate){
         if(candidate.startsWith("{")){
             //candidate is in extended form
-            return candidate.equals(Names.toExpandedString(name));
+            return candidate.equals(toExpandedString(name));
         }
 
         final int index = candidate.lastIndexOf(':');
 
         if(index <= 0){
-            return candidate.equals(name.toString());
+            return candidate.equals(name.tip().toString());
         }else{
             final String uri = candidate.substring(0,index);
             final String local = candidate.substring(index+1,candidate.length());
-            return uri.equals(name.scope().name().toString()) && local.equals(name.toString());
+            return uri.equals(getNamespace(name)) && local.equals(name.tip().toString());
         }
     }
 
     public static boolean match(final GenericName name, final GenericName candidate){
-        if(name.scope().isGlobal() || candidate.scope().isGlobal()){
+        final String ns1 = getNamespace(name);
+        final String ns2 = getNamespace(candidate);
+        if(ns1==null || ns2==null){
             //compare only localpart
-            return name.toString().equals(candidate.toString());
+            return name.tip().toString().equals(candidate.tip().toString());
         }else{
-            return name.scope().equals(candidate.scope())
-                && name.toString().equals(candidate.toString());
+            return name.toString().equals(candidate.toString());
         }
     }
 

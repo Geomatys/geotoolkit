@@ -63,7 +63,7 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory;
 
 public class ReportDemo {
@@ -88,7 +88,7 @@ public class ReportDemo {
         //source to make an atlas ----------------------------------------------------
         final FeatureStore store = FeatureStoreFinder.open(
                 (Map)Collections.singletonMap("url",ReportDemo.class.getResource("/data/world/Countries.shp")));
-        final Name name = store.getNames().iterator().next();
+        final GenericName name = store.getNames().iterator().next();
         final FeatureCollection countries =  store.createSession(true).getFeatureCollection(QueryBuilder.all(name));
 
 

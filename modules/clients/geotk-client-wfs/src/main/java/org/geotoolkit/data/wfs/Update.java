@@ -18,7 +18,7 @@
 package org.geotoolkit.data.wfs;
 
 import java.util.Map;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -52,11 +52,11 @@ public interface Update extends TransactionElement{
      * @return QName : requested type name, can be null
      * if not yet configured.
      */
-    Name getTypeName();
+    GenericName getTypeName();
 
     /**
      * @param type : requested type name, must not be null
      */
-    void setTypeName(Name type);
+    void setTypeName(GenericName type);
 
 }

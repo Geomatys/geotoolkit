@@ -75,7 +75,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.ModifiableFeatureTypeFactory;
 import org.geotoolkit.feature.type.ModifiableFeaturetype;
 import org.geotoolkit.feature.type.ModifiableType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.OperationDescriptor;
 import org.geotoolkit.feature.type.OperationType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -498,7 +498,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
                         //if the type name is not the same as the element name, make a copy of the type renaming it
                         if(!ft.getName().tip().toString().equals(element.getName())){
-                            final Name name = DefaultName.create(ft.getName().getNamespaceURI(), element.getName());
+                            final GenericName name = DefaultName.create(DefaultName.getNamespace(ft.getName()), element.getName());
                             final ModifiableFeaturetype renamed = new ModifiableFeaturetype(name,new ArrayList(), null, type.isAbstract(), null, ft, null);
                             uncompleted.add(renamed);
                             result.add(renamed);
@@ -592,13 +592,13 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return false;
     }
 
-    public org.geotoolkit.feature.type.ComplexType getComplexType(Name name) throws SchemaException{
-        return getType(new QName(name.getNamespaceURI(), name.tip().toString()));
+    public org.geotoolkit.feature.type.ComplexType getComplexType(GenericName name) throws SchemaException{
+        return getType(new QName(DefaultName.getNamespace(name), name.tip().toString()));
     }
 
-    public PropertyDescriptor getElementType(Name name) throws SchemaException{
-        final Element parentElement = findGlobalElement(new QName(name.getNamespaceURI(), name.tip().toString()));
-        return elementToAttribute(parentElement, name.getNamespaceURI()).get(0);
+    public PropertyDescriptor getElementType(GenericName name) throws SchemaException{
+        final Element parentElement = findGlobalElement(new QName(DefaultName.getNamespace(name), name.tip().toString()));
+        return elementToAttribute(parentElement, DefaultName.getNamespace(name)).get(0);
     }
 
     private org.geotoolkit.feature.type.ComplexType getType(QName qname) throws SchemaException{
@@ -640,7 +640,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             if (isFeatureType && properName.endsWith("Type")) {
                 properName = properName.substring(0, properName.lastIndexOf("Type"));
             }
-            final Name ftypeName = DefaultName.create(namespace, properName);
+            final GenericName ftypeName = DefaultName.create(namespace, properName);
             builder.setName(ftypeName);
             finalType = (ModifiableType) ((isFeatureType) ?
                     new ModifiableFeaturetype(ftypeName,new ArrayList(), null, type.isAbstract(), null, ct, null)
@@ -668,7 +668,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
         if(finalType.isLock()) return;
 
-        final String namespace = finalType.getName().getNamespaceURI();
+        final String namespace = DefaultName.getNamespace(finalType.getName());
 
         //read attributes
         final List<Annotated> atts = type.getAttributeOrAttributeGroup();
@@ -858,7 +858,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
 
 
-    private static void removeAttributes(ModifiableType type, Set<Name> propNames){
+    private static void removeAttributes(ModifiableType type, Set<GenericName> propNames){
         final List<PropertyDescriptor> descs = type.getDescriptors();
         for(int i=descs.size()-1;i>=0;i--){
             if(propNames.contains(descs.get(i).getName())){
@@ -925,8 +925,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             adb.copy(atDesc);
             adb.setName(namespace, atDesc.getName().tip().toString());
             atb.copy(atDesc.getType());
-        } else {
-            namespace = null;
         }
 
         final String id = att.getId();
@@ -937,7 +935,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
         if(id!=null || name!=null){
             //find name
-            final Name attName = DefaultName.create(namespace, "@"+ ((name==null) ? id : name));
+            final GenericName attName = DefaultName.create(namespace, "@"+ ((name==null) ? id : name));
             adb.setName(attName);
             atb.setName(attName);
         }
@@ -1017,7 +1015,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
 
         final String elementName = attributeElement.getName();
         if(elementName!=null){
-            final Name attName = DefaultName.create(namespace, elementName);
+            final GenericName attName = DefaultName.create(namespace, elementName);
             adb.setName(attName);
             if(atb.getName()==null){
                 atb.setName(attName);

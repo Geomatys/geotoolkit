@@ -37,6 +37,7 @@ import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 
@@ -99,7 +100,7 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));
 
-        final String namespace = ft.getName().getNamespaceURI();
+        final String namespace = DefaultName.getNamespace(ft.getName());
         final Map <String, String> schemaLocation = new HashMap<String, String>();
 
         final String randomFileName = UUID.randomUUID().toString();

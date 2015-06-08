@@ -22,7 +22,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -36,7 +36,7 @@ public interface Delta {
      * 
      * @return the type affected by this delta
      */
-    Name getType();
+    GenericName getType();
 
     /**
      * Whenever a previous delta is commited, new or updated features

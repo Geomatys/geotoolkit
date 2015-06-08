@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,7 +42,7 @@ public class DefaultAssociationType extends DefaultPropertyType<AssociationType>
 
     private AssociationDescriptor descriptor;
 
-    public DefaultAssociationType(final Name name, final AttributeType referenceType, final boolean isAbstract,
+    public DefaultAssociationType(final GenericName name, final AttributeType referenceType, final boolean isAbstract,
             final List<Filter> restrictions, final AssociationType superType, final InternationalString description){
         super(name, referenceType.getBinding(), isAbstract, restrictions, superType, description);
         this.relatedType = referenceType;

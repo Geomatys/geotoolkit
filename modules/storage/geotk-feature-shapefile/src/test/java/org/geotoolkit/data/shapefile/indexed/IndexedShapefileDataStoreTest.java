@@ -79,7 +79,7 @@ import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.type.FeatureType;
 
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import org.geotoolkit.geometry.DefaultBoundingBox;
@@ -200,7 +200,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
             throws MalformedURLException, IOException, DataStoreException {
         IndexedShapefileFeatureStore s = new IndexedShapefileFeatureStore(ShapeTestData
                 .url(STATE_POP), null, true, true, treeType,null);
-        Name typeName = s.getName();
+        GenericName typeName = s.getName();
         FeatureCollection all = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         assertEquals(features.getEnvelope(), all.getEnvelope());

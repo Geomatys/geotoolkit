@@ -18,7 +18,7 @@ import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.wmsc.WebMapClientCached;
 import org.geotoolkit.wmsc.map.WMSCMapLayer;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 public class IGNClientDemo {
  
@@ -60,7 +60,7 @@ public class IGNClientDemo {
         final WebMapClientCached server = new WebMapClientCached(
                 new URL("http://wxs.ign.fr/inspire/wmsc?"), tokenAndReferer,true);
         
-        for(Name name : server.getNames()){
+        for(GenericName name : server.getNames()){
             if(name.tip().toString().contains("ELEVATION.SLOPES") || name.tip().toString().contains("ORTHOIMAGERY.ORTHOPHOTOS")){
                 final WMSCMapLayer sloplayer = new WMSCMapLayer(server, name);
                 sloplayer.setDescription(SF.description(name.tip().toString(), ""));

@@ -49,7 +49,7 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -67,7 +67,7 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
 
     protected final int imageIndex;
     
-    public AbstractPyramidalCoverageReference(CoverageStore store, Name name,int imageIndex) {
+    public AbstractPyramidalCoverageReference(CoverageStore store, GenericName name,int imageIndex) {
         super(store, name);
         this.imageIndex = imageIndex;
     }

@@ -33,7 +33,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.Process;
@@ -106,11 +106,11 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         try {
             final float size = inStore.getNames().size();
             int inc = 0;
-            for(Name n : inStore.getNames()){
+            for(GenericName n : inStore.getNames()){
 
                 fireProgressing("Copying "+n+".", (int)((inc*100f)/size), false);
                 final CoverageReference inRef = inStore.getCoverageReference(n);
-                final Name name = inRef.getName();
+                final GenericName name = inRef.getName();
                 if (erase) {
                     outStore.delete(name);
                 }
@@ -309,7 +309,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
         final GeneralGridGeometry globalGeom = reader.getGridGeometry(imageIndex);
         final CoordinateReferenceSystem crs = globalGeom.getCoordinateReferenceSystem();
 
-        final Name name = inRef.getName();
+        final GenericName name = inRef.getName();
         if(crs instanceof ImageCRS){
             //image is not georeferenced, we can't store it.
             fireWarningOccurred("Image "+name+" does not have a CoordinateReferenceSystem, insertion is skipped.", 0, null);

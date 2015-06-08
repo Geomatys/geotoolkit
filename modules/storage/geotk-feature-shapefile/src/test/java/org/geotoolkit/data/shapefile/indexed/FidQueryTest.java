@@ -37,7 +37,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureBuilder;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
@@ -63,7 +63,7 @@ public class FidQueryTest extends FIDTestCase {
     private static final FilterFactory2 fac = (FilterFactory2) FactoryFinder.getFilterFactory(null);
     private Map<String, Feature> fids = new HashMap<>();
 
-    private Name name;
+    private GenericName name;
     private Session session;
 
     private int numFeatures;

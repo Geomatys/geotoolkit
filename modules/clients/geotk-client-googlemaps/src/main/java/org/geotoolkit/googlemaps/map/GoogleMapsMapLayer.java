@@ -25,7 +25,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -49,7 +49,7 @@ public class GoogleMapsMapLayer extends DefaultCoverageMapLayer {
 
     private static CoverageReference getReference(StaticGoogleMapsClient server, String mapType){
         try {
-            for(Name n : server.getNames()){
+            for(GenericName n : server.getNames()){
                 if(n.tip().toString().equalsIgnoreCase(mapType)){
                     return server.getCoverageReference(n);
                 }

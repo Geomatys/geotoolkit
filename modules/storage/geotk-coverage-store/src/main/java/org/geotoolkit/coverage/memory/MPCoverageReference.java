@@ -27,8 +27,8 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.storage.coverage.*;
+import org.opengis.util.GenericName;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -46,7 +46,7 @@ public class MPCoverageReference extends AbstractPyramidalCoverageReference {
     private SampleModel sampleModel;
     private ColorModel colorModel;
 
-    public MPCoverageReference(final MPCoverageStore store, final Name name) {
+    public MPCoverageReference(final MPCoverageStore store, final GenericName name) {
         super(store,name,0);
         this.pyramidSet = new DefaultPyramidSet();
     }

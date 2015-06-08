@@ -31,6 +31,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import java.util.Map;
 
 import org.geotoolkit.feature.ComplexAttribute;
@@ -125,7 +126,7 @@ public interface PropertyDescriptor {
      * instance.
      * </p>
      */
-    Name getName();
+    GenericName getName();
 
     /**
      * The minimum number of occurrences of the property within its containing

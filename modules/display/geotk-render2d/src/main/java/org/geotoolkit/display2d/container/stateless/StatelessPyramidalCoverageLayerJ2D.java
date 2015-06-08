@@ -47,7 +47,7 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.DefaultRasterSymbolizerRenderer;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -279,7 +279,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     private TileSetResult listTiles(RenderingContext2D context2D){
         final TileSetResult result = new TileSetResult();
         
-        final Name coverageName = item.getCoverageReference().getName();
+        final GenericName coverageName = item.getCoverageReference().getName();
         result.rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 context2D.getSEScale(), coverageName,null);
 

@@ -19,7 +19,7 @@ package org.geotoolkit.data.query;
 
 import org.geotoolkit.data.session.Session;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * Default selector implementation.
@@ -30,10 +30,10 @@ import org.geotoolkit.feature.type.Name;
 public final class DefaultSelector implements Selector{
 
     private final Session session;
-    private final Name typeName;
+    private final GenericName typeName;
     private final String name;
 
-    public DefaultSelector(final Session session, final Name typeName, final String selectorName) {
+    public DefaultSelector(final Session session, final GenericName typeName, final String selectorName) {
         ensureNonNull("selector feature type name", typeName);
         ensureNonNull("selector name", selectorName);
         this.session = session;
@@ -53,7 +53,7 @@ public final class DefaultSelector implements Selector{
      * {@inheritDoc }
      */
     @Override
-    public Name getFeatureTypeName() {
+    public GenericName getFeatureTypeName() {
         return typeName;
     }
 

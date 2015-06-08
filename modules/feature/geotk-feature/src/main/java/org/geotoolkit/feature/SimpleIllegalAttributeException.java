@@ -20,7 +20,7 @@ import java.util.Map;
 import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * Indicates client class has attempted to create an invalid feature.
@@ -44,7 +44,7 @@ public class SimpleIllegalAttributeException extends IllegalAttributeException {
         }
 
         @Override
-        public Name getName() {
+        public GenericName getName() {
             return null;
         }
 

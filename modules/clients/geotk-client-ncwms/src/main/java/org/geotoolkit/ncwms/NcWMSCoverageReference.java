@@ -24,7 +24,7 @@ import org.geotoolkit.client.Request;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WMSCoverageReference;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -103,7 +103,7 @@ public class NcWMSCoverageReference extends WMSCoverageReference{
      */
     private Boolean logScale = null;
 
-    public NcWMSCoverageReference(NcWebMapClient server, Name name) {
+    public NcWMSCoverageReference(NcWebMapClient server, GenericName name) {
         super(server, name);
     }
 

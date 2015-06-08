@@ -37,7 +37,7 @@ import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
 import org.opengis.filter.Filter;
@@ -287,7 +287,7 @@ public class OracleFilterToSQL implements FilterToSQL {
     @Override
     public StringBuilder visit(PropertyName candidate, Object o) {
         final StringBuilder sb = toStringBuilder(o);
-        final Name name = DefaultName.valueOf(candidate.getPropertyName());
+        final GenericName name = DefaultName.valueOf(candidate.getPropertyName());
         sb.append('"');
         sb.append(name.tip().toString());
         sb.append('"');

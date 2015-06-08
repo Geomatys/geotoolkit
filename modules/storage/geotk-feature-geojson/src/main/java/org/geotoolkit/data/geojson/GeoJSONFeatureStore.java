@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.geojson;
 
+import org.opengis.util.GenericName;
 import com.vividsolutions.jts.geom.*;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
@@ -65,7 +66,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     private final ReadWriteLock tmpLock = new ReentrantReadWriteLock();
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false, false);
-    private Name name;
+    private GenericName name;
     private FeatureType featureType;
     private File descFile;
     private File jsonFile;
@@ -116,11 +117,11 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public boolean isWritable(final Name typeName) throws DataStoreException {
+    public boolean isWritable(final GenericName typeName) throws DataStoreException {
         return isLocal && descFile.canWrite() && jsonFile.canWrite();
     }
 
-    public Name getName() throws DataStoreException{
+    public GenericName getName() throws DataStoreException{
         checkTypeExist();
         return name;
     }
@@ -219,7 +220,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
             Object value = property.getValue();
             Class binding = value != null ? value.getClass() : String.class;
 
-            Name name = DefaultName.create(property.getKey());
+            GenericName name = DefaultName.create(property.getKey());
             HashMap<Object, Object> userData = null;
             if ("id".equals(property.getKey()) || "fid".equals(property.getKey())) {
                 userData = new HashMap<>();
@@ -284,8 +285,8 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public Set<Name> getNames() throws DataStoreException {
-        Name name = getName();
+    public Set<GenericName> getNames() throws DataStoreException {
+        GenericName name = getName();
 
         if (name != null) {
             return Collections.singleton(getName());
@@ -342,7 +343,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter, final Hints hints) throws DataStoreException {
         typeCheck(typeName);
 
         final FeatureWriter fw = new GeoJSONFileWriter(jsonFile, featureType, rwLock, tmpLock,
@@ -358,7 +359,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
         checkTypeExist();
         if (featureType == null) {
             throw  new DataStoreException("No FeatureType found for type name : "+typeName);
@@ -368,7 +369,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         if (!isLocal) {
             throw new DataStoreException("Cannot create FeatureType on remote GeoJSON");
         }
@@ -400,7 +401,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         deleteFeatureType(typeName);
         createFeatureType(typeName, featureType);
     }
@@ -409,7 +410,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void deleteFeatureType(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
         if (!getNames().contains(typeName)) {
             throw new DataStoreException("Type name doesn't exist in FeatureStore.");
         }
@@ -445,7 +446,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures, 
             final Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
@@ -454,7 +455,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
@@ -462,7 +463,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 

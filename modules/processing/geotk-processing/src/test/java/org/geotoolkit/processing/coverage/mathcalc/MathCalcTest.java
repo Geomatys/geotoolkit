@@ -41,7 +41,7 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
 import org.geotoolkit.feature.type.DefaultName;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.image.BufferedImages;
@@ -78,7 +78,7 @@ public class MathCalcTest {
 
 
         //create output coverage ref
-        final Name n = DefaultName.create("test");
+        final GenericName n = DefaultName.create("test");
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageReference outRef = (PyramidalCoverageReference) store.create(n);
         outRef.setPackMode(ViewType.GEOPHYSICS);
@@ -130,7 +130,7 @@ public class MathCalcTest {
 
 
         //create output coverage ref
-        final Name n = DefaultName.create("test");
+        final GenericName n = DefaultName.create("test");
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageReference outRef = (PyramidalCoverageReference) store.create(n);
         outRef.setPackMode(ViewType.GEOPHYSICS);
@@ -183,7 +183,7 @@ public class MathCalcTest {
 
 
         //create output coverage ref
-        final Name n = DefaultName.create("test");
+        final GenericName n = DefaultName.create("test");
         final MPCoverageStore store = new MPCoverageStore();
         final PyramidalCoverageReference outRef = (PyramidalCoverageReference) store.create(n);
         outRef.setPackMode(ViewType.GEOPHYSICS);

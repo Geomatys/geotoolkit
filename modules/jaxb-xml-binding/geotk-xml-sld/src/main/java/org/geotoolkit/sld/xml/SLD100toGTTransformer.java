@@ -40,7 +40,7 @@ import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.metadata.citation.OnlineResource;
@@ -132,7 +132,7 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
             final Collection<FeatureTypeConstraint> constraints = new ArrayList<FeatureTypeConstraint>();
             
             for(final org.geotoolkit.sld.xml.v100.FeatureTypeConstraint aftc : ftc.getFeatureTypeConstraint()){
-                final Name name = DefaultName.create(aftc.getFeatureTypeName());
+                final GenericName name = DefaultName.create(aftc.getFeatureTypeName());
                 final Filter filter = visitFilter(aftc.getFilter());
                 final List<Extent> extents = visitExtents(aftc.getExtent());
                 final FeatureTypeConstraint cons = sldFactory.createFeatureTypeConstraint(name, filter, extents);

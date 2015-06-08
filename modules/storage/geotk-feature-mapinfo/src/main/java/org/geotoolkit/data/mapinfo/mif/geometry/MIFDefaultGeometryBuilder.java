@@ -10,7 +10,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -28,8 +28,8 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
  */
 public class MIFDefaultGeometryBuilder extends MIFGeometryBuilder{
 
-    public static final Name NAME = DefaultName.create("GEOMETRY");
-    public static final Name GEOM_NAME = DefaultName.create("GEOMETRY");
+    public static final GenericName NAME = DefaultName.create("GEOMETRY");
+    public static final GenericName GEOM_NAME = DefaultName.create("GEOMETRY");
 
     @Override
     public void buildGeometry(Scanner scanner, Feature toFill, MathTransform toApply) throws DataStoreException {
@@ -88,7 +88,7 @@ public class MIFDefaultGeometryBuilder extends MIFGeometryBuilder{
     }
 
     @Override
-    public Name getName() {
+    public GenericName getName() {
         return NAME;
     }
 

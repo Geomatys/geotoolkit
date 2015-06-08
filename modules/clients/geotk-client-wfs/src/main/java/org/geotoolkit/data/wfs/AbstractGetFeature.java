@@ -44,7 +44,7 @@ import org.geotoolkit.wfs.xml.WFSMarshallerPool;
 import org.geotoolkit.wfs.xml.ResultTypeType;
 import org.geotoolkit.wfs.xml.WFSXmlFactory;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 
 
@@ -62,7 +62,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     private QName typeName       = null;
     private Filter filter        = null;
     private Integer maxFeatures  = null;
-    private Name[] propertyNames = null;
+    private GenericName[] propertyNames = null;
     private String outputFormat  = null;
 
     protected AbstractGetFeature(final String serverURL, final String version, final ClientSecurity security){
@@ -122,7 +122,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      * {@inheritDoc }
      */
     @Override
-    public Name[] getPropertyNames() {
+    public GenericName[] getPropertyNames() {
         return propertyNames;
     }
 
@@ -130,7 +130,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      * {@inheritDoc }
      */
     @Override
-    public void setPropertyNames(final Name[] properties) {
+    public void setPropertyNames(final GenericName[] properties) {
         this.propertyNames = properties;
     }
 
@@ -215,9 +215,10 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
         if(propertyNames != null){
             final StringBuilder sb = new StringBuilder();
 
-            for(final Name prop : propertyNames){
-                if(typeName != null && prop.getNamespaceURI() != null
-                   && prop.getNamespaceURI().equals(typeName.getNamespaceURI())){
+            for(final GenericName prop : propertyNames){
+                final String propNs = DefaultName.getNamespace(prop);
+                if(typeName != null && propNs != null
+                   && propNs.equals(typeName.getNamespaceURI())){
                     sb.append(typeName.getPrefix()).append(':').append(prop.tip().toString()).append(',');
                 }else{
                     sb.append(DefaultName.toExtendedForm(prop)).append(',');
@@ -266,7 +267,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
         final List<String> propName = new ArrayList<String>();
         if(propertyNames != null){
             // TODO handle prefix/namespace
-            for(final Name prop : propertyNames){
+            for(final GenericName prop : propertyNames){
                 propName.add(prop.tip().toString());
             }
         }

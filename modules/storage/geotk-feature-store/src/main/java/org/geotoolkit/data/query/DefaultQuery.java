@@ -22,7 +22,7 @@ import java.util.Date;
 import org.geotoolkit.factory.Hints;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -37,7 +37,7 @@ class DefaultQuery implements Query {
 
     private final String language;
     private final Source source;
-    private final Name[] properties;
+    private final GenericName[] properties;
     private final Integer maxFeatures;
     private final int startIndex;
     private final Filter filter;
@@ -61,7 +61,7 @@ class DefaultQuery implements Query {
      *
      * @param typeName the name of the featureType to retrieve
      */
-    DefaultQuery(final Source name, final Name[] attributs) {
+    DefaultQuery(final Source name, final GenericName[] attributs) {
         this(name,
                 Filter.INCLUDE,
                 attributs,
@@ -74,7 +74,7 @@ class DefaultQuery implements Query {
                 null);
     }
     
-    DefaultQuery(final Source source, final Filter filter, final Name[] attributs, final SortBy[] sort,
+    DefaultQuery(final Source source, final Filter filter, final GenericName[] attributs, final SortBy[] sort,
             final CoordinateReferenceSystem crs, final int startIndex, final Integer MaxFeature, 
             final double[] resolution, final Object version, final Hints hints){
 
@@ -122,7 +122,7 @@ class DefaultQuery implements Query {
     /**
      * A custom query statement in the given language.
      */
-    DefaultQuery(final String language, final String statement, final Name name) {
+    DefaultQuery(final String language, final String statement, final GenericName name) {
         this.language = language;
         this.source = new DefaultTextStatement(statement,null,name);
         this.properties = null;
@@ -173,7 +173,7 @@ class DefaultQuery implements Query {
      * {@inheritDoc }
      */
     @Override
-    public Name getTypeName() {
+    public GenericName getTypeName() {
         if(source instanceof Selector){
             return ((Selector)source).getFeatureTypeName();
         }else if(source instanceof TextStatement){
@@ -196,7 +196,7 @@ class DefaultQuery implements Query {
      * {@inheritDoc }
      */
     @Override
-    public Name[] getPropertyNames() {
+    public GenericName[] getPropertyNames() {
         return properties;
     }
 

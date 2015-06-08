@@ -29,7 +29,7 @@ import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.awt.geom.Rectangle2D;
@@ -49,11 +49,11 @@ import org.apache.sis.util.ArgumentChecks;
  *         Date : 26/02/13
  */
 public class MIFTextBuilder extends MIFGeometryBuilder {
-    public static final Name NAME = DefaultName.create("ENVELOPE");
-    public static final Name TEXT_NAME = DefaultName.create("TEXT");
-    public static final Name SPACING_NAME = DefaultName.create("SPACING");
-    public static final Name JUSTIFY_NAME = DefaultName.create("JUSTIFY");
-    public static final Name ANGLE_NAME = DefaultName.create("ANGLE");
+    public static final GenericName NAME = DefaultName.create("ENVELOPE");
+    public static final GenericName TEXT_NAME = DefaultName.create("TEXT");
+    public static final GenericName SPACING_NAME = DefaultName.create("SPACING");
+    public static final GenericName JUSTIFY_NAME = DefaultName.create("JUSTIFY");
+    public static final GenericName ANGLE_NAME = DefaultName.create("ANGLE");
 
     public static final AttributeDescriptor TEXT_DESCRIPTOR;
     public static final AttributeDescriptor FONT_DESCRIPTOR;
@@ -264,7 +264,7 @@ public class MIFTextBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    public Name getName() {
+    public GenericName getName() {
         return NAME;
     }
 

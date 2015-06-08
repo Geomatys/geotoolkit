@@ -12,7 +12,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
 
@@ -77,8 +77,8 @@ public class MifDemo {
             // - The base type, which describe the attributes all features must have.
             // - The geometry types. They're feature types describing a specific geometry type we can find in the source
             // file. All those types inherit from base type, so we get all attributes associated with the geometry.
-            Set<Name> names = store1.getNames();
-            for(Name typeName : names) {
+            Set<GenericName> names = store1.getNames();
+            for(GenericName typeName : names) {
                 final FeatureType fType = store1.getFeatureType(typeName);
                 // Get all features of given type.
                 FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(typeName));

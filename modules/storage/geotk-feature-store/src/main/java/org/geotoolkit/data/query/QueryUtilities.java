@@ -33,7 +33,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
@@ -281,7 +281,7 @@ public class QueryUtilities {
         qb.setMaxFeatures(max);
 
         //join attributes names-------------------------------------------------
-        final Name[] propNames = retainAttributes(
+        final GenericName[] propNames = retainAttributes(
                 original.getPropertyNames(),
                 second.getPropertyNames());
         qb.setProperties(propNames);
@@ -414,7 +414,7 @@ public class QueryUtilities {
                 secondQuery.getMaxFeatures());
 
         //join attributes names
-        final Name[] propNames = joinAttributes(firstQuery.getPropertyNames(),
+        final GenericName[] propNames = joinAttributes(firstQuery.getPropertyNames(),
                 secondQuery.getPropertyNames());
 
         //join filters
@@ -429,7 +429,7 @@ public class QueryUtilities {
 
         int start = firstQuery.getStartIndex() + secondQuery.getStartIndex();
         //build the mixed query
-        final Name typeName = firstQuery.getTypeName() != null ?
+        final GenericName typeName = firstQuery.getTypeName() != null ?
             firstQuery.getTypeName() :
             secondQuery.getTypeName();
 
@@ -466,7 +466,7 @@ public class QueryUtilities {
      * @return Set of attribute names from <code>atts1</code> and
      *         <code>atts2</code>
      */
-    private static Name[] joinAttributes(final Name[] atts1, final Name[] atts2) {
+    private static GenericName[] joinAttributes(final GenericName[] atts1, final GenericName[] atts2) {
         if (atts1 == null && atts2 == null) {
             return null;
         }
@@ -485,7 +485,7 @@ public class QueryUtilities {
             }
         }
 
-        final Name[] propNames = new Name[atts.size()];
+        final GenericName[] propNames = new GenericName[atts.size()];
         atts.toArray(propNames);
 
         return propNames;
@@ -495,7 +495,7 @@ public class QueryUtilities {
      * Creates a set of attribute names from the two input lists of names,
      * while keep only the attributes from the second list
      */
-    private static Name[] retainAttributes(final Name[] atts1, final Name[] atts2) {
+    private static GenericName[] retainAttributes(final GenericName[] atts1, final GenericName[] atts2) {
         if (atts1 == null && atts2 == null) {
             return null;
         }
@@ -517,7 +517,7 @@ public class QueryUtilities {
             }
         }
 
-        final Name[] propNames = new Name[atts.size()];
+        final GenericName[] propNames = new GenericName[atts.size()];
         atts.toArray(propNames);
 
         return propNames;

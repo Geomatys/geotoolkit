@@ -27,7 +27,7 @@ import org.apache.sis.storage.DataStoreException;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -64,12 +64,12 @@ public class FishFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public Set<Name> getNames() throws DataStoreException {
+    public Set<GenericName> getNames() throws DataStoreException {
         return Collections.singleton(type.getName());
     }
 
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(GenericName typeName) throws DataStoreException {
         typeCheck(typeName);
         return type;
     }
@@ -96,17 +96,17 @@ public class FishFeatureStore extends AbstractFeatureStore{
     ///////////////////////////////////////////////////////////////
 
     @Override
-    public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void deleteFeatureType(Name typeName) throws DataStoreException {
+    public void deleteFeatureType(GenericName typeName) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -120,23 +120,23 @@ public class FishFeatureStore extends AbstractFeatureStore{
     ///////////////////////////////////////////////////////////////
 
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, 
+    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, 
             final Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
 
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(GenericName groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter,Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter,Hints hints) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 

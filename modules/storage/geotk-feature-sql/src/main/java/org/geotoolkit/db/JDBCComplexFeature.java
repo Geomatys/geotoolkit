@@ -54,7 +54,7 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.FeatureId;
@@ -70,7 +70,7 @@ import org.opengis.util.GenericName;
 public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
         
     private final DefaultJDBCFeatureStore store;
-    private final Map<Name,Object> progressiveMap = new HashMap<Name, Object>();
+    private final Map<GenericName,Object> progressiveMap = new HashMap<GenericName, Object>();
     private final FeatureType type;
     
     public JDBCComplexFeature(final DefaultJDBCFeatureStore store, final ResultSet rs,
@@ -81,7 +81,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
         
         int k=0;
         for(final PropertyDescriptor desc : type.getDescriptors()){
-            final Name n = desc.getName();
+            final GenericName n = desc.getName();
             final PropertyType ptype = desc.getType();
             
             final Object prop;
@@ -161,7 +161,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
         Object obj;
         if(name.scope().isGlobal()){
             obj = null;
-            for(Entry<Name,Object> entry : progressiveMap.entrySet()){
+            for(Entry<GenericName,Object> entry : progressiveMap.entrySet()){
                 if(DefaultName.match(name, entry.getKey())){
                     obj = entry.getValue();
                     break;

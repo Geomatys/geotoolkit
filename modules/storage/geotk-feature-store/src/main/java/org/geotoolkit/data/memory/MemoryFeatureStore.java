@@ -48,7 +48,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -141,8 +141,8 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     private final boolean singleTypeLock;
-    private final Map<Name,Group> groups = new HashMap<Name, Group>();
-    private Set<Name> nameCache = null;
+    private final Map<GenericName,Group> groups = new HashMap<GenericName, Group>();
+    private Set<GenericName> nameCache = null;
 
     public MemoryFeatureStore(){
         super(null);
@@ -168,7 +168,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
     public MemoryFeatureStore(final FeatureType type, final boolean singleTypeLock){
         super(null);
         this.singleTypeLock = singleTypeLock;
-        final Name name = type.getName();
+        final GenericName name = type.getName();
         groups.put(name, new Group(type));
     }
 
@@ -176,9 +176,9 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized Set<Name> getNames() throws DataStoreException {
+    public synchronized Set<GenericName> getNames() throws DataStoreException {
         if(nameCache == null){
-            nameCache = new HashSet<Name>(groups.keySet());
+            nameCache = new HashSet<GenericName>(groups.keySet());
         }
         return nameCache;
     }
@@ -187,7 +187,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(final Name name) throws DataStoreException {
+    public FeatureType getFeatureType(final GenericName name) throws DataStoreException {
         final Group grp = groups.get(name);
 
         if(grp == null){
@@ -201,7 +201,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized void createFeatureType(final Name name, final FeatureType featureType) throws DataStoreException {
+    public synchronized void createFeatureType(final GenericName name, final FeatureType featureType) throws DataStoreException {
         if(singleTypeLock) throw new DataStoreException(
                 "Memory feature store is in single type mode. Schema modification are not allowed.");
 
@@ -225,7 +225,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public synchronized void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         if(singleTypeLock) throw new DataStoreException(
                 "Memory feature store is in single type mode. Schema modification are not allowed.");
 
@@ -254,7 +254,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized void deleteFeatureType(final Name typeName) throws DataStoreException {
+    public synchronized void deleteFeatureType(final GenericName typeName) throws DataStoreException {
         if(singleTypeLock) throw new DataStoreException(
                 "Memory feature store is in single type mode. Schema modification are not allowed.");
 
@@ -283,7 +283,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> collection, 
+    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> collection, 
             final Hints hints) throws DataStoreException {
         typeCheck(groupName);
         final Group grp = groups.get(groupName);
@@ -336,7 +336,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         typeCheck(groupName);
 
         final Group grp = groups.get(groupName);
@@ -370,7 +370,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         typeCheck(groupName);
 
         final Group grp = groups.get(groupName);
@@ -389,7 +389,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
         fireFeaturesDeleted(groupName,eventIds);
     }
 
-    private Collection<Identifier> getAffectedFeatures(final Name groupName, final Filter filter) throws DataStoreException{
+    private Collection<Identifier> getAffectedFeatures(final GenericName groupName, final Filter filter) throws DataStoreException{
         final Group grp = groups.get(groupName);
 
         final Collection<Identifier> affected;
@@ -401,7 +401,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
 
             final QueryBuilder qb = new QueryBuilder(groupName);
             qb.setFilter(filter);
-            qb.setProperties(new Name[0]); //no properties, only ids
+            qb.setProperties(new GenericName[0]); //no properties, only ids
             final FeatureReader reader = getFeatureReader(qb.buildQuery());
             try{
                 while(reader.hasNext()){
@@ -452,7 +452,7 @@ public class MemoryFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter, final Hints hints) throws DataStoreException {
         return handleWriter(typeName, filter, hints);
     }
 

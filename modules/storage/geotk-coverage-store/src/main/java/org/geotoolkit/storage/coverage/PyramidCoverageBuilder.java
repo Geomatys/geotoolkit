@@ -35,7 +35,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.image.interpolation.LanczosInterpolation;
 import org.geotoolkit.image.interpolation.Resample;
@@ -258,7 +258,7 @@ public class PyramidCoverageBuilder {
      * @throws TransformException if problems during resampling operation.
      * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
      */
-    public void create(GridCoverage gridCoverage, CoverageStore coverageStore, Name coverageName,
+    public void create(GridCoverage gridCoverage, CoverageStore coverageStore, GenericName coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue)
             throws DataStoreException, TransformException, FactoryException, IOException {
         create(gridCoverage, coverageStore, coverageName, resolution_Per_Envelope, fillValue, null, null);
@@ -284,7 +284,7 @@ public class PyramidCoverageBuilder {
      * @throws TransformException if problems during resampling operation.
      * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
      */
-    public void create(CoverageReference gridCoverageRef, CoverageStore coverageStore, Name coverageName,
+    public void create(CoverageReference gridCoverageRef, CoverageStore coverageStore, GenericName coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue,
             ProcessListener processListener, ProgressMonitor monitor)
             throws DataStoreException, TransformException, FactoryException, IOException {
@@ -520,7 +520,7 @@ public class PyramidCoverageBuilder {
      * @throws TransformException if problems during resampling operation.
      * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
      */
-    public void create(GridCoverage gridCoverage, CoverageStore coverageStore, Name coverageName,
+    public void create(GridCoverage gridCoverage, CoverageStore coverageStore, GenericName coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue,
             ProcessListener processListener, ProgressMonitor monitor)
             throws DataStoreException, TransformException, FactoryException, IOException {
@@ -614,7 +614,7 @@ public class PyramidCoverageBuilder {
      * @throws TransformException if problems during resampling operation.
      * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
      */
-    public void create(GridCoverageReader reader, CoverageStore coverageStore, Name coverageName,
+    public void create(GridCoverageReader reader, CoverageStore coverageStore, GenericName coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue)
             throws DataStoreException, TransformException, FactoryException, IOException {
         create(reader, coverageStore, coverageName, resolution_Per_Envelope, fillValue, null);
@@ -640,7 +640,7 @@ public class PyramidCoverageBuilder {
      * @throws TransformException if problems during resampling operation.
      * @throws FactoryException if impossible to find {@code MathTransform} between two {@link CoordinateReferenceSystem}.
      */
-    public void create(GridCoverageReader reader, CoverageStore coverageStore, Name coverageName,
+    public void create(GridCoverageReader reader, CoverageStore coverageStore, GenericName coverageName,
             Map<Envelope, double[]> resolution_Per_Envelope, double[] fillValue, ProcessListener processListener)
             throws DataStoreException, TransformException, FactoryException, IOException {
         ArgumentChecks.ensureNonNull("GridCoverageReader"     , reader);
@@ -913,17 +913,17 @@ public class PyramidCoverageBuilder {
     }
 
     /**
-     * Search and return a {@link CoverageReference} in a {@link CoverageStore} from its {@link Name}.<br/>
+     * Search and return a {@link CoverageReference} in a {@link CoverageStore} from its {@link GenericName}.<br/>
      * If it doesn't exist a {@link CoverageReference} is created, added in {@link CoverageStore} parameter and returned.
      *
      * @param coverageStore
      * @param coverageName
-     * @return a {@link CoverageReference} in a {@link CoverageStore} from its {@link Name}.
+     * @return a {@link CoverageReference} in a {@link CoverageStore} from its {@link GenericName}.
      * @throws DataStoreException
      */
-    private CoverageReference getOrCreateCRef(CoverageStore coverageStore, Name coverageName) throws DataStoreException {
+    private CoverageReference getOrCreateCRef(CoverageStore coverageStore, GenericName coverageName) throws DataStoreException {
         CoverageReference cv = null;
-        for (Name n : coverageStore.getNames()) {
+        for (GenericName n : coverageStore.getNames()) {
             if (n.tip().toString().equals(coverageName.tip().toString())) {
                 cv = coverageStore.getCoverageReference(n);
             }

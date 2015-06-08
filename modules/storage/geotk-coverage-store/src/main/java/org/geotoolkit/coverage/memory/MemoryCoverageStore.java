@@ -45,7 +45,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
 import org.opengis.coverage.grid.GridCoverage;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
@@ -71,7 +71,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     }
 
     public MemoryCoverageStore(final GridCoverage2D gridCov) {
-        this(gridCov, null);
+        this(gridCov, String.valueOf(gridCov.getName()));
     }
 
     public MemoryCoverageStore(final GridCoverage2D gridCov, final String name) {
@@ -104,8 +104,8 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
     }
 
     @Override
-    public CoverageReference create(final Name name) throws DataStoreException {
-        final Set<Name> names = getNames();
+    public CoverageReference create(final GenericName name) throws DataStoreException {
+        final Set<GenericName> names = getNames();
         if(names.contains(name)){
             throw new DataStoreException("Layer "+name+" already exist");
         }
@@ -125,7 +125,7 @@ public class MemoryCoverageStore extends AbstractCoverageStore {
 
         private GridCoverage2D coverage;
 
-        public MemoryCoverageReference(Name name) {
+        public MemoryCoverageReference(GenericName name) {
             super(MemoryCoverageStore.this,null,name);
         }
 

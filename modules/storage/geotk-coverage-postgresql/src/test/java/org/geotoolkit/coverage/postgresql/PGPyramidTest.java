@@ -35,7 +35,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.storage.coverage.*;
 import org.junit.Test;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -108,7 +108,7 @@ public class PGPyramidTest {
             store = factory.open(params);
         }
         
-        for(Name n : store.getNames()){
+        for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             store.delete(n);
         }
@@ -128,7 +128,7 @@ public class PGPyramidTest {
         GridMosaic mosaic;
         BufferedImage image;
         
-        final Name name = DefaultName.create(null, "versLayer");        
+        final GenericName name = DefaultName.create(null, "versLayer");        
         store.create(name);
         
         //create version 1 -----------------------------------------------------
@@ -193,7 +193,7 @@ public class PGPyramidTest {
         GridMosaic mosaic;
         BufferedImage image;
 
-        final Name name = DefaultName.create(null, "sampleTestLayer");
+        final GenericName name = DefaultName.create(null, "sampleTestLayer");
         store.create(name);
 
         //create version 1 -----------------------------------------------------

@@ -57,7 +57,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.junit.Assert.assertTrue;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -202,7 +202,7 @@ public class CoverageImageTest {
         final double[] scales = new double[]{1.40625, 2.8125};
         final Map<Envelope, double[]> map = new HashMap<>();
         map.put(env, scales);
-        final Name name = DefaultName.create("memory_store_test");
+        final GenericName name = DefaultName.create("memory_store_test");
         pcb.create(reader, mpCovStore, name, map, fillValue);
 
         final GridCoverage2D gridcov = (GridCoverage2D) reader.read(0, null);

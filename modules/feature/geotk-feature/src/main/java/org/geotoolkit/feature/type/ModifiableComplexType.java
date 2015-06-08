@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -37,7 +38,7 @@ public class ModifiableComplexType extends DefaultComplexType implements Modifia
     private boolean lock = false;
     private AttributeType parent;
 
-    public ModifiableComplexType(final Name name, final Collection<PropertyDescriptor> properties,
+    public ModifiableComplexType(final GenericName name, final Collection<PropertyDescriptor> properties,
             final boolean identified, final boolean isAbstract, final List<Filter> restrictions,
             final AttributeType superType, final InternationalString description) {
         super(name, properties, identified, isAbstract, restrictions, superType, description);

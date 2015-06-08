@@ -42,7 +42,7 @@ import org.geotoolkit.wmts.xml.WMTSBindingUtilities;
 import org.geotoolkit.wmts.xml.WMTSVersion;
 import org.geotoolkit.wmts.xml.v100.Capabilities;
 import org.geotoolkit.wmts.xml.v100.LayerType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 
@@ -267,7 +267,7 @@ public class WebMapTileClient extends AbstractCoverageClient {
             final List<LayerType> layers = capa.getContents().getLayers();
             for(LayerType lt : layers){
                 final String name = lt.getIdentifier().getValue();
-                final Name nn = DefaultName.create(name);
+                final GenericName nn = DefaultName.create(name);
                 final CoverageReference ref = new WMTSCoverageReference(this,nn,getImageCache());
                 rootNode.getChildren().add(ref);
             }
@@ -281,12 +281,12 @@ public class WebMapTileClient extends AbstractCoverageClient {
     }
 
     @Override
-    public CoverageReference create(Name name) throws DataStoreException {
+    public CoverageReference create(GenericName name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
 
     @Override
-    public void delete(Name name) throws DataStoreException {
+    public void delete(GenericName name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
 

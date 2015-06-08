@@ -22,7 +22,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.FilterFactory2;
 
 /**
@@ -38,9 +38,9 @@ abstract class AbstractDelta implements Delta{
     private static final Logger LOGGER = Logging.getLogger(AbstractDelta.class);
 
     protected final Session session;
-    protected final Name type;
+    protected final GenericName type;
 
-    public AbstractDelta(final Session session,final Name type){
+    public AbstractDelta(final Session session,final GenericName type){
         ensureNonNull("session", session);
         ensureNonNull("name", type);
         this.session = session;
@@ -48,7 +48,7 @@ abstract class AbstractDelta implements Delta{
     }
 
     @Override
-    public Name getType() {
+    public GenericName getType() {
         return type;
     }
 

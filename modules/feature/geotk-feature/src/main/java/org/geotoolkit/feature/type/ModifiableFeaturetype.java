@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ModifiableFeaturetype extends DefaultFeatureType implements Modifia
     private boolean lock = false;
     private AttributeType parent;
 
-    public ModifiableFeaturetype(final Name name, final Collection<PropertyDescriptor> schema,
+    public ModifiableFeaturetype(final GenericName name, final Collection<PropertyDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
             final List<Filter> restrictions, final AttributeType superType, final InternationalString description) {
         super(name, schema, defaultGeometry, isAbstract, restrictions, superType, description);

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature;
 
+import org.opengis.util.GenericName;
 import java.util.Collection;
 import java.util.Iterator;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -41,14 +42,14 @@ import org.opengis.geometry.Envelope;
  */
 public abstract class AbstractFeature<C extends Collection<Property>> extends AbstractComplexAttribute<C,FeatureId> implements Feature {
 
-    private static final Name NOT_FOUND = DefaultName.create("notfound");
+    private static final GenericName NOT_FOUND = DefaultName.create("notfound");
 
     /**
      * Default geometry attribute name
      * We store only the name of the property, otherwise if the properties change
      * we might become inconsistant with the new default geometry.
      */
-    protected Name defaultGeometryName;
+    protected GenericName defaultGeometryName;
 
     /**
      * Create a Feature with the following content.

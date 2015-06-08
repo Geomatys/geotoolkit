@@ -20,7 +20,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
 import org.geotoolkit.storage.coverage.PyramidSet;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * WMTS Coverage Reference.
@@ -32,7 +32,7 @@ public class WMTSCoverageReference extends AbstractPyramidalCoverageReference {
 
     private final PyramidSet set;
 
-    WMTSCoverageReference(WebMapTileClient server, Name name, boolean cacheImage){
+    WMTSCoverageReference(WebMapTileClient server, GenericName name, boolean cacheImage){
         super(server,name,0);
         set = new WMTSPyramidSet(server, name.tip().toString(), cacheImage);
     }

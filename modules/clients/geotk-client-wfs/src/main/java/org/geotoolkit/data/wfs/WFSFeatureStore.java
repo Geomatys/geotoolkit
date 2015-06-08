@@ -74,7 +74,7 @@ import org.geotoolkit.wfs.xml.WFSMarshallerPool;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -94,9 +94,9 @@ public class WFSFeatureStore extends AbstractFeatureStore{
 
     private final QueryCapabilities queryCapabilities = new DefaultQueryCapabilities(false);
     private final WebFeatureClient server;
-    private final List<Name> typeNames = new ArrayList<Name>();
-    private final Map<Name,FeatureType> types = new HashMap<Name,FeatureType>();
-    private final Map<Name,Envelope> bounds = new HashMap<Name, Envelope>();
+    private final List<GenericName> typeNames = new ArrayList<GenericName>();
+    private final Map<GenericName,FeatureType> types = new HashMap<GenericName,FeatureType>();
+    private final Map<GenericName,Envelope> bounds = new HashMap<GenericName, Envelope>();
     private final Map<String,String> prefixes = new HashMap<String, String>();
 
 
@@ -123,7 +123,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                 prefix = "geotk" + NS_INC.incrementAndGet();
             }
 
-            Name name = DefaultName.create(uri, localpart);
+            GenericName name = DefaultName.create(uri, localpart);
             typeName = new QName(uri, localpart, prefix);
 
             //extract the feature type -----------------------------------------
@@ -169,7 +169,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
             sft = sftb.buildFeatureType();
             name = sft.getName();
             types.put(name, sft);
-            prefixes.put(name.getNamespaceURI(), prefix);
+            prefixes.put(DefaultName.getNamespace(name), prefix);
             typeNames.add(name);
 
             final GeometryDescriptor geomDesc = sft.getGeometryDescriptor();
@@ -217,7 +217,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
     }
 
     @Override
-    public boolean isWritable(final Name typeName) throws DataStoreException {
+    public boolean isWritable(final GenericName typeName) throws DataStoreException {
         this.typeCheck(typeName);
         return true;
     }
@@ -226,15 +226,15 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public Set<Name> getNames() throws DataStoreException {
-        return new HashSet<Name>(types.keySet());
+    public Set<GenericName> getNames() throws DataStoreException {
+        return new HashSet<GenericName>(types.keySet());
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
         final FeatureType ft = types.get(typeName);
 
         if(ft == null){
@@ -249,7 +249,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      */
     @Override
     public Envelope getEnvelope(final Query query) throws DataStoreException {
-        final Name typeName = query.getTypeName();
+        final GenericName typeName = query.getTypeName();
         typeCheck(typeName);
         if(   query.getCoordinateSystemReproject() == null
            && query.getFilter() == Filter.INCLUDE
@@ -278,7 +278,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Schema creation not supported.");
     }
 
@@ -286,7 +286,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Schema update not supported.");
     }
 
@@ -294,7 +294,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void deleteFeatureType(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
         throw new DataStoreException("Schema deletion not supported.");
     }
 
@@ -307,11 +307,11 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        final Name name = query.getTypeName();
+        final GenericName name = query.getTypeName();
         //will raise an error if typename in unknowned
         final FeatureType sft = getFeatureType(name);
 
-        final QName q = new QName(name.getNamespaceURI(), name.tip().toString(), prefixes.get(name.getNamespaceURI()));
+        final QName q = new QName(DefaultName.getNamespace(name), name.tip().toString(), prefixes.get(DefaultName.getNamespace(name)));
         final FeatureCollection collection;
         try {
             collection = requestFeature(q, query);
@@ -346,7 +346,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * Writer that fall back on add,remove, update methods.
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter, final Hints hints) throws DataStoreException {
         return handleWriter(typeName, filter, hints);
     }
 
@@ -354,7 +354,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
+    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
 
         final TransactionRequest request = server.createTransaction();
@@ -413,7 +413,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
 
         final TransactionRequest request = server.createTransaction();
         final Update update = server.createUpdateElement();
@@ -440,7 +440,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
 
         final TransactionRequest request = server.createTransaction();
         final Delete delete = server.createDeleteElement();
@@ -489,7 +489,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
     }
 
     private FeatureCollection requestFeature(final QName typeName, final Query query) throws IOException {
-        final Name name = DefaultName.create(typeName);
+        final GenericName name = DefaultName.create(typeName);
         FeatureType sft = types.get(name);
         sft = FeatureTypeUtilities.createSubType(sft, query.getPropertyNames());
 

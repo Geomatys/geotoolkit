@@ -17,7 +17,7 @@
 
 package org.geotoolkit.wms;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import java.util.Set;
 import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
@@ -52,7 +52,7 @@ public class WMSNamespaceTest {
     @Test
     public void test_v111_GetNames() throws DataStoreException{
         
-        final Set<Name> names = SERVER_111.getNames();
+        final Set<GenericName> names = SERVER_111.getNames();
         
         assertEquals(3, names.size());
         assertTrue(names.contains(DefaultName.create("ns1", "Sample")));
@@ -66,7 +66,7 @@ public class WMSNamespaceTest {
     @Test
     public void test_v130_GetNames() throws DataStoreException{
         
-        final Set<Name> names = SERVER_130.getNames();
+        final Set<GenericName> names = SERVER_130.getNames();
         
         assertEquals(3, names.size());
         assertTrue(names.contains(DefaultName.create("ns1", "Sample")));

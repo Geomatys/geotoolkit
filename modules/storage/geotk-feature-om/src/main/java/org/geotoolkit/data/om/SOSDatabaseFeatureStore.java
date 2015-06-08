@@ -47,7 +47,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -107,7 +107,7 @@ public class SOSDatabaseFeatureStore extends AbstractOMFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriterAppend(final Name typeName, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriterAppend(final GenericName typeName, final Hints hints) throws DataStoreException {
         return handleWriterAppend(typeName,hints);
     }
 
@@ -115,7 +115,7 @@ public class SOSDatabaseFeatureStore extends AbstractOMFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter, final Hints hints) throws DataStoreException {
         final FeatureType sft = getFeatureType(typeName);
         try {
             return handleRemaining(new OMWriter(sft), filter);
@@ -141,7 +141,7 @@ public class SOSDatabaseFeatureStore extends AbstractOMFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures, 
             final Hints hints) throws DataStoreException {
         final FeatureType featureType = getFeatureType(groupName); //raise an error if type doesn't exist
         final List<FeatureId> result = new ArrayList<>();
@@ -237,7 +237,7 @@ public class SOSDatabaseFeatureStore extends AbstractOMFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
@@ -257,7 +257,7 @@ public class SOSDatabaseFeatureStore extends AbstractOMFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -265,7 +265,7 @@ public class SOSDatabaseFeatureStore extends AbstractOMFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -273,7 +273,7 @@ public class SOSDatabaseFeatureStore extends AbstractOMFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void deleteFeatureType(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -281,7 +281,7 @@ public class SOSDatabaseFeatureStore extends AbstractOMFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 

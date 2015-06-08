@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
+
 
 /**
  * Default implementation of a asociation descriptor
@@ -29,7 +31,7 @@ package org.geotoolkit.feature.type;
 public class DefaultAssociationDescriptor extends DefaultPropertyDescriptor<AssociationType>
         implements AssociationDescriptor {
 
-    public DefaultAssociationDescriptor(final AssociationType type, final Name name,
+    public DefaultAssociationDescriptor(final AssociationType type, final GenericName name,
             final int min, final int max, final boolean isNillable) {
         super(type, name, min, max, isNillable);
         if (type instanceof DefaultAssociationType) {

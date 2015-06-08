@@ -42,7 +42,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -58,12 +58,12 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class NMEAFeatureStore extends AbstractFeatureStore {
 
-    public final static Name TYPE_NAME  = DefaultName.create(null, "NMEA POINT");
-    public final static Name GEOM_NAME  = DefaultName.create(null, "Location");
-    public final static Name ALT_NAME   = DefaultName.create(null, "Altitude");
-    public final static Name DEPTH_NAME = DefaultName.create(null, "Sea-depth");
-    public final static Name DATE_NAME  = DefaultName.create(null, "Date");
-    public final static Name SPEED_NAME = DefaultName.create(null, "Speed");
+    public final static GenericName TYPE_NAME  = DefaultName.create(null, "NMEA POINT");
+    public final static GenericName GEOM_NAME  = DefaultName.create(null, "Location");
+    public final static GenericName ALT_NAME   = DefaultName.create(null, "Altitude");
+    public final static GenericName DEPTH_NAME = DefaultName.create(null, "Sea-depth");
+    public final static GenericName DATE_NAME  = DefaultName.create(null, "Date");
+    public final static GenericName SPEED_NAME = DefaultName.create(null, "Speed");
 
     /** Feature type to use for nmea data encapsulation */
     public static final FeatureType NMEA_TYPE;
@@ -89,12 +89,12 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public Set<Name> getNames() throws DataStoreException {
+    public Set<GenericName> getNames() throws DataStoreException {
         return Collections.singleton(TYPE_NAME);
     }
 
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(GenericName typeName) throws DataStoreException {
         if (typeName.tip().toString().equalsIgnoreCase(TYPE_NAME.tip().toString())) {
             return NMEA_TYPE;
         }
@@ -121,17 +121,17 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
     //////////////////////////////////////
 
     @Override
-    public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("NMEA Feature Store is read only, and can process only data of type :"+TYPE_NAME.tip().toString());
     }
 
     @Override
-    public void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("NMEA Feature Store is read only, and can process only data of type :"+TYPE_NAME.tip().toString());
     }
 
     @Override
-    public void deleteFeatureType(Name typeName) throws DataStoreException {
+    public void deleteFeatureType(GenericName typeName) throws DataStoreException {
         throw new DataStoreException("NMEA Feature Store is read only.");
     }
 
@@ -141,22 +141,22 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
     }
 
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         throw new DataStoreException("NMEA Feature Store is read only.");
     }
 
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(GenericName groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         throw new DataStoreException("NMEA Feature Store is read only.");
     }
 
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
         throw new DataStoreException("NMEA Feature Store is read only.");
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
         throw new DataStoreException("NMEA Feature Store is read only.");
     }
 

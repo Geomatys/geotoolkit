@@ -159,7 +159,7 @@ import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.apache.sis.util.ObjectConverters;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
@@ -432,7 +432,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
     /**
      * Transform a Feature name in a QName.
      */
-    public QName visitName(final Name name) {
+    public QName visitName(final GenericName name) {
         return new QName(name.scope().isGlobal() ? null : name.scope().name().toString(), name.toString());
     }
 

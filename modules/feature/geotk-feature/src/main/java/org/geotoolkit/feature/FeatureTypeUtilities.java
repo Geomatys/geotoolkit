@@ -174,7 +174,7 @@ public final class FeatureTypeUtilities {
     }
 
     /** default feature collection name */
-    public static final DefaultName DEFAULT_TYPENAME =
+    public static final GenericName DEFAULT_TYPENAME =
             DefaultName.create("AbstractFeatureCollectionType", DEFAULT_NAMESPACE.toString());
 
     /** represent an unbounded field length */
@@ -191,7 +191,7 @@ public final class FeatureTypeUtilities {
      * Remove properties that are used for generating the primary key.
      */
     public static FeatureType excludePrimaryKeyFields(final FeatureType ft) throws SchemaException{
-        final List<Name> pkeys = new ArrayList<Name>();
+        final List<GenericName> pkeys = new ArrayList<GenericName>();
         for(PropertyDescriptor desc : ft.getDescriptors()){
             if(!isPartOfPrimaryKey(desc)) pkeys.add(desc.getName());
         }
@@ -199,7 +199,7 @@ public final class FeatureTypeUtilities {
         if(pkeys.isEmpty()){
             return ft;
         }else{
-            return createSubType(ft, pkeys.toArray(new Name[pkeys.size()]));
+            return createSubType(ft, pkeys.toArray(new GenericName[pkeys.size()]));
         }
 
     }
@@ -217,11 +217,12 @@ public final class FeatureTypeUtilities {
      * @throws SchemaException
      */
     public static FeatureType createSubType(final FeatureType featureType,
-            final Name[] properties, final CoordinateReferenceSystem override) throws SchemaException{
+            final GenericName[] properties, final CoordinateReferenceSystem override) throws SchemaException{
         URI namespaceURI = null;
-        if (featureType.getName().getNamespaceURI() != null) {
+        final String ns = DefaultName.getNamespace(featureType.getName());
+        if (ns != null) {
             try {
-                namespaceURI = new URI(featureType.getName().getNamespaceURI());
+                namespaceURI = new URI(ns);
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
@@ -231,7 +232,7 @@ public final class FeatureTypeUtilities {
     }
 
     public static FeatureType createSubType(final FeatureType featureType,
-            Name[] properties, final CoordinateReferenceSystem override, String typeName, URI namespace)
+            GenericName[] properties, final CoordinateReferenceSystem override, String typeName, URI namespace)
             throws SchemaException {
 
         if ((properties == null) && (override == null)) {
@@ -241,7 +242,7 @@ public final class FeatureTypeUtilities {
         final int propCount = featureType.getDescriptors().size();
 
         if (properties == null) {
-            properties = new Name[propCount];
+            properties = new GenericName[propCount];
             int i=0;
             for(PropertyDescriptor desc : featureType.getDescriptors()) {
                 properties[i] = desc.getName();
@@ -252,7 +253,7 @@ public final class FeatureTypeUtilities {
         final String namespaceURI = namespace != null ? namespace.toString() : null;
         boolean same = (propCount == properties.length) &&
                 featureType.getName().tip().toString().equals(typeName) &&
-                Objects.equals(featureType.getName().getNamespaceURI(), namespaceURI);
+                Objects.equals(DefaultName.getNamespace(featureType.getName()), namespaceURI);
 
 
         int i=0;
@@ -300,9 +301,9 @@ public final class FeatureTypeUtilities {
         if (typeName == null) {
             typeName = featureType.getName().tip().toString();
         }
-        if (namespace == null && featureType.getName().getNamespaceURI() != null) {
+        if (namespace == null && DefaultName.getNamespace(featureType.getName()) != null) {
             try {
-                namespace = new URI(featureType.getName().getNamespaceURI());
+                namespace = new URI(DefaultName.getNamespace(featureType.getName()));
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
@@ -326,7 +327,7 @@ public final class FeatureTypeUtilities {
         if (properties == null) {
             return featureType;
         }
-        final Name[] props = new Name[properties.length];
+        final GenericName[] props = new GenericName[properties.length];
         for(int i=0; i<properties.length; i++){
             props[i] = DefaultName.valueOf(properties[i]);
         }
@@ -344,7 +345,7 @@ public final class FeatureTypeUtilities {
      * @throws SchemaException DOCUMENT ME!
      */
     public static FeatureType createSubType(final FeatureType featureType,
-            final Name[] properties) throws SchemaException{
+            final GenericName[] properties) throws SchemaException{
         if (properties == null) {
             return featureType;
         }
@@ -355,7 +356,7 @@ public final class FeatureTypeUtilities {
         if(same){
             int i=0;
             for(PropertyDescriptor desc : featureType.getDescriptors()){
-                if(properties[i].getNamespaceURI() == null){
+                if(DefaultName.getNamespace(properties[i]) == null){
                     same = desc.getName().tip().toString().equals(properties[i].tip().toString());
                 }else{
                     same = desc.getName().equals(properties[i]);
@@ -981,7 +982,7 @@ public final class FeatureTypeUtilities {
                     return true;
                 }
             } else {
-                if (Objects.equals(superType.getName().getNamespaceURI(), namespace.toString()) &&
+                if (Objects.equals(DefaultName.getNamespace(superType.getName()), namespace.toString()) &&
                     Objects.equals(superType.getName().tip().toString(), typeName)){
                     return true;
                 }
@@ -991,8 +992,8 @@ public final class FeatureTypeUtilities {
     }
 
     public static boolean isDecendedFrom(final PropertyType featureType, final PropertyType isParentType) {
-        final Name n = isParentType.getName();
-        return isDecendedFrom(featureType, n.getNamespaceURI(), n.tip().toString());
+        final GenericName n = isParentType.getName();
+        return isDecendedFrom(featureType, DefaultName.getNamespace(n), n.tip().toString());
     }
 
     public static boolean isSimple(FeatureType type){
@@ -1106,8 +1107,8 @@ public final class FeatureTypeUtilities {
             return false;
         }
 
-        final String namespaceA = typeA.getName().getNamespaceURI();
-        final String namespaceB = typeB.getName().getNamespaceURI();
+        final String namespaceA = DefaultName.getNamespace(typeA.getName());
+        final String namespaceB = DefaultName.getNamespace(typeB.getName());
 
         if (namespaceA == null && namespaceB == null) {
             return true;
@@ -1123,7 +1124,7 @@ public final class FeatureTypeUtilities {
     public static int indexOfProperty(FeatureType type, final GenericName name) {
         int i=0;
         for(PropertyDescriptor descriptor : type.getDescriptors()){
-            final Name dname = descriptor.getName();
+            final GenericName dname = descriptor.getName();
             if (DefaultName.match(name, dname)) {
                 return i;
             }
@@ -1135,7 +1136,7 @@ public final class FeatureTypeUtilities {
     public static int indexOfProperty(FeatureType type, final String name) {
         int i=0;
         for(PropertyDescriptor descriptor : type.getDescriptors()){
-            final Name dname = descriptor.getName();
+            final GenericName dname = descriptor.getName();
             if (DefaultName.match(dname, name)) {
                 return i;
             }
@@ -1149,9 +1150,9 @@ public final class FeatureTypeUtilities {
     ////////////////////////////////////////////////////////////////////////////
 
 
-    public static Name[] attributeNames(final FeatureType featureType) {
+    public static GenericName[] attributeNames(final FeatureType featureType) {
         final Collection<PropertyDescriptor> descriptors = featureType.getDescriptors();
-        final Name[] names = new Name[descriptors.size()];
+        final GenericName[] names = new GenericName[descriptors.size()];
         final Iterator<PropertyDescriptor> ite = descriptors.iterator();
         int i=0;
         while(ite.hasNext()){
@@ -1169,13 +1170,13 @@ public final class FeatureTypeUtilities {
      * attributeName does not match the actual name of the type.
      * </p>
      */
-    public static Name[] attributeNames(final Filter filter, final FeatureType featureType) {
+    public static GenericName[] attributeNames(final Filter filter, final FeatureType featureType) {
         if (filter == null) {
-            return new Name[0];
+            return new GenericName[0];
         }
         final FilterAttributeExtractor attExtractor = new FilterAttributeExtractor(featureType);
         filter.accept(attExtractor, null);
-        final Name[] attributeNames = attExtractor.getAttributeNames();
+        final GenericName[] attributeNames = attExtractor.getAttributeNames();
         return attributeNames;
     }
 
@@ -1186,13 +1187,13 @@ public final class FeatureTypeUtilities {
      * attributeName does not match the actual name of the type.
      * </p>
      */
-    public static Name[] attributeNames(final Expression expression, final FeatureType featureType) {
+    public static GenericName[] attributeNames(final Expression expression, final FeatureType featureType) {
         if (expression == null) {
-            return new Name[0];
+            return new GenericName[0];
         }
         final FilterAttributeExtractor attExtractor = new FilterAttributeExtractor(featureType);
         expression.accept(attExtractor, null);
-        final Name[] attributeNames = attExtractor.getAttributeNames();
+        final GenericName[] attributeNames = attExtractor.getAttributeNames();
         return attributeNames;
     }
 
@@ -1438,10 +1439,10 @@ public final class FeatureTypeUtilities {
      * @return The name of all the attributes which are compliant with given pattern.
      * Can return an empty list, but never null.
      */
-    public static ArrayList<Name> hasNameLike(final String regex, final FeatureType toSearchIn) {
-        final ArrayList<Name> names = new ArrayList<>();
+    public static ArrayList<GenericName> hasNameLike(final String regex, final FeatureType toSearchIn) {
+        final ArrayList<GenericName> names = new ArrayList<>();
         for (final PropertyDescriptor desc : toSearchIn.getDescriptors()) {
-            final Name name = desc.getName();
+            final GenericName name = desc.getName();
             if (name != null && name.tip().toString().matches(regex)) {
                 names.add(name);
             }

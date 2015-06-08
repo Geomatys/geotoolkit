@@ -77,9 +77,10 @@ import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.ComplexType;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.ENCODING;
@@ -644,7 +645,7 @@ public class WPSConvertersUtils {
         final ComplexType ct = FeatureTypeUtilities.toPropertyType(toConvert);
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.copy(ct);
-        if(ftb.getName().getNamespaceURI() == null) {
+        if(DefaultName.getNamespace(ftb.getName()) == null) {
             ftb.setName("constellation-sdi/WS/wps", ftb.getName().tip().toString());
         }
         List<PropertyDescriptor> properties = ftb.getProperties();
@@ -878,14 +879,14 @@ public class WPSConvertersUtils {
         if (store == null)
             throw new DataStoreException("No available factory found");
 
-        Iterator<Name> iterator = store.getNames().iterator();
+        Iterator<GenericName> iterator = store.getNames().iterator();
         Session session = store.createSession(false);
 
         int typesNumber = store.getNames().size();
         if (typesNumber != 1)
             throw new UnconvertibleObjectException("Expected one feature. Found " + typesNumber);
 
-        Name name = iterator.next();
+        GenericName name = iterator.next();
         FeatureCollection featureCollection = session.getFeatureCollection(QueryBuilder.all(name));
         if (featureCollection.size() != 1)
             throw new DataStoreException("One feature expected. Found " + featureCollection.size());
@@ -911,14 +912,14 @@ public class WPSConvertersUtils {
         if (store == null)
             throw new DataStoreException("No available factory found");
 
-        final Iterator<Name> iterator = store.getNames().iterator();
+        final Iterator<GenericName> iterator = store.getNames().iterator();
         int typesNumber = store.getNames().size();
         final Session session = store.createSession(false);
 
         if (typesNumber != 1)
             throw new DataStoreException("One feature expected. Found " + typesNumber);
 
-        final Name name = iterator.next();
+        final GenericName name = iterator.next();
         return session.getFeatureCollection(QueryBuilder.all(name));
     }
 

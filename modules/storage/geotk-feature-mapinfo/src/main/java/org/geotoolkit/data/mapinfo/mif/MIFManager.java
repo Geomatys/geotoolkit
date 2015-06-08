@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.mapinfo.mif;
 
+import org.opengis.util.GenericName;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.ProjectionUtils;
 import org.geotoolkit.feature.type.DefaultName;
@@ -102,7 +103,7 @@ public class MIFManager {
     /**
      * Type and data containers
      */
-    private Set<Name> names = null;
+    private Set<GenericName> names = null;
     private FeatureType mifBaseType = null;
     private ArrayList<FeatureType> mifChildTypes = new ArrayList<FeatureType>();
 
@@ -150,9 +151,9 @@ public class MIFManager {
      * @return a list ({@link HashSet}) of available feature types in that document.
      * @throws DataStoreException if we get a problem parsing the file.
      */
-    public Set<Name> getTypeNames() throws DataStoreException {
+    public Set<GenericName> getTypeNames() throws DataStoreException {
         if (names == null) {
-            names = new HashSet<Name>();
+            names = new HashSet<GenericName>();
             checkDataTypes();
         }
 
@@ -181,7 +182,7 @@ public class MIFManager {
      * @throws DataStoreException If an unexpected error occurs while referencing given type.
      * @throws URISyntaxException If the URL specified at store creation is invalid.
      */
-    public void addSchema(Name typeName, FeatureType toAdd) throws DataStoreException, URISyntaxException {
+    public void addSchema(GenericName typeName, FeatureType toAdd) throws DataStoreException, URISyntaxException {
         ArgumentChecks.ensureNonNull("New feature type", toAdd);
 
         /*
@@ -300,7 +301,7 @@ public class MIFManager {
     }
 
 
-    public void deleteSchema(Name typeName) throws DataStoreException {
+    public void deleteSchema(GenericName typeName) throws DataStoreException {
         getTypeNames();
 
         if (names.contains(typeName)) {
@@ -320,7 +321,7 @@ public class MIFManager {
     }
 
 
-    public FeatureType getType(Name typeName) throws DataStoreException {
+    public FeatureType getType(GenericName typeName) throws DataStoreException {
         getTypeNames();
 
         if(mifBaseType.getName().equals(typeName)) {
@@ -582,7 +583,7 @@ public class MIFManager {
                 if (bind != null) {
                     FeatureTypeBuilder builder = new FeatureTypeBuilder();
                     builder.copy(bind);
-                    builder.setName(bind.getName().getNamespaceURI(), mifBaseType.getName().tip().toString()+"_"+bind.getName().tip().toString());
+                    builder.setName(DefaultName.getNamespace(bind.getName()), mifBaseType.getName().tip().toString()+"_"+bind.getName().tip().toString());
                     mifChildTypes.add(builder.buildFeatureType());
                 }
             }
@@ -611,12 +612,12 @@ public class MIFManager {
                         "The typename " + tmpType + "(from " + attName + " attribute) is an unknown attribute type.");
             }
             /** todo : instantiate filters for String & Double type (length limitations). */
-            final Name name = DefaultName.create(attName);
+            final GenericName name = DefaultName.create(attName);
             final DefaultAttributeType attType = new DefaultAttributeType(name, binding, true, false, null, null, null);
             final DefaultAttributeDescriptor desc = new DefaultAttributeDescriptor(attType, name, 1, 1, true, null);
             schema.add(desc);
         }
-        Name name = DefaultName.create(mifName);
+        GenericName name = DefaultName.create(mifName);
         mifBaseType = new DefaultFeatureType(name, schema, null, false, null, null, null);
     }
 
@@ -807,11 +808,11 @@ public class MIFManager {
         if(mifBaseType.equals(fType) || mifBaseType.equals(fType.getSuper())
                 || fType.getDescriptors().containsAll(mifBaseType.getDescriptors())) {
             final PropertyDescriptor[] atts = mifBaseType.getDescriptors().toArray(new PropertyDescriptor[0]);
-            final Name name = atts[0].getType().getName();
+            final GenericName name = atts[0].getType().getName();
             builder.append(MIFUtils.getStringValue(toParse.getProperty(name)));
 
             for(int i = 1 ; i < atts.length ; i++) {
-                final Name propName = atts[i].getType().getName();
+                final GenericName propName = atts[i].getType().getName();
                 builder.append(mifDelimiter).append(MIFUtils.getStringValue(toParse.getProperty(propName)));
             }
             builder.append('\n');

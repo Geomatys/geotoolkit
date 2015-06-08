@@ -35,7 +35,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
@@ -46,7 +46,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 public class MemoryReadingTest extends AbstractReadingTests{
 
     private final MemoryFeatureStore store = new MemoryFeatureStore();
-    private final Set<Name> names = new HashSet<Name>();
+    private final Set<GenericName> names = new HashSet<GenericName>();
     private final List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
 
     public MemoryReadingTest() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
@@ -54,7 +54,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //first schema----------------------------------------------------------
-        Name name = DefaultName.create("http://test.com", "TestSchema1");
+        GenericName name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
@@ -145,7 +145,7 @@ public class MemoryReadingTest extends AbstractReadingTests{
     }
 
     @Override
-    protected Set<Name> getExpectedNames() {
+    protected Set<GenericName> getExpectedNames() {
         return names;
     }
 

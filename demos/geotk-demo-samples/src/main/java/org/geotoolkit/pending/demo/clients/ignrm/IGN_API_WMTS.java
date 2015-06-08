@@ -15,7 +15,7 @@ import org.geotoolkit.style.DefaultDescription;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.wmts.WMTSClientFactory;
 import org.geotoolkit.wmts.WebMapTileClient;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -44,7 +44,7 @@ public class IGN_API_WMTS {
 
         final MapContext context = MapBuilder.createContext();
 
-        for(Name n : store.getNames()){
+        for(GenericName n : store.getNames()){
             final CoverageReference cr = store.getCoverageReference(n);
             final CoverageMapLayer cml = MapBuilder.createCoverageLayer(cr);
             cml.setDescription(new DefaultDescription(new SimpleInternationalString(n.tip().toString()), new SimpleInternationalString("")));

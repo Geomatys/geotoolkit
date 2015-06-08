@@ -17,6 +17,7 @@
 
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import java.util.Collections;
 import org.opengis.feature.Feature;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
@@ -42,7 +43,7 @@ public abstract class AbstractOperationType extends DefaultPropertyType<Operatio
     private final IdentifiedType targetType;
     private final ParameterDescriptorGroup parameters;
 
-    public AbstractOperationType(final Name name, final InternationalString description,
+    public AbstractOperationType(final GenericName name, final InternationalString description,
             AttributeType resultType, ParameterDescriptorGroup parameters) {
         super(name,resultType.getBinding(),false,null,null,description);
         this.targetType = resultType;

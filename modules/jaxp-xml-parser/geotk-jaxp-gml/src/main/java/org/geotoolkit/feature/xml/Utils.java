@@ -62,7 +62,7 @@ import org.geotoolkit.xsd.xml.v2001.Include;
 import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 
@@ -91,21 +91,21 @@ public class Utils {
     
     private static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
     private static final String GML_321_NAMESPACE = "http://www.opengis.net/gml/3.2";
-    public static final Set<Name> GML_FEATURE_TYPES;
-    public static final Set<Name> GML_STANDARD_OBJECT_PROPERTIES;
-    public static final Set<Name> GML_ABSTRACT_FEATURE_PROPERTIES;
+    public static final Set<GenericName> GML_FEATURE_TYPES;
+    public static final Set<GenericName> GML_STANDARD_OBJECT_PROPERTIES;
+    public static final Set<GenericName> GML_ABSTRACT_FEATURE_PROPERTIES;
     static{
         timestampFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
 
-        GML_FEATURE_TYPES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new Name[]{
+        GML_FEATURE_TYPES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new GenericName[]{
             //3.1.1
             //3.1.1
         DefaultName.create(GML_311_NAMESPACE, "AbstractFeatureType"), DefaultName.create(GML_311_NAMESPACE, "AbstractFeatureCollection"), DefaultName.create(GML_311_NAMESPACE, "FeatureCollection"), DefaultName.create(GML_311_NAMESPACE, "AbstractCoverage"), DefaultName.create(GML_311_NAMESPACE, "AbstractContinuousCoverage"), DefaultName.create(GML_311_NAMESPACE, "AbstractDiscreteCoverage"), DefaultName.create(GML_311_NAMESPACE, "Observation"), DefaultName.create(GML_311_NAMESPACE, "DirectedObservation"), DefaultName.create(GML_311_NAMESPACE, "DirectedObservationAtDistance"), DefaultName.create(GML_311_NAMESPACE, "MultiPointCoverage"), DefaultName.create(GML_311_NAMESPACE, "MultiCurveCoverage"), DefaultName.create(GML_311_NAMESPACE, "MultiSurfaceCoverage"), DefaultName.create(GML_311_NAMESPACE, "MultiSolidCoverage"), DefaultName.create(GML_311_NAMESPACE, "GridCoverage"), DefaultName.create(GML_311_NAMESPACE, "_FeatureCollection"), DefaultName.create(GML_311_NAMESPACE, "_Coverage"), DefaultName.create(GML_311_NAMESPACE, "_ContinuousCoverage"), DefaultName.create(GML_311_NAMESPACE, "_DiscreteCoverage"), //3.2.1
         DefaultName.create(GML_321_NAMESPACE, "AbstractFeatureType"), DefaultName.create(GML_321_NAMESPACE, "AbstractFeatureCollection"), DefaultName.create(GML_321_NAMESPACE, "FeatureCollection"), DefaultName.create(GML_321_NAMESPACE, "AbstractCoverage"), DefaultName.create(GML_321_NAMESPACE, "AbstractContinuousCoverage"), DefaultName.create(GML_321_NAMESPACE, "AbstractDiscreteCoverage"), DefaultName.create(GML_321_NAMESPACE, "Observation"), DefaultName.create(GML_321_NAMESPACE, "DirectedObservation"), DefaultName.create(GML_321_NAMESPACE, "DirectedObservationAtDistance"), DefaultName.create(GML_321_NAMESPACE, "DynamicFeatureCollection"), DefaultName.create(GML_321_NAMESPACE, "DynamicFeature"), DefaultName.create(GML_321_NAMESPACE, "DiscreteCoverage"), DefaultName.create(GML_321_NAMESPACE, "MultiPointCoverage"), DefaultName.create(GML_321_NAMESPACE, "MultiCurveCoverage"), DefaultName.create(GML_321_NAMESPACE, "MultiSurfaceCoverage"), DefaultName.create(GML_321_NAMESPACE, "MultiSolidCoverage"), DefaultName.create(GML_321_NAMESPACE, "GridCoverage"), DefaultName.create(GML_321_NAMESPACE, "RectifiedGridCoverage")
         })));
 
-        GML_STANDARD_OBJECT_PROPERTIES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new Name[]{
+        GML_STANDARD_OBJECT_PROPERTIES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new GenericName[]{
             //3.1.1
             //3.1.1
         DefaultName.create(GML_311_NAMESPACE, "metaDataProperty"), DefaultName.create(GML_311_NAMESPACE, "description"), DefaultName.create(GML_311_NAMESPACE, "name"), DefaultName.create(GML_311_NAMESPACE, "csName"), //substitution group of name
@@ -129,7 +129,7 @@ public class Utils {
         DefaultName.create(GML_321_NAMESPACE, "groupName"), //substitution group of name
         DefaultName.create(GML_321_NAMESPACE, "identifier")})));
 
-        GML_ABSTRACT_FEATURE_PROPERTIES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new Name[]{
+        GML_ABSTRACT_FEATURE_PROPERTIES = Collections.unmodifiableSet(new HashSet(Arrays.asList(new GenericName[]{
             //3.1.1
             //3.1.1
         DefaultName.create(GML_311_NAMESPACE, "@id"), DefaultName.create(GML_311_NAMESPACE, "boundedBy"), DefaultName.create(GML_311_NAMESPACE, "location"), DefaultName.create(GML_311_NAMESPACE, "priorityLocation"), //substitution group of location
@@ -147,8 +147,8 @@ public class Utils {
      * @param qname a XML QName.
      * @return a Types Name.
      */
-    public static Name getNameFromQname(final QName qname) {
-        Name name;
+    public static GenericName getNameFromQname(final QName qname) {
+        GenericName name;
         if (qname.getNamespaceURI() == null || qname.getNamespaceURI().isEmpty()) {
             name = DefaultName.create(qname.getLocalPart());
         } else {
@@ -163,12 +163,13 @@ public class Utils {
      * @param name a Types name.
      * @return A XML QName.
      */
-    public static QName getQnameFromName(final Name name) {
+    public static QName getQnameFromName(final GenericName name) {
         QName qname;
-        if (name.getNamespaceURI() == null || "".equals(name.getNamespaceURI())) {
+        final String ns = DefaultName.getNamespace(name);
+        if (ns == null || ns.isEmpty()) {
             qname = new QName(name.tip().toString());
         } else {
-            qname = new QName(name.getNamespaceURI(), name.tip().toString());
+            qname = new QName(ns, name.tip().toString());
         }
         return qname;
     }
@@ -270,8 +271,8 @@ public class Utils {
         return false;
     }
 
-    public static boolean isGeometricType(final Name elementType) {
-        if (elementType != null && elementType.getNamespaceURI()!=null && elementType.getNamespaceURI().contains(GML_311_NAMESPACE)) {
+    public static boolean isGeometricType(final GenericName elementType) {
+        if (elementType != null && DefaultName.getNamespace(elementType)!=null && DefaultName.getNamespace(elementType).contains(GML_311_NAMESPACE)) {
             return GEOMETRIC_NAME.contains(elementType.tip().toString());
         }
         return false;
@@ -392,7 +393,7 @@ public class Utils {
      */
     public static QName getQNameFromType(final PropertyType type, final String gmlVersion) {
         if (type instanceof ComplexType) {
-            return new QName(type.getName().getNamespaceURI(), getNameWithTypeSuffix(type.getName().tip().toString()));
+            return new QName(DefaultName.getNamespace(type.getName()), getNameWithTypeSuffix(type.getName().tip().toString()));
         } else {
             final Class binding = type.getBinding();
             if (binding != null) {
@@ -492,9 +493,9 @@ public class Utils {
      * @param typeNames
      * @return
      */
-    public static List<QName> getQNameListFromNameSet(final Collection<Name> typeNames) {
+    public static List<QName> getQNameListFromNameSet(final Collection<GenericName> typeNames) {
         final List<QName> result = new ArrayList<QName>(typeNames.size());
-        for (Name typeName : typeNames) {
+        for (GenericName typeName : typeNames) {
             result.add(Utils.getQnameFromName(typeName));
         }
         return result;
@@ -505,8 +506,8 @@ public class Utils {
      * @param typeNames
      * @return
      */
-    public static List<Name> getNameListFromQNameSet(final Collection<QName> typeNames) {
-        final List<Name> result = new ArrayList<Name>(typeNames.size());
+    public static List<GenericName> getNameListFromQNameSet(final Collection<QName> typeNames) {
+        final List<GenericName> result = new ArrayList<GenericName>(typeNames.size());
         for (QName typeName : typeNames) {
             result.add(Utils.getNameFromQname(typeName));
         }
@@ -639,26 +640,26 @@ public class Utils {
     
     public static Set<String> listAllSubNamespaces(PropertyType type, String namespace){
         final Set<String> ns = new HashSet<>();
-        final Set<Name> visited = new HashSet<>();
+        final Set<GenericName> visited = new HashSet<>();
         listAllSubNamespaces(type, ns, visited, namespace);
         return ns;
     }
     
-    private static void listAllSubNamespaces(PropertyType type, Set<String> ns, Set<Name> visited, final String namespace){
-        final Name name = type.getName();
+    private static void listAllSubNamespaces(PropertyType type, Set<String> ns, Set<GenericName> visited, final String namespace){
+        final GenericName name = type.getName();
         if(visited.contains(name)){
             //avoid cyclic loops
             return;
         }
         visited.add(name);
-        String typeUri = type.getName().getNamespaceURI();
+        String typeUri = DefaultName.getNamespace(type.getName());
         //if(nsuri!=null) ns.add(nsuri);
 
         if(type instanceof ComplexType){
             final ComplexType ct = (ComplexType) type;
             for(PropertyDescriptor pd : ct.getDescriptors()){
                 if (typeUri.equals(namespace)) {
-                    String nsuri = pd.getName().getNamespaceURI();
+                    String nsuri = DefaultName.getNamespace(pd.getName());
                     if(nsuri!=null) ns.add(nsuri);
                 }
                 listAllSubNamespaces(pd.getType(), ns, visited, namespace);
@@ -668,25 +669,25 @@ public class Utils {
     
     public static Set<String> listAllNamespaces(PropertyType type){
         final Set<String> ns = new HashSet<>();
-        final Set<Name> visited = new HashSet<>();
+        final Set<GenericName> visited = new HashSet<>();
         listAllNamespaces(type, ns, visited);
         return ns;
     }
 
-    private static void listAllNamespaces(PropertyType type, Set<String> ns, Set<Name> visited){
-        final Name name = type.getName();
+    private static void listAllNamespaces(PropertyType type, Set<String> ns, Set<GenericName> visited){
+        final GenericName name = type.getName();
         if(visited.contains(name)){
             //avoid cyclic loops
             return;
         }
         visited.add(name);
-        String nsuri = type.getName().getNamespaceURI();
+        String nsuri = DefaultName.getNamespace(type.getName());
         if(nsuri!=null) ns.add(nsuri);
 
         if(type instanceof ComplexType){
             final ComplexType ct = (ComplexType) type;
             for(PropertyDescriptor pd : ct.getDescriptors()){
-                nsuri = pd.getName().getNamespaceURI();
+                nsuri = DefaultName.getNamespace(pd.getName());
                 if(nsuri!=null) ns.add(nsuri);
                 listAllNamespaces(pd.getType(), ns, visited);
             }

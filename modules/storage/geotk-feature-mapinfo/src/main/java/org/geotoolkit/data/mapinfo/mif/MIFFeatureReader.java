@@ -25,7 +25,7 @@ import org.apache.sis.util.CharSequences;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import java.io.IOException;
@@ -95,7 +95,7 @@ public class MIFFeatureReader implements FeatureReader {
     final String geometryId;
     final Pattern geometryPattern;
 
-    public MIFFeatureReader(MIFManager parent, Name typeName) throws DataStoreException {
+    public MIFFeatureReader(MIFManager parent, GenericName typeName) throws DataStoreException {
         ArgumentChecks.ensureNonNull("Parent reader", parent);
         master = parent;
         readType = master.getType(typeName);

@@ -40,7 +40,7 @@ import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.junit.Test;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -135,7 +135,7 @@ public class PostgresVersioningTest {
         //open in complex type to delete all types
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
         store = (PostgresFeatureStore) FeatureStoreFinder.open(params);        
-        for(Name n : store.getNames()){
+        for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             vc.dropVersioning();
             store.deleteFeatureType(n);
@@ -190,7 +190,7 @@ public class PostgresVersioningTest {
         
         //check the version table is not visible in the feature types
         store.refreshMetaModel();
-        final Set<Name> names = store.getNames();
+        final Set<GenericName> names = store.getNames();
         assertEquals(1, names.size());
         
         
@@ -1069,7 +1069,7 @@ public class PostgresVersioningTest {
             //schema public2 already exist
         }
         
-        for(Name n : store2.getNames()) {
+        for(GenericName n : store2.getNames()) {
             VersionControl vc = store2.getVersioning(n);
             vc.dropVersioning();
             store2.deleteFeatureType(n);

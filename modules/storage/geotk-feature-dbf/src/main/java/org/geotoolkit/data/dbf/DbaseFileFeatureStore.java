@@ -48,7 +48,7 @@ import org.geotoolkit.feature.Feature;
 import static org.geotoolkit.feature.FeatureUtilities.defaultProperty;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.opengis.filter.Filter;
@@ -156,7 +156,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc}
      */
     @Override
-    public Set<Name> getNames() throws DataStoreException {
+    public Set<GenericName> getNames() throws DataStoreException {
         checkExist();
         if(featureType != null){
             return Collections.singleton(featureType.getName());
@@ -169,7 +169,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc}
      */
     @Override
-    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
         return featureType;
     }
@@ -197,7 +197,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
      * Unsupported, throws a {@link DataStoreException}.
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName,
+    public FeatureWriter getFeatureWriter(final GenericName typeName,
     final Filter filter, final Hints hints) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
@@ -206,7 +206,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
      * Unsupported, throws a {@link DataStoreException}.
      */
     @Override
-    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Schema creation not supported");
     }
 
@@ -214,7 +214,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
      * Unsupported, throws a {@link DataStoreException}.
      */
     @Override
-    public void deleteFeatureType(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
         throw new DataStoreException("Schema deletion not supported");
     }
 
@@ -222,7 +222,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
      * Unsupported, throws a {@link DataStoreException}.
      */
     @Override
-    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Schema update not supported");
     }
 
@@ -238,7 +238,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc}
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
+    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures,hints);
     }
@@ -247,7 +247,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc}
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
@@ -255,7 +255,7 @@ public class DbaseFileFeatureStore extends AbstractFeatureStore implements DataF
      * {@inheritDoc}
      */
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 

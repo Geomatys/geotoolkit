@@ -27,7 +27,7 @@ import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.Collections;
@@ -43,7 +43,7 @@ import java.util.logging.Level;
  */
 public class MIFMultiPointBuilder extends MIFGeometryBuilder {
 
-    public static final Name NAME = DefaultName.create("MULTIPOINT");
+    public static final GenericName NAME = DefaultName.create("MULTIPOINT");
 
     public static final AttributeDescriptor SYMBOL_DESCRIPTOR;
 
@@ -137,7 +137,7 @@ public class MIFMultiPointBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    public Name getName() {
+    public GenericName getName() {
         return NAME;
     }
 

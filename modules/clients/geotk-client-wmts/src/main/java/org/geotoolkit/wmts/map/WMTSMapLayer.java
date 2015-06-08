@@ -25,7 +25,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.wmts.WebMapTileClient;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * Map representation of a WMTS layer.
@@ -47,7 +47,7 @@ public class WMTSMapLayer extends DefaultCoverageMapLayer {
 
     private static CoverageReference getReference(WebMapTileClient server, String mapType){
         try {
-            for(Name n : server.getNames()){
+            for(GenericName n : server.getNames()){
                 if(n.tip().toString().equalsIgnoreCase(mapType)){
                     return server.getCoverageReference(n);
                 }

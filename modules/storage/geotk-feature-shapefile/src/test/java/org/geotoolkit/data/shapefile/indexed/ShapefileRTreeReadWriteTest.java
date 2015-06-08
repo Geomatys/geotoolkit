@@ -36,7 +36,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 
 import static org.junit.Assert.*;
@@ -85,7 +85,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         copyShapefiles("shapes/stream.shp");
         IndexedShapefileFeatureStore s1 = new IndexedShapefileFeatureStore(TestData
                 .url(ShapeTestData.class, "shapes/stream.shp"));
-        Name typeName = s1.getName();
+        GenericName typeName = s1.getName();
         FeatureType type = s1.getFeatureType();
         FeatureCollection one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
@@ -129,7 +129,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
     private void test(final FeatureType type, final FeatureCollection one, final File tmp, final boolean memorymapped)
             throws IOException, MalformedURLException, Exception {
         IndexedShapefileFeatureStore s;
-        Name typeName;
+        GenericName typeName;
         s = (IndexedShapefileFeatureStore) new IndexedShapefileFeatureStore(tmp.toURI().toURL(),
                 memorymapped, true);
 

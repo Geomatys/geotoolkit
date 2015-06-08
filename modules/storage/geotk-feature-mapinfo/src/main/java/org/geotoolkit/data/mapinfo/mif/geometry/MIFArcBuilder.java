@@ -28,7 +28,7 @@ import org.geotoolkit.feature.type.DefaultAttributeType;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.awt.geom.Rectangle2D;
@@ -48,9 +48,9 @@ import org.apache.sis.util.ArgumentChecks;
  */
 public class MIFArcBuilder extends MIFGeometryBuilder {
 
-    public static final Name NAME = DefaultName.create("ARC");
-    public static final Name BEGIN_ANGLE_NAME = DefaultName.create("BEGIN_ANGLE");
-    public static final Name END_ANGLE_NAME = DefaultName.create("END_ANGLE");
+    public static final GenericName NAME = DefaultName.create("ARC");
+    public static final GenericName BEGIN_ANGLE_NAME = DefaultName.create("BEGIN_ANGLE");
+    public static final GenericName END_ANGLE_NAME = DefaultName.create("END_ANGLE");
 
     public static final AttributeDescriptor BEGIN_ANGLE;
     public static final AttributeDescriptor END_ANGLE;
@@ -175,7 +175,7 @@ public class MIFArcBuilder extends MIFGeometryBuilder {
         return new Class[]{Envelope.class, Envelope2D.class, Rectangle2D.class};
     }
 
-    public Name getName() {
+    public GenericName getName() {
         return NAME;
     }
 

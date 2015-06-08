@@ -38,7 +38,7 @@ import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -94,10 +94,10 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection{
         if(type == null){
             final FeatureType leftType = leftCollection.getFeatureType();
             final FeatureType rightType = rightCollection.getFeatureType();
-            final Name leftAttName = (leftCollection.getSource() instanceof Selector) ?
+            final GenericName leftAttName = (leftCollection.getSource() instanceof Selector) ?
                     DefaultName.valueOf(((Selector)leftCollection.getSource()).getSelectorName()) :
                     leftType.getName();
-            final Name rightAttName = (rightCollection.getSource() instanceof Selector) ?
+            final GenericName rightAttName = (rightCollection.getSource() instanceof Selector) ?
                     DefaultName.valueOf(((Selector)rightCollection.getSource()).getSelectorName()) :
                     rightType.getName();
 

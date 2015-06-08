@@ -47,7 +47,7 @@ import org.geotoolkit.process.ProcessFinder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.image.BufferedImages;
 import org.junit.Test;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -71,7 +71,7 @@ public class PyramidTest {
         upperLeft.setCoordinate(-180,90);
 
         final MPCoverageStore store = new MPCoverageStore();
-        final Name name = DefaultName.create(null, "test");
+        final GenericName name = DefaultName.create(null, "test");
         final PyramidalCoverageReference pcr = (PyramidalCoverageReference) store.create(name);
         final List<GridSampleDimension> dims = new ArrayList<GridSampleDimension>();
         final GridSampleDimension dim1 = new GridSampleDimension("sampleDesc1");

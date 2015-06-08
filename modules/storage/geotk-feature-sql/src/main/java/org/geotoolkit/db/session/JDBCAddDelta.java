@@ -28,7 +28,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.identity.FeatureId;
 
 /**
@@ -38,7 +38,7 @@ import org.opengis.filter.identity.FeatureId;
  */
 public class JDBCAddDelta extends AddDelta{
 
-    public JDBCAddDelta(Session session, Name typeName, Collection<? extends Feature> features) {
+    public JDBCAddDelta(Session session, GenericName typeName, Collection<? extends Feature> features) {
         super(session, typeName, features);
     }
 

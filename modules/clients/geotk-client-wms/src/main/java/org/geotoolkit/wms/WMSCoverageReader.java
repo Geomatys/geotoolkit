@@ -41,8 +41,9 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.feature.type.DefaultName;
 import org.opengis.coverage.grid.GridCoverage;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -85,10 +86,10 @@ public class WMSCoverageReader extends GridCoverageReader{
     @Override
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
         final NameFactory dnf = FactoryFinder.getNameFactory(null);
-        final Name name = getInput().getName();
+        final GenericName name = getInput().getName();
         NameSpace ns = null;
-        if (name.getNamespaceURI() != null) {
-            ns = dnf.createNameSpace(dnf.createGenericName(null, name.getNamespaceURI()), null);
+        if (DefaultName.getNamespace(name) != null) {
+            ns = dnf.createNameSpace(dnf.createGenericName(null, DefaultName.getNamespace(name)), null);
         }
         final GenericName gn = dnf.createLocalName(ns, name.tip().toString());
         return Collections.singletonList(gn);

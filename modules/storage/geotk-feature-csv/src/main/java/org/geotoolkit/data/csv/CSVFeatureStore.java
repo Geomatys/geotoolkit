@@ -71,7 +71,7 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.opengis.filter.Filter;
@@ -202,7 +202,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
             final int dep = field.indexOf('(');
             final int fin = field.lastIndexOf(')');
 
-            final Name fieldName;
+            final GenericName fieldName;
             Class type = String.class;
             CoordinateReferenceSystem crs = null;
             // Check non-empty parenthesis
@@ -301,7 +301,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     private void writeType(final FeatureType type) throws DataStoreException {
-        defaultNamespace = type.getName().getNamespaceURI();
+        defaultNamespace = DefaultName.getNamespace(type.getName());
         Parameters.getOrCreate(CSVFeatureStoreFactory.NAMESPACE, parameters).setValue(defaultNamespace);
         name = type.getName().tip().toString();
 
@@ -343,7 +343,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public Set<Name> getNames() throws DataStoreException {
+    public Set<GenericName> getNames() throws DataStoreException {
         checkExist();
         if(featureType != null){
             return Collections.singleton(featureType.getName());
@@ -353,7 +353,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         checkExist();
         if (this.featureType != null) {
             throw new DataStoreException("Can only have one feature type in CSV dataStore.");
@@ -375,7 +375,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public void deleteFeatureType(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
 
         final FeatureType oldSchema = featureType;
@@ -393,14 +393,14 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         typeCheck(typeName); //raise error if type doesn't exist
         deleteFeatureType(typeName);
         createFeatureType(typeName, featureType);
     }
 
     @Override
-    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
         return featureType;
     }
@@ -417,7 +417,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter,
+    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter,
             final Hints hints) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
         final FeatureWriter fw = new CSVFeatureWriter();
@@ -425,7 +425,7 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public boolean isWritable(Name typeName) throws DataStoreException {
+    public boolean isWritable(GenericName typeName) throws DataStoreException {
         return true;
     }
 
@@ -439,18 +439,18 @@ public class CSVFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
+    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures,hints);
     }
 
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 

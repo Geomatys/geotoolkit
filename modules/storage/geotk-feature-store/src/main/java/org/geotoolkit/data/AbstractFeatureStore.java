@@ -58,7 +58,7 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
@@ -137,7 +137,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     
     @Override
     public VersionControl getVersioning(String typeName) throws VersioningException{
-        final Name n = DefaultName.valueOf(typeName);
+        final GenericName n = DefaultName.valueOf(typeName);
         return getVersioning(n);
     }
 
@@ -146,7 +146,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @param version 
      */
     @Override
-    public VersionControl getVersioning(Name typeName) throws VersioningException{
+    public VersionControl getVersioning(GenericName typeName) throws VersioningException{
         throw new VersioningException("Versioning not supported");
     }
 
@@ -171,8 +171,8 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      */
     @Override
     public String[] getTypeNames() throws DataStoreException {
-        final Set<Name> names = getNames();
-        final Iterator<Name> ite = names.iterator();
+        final Set<GenericName> names = getNames();
+        final Iterator<GenericName> ite = names.iterator();
         final String[] locals = new String[names.size()];
         int i=0;
         while(ite.hasNext()){
@@ -187,7 +187,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      */
     @Override
     public FeatureType getFeatureType(final String typeName) throws DataStoreException {
-        for(final Name n : getNames()){
+        for(final GenericName n : getNames()){
             if(n.tip().toString().equals(typeName)){
                 return getFeatureType(n);
             }
@@ -225,7 +225,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @throws DataStoreException
      */
     @Override
-    public List<ComplexType> getFeatureTypeHierarchy(Name typeName) throws DataStoreException {
+    public List<ComplexType> getFeatureTypeHierarchy(GenericName typeName) throws DataStoreException {
         return Collections.singletonList((ComplexType)getFeatureType(typeName));
     }
 
@@ -236,7 +236,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * succeed.
      */
     @Override
-    public boolean isWritable(final Name typeName) throws DataStoreException {
+    public boolean isWritable(final GenericName typeName) throws DataStoreException {
         //while raise an error if type doesnt exist
         getFeatureType(typeName);
 
@@ -285,7 +285,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
         if(query.retrieveAllProperties()){
             //we simplify it, get only geometry attributes + sort attribute
             final FeatureType ft = getFeatureType(query.getTypeName());
-            final List<Name> names = new ArrayList<Name>();
+            final List<GenericName> names = new ArrayList<GenericName>();
             for(PropertyDescriptor desc : ft.getDescriptors()){
                 if(desc instanceof GeometryDescriptor){
                     names.add(desc.getName());
@@ -306,12 +306,12 @@ public abstract class AbstractFeatureStore extends FeatureStore {
             }
             
             final QueryBuilder qb = new QueryBuilder(query);
-            qb.setProperties(names.toArray(new Name[names.size()]));
+            qb.setProperties(names.toArray(new GenericName[names.size()]));
             query = qb.buildQuery();
         }
         
         
-        final Name[] wantedProp = query.getPropertyNames();
+        final GenericName[] wantedProp = query.getPropertyNames();
         if(wantedProp.length==0){
             return null;
         }
@@ -328,7 +328,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     }
 
     @Override
-    public final List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public final List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
         return addFeatures(groupName,newFeatures,new Hints());
     }
 
@@ -339,12 +339,12 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @see  #updateFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final PropertyDescriptor desc, final Object value) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final PropertyDescriptor desc, final Object value) throws DataStoreException {
         updateFeatures(groupName, filter, Collections.singletonMap(desc, value));
     }
 
     @Override
-    public final FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+    public final FeatureWriter getFeatureWriter(GenericName typeName, Filter filter) throws DataStoreException {
         return getFeatureWriter(typeName, filter, null);
     }
     
@@ -354,7 +354,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * Generic implementation, will aquiere a featurewriter and iterate to the end of the writer.
      */
     @Override
-    public final FeatureWriter getFeatureWriterAppend(final Name typeName) throws DataStoreException {
+    public final FeatureWriter getFeatureWriterAppend(final GenericName typeName) throws DataStoreException {
         return getFeatureWriterAppend(typeName,null);
     }
     
@@ -364,7 +364,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * Generic implementation, will aquiere a featurewriter and iterate to the end of the writer.
      */
     @Override
-    public FeatureWriter getFeatureWriterAppend(final Name typeName,final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriterAppend(final GenericName typeName,final Hints hints) throws DataStoreException {
         final FeatureWriter writer = getFeatureWriter(typeName,Filter.INCLUDE, hints);
 
         while (writer.hasNext()) {
@@ -394,7 +394,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @param name added schema name
      * @param type added feature type
      */
-    protected void fireSchemaAdded(final Name name, final FeatureType type){
+    protected void fireSchemaAdded(final GenericName name, final FeatureType type){
         sendStructureEvent(FeatureStoreManagementEvent.createAddEvent(this, name, type));
     }
 
@@ -405,7 +405,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @param oldType featuretype before change
      * @param newType featuretype after change
      */
-    protected void fireSchemaUpdated(final Name name, final FeatureType oldType, final FeatureType newType){
+    protected void fireSchemaUpdated(final GenericName name, final FeatureType oldType, final FeatureType newType){
         sendStructureEvent(FeatureStoreManagementEvent.createUpdateEvent(this, name, oldType, newType));
     }
 
@@ -415,7 +415,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @param name deleted schema name
      * @param type feature type of the deleted schema
      */
-    protected void fireSchemaDeleted(final Name name, final FeatureType type){
+    protected void fireSchemaDeleted(final GenericName name, final FeatureType type){
         sendStructureEvent(FeatureStoreManagementEvent.createDeleteEvent(this, name, type));
     }
 
@@ -425,7 +425,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @param name of the schema where features where added.
      * @param ids modified feature ids
      */
-    protected void fireFeaturesAdded(final Name name, final Id ids){
+    protected void fireFeaturesAdded(final GenericName name, final Id ids){
         sendContentEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
     }
 
@@ -435,7 +435,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @param name of the schema where features where updated.
      * @param ids modified feature ids
      */
-    protected void fireFeaturesUpdated(final Name name, final Id ids){
+    protected void fireFeaturesUpdated(final GenericName name, final Id ids){
         sendContentEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
     }
 
@@ -445,7 +445,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @param name of the schema where features where deleted
      * @param ids modified feature ids
      */
-    protected void fireFeaturesDeleted(final Name name, final Id ids){
+    protected void fireFeaturesDeleted(final GenericName name, final Id ids){
         sendContentEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
     }
 
@@ -459,14 +459,14 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @param candidate Name to test.
      * @throws DataStoreException if name do not exist.
      */
-    protected void typeCheck(final Name candidate) throws DataStoreException{
+    protected void typeCheck(final GenericName candidate) throws DataStoreException{
 
-        final Collection<Name> names = getNames();
+        final Collection<GenericName> names = getNames();
         if(!names.contains(candidate)){
             final StringBuilder sb = new StringBuilder("Type name : ");
             sb.append(candidate);
             sb.append(" do not exist in this feature store, available names are : ");
-            for(final Name n : names){
+            for(final GenericName n : names){
                 sb.append(n).append(", ");
             }
             throw new DataStoreException(sb.toString());
@@ -531,7 +531,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @return list of ids of the features added.
      * @throws DataStoreException
      */
-    protected List<FeatureId> handleAddWithFeatureWriter(final Name groupName, final Collection<? extends Feature> newFeatures,
+    protected List<FeatureId> handleAddWithFeatureWriter(final GenericName groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException{
         try{
             return FeatureStoreUtilities.write(getFeatureWriterAppend(groupName,hints), newFeatures);
@@ -549,7 +549,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @param values
      * @throws DataStoreException
      */
-    protected void handleUpdateWithFeatureWriter(final Name groupName, final Filter filter,
+    protected void handleUpdateWithFeatureWriter(final GenericName groupName, final Filter filter,
             final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
 
         final FeatureWriter writer = getFeatureWriter(groupName,filter);
@@ -577,7 +577,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @param filter
      * @throws DataStoreException
      */
-    protected void handleRemoveWithFeatureWriter(final Name groupName, final Filter filter) throws DataStoreException {
+    protected void handleRemoveWithFeatureWriter(final GenericName groupName, final Filter filter) throws DataStoreException {
         final FeatureWriter writer = getFeatureWriter(groupName,filter);
 
         try{
@@ -600,16 +600,16 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * @param filter
      * @throws DataStoreException
      */
-    protected FeatureWriter handleWriter(final Name groupName, final Filter filter, final Hints hints) throws DataStoreException {
+    protected FeatureWriter handleWriter(final GenericName groupName, final Filter filter, final Hints hints) throws DataStoreException {
         return GenericFeatureWriter.wrap(this, groupName, filter);
     }
 
-    protected FeatureWriter handleWriterAppend(final Name groupName, final Hints hints) throws DataStoreException {
+    protected FeatureWriter handleWriterAppend(final GenericName groupName, final Hints hints) throws DataStoreException {
         return GenericFeatureWriter.wrapAppend(this, groupName);
     }
 
 
-    public static Name ensureGMLNS(final String namespace, final String local){
+    public static GenericName ensureGMLNS(final String namespace, final String local){
         if(local.equals(GML_NAME)){
             return DefaultName.create(GML_311_NAMESPACE, GML_NAME);
         }else if(local.equals(GML_DESCRIPTION)){

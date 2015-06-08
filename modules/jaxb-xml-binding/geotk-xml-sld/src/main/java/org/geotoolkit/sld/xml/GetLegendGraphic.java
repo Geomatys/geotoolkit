@@ -20,7 +20,7 @@ import org.geotoolkit.ows.xml.RequestBase;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
 import org.apache.sis.util.Version;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -34,7 +34,7 @@ public final class GetLegendGraphic implements RequestBase {
     /**
      * Layer to consider.
      */
-    private final Name layer;
+    private final GenericName layer;
 
     /**
      * Format of the legend file returned.
@@ -84,7 +84,7 @@ public final class GetLegendGraphic implements RequestBase {
      * Builds a {@code GetLegendGraphic} request, using the layer and mime-type specified
      * and width and height for the image.
      */
-    public GetLegendGraphic(final Name layer, final String format, final Integer width,
+    public GetLegendGraphic(final GenericName layer, final String format, final Integer width,
                             final Integer height, final String style, final String sld,
                             final StyledLayerDescriptor sldVersion, final String rule,
                             final Double scale, final Version version)
@@ -104,7 +104,7 @@ public final class GetLegendGraphic implements RequestBase {
     /**
      * Returns the layer to consider for this request.
      */
-    public Name getLayer() {
+    public GenericName getLayer() {
         return layer;
     }
 

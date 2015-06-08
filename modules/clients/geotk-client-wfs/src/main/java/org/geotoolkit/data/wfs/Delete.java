@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.wfs;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 
 /**
@@ -39,11 +39,11 @@ public interface Delete extends TransactionElement {
      * @return QName : requested type name, can be null
      * if not yet configured.
      */
-    Name getTypeName();
+    GenericName getTypeName();
 
     /**
      * @param type : requested type name, must not be null
      */
-    void setTypeName(Name type);
+    void setTypeName(GenericName type);
 
 }

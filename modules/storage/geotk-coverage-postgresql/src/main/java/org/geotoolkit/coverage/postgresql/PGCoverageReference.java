@@ -63,7 +63,7 @@ import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.version.Version;
 import org.opengis.coverage.SampleDimensionType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -82,7 +82,7 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
     private final PGPyramidSet pyramidSet;
     final Version version;
 
-    public PGCoverageReference(final PGCoverageStore store, final Name name, Version version) {
+    public PGCoverageReference(final PGCoverageStore store, final GenericName name, Version version) {
         super(store,name,0);
         this.pgstore = store;
         this.pyramidSet = new PGPyramidSet(this);

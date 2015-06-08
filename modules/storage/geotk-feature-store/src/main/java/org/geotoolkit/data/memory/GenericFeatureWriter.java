@@ -33,7 +33,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -52,14 +52,14 @@ public class GenericFeatureWriter implements FeatureWriter {
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     protected final FeatureStore store;
-    protected final Name typeName;
+    protected final GenericName typeName;
     protected final FeatureReader reader;
     protected final FeatureType type;
     protected Feature currentFeature = null;
     protected Feature modified = null;
     private boolean remove = false;
 
-    private GenericFeatureWriter(final FeatureStore store, final Name typeName, final Filter filter) throws DataStoreException {
+    private GenericFeatureWriter(final FeatureStore store, final GenericName typeName, final Filter filter) throws DataStoreException {
         this.store = store;
         this.typeName = typeName;
         reader = store.getFeatureReader(QueryBuilder.filtered(typeName, filter));
@@ -190,11 +190,11 @@ public class GenericFeatureWriter implements FeatureWriter {
         return sb.toString();
     }
 
-    public static FeatureWriter wrap(final FeatureStore store, final Name typeName, final Filter filter) throws DataStoreException{
+    public static FeatureWriter wrap(final FeatureStore store, final GenericName typeName, final Filter filter) throws DataStoreException{
         return new GenericFeatureWriter(store, typeName, filter);
     }
 
-    public static FeatureWriter wrapAppend(final FeatureStore store, final Name typeName) throws DataStoreException{
+    public static FeatureWriter wrapAppend(final FeatureStore store, final GenericName typeName) throws DataStoreException{
         return wrap(store,typeName,Filter.EXCLUDE);
     }
 

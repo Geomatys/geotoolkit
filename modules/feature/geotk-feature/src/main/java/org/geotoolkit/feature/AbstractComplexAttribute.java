@@ -32,7 +32,6 @@ import org.apache.sis.io.TableAppender;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.Utilities;
-import org.apache.sis.util.iso.Names;
 
 import org.geotoolkit.feature.type.AssociationType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
@@ -83,7 +82,8 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      */
     @Override
     public Collection<Property> getProperties(final GenericName name) {
-        if(name.scope().isGlobal()){
+        final String ns = DefaultName.getNamespace(name);
+        if(ns==null || ns.isEmpty()){
             return getProperties(name.toString());
         }
 
@@ -117,7 +117,8 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      */
     @Override
     public Property getProperty(final GenericName name) {
-        if(name.scope().isGlobal()){
+        final String ns = DefaultName.getNamespace(name);
+        if(ns==null || ns.isEmpty()){
             return getProperty(name.toString());
         }
         //TODO find a faster way, hashmap ?
@@ -312,7 +313,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         }
 
         if(name != null){
-            tablewriter.append(Names.toExpandedString(name));
+            tablewriter.append(DefaultName.toExpandedString(name));
         }
 
         //write the index if one

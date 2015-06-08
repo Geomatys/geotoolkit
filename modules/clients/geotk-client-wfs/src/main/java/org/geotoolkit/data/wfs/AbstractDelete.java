@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.wfs;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 
 /**
@@ -28,7 +28,7 @@ public class AbstractDelete implements Delete{
 
     protected String handle = null;
     protected Filter filter = null;
-    protected Name typeName = null;
+    protected GenericName typeName = null;
 
     @Override
     public String getHandle() {
@@ -51,12 +51,12 @@ public class AbstractDelete implements Delete{
     }
 
     @Override
-    public Name getTypeName() {
+    public GenericName getTypeName() {
         return typeName;
     }
 
     @Override
-    public void setTypeName(final Name type) {
+    public void setTypeName(final GenericName type) {
         this.typeName = type;
     }
 

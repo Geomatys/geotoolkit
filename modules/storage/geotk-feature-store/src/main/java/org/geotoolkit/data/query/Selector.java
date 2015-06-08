@@ -18,7 +18,7 @@
 package org.geotoolkit.data.query;
 
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * Define the feature provider that will be use by the query.
@@ -44,7 +44,7 @@ public interface Selector extends Source{
     /**
      * Gets the name of the required feature type.
      */
-    Name getFeatureTypeName();
+    GenericName getFeatureTypeName();
 
     /**
      * Gets the selector name.

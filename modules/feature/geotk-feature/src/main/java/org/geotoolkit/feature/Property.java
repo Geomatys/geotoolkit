@@ -33,7 +33,7 @@ package org.geotoolkit.feature;
 
 import java.util.Map;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 
@@ -168,7 +168,7 @@ public interface Property extends org.opengis.feature.Property {
      *
      * @return name of the property.
      */
-    Name getName();
+    GenericName getName();
 
     /**
      * Flag indicating if <code>null</code> is an acceptable value for the

@@ -48,7 +48,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 import static org.junit.Assert.*;
 
@@ -95,7 +95,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         copyShapefiles("shapes/stream.shp");
         ShapefileFeatureStoreFactory fac = new ShapefileFeatureStoreFactory();
         FeatureStore s1 = createDataStore(fac, TestData.url(AbstractTestCaseSupport.class, "shapes/stream.shp"), true);
-        Name typeName = s1.getNames().iterator().next();
+        GenericName typeName = s1.getNames().iterator().next();
         FeatureType type = s1.getFeatureType(typeName);
         FeatureCollection one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
@@ -137,7 +137,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
 //        File file = copyShapefiles(f); // Work on File rather than URL from
 //        // JAR.
         FeatureStore s = createDataStore(new ShapefileFeatureStoreFactory(), ShapeTestData.url(f), true);
-        Name typeName = s.getNames().iterator().next();
+        GenericName typeName = s.getNames().iterator().next();
         FeatureType type = s.getFeatureType(typeName);
         FeatureCollection one = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
@@ -159,7 +159,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         session.commit();
 
         s = createDataStore(new ShapefileFeatureStoreFactory(), tmp.toURI().toURL(), true);
-        Name typeName = s.getNames().iterator().next();
+        GenericName typeName = s.getNames().iterator().next();
 
         FeatureCollection two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 

@@ -17,6 +17,7 @@
 
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import javax.xml.namespace.QName;
 import org.junit.Test;
 import static org.geotoolkit.test.Assert.*;
@@ -36,27 +37,24 @@ public class DefaultNameTest {
     public void testParameter() {
         final String uri = "http://test.com";
         final String local = "localpart";
-        DefaultName name;
+        GenericName name;
 
         name = DefaultName.create(new QName(uri, local));
-        assertEquals(name.getNamespaceURI(), uri);
+        assertEquals(DefaultName.getNamespace(name), uri);
         assertEquals(name.tip().toString(), local);
-        assertEquals(name.scope().isGlobal(), false);
 
         name = DefaultName.create(local);
-        assertEquals(name.getNamespaceURI(), null);
+        assertEquals(DefaultName.getNamespace(name), null);
         assertEquals(name.tip().toString(), local);
-        assertEquals(name.scope().isGlobal(), true);
 
         name = DefaultName.create(uri, local);
-        assertEquals(name.getNamespaceURI(), uri);
+        assertEquals(DefaultName.getNamespace(name), uri);
         assertEquals(name.tip().toString(), local);
-        assertEquals(name.scope().isGlobal(), false);
 
         name = DefaultName.create(uri, local);
-        assertEquals(name.getNamespaceURI(), uri);
+        assertEquals(DefaultName.getNamespace(name), uri);
         assertEquals(name.tip().toString(), local);
-        assertEquals(name.scope().isGlobal(), false);
+        
     }
 
     /**
@@ -66,29 +64,26 @@ public class DefaultNameTest {
     public void testValueOf() {
         final String uri = "http://test.com";
         final String local = "localpart";
-        Name name;
+        GenericName name;
 
         name = DefaultName.valueOf("{"+uri+"}"+local);
-        assertEquals(name.getNamespaceURI(), uri);
+        assertEquals(DefaultName.getNamespace(name), uri);
         assertEquals(name.tip().toString(), local);
-        assertEquals(name.scope().isGlobal(), false);
 
         name = DefaultName.valueOf(uri+":"+local);
-        assertEquals(name.getNamespaceURI(), uri);
+        assertEquals(DefaultName.getNamespace(name), uri);
         assertEquals(name.tip().toString(), local);
-        assertEquals(name.scope().isGlobal(), false);
 
         name = DefaultName.valueOf(local);
-        assertEquals(name.getNamespaceURI(), null);
+        assertEquals(DefaultName.getNamespace(name), null);
         assertEquals(name.tip().toString(), local);
-        assertEquals(name.scope().isGlobal(), true);
 
     }
 
     @Test
     public void testEquals(){
-        Name n1 = DefaultName.create("http://test.com", "test");
-        Name n2 = DefaultName.create("http://test.com", "test");
+        GenericName n1 = DefaultName.create("http://test.com", "test");
+        GenericName n2 = DefaultName.create("http://test.com", "test");
         assertEquals(n1, n2);
 
         n1 = DefaultName.create("http://test.com", "test1");
@@ -103,7 +98,7 @@ public class DefaultNameTest {
 
     @Test
     public void testSerialize(){
-        Name name = DefaultName.valueOf("{geotk}test");
+        GenericName name = DefaultName.valueOf("{geotk}test");
         assertSerializedEquals(name);
     }
 

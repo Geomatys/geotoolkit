@@ -50,7 +50,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.Names;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.RandomStyleBuilder;
@@ -58,7 +58,7 @@ import org.geotoolkit.style.StyleConstants;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * Panel allowing to choose layer among the available datas of the source.
@@ -78,16 +78,16 @@ public class JLayerChooser extends javax.swing.JPanel {
 
             if(o1 instanceof FeatureType){
                 str1 = ((FeatureType)o1).getName().tip().toString();
-            }else if(o1 instanceof Name){
-                str1 = ((Name)o1).tip().toString();
+            }else if(o1 instanceof GenericName){
+                str1 = ((GenericName)o1).tip().toString();
             }else{
                 str1 = o1.toString();
             }
 
             if(o2 instanceof FeatureType){
                 str2 = ((FeatureType)o2).getName().tip().toString();
-            }else if(o2 instanceof Name){
-                str2 = ((Name)o2).tip().toString();
+            }else if(o2 instanceof GenericName){
+                str2 = ((GenericName)o2).tip().toString();
             }else{
                 str2 = o2.toString();
             }
@@ -113,11 +113,11 @@ public class JLayerChooser extends javax.swing.JPanel {
 
         if(values != null){
             for(Object value : values){
-                final Name name;
+                final GenericName name;
                 if(value instanceof FeatureType){
                     name = ((FeatureType) value).getName();
                 }else{
-                    name = (Name) value;
+                    name = (GenericName) value;
                 }
 
                 if(source instanceof FeatureStore){
@@ -151,7 +151,7 @@ public class JLayerChooser extends javax.swing.JPanel {
 
         if(source instanceof FeatureStore){
             final FeatureStore store = (FeatureStore) source;
-            for(Name name : store.getNames()){
+            for(GenericName name : store.getNames()){
                 final FeatureType ft = store.getFeatureType(name);
                 if(ft.getGeometryDescriptor() != null){
                     firstCandidates.add(ft);
@@ -296,10 +296,10 @@ public class JLayerChooser extends javax.swing.JPanel {
                 value = ft.getName();
             }
 
-            if(value instanceof Name){
-                final Name name = (Name) value;
+            if(value instanceof GenericName){
+                final GenericName name = (GenericName) value;
                 lbl.setText(name.tip().toString());
-                lbl.setToolTipText(Names.toExpandedString(name));
+                lbl.setToolTipText(DefaultName.toExpandedString(name));
             }
 
             return lbl;

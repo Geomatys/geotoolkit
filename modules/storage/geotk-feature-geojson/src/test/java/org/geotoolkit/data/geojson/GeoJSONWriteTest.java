@@ -1,5 +1,6 @@
 package org.geotoolkit.data.geojson;
 
+import org.opengis.util.GenericName;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.io.WKTReader;
@@ -308,7 +309,7 @@ public class GeoJSONWriteTest {
                 Feature candidate = ite.next();
 
                 for (PropertyDescriptor propDesc : expected.getType().getDescriptors()) {
-                    Name propName = propDesc.getName();
+                    GenericName propName = propDesc.getName();
                     Collection<Property> expectedProperties = expected.getProperties(propName);
                     Collection<Property> resultProperties = candidate.getProperties(propName);
 

@@ -45,7 +45,7 @@ import org.geotoolkit.ogc.xml.v100.UpperBoundaryType;
 import org.geotoolkit.sld.xml.v100.CssParameter;
 import org.geotoolkit.sld.xml.v100.ParameterValueType;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
@@ -289,7 +289,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
     /**
      * Transform a Feature name in a QName.
      */
-    public QName visitName(final Name name){
+    public QName visitName(final GenericName name){
         return new QName(name.scope().isGlobal() ? null : name.scope().name().toString(), name.toString());
     }
 

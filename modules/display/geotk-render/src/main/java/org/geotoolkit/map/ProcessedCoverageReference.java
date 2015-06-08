@@ -27,6 +27,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 

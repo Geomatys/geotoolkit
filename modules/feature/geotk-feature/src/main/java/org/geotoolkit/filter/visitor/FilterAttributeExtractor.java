@@ -24,7 +24,7 @@ import org.geotoolkit.feature.type.DefaultName;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.expression.PropertyName;
 
 
@@ -37,7 +37,7 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
     /*
      * Last set visited
      */
-    private final Set<Name> attributeNames = new HashSet<>();
+    private final Set<GenericName> attributeNames = new HashSet<>();
 
     /**
      * feature type to evaluate against
@@ -71,8 +71,8 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
     /**
      * @return an array of the attribute names found so far during the visit
      */
-    public Name[] getAttributeNames() {
-        return (Name[]) attributeNames.toArray(new Name[attributeNames.size()]);
+    public GenericName[] getAttributeNames() {
+        return (GenericName[]) attributeNames.toArray(new GenericName[attributeNames.size()]);
     }
 
     /**

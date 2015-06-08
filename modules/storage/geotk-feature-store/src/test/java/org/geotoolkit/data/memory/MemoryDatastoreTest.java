@@ -49,7 +49,7 @@ import org.junit.Test;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
@@ -83,13 +83,13 @@ public class MemoryDatastoreTest extends TestCase{
     public void testSchemas() throws Exception {
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final MemoryFeatureStore store = new MemoryFeatureStore();
-        Set<Name> names;
+        Set<GenericName> names;
 
         names = store.getNames();
         assertEquals(0,names.size());
 
         //test creation of one schema ------------------------------------------
-        Name name = DefaultName.create("http://test.com", "TestSchema1");
+        GenericName name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
@@ -99,10 +99,10 @@ public class MemoryDatastoreTest extends TestCase{
 
         names = store.getNames();
         assertEquals(1,names.size());
-        Name n = names.iterator().next();
+        GenericName n = names.iterator().next();
 
         assertEquals(n.tip().toString(), "TestSchema1");
-        assertEquals(n.getNamespaceURI(), "http://test.com");
+        assertEquals(DefaultName.getNamespace(n), "http://test.com");
 
         FeatureType t = store.getFeatureType(n);
         assertEquals(t, type1);
@@ -128,7 +128,7 @@ public class MemoryDatastoreTest extends TestCase{
         n = names.iterator().next();
 
         assertEquals(n.tip().toString(), "TestSchema1");
-        assertEquals(n.getNamespaceURI(), "http://test.com");
+        assertEquals(DefaultName.getNamespace(n), "http://test.com");
 
         t = store.getFeatureType(n);
         assertEquals(t, type2);
@@ -166,7 +166,7 @@ public class MemoryDatastoreTest extends TestCase{
         final MemoryFeatureStore store = new MemoryFeatureStore();
 
         //create the schema
-        Name name = DefaultName.create("http://test.com", "TestSchema1");
+        GenericName name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
@@ -285,7 +285,7 @@ public class MemoryDatastoreTest extends TestCase{
         final MemoryFeatureStore store = new MemoryFeatureStore();
 
         //create the schema
-        final Name name = DefaultName.create("http://test.com", "TestSchema1");
+        final GenericName name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("string", String.class);
@@ -574,7 +574,7 @@ public class MemoryDatastoreTest extends TestCase{
         final GeometryFactory gf = new GeometryFactory();
 
         //create the schema
-        final Name name = DefaultName.create("http://test.com", "TestSchema1");
+        final GenericName name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("geometry", Point.class, CRS.decode("EPSG:27582"));
@@ -659,13 +659,13 @@ public class MemoryDatastoreTest extends TestCase{
     public void testPreserveId() throws Exception{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final MemoryFeatureStore store = new MemoryFeatureStore();
-        Set<Name> names;
+        Set<GenericName> names;
 
         names = store.getNames();
         assertEquals(0,names.size());
 
         //test creation of one schema ------------------------------------------
-        Name name = DefaultName.create("http://test.com", "TestSchema1");
+        GenericName name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("att1", String.class);
@@ -675,10 +675,10 @@ public class MemoryDatastoreTest extends TestCase{
 
         names = store.getNames();
         assertEquals(1,names.size());
-        Name n = names.iterator().next();
+        GenericName n = names.iterator().next();
 
         assertEquals(n.tip().toString(), "TestSchema1");
-        assertEquals(n.getNamespaceURI(), "http://test.com");
+        assertEquals(DefaultName.getNamespace(n), "http://test.com");
 
 
         //try to insert features -----------------------------------------------
@@ -706,13 +706,13 @@ public class MemoryDatastoreTest extends TestCase{
     public void testCollectionAttributs() throws Exception{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final MemoryFeatureStore store = new MemoryFeatureStore();
-        Set<Name> names;
+        Set<GenericName> names;
 
         names = store.getNames();
         assertEquals(0,names.size());
 
         //test creation of one schema ------------------------------------------
-        Name name = DefaultName.create("http://test.com", "TestSchema1");
+        GenericName name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("ListAtt", List.class);
@@ -724,10 +724,10 @@ public class MemoryDatastoreTest extends TestCase{
 
         names = store.getNames();
         assertEquals(1,names.size());
-        Name n = names.iterator().next();
+        GenericName n = names.iterator().next();
 
         assertEquals(n.tip().toString(), "TestSchema1");
-        assertEquals(n.getNamespaceURI(), "http://test.com");
+        assertEquals(DefaultName.getNamespace(n), "http://test.com");
 
         //try to insert features -----------------------------------------------
         Collection<Feature> features = new ArrayList<>();
@@ -790,13 +790,13 @@ public class MemoryDatastoreTest extends TestCase{
     public void testNoIteratorUnclosed() throws Exception{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final MemoryFeatureStore store = new MemoryFeatureStore();
-        Set<Name> names;
+        Set<GenericName> names;
 
         names = store.getNames();
         assertEquals(0,names.size());
 
         //test creation of one schema ------------------------------------------
-        Name name = DefaultName.create("http://test.com", "TestSchema1");
+        GenericName name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("ListAtt", List.class);

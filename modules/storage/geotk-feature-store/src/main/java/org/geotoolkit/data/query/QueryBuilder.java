@@ -23,7 +23,7 @@ import java.util.Set;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.version.Version;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -36,13 +36,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public final class QueryBuilder {
 
-    private static final Name[] NO_PROPERTIES = new Name[0];
+    private static final GenericName[] NO_PROPERTIES = new GenericName[0];
 
     private Source source = null;
-    private Name typeName = null;
+    private GenericName typeName = null;
 
     private Filter filter = Filter.INCLUDE;
-    private Name[] properties = null;
+    private GenericName[] properties = null;
     private SortBy[] sortBy = null;
     private CoordinateReferenceSystem crs = null;
     private int startIndex = 0;
@@ -59,7 +59,7 @@ public final class QueryBuilder {
         copy(query);
     }
 
-    public QueryBuilder(final Name name){
+    public QueryBuilder(final GenericName name){
         setTypeName(name);
     }
 
@@ -92,11 +92,11 @@ public final class QueryBuilder {
         this.language = query.getLanguage();
     }
 
-    public Name getTypeName() {
+    public GenericName getTypeName() {
         return typeName;
     }
 
-    public void setTypeName(final Name typeName) {
+    public void setTypeName(final GenericName typeName) {
         this.typeName = typeName;
         this.source = null;
     }
@@ -122,7 +122,7 @@ public final class QueryBuilder {
         this.filter = filter;
     }
 
-    public Name[] getProperties() {
+    public GenericName[] getProperties() {
         return properties;
     }
 
@@ -130,14 +130,14 @@ public final class QueryBuilder {
         if(properties == null){
             this.properties = null;
         }else{
-            this.properties = new Name[properties.length];
+            this.properties = new GenericName[properties.length];
             for(int i=0;i<properties.length;i++){
                 this.properties[i] = DefaultName.valueOf(properties[i]);
             }
         }
     }
 
-    public void setProperties(final Name[] properties) {
+    public void setProperties(final GenericName[] properties) {
         this.properties = properties;
     }
 
@@ -256,7 +256,7 @@ public final class QueryBuilder {
      * @param filter
      * @return Immutable query
      */
-    public static Query filtered(final Name name, final Filter filter){
+    public static Query filtered(final GenericName name, final Filter filter){
         final QueryBuilder builder = new QueryBuilder();
         builder.setTypeName(name);
         builder.setFilter(filter);
@@ -270,7 +270,7 @@ public final class QueryBuilder {
      * @param filter
      * @return Immutable query
      */
-    public static Query sorted(final Name name, final SortBy ... sorts){
+    public static Query sorted(final GenericName name, final SortBy ... sorts){
         final QueryBuilder builder = new QueryBuilder();
         builder.setTypeName(name);
         builder.setSortBy(sorts);
@@ -282,7 +282,7 @@ public final class QueryBuilder {
      * query should retrieve all properties, with no maxFeatures, no
      * filtering, and the default featureType.
      */
-    public static Query all(final Name name){
+    public static Query all(final GenericName name){
         return new DefaultQuery(new DefaultSelector(null, name, "s1"));
     }
 
@@ -303,7 +303,7 @@ public final class QueryBuilder {
      * @param query name
      * @return Query
      */
-    public static Query language(final String language, final String statement, final Name name){
+    public static Query language(final String language, final String statement, final GenericName name){
         return new DefaultQuery(language, statement,name);
     }
 
@@ -312,7 +312,7 @@ public final class QueryBuilder {
      * This query should retrive no properties, with no maxFeatures, no
      * filtering, and the a featureType with no attributes.
      */
-    public static Query fids(final Name name){
+    public static Query fids(final GenericName name){
         return new DefaultQuery(new DefaultSelector(null, name, "s1"), NO_PROPERTIES);
     }
 
@@ -323,7 +323,7 @@ public final class QueryBuilder {
      * @param filter
      * @return Immutable query
      */
-    public static Query reprojected(final Name name, final CoordinateReferenceSystem crs){
+    public static Query reprojected(final GenericName name, final CoordinateReferenceSystem crs){
         final QueryBuilder builder = new QueryBuilder();
         builder.setTypeName(name);
         builder.setCRS(crs);

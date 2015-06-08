@@ -30,7 +30,7 @@ import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.DefaultName;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -92,7 +92,7 @@ public class AttributeDescriptorBuilder {
      */
     private final FeatureTypeFactory factory;
 
-    private Name name = null;
+    private GenericName name = null;
     private int minOccurs = 1;
     private int maxOccurs = 1;
     /**
@@ -152,7 +152,7 @@ public class AttributeDescriptorBuilder {
         userData.putAll(descriptor.getUserData());
     }
 
-    public void setName(final Name name) {
+    public void setName(final GenericName name) {
         this.name = name;
     }
 
@@ -164,7 +164,7 @@ public class AttributeDescriptorBuilder {
         this.name = DefaultName.create(namespace, localPart);
     }
 
-    public Name getName() {
+    public GenericName getName() {
         return name;
     }
 
@@ -286,12 +286,12 @@ public class AttributeDescriptorBuilder {
     }
 
 
-    public AttributeDescriptor create(final Name name, final Class binding,
+    public AttributeDescriptor create(final GenericName name, final Class binding,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData) {
         return create(name,binding,null,min,max,nillable,userData);
     }
 
-    public AttributeDescriptor create(final Name name, final Class binding, final CoordinateReferenceSystem crs,
+    public AttributeDescriptor create(final GenericName name, final Class binding, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData) {
 
         final PropertyType at;
@@ -313,7 +313,7 @@ public class AttributeDescriptorBuilder {
         return create(at,name,crs,min,max,nillable,userData);
     }
 
-    public AttributeDescriptor create(final Name name, final Class binding, final CoordinateReferenceSystem crs,
+    public AttributeDescriptor create(final GenericName name, final Class binding, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Object defaultValue, final Map<Object,Object> userData) {
 
         final PropertyType at;
@@ -335,12 +335,12 @@ public class AttributeDescriptorBuilder {
         return create(at,name,crs,min,max,nillable,defaultValue,userData);
     }
 
-    public AttributeDescriptor create(final PropertyType at, final Name name,
+    public AttributeDescriptor create(final PropertyType at, final GenericName name,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
         return create(at,name,null,min,max,nillable,userData);
     }
 
-    public AttributeDescriptor create(final PropertyType at, final Name name, final CoordinateReferenceSystem crs,
+    public AttributeDescriptor create(final PropertyType at, final GenericName name, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
         Object defaultValue = null;
         if(!nillable){
@@ -368,7 +368,7 @@ public class AttributeDescriptorBuilder {
         return desc;
     }
 
-    public AttributeDescriptor create(final PropertyType at, final Name name, final CoordinateReferenceSystem crs,
+    public AttributeDescriptor create(final PropertyType at, final GenericName name, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, Object defaultValue, final Map<Object,Object> userData){
 
         final AttributeDescriptor desc;

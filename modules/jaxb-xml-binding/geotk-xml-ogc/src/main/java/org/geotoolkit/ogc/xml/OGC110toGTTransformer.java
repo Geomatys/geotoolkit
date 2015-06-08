@@ -46,7 +46,7 @@ import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.ObjectConverters;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.MatchAction;
@@ -545,7 +545,7 @@ public class OGC110toGTTransformer {
     /**
      * Change a QName in Name.
      */
-    public Name visitQName(final QName qname){
+    public GenericName visitQName(final QName qname){
         if(qname == null) {return null;}
         return DefaultName.create(qname);
     }

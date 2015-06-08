@@ -75,7 +75,7 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.Filter;
@@ -143,7 +143,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     @Override
-    public boolean isWritable(final Name typeName) throws DataStoreException {
+    public boolean isWritable(final GenericName typeName) throws DataStoreException {
         final PrimaryKey key = dbmodel.getPrimaryKey(typeName);
         return key != null && !(key.isNull());
     }
@@ -232,13 +232,13 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
     
     @Override
-    public Set<Name> getNames() throws DataStoreException {
+    public Set<GenericName> getNames() throws DataStoreException {
         ensureOpen();
         return dbmodel.getNames();
     }
 
     @Override
-    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
         ensureOpen();
         return dbmodel.getFeatureType(typeName);
     }
@@ -363,9 +363,9 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             returnedFeatureType = (FeatureType) FeatureTypeBuilder.retype(tableType, query.getPropertyNames());
             final FilterAttributeExtractor extractor = new FilterAttributeExtractor(tableType);
             postFilter.accept(extractor, null);
-            final Name[] extraAttributes = extractor.getAttributeNames();
-            final List<Name> allAttributes = new ArrayList<Name>(Arrays.asList(query.getPropertyNames()));
-            for (Name extraAttribute : extraAttributes) {
+            final GenericName[] extraAttributes = extractor.getAttributeNames();
+            final List<GenericName> allAttributes = new ArrayList<GenericName>(Arrays.asList(query.getPropertyNames()));
+            for (GenericName extraAttribute : extraAttributes) {
                 if(!allAttributes.contains(extraAttribute)) {
                     allAttributes.add(extraAttribute);
                 }
@@ -375,7 +375,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             pkLoop :
             for(ColumnMetaModel pkc : pkey.getColumns()){
                 final String pkcName = pkc.getName();
-                for(Name n : allAttributes){
+                for(GenericName n : allAttributes){
                     if(n.tip().toString().equals(pkcName)){
                         continue pkLoop;
                      }
@@ -384,7 +384,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                 allAttributes.add(baseType.getDescriptor(pkcName).getName());
              }
 
-            final Name[] allAttributeArray = allAttributes.toArray(new Name[allAttributes.size()]);
+            final GenericName[] allAttributeArray = allAttributes.toArray(new GenericName[allAttributes.size()]);
             queryFeatureType = (FeatureType) FeatureTypeBuilder.retype(tableType, allAttributeArray);
         }
         
@@ -488,11 +488,11 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter, final Hints hints) throws DataStoreException {
         return getFeatureWriter(typeName, filter, null, hints);
     }
     
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, 
+    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter, 
             final Connection cnx, final Hints hints) throws DataStoreException {
         try {
             return getFeatureWriterInternal(typeName, filter, EditMode.UPDATE_AND_INSERT, cnx, hints);
@@ -502,11 +502,11 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriterAppend(final Name typeName, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriterAppend(final GenericName typeName, final Hints hints) throws DataStoreException {
         return getFeatureWriterAppend(typeName, null, hints);
     }
     
-    public FeatureWriter getFeatureWriterAppend(final Name typeName, final Connection cnx, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriterAppend(final GenericName typeName, final Connection cnx, final Hints hints) throws DataStoreException {
         try {
             return getFeatureWriterInternal(typeName, Filter.EXCLUDE, EditMode.INSERT, cnx, hints);
         } catch (IOException ex) {
@@ -514,7 +514,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         }
     }
 
-    private FeatureWriter getFeatureWriterInternal(final Name typeName, Filter baseFilter,
+    private FeatureWriter getFeatureWriterInternal(final GenericName typeName, Filter baseFilter,
             final EditMode mode, Connection cnx, final Hints hints) throws DataStoreException, IOException {
 
         if(!isWritable(typeName)){
@@ -630,7 +630,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * @throws DataStoreException 
      */
     @Override
-    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         ensureOpen();
         
         if(typeName == null){
@@ -742,7 +742,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     @Override
-    public void updateFeatureType(final Name typeName, final FeatureType newft) throws DataStoreException {
+    public void updateFeatureType(final GenericName typeName, final FeatureType newft) throws DataStoreException {
         ensureOpen();
         final FeatureType oldft = getFeatureType(typeName);
 
@@ -791,7 +791,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     @Override
-    public void deleteFeatureType(final Name typeName) throws DataStoreException{
+    public void deleteFeatureType(final GenericName typeName) throws DataStoreException{
         ensureOpen();
         final FeatureType featureType = getFeatureType(typeName);
         final Set<ComplexType> visited = new HashSet<ComplexType>();
@@ -811,7 +811,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         if(visited.contains(featureType)) return;
         visited.add(featureType);
         
-        final Name typeName = featureType.getName();
+        final GenericName typeName = featureType.getName();
         Connection cnx = null;
         Statement stmt = null;
         String sql = null;
@@ -842,7 +842,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      */
     private void decompose(ComplexType type, List<FeatureType> types, List<TypeRelation> relations) throws DataStoreException{
         
-        final Name dbName = DefaultName.create(getDefaultNamespace(), type.getName().tip().toString());
+        final GenericName dbName = DefaultName.create(getDefaultNamespace(), type.getName().tip().toString());
         
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(dbName);
@@ -879,7 +879,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
     
     private static class TypeRelation {
-        Name type;
+        GenericName type;
         PropertyDescriptor property;
     }
     
@@ -892,11 +892,11 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         return addFeatures(groupName, newFeatures, null, hints);
     }
     
-    public final List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, 
+    public final List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, 
             Connection cnx, Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures, cnx, hints);
     }
@@ -905,11 +905,11 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         updateFeatures(groupName, filter, values, null);
     }
     
-    public void updateFeatures(final Name groupName, final Filter filter, 
+    public void updateFeatures(final GenericName groupName, final Filter filter, 
             final Map<? extends PropertyDescriptor, ? extends Object> values, Connection cnx) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values, cnx);
     }
@@ -918,11 +918,11 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         removeFeatures(groupName, filter, null);
     }
     
-    public void removeFeatures(final Name groupName, final Filter filter, Connection cnx) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter, Connection cnx) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter, cnx);
     }
 
@@ -1131,7 +1131,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * @return list of ids of the features added.
      * @throws DataStoreException
      */
-    protected List<FeatureId> handleAddWithFeatureWriter(final Name groupName, final Collection<? extends Feature> newFeatures,
+    protected List<FeatureId> handleAddWithFeatureWriter(final GenericName groupName, final Collection<? extends Feature> newFeatures,
             Connection cnx, final Hints hints) throws DataStoreException{
         try{
             return FeatureStoreUtilities.write(getFeatureWriterAppend(groupName,cnx,hints), newFeatures);
@@ -1150,7 +1150,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * @param cnx
      * @throws DataStoreException
      */
-    protected void handleUpdateWithFeatureWriter(final Name groupName, final Filter filter,
+    protected void handleUpdateWithFeatureWriter(final GenericName groupName, final Filter filter,
             final Map<? extends PropertyDescriptor, ? extends Object> values, Connection cnx) throws DataStoreException {
 
         final FeatureWriter writer = getFeatureWriter(groupName,filter,cnx,null);
@@ -1179,7 +1179,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
      * @param cnx
      * @throws DataStoreException
      */
-    protected void handleRemoveWithFeatureWriter(final Name groupName, final Filter filter, Connection cnx) throws DataStoreException {
+    protected void handleRemoveWithFeatureWriter(final GenericName groupName, final Filter filter, Connection cnx) throws DataStoreException {
         final FeatureWriter writer = getFeatureWriter(groupName,filter,cnx,null);
 
         try{

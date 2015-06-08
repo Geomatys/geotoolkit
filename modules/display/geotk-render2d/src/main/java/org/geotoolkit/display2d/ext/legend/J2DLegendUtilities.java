@@ -51,7 +51,8 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.map.AbstractMapItem;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.style.Description;
@@ -104,7 +105,7 @@ public class J2DLegendUtilities {
             float X = bounds.x, Y = bounds.y;
 
             // Will store the get legend graphic results
-            final Map<Name, BufferedImage> legendResults = new HashMap<>();
+            final Map<GenericName, BufferedImage> legendResults = new HashMap<>();
 
             final Dimension estimation = estimate(g2d, item, template, legendResults, false);
             final BackgroundTemplate background = template.getBackground();
@@ -161,7 +162,7 @@ public class J2DLegendUtilities {
             final Graphics2D g2d,
             final Rectangle bounds,
             final LegendTemplate template,
-            final Map<Name, BufferedImage> legendResults) {
+            final Map<GenericName, BufferedImage> legendResults) {
 
         final AffineTransform origin =  g2d.getTransform();
         
@@ -395,7 +396,7 @@ public class J2DLegendUtilities {
      * legend of the input map item.
      */
     public static Dimension estimate(final Graphics2D g, MapItem mapitem, final LegendTemplate template,
-            final Map<Name,BufferedImage> images, final boolean considerBackground)
+            final Map<GenericName,BufferedImage> images, final boolean considerBackground)
     {
         final Dimension dim = new Dimension(0, 0);
         if (mapitem == null) {
@@ -464,7 +465,7 @@ public class J2DLegendUtilities {
             final MapItem source,
             final Dimension toSet,
             final LegendTemplate template,
-            final Map<Name,BufferedImage> images,
+            final Map<GenericName,BufferedImage> images,
             final boolean considerBackground) {
 
         final FontMetrics layerFontMetric = g2d.getFontMetrics(template.getLayerFont());

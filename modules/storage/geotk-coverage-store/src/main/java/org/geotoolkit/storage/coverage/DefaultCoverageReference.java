@@ -26,7 +26,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.memory.MemoryCoverageReader;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * CoverageReference implementation wrapping a coverage.
@@ -39,7 +39,7 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
     private final Object input;
     private final int imageIndex;
 
-    public DefaultCoverageReference(final CoverageStore store, final GridCoverage2D coverage, Name name) {
+    public DefaultCoverageReference(final CoverageStore store, final GridCoverage2D coverage, GenericName name) {
         super(store,name);
         setValue(TableColumn.NAME, name.tip().toString());
         this.coverage = coverage;
@@ -47,7 +47,7 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
         this.imageIndex = 0;
     }
 
-    public DefaultCoverageReference(final GridCoverage2D coverage, Name name) {
+    public DefaultCoverageReference(final GridCoverage2D coverage, GenericName name) {
         super(null,name);
         setValue(TableColumn.NAME, name.tip().toString());
         this.coverage = coverage;
@@ -55,7 +55,7 @@ public class DefaultCoverageReference extends AbstractCoverageReference{
         this.imageIndex = 0;
     }
 
-    public DefaultCoverageReference(final Object input, Name name) {
+    public DefaultCoverageReference(final Object input, GenericName name) {
         super(null,name);
         this.coverage = null;
         this.input = input;

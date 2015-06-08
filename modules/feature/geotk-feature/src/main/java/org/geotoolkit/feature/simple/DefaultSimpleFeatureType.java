@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.util.iso.Names;
 
 import org.geotoolkit.feature.type.DefaultFeatureType;
 
@@ -29,7 +28,7 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.util.GenericName;
@@ -49,7 +48,7 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
     protected List<AttributeType> typesList;
     final Map<Object, Integer> index;
 
-    public DefaultSimpleFeatureType(final Name name, final List<AttributeDescriptor> schema,
+    public DefaultSimpleFeatureType(final GenericName name, final List<AttributeDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
             final List<Filter> restrictions, final AttributeType superType,
             final InternationalString description){
@@ -152,7 +151,8 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
      */
     @Override
     public int indexOf(final GenericName name) {
-        if (name.scope().isGlobal()) {
+        final String ns = DefaultName.getNamespace(name);
+        if(ns==null || ns.isEmpty()){
             return indexOf(name.toString());
         }
         // otherwise do a full scan
@@ -205,12 +205,12 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
         //must iterate backward to make first attribut with same local part first
         for(int i=n-1; i>=0; i--){
             final AttributeDescriptor ad = descs.get(i);
-            final Name name = ad.getName();
+            final GenericName name = ad.getName();
             index.put(name, i);
             index.put(DefaultName.create(name.tip().toString()), i);
             //must add possible string combinaison
             index.put(name.tip().toString(), i);
-            index.put(Names.toExpandedString(name), i);
+            index.put(DefaultName.toExpandedString(name), i);
             index.put(DefaultName.toExtendedForm(name), i);
         }
 

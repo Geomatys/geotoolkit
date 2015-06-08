@@ -48,7 +48,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
@@ -82,7 +82,7 @@ public class SessionTest{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //create the schema
-        final Name name = DefaultName.create("http://test.com", "TestSchema1");
+        final GenericName name = DefaultName.create("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
         builder.add("geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
@@ -141,7 +141,7 @@ public class SessionTest{
 
     @Test
     public void testSessionReader() throws Exception {
-        final Name name = store.getNames().iterator().next();
+        final GenericName name = store.getNames().iterator().next();
         final QueryBuilder qb = new QueryBuilder();
         Query query;
         
@@ -276,7 +276,7 @@ public class SessionTest{
 
     @Test
     public void testSessionRemoveDelta() throws DataStoreException{
-        final Name name = store.getNames().iterator().next();
+        final GenericName name = store.getNames().iterator().next();
         final QueryBuilder qb = new QueryBuilder();
         Query query;
 
@@ -343,7 +343,7 @@ public class SessionTest{
 
     @Test
     public void testSessionModifyDelta() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
-        final Name name = store.getNames().iterator().next();
+        final GenericName name = store.getNames().iterator().next();
         final QueryBuilder qb = new QueryBuilder();
         Query query;
 
@@ -526,7 +526,7 @@ public class SessionTest{
 
     @Test
     public void testSessionModifyDeltaFilter() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
-        final Name name = store.getNames().iterator().next();
+        final GenericName name = store.getNames().iterator().next();
         final QueryBuilder qb = new QueryBuilder();
         Query query;
 

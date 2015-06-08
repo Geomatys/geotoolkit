@@ -49,9 +49,10 @@ import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.geometry.Envelope;
@@ -156,8 +157,8 @@ public class ElementFeatureWriter {
 
         //the root element of the xml document (type of the feature)
         final FeatureType type = feature.getType();
-        final Name typeName    = type.getName();
-        final String namespace = typeName.getNamespaceURI();
+        final GenericName typeName    = type.getName();
+        final String namespace = DefaultName.getNamespace(typeName);
         final String localPart = typeName.tip().toString();
 
         final Element rootElement;
@@ -189,9 +190,9 @@ public class ElementFeatureWriter {
             for (Property a : props) {
                 final Object valueA = a.getValue();
                 final PropertyType typeA = a.getType();
-                final Name nameA = a.getName();
+                final GenericName nameA = a.getName();
                 final String nameProperty = nameA.tip().toString();
-                String namespaceProperty = nameA.getNamespaceURI();
+                String namespaceProperty = DefaultName.getNamespace(nameA);
                 if (valueA instanceof Collection && !(typeA instanceof GeometryType)) {
                     for (Object value : (Collection)valueA) {
                         final Element element;

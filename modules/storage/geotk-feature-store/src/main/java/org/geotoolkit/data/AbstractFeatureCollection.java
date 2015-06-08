@@ -56,7 +56,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.sort.SortBy;
@@ -266,7 +266,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         final Integer start = remainingParameters.getStartIndex();
         final Integer max = remainingParameters.getMaxFeatures();
         final Filter filter = remainingParameters.getFilter();
-        final Name[] properties = remainingParameters.getPropertyNames();
+        final GenericName[] properties = remainingParameters.getPropertyNames();
         final SortBy[] sorts = remainingParameters.getSortBy();
         final double[] resampling = remainingParameters.getResolution();
         final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
@@ -449,7 +449,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * @param name of the schema where features where added.
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesAdded(final Name name, final Id ids){
+    protected void fireFeaturesAdded(final GenericName name, final Id ids){
         sendEvent(FeatureStoreContentEvent.createAddEvent(this, name,ids));
     }
 
@@ -459,7 +459,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * @param name of the schema where features where updated.
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesUpdated(final Name name, final Id ids){
+    protected void fireFeaturesUpdated(final GenericName name, final Id ids){
         sendEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
     }
 
@@ -469,7 +469,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
      * @param name of the schema where features where deleted
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesDeleted(final Name name, final Id ids){
+    protected void fireFeaturesDeleted(final GenericName name, final Id ids){
         sendEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
     }
 

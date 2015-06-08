@@ -39,7 +39,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.referencing.CRS;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
@@ -51,7 +51,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 public class CSVReadingTest extends AbstractReadingTests{
 
     private final CSVFeatureStore store;
-    private final Set<Name> names = new HashSet<Name>();
+    private final Set<GenericName> names = new HashSet<GenericName>();
     private final List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
 
     public CSVReadingTest() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, IOException{
@@ -65,7 +65,7 @@ public class CSVReadingTest extends AbstractReadingTests{
 
         final String namespace = "http://test.com";
         
-        Name name = DefaultName.create("http://test.com", "TestSchema3");
+        GenericName name = DefaultName.create("http://test.com", "TestSchema3");
         builder.reset();
         builder.setName(name);
         builder.add(DefaultName.create(namespace, "geometry"), Geometry.class, CRS.decode("EPSG:27582"));
@@ -111,7 +111,7 @@ public class CSVReadingTest extends AbstractReadingTests{
     }
 
     @Override
-    protected Set<Name> getExpectedNames() {
+    protected Set<GenericName> getExpectedNames() {
         return names;
     }
 

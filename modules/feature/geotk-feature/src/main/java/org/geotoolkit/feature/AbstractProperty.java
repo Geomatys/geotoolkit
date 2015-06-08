@@ -21,7 +21,7 @@ import java.util.Map;
 import java.io.Serializable;
 import java.util.Objects;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 
@@ -42,7 +42,7 @@ public abstract class AbstractProperty implements Property,Serializable {
      * {@inheritDoc }
      */
     @Override
-    public Name getName() {
+    public GenericName getName() {
         final PropertyDescriptor descriptor = getDescriptor();
         if(descriptor != null){
             return descriptor.getName();

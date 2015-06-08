@@ -34,7 +34,7 @@ import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.version.AbstractVersionControl;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersioningException;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * Postgresql version control.
@@ -50,9 +50,9 @@ public class PGVersionControl extends AbstractVersionControl{
     public static final String UNSET = "unset";
     
     private final PGCoverageStore store;
-    private final Name name;
+    private final GenericName name;
 
-    public PGVersionControl(PGCoverageStore store, Name name) {
+    public PGVersionControl(PGCoverageStore store, GenericName name) {
         this.store = store;
         this.name = name;
     }

@@ -27,7 +27,7 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -38,7 +38,7 @@ public abstract class AbstractOMFeatureStore extends AbstractFeatureStore {
 
     private static final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
 
-    protected final Map<Name, FeatureType> types;
+    protected final Map<GenericName, FeatureType> types;
 
     protected static final Logger LOGGER = Logging.getLogger(AbstractOMFeatureStore.class);
 
@@ -53,7 +53,7 @@ public abstract class AbstractOMFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public Set<Name> getNames() throws DataStoreException {
+    public Set<GenericName> getNames() throws DataStoreException {
         return types.keySet();
     }
 
@@ -61,7 +61,7 @@ public abstract class AbstractOMFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
         typeCheck(typeName);
         return types.get(typeName);
     }

@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -106,7 +106,7 @@ public class Copy extends AbstractProcess {
             queryName = "*";
         }
 
-        final Set<Name> names;
+        final Set<GenericName> names;
         if ("*".equals(queryName)) {
             //all values
             try {
@@ -130,7 +130,7 @@ public class Copy extends AbstractProcess {
 
         final float size = names.size();
         int inc = 0;
-        for (Name n : names) {
+        for (GenericName n : names) {
             fireProgressing("Copying "+n+".", (int)((inc*100f)/size), false);
             try {
 
@@ -158,7 +158,7 @@ public class Copy extends AbstractProcess {
                 targetSS.commit();
                 
                 //find last version
-                for (Name n : names) {
+                for (GenericName n : names) {
                     if(targetSS.getFeatureStore().getQueryCapabilities().handleVersioning()) {
                         final List<Version> versions = targetSS.getFeatureStore().getVersioning(n).list();
                         if (!versions.isEmpty()) {
@@ -181,7 +181,7 @@ public class Copy extends AbstractProcess {
         }
     }
 
-    private void insert(Name name, final Session sourceSS, final Session targetSS, Query query,
+    private void insert(GenericName name, final Session sourceSS, final Session targetSS, Query query,
                         final boolean erase, final boolean newVersion) throws DataStoreException{
 
         FeatureType type = sourceSS.getFeatureStore().getFeatureType(name);

@@ -24,7 +24,7 @@ import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -68,7 +68,7 @@ public abstract class CoverageStore extends DataStore {
      * @return Set<Name> , never null, but can be empty.
      * @throws DataStoreException
      */
-    public abstract Set<Name> getNames() throws DataStoreException;
+    public abstract Set<GenericName> getNames() throws DataStoreException;
 
     /**
      * Check if this coverage store support versioning.
@@ -80,7 +80,7 @@ public abstract class CoverageStore extends DataStore {
      * Get version history for given coverage.
      * @return VersionHistory for given name.
      */
-    public abstract VersionControl getVersioning(Name typeName) throws VersioningException;
+    public abstract VersionControl getVersioning(GenericName typeName) throws VersioningException;
 
     /**
      * Get the coverage reference for the given name.
@@ -88,7 +88,7 @@ public abstract class CoverageStore extends DataStore {
      * @return CoverageReference
      * @throws DataStoreException
      */
-    public abstract CoverageReference getCoverageReference(Name name) throws DataStoreException;
+    public abstract CoverageReference getCoverageReference(GenericName name) throws DataStoreException;
 
     /**
      * Get the coverage reference for the given name and version.
@@ -99,7 +99,7 @@ public abstract class CoverageStore extends DataStore {
      * @return CoverageReference
      * @throws DataStoreException
      */
-    public abstract CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException;
+    public abstract CoverageReference getCoverageReference(GenericName name, Version version) throws DataStoreException;
 
     /**
      * Create a new coverage reference.
@@ -109,7 +109,7 @@ public abstract class CoverageStore extends DataStore {
      * @return CoverageReference
      * @throws DataStoreException
      */
-    public abstract CoverageReference create(Name name) throws DataStoreException;
+    public abstract CoverageReference create(GenericName name) throws DataStoreException;
 
     /**
      * Check coverage type define in {@link CoverageType}
@@ -123,7 +123,7 @@ public abstract class CoverageStore extends DataStore {
      * @param name
      * @throws DataStoreException
      */
-    public abstract void delete(Name name) throws DataStoreException;
+    public abstract void delete(GenericName name) throws DataStoreException;
 
     /**
      * Add a storage listener which will be notified when structure changes or

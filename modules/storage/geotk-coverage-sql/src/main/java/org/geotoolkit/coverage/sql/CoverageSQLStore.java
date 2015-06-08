@@ -38,7 +38,7 @@ import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -112,22 +112,22 @@ public class CoverageSQLStore extends AbstractCoverageStore {
     }
 
     @Override
-    public VersionControl getVersioning(Name typeName) throws VersioningException {
+    public VersionControl getVersioning(GenericName typeName) throws VersioningException {
         throw new VersioningException("Versioning not supported");
     }
 
     @Override
-    public CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException {
+    public CoverageReference getCoverageReference(GenericName name, Version version) throws DataStoreException {
         throw new DataStoreException("Versioning not supported");
     }
 
     @Override
-    public CoverageReference create(Name name) throws DataStoreException {
+    public CoverageReference create(GenericName name) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
     @Override
-    public void delete(Name name) throws DataStoreException {
+    public void delete(GenericName name) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -191,7 +191,7 @@ public class CoverageSQLStore extends AbstractCoverageStore {
     private class CoverageSQLLayerReference extends AbstractCoverageReference {
 
 
-        private CoverageSQLLayerReference(Name name) {
+        private CoverageSQLLayerReference(GenericName name) {
             super(CoverageSQLStore.this,name);
         }
 

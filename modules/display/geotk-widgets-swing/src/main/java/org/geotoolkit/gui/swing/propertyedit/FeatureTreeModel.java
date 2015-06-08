@@ -30,7 +30,7 @@ import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 
 /**
@@ -191,10 +191,10 @@ public class FeatureTreeModel extends DefaultTreeModel{
         public String toString() {
 
             if(userObject instanceof Property){
-                final Name name = ((Property)getUserObject()).getName();
+                final GenericName name = ((Property)getUserObject()).getName();
                 return String.valueOf(name);
             }else if(userObject instanceof PropertyDescriptor){
-                final Name name = ((PropertyDescriptor)getUserObject()).getName();
+                final GenericName name = ((PropertyDescriptor)getUserObject()).getName();
                 return String.valueOf(name);
             }
 

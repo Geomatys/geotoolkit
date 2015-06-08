@@ -71,7 +71,7 @@ import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.PropertyType;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.GeometryDescriptor;
@@ -256,7 +256,7 @@ public class MySQLFeatureStoreTest {
         //open in complex type to delete all types
         ParametersExt.getOrCreateValue(params, MySQLFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
         store = (MySQLFeatureStore) FeatureStoreFinder.open(params);        
-        for(Name n : store.getNames()){
+        for(GenericName n : store.getNames()){
             VersionControl vc = store.getVersioning(n);
             vc.dropVersioning();
             store.deleteFeatureType(n);
@@ -380,7 +380,7 @@ public class MySQLFeatureStoreTest {
         store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
          
-        final Name name = store.getNames().iterator().next();
+        final GenericName name = store.getNames().iterator().next();
         final FeatureType created = store.getFeatureType(name);
         lazyCompare(refType, created);
         
@@ -395,7 +395,7 @@ public class MySQLFeatureStoreTest {
         store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
         
-        final Name name = store.getNames().iterator().next();
+        final GenericName name = store.getNames().iterator().next();
         final FeatureType created = store.getFeatureType(name);
         lazyCompare(refType, created);
         
@@ -410,13 +410,13 @@ public class MySQLFeatureStoreTest {
         store.createFeatureType(refType.getName(), refType);        
         assertEquals(1, store.getNames().size());
         
-        final Name name = store.getNames().iterator().next();
+        final GenericName name = store.getNames().iterator().next();
         final FeatureType created = store.getFeatureType(name);
         lazyCompare(refType, created);
     }
     
     private void lazyCompare(final PropertyType refType, final PropertyType candidate){
-        final Name name = refType.getName();
+        final GenericName name = refType.getName();
         assertEquals(refType.getName().tip().toString(), name.tip().toString());
         
         if(refType instanceof ComplexType){

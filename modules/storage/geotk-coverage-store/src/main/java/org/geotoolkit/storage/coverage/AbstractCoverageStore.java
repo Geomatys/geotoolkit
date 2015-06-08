@@ -38,7 +38,7 @@ import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
@@ -59,7 +59,7 @@ public abstract class AbstractCoverageStore extends CoverageStore {
     protected final ParameterValueGroup parameters;
     protected final Set<StorageListener> listeners = new HashSet<>();
 
-    private final HashMap<Name, CoverageReference> cachedRefs = new HashMap<>();
+    private final HashMap<GenericName, CoverageReference> cachedRefs = new HashMap<>();
 
     protected AbstractCoverageStore(final ParameterValueGroup params) {
         this.parameters = params;
@@ -121,12 +121,12 @@ public abstract class AbstractCoverageStore extends CoverageStore {
     }
 
     @Override
-    public CoverageReference create(Name name) throws DataStoreException {
+    public CoverageReference create(GenericName name) throws DataStoreException {
         throw new DataStoreException("Creation of new coverage not supported.");
     }
 
     @Override
-    public void delete(Name name) throws DataStoreException {
+    public void delete(GenericName name) throws DataStoreException {
         throw new DataStoreException("Deletion of coverage not supported.");
     }
 
@@ -135,20 +135,20 @@ public abstract class AbstractCoverageStore extends CoverageStore {
     ////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public final Set<Name> getNames() throws DataStoreException {
-        final Map<Name,CoverageReference> map = listReferences();
+    public final Set<GenericName> getNames() throws DataStoreException {
+        final Map<GenericName,CoverageReference> map = listReferences();
         return map.keySet();
     }
 
     @Override
-    public final CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        final Map<Name,CoverageReference> map = listReferences();
+    public final CoverageReference getCoverageReference(GenericName name) throws DataStoreException {
+        final Map<GenericName,CoverageReference> map = listReferences();
         final CoverageReference ref = map.get(name);
         if(ref==null){
             final StringBuilder sb = new StringBuilder("Type name : ");
             sb.append(name);
             sb.append(" do not exist in this datastore, available names are : ");
-            for(final Name n : map.keySet()){
+            for(final GenericName n : map.keySet()){
                 sb.append(n).append(", ");
             }
             throw new DataStoreException(sb.toString());
@@ -156,14 +156,14 @@ public abstract class AbstractCoverageStore extends CoverageStore {
         return ref;
     }
 
-    protected Map<Name,CoverageReference> listReferences() throws DataStoreException {
+    protected Map<GenericName,CoverageReference> listReferences() throws DataStoreException {
         if (cachedRefs.isEmpty()) {
             listReferences(getRootNode(), cachedRefs);
         }
         return cachedRefs;
     }
 
-    private Map<Name,CoverageReference> listReferences(Node node, Map<Name,CoverageReference> map){
+    private Map<GenericName,CoverageReference> listReferences(Node node, Map<GenericName,CoverageReference> map){
 
         if(node instanceof CoverageReference){
             final CoverageReference cr = (CoverageReference) node;
@@ -187,12 +187,12 @@ public abstract class AbstractCoverageStore extends CoverageStore {
     }
 
     @Override
-    public VersionControl getVersioning(Name typeName) throws VersioningException {
+    public VersionControl getVersioning(GenericName typeName) throws VersioningException {
         throw new VersioningException("Versioning not supported");
     }
 
     @Override
-    public CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException {
+    public CoverageReference getCoverageReference(GenericName name, Version version) throws DataStoreException {
         throw new DataStoreException("Versioning not supported");
     }
 
@@ -200,81 +200,81 @@ public abstract class AbstractCoverageStore extends CoverageStore {
     // convinient methods                                                     //
     ////////////////////////////////////////////////////////////////////////////
 
-    protected CoverageStoreManagementEvent fireCoverageAdded(final Name name){
+    protected CoverageStoreManagementEvent fireCoverageAdded(final GenericName name){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createCoverageAddEvent(this, name);
         sendStructureEvent(event);
         return event;
     }
 
-    protected CoverageStoreManagementEvent fireCoverageUpdated(final Name name){
+    protected CoverageStoreManagementEvent fireCoverageUpdated(final GenericName name){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createCoverageUpdateEvent(this, name);
         sendStructureEvent(event);
         return event;
     }
 
-    protected CoverageStoreManagementEvent fireCoverageDeleted(final Name name){
+    protected CoverageStoreManagementEvent fireCoverageDeleted(final GenericName name){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createCoverageDeleteEvent(this, name);
         sendStructureEvent(event);
         return event;
     }
 
-    protected CoverageStoreManagementEvent firePyramidAdded(final Name name, final String pyramidId){
+    protected CoverageStoreManagementEvent firePyramidAdded(final GenericName name, final String pyramidId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidAddEvent(this, name, pyramidId);
         sendStructureEvent(event);
         return event;
     }
 
-    protected CoverageStoreManagementEvent firePyramidUpdated(final Name name, final String pyramidId){
+    protected CoverageStoreManagementEvent firePyramidUpdated(final GenericName name, final String pyramidId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidUpdateEvent(this, name, pyramidId);
         sendStructureEvent(event);
         return event;
     }
 
-    protected CoverageStoreManagementEvent firePyramidDeleted(final Name name, final String pyramidId){
+    protected CoverageStoreManagementEvent firePyramidDeleted(final GenericName name, final String pyramidId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createPyramidDeleteEvent(this, name, pyramidId);
         sendStructureEvent(event);
         return event;
     }
 
-    protected CoverageStoreManagementEvent fireMosaicAdded(final Name name, final String pyramidId, final String mosaicId){
+    protected CoverageStoreManagementEvent fireMosaicAdded(final GenericName name, final String pyramidId, final String mosaicId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicAddEvent(this, name, pyramidId, mosaicId);
         sendStructureEvent(event);
         return event;
     }
 
-    protected CoverageStoreManagementEvent fireMosaicUpdated(final Name name, final String pyramidId, final String mosaicId){
+    protected CoverageStoreManagementEvent fireMosaicUpdated(final GenericName name, final String pyramidId, final String mosaicId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicUpdateEvent(this, name, pyramidId, mosaicId);
         sendStructureEvent(event);
         return event;
     }
 
-    protected CoverageStoreManagementEvent fireMosaicDeleted(final Name name, final String pyramidId, final String mosaicId){
+    protected CoverageStoreManagementEvent fireMosaicDeleted(final GenericName name, final String pyramidId, final String mosaicId){
         final CoverageStoreManagementEvent event = CoverageStoreManagementEvent.createMosaicDeleteEvent(this, name, pyramidId, mosaicId);
         sendStructureEvent(event);
         return event;
     }
 
-    protected CoverageStoreContentEvent fireDataUpdated(final Name name){
+    protected CoverageStoreContentEvent fireDataUpdated(final GenericName name){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createDataUpdateEvent(this, name);
         sendContentEvent(event);
         return event;
     }
 
-    protected CoverageStoreContentEvent fireTileAdded(final Name name,
+    protected CoverageStoreContentEvent fireTileAdded(final GenericName name,
             final String pyramidId, final String mosaicId, final List<Point> tiles){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileAddEvent(this, name, pyramidId, mosaicId, tiles);
         sendContentEvent(event);
         return event;
     }
 
-    protected CoverageStoreContentEvent fireTileUpdated(final Name name,
+    protected CoverageStoreContentEvent fireTileUpdated(final GenericName name,
             final String pyramidId, final String mosaicId, final List<Point> tiles){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileUpdateEvent(this, name, pyramidId, mosaicId, tiles);
         sendContentEvent(event);
         return event;
     }
 
-    protected CoverageStoreContentEvent fireTileDeleted(final Name name,
+    protected CoverageStoreContentEvent fireTileDeleted(final GenericName name,
             final String pyramidId, final String mosaicId, final List<Point> tiles){
         final CoverageStoreContentEvent event = CoverageStoreContentEvent.createTileDeleteEvent(this, name, pyramidId, mosaicId, tiles);
         sendContentEvent(event);
@@ -287,14 +287,14 @@ public abstract class AbstractCoverageStore extends CoverageStore {
      * @param candidate Name to test.
      * @throws DataStoreException if name do not exist.
      */
-    protected void typeCheck(final Name candidate) throws DataStoreException{
+    protected void typeCheck(final GenericName candidate) throws DataStoreException{
 
-        final Collection<Name> names = getNames();
+        final Collection<GenericName> names = getNames();
         if(!names.contains(candidate)){
             final StringBuilder sb = new StringBuilder("Type name : ");
             sb.append(candidate);
             sb.append(" do not exist in this datastore, available names are : ");
-            for(final Name n : names){
+            for(final GenericName n : names){
                 sb.append(n).append(", ");
             }
             throw new DataStoreException(sb.toString());

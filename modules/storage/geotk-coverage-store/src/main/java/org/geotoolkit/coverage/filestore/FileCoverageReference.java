@@ -33,7 +33,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * Reference to a coverage stored in a single file.
@@ -49,7 +49,7 @@ public class FileCoverageReference extends RecyclingCoverageReference{
     private final int imageIndex;
     private ImageReaderSpi spi;
 
-    FileCoverageReference(FileCoverageStore store, Name name, File file, int imageIndex) {
+    FileCoverageReference(FileCoverageStore store, GenericName name, File file, int imageIndex) {
         super(store,name);
         this.file = file;
         this.imageIndex = imageIndex;

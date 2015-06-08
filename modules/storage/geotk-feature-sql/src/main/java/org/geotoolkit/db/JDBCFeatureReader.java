@@ -33,7 +33,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.identity.FeatureId;
 
@@ -70,7 +70,7 @@ public class JDBCFeatureReader implements FeatureReader {
     public JDBCFeatureReader(final DefaultJDBCFeatureStore store, final String sql, 
             final FeatureType type, Connection cnx, boolean release, final Hints hints) throws SQLException,DataStoreException {
         ArgumentChecks.ensureNonNull("Connection", cnx);
-        final Name typeName = type.getName();
+        final GenericName typeName = type.getName();
         final String name = typeName.tip().toString();
         this.fidBase = name + ".";
         

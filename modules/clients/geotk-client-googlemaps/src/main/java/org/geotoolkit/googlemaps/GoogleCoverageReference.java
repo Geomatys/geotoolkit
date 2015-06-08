@@ -18,9 +18,9 @@ package org.geotoolkit.googlemaps;
 
 import org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
 import org.geotoolkit.storage.coverage.PyramidSet;
+import org.opengis.util.GenericName;
 
 /**
  * GoogleMaps coverage reference.
@@ -32,7 +32,7 @@ public class GoogleCoverageReference extends AbstractPyramidalCoverageReference 
 
     private final GoogleMapsPyramidSet set;
 
-    GoogleCoverageReference(final StaticGoogleMapsClient server, final Name name, boolean cacheImage) throws DataStoreException{
+    GoogleCoverageReference(final StaticGoogleMapsClient server, final GenericName name, boolean cacheImage) throws DataStoreException{
         super(server,name,0);
         this.set = new GoogleMapsPyramidSet(this,cacheImage);
     }

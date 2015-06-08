@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature;
 
+import org.opengis.util.GenericName;
 import com.vividsolutions.jts.geom.*;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -198,7 +199,7 @@ public final class FeatureUtilities {
             for(final Property p : sourceComplex.getProperties()){
                 //find or build the property to copy to
                 final PropertyDescriptor sourceDesc = p.getDescriptor();
-                final Name name = sourceDesc.getName();
+                final GenericName name = sourceDesc.getName();
                 Property targetCopy = null;
                 if(sourceDesc.getMaxOccurs() == 1){
                     //single property, try to reuse existing target property

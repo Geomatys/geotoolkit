@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.Map;
 import java.util.Objects;
@@ -38,7 +39,7 @@ public class DefaultAttributeDescriptor<T extends AttributeType> extends Default
 
     protected final Object defaultValue;
 
-    public DefaultAttributeDescriptor(final T type, final Name name, final int min,
+    public DefaultAttributeDescriptor(final T type, final GenericName name, final int min,
             final int max, final boolean isNillable, final Object defaultValue){
         super(type, name, min, max, isNillable);
 

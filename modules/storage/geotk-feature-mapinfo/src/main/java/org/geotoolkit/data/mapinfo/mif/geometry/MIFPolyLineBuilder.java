@@ -31,7 +31,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.referencing.operation.MathTransform;
 
 import java.util.ArrayList;
@@ -50,8 +50,8 @@ import org.geotoolkit.feature.type.FeatureType;
  */
 public class MIFPolyLineBuilder extends MIFGeometryBuilder {
 
-    public static final Name NAME = DefaultName.create("PLINE");
-    public static final Name SMOOTH_NAME = DefaultName.create("SMOOTH");
+    public static final GenericName NAME = DefaultName.create("PLINE");
+    public static final GenericName SMOOTH_NAME = DefaultName.create("SMOOTH");
 
     private static final AttributeDescriptor SMOOTH;
     private static final AttributeDescriptor PEN;
@@ -199,7 +199,7 @@ public class MIFPolyLineBuilder extends MIFGeometryBuilder {
     }
 
     @Override
-    public Name getName() {
+    public GenericName getName() {
         return NAME;
     }
 

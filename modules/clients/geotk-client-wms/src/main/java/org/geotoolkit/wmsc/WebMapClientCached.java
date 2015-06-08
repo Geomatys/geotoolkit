@@ -24,7 +24,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapClient;
 import org.geotoolkit.wms.xml.WMSVersion;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * WMS-C is a osgeo profile for WMS 1.1.1.
@@ -87,7 +87,7 @@ public class WebMapClientCached extends WebMapClient {
     }
 
     @Override
-    protected CoverageReference createReference(Name name) throws DataStoreException{
+    protected CoverageReference createReference(GenericName name) throws DataStoreException{
         try {
             return new WMSCCoverageReference(this,name);
         } catch (CapabilitiesException ex) {

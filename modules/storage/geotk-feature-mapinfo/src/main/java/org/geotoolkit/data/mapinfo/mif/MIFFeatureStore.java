@@ -27,7 +27,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -106,7 +106,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public Set<Name> getNames() throws DataStoreException {
+    public Set<GenericName> getNames() throws DataStoreException {
         return manager.getTypeNames();
     }
 
@@ -114,7 +114,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         try {
             manager.addSchema(typeName, featureType);
         } catch (URISyntaxException e) {
@@ -126,7 +126,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Can not update MIF schema.");
     }
 
@@ -134,7 +134,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public void deleteFeatureType(Name typeName) throws DataStoreException {
+    public void deleteFeatureType(GenericName typeName) throws DataStoreException {
         manager.deleteSchema(typeName);
         removeFeatures(typeName, null);
     }
@@ -143,7 +143,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(GenericName typeName) throws DataStoreException {
         return manager.getType(typeName);
     }
 
@@ -159,7 +159,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         final FeatureWriter writer = getFeatureWriter(groupName, null, null);
 
         // We remove the features as we get them. We don't need to write them as the default writing behaviour is append mode.
@@ -190,7 +190,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * multiple feature types.
      */
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(GenericName groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         //handleUpdateWithFeatureWriter(groupName, filter, values);
         throw new UnsupportedOperationException("Update operation is not supported now");
     }
@@ -200,7 +200,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * multiple feature types.
      */
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
         //handleRemoveWithFeatureWriter(groupName, filter);
         throw new UnsupportedOperationException("Remove operation is not supported now");
     }
@@ -218,7 +218,7 @@ public class MIFFeatureStore extends AbstractFeatureStore {
      * {@inheritDoc}
      */
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
         typeCheck(typeName);
         final MIFFeatureReader reader = new MIFFeatureReader(manager, typeName);
         final MIFFeatureWriter writer = new MIFFeatureWriter(manager, reader);

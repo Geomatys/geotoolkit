@@ -65,7 +65,7 @@ import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -90,7 +90,7 @@ public class GenericIteratorTest extends TestCase{
 
     private final FeatureCollection collection;
     private final FeatureCollection collectionComplex;
-    private final Name name;
+    private final GenericName name;
     private final FeatureType originalType;
     private final FeatureType reducedType;
     private final FeatureType reprojectedType;
@@ -466,7 +466,7 @@ public class GenericIteratorTest extends TestCase{
     @Test
     public void testTransformFeatureIterator() throws DataStoreException{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        final DefaultName name = DefaultName.create("http://test.com", "TestSchema");
+        final GenericName name = DefaultName.create("http://test.com", "TestSchema");
         builder.reset();
         builder.setName(name);
         builder.add("att_geom", LineString.class, CommonCRS.WGS84.normalizedGeographic());

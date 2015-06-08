@@ -40,7 +40,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.Names;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.data.FeatureCollection;
@@ -50,9 +49,10 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -81,16 +81,16 @@ public class FXLayerChooser extends BorderPane{
 
             if(o1 instanceof FeatureType){
                 str1 = ((FeatureType)o1).getName().tip().toString();
-            }else if(o1 instanceof Name){
-                str1 = ((Name)o1).tip().toString();
+            }else if(o1 instanceof GenericName){
+                str1 = ((GenericName)o1).tip().toString();
             }else{
                 str1 = o1.toString();
             }
 
             if(o2 instanceof FeatureType){
                 str2 = ((FeatureType)o2).getName().tip().toString();
-            }else if(o2 instanceof Name){
-                str2 = ((Name)o2).tip().toString();
+            }else if(o2 instanceof GenericName){
+                str2 = ((GenericName)o2).tip().toString();
             }else{
                 str2 = o2.toString();
             }
@@ -126,11 +126,11 @@ public class FXLayerChooser extends BorderPane{
 
         if(values != null){
             for(Object value : values){
-                final Name name;
+                final GenericName name;
                 if(value instanceof FeatureType){
                     name = ((FeatureType) value).getName();
                 }else{
-                    name = (Name) value;
+                    name = (GenericName) value;
                 }
 
                 if(source instanceof FeatureStore){
@@ -178,7 +178,7 @@ public class FXLayerChooser extends BorderPane{
 
         if(source instanceof FeatureStore){
             final FeatureStore store = (FeatureStore) source;
-            for(Name name : store.getNames()){
+            for(GenericName name : store.getNames()){
                 final FeatureType ft = store.getFeatureType(name);
                 if(ft.getGeometryDescriptor() != null){
                     firstCandidates.add(ft);
@@ -271,10 +271,10 @@ public class FXLayerChooser extends BorderPane{
                 value = ft.getName();
             }
 
-            if(value instanceof Name){
-                final Name name = (Name) value;
+            if(value instanceof GenericName){
+                final GenericName name = (GenericName) value;
                 setText(name.tip().toString());
-                setTooltip(new Tooltip(Names.toExpandedString(name)));
+                setTooltip(new Tooltip(DefaultName.toExpandedString(name)));
             }
 
         }

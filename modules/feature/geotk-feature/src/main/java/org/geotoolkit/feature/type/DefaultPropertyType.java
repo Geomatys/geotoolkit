@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import java.util.*;
 
 import java.io.Serializable;
@@ -42,7 +43,7 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
 
     private static final List<Filter> NO_RESTRICTIONS = Collections.emptyList();
 
-    protected final Name name;
+    protected final GenericName name;
     private final InternationalString description;
     protected final Class<?> binding;
     protected final boolean isAbstract;
@@ -50,7 +51,7 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
     protected final List<Filter> restrictions;
     protected final Map<Object, Object> userData;
 
-    public DefaultPropertyType(final Name name, final Class<?> binding, final boolean isAbstract,
+    public DefaultPropertyType(final GenericName name, final Class<?> binding, final boolean isAbstract,
             final List<Filter> restrictions, final T superType, final InternationalString description)
     {
         ensureNonNull("name", name);
@@ -82,7 +83,7 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
      * {@inheritDoc }
      */
     @Override
-    public Name getName() {
+    public GenericName getName() {
         return name;
     }
 

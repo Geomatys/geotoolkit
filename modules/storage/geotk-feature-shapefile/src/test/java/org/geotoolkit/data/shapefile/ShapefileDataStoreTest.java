@@ -166,7 +166,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         FeatureStore store = factory.open(map);
         FeatureType schema = store.getFeatureType(store.getTypeNames()[0]);
-        assertEquals(namespace.toString(), schema.getName().getNamespaceURI());
+        assertEquals(namespace, DefaultName.getNamespace(schema.getName()));
     }
 
     @Test

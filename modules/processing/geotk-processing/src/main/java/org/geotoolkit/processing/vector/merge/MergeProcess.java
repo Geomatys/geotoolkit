@@ -33,7 +33,7 @@ import org.apache.sis.util.ObjectConverter;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -77,7 +77,7 @@ public class MergeProcess extends AbstractProcess {
     * @return a feature
     * @throws UnconvertibleObjectException
     */
-    static Feature mergeFeature(final Feature feature,final FeatureType newFeatureType, final Map<Name, ObjectConverter> conversionMap)
+    static Feature mergeFeature(final Feature feature,final FeatureType newFeatureType, final Map<GenericName, ObjectConverter> conversionMap)
             throws UnconvertibleObjectException {
 
         if(conversionMap == null) {
@@ -86,7 +86,7 @@ public class MergeProcess extends AbstractProcess {
 
         final Feature mergedFeature = FeatureUtilities.defaultFeature(newFeatureType, feature.getIdentifier().getID());
 
-        for (final Map.Entry<Name,ObjectConverter> entry : conversionMap.entrySet()) {
+        for (final Map.Entry<GenericName,ObjectConverter> entry : conversionMap.entrySet()) {
             if(entry.getValue() == null) {
                 mergedFeature.getProperty(entry.getKey()).setValue(feature.getProperty(entry.getKey()).getValue());
             }else{
@@ -107,12 +107,12 @@ public class MergeProcess extends AbstractProcess {
     * @return map<Name, ObjectConverter>. Return null if input FeatureType are equals
     * @throws UnconvertibleObjectException
     */
-    static Map<Name, ObjectConverter> createConversionMap (final FeatureType input, final FeatureType toConvert) throws UnconvertibleObjectException{
+    static Map<GenericName, ObjectConverter> createConversionMap (final FeatureType input, final FeatureType toConvert) throws UnconvertibleObjectException{
 
         if(input.equals(toConvert)) {
             return null;
         }
-        final Map<Name, ObjectConverter> map = new HashMap<Name, ObjectConverter>();
+        final Map<GenericName, ObjectConverter> map = new HashMap<GenericName, ObjectConverter>();
 
         for (final PropertyDescriptor toConvertDesc : toConvert.getDescriptors()) {
             for(final PropertyDescriptor inputDesc : input.getDescriptors()) {

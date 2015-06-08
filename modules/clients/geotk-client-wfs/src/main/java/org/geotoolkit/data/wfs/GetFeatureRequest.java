@@ -18,7 +18,7 @@ package org.geotoolkit.data.wfs;
 
 import javax.xml.namespace.QName;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 
 
@@ -68,13 +68,13 @@ public interface GetFeatureRequest extends Request{
      * @return String[] : array of requested properties,
      *  null if all properties, empty for only the id.
      */
-    Name[] getPropertyNames();
+    GenericName[] getPropertyNames();
 
     /**
      * @param properties : array of requested properties,
      *  null if all properties, empty for only the id.
      */
-    void setPropertyNames(Name[] properties);
+    void setPropertyNames(GenericName[] properties);
 
     /**
      * Return the output format to use for the response.

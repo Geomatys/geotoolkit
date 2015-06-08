@@ -18,9 +18,9 @@ package org.geotoolkit.osmtms;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
 import org.geotoolkit.storage.coverage.PyramidSet;
+import org.opengis.util.GenericName;
 
 /**
  * Open Street Map Tile Map Server.
@@ -30,7 +30,7 @@ import org.geotoolkit.storage.coverage.PyramidSet;
  */
 public class OSMTMSCoverageReference extends AbstractPyramidalCoverageReference {
 
-    OSMTMSCoverageReference(OSMTileMapClient server, Name name){
+    OSMTMSCoverageReference(OSMTileMapClient server, GenericName name){
         super(server,name,0);
     }
 

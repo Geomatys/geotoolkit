@@ -16,7 +16,7 @@ import org.geotoolkit.style.DefaultDescription;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.wmts.WMTSClientFactory;
 import org.geotoolkit.wmts.WebMapTileClient;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 public class IGN_GEOPORTAIL_WMTS {
@@ -42,7 +42,7 @@ public class IGN_GEOPORTAIL_WMTS {
 
         final MapContext context = MapBuilder.createContext();
 
-        for(Name n : store.getNames()){
+        for(GenericName n : store.getNames()){
             final CoverageReference cr = store.getCoverageReference(n);
             if(cr instanceof PyramidalCoverageReference){
                 PyramidalCoverageReference model = (PyramidalCoverageReference) cr;

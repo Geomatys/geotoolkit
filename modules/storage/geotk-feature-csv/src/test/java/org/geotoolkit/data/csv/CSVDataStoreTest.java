@@ -41,7 +41,7 @@ import org.junit.Test;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.util.FileUtilities;
@@ -92,11 +92,11 @@ public class CSVDataStoreTest {
         ftb.add("geometryProp", Geometry.class, CommonCRS.WGS84.normalizedGeographic());
         FeatureType sft = ftb.buildFeatureType();
         ds.createFeatureType(sft.getName(), sft);
-        Name name = ds.getNames().iterator().next();
+        GenericName name = ds.getNames().iterator().next();
 
         assertEquals(1, ds.getNames().size());
 
-        for(Name n : ds.getNames()){
+        for(GenericName n : ds.getNames()){
             FeatureType ft = ds.getFeatureType(n);
             for(PropertyDescriptor desc : sft.getDescriptors()){
                 PropertyDescriptor td = ft.getDescriptor(desc.getName().tip().toString());

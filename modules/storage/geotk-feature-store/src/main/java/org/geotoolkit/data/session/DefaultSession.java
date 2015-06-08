@@ -46,7 +46,7 @@ import org.geotoolkit.version.Version;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.FilterVisitor;
@@ -88,16 +88,16 @@ public class DefaultSession extends AbstractSession {
         return new DefaultSessionDiff();
     }
 
-    protected AddDelta createAddDelta(Session session, Name typeName, Collection<? extends Feature> features){
+    protected AddDelta createAddDelta(Session session, GenericName typeName, Collection<? extends Feature> features){
         return new AddDelta(this, typeName, features);
     }
     
-    protected ModifyDelta createModifyDelta(Session session, Name typeName, 
+    protected ModifyDelta createModifyDelta(Session session, GenericName typeName, 
             Id filter , final Map<? extends AttributeDescriptor,? extends Object> values){
         return new ModifyDelta(this, typeName, filter, values);
     }
     
-    protected RemoveDelta createRemoveDelta(Session session, Name typeName, Id filter){
+    protected RemoveDelta createRemoveDelta(Session session, GenericName typeName, Id filter){
         return new RemoveDelta(session, typeName, filter);
     }
     
@@ -167,7 +167,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void addFeatures(final Name groupName, final Collection newFeatures) throws DataStoreException {
+    public void addFeatures(final GenericName groupName, final Collection newFeatures) throws DataStoreException {
         checkVersion();
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
@@ -184,7 +184,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final Name groupName, Filter filter, final Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, Filter filter, final Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
         checkVersion();
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
@@ -235,7 +235,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         checkVersion();
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);

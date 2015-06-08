@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.sis.util.Version;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.sld.StyledLayerDescriptor;
 
@@ -53,7 +53,7 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
     /**
      * Layers to request.
      */
-    private final UnmodifiableArrayList<Name> queryLayers;
+    private final UnmodifiableArrayList<GenericName> queryLayers;
 
     /**
      * Format of the returned information.
@@ -66,30 +66,30 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
     private final Integer featureCount;
 
     public GetFeatureInfo(final GetMap getMap, final int x, final int y,
-                          final List<Name> queryLayers, final String infoFormat,
+                          final List<GenericName> queryLayers, final String infoFormat,
                           final Integer featureCount)
     {
         super(getMap);
         this.x = x;
         this.y = y;
-        this.queryLayers = UnmodifiableArrayList.wrap(queryLayers.toArray(new Name[queryLayers.size()]));
+        this.queryLayers = UnmodifiableArrayList.wrap(queryLayers.toArray(new GenericName[queryLayers.size()]));
         this.infoFormat  = infoFormat;
         this.featureCount = featureCount;
     }
 
     public GetFeatureInfo(final Envelope envelope, final Version version,
-                  final String format, final List<Name> layers, final List<String> styles,
+                  final String format, final List<GenericName> layers, final List<String> styles,
                   final StyledLayerDescriptor sld, final Double elevation, final List<Date> dates,
                   final Dimension size, final Color background,
                   final Boolean transparent, final String exceptions, final int x, final int y,
-                  final List<Name> queryLayers, final String infoFormat, final Integer featureCount,
+                  final List<GenericName> queryLayers, final String infoFormat, final Integer featureCount,
                   final Object parameters)
     {
         super(envelope, version, format, layers, styles, sld, elevation, dates, size,
                 background, transparent, 0,exceptions, parameters);
         this.x = x;
         this.y = y;
-        this.queryLayers = UnmodifiableArrayList.wrap(queryLayers.toArray(new Name[queryLayers.size()]));
+        this.queryLayers = UnmodifiableArrayList.wrap(queryLayers.toArray(new GenericName[queryLayers.size()]));
         this.infoFormat  = infoFormat;
         this.featureCount = featureCount;
     }
@@ -111,7 +111,7 @@ public final class GetFeatureInfo extends GetMap implements org.geotoolkit.ows.x
     /**
      * Returns an immutable list of layers to request.
      */
-    public List<Name> getQueryLayers() {
+    public List<GenericName> getQueryLayers() {
         return queryLayers;
     }
 

@@ -44,7 +44,7 @@ import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
@@ -124,7 +124,7 @@ public class ExportItem extends TreeMenuItem {
                         try {
                             final FeatureCollection baseCol = layer.getCollection();
                             final FeatureType baseType = baseCol.getFeatureType();
-                            final Name baseName = baseType.getName();
+                            final GenericName baseName = baseType.getName();
 
                             final FactoryMetadata metadata = factory.getMetadata();
                             final Class<Geometry>[] supportedGeometryTypes = metadata.supportedGeometryTypes();
@@ -152,7 +152,7 @@ public class ExportItem extends TreeMenuItem {
                                 //create output type
                                 store.createFeatureType(inType.getName(), inType);
                                 final FeatureType outType = store.getFeatureType(inTypeName);
-                                final Name outName = outType.getName();
+                                final GenericName outName = outType.getName();
 
                                 //write datas
                                 final Session session = store.createSession(false);

@@ -19,7 +19,7 @@ package org.geotoolkit.data.mapinfo.mif.style;
 import org.geotoolkit.data.mapinfo.mif.geometry.MIFLineBuilder;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.style.DefaultDescription;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.*;
 
@@ -37,7 +37,7 @@ import org.geotoolkit.factory.FactoryFinder;
  */
 public class Brush implements MIFSymbolizer, PolygonSymbolizer {
 
-    public static final Name NAME = DefaultName.create("BRUSH");
+    public static final GenericName NAME = DefaultName.create("BRUSH");
 
     public static final Pattern BRUSH_PATTERN = Pattern.compile(NAME.tip().toString()+"(\\s*\\([^\\)]+\\))?", Pattern.CASE_INSENSITIVE);
 

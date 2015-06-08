@@ -12,7 +12,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.RandomStyleBuilder;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 public class PostgisDemo {
@@ -33,7 +33,7 @@ public class PostgisDemo {
         
         final MapContext context = MapBuilder.createContext();
         
-        for(Name n : store.getNames()){
+        for(GenericName n : store.getNames()){
             System.out.println(store.getFeatureType(n));
             
             final FeatureCollection col = store.createSession(true).getFeatureCollection(QueryBuilder.all(n));

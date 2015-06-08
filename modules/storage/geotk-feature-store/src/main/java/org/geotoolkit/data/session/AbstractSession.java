@@ -26,7 +26,7 @@ import org.geotoolkit.data.FeatureStoreManagementEvent;
 import org.geotoolkit.storage.AbstractStorage;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 
@@ -62,7 +62,7 @@ public abstract class AbstractSession extends AbstractStorage implements Session
      * @see  #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final AttributeDescriptor desc, final Object value) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final AttributeDescriptor desc, final Object value) throws DataStoreException {
         updateFeatures(groupName, filter, Collections.singletonMap(desc, value));
     }
 
@@ -93,7 +93,7 @@ public abstract class AbstractSession extends AbstractStorage implements Session
      * @param name of the schema where features where added.
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesAdded(final Name name, final Id ids){
+    protected void fireFeaturesAdded(final GenericName name, final Id ids){
         sendContentEvent(FeatureStoreContentEvent.createAddEvent(this, name, ids));
     }
 
@@ -103,7 +103,7 @@ public abstract class AbstractSession extends AbstractStorage implements Session
      * @param name of the schema where features where updated.
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesUpdated(final Name name, final Id ids){
+    protected void fireFeaturesUpdated(final GenericName name, final Id ids){
         sendContentEvent(FeatureStoreContentEvent.createUpdateEvent(this, name, ids));
     }
 
@@ -113,7 +113,7 @@ public abstract class AbstractSession extends AbstractStorage implements Session
      * @param name of the schema where features where deleted
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesDeleted(final Name name, final Id ids){
+    protected void fireFeaturesDeleted(final GenericName name, final Id ids){
         sendContentEvent(FeatureStoreContentEvent.createDeleteEvent(this, name, ids));
     }
 

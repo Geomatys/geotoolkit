@@ -27,7 +27,7 @@ import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -67,7 +67,7 @@ public class MapTilingDemo {
         //create a coverage store where the pyramid wil be stored
         final XMLCoverageStoreFactory factory = new XMLCoverageStoreFactory();
         final CoverageStore store = factory.create(Collections.singletonMap("path", new URL("file:/media/terra/GIS_DATA/wmts_bluemarble")));
-        final Name name = DefaultName.create("bluemarble");
+        final GenericName name = DefaultName.create("bluemarble");
         final CoverageReference ref = store.create(name);
 
 
@@ -130,7 +130,7 @@ public class MapTilingDemo {
 
         final MapContext context = MapBuilder.createContext();
 
-        for(Name n : store.getNames()){
+        for(GenericName n : store.getNames()){
             final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageReference(n));
             context.layers().add(layer);
         }

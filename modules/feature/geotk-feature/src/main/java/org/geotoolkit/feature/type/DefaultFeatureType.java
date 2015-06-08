@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -43,7 +44,7 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
     private GeometryDescriptor defaultGeometry;
     private CoordinateReferenceSystem crs;
 
-    public DefaultFeatureType(final Name name, final Collection<PropertyDescriptor> schema,
+    public DefaultFeatureType(final GenericName name, final Collection<PropertyDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
             final List<Filter> restrictions, final AttributeType superType, final InternationalString description) {
         super(name, schema, true, isAbstract, restrictions, superType, description);

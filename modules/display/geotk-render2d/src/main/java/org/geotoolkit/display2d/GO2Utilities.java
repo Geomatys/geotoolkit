@@ -113,7 +113,7 @@ import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.GeometryType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.renderer.style.WKMMarkFactory;
@@ -1269,7 +1269,7 @@ public final class GO2Utilities {
         return validRules.toArray(new CachedRule[validRules.size()]);
     }
 
-    public static CachedRule[] getValidCachedRules(final Style style, final double scale, final Name type, final ComplexType expected) {
+    public static CachedRule[] getValidCachedRules(final Style style, final double scale, final GenericName type, final ComplexType expected) {
         final List<CachedRule> validRules = new ArrayList<CachedRule>();
 
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();

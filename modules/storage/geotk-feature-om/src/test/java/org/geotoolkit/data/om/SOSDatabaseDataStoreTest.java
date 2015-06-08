@@ -40,7 +40,7 @@ import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.ScriptRunner;
 import org.geotoolkit.referencing.CRS;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 
 /**
@@ -52,7 +52,7 @@ public class SOSDatabaseDataStoreTest extends AbstractReadingTests{
 
     private static DefaultDataSource ds;
     private static FeatureStore store;
-    private static final Set<Name> names = new HashSet<>();
+    private static final Set<GenericName> names = new HashSet<>();
     private static final List<ExpectedResult> expecteds = new ArrayList<>();
     static{
         try{
@@ -74,7 +74,7 @@ public class SOSDatabaseDataStoreTest extends AbstractReadingTests{
 
             final String nsOM = "http://www.opengis.net/sampling/1.0";
             final String nsGML = "http://www.opengis.net/gml";
-            final Name name = DefaultName.create(nsOM, "SamplingPoint");
+            final GenericName name = DefaultName.create(nsOM, "SamplingPoint");
             names.add(name);
 
             final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
@@ -126,7 +126,7 @@ public class SOSDatabaseDataStoreTest extends AbstractReadingTests{
     }
 
     @Override
-    protected Set<Name> getExpectedNames() {
+    protected Set<GenericName> getExpectedNames() {
         return names;
     }
 

@@ -34,7 +34,7 @@ import org.geotoolkit.data.gpx.model.GPXModelConstants;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CommonCRS;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
@@ -46,7 +46,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 public class GPXReading {//extends AbstractReadingTests{
 
     private final GPXFeatureStore store;
-    private final Set<Name> names = new HashSet<Name>();
+    private final Set<GenericName> names = new HashSet<GenericName>();
     private final List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
 
     public GPXReading() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, IOException{

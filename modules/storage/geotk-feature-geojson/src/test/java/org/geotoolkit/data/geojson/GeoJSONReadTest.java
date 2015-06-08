@@ -1,5 +1,6 @@
 package org.geotoolkit.data.geojson;
 
+import org.opengis.util.GenericName;
 import com.vividsolutions.jts.geom.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.*;
@@ -34,7 +35,7 @@ public class GeoJSONReadTest {
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
-        Name name = store.getNames().iterator().next();
+        GenericName name = store.getNames().iterator().next();
         assertEquals(DefaultName.create("point"), name);
 
         FeatureType ft = store.getFeatureType(name);
@@ -55,7 +56,7 @@ public class GeoJSONReadTest {
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
-        Name name = store.getNames().iterator().next();
+        GenericName name = store.getNames().iterator().next();
         assertEquals(DefaultName.create("multipoint"), name);
 
         FeatureType ft = store.getFeatureType(name);
@@ -76,7 +77,7 @@ public class GeoJSONReadTest {
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
-        Name name = store.getNames().iterator().next();
+        GenericName name = store.getNames().iterator().next();
         assertEquals(DefaultName.create("linestring"), name);
 
         FeatureType ft = store.getFeatureType(name);
@@ -97,7 +98,7 @@ public class GeoJSONReadTest {
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
-        Name name = store.getNames().iterator().next();
+        GenericName name = store.getNames().iterator().next();
         assertEquals(DefaultName.create("multilinestring"), name);
 
         FeatureType ft = store.getFeatureType(name);
@@ -118,7 +119,7 @@ public class GeoJSONReadTest {
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
-        Name name = store.getNames().iterator().next();
+        GenericName name = store.getNames().iterator().next();
         assertEquals(DefaultName.create("polygon"), name);
 
         FeatureType ft = store.getFeatureType(name);
@@ -139,7 +140,7 @@ public class GeoJSONReadTest {
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
-        Name name = store.getNames().iterator().next();
+        GenericName name = store.getNames().iterator().next();
         assertEquals(DefaultName.create("multipolygon"), name);
 
         FeatureType ft = store.getFeatureType(name);
@@ -160,7 +161,7 @@ public class GeoJSONReadTest {
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
-        Name name = store.getNames().iterator().next();
+        GenericName name = store.getNames().iterator().next();
         assertEquals(DefaultName.create("geometrycollection"), name);
 
         FeatureType ft = store.getFeatureType(name);
@@ -182,7 +183,7 @@ public class GeoJSONReadTest {
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
-        Name name = store.getNames().iterator().next();
+        GenericName name = store.getNames().iterator().next();
         assertEquals(DefaultName.create("feature"), name);
 
         FeatureType ft = store.getFeatureType(name);
@@ -203,7 +204,7 @@ public class GeoJSONReadTest {
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
-        Name name = store.getNames().iterator().next();
+        GenericName name = store.getNames().iterator().next();
         assertEquals(DefaultName.create("featurecollection"), name);
 
         FeatureType ft = store.getFeatureType(name);
@@ -228,7 +229,7 @@ public class GeoJSONReadTest {
         assertNotNull(store);
 
         assertEquals(1, store.getNames().size());
-        Name name = store.getNames().iterator().next();
+        GenericName name = store.getNames().iterator().next();
         assertEquals(DefaultName.create("f_prop_array"), name);
 
         FeatureType ft = store.getFeatureType(name);

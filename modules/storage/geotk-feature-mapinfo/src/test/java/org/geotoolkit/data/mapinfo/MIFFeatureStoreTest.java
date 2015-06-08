@@ -46,7 +46,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import static org.junit.Assert.*;
 import org.opengis.parameter.ParameterValueGroup;
@@ -124,10 +124,10 @@ public class MIFFeatureStoreTest {
         ds.createFeatureType(featureType.getName(), featureType);
         assertEquals(1, ds.getNames().size());
         
-        Name name = ds.getNames().iterator().next();
+        GenericName name = ds.getNames().iterator().next();
 
 
-        for(Name n : ds.getNames()){
+        for(GenericName n : ds.getNames()){
             FeatureType ft = ds.getFeatureType(n);
             for(PropertyDescriptor desc : featureType.getDescriptors()){
                 PropertyDescriptor td = ft.getDescriptor(desc.getName().tip().toString());

@@ -27,12 +27,10 @@ import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.opengis.filter.identity.FeatureId;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.iso.Names;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.util.GenericName;
 
@@ -148,9 +146,9 @@ public class FeatureBuilder {
 
         descs = featureType.getDescriptors().toArray(new PropertyDescriptor[0]);
         for(int i=0;i<descs.length;i++){
-            final Name name = descs[i].getName();
+            final GenericName name = descs[i].getName();
             names.put(name.tip().toString(),i);
-            names.put(Names.toExpandedString(name),i);
+            names.put(DefaultName.toExpandedString(name),i);
             names.put(DefaultName.toExtendedForm(name),i);
         }
         reset();

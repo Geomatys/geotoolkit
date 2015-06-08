@@ -37,7 +37,7 @@ import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.FileUtilities;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  *
@@ -46,7 +46,7 @@ import org.geotoolkit.feature.type.Name;
 public class NetCDFFeatureStoreTest extends AbstractReadingTests{
     
     private static FeatureStore store;
-    private static final Set<Name> names = new HashSet<>();
+    private static final Set<GenericName> names = new HashSet<>();
     private static final List<AbstractReadingTests.ExpectedResult> expecteds = new ArrayList<>();
     static{
         try{
@@ -60,7 +60,7 @@ public class NetCDFFeatureStoreTest extends AbstractReadingTests{
 
             final String nsOM = "http://www.opengis.net/sampling/1.0";
             final String nsGML = "http://www.opengis.net/gml";
-            final Name name = DefaultName.create(nsOM, "test-trajectories");
+            final GenericName name = DefaultName.create(nsOM, "test-trajectories");
             names.add(name);
 
             final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
@@ -112,7 +112,7 @@ public class NetCDFFeatureStoreTest extends AbstractReadingTests{
     }
 
     @Override
-    protected Set<Name> getExpectedNames() {
+    protected Set<GenericName> getExpectedNames() {
         return names;
     }
 

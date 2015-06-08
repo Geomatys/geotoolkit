@@ -33,7 +33,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.storage.DataStoreException;
 import static org.junit.Assert.assertNotNull;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
@@ -45,7 +45,7 @@ import org.opengis.util.FactoryException;
 public class DBFReadingTest extends AbstractReadingTests{
 
     private final DbaseFileFeatureStore store;
-    private final Set<Name> names = new HashSet<Name>();
+    private final Set<GenericName> names = new HashSet<GenericName>();
     private final List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
 
     public DBFReadingTest() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException, IOException{
@@ -54,7 +54,7 @@ public class DBFReadingTest extends AbstractReadingTests{
         final String ns = "http://test.com";
         store = new DbaseFileFeatureStore(file, ns);
 
-        for(Name n : store.getNames()){
+        for(GenericName n : store.getNames()){
             FeatureType ft = store.getFeatureType(n);
             assertNotNull(ft);
         }
@@ -64,7 +64,7 @@ public class DBFReadingTest extends AbstractReadingTests{
         final AttributeTypeBuilder buildAtt = new AttributeTypeBuilder();
         final AttributeDescriptorBuilder buildDesc = new AttributeDescriptorBuilder();
         
-        Name name = DefaultName.create("http://test.com", "sample");
+        GenericName name = DefaultName.create("http://test.com", "sample");
         builder.reset();
         builder.setName(name);
         
@@ -110,7 +110,7 @@ public class DBFReadingTest extends AbstractReadingTests{
     }
 
     @Override
-    protected Set<Name> getExpectedNames() {
+    protected Set<GenericName> getExpectedNames() {
         return names;
     }
 

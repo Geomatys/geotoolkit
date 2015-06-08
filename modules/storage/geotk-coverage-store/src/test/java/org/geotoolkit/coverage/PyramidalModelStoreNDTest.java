@@ -48,6 +48,7 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.referencing.CommonCRS;
+import org.opengis.util.GenericName;
 
 /**
  * Abstract pyramid store test.
@@ -84,7 +85,7 @@ public abstract class PyramidalModelStoreNDTest {
         final CoordinateReferenceSystem vertical = CommonCRS.Vertical.ELLIPSOIDAL.crs();
         crs = new DefaultCompoundCRS(Collections.singletonMap(DefaultCompoundCRS.NAME_KEY, "3dcrs"), horizontal,vertical);
 
-        final DefaultName name = DefaultName.create("test");
+        final GenericName name = DefaultName.create("test");
         ref = (PyramidalCoverageReference) store.create(name);
 
         //prepare expected colors

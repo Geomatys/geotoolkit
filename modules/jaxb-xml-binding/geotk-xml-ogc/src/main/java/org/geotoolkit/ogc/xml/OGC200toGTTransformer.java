@@ -33,7 +33,7 @@ import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.geotoolkit.ogc.xml.v200.*;
 import org.geotoolkit.referencing.CRS;
 
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.MatchAction;
@@ -522,7 +522,7 @@ public class OGC200toGTTransformer {
     /**
      * Change a QName in Name.
      */
-    public Name visitQName(final QName qname){
+    public GenericName visitQName(final QName qname){
         if(qname == null) {return null;}
         return DefaultName.create(qname);
     }

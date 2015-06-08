@@ -46,7 +46,7 @@ import org.geotoolkit.wfs.xml.WFSCapabilities;
 import org.geotoolkit.wfs.xml.WFSVersion;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -275,7 +275,7 @@ public class WebFeatureClient extends AbstractFeatureClient {
     }
 
     @Override
-    public VersionControl getVersioning(Name typeName) throws VersioningException {
+    public VersionControl getVersioning(GenericName typeName) throws VersioningException {
         return store.getVersioning(typeName);
     }
 
@@ -285,22 +285,22 @@ public class WebFeatureClient extends AbstractFeatureClient {
     }
 
     @Override
-    public Set<Name> getNames() throws DataStoreException {
+    public Set<GenericName> getNames() throws DataStoreException {
         return getStore().getNames();
     }
 
     @Override
-    public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         getStore().createFeatureType(typeName, featureType);
     }
 
     @Override
-    public void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         getStore().updateFeatureType(typeName, featureType);
     }
 
     @Override
-    public void deleteFeatureType(Name typeName) throws DataStoreException {
+    public void deleteFeatureType(GenericName typeName) throws DataStoreException {
         getStore().deleteFeatureType(typeName);
     }
 
@@ -310,7 +310,7 @@ public class WebFeatureClient extends AbstractFeatureClient {
     }
 
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(GenericName typeName) throws DataStoreException {
         return getStore().getFeatureType(typeName);
     }
 
@@ -320,7 +320,7 @@ public class WebFeatureClient extends AbstractFeatureClient {
     }
 
     @Override
-    public boolean isWritable(Name typeName) throws DataStoreException {
+    public boolean isWritable(GenericName typeName) throws DataStoreException {
         return getStore().isWritable(typeName);
     }
 
@@ -340,22 +340,22 @@ public class WebFeatureClient extends AbstractFeatureClient {
     }
 
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         return getStore().addFeatures(groupName, newFeatures, hints);
     }
 
     @Override
-    public void updateFeatures(Name groupName, Filter filter, PropertyDescriptor desc, Object value) throws DataStoreException {
+    public void updateFeatures(GenericName groupName, Filter filter, PropertyDescriptor desc, Object value) throws DataStoreException {
         getStore().updateFeatures(groupName, filter, desc, value);
     }
 
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(GenericName groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         getStore().updateFeatures(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
         getStore().removeFeatures(groupName, filter);
     }
 
@@ -365,12 +365,12 @@ public class WebFeatureClient extends AbstractFeatureClient {
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
         return getStore().getFeatureWriter(typeName,filter,hints);
     }
 
     @Override
-    public FeatureWriter getFeatureWriterAppend(Name typeName, Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriterAppend(GenericName typeName, Hints hints) throws DataStoreException {
         return getStore().getFeatureWriterAppend(typeName,hints);
     }
 

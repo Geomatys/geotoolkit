@@ -31,6 +31,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,9 +59,9 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
      */
     @Test
     public void testCreateComplexType() {
-        final Name name = DefaultName.create("point");
-        final Name strName = DefaultName.create("String");
-        final Name ctName = DefaultName.create("complexTypeName");
+        final GenericName name = DefaultName.create("point");
+        final GenericName strName = DefaultName.create("String");
+        final GenericName ctName = DefaultName.create("complexTypeName");
         final Map crsInfo = new HashMap<String, String>();
         crsInfo.put("name", "myCRS");
         crsInfo.put("first", "one");
@@ -118,7 +119,7 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
             res.getDescriptor("non-existant");
         } catch (Exception e) {
         }
-        Name tmpName = DefaultName.create("non-existant");
+        GenericName tmpName = DefaultName.create("non-existant");
         try {
             res.getDescriptor(tmpName);
         } catch (Exception e) {
@@ -131,9 +132,9 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
      */
     @Test
     public void createFeatureType() {
-        final Name name = DefaultName.create("point");
-        final Name strName = DefaultName.create("String");
-        final Name fName = DefaultName.create("featureTypeName");
+        final GenericName name = DefaultName.create("point");
+        final GenericName strName = DefaultName.create("String");
+        final GenericName fName = DefaultName.create("featureTypeName");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         //types and descriptors
@@ -170,7 +171,7 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
             res.getDescriptor("non-existant");
         } catch (Exception e) {
         }
-        Name tmpName = DefaultName.create("non-existant");
+        GenericName tmpName = DefaultName.create("non-existant");
         try {
             res.getDescriptor(tmpName);
         } catch (Exception e) {

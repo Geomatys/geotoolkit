@@ -36,7 +36,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
@@ -132,8 +132,8 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public Set<Name> getNames() throws DataStoreException {
-        final Set<Name> names = new HashSet<Name>();
+    public Set<GenericName> getNames() throws DataStoreException {
+        final Set<GenericName> names = new HashSet<GenericName>();
         names.add(TYPE_GPX_ENTITY.getName());
         names.add(TYPE_WAYPOINT.getName());
         names.add(TYPE_ROUTE.getName());
@@ -142,7 +142,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
         if(TYPE_GPX_ENTITY.getName().equals(typeName)){
             return TYPE_GPX_ENTITY;
         }else if(TYPE_WAYPOINT.getName().equals(typeName)){
@@ -157,7 +157,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public boolean isWritable(Name typeName) throws DataStoreException {
+    public boolean isWritable(GenericName typeName) throws DataStoreException {
         typeCheck(typeName);
         return file.canWrite() && getFeatureType(typeName) != TYPE_GPX_ENTITY;
     }
@@ -171,7 +171,7 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName,
+    public FeatureWriter getFeatureWriter(final GenericName typeName,
             final Filter filter, final Hints hints) throws DataStoreException {
         final FeatureType ft = getFeatureType(typeName);
         final FeatureWriter fw = new GPXFeatureWriter(ft);
@@ -188,33 +188,33 @@ public class GPXFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("New schema creation not allowed on GPX files.");
     }
 
     @Override
-    public void deleteFeatureType(final Name typeName) throws DataStoreException {
+    public void deleteFeatureType(final GenericName typeName) throws DataStoreException {
         throw new DataStoreException("Delete schema not allowed on GPX files.");
     }
 
     @Override
-    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Update schema not allowed on GPX files.");
     }
 
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
+    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
 
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 

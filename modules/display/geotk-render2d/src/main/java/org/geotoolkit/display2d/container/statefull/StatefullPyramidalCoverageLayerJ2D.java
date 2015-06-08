@@ -32,7 +32,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRule;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
@@ -116,7 +116,7 @@ public class StatefullPyramidalCoverageLayerJ2D extends StatefullMapLayerJ2D<Cov
 
         if(!item.isVisible()) return;
 
-        final Name coverageName = item.getCoverageReference().getName();
+        final GenericName coverageName = item.getCoverageReference().getName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 context2D.getSEScale(), coverageName,null);
 

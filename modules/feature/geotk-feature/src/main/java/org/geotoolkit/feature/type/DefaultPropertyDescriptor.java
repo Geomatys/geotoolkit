@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,13 +40,13 @@ import static org.apache.sis.util.ArgumentChecks.*;
 public class DefaultPropertyDescriptor<T extends PropertyType> implements PropertyDescriptor,Serializable {
 
     protected final T type;
-    protected final Name name;
+    protected final GenericName name;
     protected final int minOccurs;
     protected final int maxOccurs;
     protected final boolean isNillable;
     protected final Map<Object, Object> userData = new HashMap<Object, Object>();
 
-    public DefaultPropertyDescriptor(final T type, final Name name, final int min,
+    public DefaultPropertyDescriptor(final T type, final GenericName name, final int min,
             final int max, final boolean isNillable){
 
         ensureNonNull("property type", type);
@@ -74,7 +75,7 @@ public class DefaultPropertyDescriptor<T extends PropertyType> implements Proper
      * {@inheritDoc }
      */
     @Override
-    public Name getName() {
+    public GenericName getName() {
         return name;
     }
 

@@ -39,7 +39,7 @@ import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -79,7 +79,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
     private final AbstractFolderFeatureStoreFactory folderFactory;
     private final FileFeatureStoreFactory singleFileFactory;
     private final ParameterValueGroup singleFileDefaultParameters;
-    private Map<Name,FeatureStore> stores = null;
+    private Map<GenericName,FeatureStore> stores = null;
 
     public DefaultFolderFeatureStore(final ParameterValueGroup params, final AbstractFolderFeatureStoreFactory factory){
         super(params);
@@ -111,7 +111,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      * Fallthrought to sub feature stores.
      */
     @Override
-    public VersionControl getVersioning(Name typeName) throws VersioningException {
+    public VersionControl getVersioning(GenericName typeName) throws VersioningException {
         try {
             typeCheck(typeName);
         } catch (DataStoreException ex) {
@@ -125,10 +125,10 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      * {@inheritDoc}
      */
     @Override
-    public synchronized Set<Name> getNames() throws DataStoreException {
+    public synchronized Set<GenericName> getNames() throws DataStoreException {
 
         if(stores == null){
-            this.stores = new HashMap<Name, FeatureStore>();
+            this.stores = new HashMap<GenericName, FeatureStore>();
             final File folder = getFolder(folderParameters);
 
             if(!folder.exists()){
@@ -187,7 +187,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      * {@inheritDoc}
      */
     @Override
-    public void createFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
 
         if(typeName == null){
             throw new DataStoreException("Type name can not be null.");
@@ -220,7 +220,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      * Unsupported, throws a {@link DataStoreException}.
      */
     @Override
-    public void updateFeatureType(final Name typeName, final FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(final GenericName typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -228,7 +228,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      * Unsupported, throws a {@link DataStoreException}.
      */
     @Override
-    public synchronized void deleteFeatureType(final Name typeName) throws DataStoreException {
+    public synchronized void deleteFeatureType(final GenericName typeName) throws DataStoreException {
         final FeatureStore store = stores.get(typeName);
         if (store == null) {
             throw new DataStoreException("There's no data with the following type name : "+typeName);
@@ -261,7 +261,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      * {@inheritDoc}
      */
     @Override
-    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final GenericName typeName) throws DataStoreException {
         typeCheck(typeName);
         final FeatureStore store = stores.get(typeName);
         return store.getFeatureType(typeName);
@@ -271,7 +271,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      * {@inheritDoc}
      */
     @Override
-    public boolean isWritable(final Name typeName) throws DataStoreException {
+    public boolean isWritable(final GenericName typeName) throws DataStoreException {
         typeCheck(typeName);
         final FeatureStore store = stores.get(typeName);
         return store.isWritable(typeName);
@@ -289,7 +289,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      * {@inheritDoc}
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
+    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         typeCheck(groupName);
         final FeatureStore store = stores.get(groupName);
@@ -300,7 +300,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      * {@inheritDoc}
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter,
+    public void updateFeatures(final GenericName groupName, final Filter filter,
             final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         typeCheck(groupName);
         final FeatureStore store = stores.get(groupName);
@@ -311,7 +311,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      * {@inheritDoc}
      */
     @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+    public void removeFeatures(final GenericName groupName, final Filter filter) throws DataStoreException {
         typeCheck(groupName);
         final FeatureStore store = stores.get(groupName);
         store.removeFeatures(groupName, filter);
@@ -322,7 +322,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
-        final Name name = query.getTypeName();
+        final GenericName name = query.getTypeName();
         typeCheck(name);
         final FeatureStore store = stores.get(name);
         return store.getFeatureReader(query);
@@ -332,7 +332,7 @@ public class DefaultFolderFeatureStore extends AbstractFeatureStore implements D
      * {@inheritDoc}
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final GenericName typeName, final Filter filter, final Hints hints) throws DataStoreException {
         typeCheck(typeName);
         final FeatureStore store = stores.get(typeName);
         return store.getFeatureWriter(typeName, filter, hints);

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -28,7 +29,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class DefaultGeometryDescriptor extends DefaultAttributeDescriptor<GeometryType>
         implements GeometryDescriptor {
 
-    public DefaultGeometryDescriptor(final GeometryType type, final Name name, final int min,
+    public DefaultGeometryDescriptor(final GeometryType type, final GenericName name, final int min,
             final int max, final boolean isNillable, final Object defaultValue){
         super(type, name, min, max, isNillable, defaultValue);
     }

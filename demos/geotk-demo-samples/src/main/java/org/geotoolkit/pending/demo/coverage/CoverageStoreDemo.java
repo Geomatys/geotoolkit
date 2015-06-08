@@ -16,7 +16,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 
@@ -40,7 +40,7 @@ public class CoverageStoreDemo {
         //create a mapcontext
         final MapContext context = MapBuilder.createContext();
 
-        for(Name n : store.getNames()){
+        for(GenericName n : store.getNames()){
             final CoverageReference ref = store.getCoverageReference(n);
             final CoverageMapLayer cl = MapBuilder.createCoverageLayer(ref);
             context.layers().add(cl);

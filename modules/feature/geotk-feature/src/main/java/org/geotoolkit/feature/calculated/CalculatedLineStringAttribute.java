@@ -28,7 +28,7 @@ import org.geotoolkit.feature.DefaultGeometryAttribute;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * A calculated attribut that define a LineString geometry calculated
@@ -45,7 +45,7 @@ public class CalculatedLineStringAttribute extends DefaultGeometryAttribute {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
-    private final Name[] path;
+    private final GenericName[] path;
     private ComplexAttribute related;
 
     /**
@@ -53,7 +53,7 @@ public class CalculatedLineStringAttribute extends DefaultGeometryAttribute {
      * @param desc : the descriptor of this attribute
      * @param path : a path of names to the property that holds Point geometries.
      */
-    public CalculatedLineStringAttribute(final GeometryDescriptor desc, final Name ... path) {
+    public CalculatedLineStringAttribute(final GeometryDescriptor desc, final GenericName ... path) {
         super(null, desc, null);
         this.path = path;
     }

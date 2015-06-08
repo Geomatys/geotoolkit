@@ -26,7 +26,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -139,7 +139,7 @@ public abstract class MIFGeometryBuilder {
      * The name of the geometry, as MIF defines it.
      * @return
      */
-    public abstract Name getName();
+    public abstract GenericName getName();
 
     protected abstract List<AttributeDescriptor> getAttributes();
 

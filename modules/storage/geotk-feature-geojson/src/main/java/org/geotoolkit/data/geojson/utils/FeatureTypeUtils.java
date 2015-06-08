@@ -1,5 +1,6 @@
 package org.geotoolkit.data.geojson.utils;
 
+import org.opengis.util.GenericName;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -418,7 +419,7 @@ public final class FeatureTypeUtils extends Static {
             throw new DataStoreException("Geometry crs or binding not found.");
         }
 
-        Name name = geometryName != null ? DefaultName.create(geometryName) : DefaultName.create(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
+        GenericName name = geometryName != null ? DefaultName.create(geometryName) : DefaultName.create(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
         PropertyType prop = FT_FACTORY.createGeometryType(name, binding, crs, false, false, null, null, description);
         return (GeometryDescriptor) adb.create((org.geotoolkit.feature.type.PropertyType) prop, name, crs, 1, 1, false, null);
     }
@@ -507,7 +508,7 @@ public final class FeatureTypeUtils extends Static {
             userData.put(HintsPending.PROPERTY_IS_IDENTIFIER, Boolean.TRUE);
         }
 
-        Name name = DefaultName.valueOf(attributeName);
+        GenericName name = DefaultName.valueOf(attributeName);
         InternationalString desc = description != null ? new SimpleInternationalString(description) : null;
         if (descs.isEmpty()) {
             //build AttributeDescriptor

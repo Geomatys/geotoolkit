@@ -41,7 +41,7 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.filter.function.string.StringFunctionFactory;
 import org.opengis.filter.Filter;
@@ -514,7 +514,7 @@ public class SQLQueryBuilder {
      * Generates a 'ALTER TABLE - ADD FOREIGN KEY (-) REFERENCES -(-)' sql query.
      */
     public String alterTableAddForeignKey(final ComplexType sourceType, final String sourceProperty,
-            final Name targetType, final String targetProperty, boolean cascade) throws SQLException{
+            final GenericName targetType, final String targetProperty, boolean cascade) throws SQLException{
         final String sourceName = sourceType.getName().tip().toString();
         final String targetName = targetType.tip().toString();
 

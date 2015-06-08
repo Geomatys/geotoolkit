@@ -42,7 +42,7 @@ import org.geotoolkit.storage.DefaultDataNode;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -117,7 +117,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
             stmt = cnx.createStatement();
             rs = stmt.executeQuery(query.toString());
             while (rs.next()){
-                final Name n = DefaultName.create(ns, rs.getString(1));
+                final GenericName n = DefaultName.create(ns, rs.getString(1));
                 final CoverageReference ref = createCoverageReference(n, null);
                 root.getChildren().add(ref);
             }
@@ -130,7 +130,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
     }
 
     @Override
-    public CoverageReference create(Name name) throws DataStoreException {
+    public CoverageReference create(GenericName name) throws DataStoreException {
 
         final StringBuilder query = new StringBuilder();
         query.append("INSERT INTO ");
@@ -158,7 +158,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
     }
 
     @Override
-    public void delete(Name name) throws DataStoreException {
+    public void delete(GenericName name) throws DataStoreException {
         final StringBuilder query = new StringBuilder();
         query.append("DELETE FROM ");
         query.append(encodeTableName("Layer"));
@@ -238,7 +238,7 @@ public class PGCoverageStore extends AbstractCoverageStore{
     }
 
     @Override
-    public VersionControl getVersioning(Name typeName) throws VersioningException {
+    public VersionControl getVersioning(GenericName typeName) throws VersioningException {
         try {
             typeCheck(typeName);
             return new PGVersionControl(this, typeName);
@@ -248,12 +248,12 @@ public class PGCoverageStore extends AbstractCoverageStore{
     }
 
     @Override
-    public CoverageReference getCoverageReference(Name name, Version version) throws DataStoreException {
+    public CoverageReference getCoverageReference(GenericName name, Version version) throws DataStoreException {
         typeCheck(name);
         return createCoverageReference(name, version);
     }
 
-    private CoverageReference createCoverageReference(final Name name, Version version) throws DataStoreException {
+    private CoverageReference createCoverageReference(final GenericName name, Version version) throws DataStoreException {
         if(version == null){
             try {
                 //grab the latest

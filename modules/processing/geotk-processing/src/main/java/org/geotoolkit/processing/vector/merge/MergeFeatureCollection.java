@@ -29,7 +29,7 @@ import org.apache.sis.util.ObjectConverter;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 
 /**
  * FeatureCollection for Merge process
@@ -76,7 +76,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
      * @param map
      * @return result feature
      */
-    protected Feature modify2(final Feature feature, final Map<Name,ObjectConverter> map) {
+    protected Feature modify2(final Feature feature, final Map<GenericName,ObjectConverter> map) {
         try {
             return MergeProcess.mergeFeature(feature, newFeatureType, map);
         } catch (UnconvertibleObjectException ex) {
@@ -109,7 +109,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
         private FeatureIterator ite;
 
         private Feature nextFeature;
-        private Map<Name,ObjectConverter> conversionMap;
+        private Map<GenericName,ObjectConverter> conversionMap;
 
         /**
          * Connect to the original FeatureIterator

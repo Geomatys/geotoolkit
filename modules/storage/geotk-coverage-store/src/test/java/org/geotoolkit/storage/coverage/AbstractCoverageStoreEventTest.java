@@ -30,6 +30,7 @@ import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
 import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.util.GenericName;
 
 /**
  * Coverage store event tests.
@@ -53,7 +54,7 @@ public abstract class AbstractCoverageStoreEventTest {
 
         assertEquals(0, store.getNames().size());
 
-        final DefaultName name = DefaultName.create(store.getDefaultNamespace(), "test");
+        final GenericName name = DefaultName.create(store.getDefaultNamespace(), "test");
         final CoverageReference ref = store.create(name);
         assertNotNull(ref);
         assertEquals(1, storelistener.numManageEvent);

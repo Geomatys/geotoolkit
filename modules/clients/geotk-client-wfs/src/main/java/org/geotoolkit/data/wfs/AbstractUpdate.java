@@ -19,7 +19,7 @@ package org.geotoolkit.data.wfs;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -32,7 +32,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class AbstractUpdate implements Update{
 
     protected final Map<PropertyDescriptor,Object> updates = new HashMap<PropertyDescriptor,Object>();
-    protected Name typeName = null;
+    protected GenericName typeName = null;
     protected String handle = null;
     protected Filter filter = null;
     protected CoordinateReferenceSystem crs = null;
@@ -84,12 +84,12 @@ public class AbstractUpdate implements Update{
     }
 
     @Override
-    public Name getTypeName() {
+    public GenericName getTypeName() {
         return typeName;
     }
 
     @Override
-    public void setTypeName(final Name type) {
+    public void setTypeName(final GenericName type) {
         this.typeName = type;
     }
 

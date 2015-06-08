@@ -42,7 +42,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.parameter.Parameters;
@@ -69,7 +69,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     private Boolean longitudeFirst;
 
     //all types
-    private final Map<Name, Object> cache = new HashMap<>();
+    private final Map<GenericName, Object> cache = new HashMap<>();
 
     public GMLFeatureStore(final File f) throws MalformedURLException, DataStoreException{
         this(toParameters(f));
@@ -107,7 +107,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public synchronized Set<Name> getNames() throws DataStoreException {
+    public synchronized Set<GenericName> getNames() throws DataStoreException {
         if(featureType==null){
             final JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
             reader.getProperties().put(JAXPStreamFeatureReader.LONGITUDE_FIRST, longitudeFirst);
@@ -125,13 +125,13 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(GenericName typeName) throws DataStoreException {
         typeCheck(typeName);
         return featureType;
     }
 
     @Override
-    public List<ComplexType> getFeatureTypeHierarchy(Name typeName) throws DataStoreException {
+    public List<ComplexType> getFeatureTypeHierarchy(GenericName typeName) throws DataStoreException {
         return super.getFeatureTypeHierarchy(typeName);
     }
 
@@ -173,37 +173,37 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     // WRITING SUPPORT : TODO //////////////////////////////////////////////////
 
     @Override
-    public void createFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 
     @Override
-    public void updateFeatureType(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateFeatureType(GenericName typeName, FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 
     @Override
-    public void deleteFeatureType(Name typeName) throws DataStoreException {
+    public void deleteFeatureType(GenericName typeName) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
+    public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(GenericName groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 

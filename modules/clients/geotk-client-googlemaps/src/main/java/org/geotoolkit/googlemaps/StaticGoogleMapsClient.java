@@ -30,7 +30,7 @@ import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -118,12 +118,12 @@ public class StaticGoogleMapsClient extends AbstractCoverageClient {
     }
 
     @Override
-    public CoverageReference create(Name name) throws DataStoreException {
+    public CoverageReference create(GenericName name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
 
     @Override
-    public void delete(Name name) throws DataStoreException {
+    public void delete(GenericName name) throws DataStoreException {
         throw new DataStoreException("Can not create new coverage.");
     }
 

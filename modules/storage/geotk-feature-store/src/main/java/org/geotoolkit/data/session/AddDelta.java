@@ -39,7 +39,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
-import org.geotoolkit.feature.type.Name;
+import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
@@ -65,7 +65,7 @@ public class AddDelta extends AbstractDelta{
      * a feature store which may be slow or changing with time.
      * this features from the given collection will be copied.
      */
-    public AddDelta(final Session session, final Name typeName, final Collection<? extends Feature> features){
+    public AddDelta(final Session session, final GenericName typeName, final Collection<? extends Feature> features){
         super(session,typeName);
         ensureNonNull("type name", typeName);
         ensureNonNull("features", features);
