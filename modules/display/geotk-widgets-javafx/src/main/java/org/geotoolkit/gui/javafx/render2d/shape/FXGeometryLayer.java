@@ -18,6 +18,8 @@ package org.geotoolkit.gui.javafx.render2d.shape;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -33,6 +35,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import org.apache.sis.referencing.CRS;
@@ -62,7 +66,9 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
             }
         }
     };
-    
+
+    private Paint fill = new Color(0, 0, 0, 0.4);
+
     public FXGeometryLayer() {
         geoms.addListener((ListChangeListener.Change<? extends Geometry> c) -> {
             updateGraphics();
@@ -83,9 +89,16 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
         //disable cache, may have many and large geometries
         setCache(false);
         setCacheShape(false);
-        
     }
 
+    public void setFill(Paint fill) {
+        this.fill = fill;
+    }
+
+    public Paint getFill() {
+        return fill;
+    }
+    
     public ObservableList<Geometry> getGeometries() {
         return geoms;
     }
@@ -106,7 +119,11 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
                 }
 
                 coords.addAll(Arrays.asList(geom.getCoordinates()));
-                shapes.add(new FXGeometry(geom));
+                final FXGeometry fxgeom = new FXGeometry(geom);
+                if(geom instanceof Polygon || geom instanceof MultiPolygon){
+                    fxgeom.setFill(fill);
+                }
+                shapes.add(fxgeom);
             }catch(Exception ex){
                 Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
             }

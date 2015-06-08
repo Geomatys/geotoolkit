@@ -22,14 +22,14 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ChoiceBox;
@@ -37,50 +37,61 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.paint.Color;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.display.MeasureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.javafx.render2d.FXAbstractNavigationHandler;
-import org.geotoolkit.gui.javafx.render2d.shape.FXGeometryLayer;
+import org.geotoolkit.gui.javafx.render2d.FXGridDecoration;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXPanMouseListen;
-import org.geotoolkit.gui.javafx.render2d.navigation.AbstractMouseHandler;
-import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.gui.javafx.render2d.shape.FXGeometryLayer;
 import org.geotoolkit.internal.Loggers;
 
 /**
- *
+ * Map tool to calculate areas.
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class FXMesureAreaHandler extends FXAbstractNavigationHandler {
 
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
     private final MouseListen mouseInputListener = new MouseListen();
-    private final double zoomFactor = 2;
     private final List<Coordinate> coords = new ArrayList<>();
-    private final FXGeometryLayer layer;
+    private final FXGeometryLayer layer = new FXGeometryLayer();
+    private final FXGridDecoration deco = new FXGridDecoration();
     private final Label uiArea = new Label();
     private final ChoiceBox<Unit> uiUnit = new ChoiceBox<>();
     private final HBox pane = new HBox(10,uiArea,uiUnit);
     
     
     public FXMesureAreaHandler(final FXMap map) {
-        super(map);
-        layer = new FXGeometryLayer();        
+        super(map);       
         uiArea.setMaxHeight(Double.MAX_VALUE);
         uiUnit.setItems(FXCollections.observableArrayList(Unit.valueOf("km2"),SI.SQUARE_METRE));
         uiUnit.getSelectionModel().selectFirst();
         
         pane.setAlignment(Pos.CENTER);
-        pane.setFillHeight(true);
-        
+        pane.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(10), Insets.EMPTY)));
+        pane.setPadding(new Insets(10, 10, 10, 10));
+        deco.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        deco.getColumnConstraints().add(new ColumnConstraints(0,HBox.USE_COMPUTED_SIZE,Double.MAX_VALUE,Priority.ALWAYS,HPos.CENTER,true));
+        deco.getColumnConstraints().add(new ColumnConstraints(0,HBox.USE_COMPUTED_SIZE,Double.MAX_VALUE,Priority.NEVER,HPos.CENTER,true));
+        deco.getColumnConstraints().add(new ColumnConstraints(0,HBox.USE_COMPUTED_SIZE,Double.MAX_VALUE,Priority.ALWAYS,HPos.CENTER,true));
+
         uiUnit.valueProperty().addListener((ObservableValue<? extends Unit> observable, Unit oldValue, Unit newValue) -> {
             updateGeometry();
         });
-                
+
+        deco.add(pane, 1, 0);
     }
 
     /**
@@ -92,8 +103,8 @@ public class FXMesureAreaHandler extends FXAbstractNavigationHandler {
         component.addEventHandler(MouseEvent.ANY, mouseInputListener);
         component.addEventHandler(ScrollEvent.ANY, mouseInputListener);
         map.setCursor(Cursor.CROSSHAIR);
-        map.addDecoration(0,layer);
-        component.setBottom(pane);
+        map.addDecoration(layer);
+        map.addDecoration(deco);
     }
 
     /**
@@ -105,7 +116,7 @@ public class FXMesureAreaHandler extends FXAbstractNavigationHandler {
         component.removeEventHandler(MouseEvent.ANY, mouseInputListener);
         component.removeEventHandler(ScrollEvent.ANY, mouseInputListener);
         map.removeDecoration(layer);
-        component.setBottom(null);
+        map.removeDecoration(deco);
         return true;
     }
     

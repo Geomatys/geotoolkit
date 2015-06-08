@@ -104,11 +104,14 @@ public class FXMap extends BorderPane {
         mapDecorationPane.getChildren().add(0,view);
         mainDecorationPane.getChildren().add(0,backDecoration.getComponent());
         mainDecorationPane.getChildren().add(1,mapDecorationPane);
-        mainDecorationPane.getChildren().add(2,userDecorationPane);
-        mainDecorationPane.getChildren().add(3,informationDecoration.getComponent());
+        mainDecorationPane.getChildren().add(2,informationDecoration.getComponent());
+        mainDecorationPane.getChildren().add(3,userDecorationPane);
         informationDecoration.setMap2D(this);
         setCenter(mainDecorationPane);
-        
+
+        mapDecorationPane.setFocusTraversable(true);
+        userDecorationPane.setFocusTraversable(true);
+        mainDecorationPane.setFocusTraversable(true);
         
         canvas = new J2DCanvasVolatile(CommonCRS.WGS84.normalizedGeographic(), new Dimension(100, 100), hints);
         canvas.setMonitor(new NeverFailMonitor());
