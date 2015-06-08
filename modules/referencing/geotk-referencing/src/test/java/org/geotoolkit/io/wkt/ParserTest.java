@@ -24,12 +24,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.LineNumberReader;
 import java.io.FileNotFoundException;
-import javax.measure.unit.NonSI;
-
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.util.LenientComparable;
 import org.apache.sis.io.wkt.Symbols;
@@ -37,10 +33,9 @@ import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.TestData;
-import org.apache.sis.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.operation.projection.FormattingTest;
-
 import org.junit.*;
+
 import static org.junit.Assert.*;
 
 
@@ -213,72 +208,5 @@ public final strictfp class ParserTest {
         assertEquals(crs1, crs2);
         assertFalse(check.contains("semi_major"));
         assertFalse(check.contains("semi_minor"));
-    }
-
-    /**
-     * A coordinate reference system defined by IGNF. This WKT is not strictly standard-compliant,
-     * in that it wrongly (from the WKT standard point of view) define the {@code PRIMEM} in degrees
-     * unit, while it shall be in gradian unit.
-     *
-     * @since 3.20
-     */
-    static final String IGNF_LAMBE =
-        "PROJCS[\"Lambert II étendu\"," +
-            " GEOGCS[\"Nouvelle Triangulation Française Paris grades\"," +
-            " DATUM[\"NTF\"," +
-              " SPHEROID[\"Clarke 1880 IGN\", 6378249.2, 293.466021, AUTHORITY[\"IGNF\",\"ELG010\"]]," +
-              " TOWGS84[-168,-60,320,0,0,0,0]," +
-              " AUTHORITY[\"IGNF\",\"REG002\"]]," +
-            " PRIMEM[\"Paris\", 2.337229167, AUTHORITY[\"IGNF\",\"LGO02\"]]," + // Should be PRIMEM["Paris", 2.5969213] because of gradian unit.
-            " UNIT[\"grad\", 0.01570796326794897]," +
-            " AXIS[\"Longitude\", EAST]," +
-            " AXIS[\"Latitude\", NORTH]," +
-            " AUTHORITY[\"IGNF\",\"NTFP\"]]," +
-          " PROJECTION[\"Lambert_Conformal_Conic_1SP\", AUTHORITY[\"IGNF\",\"PRC0120\"]]," +
-          " PARAMETER[\"semi_major\", 6378249.2]," +
-          " PARAMETER[\"semi_minor\", 6356515.0]," +
-          " PARAMETER[\"latitude_of_origin\", 46.8]," + // Should be 52 in gradian unit.
-          " PARAMETER[\"central_meridian\", 0.0]," +
-          " PARAMETER[\"scale_factor\", 0.99987742]," +
-          " PARAMETER[\"false_easting\", 600000.0]," +
-          " PARAMETER[\"false_northing\", 2200000.0]," +
-          " UNIT[\"metre\",1]," +
-          " AXIS[\"Easting\",EAST]," +
-          " AXIS[\"Northing\",NORTH]," +
-          " AUTHORITY[\"IGNF\",\"LAMBE\"]]";
-
-    /**
-     * Verifies the CRS parsed from the {@link #IGNF_LAMBE} string.
-     *
-     * @param crs The parsed CRS.
-     */
-    static void verifyLambertII(final ProjectedCRS crs, final boolean forceDegreeUnit) {
-        assertEquals(forceDegreeUnit ? "Expected the real prime meridian value, in degrees." :
-                "Expected a value converted from gradians to degrees, despite resulting to a unintented value.",
-                forceDegreeUnit ? 2.337229167 : 2.103506250,
-                ((DefaultPrimeMeridian) crs.getDatum().getPrimeMeridian()).getGreenwichLongitude(NonSI.DEGREE_ANGLE), 1E-9);
-
-        assertEquals(forceDegreeUnit ? "Expected the real latitude of origin value, in degrees." :
-                "Expected a value converted from gradians to degrees, despite resulting to a unintented value.",
-                forceDegreeUnit ? 46.8 : 42.12,
-                crs.getConversionFromBase().getParameterValues().parameter("latitude_of_origin").doubleValue(NonSI.DEGREE_ANGLE), 0.01);
-    }
-
-    /**
-     * Tests the parsing of a WKT using ESRI conventions.
-     *
-     * @throws ParseException Should never happen.
-     *
-     * @since 3.20
-     */
-    @Test
-    public void testEsriConventions() throws ParseException {
-        final WKTFormat parser = new WKTFormat();
-        verifyLambertII((ProjectedCRS) parser.parseObject(IGNF_LAMBE), false);
-        /*
-         * Now force the angular unit to degrees, and test again.
-         */
-        parser.setConvention(Convention.WKT1_COMMON_UNITS);
-        verifyLambertII((ProjectedCRS) parser.parseObject(IGNF_LAMBE), true);
     }
 }
