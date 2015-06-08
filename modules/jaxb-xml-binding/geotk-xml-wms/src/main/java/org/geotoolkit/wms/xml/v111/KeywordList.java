@@ -42,7 +42,7 @@ import org.geotoolkit.wms.xml.AbstractKeywordList;
 public class KeywordList implements AbstractKeywordList{
 
     @XmlElement(name = "Keyword")
-    private List<Keyword> keyword = new ArrayList<Keyword>();
+    private List<Keyword> keyword = new ArrayList<>();
 
      /**
      * An empty constructor used by JAXB.

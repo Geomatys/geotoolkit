@@ -28,11 +28,25 @@ public interface AbstractService {
     
     String getName();
     
+    void setName(String name);
+    
     String getTitle();
     
+    void setTitle(String title);
+    
     String getAbstract();
+    
+    void setAbstract(String _abstract);
+    
+    String getFees();
+    
+    void setFees(String fees);
 
     String getAccessConstraints();
 
     void setAccessConstraints(final String constraint);
+    
+    AbstractKeywordList getKeywordList();
+    
+    AbstractContactInformation getContactInformation();
 }

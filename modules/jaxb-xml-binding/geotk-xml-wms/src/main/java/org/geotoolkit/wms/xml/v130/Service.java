@@ -116,7 +116,7 @@ public class Service implements AbstractService {
     public Service(final String name, final String title, final String _abstract,
             final KeywordList keywordList, final OnlineResource onlineResource, 
             final ContactInformation contactInformation, final String fees, final String accessConstraints,
-            final int layerLimit, final int maxWidth, final int maxHeight) {
+            final Integer layerLimit, final Integer maxWidth, final Integer maxHeight) {
         
         this._abstract          = _abstract;
         this.name               = name;
@@ -142,6 +142,14 @@ public class Service implements AbstractService {
     }
 
     /**
+     * @param name the name to set
+     */
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    /**
      * Gets the value of the title property.
      */
     @Override
@@ -149,6 +157,14 @@ public class Service implements AbstractService {
         return title;
     }
 
+    /**
+     * @param title the title to set
+     */
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    
    /**
      * Gets the value of the abstract property.
      * 
@@ -157,14 +173,30 @@ public class Service implements AbstractService {
     public String getAbstract() {
         return _abstract;
     }
+    
+    /**
+     * @param _abstract the _abstract to set
+     */
+    @Override
+    public void setAbstract(String _abstract) {
+        this._abstract = _abstract;
+    }
 
     /**
      * Gets the value of the keywordList property.
      */
+    @Override
     public KeywordList getKeywordList() {
         return keywordList;
     }
 
+    /**
+     * @param keywordList the keywordList to set
+     */
+    public void setKeywordList(KeywordList keywordList) {
+        this.keywordList = keywordList;
+    }
+    
     /**
      * Gets the value of the onlineResource property.
      */
@@ -174,18 +206,42 @@ public class Service implements AbstractService {
     }
 
     /**
+     * @param onlineResource the onlineResource to set
+     */
+    public void setOnlineResource(OnlineResource onlineResource) {
+        this.onlineResource = onlineResource;
+    }
+    
+    /**
      * Gets the value of the contactInformation property.
      * 
      */
+    @Override
     public ContactInformation getContactInformation() {
         return contactInformation;
     }
 
     /**
+     * @param contactInformation the contactInformation to set
+     */
+    public void setContactInformation(ContactInformation contactInformation) {
+        this.contactInformation = contactInformation;
+    }
+    
+    /**
      * Gets the value of the fees property.
      */
+    @Override
     public String getFees() {
         return fees;
+    }
+    
+    /**
+     * @param fees the fees to set
+     */
+    @Override
+    public void setFees(String fees) {
+        this.fees = fees;
     }
 
    /**
@@ -203,6 +259,13 @@ public class Service implements AbstractService {
     public Integer getLayerLimit() {
         return layerLimit;
     }
+    
+    /**
+     * @param layerLimit the layerLimit to set
+     */
+    public void setLayerLimit(Integer layerLimit) {
+        this.layerLimit = layerLimit;
+    }
 
     /**
      * Gets the value of the maxWidth property.
@@ -211,12 +274,26 @@ public class Service implements AbstractService {
         return maxWidth;
     }
 
+    /**
+     * @param maxWidth the maxWidth to set
+     */
+    public void setMaxWidth(Integer maxWidth) {
+        this.maxWidth = maxWidth;
+    }
+    
    /**
     * Gets the value of the maxHeight property.
     *     
     */
     public Integer getMaxHeight() {
         return maxHeight;
+    }
+    
+    /**
+     * @param maxHeight the maxHeight to set
+     */
+    public void setMaxHeight(Integer maxHeight) {
+        this.maxHeight = maxHeight;
     }
 
     @Override

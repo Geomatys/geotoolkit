@@ -297,7 +297,7 @@ public class WmsXmlFactory {
     public static AbstractService createService(final String currentVersion, final String name, final String title, final String _abstract,
             final AbstractKeywordList keywordList, final AbstractOnlineResource onlineResource,
             final AbstractContactInformation contactInformation, final String fees, final String accessConstraint,
-            final int layerLimit, final int maxWidth, final int maxHeight) {
+            final Integer layerLimit, final Integer maxWidth, final Integer maxHeight) {
         if ("1.1.1".equals(currentVersion)) {
             if (keywordList != null && !(keywordList instanceof org.geotoolkit.wms.xml.v111.KeywordList)) {
                 throw new IllegalArgumentException("unexpected object version for keywordList");
@@ -326,6 +326,24 @@ public class WmsXmlFactory {
             if (contactInformation != null && !(contactInformation instanceof org.geotoolkit.wms.xml.v130.ContactInformation)) {
                 throw new IllegalArgumentException("unexpected object version for contactInformation");
             }
+            final Integer layerLimitValue;
+            if (layerLimit != null && layerLimit == 0 ) {
+                layerLimitValue = null;
+            } else {
+                layerLimitValue = layerLimit;
+            }
+            final Integer maxWidthValue;
+            if (maxWidth != null && maxWidth == 0 ) {
+                maxWidthValue = null;
+            } else {
+                maxWidthValue = maxWidth;
+            }
+            final Integer maxHeightValue;
+            if (maxHeight != null && maxHeight == 0 ) {
+                maxHeightValue = null;
+            } else {
+                maxHeightValue = maxHeight;
+            }
             return new org.geotoolkit.wms.xml.v130.Service(name,
                                                            title,
                                                            _abstract,
@@ -334,9 +352,9 @@ public class WmsXmlFactory {
                                                            (org.geotoolkit.wms.xml.v130.ContactInformation)contactInformation,
                                                            fees,
                                                            accessConstraint,
-                                                           layerLimit,
-                                                           maxWidth,
-                                                           maxHeight);
+                                                           layerLimitValue,
+                                                           maxWidthValue,
+                                                           maxHeightValue);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }

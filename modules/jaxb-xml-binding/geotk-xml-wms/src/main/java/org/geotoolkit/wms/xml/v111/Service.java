@@ -94,6 +94,13 @@ public class Service implements AbstractService {
     public String getName() {
         return name;
     }
+    
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the value of the title property.
@@ -101,6 +108,14 @@ public class Service implements AbstractService {
     @Override
     public String getTitle() {
         return title;
+    }
+    
+    /**
+     * @param title the title to set
+     */
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
     }
 
    /**
@@ -111,14 +126,30 @@ public class Service implements AbstractService {
     public String getAbstract() {
         return _abstract;
     }
+    
+    /**
+     * @param _abstract the _abstract to set
+     */
+    @Override
+    public void setAbstract(String _abstract) {
+        this._abstract = _abstract;
+    }
 
     /**
      * Gets the value of the keywordList property.
      */
+    @Override
     public KeywordList getKeywordList() {
         return keywordList;
     }
 
+    /**
+     * @param keywordList the keywordList to set
+     */
+    public void setKeywordList(KeywordList keywordList) {
+        this.keywordList = keywordList;
+    }
+    
     /**
      * Gets the value of the onlineResource property.
      */
@@ -128,18 +159,42 @@ public class Service implements AbstractService {
     }
 
     /**
+     * @param onlineResource the onlineResource to set
+     */
+    public void setOnlineResource(OnlineResource onlineResource) {
+        this.onlineResource = onlineResource;
+    }
+    
+    /**
      * Gets the value of the contactInformation property.
      * 
      */
+    @Override
     public ContactInformation getContactInformation() {
         return contactInformation;
+    }
+    
+    /**
+     * @param contactInformation the contactInformation to set
+     */
+    public void setContactInformation(ContactInformation contactInformation) {
+        this.contactInformation = contactInformation;
     }
 
     /**
      * Gets the value of the fees property.
      */
+    @Override
     public String getFees() {
         return fees;
+    }
+    
+    /**
+     * @param fees the fees to set
+     */
+    @Override
+    public void setFees(String fees) {
+        this.fees = fees;
     }
 
    /**
