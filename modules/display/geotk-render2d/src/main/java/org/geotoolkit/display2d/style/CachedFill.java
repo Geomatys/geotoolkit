@@ -73,7 +73,7 @@ public class CachedFill extends Cache<Fill>{
         final Expression opacity = styleElement.getOpacity();
 
         if(GO2Utilities.isStatic(opacity)){
-            float j2dOpacity = GO2Utilities.evaluate(opacity, null, Float.class, 1f);
+            float j2dOpacity = GO2Utilities.evaluate(opacity, null, 1f,0f,1f);
 
             //we return false, opacity is 0 no need to cache or draw anything
             if(j2dOpacity <= 0){
@@ -172,7 +172,7 @@ public class CachedFill extends Cache<Fill>{
             //test dynamic composite
             if(cachedComposite == null){
                 final Expression opacity = styleElement.getOpacity();
-                Float j2dOpacity = GO2Utilities.evaluate(opacity, candidate, Float.class, 1f);
+                Float j2dOpacity = GO2Utilities.evaluate(opacity, candidate, 1f,0f,1f);
                 if(j2dOpacity <= 0) return false;
             }
 
@@ -204,7 +204,7 @@ public class CachedFill extends Cache<Fill>{
         if(cachedComposite == null){
             //if composite is null it means it is dynamic
             final Expression opacity = styleElement.getOpacity();
-            Float j2dOpacity = GO2Utilities.evaluate(opacity, candidate, Float.class, 1f);
+            Float j2dOpacity = GO2Utilities.evaluate(opacity, candidate, 1f,0f,1f);
             return AlphaComposite.getInstance(AlphaComposite.SRC_OVER, j2dOpacity.floatValue());
         }
 

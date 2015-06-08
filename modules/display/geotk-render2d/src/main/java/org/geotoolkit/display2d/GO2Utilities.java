@@ -115,6 +115,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.renderer.style.WKMMarkFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
@@ -428,10 +429,9 @@ public final class GO2Utilities {
         }
 
         if(expOpa != null && GO2Utilities.isStatic(expOpa)){
-            Literal literal = (Literal) expOpa;
             Number num = expOpa.evaluate(null, Number.class);
             if(num != null){
-                opacity = num.floatValue();
+                opacity = XMath.clamp(num.floatValue(),0f,1f);
             }else{
                 opacity = 0.6f;
             }
@@ -518,7 +518,7 @@ public final class GO2Utilities {
         }
 
         if(GO2Utilities.isStatic(expOpa)){
-            opacity = expOpa.evaluate(null, Number.class).floatValue();
+            opacity = XMath.clamp(expOpa.evaluate(null, Number.class).floatValue(),0f,1f);
         }else{
             opacity = 0.6f;
         }
@@ -937,10 +937,31 @@ public final class GO2Utilities {
     }
 
     public static <T> T evaluate(final Expression exp, final Object candidate, final Class<T> type, final T defaultValue ){
+        if(exp==null) return defaultValue;
         T value;
         try{
-            if(exp == null || (value = exp.evaluate(candidate, type)) == null){
+            value = exp.evaluate(candidate, type);
+            if(value == null){
                 value = defaultValue;
+            }
+        }catch(IllegalArgumentException ex){
+            //if functions or candidate do not have the proper field we will have a IllegalArgumentException
+            value = defaultValue;
+        }
+        return value;
+    }
+
+    public static Float evaluate(final Expression exp, final Object candidate,
+            final float defaultValue, final float min, final float max){
+        if(exp==null) return defaultValue;
+        Float value;
+        try{
+            value = exp.evaluate(candidate, Float.class);
+            if(value == null){
+                value = defaultValue;
+            }else{
+                //ensure min/max
+                value = XMath.clamp(value, min, max);
             }
         }catch(IllegalArgumentException ex){
             //if functions or candidate do not have the proper field we will have a IllegalArgumentException

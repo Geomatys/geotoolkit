@@ -22,6 +22,7 @@ import org.geotoolkit.gui.javafx.style.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -183,8 +184,10 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
 //                //we validate the previous edition pane
 //                if(!applying){
 //                    //we keep the same editor if we are currently applying changes
-//                    applyEditor(editorPath);
-
+                
+                    //force request focus, this will remove the focus from the previous
+                    //panel, validating any last changes if any.
+                    tree.requestFocus();
                     contentPane.setCenter(null);
 
                     if(treeItem!=null){

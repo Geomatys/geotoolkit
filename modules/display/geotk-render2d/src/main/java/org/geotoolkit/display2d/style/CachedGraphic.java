@@ -117,7 +117,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 
         // Opacity -------------------------------------
         if(GO2Utilities.isStatic(expOpacity)){
-            cachedOpacity = GO2Utilities.evaluate(expOpacity, null, Number.class, 1f).floatValue();
+            cachedOpacity = GO2Utilities.evaluate(expOpacity, null,1f,0f,1f);
             //we return false, opacity is 0 no need to cache or draw anything
             if(cachedOpacity <= 0){
                 isStaticVisible = VisibilityState.UNVISIBLE;
@@ -311,7 +311,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 
         if(Float.isNaN(candidateOpacity)){
             final Expression expOpacity = styleElement.getOpacity();
-            candidateOpacity = GO2Utilities.evaluate(expOpacity, candidate, Number.class, 1f).floatValue();
+            candidateOpacity = GO2Utilities.evaluate(expOpacity, candidate, 1f,0f,1);
         }
 
         if(Float.isNaN(candidateRotation)){
@@ -441,7 +441,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
                 //can not evaluate
                 return Float.NaN;
             }else{
-                candidateOpacity = GO2Utilities.evaluate(expOpacity, candidate, Number.class, 1f).floatValue();
+                candidateOpacity = GO2Utilities.evaluate(expOpacity, candidate, 1f,0f,1f);
             }
         }
 
@@ -545,7 +545,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             //test dynamic opacity
             if(Float.isNaN(cachedOpacity)){
                 final Expression expopacity = styleElement.getOpacity();
-                float j2dOpacity = GO2Utilities.evaluate(expopacity, candidate, Number.class, 1f).floatValue();
+                float j2dOpacity = GO2Utilities.evaluate(expopacity, candidate, 1f,0f,1f);
                 if(j2dOpacity <= 0) return false;
             }
 

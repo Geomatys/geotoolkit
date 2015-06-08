@@ -78,7 +78,7 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
     private boolean evaluateComposite(){
         final Expression opacity = styleElement.getOpacity();
         if(GO2Utilities.isStatic(opacity)){
-            Float j2dOpacity = GO2Utilities.evaluate(opacity, null, Float.class, 1f);
+            Float j2dOpacity = GO2Utilities.evaluate(opacity, null, 1f,0f,1f);
             if(j2dOpacity <= 0) return false; //-------------------------------------------------OUT NO NEED TO PAINT
             j2dComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, j2dOpacity.floatValue());
         }
@@ -92,7 +92,7 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
         //if composite is null it means it is dynamic
         if(j2dComposite == null){
             final Expression opacity = styleElement.getOpacity();
-            Float j2dOpacity = GO2Utilities.evaluate(opacity, null, Float.class, 1f);
+            Float j2dOpacity = GO2Utilities.evaluate(opacity, null, 1f,0f,1f);
             return AlphaComposite.getInstance(AlphaComposite.SRC_OVER, j2dOpacity.floatValue());
         }
 
