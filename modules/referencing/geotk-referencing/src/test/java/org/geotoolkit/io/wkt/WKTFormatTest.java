@@ -45,7 +45,6 @@ import static org.geotoolkit.referencing.Assert.*;
  *
  * @since 2.0
  */
-@DependsOn({ParserTest.class})
 public final strictfp class WKTFormatTest {
     private static Map<String,String> name(final String name) {
         return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
