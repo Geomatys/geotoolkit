@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import org.apache.sis.util.ArgumentChecks;
 
 import org.w3c.dom.Element;
@@ -52,6 +53,10 @@ public final class GeoTiffMetaDataStack {
      * More informations at : http://www.awaresystems.be/imaging/tiff/tifftags/datetime.html.
      */
     private static final SimpleDateFormat S_DATE_FORMAT = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+    static {
+        //Force removing timezone
+        S_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
     
     private final Element ifd;
 

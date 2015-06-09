@@ -21,9 +21,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -268,8 +270,9 @@ public strictfp class ThirdPartyMetaDataReader {
         else if (datetimeDigitized != null) date = datetimeDigitized;
         if (date != null) {
             try {
-                final Date dd = TemporalUtilities.parseDate(date.trim());
-                GeoTiffExtension.setOrCreateSliceDimension(metadata, CommonCRS.Temporal.JAVA.crs(), dd.getTime());
+                final Calendar dd = TemporalUtilities.parseDateCal(date.trim());
+                dd.setTimeZone(TimeZone.getTimeZone("UTC"));
+                GeoTiffExtension.setOrCreateSliceDimension(metadata, CommonCRS.Temporal.JAVA.crs(), dd.getTimeInMillis());
             } catch (FactoryException | ParseException ex) {
                 // dates are often badly formatted, this is an extra crs information
                 // in the worse case the value will be in the metadatas.
