@@ -700,6 +700,7 @@ public final class TemporalUtilities {
 
     /**
      * Try to parse a date from different well knowed writing types.
+     * CAUTION : time zone will be local TimeZone unless the date string specify it.
      * 
      * @param date
      *            String to parse
@@ -708,7 +709,9 @@ public final class TemporalUtilities {
      *             if String is not valid.
      * @throws NullPointerException
      *             if String is null.
+     * @deprecated use parseDateCal
      */
+    @Deprecated
     public static Date parseDate(final String date) throws ParseException,
             NullPointerException {
         return parseDate(date, false);
@@ -717,6 +720,7 @@ public final class TemporalUtilities {
     
     /**
      * Try to parse a date from different well knowed writing types.
+     * CAUTION : time zone will be local TimeZone unless the date string specify it.
      * 
      * @param date
      *            String to parse
@@ -728,8 +732,26 @@ public final class TemporalUtilities {
      *             if String is not valid.
      * @throws NullPointerException
      *             if String is null.
+     * @deprecated use parseDateCal
      */
+    @Deprecated
     public static Date parseDate(final String date, final boolean noGMTO) throws ParseException,
+            NullPointerException {
+        final Calendar cal = parseDateCal(date);
+        return cal.getTime();
+    }
+
+    /**
+     * Try to parse a date from different well knowed writing types.
+     * Calendar time zone will be local TimeZone unless the date string specify it.
+     *
+     * @param date
+     *            String to parse
+     * @return Calendar
+     * @throws ParseException
+     * @throws NullPointerException
+     */
+    public static Calendar parseDateCal(final String date) throws ParseException,
             NullPointerException {
 
         if (date.endsWith("BC")) {
@@ -748,7 +770,7 @@ public final class TemporalUtilities {
             final Calendar cal = Calendar.getInstance();
             cal.set(year, month, 1, 0, 0, 0);
             cal.set(Calendar.MILLISECOND, 0);
-            return cal.getTime();
+            return cal;
 
         } else if (slashOccurences.length == 2) {
             // date is like : 23/11/2050
@@ -759,7 +781,7 @@ public final class TemporalUtilities {
             final Calendar cal = Calendar.getInstance();
             cal.set(year, month, day, 0, 0, 0);
             cal.set(Calendar.MILLISECOND, 0);
-            return cal.getTime();
+            return cal;
         }
 
         final int[] spaceOccurences = StringUtilities.getIndexes(date, ' ');
@@ -779,7 +801,7 @@ public final class TemporalUtilities {
             final Calendar cal = Calendar.getInstance();
             cal.set(year, month, day, hour, min, sec);
             cal.set(Calendar.MILLISECOND, 0);
-            return cal.getTime();
+            return cal;
         }else if (spaceOccurences.length == 2) {
             // date is like : 18 janvier 2050
             final int day = parseInt(date.substring(0, spaceOccurences[0]));
@@ -789,12 +811,13 @@ public final class TemporalUtilities {
             final Calendar cal = Calendar.getInstance();
             cal.set(year, month, day, 0, 0, 0);
             cal.set(Calendar.MILLISECOND, 0);
-            return cal.getTime();
+            return cal;
 
         } else if (spaceOccurences.length == 1 && dashOccurences.length < 3) {
             final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             try {
-                return df.parse(date);
+                df.parse(date);
+                return df.getCalendar();
             } catch (ParseException ex) {
                 LOGGER.log(Level.FINE, "Could not parse date : " + date
                         + " with dateFormat : " + df);
@@ -807,7 +830,7 @@ public final class TemporalUtilities {
             final Calendar cal = Calendar.getInstance();
             cal.set(year, month, 1, 0, 0, 0);
             cal.set(Calendar.MILLISECOND, 0);
-            return cal.getTime();
+            return cal;
 
         } else if (dashOccurences.length == 1) {
             if (dashOccurences[0] == 2) {
@@ -817,7 +840,7 @@ public final class TemporalUtilities {
                 final Calendar cal = Calendar.getInstance();
                 cal.set(year, month, 1, 0, 0, 0);
                 cal.set(Calendar.MILLISECOND, 0);
-                return cal.getTime();
+                return cal;
             } else {
                 // date is like : 2050-05
                 final int year = parseInt(date.substring(0, dashOccurences[0]));
@@ -826,24 +849,14 @@ public final class TemporalUtilities {
                 final Calendar cal = Calendar.getInstance();
                 cal.set(year, month, 1, 0, 0, 0);
                 cal.set(Calendar.MILLISECOND, 0);
-                return cal.getTime();
+                return cal;
             }
 
         } else if (dashOccurences.length >= 2) {
             // if date is in format yyyy-mm-ddTHH:mm:ss
             try {
-                final java.util.Date resultDate = getDateFromString(date, noGMTO);
-                if (resultDate != null) {
-                    return resultDate;
-                }
-            } catch (ParseException e) {
-                LOGGER.log(Level.FINE, "Could not parse date : " + date
-                        + " with getDateFromString method.");
-            }
-
-            try {
                 final ISODateParser fp = new ISODateParser();
-                final java.util.Date resultDate = fp.parseToDate(date);
+                final Calendar resultDate = fp.getCalendar(date);
                 if (resultDate != null) {
                     return resultDate;
                 }
@@ -869,7 +882,7 @@ public final class TemporalUtilities {
                 final Calendar cal = Calendar.getInstance();
                 cal.set(year, month, day, 0, 0, 0);
                 cal.set(Calendar.MILLISECOND, 0);
-                return cal.getTime();
+                return cal;
             } else {
                 // date is like 23-11-2010
                 final int day = parseInt(date.substring(0, dashOccurences[0]));
@@ -879,7 +892,7 @@ public final class TemporalUtilities {
                 final Calendar cal = Calendar.getInstance();
                 cal.set(year, month, day, 0, 0, 0);
                 cal.set(Calendar.MILLISECOND, 0);
-                return cal.getTime();
+                return cal;
             }
 
         } else if (dashOccurences.length == 0) {
@@ -888,14 +901,16 @@ public final class TemporalUtilities {
             final Calendar cal = Calendar.getInstance();
             cal.set(year, 0, 1, 0, 0, 0);
             cal.set(Calendar.MILLISECOND, 0);
-            return cal.getTime();
+            return cal;
         }
 
         throw new ParseException("Invalid date format : " + date, 0);
     }
 
+
     /**
      * @see TemporalUtilities#parseDate(java.lang.String)
+     * CAUTION : time zone will be local TimeZone unless the date string specify it.
      * 
      * @param date
      *            : string to parse.
@@ -911,6 +926,7 @@ public final class TemporalUtilities {
     
     /**
      * @see TemporalUtilities#parseDate(java.lang.String)
+     * CAUTION : time zone will be local TimeZone unless the date string specify it.
      * 
      * @param date
      *            : string to parse.

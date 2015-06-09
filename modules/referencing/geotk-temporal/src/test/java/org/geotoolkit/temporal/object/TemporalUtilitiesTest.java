@@ -169,17 +169,6 @@ public class TemporalUtilitiesTest implements Test {
         assertEquals(0, date.get(SECOND));
         assertEquals(0, date.get(MILLISECOND));
 
-        str = "1995-11-23";
-        date.setTime(TemporalUtilities.parseDate(str));
-        date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-        assertEquals(year, date.get(YEAR));
-        assertEquals(month, date.get(MONTH));
-        assertEquals(day, date.get(DAY_OF_MONTH));
-        assertEquals(0, date.get(HOUR_OF_DAY));
-        assertEquals(0, date.get(MINUTE));
-        assertEquals(0, date.get(SECOND));
-        assertEquals(0, date.get(MILLISECOND));
-
         str = "1995";
         date.setTime(TemporalUtilities.parseDate(str));
         date.setTimeZone(TimeZone.getDefault());
@@ -260,9 +249,9 @@ public class TemporalUtilitiesTest implements Test {
         assertEquals(sec, date.get(SECOND));
         assertEquals(512, date.get(MILLISECOND));
 
-        str = "1995-11-23";
+        str = "1995-11-23"; //no Z, we are in local time zone
         date.setTime(TemporalUtilities.parseDate(str));
-        date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(day, date.get(DAY_OF_MONTH));
