@@ -104,7 +104,7 @@ public class GmlXMLBindingTest {
         result = result.substring(result.indexOf("?>") + 3);
 
         String expResult = "<gml:Envelope xmlns:gml=\"" + GML + '"' +
-                           " srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\" gml:id=\"bound-1\" >" + '\n' +
+                           " srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\">" + '\n' +
                            "  <gml:lowerCorner>-30.711 134.196</gml:lowerCorner>" + '\n' +
                            "  <gml:upperCorner>-30.702 134.205</gml:upperCorner>" + '\n' +
                            "</gml:Envelope>" + '\n' ;
