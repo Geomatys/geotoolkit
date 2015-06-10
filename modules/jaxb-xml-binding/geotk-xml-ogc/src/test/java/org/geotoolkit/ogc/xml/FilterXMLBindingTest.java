@@ -106,7 +106,7 @@ public class FilterXMLBindingTest {
          */
         DirectPositionType lowerCorner = new DirectPositionType(10.0, 11.0);
         DirectPositionType upperCorner = new DirectPositionType(10.0, 11.0);
-        EnvelopeType envelope         = new EnvelopeType("env-id", lowerCorner, upperCorner, "EPSG:4326");
+        EnvelopeType envelope         = new EnvelopeType(lowerCorner, upperCorner, "EPSG:4326");
 
         OverlapsType filterElement     = new OverlapsType(new PropertyNameType("boundingBox"), envelope);
         FilterType filter              = new FilterType(filterElement);
@@ -121,7 +121,7 @@ public class FilterXMLBindingTest {
         "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
         "    <ogc:Overlaps>"                                                + '\n' +
         "        <ogc:PropertyName>boundingBox</ogc:PropertyName>"          + '\n' +
-        "        <gml:Envelope srsName=\"EPSG:4326\" gml:id=\"env-id\">"    + '\n' +
+        "        <gml:Envelope srsName=\"EPSG:4326\">"                      + '\n' +
         "            <gml:lowerCorner>10.0 11.0</gml:lowerCorner>"          + '\n' +
         "            <gml:upperCorner>10.0 11.0</gml:upperCorner>"          + '\n' +
         "        </gml:Envelope>"                                           + '\n' +
@@ -192,7 +192,7 @@ public class FilterXMLBindingTest {
         "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
         "    <ogc:Overlaps>"                                                                                                                           + '\n' +
         "        <ogc:PropertyName>boundingBox</ogc:PropertyName>"                                                                                     + '\n' +
-        "        <gml:Envelope srsName=\"EPSG:4326\" gml:id=\"env-id\">"                                                                                                 + '\n' +
+        "        <gml:Envelope srsName=\"EPSG:4326\">"                                                                                                 + '\n' +
         "            <gml:lowerCorner>10.0 11.0</gml:lowerCorner>"                                                                                     + '\n' +
         "            <gml:upperCorner>10.0 11.0</gml:upperCorner>"                                                                                     + '\n' +
         "        </gml:Envelope>"                                                                                                                      + '\n' +
@@ -206,7 +206,7 @@ public class FilterXMLBindingTest {
 
         DirectPositionType lowerCorner = new DirectPositionType(10.0, 11.0);
         DirectPositionType upperCorner = new DirectPositionType(10.0, 11.0);
-        EnvelopeType envelope         = new EnvelopeType("env-id", lowerCorner, upperCorner, "EPSG:4326");
+        EnvelopeType envelope         = new EnvelopeType(lowerCorner, upperCorner, "EPSG:4326");
 
         OverlapsType filterElement     = new OverlapsType(new PropertyNameType("boundingBox"), envelope);
         FilterType expResult           = new FilterType(filterElement);
@@ -220,7 +220,7 @@ public class FilterXMLBindingTest {
         "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/fes/2.0\" xmlns:gml=\"http://www.opengis.net/gml\">"  + '\n' +
         "    <ogc:BBOX>"                                                                                                                               + '\n' +
         "        <ogc:ValueReference>boundingBox</ogc:ValueReference>"                                                                                 + '\n' +
-        "        <gml:Envelope srsName=\"EPSG:4326\" gml:id=\"env-id\">"                                                                               + '\n' +
+        "        <gml:Envelope srsName=\"EPSG:4326\">"                                                                                                 + '\n' +
         "            <gml:lowerCorner>10.0 11.0</gml:lowerCorner>"                                                                                     + '\n' +
         "            <gml:upperCorner>10.0 11.0</gml:upperCorner>"                                                                                     + '\n' +
         "        </gml:Envelope>"                                                                                                                      + '\n' +
