@@ -65,7 +65,10 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             final CoverageReference covref = projectedCoverage.getCandidate().getCoverageReference();
             final CoverageDescription covdesc = covref.getMetadata();
             
-            dataCoverage = dataCoverage.view(ViewType.GEOPHYSICS);
+            if (dataCoverage.getViewTypes().contains(ViewType.GEOPHYSICS)) 
+                dataCoverage = dataCoverage.view(ViewType.GEOPHYSICS);
+            
+            
             final RenderedImage ri = dataCoverage.getRenderedImage();
             final DynamicRangeSymbolizer symbolizer = symbol.getSource();
             
