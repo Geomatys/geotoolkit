@@ -29,11 +29,14 @@ import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.SampleModel;
 import java.util.Arrays;
+import java.util.Hashtable;
 import javax.imageio.ImageTypeSpecifier;
 import org.apache.sis.util.ArgumentChecks;
 import static org.geotoolkit.image.internal.SampleType.Byte;
 import static org.geotoolkit.image.internal.SampleType.Short;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.lang.Static;
 
 /**
@@ -715,6 +718,42 @@ public class ImageUtils extends Static{
      */
     public static ColorModel createColorModel(final int sampleBitsSize, final int numBand, final short photometricInterpretation, 
                                                final short sampleFormat, final  long[] colorMap) throws UnsupportedOperationException { 
+        return createColorModel(sampleBitsSize, numBand, photometricInterpretation, sampleFormat, null, null, colorMap);
+    }
+    
+    /**
+     * Create and returns an adapted {@link ColorModel} from given parameters.
+     * 
+     * @param sampleBitsSize
+     * @param numBand
+     * @param photometricInterpretation
+     * @param sampleFormat
+     * @param minSampleValue minimum raster sample value to build needed {@link ColorSpace}, 
+     * may be {@code null}, if null the default choosen value will be {@link Double#MIN_VALUE}.
+     * @param maxSampleValue maximum raster sample value to build needed {@link ColorSpace}, 
+     * may be {@code null}, if null the default choosen value will be {@link Double#MAX_VALUE}.
+     * @param colorMap associate color map array in case where a palette color model is define.
+     * @return an adapted {@link ColorModel} from given parameters.
+     * @throws IllegalArgumentException if photometric interpretation is define 
+     * as palette (photometricInterpretation == 3) and colorMap is {@code null}.
+     * @throws IllegalArgumentException if minSampleValue or maxSampleValue is(are) equals to {@link Double#NaN}.
+     * @see ScaledColorSpace
+     */
+    public static ColorModel createColorModel(final int sampleBitsSize, final int numBand, 
+                                              final short photometricInterpretation, final short sampleFormat,
+                                              final Double minSampleValue, final Double maxSampleValue, 
+                                              final long[] colorMap) 
+                                              throws UnsupportedOperationException { 
+        if (minSampleValue != null) {
+            if (Double.isNaN(minSampleValue))
+                throw new IllegalArgumentException("invalid minimum raster sample value, it should not be Double.NAN");
+        }
+        
+        if (maxSampleValue != null) {
+            if (Double.isNaN(maxSampleValue))
+                throw new IllegalArgumentException("invalid minimum raster sample value, it should not be Double.NAN");
+        }
+        
         final int dataBufferType;
         
         if (sampleFormat == 3) {
@@ -749,10 +788,12 @@ public class ImageUtils extends Static{
         switch (photometricInterpretation) {
             case 0 :   //--minIsWhite
             case 1 : { //-- minIsBlack
-                if (numBand > 1) {
-                    cs = new ScaledColorSpace(numBand, 0, Double.MIN_VALUE, Double.MAX_VALUE);
+                if (dataBufferType == DataBuffer.TYPE_DOUBLE || dataBufferType == DataBuffer.TYPE_FLOAT) {
+                    final double minCs = (minSampleValue != null) ? minSampleValue : Double.MIN_VALUE;
+                    final double maxCs = (maxSampleValue != null) ? maxSampleValue : Double.MAX_VALUE;
+                    cs = new ScaledColorSpace(numBand, 0, minCs, maxCs);//-- attention au choix de la bande !!!!
                 } else {
-                    cs = ColorSpace.getInstance(ColorSpace.CS_GRAY); 
+                    cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
                 }
                 break;
             }
@@ -780,7 +821,40 @@ public class ImageUtils extends Static{
         return new ComponentColorModel(cs, bits, hasAlpha, false,
                 hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, dataBufferType);
     }
-    
+    /**
+     * Returns {@link BufferedImage} with the {@link ColorModel} replaced by another better color model if it is possible.<br>
+     * This method is efficient only for float or double {@linkplain SampleModel#getDataType() data buffer type}.<br><br>
+     * 
+     * In java 2d when {@link ColorSpace} is define for float or double values, rasters values will not be able to greater than 1.<br>
+     * This method replace current color model from Buffered image parameter with an appropriate {@link ScaledColorSpace}.
+     * 
+     * @param image study image.
+     * @return image with color model updated or not.
+     */
+    public static BufferedImage replaceFloatingColorModel(final BufferedImage image) {
+        final int databufferType = image.getSampleModel().getDataType();
+        final ColorModel cm = image.getColorModel();
+        if ((DataBuffer.TYPE_FLOAT != databufferType && DataBuffer.TYPE_DOUBLE != databufferType)
+          || (cm instanceof IndexColorModel))
+            return image;
+        
+        double min = Double.POSITIVE_INFINITY;
+        double max = Double.NEGATIVE_INFINITY;
+        final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
+        while (pix.next()) {
+            min = StrictMath.min(min, pix.getSampleDouble());
+            max = StrictMath.max(max, pix.getSampleDouble());
+        }
+        
+        //-- ici si les valeur min et max sont entre [0; 1] faire un colorSpace cs_gray
+        
+        final ColorSpace cs = new ScaledColorSpace(cm.getNumComponents(), 0, min, max);
+        
+        final ComponentColorModel cm2 = new ComponentColorModel(cs, cm.hasAlpha(), false, (cm.hasAlpha())
+                                                                                    ? Transparency.TRANSLUCENT
+                                                                                    : Transparency.OPAQUE, databufferType);
+        return new BufferedImage(cm2, image.getRaster(), image.isAlphaPremultiplied(), new Hashtable<>());
+    }
     /**
      * Convert and return color map array from tiff file to an Integer array adapted to build {@link IndexColorModel} in java.
      *

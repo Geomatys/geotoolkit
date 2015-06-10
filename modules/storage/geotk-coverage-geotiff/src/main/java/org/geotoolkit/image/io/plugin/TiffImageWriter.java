@@ -3444,6 +3444,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         } catch (IOException ex) {
             Logger.getLogger(TiffImageWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
+        channel = null;
     }
 
     /**
@@ -3452,7 +3453,6 @@ public class TiffImageWriter extends SpatialImageWriter {
     @Override
     public void setOutput(Object output) {
         final Object out = (output instanceof String) ? new File((String) output) : output;
-        super.setOutput(out);
         ifdPosition     = new long[2];
         headProperties  = null;
         packBitArray    = new byte[8196];
@@ -3463,12 +3463,13 @@ public class TiffImageWriter extends SpatialImageWriter {
         try {
             if (channel != null) {
                 channel.flush();
-                if (out instanceof File) channel.close();
+                if (this.output instanceof File) channel.close();
             }
         } catch (IOException ex) {
             Logger.getLogger(TiffImageWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
         channel = null;
+        super.setOutput(out);
     }
 
    /**

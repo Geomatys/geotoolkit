@@ -78,6 +78,7 @@ import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.color.ScaledColorSpace;
+import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.io.IOUtilities;
@@ -323,6 +324,14 @@ public class TiffImageReader extends SpatialImageReader {
      * To avoid scanning then more then once.
      */
     private List<GeoTiffExtension> extensions = null;
+    
+    /**
+     * Define minimum and maximum sample value of the just read layer.
+     * 
+     * @see #getRawImageType(int) 
+     * @see #selectLayer(int) 
+     */
+    private Short minSampleValue, maxSampleValue;
     
     /**
      * Attribut used to stipulate into internal {@link #headProperties} that represent noData tag.
@@ -857,11 +866,14 @@ public class TiffImageReader extends SpatialImageReader {
             switch (photoInter) {
                 case 0 :   //-- minIsWhite
                 case 1 : { //-- minIsBlack
-                    if (bits.length > 1) {
-                        cs = new ScaledColorSpace(bits.length, 0, Double.MIN_VALUE, Double.MAX_VALUE);//-- attention au choix de la bande !!!!
-                    } else {
-                        cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-                    }
+                        //-- faire un echantillonnage sur l'ensemble de l'image et recup min et max.
+                        if (sourceDataBufferType == DataBuffer.TYPE_DOUBLE || sourceDataBufferType == DataBuffer.TYPE_FLOAT) {
+                            final double minCs = (minSampleValue != null) ? minSampleValue : Double.MIN_VALUE;
+                            final double maxCs = (maxSampleValue != null) ? maxSampleValue : Double.MAX_VALUE;
+                            cs = new ScaledColorSpace(bits.length, 0, minCs, maxCs);//-- attention au choix de la bande !!!!
+                        } else {
+                            cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+                        }
                     break;
                 }
                 case 2 : { //-- RGB
@@ -925,7 +937,7 @@ public class TiffImageReader extends SpatialImageReader {
     public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
         checkLayers();
         final BufferedImage image = readLayer(getLayerIndex(imageIndex), param);
-
+        
         //if the image contains floats or double, datas are already in geophysic type
         //we must replace noData values by NaN.
         final int dataType = image.getSampleModel().getDataType();
@@ -936,7 +948,7 @@ public class TiffImageReader extends SpatialImageReader {
                 if (accessor.childCount() == 1) {
                     accessor.selectChild(0);
                     Double noDatas = accessor.getAttributeAsDouble("realFillValue");
-                    if (noDatas != null && noDatas != null) {
+                    if (noDatas != null) {
                         final double[][][] nodatas = new double[1][2][1];
                         nodatas[0][0][0] = noDatas;
                         Arrays.fill(nodatas[0][1], Double.NaN);
@@ -1079,7 +1091,9 @@ public class TiffImageReader extends SpatialImageReader {
                     bitsPerSample   = null;
                     tileOffsets     = null;
                     rawImageType    = null;
-
+                    minSampleValue  = null;
+                    maxSampleValue  = null;
+                    
                     headProperties  = metaHeads[layerIndex];
                     if (headProperties == null) {
                         headProperties = new HashMap<Integer, Map>();
@@ -1102,15 +1116,20 @@ public class TiffImageReader extends SpatialImageReader {
                         metaHeads[layerIndex] = headProperties;
                     }
 
-                    final Map<String, Object> iwObj   = headProperties.get(ImageWidth);
-                    final Map<String, Object> ihObj   = headProperties.get(ImageLength);
-                    final Map<String, Object> isppObj = headProperties.get(SamplesPerPixel);
-                    final Map<String, Object> ibpsObj = headProperties.get(BitsPerSample);
+                    final Map<String, Object> iwObj    = headProperties.get(ImageWidth);
+                    final Map<String, Object> ihObj    = headProperties.get(ImageLength);
+                    final Map<String, Object> isppObj  = headProperties.get(SamplesPerPixel);
+                    final Map<String, Object> ibpsObj  = headProperties.get(BitsPerSample);
+                    final Map<String, Object> minspObj = headProperties.get(MinSampleValue);
+                    final Map<String, Object> maxspObj = headProperties.get(MaxSampleValue);
 
                     imageWidth      = (int) ((iwObj   == null) ? -1 : ((long[]) iwObj.get(ATT_VALUE))[0]);
                     imageHeight     = (int) ((ihObj   == null) ? -1 : ((long[]) ihObj.get(ATT_VALUE))[0]);
                     samplesPerPixel = (int) ((isppObj == null) ? -1 : ((long[]) isppObj.get(ATT_VALUE))[0]);
                     bitsPerSample   = ((long[]) ibpsObj.get(ATT_VALUE));
+                    
+                    if (minspObj != null) minSampleValue = (short) (((long[]) minspObj.get(ATT_VALUE))[0]);
+                    if (maxspObj != null) maxSampleValue = (short) (((long[]) maxspObj.get(ATT_VALUE))[0]);
                    
                     final Map<String, Object> twObj   =  headProperties.get(TileWidth);
                     final Map<String, Object> thObj   =  headProperties.get(TileLength);
@@ -1901,7 +1920,7 @@ public class TiffImageReader extends SpatialImageReader {
         selectLayer(layerIndex);
         final Rectangle srcRegion = new Rectangle();
         final Rectangle dstRegion = new Rectangle();
-        final BufferedImage image = getDestination(param, getImageTypes(layerIndex), imageWidth, imageHeight);
+        BufferedImage image = getDestination(param, getImageTypes(layerIndex), imageWidth, imageHeight);
 
         if (image.getRaster().getDataBuffer().getDataType() != sourceDataBufferType)
             throw new IllegalArgumentException("The destination image datatype doesn't match with read source image datatype. "
@@ -1930,6 +1949,7 @@ public class TiffImageReader extends SpatialImageReader {
                 readFromTiles(image.getRaster(), param, srcRegion, dstRegion);
             }
         }
+        image = ImageUtils.replaceFloatingColorModel(image);
         return image;
     }
 
@@ -2818,7 +2838,7 @@ public class TiffImageReader extends SpatialImageReader {
         }
         }
     }
-
+    
     /**
      * Verifies if all the strips are sequenced as a result in the file.
      *
