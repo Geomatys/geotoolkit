@@ -22,6 +22,8 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.awt.image.renderable.ParameterBlock;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -245,9 +247,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     //duplicate geometry on the other warp line
                     nbIncRep++;
                 }
-
                 renderCoverage(projectedCoverage, dataImage, trs2D);
-
+                
                 //-- repetition of increasing and decreasing sides.
                 for (int i = 0; i < nbDecRep; i++) {
                     g2d.setTransform(renderingContext.wraps.wrapDecObjToDisp[i]);
@@ -451,12 +452,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             recolor = GO2Utilities.STYLE_FACTORY.colorMap(function);
         }
         
-        //-- apply recolor function "sample to geophysic", sample interpretationµ.
+        //-- apply recolor function "sample to geophysic", sample interpretation.
         if (recolor != null 
-         && recolor.getFunction() != null
-         && hasView(coverage, ViewType.GEOPHYSICS)) {
+         && recolor.getFunction() != null) {
+            
             //color map is applied on geophysics view
-            coverage    = coverage.view(ViewType.GEOPHYSICS);
+            coverage    = (hasView(coverage, ViewType.GEOPHYSICS)) ? coverage.view(ViewType.GEOPHYSICS) 
+                                                                   : coverage;
             resultImage = coverage.getRenderedImage();
 
             final Function fct = recolor.getFunction();
@@ -522,8 +524,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             try {
                 g2d.drawRenderedImage(img, (AffineTransform)trs2D);
             } catch (Exception ex) {
-
+                final StringWriter sw = new StringWriter();
+                final PrintWriter pw = new PrintWriter(sw);
+                ex.printStackTrace(pw);
+                LOGGER.log(Level.WARNING, sw.toString());//-- more explicite way to debug
+                
                 if(ex instanceof ArrayIndexOutOfBoundsException){
+                   
                     //we can recover when it's an inapropriate componentcolormodel
                     final StackTraceElement[] eles = ex.getStackTrace();
                     if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
@@ -537,7 +544,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                             final double[] maxArray = (double[])analyze.get(StatisticOp.MAXIMUM);
                             final double min = findExtremum(minArray, true);
                             final double max = findExtremum(maxArray, false);
-
+                            
                             final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
                             values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
                             values.add(new DefaultInterpolationPoint(min, GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
