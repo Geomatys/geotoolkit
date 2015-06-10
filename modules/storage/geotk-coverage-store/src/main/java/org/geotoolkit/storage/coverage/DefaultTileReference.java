@@ -50,7 +50,7 @@ public class DefaultTileReference implements TileReference{
         ImageReader reader = null;
 
         if (spi == null && input != null) {
-            reader = XImageIO.getReader(input, Boolean.TRUE, Boolean.TRUE);
+            reader = XImageIO.getReader(input, Boolean.FALSE, Boolean.FALSE);
             spi = reader.getOriginatingProvider();
         }
 

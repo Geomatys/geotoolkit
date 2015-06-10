@@ -61,7 +61,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     public String getFormatName() {
         final String format = ref.getPreferredFormat();
         if(format!=null && !format.isEmpty()) return format;
-        return ref.getPackMode().equals(ViewType.GEOPHYSICS) ? "TIFF" : "PNG";
+        return ref.getPackMode().equals(ViewType.GEOPHYSICS) ? "GEOTIFF" : "PNG";
     }
 
     public XMLCoverageReference getRef() {
@@ -75,7 +75,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     public ImageReaderSpi getReaderSpi() throws DataStoreException{
         if(spi == null){
             try {
-                final ImageReader reader = XImageIO.getReaderByFormatName(getFormatName(), null, Boolean.TRUE, Boolean.TRUE);
+                final ImageReader reader = XImageIO.getReaderByFormatName(getFormatName(), null, Boolean.FALSE, Boolean.FALSE);
                 spi = reader.getOriginatingProvider();
                 reader.dispose();
             } catch (IOException ex) {

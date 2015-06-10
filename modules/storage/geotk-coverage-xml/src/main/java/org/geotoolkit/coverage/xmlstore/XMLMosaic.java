@@ -393,7 +393,7 @@ public class XMLMosaic implements GridMosaic {
                     return getIsMissingCache().getOrCreate(key, new Callable<Boolean>() {
                         @Override
                         public Boolean call() throws Exception {
-                            return !getTileFile(key.x, key.y).isFile();
+                            return getTileFile(key.x, key.y) == null;
                         }
                     });
                 } catch (PointOutsideCoverageException e) {
@@ -489,10 +489,56 @@ public class XMLMosaic implements GridMosaic {
         return sb.toString();
     }
 
-    public File getTileFile(int col, int row) throws DataStoreException {
+    /**
+     * Returns the {@linkplain File file path} of tile at col and row index position.<br><br>
+     * 
+     * Moreover, this method check all possible path file suffix from pyramid SPI 
+     * and return the first that exist else return {@code null} if any exists. 
+     * 
+     * @param col mosaic column index.
+     * @param row mosaic row index.
+     * @return {@linkplain File file path} of tile at col and row index position if exist, else return {@code null}.
+     * @throws DataStoreException if tile is not present at path file place.
+     */
+    private File getTileFile(int col, int row) throws DataStoreException {
         checkPosition(col, row);
-        final String postfix = getPyramid().getPyramidSet().getReaderSpi().getFileSuffixes()[0];
-        return new File(getFolder(),row+"_"+col+"."+postfix);
+        for (File fil : getTileFiles(col, row)) {
+            if (fil.isFile()) return fil;
+        }
+        return null;
+    }
+    
+    /**
+     * Return the first available tile path {@link File} use to write tile.<br>
+     * 
+     * You may choose another suffix {@link File}, with travel {@link #getTileFiles(int, int) } results.
+     * 
+     * @param col mosaic column index.
+     * @param row mosaic row index.
+     * @return the first available tile path {@link File} use to write tile.
+     * @throws DataStoreException 
+     */
+    private File getDefaultTileFile(int col, int row) throws DataStoreException {
+        final File fil = getTileFiles(col, row).get(0);
+//        assert !fil.exists(): "created file should not exist : path : "+fil.getPath();
+        return fil;
+    }
+    
+    /**
+     * Returns all possible {@linkplain File files} from all suffix from reader spi.
+     * 
+     * @param col mosaic column index.
+     * @param row mosaic row index.
+     * @return all possible {@linkplain File files} from all suffix from reader spi.
+     * @throws DataStoreException if problem during get suffix.
+     */
+    private List<File> getTileFiles(int col, int row) throws DataStoreException {
+        final String[] suffixx = getPyramid().getPyramidSet().getReaderSpi().getFileSuffixes();
+        final List<File> fils = new ArrayList<>();
+        for (String suffix : suffixx) {
+            fils.add(new File(getFolder(),row+"_"+col+"."+suffix));
+        }
+        return fils;
     }
 
     ImageWriter acquireImageWriter() throws IOException {
@@ -527,7 +573,8 @@ public class XMLMosaic implements GridMosaic {
         }
 
         checkPosition(col, row);
-        final File f = getTileFile(col, row);
+        File f = getTileFile(col, row);
+        if (f == null) f = getDefaultTileFile(col, row);
         f.getParentFile().mkdirs();
 
         ImageOutputStream out = null;
@@ -599,7 +646,9 @@ public class XMLMosaic implements GridMosaic {
                 final int tileIndex = getTileIndex(x, y);
                 checkPosition(x, y);
 
-                final File f = getTileFile(x, y);
+                
+                File f = getTileFile(x, y);
+                if (f == null) f = getDefaultTileFile(x, y);
                 f.getParentFile().mkdirs();
                 Future fut = TILEWRITEREXECUTOR.submit(new TileWriter(f, image, x, y, tileIndex, image.getColorModel(), getPyramid().getPyramidSet().getFormatName(), monitor));
                 futurs.add(fut);
@@ -682,7 +731,7 @@ public class XMLMosaic implements GridMosaic {
     /**
      * check if image is empty
      */
-    private static boolean isEmpty(Raster raster){
+    private static boolean isEmpty(Raster raster) { //-- maybe use iterator is more efficiency
         double[] array = null;
         searchEmpty:
         for(int x=0,width=raster.getWidth(); x<width; x++){

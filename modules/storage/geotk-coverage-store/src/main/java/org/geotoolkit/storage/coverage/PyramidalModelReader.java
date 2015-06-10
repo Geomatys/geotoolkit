@@ -21,6 +21,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.*;
@@ -53,7 +54,6 @@ import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
-import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.util.Cancellable;
 import org.geotoolkit.util.ImageIOUtilities;
 
@@ -531,9 +531,17 @@ public class PyramidalModelReader extends GridCoverageReader{
                     
                     
                     if (image == null) {
-                        image = BufferedImages.createImage(
-                                (int)(tileMaxCol-tileMinCol)*tileSize.width, 
-                                (int)(tileMaxRow-tileMinRow)*tileSize.height, tileImage);
+                        final ColorModel cm;
+                        if (ref instanceof PyramidalCoverageReference) {
+                            final PyramidalCoverageReference pyramRef = (PyramidalCoverageReference) ref;
+                            cm = pyramRef.getColorModel();
+                        } else {
+                            cm = tileImage.getColorModel();
+                        }
+                        image = new BufferedImage(cm, 
+                                tileImage.getTile(0, 0).createCompatibleWritableRaster((int)(tileMaxCol-tileMinCol)*tileSize.width, 
+                                                                                       (int)(tileMaxRow-tileMinRow)*tileSize.height), 
+                                cm.isAlphaPremultiplied(), new Hashtable<>());
                     }
                     
                     ((BufferedImage)image).getRaster().setDataElements(offset.x, offset.y, tileImage.getData());
@@ -549,7 +557,11 @@ public class PyramidalModelReader extends GridCoverageReader{
                     BufferedImage.TYPE_INT_ARGB);
             }
         }
-
+////
+////        //-- if DatabufferType of image is float or Double we must change the Color Space
+////        //-- to bound sample value between 0 and 1 to avoid java 2d rendering problem
+////        image = ImageUtils.replaceFloatingColorModel(image);
+        
         //build the coverage ---------------------------------------------------
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         gcb.setName(ref.getName().tip().toString());
@@ -564,7 +576,7 @@ public class PyramidalModelReader extends GridCoverageReader{
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, gtc, wantedCRS, null);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
-
+        
         return gcb.build();
     }
     

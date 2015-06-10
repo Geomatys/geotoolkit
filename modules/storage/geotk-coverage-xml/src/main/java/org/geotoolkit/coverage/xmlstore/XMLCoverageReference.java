@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.xmlstore;
 
 import java.awt.*;
+import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
@@ -37,6 +38,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.xml.MarshallerPool;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
 import org.geotoolkit.storage.coverage.GridMosaic;
@@ -47,7 +49,11 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.feature.type.NamesExt;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.util.GenericName;
+import org.geotoolkit.image.color.ScaledColorSpace;
 import org.geotoolkit.image.internal.ImageUtils;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.geotoolkit.internal.jdk8.JDK8;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -158,6 +164,22 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     private int[] colorMap = null;
     
     /**
+     * Minimum sample value only use in case where {@link ColorSpace} from {@link #colorModel} 
+     * is instance of {@link ScaledColorSpace} and type of samples are Float or double type.
+     * @see ScaledColorSpace
+     */
+    @XmlElement(name="MinColorSpaceSampleValue")
+    private Double minColorSampleValue = null;
+    
+    /**
+     * Maximum sample value only use in case where {@link ColorSpace} from {@link #colorModel} 
+     * is instance of {@link ScaledColorSpace} and type of samples are Float or double type.
+     * @see ScaledColorSpace
+     */
+    @XmlElement(name="MaxColorSpaceSampleValue")
+    private Double maxColorSampleValue = null;
+    
+    /**
      * {@link SampleModel} of all internaly pyramid stored tiles. 
      */
     private SampleModel sampleModel;
@@ -188,15 +210,23 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     }
 
     public void copy(XMLCoverageReference ref){
-        this.version          = ref.version;
-        this.id               = ref.id;
-        this.mainfile         = ref.mainfile;
-        this.set              = ref.set;
-        this.packMode         = ref.packMode;
-        this.sampleDimensions = ref.sampleDimensions;
-        this.preferredFormat  = ref.preferredFormat;
-        this.sampleType       = ref.sampleType;
-        this.nbBands          = ref.nbBands;
+        this.version                    = ref.version;
+        this.id                         = ref.id;
+        this.mainfile                   = ref.mainfile;
+        this.set                        = ref.set;
+        this.packMode                   = ref.packMode;
+        this.sampleDimensions           = ref.sampleDimensions;
+        this.preferredFormat            = ref.preferredFormat;
+        this.nbBands                    = ref.nbBands;
+        this.sampleType                 = ref.sampleType;
+        this.bitPerSample               = ref.bitPerSample;
+        this.samplePerPixel             = ref.samplePerPixel;
+        this.planarConfiguration        = ref.planarConfiguration;
+        this.sampleFormat               = ref.sampleFormat;
+        this.photometricInterpretation  = ref.photometricInterpretation;
+        this.colorMap                   = ref.colorMap;
+        this.minColorSampleValue        = ref.minColorSampleValue;
+        this.maxColorSampleValue        = ref.maxColorSampleValue;
         this.set.setRef(this);
     }
 
@@ -255,6 +285,17 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      * @throws DataStoreException
      */
     synchronized void save() throws DataStoreException{
+        if (minColorSampleValue == null) {
+            assert maxColorSampleValue == null;
+            assert !(colorModel.getColorSpace() instanceof ScaledColorSpace) : "with min and max NULL sample value color space should not be instance of ScaledColorSpace.";
+        } else {
+            assert maxColorSampleValue != null;
+            assert (colorModel.getColorSpace() instanceof ScaledColorSpace) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
+            assert JDK8.isFinite(minColorSampleValue) : "To write minColorSampleValue into XML Pyramid File, it should be finite. Found : "+minColorSampleValue;
+            assert JDK8.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
+        }
+        
+        
         try {
             final MarshallerPool pool   = getPoolInstance();
             final Marshaller marshaller = pool.acquireMarshaller();
@@ -357,8 +398,19 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     public ColorModel getColorModel() {
         if (colorModel == null) {
             if (checkAttributs()) {
+                if (minColorSampleValue == null) {
+                    assert maxColorSampleValue == null;
+                    assert !(colorModel.getColorSpace() instanceof ScaledColorSpace) : "with min and max NULL sample value color space should not be instance of ScaledColorSpace.";
+                } else {
+                    assert maxColorSampleValue != null;
+                    assert (colorModel.getColorSpace() instanceof ScaledColorSpace) : "with NOT NULL min and max sample value color space must be instance of ScaledColorSpace.";
+                    assert JDK8.isFinite(minColorSampleValue) : "To write minColorSampleValue into XML Pyramid File, it should be finite. Found : "+minColorSampleValue;
+                    assert JDK8.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
+                }
+                
                 colorModel = ImageUtils.createColorModel(bitPerSample, nbBands, 
-                        (short) photometricInterpretation, (short) sampleFormat, convertColorMap(colorMap));
+                        (short) photometricInterpretation, (short) sampleFormat, 
+                        minColorSampleValue, maxColorSampleValue, convertColorMap(colorMap));
             }
             //-- else do nothing case where unmarshall old pyramid. older comportement.
         }
@@ -392,6 +444,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      */
     @Override
     public void setColorModel(ColorModel colorModel) throws DataStoreException {
+        ArgumentChecks.ensureNonNull("colorModel", colorModel);
         //--photometric
         this.photometricInterpretation = ImageUtils.getPhotometricInterpretation(colorModel);
         if (photometricInterpretation == 3) {
@@ -403,6 +456,17 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             indexColorMod.getRGBs(colorMap);
         }
         this.colorModel = colorModel;
+        //-- code in comment in attempt to update TiffImageReader to scan all sampleValues to build appropriate colorSpace
+//        final ColorSpace colorSpace = colorModel.getColorSpace();
+//        if (colorSpace instanceof ScaledColorSpace) {
+//            minColorSampleValue = (minColorSampleValue == null) 
+//                                  ? colorSpace.getMinValue(0) 
+//                                  : StrictMath.min(minColorSampleValue, colorSpace.getMinValue(0));
+//            maxColorSampleValue = (maxColorSampleValue == null) 
+//                                  ? colorSpace.getMaxValue(0) 
+//                                  : StrictMath.max(maxColorSampleValue, colorSpace.getMaxValue(0));
+//
+//        }
         save();
     }
 
@@ -450,7 +514,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             && (samplePerPixel != -1) 
             && (sampleFormat != -1) 
             && (planarConfiguration != -1) 
-            && (photometricInterpretation != -1) ;
+            && (photometricInterpretation != -1);
     }
     
     /**
@@ -513,6 +577,40 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         
         final ColorModel cm    = getColorModel();
         final ColorModel imgCm = image.getColorModel();
+        
+        //-- each tile may have different min and max value in its internal colorspace but it must be same type class.
+        final ColorSpace imgCmCS = imgCm.getColorSpace();
+        if (imgCmCS instanceof ScaledColorSpace) {
+            
+            if (cm != null && (!(cm.getColorSpace() instanceof ScaledColorSpace)))
+                throw new IllegalArgumentException(String.format("Mismatch color space."));
+            
+            if (minColorSampleValue == null) minColorSampleValue = Double.POSITIVE_INFINITY;
+            if (maxColorSampleValue == null) maxColorSampleValue = Double.NEGATIVE_INFINITY;
+
+            //-- when largeRenderedImage will own its right ScaledColorSpace 
+            //-- moreover to have right ScaledColorSpace tiff reader must travel all of sample values.
+            //-- discomment following coding row
+//                {
+//                    minColorSampleValue = StrictMath.min(minColorSampleValue, imgCmCS.getMinValue(0));
+//                    maxColorSampleValue = StrictMath.max(maxColorSampleValue, imgCmCS.getMaxValue(0));
+//                }
+            //-- now to be in accordance with ScaledColorSpace properties
+            //-- travel all current image to find minimum and maximum raster values
+            final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
+            while (pix.next()) {
+                //-- to avoid unexpected NAN values comportement don't use StrictMath class.
+                final double value = pix.getSampleDouble();
+                if (value < minColorSampleValue) {
+                    minColorSampleValue = value;
+                } else if (value > maxColorSampleValue) {
+                    maxColorSampleValue = value;
+                }
+            }
+            //-- to refresh min and max of current stored color model
+            this.colorModel = null; //-- see : getColorModel()
+        }
+        
         if (cm != null) {
             if (ImageUtils.getPhotometricInterpretation(cm) != photometricInterpretation) 
                 throw new IllegalArgumentException(String.format("Mismatch photometric interpretation. Expected : %d .Found : %d", photometricInterpretation, ImageUtils.getPhotometricInterpretation(cm)));
