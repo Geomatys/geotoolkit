@@ -18,6 +18,9 @@ package org.geotoolkit.parameter;
 
 import java.util.*;
 
+import org.apache.sis.measure.Range;
+import org.apache.sis.parameter.DefaultParameterDescriptor;
+import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.parameter.*;
@@ -321,7 +324,9 @@ public final class ParametersExt {
      * @param unit parameter unit
      * @param required mandatory or not
      * @return a ParameterDescriptor
+     * @deprecated Use org.apache.sis.parameter.ParameterBuilder
      */
+    @Deprecated
     public static ParameterDescriptor createParameterDescriptor(final String code, final InternationalString remarks,
                                                                 final Class valueClass, final Object[] validValues, final Object defaultValue, final Comparable minValue,
                                                                 final Comparable maxValue, final Unit unit, final boolean required) {
@@ -330,7 +335,7 @@ public final class ParametersExt {
         paramMap.put(IdentifiedObject.NAME_KEY, code);
         paramMap.put(IdentifiedObject.REMARKS_KEY, remarks);
 
-        return new DefaultParameterDescriptor(paramMap, valueClass, validValues, defaultValue, minValue, maxValue, unit, required);
+        return new DefaultParameterDescriptor(paramMap, required?1:0, 1, valueClass, new Range(valueClass, minValue, true, maxValue, true), validValues, defaultValue);
     }
 
 
