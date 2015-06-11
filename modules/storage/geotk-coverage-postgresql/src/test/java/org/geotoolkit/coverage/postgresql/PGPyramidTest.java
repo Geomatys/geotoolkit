@@ -33,6 +33,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.storage.coverage.*;
 import org.junit.Test;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;

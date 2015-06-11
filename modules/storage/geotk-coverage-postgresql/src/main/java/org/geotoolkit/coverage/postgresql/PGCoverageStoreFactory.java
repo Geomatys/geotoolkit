@@ -26,7 +26,7 @@ import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
-import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
+import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.coverage.postgresql.exception.SchemaExistsException;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.apache.sis.metadata.iso.DefaultIdentifier;

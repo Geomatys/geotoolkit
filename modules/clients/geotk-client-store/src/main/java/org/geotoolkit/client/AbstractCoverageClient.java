@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.coverage.AbstractCoverageStore;
+import org.geotoolkit.storage.coverage.AbstractCoverageStore;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;

@@ -33,12 +33,12 @@ import java.util.Properties;
 import java.util.TimeZone;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.coverage.CoverageStoreFinder;
-import org.geotoolkit.coverage.GridMosaic;
-import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.PyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageStoreFinder;
+import org.geotoolkit.storage.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 

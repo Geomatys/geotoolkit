@@ -20,7 +20,7 @@ package org.geotoolkit.client;
 import java.io.Serializable;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**

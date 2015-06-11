@@ -19,7 +19,7 @@ package org.geotoolkit.coverage.xmlstore;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.coverage.PyramidalModelStoreNDTest;
 import org.geotoolkit.util.FileUtilities;
 import org.junit.After;

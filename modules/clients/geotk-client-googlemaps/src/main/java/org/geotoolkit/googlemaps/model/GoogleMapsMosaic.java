@@ -21,9 +21,9 @@ import java.awt.Point;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import org.geotoolkit.coverage.AbstractGridMosaic;
-import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.TileReference;
+import org.geotoolkit.storage.coverage.AbstractGridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.TileReference;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.DirectPosition;
 

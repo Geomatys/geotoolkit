@@ -19,7 +19,7 @@ package org.geotoolkit.processing.coverage.mathcalc;
 
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;

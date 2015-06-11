@@ -8,7 +8,7 @@ import java.util.Collections;
 import javax.imageio.ImageIO;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
-import org.geotoolkit.coverage.*;
+
 import org.geotoolkit.coverage.filestore.*;
 import org.geotoolkit.feature.type.DefaultName;
 import org.apache.sis.geometry.GeneralEnvelope;
@@ -22,9 +22,11 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 

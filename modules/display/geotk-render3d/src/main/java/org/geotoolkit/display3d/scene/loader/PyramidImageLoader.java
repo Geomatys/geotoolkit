@@ -36,11 +36,11 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.operation.transform.MathTransforms;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.coverage.AbstractGridMosaic;
-import org.geotoolkit.coverage.GridMosaic;
-import org.geotoolkit.coverage.GridMosaicRenderedImage;
-import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.PyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.AbstractGridMosaic;
+import org.geotoolkit.storage.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.GridMosaicRenderedImage;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display3d.utils.TextureUtils;
 

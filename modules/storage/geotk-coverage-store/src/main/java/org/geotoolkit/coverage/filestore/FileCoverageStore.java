@@ -29,10 +29,10 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.AbstractCoverageStore;
-import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.coverage.CoverageStoreFinder;
-import org.geotoolkit.coverage.CoverageType;
+import org.geotoolkit.storage.coverage.AbstractCoverageStore;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageStoreFinder;
+import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;

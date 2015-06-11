@@ -21,7 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.io.X364;

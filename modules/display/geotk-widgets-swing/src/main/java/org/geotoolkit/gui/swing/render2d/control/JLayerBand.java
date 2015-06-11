@@ -39,7 +39,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;

@@ -41,7 +41,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.NumberRange;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 
 /**
  *

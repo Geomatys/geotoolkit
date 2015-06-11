@@ -18,8 +18,8 @@
 package org.geotoolkit.processing.coverage.mathcalc;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.PyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.cql.CQL;

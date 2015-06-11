@@ -26,7 +26,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.coverage.RecyclingCoverageReference;
+import org.geotoolkit.storage.coverage.RecyclingCoverageReference;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;

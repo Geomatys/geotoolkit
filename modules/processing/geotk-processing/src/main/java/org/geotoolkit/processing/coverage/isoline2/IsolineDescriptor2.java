@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.coverage.isoline2;
 
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;

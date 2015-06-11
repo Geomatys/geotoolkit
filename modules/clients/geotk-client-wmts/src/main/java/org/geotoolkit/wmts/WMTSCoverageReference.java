@@ -16,8 +16,9 @@
  */
 package org.geotoolkit.wmts;
 
-import org.geotoolkit.coverage.*;
 import org.apache.sis.storage.DataStoreException;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.PyramidSet;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
 import org.geotoolkit.feature.type.Name;
 

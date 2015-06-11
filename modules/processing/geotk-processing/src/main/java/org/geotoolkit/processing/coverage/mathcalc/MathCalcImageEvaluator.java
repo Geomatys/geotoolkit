@@ -22,7 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
-import org.geotoolkit.coverage.ProcessedRenderedImage;
+import org.geotoolkit.storage.coverage.ProcessedRenderedImage;
 import org.geotoolkit.processing.coverage.mathcalc.FillCoverage.SampleEvaluator;
 import org.opengis.referencing.operation.MathTransform;
 

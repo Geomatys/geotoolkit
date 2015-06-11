@@ -48,10 +48,11 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
+
 import org.apache.sis.internal.util.UnmodifiableArrayList;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageReader;

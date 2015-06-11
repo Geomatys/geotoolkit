@@ -16,9 +16,8 @@
  */
 package org.geotoolkit.wmts.map;
 
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.PyramidSet;
-import org.geotoolkit.feature.type.DefaultName;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.PyramidSet;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;

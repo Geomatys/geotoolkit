@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import net.iharder.Base64;
-import org.geotoolkit.coverage.TileReference;
+import org.geotoolkit.storage.coverage.TileReference;
 import org.geotoolkit.coverage.wkb.WKBRasterImageReader;
 
 /**

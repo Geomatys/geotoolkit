@@ -2,13 +2,12 @@
 package org.geotoolkit.pending.demo.clients.wmts;
 
 import java.net.URL;
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.PyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.osmtms.OSMTileMapClient;
 import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;

@@ -36,6 +36,10 @@ import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
 import static org.junit.Assert.*;
 
+import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;

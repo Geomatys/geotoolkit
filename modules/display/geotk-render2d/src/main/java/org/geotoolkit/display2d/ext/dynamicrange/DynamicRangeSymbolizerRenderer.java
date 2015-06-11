@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import org.apache.sis.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.display.PortrayalException;

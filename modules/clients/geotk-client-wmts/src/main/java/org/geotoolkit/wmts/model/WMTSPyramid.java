@@ -18,7 +18,7 @@ package org.geotoolkit.wmts.model;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.coverage.DefaultPyramid;
+import org.geotoolkit.storage.coverage.DefaultPyramid;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wmts.xml.v100.*;
 import org.opengis.referencing.NoSuchAuthorityCodeException;

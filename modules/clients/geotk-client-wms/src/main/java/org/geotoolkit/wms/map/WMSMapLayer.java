@@ -21,8 +21,8 @@ import java.awt.geom.Point2D;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import org.geotoolkit.client.Request;
-import org.geotoolkit.coverage.CoverageReference;
+
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;

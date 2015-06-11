@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.pending.demo.coverage;
 
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.coverage.CoverageStoreFinder;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.postgresql.PGCoverageStore;
 import org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory;
 import org.geotoolkit.feature.type.DefaultName;

@@ -2,9 +2,9 @@
 package org.geotoolkit.pending.demo.clients.osmtms;
 
 import java.net.URL;
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.coverage.CoverageStoreFinder;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;

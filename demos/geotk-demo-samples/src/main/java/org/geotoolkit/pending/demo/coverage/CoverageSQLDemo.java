@@ -4,21 +4,8 @@
  */
 package org.geotoolkit.pending.demo.coverage;
 
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.coverage.CoverageStoreFinder;
 //import org.geotoolkit.coverage.sql.CoverageSQLStoreFactory;
-import org.geotoolkit.feature.type.DefaultName;
-import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.pending.demo.Demos;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.style.StyleConstants;
-import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *

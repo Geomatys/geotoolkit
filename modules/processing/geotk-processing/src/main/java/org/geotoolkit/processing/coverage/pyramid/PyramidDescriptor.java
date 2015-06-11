@@ -18,7 +18,7 @@ package org.geotoolkit.processing.coverage.pyramid;
 
 import java.awt.Dimension;
 import java.util.Map;
-import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
@@ -27,7 +27,7 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;

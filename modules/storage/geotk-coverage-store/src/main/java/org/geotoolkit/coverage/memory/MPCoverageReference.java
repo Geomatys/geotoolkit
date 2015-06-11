@@ -28,6 +28,7 @@ import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.storage.coverage.*;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

@@ -37,6 +37,10 @@ import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.referencing.CRS;
 import static org.junit.Assert.*;
+
+import org.geotoolkit.storage.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.junit.Test;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

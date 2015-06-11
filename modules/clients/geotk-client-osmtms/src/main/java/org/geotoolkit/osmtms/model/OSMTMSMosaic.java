@@ -18,13 +18,12 @@ package org.geotoolkit.osmtms.model;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import org.geotoolkit.coverage.AbstractGridMosaic;
-import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.TileReference;
+import org.geotoolkit.storage.coverage.AbstractGridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.TileReference;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.DirectPosition;
 

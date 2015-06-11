@@ -17,7 +17,7 @@
 package org.geotoolkit.gui.swing.render2d.control.edition;
 
 import java.util.logging.Level;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;

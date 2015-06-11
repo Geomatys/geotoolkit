@@ -16,10 +16,11 @@
  */
 package org.geotoolkit.googlemaps;
 
-import org.geotoolkit.coverage.*;
 import org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.PyramidSet;
 
 /**
  * GoogleMaps coverage reference.
@@ -27,7 +28,7 @@ import org.geotoolkit.feature.type.Name;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GoogleCoverageReference extends AbstractPyramidalCoverageReference{
+public class GoogleCoverageReference extends AbstractPyramidalCoverageReference {
 
     private final GoogleMapsPyramidSet set;
 

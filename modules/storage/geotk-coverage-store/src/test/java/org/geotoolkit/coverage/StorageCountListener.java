@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.coverage;
 
+import org.geotoolkit.storage.coverage.CoverageStoreContentEvent;
+import org.geotoolkit.storage.coverage.CoverageStoreListener;
+import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
+
 /**
  * Test storage listener, count the number of events and store the last event objects.
  * @author Johann Sorel (Geomatys)

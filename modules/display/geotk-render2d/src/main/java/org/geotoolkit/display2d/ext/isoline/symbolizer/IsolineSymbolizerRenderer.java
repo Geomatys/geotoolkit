@@ -19,7 +19,7 @@ package org.geotoolkit.display2d.ext.isoline.symbolizer;
 
 import org.apache.sis.storage.DataStoreException;
 
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;

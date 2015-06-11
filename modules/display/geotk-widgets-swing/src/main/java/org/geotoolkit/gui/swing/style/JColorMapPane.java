@@ -73,8 +73,8 @@ import javax.swing.table.TableCellEditor;
 
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ObjectConverters;
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageUtilities;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;

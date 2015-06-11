@@ -18,7 +18,7 @@ package org.geotoolkit.wmsc;
 
 import java.net.URL;
 import org.geotoolkit.client.CapabilitiesException;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wms.GetMapRequest;

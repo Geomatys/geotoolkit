@@ -27,20 +27,19 @@ import java.util.logging.Logger;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.CoverageUtilities;
-import org.geotoolkit.coverage.GridMosaic;
-import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.PyramidSet;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
+import org.geotoolkit.storage.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.PyramidSet;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
- * Define {@link org.geotoolkit.coverage.Pyramid} and {@link org.geotoolkit.coverage.GridMosaic} search rules.
+ * Define {@link Pyramid} and {@link GridMosaic} search rules.
  *
  * @author Rémi Marechal (Geomatys).
  * @author Johann Sorel  (Geomatys).

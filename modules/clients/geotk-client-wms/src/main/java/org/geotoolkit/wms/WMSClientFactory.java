@@ -24,7 +24,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.CoverageClientFactory;
-import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;

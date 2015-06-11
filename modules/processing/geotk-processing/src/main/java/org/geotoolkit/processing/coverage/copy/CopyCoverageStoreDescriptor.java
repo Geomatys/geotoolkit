@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.processing.coverage.copy;
 
-import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;

@@ -2,8 +2,8 @@
 package org.geotoolkit.pending.demo.coverage;
 
 import java.util.Iterator;
-import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.coverage.CoverageStoreFinder;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.pending.demo.Demos;
 import org.opengis.parameter.ParameterDescriptorGroup;
 

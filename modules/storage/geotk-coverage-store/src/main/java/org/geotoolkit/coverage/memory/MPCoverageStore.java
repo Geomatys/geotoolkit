@@ -17,11 +17,11 @@
 package org.geotoolkit.coverage.memory;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.AbstractCoverageStore;
-import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.coverage.CoverageType;
+import org.geotoolkit.storage.coverage.AbstractCoverageStore;
+import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.DefaultDataNode;

@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.coverage.CoverageUtilities;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;

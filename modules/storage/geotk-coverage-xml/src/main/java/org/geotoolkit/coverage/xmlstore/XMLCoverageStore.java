@@ -25,11 +25,11 @@ import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 
-import org.geotoolkit.coverage.AbstractCoverageStore;
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.coverage.CoverageStoreFinder;
-import org.geotoolkit.coverage.CoverageType;
+import org.geotoolkit.storage.coverage.AbstractCoverageStore;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageStoreFinder;
+import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.feature.type.DefaultName;
 import org.apache.sis.storage.DataStoreException;

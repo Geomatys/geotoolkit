@@ -22,7 +22,7 @@ import java.util.logging.Level;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedPyramidSet;
-import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.GridMosaic;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.xml.v111.Capability;

@@ -16,10 +16,11 @@
  */
 package org.geotoolkit.osmtms;
 
-import org.geotoolkit.coverage.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.feature.type.Name;
+import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.PyramidSet;
 
 /**
  * Open Street Map Tile Map Server.

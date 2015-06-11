@@ -7,10 +7,8 @@ import javax.imageio.ImageReader;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.filestore.FileCoverageStore;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
@@ -24,10 +22,10 @@ import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.StyleConstants;
+
 import static org.geotoolkit.style.StyleConstants.DEFAULT_DESCRIPTION;
 import static org.geotoolkit.style.StyleConstants.LITERAL_ONE_FLOAT;
-import org.geotoolkit.feature.type.Name;
+
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.cs.AxisDirection;

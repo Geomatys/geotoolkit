@@ -17,8 +17,6 @@
 package org.geotoolkit.coverage.xmlstore;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,12 +28,11 @@ import javax.xml.bind.annotation.*;
 
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.coverage.AbstractPyramidSet;
-import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.AbstractPyramidSet;
+import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.XImageIO;
-import org.apache.sis.referencing.IdentifiedObjects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**

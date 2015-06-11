@@ -23,9 +23,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
-import org.geotoolkit.coverage.AbstractGridMosaic;
-import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.TileReference;
+import org.geotoolkit.storage.coverage.AbstractGridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.TileReference;
 import org.apache.sis.storage.DataStoreException;
 import org.opengis.geometry.DirectPosition;
 

@@ -17,8 +17,8 @@
 package org.geotoolkit.wmts;
 
 import java.util.Iterator;
-import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.coverage.CoverageStoreFinder;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 

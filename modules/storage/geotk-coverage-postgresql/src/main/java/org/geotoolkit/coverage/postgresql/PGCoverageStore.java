@@ -28,11 +28,11 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.AbstractCoverageStore;
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.coverage.CoverageStoreFinder;
-import org.geotoolkit.coverage.CoverageType;
+import org.geotoolkit.storage.coverage.AbstractCoverageStore;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageStoreFinder;
+import org.geotoolkit.storage.coverage.CoverageType;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;

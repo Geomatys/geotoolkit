@@ -21,7 +21,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.util.Hashtable;
 
-import org.geotoolkit.coverage.CoverageUtilities;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;

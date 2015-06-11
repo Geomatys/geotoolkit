@@ -18,8 +18,8 @@ package org.geotoolkit.map;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.PyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -31,7 +31,6 @@ import org.geotoolkit.style.MutableStyle;
 import org.apache.sis.util.NullArgumentException;
 import org.opengis.geometry.Envelope;
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.geotoolkit.util.ImageIOUtilities;
 
 /**
  * Default implementation of the coverage MapLayer.

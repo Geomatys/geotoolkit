@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.coverage.AbstractCoverageReference;
+import org.geotoolkit.storage.coverage.AbstractCoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriter;

@@ -23,7 +23,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.client.Request;
-import org.geotoolkit.coverage.DefaultTileReference;
+import org.geotoolkit.storage.coverage.DefaultTileReference;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.ImageIOUtilities;
 

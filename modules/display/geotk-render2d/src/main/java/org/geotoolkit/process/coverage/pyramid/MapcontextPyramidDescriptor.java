@@ -18,7 +18,7 @@ package org.geotoolkit.process.coverage.pyramid;
 
 import java.awt.Dimension;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.coverage.PyramidalCoverageReference;
+import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;

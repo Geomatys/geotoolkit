@@ -36,7 +36,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import org.apache.sis.storage.DataStoreException;
 
-import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -62,6 +61,7 @@ import static org.geotoolkit.processing.coverage.isoline2.IsolineDescriptor2.*;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.storage.coverage.*;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.opengis.parameter.ParameterValueGroup;

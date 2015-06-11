@@ -39,7 +39,7 @@ import javax.media.jai.RenderedOp;
 
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.*;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -282,7 +282,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @throws FactoryException if problem during apply shaded relief style.
      * @throws TransformException if problem during apply shaded relief style.
      * @throws PortrayalException if problem during apply contrast enhancement style.
-     * @see #applyColorMapStyle(org.geotoolkit.coverage.CoverageReference, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer) 
+     * @see #applyColorMapStyle(CoverageReference, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer)
      * @see #applyShadedRelief(java.awt.image.RenderedImage, org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer) 
      * @see #applyContrastEnhancement(java.awt.image.RenderedImage, org.opengis.style.RasterSymbolizer)  
      */
@@ -337,7 +337,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     /**
      * Apply shaded relief on the image parameter from coverage geographic properties and elevation coverage properties.
      * 
-     * @param colorMappedImage image result issue from {@link #applyColorMapStyle(org.geotoolkit.coverage.CoverageReference, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer) }
+     * @param colorMappedImage image result issue from {@link #applyColorMapStyle(CoverageReference, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer) }
      * @param coverage base coverage 
      * @param elevationCoverage elevation coverage if exist, should be {@code null}, 
      * if {@code null} image is just transformed into {@link BufferedImage#TYPE_INT_ARGB}.

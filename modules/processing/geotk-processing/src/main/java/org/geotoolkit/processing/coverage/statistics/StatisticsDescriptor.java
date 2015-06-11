@@ -18,7 +18,7 @@ package org.geotoolkit.processing.coverage.statistics;
 
 import org.geotoolkit.metadata.ImageStatistics;
 import org.apache.sis.util.iso.ResourceInternationalString;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;

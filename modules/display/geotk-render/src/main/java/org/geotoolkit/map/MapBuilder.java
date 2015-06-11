@@ -17,8 +17,8 @@
 package org.geotoolkit.map;
 
 import java.util.Collection;
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.DefaultCoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.DefaultCoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.data.FeatureCollection;
@@ -33,7 +33,6 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.RandomStyleBuilder;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.feature.Feature;
 import org.opengis.filter.FilterFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

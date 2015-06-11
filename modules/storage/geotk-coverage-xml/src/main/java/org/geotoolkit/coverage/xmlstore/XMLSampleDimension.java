@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.coverage.CoverageUtilities;
+import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.SampleDimensionType;

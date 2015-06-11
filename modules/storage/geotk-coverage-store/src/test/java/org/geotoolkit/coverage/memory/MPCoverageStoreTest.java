@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.coverage.memory;
 
-import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.coverage.AbstractPyramidalModelStoreTest;
 
 /**

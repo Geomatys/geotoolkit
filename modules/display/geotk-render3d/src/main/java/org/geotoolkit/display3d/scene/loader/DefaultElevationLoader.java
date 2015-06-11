@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.measure.converter.ConversionException;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;

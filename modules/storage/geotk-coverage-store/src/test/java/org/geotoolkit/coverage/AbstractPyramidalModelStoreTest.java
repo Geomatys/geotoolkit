@@ -34,12 +34,16 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.image.BufferedImages;
 
 import static org.junit.Assert.*;
+
+import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.GridMosaic;
+import org.geotoolkit.storage.coverage.Pyramid;
+import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;

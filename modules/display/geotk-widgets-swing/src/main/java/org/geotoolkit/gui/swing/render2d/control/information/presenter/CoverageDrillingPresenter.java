@@ -18,8 +18,8 @@
 package org.geotoolkit.gui.swing.render2d.control.information.presenter;
 
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.coverage.CoverageExtractor;
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageExtractor;
+import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;

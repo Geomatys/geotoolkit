@@ -2,9 +2,9 @@
 package org.geotoolkit.pending.demo.coverage;
 
 import java.io.File;
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.coverage.CoverageStoreFinder;
+import org.geotoolkit.storage.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.filestore.FileCoverageStoreFactory;
 import org.geotoolkit.gui.swing.render2d.JMap2DFrame;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
@@ -16,7 +16,6 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 

@@ -11,6 +11,7 @@ import org.geotoolkit.feature.type.DefaultName;
 import org.geotoolkit.feature.type.Name;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.storage.coverage.*;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;

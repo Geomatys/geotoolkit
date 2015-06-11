@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.map;
 
-import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.storage.coverage.CoverageReference;
 
 /**
  * MapLayer handeling coverages.

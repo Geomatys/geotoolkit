@@ -18,7 +18,7 @@ package org.geotoolkit.coverage.memory;
 
 import java.awt.Point;
 import java.awt.image.RenderedImage;
-import org.geotoolkit.coverage.DefaultTileReference;
+import org.geotoolkit.storage.coverage.DefaultTileReference;
 
 /**
  *
