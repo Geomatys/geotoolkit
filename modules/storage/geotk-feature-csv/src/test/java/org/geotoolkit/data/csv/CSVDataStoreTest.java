@@ -161,7 +161,7 @@ public class CSVDataStoreTest {
         final FeatureIterator ite = col.iterator();
         Feature next = ite.next();
         assertEquals("hubert", next.getPropertyValue("name"));
-        assertEquals("someone from the \"big fisher\" corp,\na good guy and\na family \"best\" friend", next.getPropertyValue("comment"));
+        assertEquals("someone from the \"big fisher\" corp,\na good guy and;\na ;family \"best\" friend", next.getPropertyValue("comment"));
         assertEquals(36, next.getPropertyValue("age"));
         next = ite.next();
         assertEquals("marc", next.getPropertyValue("name"));

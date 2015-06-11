@@ -1,5 +1,5 @@
 name(String);comment(String);age(Integer)
 hubert;"someone from the ""big fisher"" corp,
-a good guy and
-a family ""best"" friend";36
+a good guy and;
+a ;family ""best"" friend";36
 marc;lucky luck;22
