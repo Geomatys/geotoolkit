@@ -82,6 +82,15 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection {
         return new VectorFeatureIterator(originalFC.iterator());
     }
 
+    @Override
+    public boolean isEmpty() {
+        final boolean empty;
+        try (FeatureIterator ite = iterator()) {
+            empty = !ite.hasNext();
+        }
+        return empty;
+    }
+
     /**
      * Useless because current FeatureCollection can't be modified
      * @param filter
