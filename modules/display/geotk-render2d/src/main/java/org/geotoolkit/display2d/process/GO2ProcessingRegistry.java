@@ -15,13 +15,13 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.process;
+package org.geotoolkit.display2d.process;
 
 import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescriptor;
+import org.geotoolkit.display2d.process.pyramid.MapcontextPyramidDescriptor;
 import org.geotoolkit.processing.AbstractProcessingRegistry;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;

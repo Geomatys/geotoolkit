@@ -46,7 +46,7 @@ import org.opengis.referencing.operation.TransformException;
  * This implementation is mostly used to tile a portrayal context in a @{org.geotoolkit.coverage.GridMosaic}.
  *
  * @author Johann Sorel (Geomatys)
- * @see org.geotoolkit.process.coverage.pyramid.MapcontextPyramidProcess
+ * @see org.geotoolkit.display2d.process.pyramid.MapcontextPyramidProcess
  */
 public class PortrayalRenderedImage implements RenderedImage{
 

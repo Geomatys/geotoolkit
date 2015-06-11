@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.process.coverage.pyramid;
+package org.geotoolkit.display2d.process.pyramid;
 
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralDirectPosition;
@@ -59,7 +59,7 @@ import java.util.concurrent.CancellationException;
 
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.parameter.Parameters.value;
-import static org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescriptor.*;
+import static org.geotoolkit.display2d.process.pyramid.MapcontextPyramidDescriptor.*;
 
 /**
  * Create a pyramid in the given PyramidalModel.
