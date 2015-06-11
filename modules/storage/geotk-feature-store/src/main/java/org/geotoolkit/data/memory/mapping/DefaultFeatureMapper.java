@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.sis.util.Numbers;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.util.ObjectConverters;
@@ -164,7 +165,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
 
         //normal attributs type, string, numbers, dates ...
         try{
-            return ObjectConverters.convert(value, target.getType().getBinding());
+            return ObjectConverters.convert(value, Numbers.primitiveToWrapper(target.getType().getBinding()));
         }catch(Exception ex){
             ex.printStackTrace();
             //could not convert between types

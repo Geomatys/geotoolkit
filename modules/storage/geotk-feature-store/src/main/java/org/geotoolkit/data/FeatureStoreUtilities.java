@@ -17,6 +17,12 @@
 package org.geotoolkit.data;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,6 +65,7 @@ import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.GenericName;
 
 /**
  * Convinient methods to manipulate FeatureStore and FeatureCollection.
@@ -316,31 +323,79 @@ public class FeatureStoreUtilities {
      * @return splitted collections
      */
     public static FeatureCollection[] decomposeByGeometryType(FeatureCollection col, Class ... geomClasses) throws DataStoreException{
-        
+        return decomposeByGeometryType(col, col.getFeatureType().getGeometryDescriptor().getName(), true, geomClasses);
+    }
+
+    /**
+     * Split the collection by geometry types.
+     * Multiple feature store can only support a limited number of geometry types.
+     * This method will split the content of the given collection in collections with a
+     * simple geometry type.
+     *
+     * Collection datas are not copied, result collections are filtered collections
+     *
+     * @param col
+     * @param adaptType : ry to map types even if they do not match exactly. 
+     * list of adapt operations :
+     * LineString -> MultiLineString
+     * Polygon -> MultiPolygon
+     * Point -> MultiPoint
+     * @param geomClasses
+     * @return splitted collections
+     * @throws org.apache.sis.storage.DataStoreException
+     */
+    public static FeatureCollection[] decomposeByGeometryType(FeatureCollection col, Name geomPropName, boolean adaptType, Class ... geomClasses) throws DataStoreException{
+
         final FilterFactory FF = FactoryFinder.getFilterFactory(null);
         final FeatureType baseType = col.getFeatureType();
         final Name name = baseType.getName();
-        final GeometryDescriptor geomDesc = baseType.getGeometryDescriptor();
-        final Name geomPropName = geomDesc.getName();
-        
+        final GeometryDescriptor geomDesc = (GeometryDescriptor) baseType.getDescriptor(geomPropName);
+
+        final List<Class> lstClasses = Arrays.asList(geomClasses);
+
         final FeatureCollection[] cols = new FeatureCollection[geomClasses.length];
         for(int i=0; i<geomClasses.length;i++){
-            final String geomTypeName = geomClasses[i].getSimpleName();
-            final Filter filter = FF.equals(
-                    FF.function("geometryType", FF.property(geomPropName.getLocalPart())),
-                    FF.literal(geomTypeName));
+            final Class geomClass = geomClasses[i];
+            Filter filter = FF.equals(
+                    FF.function("geometryType", FF.property(geomPropName.tip().toString())),
+                    FF.literal(geomClass.getSimpleName()));
+
+            //check if we need to map another type
+            if(adaptType){
+                if(geomClass == MultiPolygon.class && !lstClasses.contains(Polygon.class)){
+                    filter = FF.or(filter,
+                            FF.equals(
+                                FF.function("geometryType", FF.property(geomPropName.tip().toString())),
+                                FF.literal(Polygon.class.getSimpleName()))
+                            );
+                }else if(geomClass == MultiLineString.class && !lstClasses.contains(LineString.class)){
+                    filter = FF.or(filter,
+                            FF.equals(
+                                FF.function("geometryType", FF.property(geomPropName.tip().toString())),
+                                FF.literal(LineString.class.getSimpleName()))
+                            );
+                }else if(geomClass == MultiPoint.class && !lstClasses.contains(Point.class)){
+                    filter = FF.or(filter,
+                            FF.equals(
+                                FF.function("geometryType", FF.property(geomPropName.tip().toString())),
+                                FF.literal(Point.class.getSimpleName()))
+                            );
+                }
+            }
+
             cols[i] = col.subCollection( QueryBuilder.filtered(name, filter) );
-            
+
             //retype the collection
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.copy(baseType);
-            ftb.setName(new DefaultName(name.getNamespaceURI(), name.getLocalPart()+"_"+geomTypeName));
-            ftb.remove(geomPropName.getLocalPart());
+            ftb.setName(new DefaultName(name.getNamespaceURI(), name.getLocalPart()+"_"+geomClass.getSimpleName()));
+            ftb.remove(geomPropName.tip().toString());
             ftb.add(geomPropName, geomClasses[i], geomDesc.getCoordinateReferenceSystem());
-            
+            ftb.setDefaultGeometry(geomPropName);
+
             cols[i] = new GenericMappingFeatureCollection(cols[i],new DefaultFeatureMapper(baseType, ftb.buildFeatureType()));
         }
-        
+
         return cols;
     }
     
