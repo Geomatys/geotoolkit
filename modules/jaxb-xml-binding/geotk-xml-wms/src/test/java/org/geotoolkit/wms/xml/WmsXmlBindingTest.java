@@ -354,37 +354,23 @@ public class WmsXmlBindingTest {
         "                <gmd:specification>" + '\n' +
         "                    <gmd:CI_Citation>" + '\n' +
         "                        <gmd:title>" + '\n' +
-        "                            <gco:CharacterString>European Petroleum Survey Group</gco:CharacterString>" + '\n' +
+        "                            <gco:CharacterString>EPSG Geodetic Parameter Dataset</gco:CharacterString>" + '\n' +
         "                        </gmd:title>" + '\n' +
-        "                        <gmd:alternateTitle>" + '\n' +
-        "                            <gco:CharacterString>EPSG</gco:CharacterString>" + '\n' +
-        "                        </gmd:alternateTitle>" + '\n' +
         "                        <gmd:identifier>" + '\n' +
-        "                            <gmd:MD_Identifier>" + '\n' +
+        "                            <gmd:RS_Identifier>" + '\n' +
         "                                <gmd:code>" + '\n' +
         "                                    <gco:CharacterString>EPSG</gco:CharacterString>" + '\n' +
         "                                </gmd:code>" + '\n' +
-        "                            </gmd:MD_Identifier>" + '\n' +
+        "                                <gmd:codeSpace>" + '\n' +
+        "                                    <gco:CharacterString>IOGP</gco:CharacterString>" + '\n' +
+        "                                </gmd:codeSpace>" + '\n' +
+        "                            </gmd:RS_Identifier>" + '\n' +
         "                        </gmd:identifier>" + '\n' +
         "                        <gmd:citedResponsibleParty>" + '\n' +
         "                            <gmd:CI_ResponsibleParty>" + '\n' +
         "                                <gmd:organisationName>" + '\n' +
-        "                                    <gco:CharacterString>European Petroleum Survey Group</gco:CharacterString>" + '\n' +
+        "                                    <gco:CharacterString>International Association of Oil &amp; Gas producers</gco:CharacterString>" + '\n' +
         "                                </gmd:organisationName>" + '\n' +
-        "                                <gmd:contactInfo>" + '\n' +
-        "                                    <gmd:CI_Contact>" + '\n' +
-        "                                        <gmd:onlineResource>" + '\n' +
-        "                                            <gmd:CI_OnlineResource>" + '\n' +
-        "                                                <gmd:linkage>" + '\n' +
-        "                                                    <gmd:URL>http://www.epsg.org</gmd:URL>" + '\n' +
-        "                                                </gmd:linkage>" + '\n' +
-        "                                                <gmd:function>" + '\n' +
-        "                                                    <gmd:CI_OnLineFunctionCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\">Information</gmd:CI_OnLineFunctionCode>" + '\n' +
-        "                                                </gmd:function>" + '\n' +
-        "                                            </gmd:CI_OnlineResource>" + '\n' +
-        "                                        </gmd:onlineResource>" + '\n' +
-        "                                    </gmd:CI_Contact>" + '\n' +
-        "                                </gmd:contactInfo>" + '\n' +
         "                                <gmd:role>" + '\n' +
         "                                    <gmd:CI_RoleCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\">Principal investigator</gmd:CI_RoleCode>" + '\n' +
         "                                </gmd:role>" + '\n' +
@@ -406,22 +392,8 @@ public class WmsXmlBindingTest {
         "        <inspire_vs:MetadataPointOfContact>" + '\n' +
         "            <gmd:CI_ResponsibleParty>" + '\n' +
         "                <gmd:organisationName>" + '\n' +
-        "                    <gco:CharacterString>European Petroleum Survey Group</gco:CharacterString>" + '\n' +
+        "                    <gco:CharacterString>International Association of Oil &amp; Gas producers</gco:CharacterString>" + '\n' +
         "                </gmd:organisationName>" + '\n' +
-        "                <gmd:contactInfo>" + '\n' +
-        "                    <gmd:CI_Contact>" + '\n' +
-        "                        <gmd:onlineResource>" + '\n' +
-        "                            <gmd:CI_OnlineResource>" + '\n' +
-        "                                <gmd:linkage>" + '\n' +
-        "                                    <gmd:URL>http://www.epsg.org</gmd:URL>" + '\n' +
-        "                                </gmd:linkage>" + '\n' +
-        "                                <gmd:function>" + '\n' +
-        "                                    <gmd:CI_OnLineFunctionCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\">Information</gmd:CI_OnLineFunctionCode>" + '\n' +
-        "                                </gmd:function>" + '\n' +
-        "                            </gmd:CI_OnlineResource>" + '\n' +
-        "                        </gmd:onlineResource>" + '\n' +
-        "                    </gmd:CI_Contact>" + '\n' +
-        "                </gmd:contactInfo>" + '\n' +
         "                <gmd:role>" + '\n' +
         "                    <gmd:CI_RoleCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\">Principal investigator</gmd:CI_RoleCode>" + '\n' +
         "                </gmd:role>" + '\n' +
