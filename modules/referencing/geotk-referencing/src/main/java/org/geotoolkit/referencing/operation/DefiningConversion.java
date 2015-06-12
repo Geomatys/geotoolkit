@@ -21,12 +21,14 @@
 package org.geotoolkit.referencing.operation;
 
 import java.util.Collections;
-import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.OperationMethod;
+import org.opengis.util.NoSuchIdentifierException;
+import org.apache.sis.internal.system.DefaultFactories;
 import org.apache.sis.referencing.operation.DefaultConversion;
-import org.apache.sis.referencing.operation.DefaultOperationMethod;
 
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
 
 
@@ -53,7 +55,7 @@ public class DefiningConversion extends DefaultConversion {
      *
      * @since 2.2
      */
-    public DefiningConversion(final String name, final ParameterValueGroup parameters) {
+    public DefiningConversion(final String name, final ParameterValueGroup parameters) throws NoSuchIdentifierException {
         super(Collections.singletonMap(NAME_KEY, name), getOperationMethod(parameters), null, parameters);
     }
 
@@ -61,10 +63,9 @@ public class DefiningConversion extends DefaultConversion {
      * Work around for RFE #4093999 in Sun's bug database
      * ("Relax constraint on placement of this()/super() call in constructors").
      */
-    private static OperationMethod getOperationMethod(final ParameterValueGroup parameters) {
+    private static OperationMethod getOperationMethod(final ParameterValueGroup parameters) throws NoSuchIdentifierException {
         ensureNonNull("parameters", parameters);
-        final ParameterDescriptorGroup descriptor = parameters.getDescriptor();
-        return new DefaultOperationMethod(
-                org.geotoolkit.referencing.IdentifiedObjects.getProperties(descriptor, null), 2, 2, descriptor);
+        return DefaultFactories.forBuildin(MathTransformFactory.class, DefaultMathTransformFactory.class)
+                .getOperationMethod(parameters.getDescriptor().getName().getCode());
     }
 }
