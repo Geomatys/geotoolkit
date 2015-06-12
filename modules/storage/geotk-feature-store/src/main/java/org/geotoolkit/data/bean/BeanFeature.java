@@ -154,7 +154,9 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
         @Override
         public Object getValue() {
             try {
-                return mapping.accessors.get(getName().getLocalPart()).getReadMethod().invoke(bean);
+                final Method m = mapping.accessors.get(getName().getLocalPart()).getReadMethod();
+                if(m==null) return null;
+                return m.invoke(bean);
             } catch (ReflectiveOperationException | IllegalArgumentException ex) {
                 throw new FeatureStoreRuntimeException(ex);
             }
@@ -163,7 +165,9 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
         @Override
         public void setValue(Object newValue) {
             try {
-                mapping.accessors.get(getName().getLocalPart()).getWriteMethod().invoke(bean,newValue);
+                final Method m = mapping.accessors.get(getName().getLocalPart()).getWriteMethod();
+                if(m==null) return;
+                m.invoke(bean,newValue);
             } catch (ReflectiveOperationException | IllegalArgumentException ex) {
                 throw new FeatureStoreRuntimeException(ex);
             }
