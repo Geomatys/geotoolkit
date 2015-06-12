@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.image.io.plugin.yaml.internal;
 
+import java.util.Locale;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.Category;
@@ -82,7 +83,7 @@ public class YamlCategory {
      */
     public YamlCategory(final Category category) {
         ArgumentChecks.ensureNonNull("geotk category", category);
-        name = category.getName().toString();
+        name = category.getName().toString(Locale.ENGLISH);
         final NumberRange numRange = category.getRange();
         
         final double tempminSampleValue = numRange.getMinDouble();

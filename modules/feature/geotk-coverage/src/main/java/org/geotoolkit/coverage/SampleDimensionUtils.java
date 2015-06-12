@@ -28,6 +28,7 @@ import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Numbers;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.coverage.SampleDimension;
+import org.opengis.util.InternationalString;
 
 /**
  * Utilities class for {@link SampleDimension}, {@link Category}  working.
@@ -41,7 +42,7 @@ public final strictfp class SampleDimensionUtils {
      * Used nodata {@link Category} name.
      * @see Category#getName() 
      */
-    public static String NODATA_CATEGORY_NAME = Vocabulary.formatInternational(Vocabulary.Keys.NODATA).toString();
+    public static InternationalString NODATA_CATEGORY_NAME = Vocabulary.formatInternational(Vocabulary.Keys.NODATA);
     
     /**
      * Create a {@link Category} adapted for No data value.<br>

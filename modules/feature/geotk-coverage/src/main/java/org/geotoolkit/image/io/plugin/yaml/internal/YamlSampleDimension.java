@@ -18,7 +18,7 @@ package org.geotoolkit.image.io.plugin.yaml.internal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.SampleDimensionUtils;
@@ -58,11 +58,11 @@ public class YamlSampleDimension {
      * @param sampleDimension {@link GridSampleDimension} which will be serialized into Yaml format.
      */
     public YamlSampleDimension(final GridSampleDimension sampleDimension) {
-        description = sampleDimension.getDescription().toString();
+        description = sampleDimension.getDescription().toString(Locale.ENGLISH);
         
         categories  = new ArrayList<YamlCategory>();
         for (final Category cat : sampleDimension.getCategories()) {
-            categories.add(SampleDimensionUtils.NODATA_CATEGORY_NAME.equalsIgnoreCase(cat.getName().toString())
+            categories.add(SampleDimensionUtils.NODATA_CATEGORY_NAME.toString(Locale.ENGLISH).equalsIgnoreCase(cat.getName().toString(Locale.ENGLISH))
                            ? new YamlCategory(cat) 
                            : new YamlSampleCategory(cat));
         }

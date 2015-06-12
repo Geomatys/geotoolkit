@@ -18,6 +18,7 @@ package org.geotoolkit.image.io.plugin.yaml.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.Category;
@@ -146,7 +147,7 @@ public class YamlBuilder implements YamlReaderBuilder, YamlWriterBuilder {
                     isMaxInclusive = (boolean) yCat.get("isMaxInclusive");
                 }
                 
-                if (catName.equalsIgnoreCase(SampleDimensionUtils.NODATA_CATEGORY_NAME)) {
+                if (catName.equalsIgnoreCase(SampleDimensionUtils.NODATA_CATEGORY_NAME.toString(Locale.ENGLISH))) {
                     cats[c++] = SampleDimensionUtils.buildNoDataCategory(dataType, 
                                                                          minSampleValue, isMinInclusive, 
                                                                          maxSampleValue, isMaxInclusive);

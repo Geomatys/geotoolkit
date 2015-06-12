@@ -63,7 +63,7 @@ public class YamlUtilsTest {
 "sampleDimension:\n" +
 "- description: band_0\n" +
 "  categories:\n" +
-"  - name: Absence de données\n" +
+"  - name: No data\n" +
 "    value: 0.0\n" +
 "  - name: data\n" +
 "    minSampleValue: 1.0\n" +
@@ -114,7 +114,7 @@ public class YamlUtilsTest {
 "sampleDimension:\n" +
 "- description: band_0\n" +
 "  categories:\n" +
-"  - name: Absence de données\n" +
+"  - name: No data\n" +
 "    value: 0.0\n" +
 "  - name: data\n" +
 "    minSampleValue: 1.0\n" +
@@ -132,7 +132,7 @@ public class YamlUtilsTest {
 "    isMaxInclusive: true\n" +
 "    scale: 1.0\n" +
 "    offset: 0.0\n" +
-"  - name: Absence de données\n" +
+"  - name: No data\n" +
 "    minSampleValue: 125.0\n" +
 "    isMinInclusive: false\n" +
 "    maxSampleValue: 254.0\n" +
@@ -150,7 +150,7 @@ public class YamlUtilsTest {
 "    isMaxInclusive: false\n" +
 "    scale: 1.0\n" +
 "    offset: 0.0\n" +
-"  - name: Absence de données\n" +
+"  - name: No data\n" +
 "    value: 254.0\n" +
 "  - name: data\n" +
 "    value: 255.0\n" +
@@ -220,7 +220,7 @@ public class YamlUtilsTest {
 "sampleDimension:\n" +
 "- description: band_0\n" +
 "  categories:\n" +
-"  - name: Absence de données\n" +
+"  - name: No data\n" +
 "    value: 0.0\n" +
 "  - name: data\n" +
 "    minSampleValue: 1.0\n" +
