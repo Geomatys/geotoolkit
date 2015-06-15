@@ -803,7 +803,16 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
         //search properties which are complex types
         for(PropertyDescriptor desc : featureType.getDescriptors()){
             final PropertyType pt = desc.getType();
-            if(pt instanceof ComplexType){
+            if(pt instanceof AssociationType){
+                final RelationMetaModel relation = (RelationMetaModel)desc.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_RELATION);
+                if(!relation.isImported()){
+                    //a table point toward this one.
+                    final ComplexType refType = (ComplexType) ((AssociationType)pt).getRelatedType();
+                    recursiveDelete((ComplexType)refType,visited);
+                }
+                
+
+            }else if(pt instanceof ComplexType){
                 recursiveDelete((ComplexType)pt,visited);
             }
         }

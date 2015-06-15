@@ -289,10 +289,10 @@ public class PostgresFeatureStoreTest {
         
         //open in complex type to delete all types
         ParametersExt.getOrCreateValue(params, PostgresFeatureStoreFactory.SIMPLETYPE.getName().getCode()).setValue(false);
-        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);        
-        for(GenericName n : store.getNames()){
-            System.out.println(n);
-            VersionControl vc = store.getVersioning(n);
+        store = (PostgresFeatureStore) FeatureStoreFinder.open(params);
+        while(!store.getNames().isEmpty()){ // we get the list each type because relations may delete multiple types each time
+            final GenericName n = store.getNames().iterator().next();
+            final VersionControl vc = store.getVersioning(n);
             vc.dropVersioning();
             store.deleteFeatureType(n);
         }
