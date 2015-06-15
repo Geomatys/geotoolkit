@@ -19,10 +19,12 @@ package org.geotoolkit.gui.javafx.contexttree;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Pos;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.TextAlignment;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
@@ -70,6 +72,8 @@ public class MapItemSelectableColumn extends TreeTableColumn{
                     }
                 }
             });
+            setTextAlignment(TextAlignment.CENTER);
+            setAlignment(Pos.CENTER);
         }
 
         private void mouseClick(MouseEvent event){

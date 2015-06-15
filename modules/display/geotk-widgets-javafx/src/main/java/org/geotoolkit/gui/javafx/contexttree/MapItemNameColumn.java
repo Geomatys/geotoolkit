@@ -17,6 +17,8 @@
 
 package org.geotoolkit.gui.javafx.contexttree;
 
+import java.awt.Color;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TreeItem;
@@ -29,14 +31,28 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.TextAlignment;
 import javafx.util.converter.DefaultStringConverter;
+import org.geotoolkit.client.ClientFactory;
+import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.font.FontAwesomeIcons;
+import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapItem;
+import org.geotoolkit.storage.coverage.CoverageStore;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
+
+    private static final Image ICON_RASTER = new Image("/org/geotoolkit/gui/javafx/icon/raster-icon.png");
+    private static final Image ICON_VECTOR = new Image("/org/geotoolkit/gui/javafx/icon/vector-icon.png");
+    private static final Image ICON_SERVICE = new Image("/org/geotoolkit/gui/javafx/icon/service-icon.png");
+    private static final Image ICON_SENSOR = new Image("/org/geotoolkit/gui/javafx/icon/sensor-icon.png");
+    private static final Image ICON_FOLDER = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER_O,16,Color.GRAY),null);
 
     public MapItemNameColumn() {
         super(GeotkFX.getString(MapItemNameColumn.class,"layers"));
@@ -80,6 +96,26 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
                 pane.setMaxSize(BorderPane.USE_COMPUTED_SIZE,Double.MAX_VALUE);
                 pane.setPrefSize(BorderPane.USE_COMPUTED_SIZE, BorderPane.USE_COMPUTED_SIZE);
                 setGraphic(pane);
+            }else if(ti instanceof TreeMapItem){
+                final MapItem mapItem = (MapItem) ((TreeMapItem)ti).getValue();
+                if(mapItem instanceof FeatureMapLayer){
+                    final FeatureStore store = ((FeatureMapLayer)mapItem).getCollection().getSession().getFeatureStore();
+                    if(store!=null && store.getFactory() instanceof ClientFactory){
+                        setGraphic(new ImageView(ICON_SERVICE));
+                    }else{
+                        setGraphic(new ImageView(ICON_VECTOR));
+                    }
+                }else if(mapItem instanceof CoverageMapLayer){
+                    final CoverageStore store = ((CoverageMapLayer)mapItem).getCoverageReference().getStore();
+                    if(store!=null && store.getFactory() instanceof ClientFactory){
+                        setGraphic(new ImageView(ICON_SERVICE));
+                    }else{
+                        setGraphic(new ImageView(ICON_RASTER));
+                    }
+                }else{
+                    //container
+                    setGraphic(new ImageView(ICON_FOLDER));
+                }
             }
 
         }

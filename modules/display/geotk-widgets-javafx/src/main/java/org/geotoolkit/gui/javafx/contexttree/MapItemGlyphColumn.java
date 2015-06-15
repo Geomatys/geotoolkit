@@ -165,9 +165,9 @@ public class MapItemGlyphColumn extends TreeTableColumn {
 
     private static Image createGlyph(final MapLayer mapLayer) {
         if (mapLayer != null) {
-            final BufferedImage glyph = new BufferedImage(24, 22, BufferedImage.TYPE_INT_ARGB);
+            final BufferedImage glyph = new BufferedImage(24, 16, BufferedImage.TYPE_INT_ARGB);
             DefaultGlyphService.render(mapLayer.getStyle(),
-                    new Rectangle(24, 22), glyph.createGraphics(), mapLayer);
+                    new Rectangle(24, 16), glyph.createGraphics(), mapLayer);
             return SwingFXUtils.toFXImage(glyph, null);
         }
         return null;
