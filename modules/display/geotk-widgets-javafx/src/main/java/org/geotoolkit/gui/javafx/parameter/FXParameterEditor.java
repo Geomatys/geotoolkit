@@ -18,7 +18,6 @@
 package org.geotoolkit.gui.javafx.parameter;
 
 import java.util.List;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -33,7 +32,6 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
-import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.parameter.ParametersExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;

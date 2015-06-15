@@ -47,12 +47,16 @@ public abstract class FXValueEditor {
     
     private static final List<FXValueEditor> DEFAULTS;
     static {
+        final FXURLEditor editor = new FXURLEditor();
+        editor.getComponent().showOpenProperty().setValue(false);
+
         DEFAULTS = UnmodifiableArrayList.wrap(new FXValueEditor[]{
             new FXChoiceEditor(),
             new FXBooleanEditor(),
             new FXStringEditor(),
             new FXNumberEditor(),
-            new FXURLEditor()
+            editor,
+            new FXCRSEditor()
         });
     }
     

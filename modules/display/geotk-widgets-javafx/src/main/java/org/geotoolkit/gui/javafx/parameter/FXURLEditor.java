@@ -131,8 +131,14 @@ public class FXURLEditor extends FXValueEditor {
     }
 
     @Override
-    public Node getComponent() {
+    public FXFileTextField getComponent() {
         return pathField;
+    }
+
+    public FXURLEditor copy(){
+        final FXURLEditor cp = new FXURLEditor();
+        cp.pathField.showOpenProperty().setValue(pathField.showOpenProperty().getValue());
+        return cp;
     }
 
     public static String getPreviousPath() {

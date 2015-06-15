@@ -16,12 +16,14 @@
  */
 package org.geotoolkit.gui.javafx.parameter;
 
+import java.util.Collections;
 import java.util.List;
 import javafx.beans.property.Property;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.opengis.feature.AttributeType;
@@ -44,19 +46,29 @@ public class FXChoiceEditor extends FXValueEditor{
     
     protected void updateChoices(ObservableValue observable, Object oldValue, Object newValue) {
         pane.getChildren().clear();
-        List choices = null;
+        final List choices;
         if (newValue instanceof AttributeType) {
             choices = extractChoices((AttributeType) newValue);
         } else if (newValue instanceof ParameterDescriptor) {
-
             final PropertyType pt = FeatureTypeUtilities.toPropertyType((ParameterDescriptor) newValue);
             if (pt instanceof AttributeType) {
                 choices = extractChoices((AttributeType) pt);
+            }else{
+                choices = Collections.EMPTY_LIST;
             }
+        }else{
+            choices = Collections.EMPTY_LIST;
         }
 
-        guiCombo.setItems(FXCollections.observableList(choices));
-        pane.setCenter(guiCombo);
+        if(choices.size()==1){
+            //do not show a combobox when we don't have a real choice
+            guiCombo.setItems(FXCollections.observableList(choices));
+            guiCombo.valueProperty().setValue(choices.get(0));
+            pane.setCenter(new Label(String.valueOf(choices.get(0))));
+        }else{
+            guiCombo.setItems(FXCollections.observableList(choices));
+            pane.setCenter(guiCombo);
+        }
     }
     
     @Override

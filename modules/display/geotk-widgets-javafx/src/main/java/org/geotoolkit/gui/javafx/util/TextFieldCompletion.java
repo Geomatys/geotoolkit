@@ -138,7 +138,7 @@ public class TextFieldCompletion {
     private void updateChoices(final ObservableValue<? extends String> obs, String oldText, String newText) {
         ObservableList<String> choices = getChoices(newText);
         list.setItems(choices);
-        if (choices.isEmpty()) {
+        if (choices.isEmpty() || (choices.size()==1 && choices.get(0).equals(newText))) {
             popup.hide();
         } else {
             final Point2D popupPos = textField.localToScreen(0, textField.getHeight());

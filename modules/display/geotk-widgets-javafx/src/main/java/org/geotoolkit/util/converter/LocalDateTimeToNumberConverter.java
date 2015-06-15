@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.util.converter.SimpleConverter;
+import org.geotoolkit.feature.util.converter.SimpleConverter;
 
 /**
  *

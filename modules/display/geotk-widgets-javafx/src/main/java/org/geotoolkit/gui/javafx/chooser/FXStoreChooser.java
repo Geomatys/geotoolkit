@@ -50,8 +50,6 @@ import javafx.scene.text.FontWeight;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.client.ClientFinder;
-import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
@@ -67,6 +65,8 @@ import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**

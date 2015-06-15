@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import javafx.beans.DefaultProperty;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
@@ -113,7 +114,8 @@ public abstract class AbstractPathTextField extends HBox {
         setHgrow(inputText, Priority.ALWAYS);
         setSpacing(5);
         getChildren().addAll(inputText, choosePathButton);
-        
+
+        openPathButton.managedProperty().bind(openPathButton.visibleProperty());
         if (Desktop.isDesktopSupported()) {
             getChildren().add(openPathButton);
             openPathButton.setOnAction((ActionEvent e) -> {
@@ -121,7 +123,11 @@ public abstract class AbstractPathTextField extends HBox {
             });
         }
     }
-    
+
+    public BooleanProperty showOpenProperty(){
+        return openPathButton.visibleProperty();
+    }
+
     public String getText() {
         return textProperty.get();
     }
