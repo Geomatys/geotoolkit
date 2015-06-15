@@ -19,7 +19,7 @@ package org.geotoolkit.metadata.landsat;
 import java.io.IOException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
-import org.geotoolkit.metadata.GeoTiffExtension;
+import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
 
 /**
  *

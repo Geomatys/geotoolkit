@@ -83,7 +83,7 @@ import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.lang.SystemOverride;
-import org.geotoolkit.metadata.GeoTiffExtension;
+import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
 import org.geotoolkit.metadata.geotiff.GeoTiffCRSWriter;
 import org.geotoolkit.metadata.geotiff.GeoTiffConstants;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;

@@ -22,7 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.metadata.GeoTiffExtension;
+import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
 import org.opengis.metadata.Metadata;
 import org.xml.sax.SAXException;
 
