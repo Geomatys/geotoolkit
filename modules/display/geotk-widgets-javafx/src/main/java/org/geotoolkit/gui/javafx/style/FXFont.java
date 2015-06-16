@@ -24,9 +24,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.SpinnerValueFactory;
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.style.Font;
@@ -55,8 +55,8 @@ public class FXFont extends FXStyleElementController<Font>{
     @Override
     public void initialize() {
         super.initialize();        
-                
-        uiSize.getEditor().minValueProperty().set(0);
+
+        uiSize.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 10, 1));
                 
         //Initialize family font list with available font family
         final GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();

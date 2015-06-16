@@ -109,112 +109,8 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
     public boolean init(Object candidate) {
         if(!(candidate instanceof MapLayer)) return false;
         this.layer = (MapLayer) candidate;
-        tree.setRoot(new FXStyleTree.StyleTreeItem(this.layer.getStyle()));
-        tree.setPlaceholder(new Label(""));
-        tree.setShowRoot(false);
-
-        //this will cause the column width to fit the view area
-        tree.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
-
-        final TreeTableColumn col = new FXStyleTree.NameColumn();
-                
-        final ContextMenu menu = new ContextMenu();
-        tree.setContextMenu(menu);
-        tree.getColumns().add(col);
-        tree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        //dummy item to ensure showing will be called
-        menu.getItems().add(DUMMY);
-
-        menu.setOnShowing(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                //update menu items
-                final ObservableList items = menu.getItems();
-                items.clear();
-                items.add(DUMMY);
-                final List<TreeItem> selection = new ArrayList<>();
-                for(Object i : tree.getSelectionModel().getSelectedCells()){
-                    final TreeTablePosition ttp = (TreeTablePosition) i;
-                    final TreeItem ti = tree.getTreeItem(ttp.getRow());
-                    if(ti!=null && !selection.contains(ti)) selection.add(ti);
-                }
-                for(int i=0,n=menuItems.size();i<n;i++){
-                    final Object candidate = menuItems.get(i);
-                    if(candidate instanceof FXStyleTree.ShowStylePaneAction){
-                        ((FXStyleTree.ShowStylePaneAction)candidate).setMapLayer(layer);
-                    }
-
-                    if(candidate instanceof TreeMenuItem){
-                        final MenuItem mc = ((TreeMenuItem)candidate).init(selection);
-                        if(mc!=null) items.add(mc);
-                    }else if(candidate instanceof SeparatorMenuItem){
-                        //special case, we don't want any separator at the start or end
-                        //or 2 succesive separators
-                        if(i==0 || i==n-1 || items.isEmpty()) continue;
-
-                        if(items.get(items.size()-1) instanceof SeparatorMenuItem){
-                            continue;
-                        }
-                        items.add((SeparatorMenuItem)candidate);
-
-                    }else if(candidate instanceof MenuItem){
-                        items.add((MenuItem)candidate);
-                    }
-                }
-                //special case, we don't want any separator at the start or end
-                if(!items.isEmpty()){
-                    if(items.get(0) instanceof SeparatorMenuItem){
-                        items.remove(0);
-                    }
-                    if(!items.isEmpty()){
-                        final int idx = items.size()-1;
-                        if(items.get(idx) instanceof SeparatorMenuItem){
-                            items.remove(idx);
-                        }
-                    }
-                }
-            }
-        });
-
-        tree.getSelectionModel().getSelectedItems().addListener(new ListChangeListener() {
-            @Override
-            public void onChanged(ListChangeListener.Change c) {
-                final TreeItem treeItem = (TreeItem) tree.getSelectionModel().getSelectedItem();
-
-//                //we validate the previous edition pane
-//                if(!applying){
-//                    //we keep the same editor if we are currently applying changes
-                
-                    //force request focus, this will remove the focus from the previous
-                    //panel, validating any last changes if any.
-                    tree.requestFocus();
-                    contentPane.setCenter(null);
-
-                    if(treeItem!=null){
-                        final Object val = treeItem.getValue();
-                        editorPath = treeItem;
-                        editor = FXStyleElementEditor.findEditor(val);
-                        if(editor != null){
-                            editor.setLayer(layer);
-                            editor.valueProperty().setValue(val);
-
-                            //listen to editor change
-                            editor.valueProperty().addListener(new ChangeListener() {
-                                @Override
-                                public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                                    FXStyleTree.applyTreeItemEditor(editor,editorPath);
-                                }
-                            });
-                            contentPane.setCenter(editor);
-                        }
-                    }
-//                }
-            }
-        });
-
-        FXUtilities.expandAll(tree.getRoot());
-
-
+        initTree();
+        updateEditor(this.layer.getStyle());
         return true;
     }
 
@@ -308,58 +204,42 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
         }
     }
 
-    protected void updateEditor(MutableStyle styleElement) {
-        
-        tree.setRoot(new FXStyleTree.StyleTreeItem(styleElement));
+    private void initTree(){
+        tree.setPlaceholder(new Label(""));
+        tree.setShowRoot(false);
+
+        final TreeTableColumn col = new FXStyleTree.NameColumn();
+
         //this will cause the column width to fit the view area
         tree.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
         tree.getColumns().clear();
-        
-        final TreeTableColumn<Object, String> col = new TreeTableColumn<>();
-        col.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<Object, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<Object, String> param) {
-                final Object obj = param.getValue().getValue();
-                if(obj instanceof Style){
-                    return FXUtilities.beanProperty(obj, "name", String.class);
-                }else if(obj instanceof FeatureTypeStyle){
-                    return FXUtilities.beanProperty(obj, "name", String.class);
-                }else if(obj instanceof Rule){
-                    return FXUtilities.beanProperty(obj, "name", String.class);
-                }else if(obj instanceof Symbolizer){
-                    return new SimpleObjectProperty<>(((Symbolizer)obj).getName());
-                }else{
-                    return new SimpleObjectProperty<>("");
-                }
-            }
-        });
-        col.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
-        col.setPrefWidth(200);
-        col.setMinWidth(120);
-        
-                
+
         final ContextMenu menu = new ContextMenu();
         tree.setContextMenu(menu);
-        tree.getColumns().add(col);                
+        tree.getColumns().add(col);
         tree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         //dummy item to ensure showing will be called
         menu.getItems().add(DUMMY);
-                
+
         menu.setOnShowing(new EventHandler<WindowEvent>() {
             @Override
-            public void handle(WindowEvent event) {                
+            public void handle(WindowEvent event) {
                 //update menu items
                 final ObservableList items = menu.getItems();
                 items.clear();
                 items.add(DUMMY);
                 final List<TreeItem> selection = new ArrayList<>();
                 for(Object i : tree.getSelectionModel().getSelectedCells()){
-                    final TreeTablePosition ttp = (TreeTablePosition) i;                    
+                    final TreeTablePosition ttp = (TreeTablePosition) i;
                     final TreeItem ti = tree.getTreeItem(ttp.getRow());
                     if(ti!=null && !selection.contains(ti)) selection.add(ti);
                 }
                 for(int i=0,n=menuItems.size();i<n;i++){
                     final Object candidate = menuItems.get(i);
+                    if(candidate instanceof FXStyleTree.ShowStylePaneAction){
+                        ((FXStyleTree.ShowStylePaneAction)candidate).setMapLayer(layer);
+                    }
+
                     if(candidate instanceof TreeMenuItem){
                         final MenuItem mc = ((TreeMenuItem)candidate).init(selection);
                         if(mc!=null) items.add(mc);
@@ -367,12 +247,12 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
                         //special case, we don't want any separator at the start or end
                         //or 2 succesive separators
                         if(i==0 || i==n-1 || items.isEmpty()) continue;
-                        
+
                         if(items.get(items.size()-1) instanceof SeparatorMenuItem){
                             continue;
                         }
                         items.add((SeparatorMenuItem)candidate);
-                        
+
                     }else if(candidate instanceof MenuItem){
                         items.add((MenuItem)candidate);
                     }
@@ -391,17 +271,19 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
                 }
             }
         });
-                
+
         tree.getSelectionModel().getSelectedItems().addListener(new ListChangeListener() {
             @Override
-            public void onChanged(ListChangeListener.Change c) {                
+            public void onChanged(ListChangeListener.Change c) {
                 final TreeItem treeItem = (TreeItem) tree.getSelectionModel().getSelectedItem();
-                
+
 //                //we validate the previous edition pane
 //                if(!applying){
 //                    //we keep the same editor if we are currently applying changes
-//                    applyEditor(editorPath);
 
+                    //force request focus, this will remove the focus from the previous
+                    //panel, validating any last changes if any.
+                    tree.requestFocus();
                     contentPane.setCenter(null);
 
                     if(treeItem!=null){
@@ -411,7 +293,7 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
                         if(editor != null){
                             editor.setLayer(layer);
                             editor.valueProperty().setValue(val);
-                            
+
                             //listen to editor change
                             editor.valueProperty().addListener(new ChangeListener() {
                                 @Override
@@ -425,7 +307,11 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
 //                }
             }
         });
-        
+
+    }
+
+    protected void updateEditor(MutableStyle styleElement) {        
+        tree.setRoot(new FXStyleTree.StyleTreeItem(styleElement));
         FXUtilities.expandAll(tree.getRoot());
     }
     

@@ -20,6 +20,7 @@ package org.geotoolkit.gui.javafx.contexttree;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
+import java.util.EventObject;
 import java.util.function.Function;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -43,6 +44,8 @@ import org.geotoolkit.gui.javafx.layer.FXPropertiesPane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleAggregatedPane;
 import org.geotoolkit.gui.javafx.util.ButtonTreeTableCell;
 import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.map.LayerListener;
+import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.StyleListener;
@@ -112,9 +115,9 @@ public class MapItemGlyphColumn extends TreeTableColumn {
         dialog.show();
     }
 
-    private class MapItemGlyphTableCell extends ButtonTreeTableCell<Object, Object> implements StyleListener{
+    private class MapItemGlyphTableCell extends ButtonTreeTableCell<Object, Object> implements LayerListener{
 
-        private final StyleListener.Weak listener = new StyleListener.Weak(this);
+        private final LayerListener.Weak listener = new LayerListener.Weak(this);
         private MapLayer mapLayer;
         /** Image view contained in the cell. */
         private final ImageView cellContent = new ImageView();
@@ -147,19 +150,26 @@ public class MapItemGlyphColumn extends TreeTableColumn {
 
             if (!empty && mapItem instanceof MapLayer) {
                 mapLayer = (MapLayer) mapItem;
-                listener.registerSource(mapLayer.getStyle());
+                listener.registerSource(mapLayer);
                 cellContent.setImage(createGlyph(mapLayer));
                 button.setGraphic(cellContent);
             }
         }      
 
         @Override
-        public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
+        public void propertyChange(PropertyChangeEvent evt) {
+            if(MapLayer.STYLE_PROPERTY.equals(evt.getPropertyName())){
+                cellContent.setImage(createGlyph(mapLayer));
+            }
+        }
+
+        @Override
+        public void styleChange(MapLayer source, EventObject event) {
             cellContent.setImage(createGlyph(mapLayer));
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {}
+        public void itemChange(CollectionChangeEvent<MapItem> event) {}
         
     }
 

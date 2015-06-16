@@ -41,6 +41,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -49,7 +50,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
-import jidefx.scene.control.field.NumberField;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
@@ -243,8 +243,7 @@ public class FXStyleClassifRangePane extends FXLayerStylePane {
         uiMethod.getItems().add(IntervalStyleBuilder.METHOD.EL);
         uiMethod.getItems().add(IntervalStyleBuilder.METHOD.QANTILE);
         uiMethod.getItems().add(IntervalStyleBuilder.METHOD.MANUAL);
-        uiClasses.getNumberField().setNumberType(NumberField.NumberType.Integer);
-        uiClasses.minValueProperty().set(0);
+        uiClasses.getSpinner().setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0, 1));
         uiClasses.valueProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
             analyze.setNbClasses(uiClasses.valueProperty().get().intValue());
         });

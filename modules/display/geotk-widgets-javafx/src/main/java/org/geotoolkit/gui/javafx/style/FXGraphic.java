@@ -34,6 +34,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
@@ -120,10 +121,9 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             resetValue();
         };
-        
-        uiOpacity.getEditor().minValueProperty().set(0);
-        uiOpacity.getEditor().maxValueProperty().set(1);
-        uiSize.getEditor().minValueProperty().set(0);
+
+        uiOpacity.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1, 1, 0.1));
+        uiSize.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 16, 1));
         
         uiSize.valueProperty().addListener(changeListener);
         uiOpacity.valueProperty().addListener(changeListener);

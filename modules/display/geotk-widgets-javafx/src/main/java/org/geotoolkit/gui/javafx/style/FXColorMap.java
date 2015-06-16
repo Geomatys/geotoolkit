@@ -45,6 +45,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -54,7 +55,6 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.util.Callback;
-import jidefx.scene.control.field.NumberField;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -490,7 +490,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     }
 
     public int getSelectedBand(){
-        return uiBand.getNumberField().valueProperty().get().intValue();
+        return ((Number)uiBand.getSpinner().valueProperty().get()).intValue();
     }
 
     private List<InterOrCategorize> getInterpolationPoints(final double min, final double max, 
@@ -564,8 +564,8 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     
     private void postParse(){
         uiInvert.setDisable(false);
-        uiMinimum.getNumberField().setEditable(true);
-        uiMaximum.getNumberField().setEditable(true);
+        uiMinimum.getSpinner().setEditable(true);
+        uiMaximum.getSpinner().setEditable(true);
 
         if(Interpolate.class.isAssignableFrom(function)){
             uiMethod.getSelectionModel().select("Interpolate");
@@ -686,8 +686,8 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
 
                     final GridCoverage coverage = reader.read(covRef.getImageIndex(), readParam);
                     final int nbBands = coverage.getNumSampleDimensions() - 1;
-                    uiBand.minValueProperty().set(0);
-                    uiBand.maxValueProperty().set(nbBands);
+
+                    uiBand.getSpinner().setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, nbBands, 0, 1));
                 }
                 covRef.recycle(reader);
             }
@@ -716,13 +716,11 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
 
         uiNoData.setVisible(false);
         uiDynamic.setVisible(false);
-        
-        uiDivision.getNumberField().setNumberType(NumberField.NumberType.Integer);
-        uiDivision.valueProperty().set(10);        
-        uiBand.getNumberField().setNumberType(NumberField.NumberType.Integer);
-        uiBand.valueProperty().set(0);
-        uiMinimum.valueProperty().set(0);
-        uiMaximum.valueProperty().set(1);
+
+        uiDivision.getSpinner().setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 10, 1));
+        uiBand.getSpinner().setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0, 1));
+        uiMinimum.valueProperty().set(0.0);
+        uiMaximum.valueProperty().set(1.0);
         uiNaN.setSelected(true);
         
         uiPalette.setItems(FXCollections.observableList(FXUtilities.PALETTES));        
@@ -884,7 +882,6 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         private final FXNumberSpinner field = new FXNumberSpinner();
 
         public FXValueExpressionCell() {
-            field.getNumberField().setNumberType(NumberField.NumberType.Normal);
             setGraphic(field);
             setAlignment(Pos.CENTER_RIGHT);
             setContentDisplay(ContentDisplay.CENTER);
@@ -915,7 +912,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             super.startEdit();
             setText(null);
             setGraphic(field);
-            field.getNumberField().requestFocus();
+            field.getSpinner().requestFocus();
         }
 
         @Override

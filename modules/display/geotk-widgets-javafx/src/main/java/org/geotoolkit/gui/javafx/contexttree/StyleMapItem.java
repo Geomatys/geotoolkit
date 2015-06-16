@@ -52,7 +52,7 @@ public class StyleMapItem extends TreeItem implements LayerListener {
     //generate a template for the legend
     private static final LegendTemplate legendTemplate = new DefaultLegendTemplate(
             new DefaultBackgroundTemplate( //legend background
-                    new BasicStroke(0), //stroke
+                    null, //stroke
                     Color.BLACK, //stroke paint
                     new Color(0, 0, 0, 0), // fill paint
                     new Insets(2, 2, 2, 2), //border margins
@@ -91,6 +91,9 @@ public class StyleMapItem extends TreeItem implements LayerListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
+        if(MapLayer.STYLE_PROPERTY.equals(evt.getPropertyName())){
+            styleChange((MapLayer) evt.getSource(), null);
+        }
     }
 
     @Override

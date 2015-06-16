@@ -19,7 +19,7 @@ package org.geotoolkit.gui.javafx.util;
 import java.text.DecimalFormat;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
-import jidefx.scene.control.field.NumberField;
+import javafx.scene.control.SpinnerValueFactory;
 
 /**
  *
@@ -28,8 +28,12 @@ import jidefx.scene.control.field.NumberField;
 public class FXNumberCell<S> extends FXTableCell<S, Number> {
     protected final FXNumberSpinner field = new FXNumberSpinner();
     
-    public FXNumberCell(NumberField.NumberType type) {
-        field.getNumberField().setNumberType(type);
+    public FXNumberCell(Class clazz) {
+        if(clazz==Integer.class){
+            field.getSpinner().setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 1));
+        }else{
+            field.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.MIN_VALUE, Double.MAX_VALUE, 0, 1));
+        }
         setGraphic(field);
         setAlignment(Pos.CENTER_RIGHT);
         setContentDisplay(ContentDisplay.CENTER);
@@ -50,7 +54,7 @@ public class FXNumberCell<S> extends FXTableCell<S, Number> {
         super.startEdit();
         setText(null);
         setGraphic(field);
-        field.getNumberField().requestFocus();
+        field.getSpinner().requestFocus();
     }
 
     @Override
@@ -79,8 +83,8 @@ public class FXNumberCell<S> extends FXTableCell<S, Number> {
     
     public static class Float<T> extends FXNumberCell<T> {
 
-        public Float(NumberField.NumberType type) {
-            super(type);
+        public Float() {
+            super(Double.class);
         }
 
         @Override

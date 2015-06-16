@@ -20,6 +20,7 @@ package org.geotoolkit.gui.javafx.style;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.SpinnerValueFactory;
 import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
@@ -55,12 +56,11 @@ public class FXStroke extends FXStyleElementController<Stroke> {
     public void initialize() {
         super.initialize();     
         
-        uiWidth.getEditor().minValueProperty().set(0);
-        uiOpacity.getEditor().minValueProperty().set(0);
-        uiOpacity.getEditor().maxValueProperty().set(1);
-        uiDash1.minValueProperty().set(0);
-        uiDash2.minValueProperty().set(0);
-        uiDash3.minValueProperty().set(0);
+        uiWidth.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 1, 1));
+        uiOpacity.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1, 1, 0.1));
+        uiDash1.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 0, 1));
+        uiDash2.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 0, 1));
+        uiDash3.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 0, 1));
         
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;

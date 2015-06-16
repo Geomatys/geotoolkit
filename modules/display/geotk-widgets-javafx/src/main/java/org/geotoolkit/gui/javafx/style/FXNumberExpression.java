@@ -57,9 +57,9 @@ public class FXNumberExpression extends FXExpression {
     protected boolean canHandle(Expression exp) {
         if(exp==null) return false;
         try{
-            final Number n = exp.evaluate(exp, Number.class);
+            final Number n = (Number) exp.evaluate(exp, (Class)uiNumber.getSpinner().getValueFactory().getValue().getClass());
             if(n!=null){
-                uiNumber.getNumberField().setValue(n);
+                uiNumber.getSpinner().getValueFactory().setValue(n);
                 return true;
             }
         }catch(Exception ex){}
