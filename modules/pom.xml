@@ -70,20 +70,8 @@
        =========================================================== -->
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.geotoolkit.project</groupId>
-        <artifactId>geotk-resource-compiler</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
 
-      <!-- Collect JAR files in <root>/target/binaries directory. -->
+      <!-- Compile properties files into resources UTF files. -->
       <plugin>
         <groupId>org.apache.sis.core</groupId>
         <artifactId>sis-build-helper</artifactId>
@@ -91,6 +79,7 @@
         <executions>
           <execution>
             <goals>
+              <goal>compile-resources</goal>
               <goal>collect-jars</goal>
             </goals>
           </execution>

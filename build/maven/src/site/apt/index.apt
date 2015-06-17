@@ -13,7 +13,4 @@ Maven plugins for Geotk
 
   The main Maven plugins are:
 
-  * {{{./geotk-resource-compiler/index.html}Resources compiler}} for creating the binary files used for
-    internationalization in Geotk.
-
   * {{{./geotk-unopkg/index.html}UNO packager}}, for creating Libre/OpenOffice.org add-ins.

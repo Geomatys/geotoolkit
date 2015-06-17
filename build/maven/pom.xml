@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ======================================================================= 
+<!-- =======================================================================
 	    Maven Project Configuration File
-      
+
 	    The Geotoolkit.org Project
-	       http://www.geotoolkit.org/ 
+	       http://www.geotoolkit.org/
 	======================================================================= -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -27,7 +27,7 @@
   </description>
 
 
-	<!-- =========================================================== 
+	<!-- ===========================================================
          Developers and Contributors
          =========================================================== -->
   <developers>
@@ -64,7 +64,7 @@
   <build>
     <pluginManagement>
       <plugins>
-      <!--This plugin's configuration is used to store Eclipse m2e settings 
+      <!--This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
@@ -99,7 +99,6 @@
           Modules included in the build
          =========================================================== -->
   <modules>
-    <module>geotk-resource-compiler</module>
     <module>geotk-unopkg</module>
   </modules>
 </project>
