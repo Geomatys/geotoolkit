@@ -73,7 +73,7 @@ public class ReferencingFactory extends org.geotoolkit.factory.Factory implement
      */
     static final Citation ALL;
     static {
-        final DefaultCitation citation = new DefaultCitation(Vocabulary.format(Vocabulary.Keys.ALL));
+        final DefaultCitation citation = new DefaultCitation(Vocabulary.format(Vocabulary.Keys.All));
         citation.freeze();
         ALL = citation;
     }
@@ -114,7 +114,7 @@ public class ReferencingFactory extends org.geotoolkit.factory.Factory implement
     {
         if (object == null) {
             throw new InvalidParameterValueException(Errors.format(
-                    Errors.Keys.NULL_ARGUMENT_1, name), name, object);
+                    Errors.Keys.NullArgument_1, name), name, object);
         }
     }
 

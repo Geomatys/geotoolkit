@@ -404,10 +404,10 @@ public class ImageCoverageReader extends GridCoverageReader {
                                     final short messageKey;
                                     final Object argument;
                                     if (IOUtilities.canProcessAsPath(input)) {
-                                        messageKey = Errors.Keys.CANT_READ_FILE_1;
+                                        messageKey = Errors.Keys.CantReadFile_1;
                                         argument = org.apache.sis.internal.storage.IOUtilities.filename(input);
                                     } else {
-                                        messageKey = Errors.Keys.UNKNOWN_TYPE_1;
+                                        messageKey = Errors.Keys.UnknownType_1;
                                         argument = input.getClass();
                                     }
                                     throw new CoverageStoreException(Errors.getResources(locale).getString(messageKey, argument));
@@ -533,7 +533,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         if (coverageNames == null) {
             final ImageReader imageReader = this.imageReader; // Protect from changes.
             if (imageReader == null) {
-                throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
+                throw new IllegalStateException(formatErrorMessage(Errors.Keys.NoImageInput));
             }
             try {
                 List<String> imageNames = null;
@@ -581,7 +581,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         if (gridGeometry == null) {
             final ImageReader imageReader = this.imageReader; // Protect from changes.
             if (imageReader == null) {
-                throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
+                throw new IllegalStateException(formatErrorMessage(Errors.Keys.NoImageInput));
             }
             /*
              * Get the required information from the SpatialMetadata, if any.
@@ -718,7 +718,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         if (sd == null) {
             final ImageReader imageReader = this.imageReader; // Protect from changes.
             if (imageReader == null) {
-                throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
+                throw new IllegalStateException(formatErrorMessage(Errors.Keys.NoImageInput));
             }
             /*
              * Get the required information from the SpatialMetadata, if any.
@@ -824,7 +824,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     public SpatialMetadata getStreamMetadata() throws CoverageStoreException {
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader == null) {
-            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
+            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NoImageInput));
         }
         try {
             final IIOMetadata metadata = imageReader.getStreamMetadata();
@@ -855,7 +855,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     public SpatialMetadata getCoverageMetadata(final int index) throws CoverageStoreException {
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader == null) {
-            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
+            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NoImageInput));
         }
         try {
             final IIOMetadata metadata = imageReader.getImageMetadata(index);
@@ -946,7 +946,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         abortRequested = false;
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader == null) {
-            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
+            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NoImageInput));
         }
         GridGeometry2D gridGeometry = getGridGeometry(index);
         checkAbortState();
@@ -964,7 +964,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             dstBands = param.getDestinationBands();
             if (srcBands != null && dstBands != null && srcBands.length != dstBands.length) {
                 throw new IllegalArgumentException(Errors.getResources(locale).getString(
-                        Errors.Keys.MISMATCHED_ARRAY_LENGTH_2, "sourceBands", "destinationBands"));
+                        Errors.Keys.MismatchedArrayLength_2, "sourceBands", "destinationBands"));
             }
             /*
              * Convert geodetic envelope and resolution to pixel coordinates.

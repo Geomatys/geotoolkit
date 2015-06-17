@@ -93,7 +93,7 @@ public class OrdinateOutsideCoverageException extends PointOutsideCoverageExcept
      * exception.
      */
     OrdinateOutsideCoverageException(final OrdinateOutsideCoverageException cause, final Date date) {
-        super(Errors.format(Errors.Keys.DATE_OUTSIDE_COVERAGE_1, date));
+        super(Errors.format(Errors.Keys.DateOutsideCoverage_1, date));
         dimension = cause.dimension;
         envelope  = cause.envelope;
         initCause(cause);

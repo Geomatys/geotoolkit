@@ -248,7 +248,7 @@ public final class Setup extends Static {
                  .getMethod("show", Locale.class).invoke(null, new Object[] {null});
         } catch (ClassNotFoundException exception) {
             throw new UnsupportedOperationException(Errors.format(
-                    Errors.Keys.MISSING_MODULE_1, "geotk-setup"), exception);
+                    Errors.Keys.MissingModule_1, "geotk-setup"), exception);
         } catch (InvocationTargetException exception) {
             final Throwable cause = exception.getCause();
             if (cause instanceof RuntimeException) {

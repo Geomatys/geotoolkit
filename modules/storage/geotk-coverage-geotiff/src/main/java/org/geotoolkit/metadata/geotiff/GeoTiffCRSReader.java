@@ -1051,10 +1051,10 @@ final class GeoTiffCRSReader {
                     "Error when trying to create a PCS using this linear UoM "
                     + linearUnit.toString());
         }
-        return new DefaultCartesianCS(name(Vocabulary.formatInternational(Vocabulary.Keys.PROJECTED).toString()),
-                new DefaultCoordinateSystemAxis(name(Vocabulary.formatInternational(Vocabulary.Keys.EASTING).toString()), "E",
+        return new DefaultCartesianCS(name(Vocabulary.formatInternational(Vocabulary.Keys.Projected).toString()),
+                new DefaultCoordinateSystemAxis(name(Vocabulary.formatInternational(Vocabulary.Keys.Easting).toString()), "E",
                 AxisDirection.EAST, linearUnit),
-                new DefaultCoordinateSystemAxis(name(Vocabulary.formatInternational(Vocabulary.Keys.NORTHING).toString()), "N",
+                new DefaultCoordinateSystemAxis(name(Vocabulary.formatInternational(Vocabulary.Keys.Northing).toString()), "N",
                 AxisDirection.NORTH, linearUnit));
     }
 

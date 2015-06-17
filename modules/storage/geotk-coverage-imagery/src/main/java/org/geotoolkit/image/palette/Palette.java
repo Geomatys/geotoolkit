@@ -116,7 +116,7 @@ public abstract class Palette {
         ArgumentChecks.ensureNonNull("factory", factory); // Can't use factory.getErrorResources() here.
         if (name == null) {
             throw new NullArgumentException(factory.getErrorResources().getString(
-                    Errors.Keys.NULL_ARGUMENT_1, "name"));
+                    Errors.Keys.NullArgument_1, "name"));
         }
         ensureInsideBounds(numBands, 0, 255); // This maximal value is somewhat arbitrary.
         ensureInsideBounds(visibleBand, 0, numBands-1);
@@ -136,7 +136,7 @@ public abstract class Palette {
     {
         if (value < min || value > max) {
             throw new IllegalArgumentException(factory.getErrorResources().getString(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_3, value, min, max));
+                    Errors.Keys.ValueOutOfBounds_3, value, min, max));
         }
     }
 

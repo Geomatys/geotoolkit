@@ -189,7 +189,7 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
             }
             final Locale locale = getLocale();
             final LogRecord record = Loggings.getResources(locale).getLogRecord(
-                    OPERATION, Loggings.Keys.APPLIED_OPERATION_4,
+                    OPERATION, Loggings.Keys.AppliedOperation_4,
                      getName((source != null) ? source : result, locale),
                     operationName, interp, Integer.valueOf(fromCache ? 1 : 0));
             record.setSourceClassName(getClass().getCanonicalName());
@@ -231,6 +231,6 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
                 return name.toString(locale);
             }
         }
-        return Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED);
+        return Vocabulary.getResources(locale).getString(Vocabulary.Keys.Untitled);
     }
 }

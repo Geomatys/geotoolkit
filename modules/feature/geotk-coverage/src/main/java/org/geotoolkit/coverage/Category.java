@@ -114,7 +114,7 @@ public class Category implements Serializable {
      * the name is "no data" localized to the requested locale.
      */
     public static final Category NODATA = new Category(
-            Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), 0);
+            Vocabulary.formatInternational(Vocabulary.Keys.Nodata), new Color(0,0,0,0), 0);
 
     /**
      * A default category for the boolean "{@link Boolean#FALSE false}" value. This default
@@ -122,7 +122,7 @@ public class Category implements Serializable {
      * the name "false" localized to the specified locale.
      */
     public static final Category FALSE = new Category(
-            Vocabulary.formatInternational(Vocabulary.Keys.FALSE), Color.BLACK, false);
+            Vocabulary.formatInternational(Vocabulary.Keys.False), Color.BLACK, false);
 
     /**
      * A default category for the boolean "{@link Boolean#TRUE true}" value. This default
@@ -130,7 +130,7 @@ public class Category implements Serializable {
      * and the name "true" localized to the specified locale.
      */
     public static final Category TRUE = new Category(
-            Vocabulary.formatInternational(Vocabulary.Keys.TRUE), Color.WHITE, true);
+            Vocabulary.formatInternational(Vocabulary.Keys.True), Color.WHITE, true);
 
     /**
      * The category name.
@@ -354,10 +354,10 @@ public class Category implements Serializable {
             throw new AssertionError(exception);
         }
         if (Double.isNaN(scale) || Double.isInfinite(scale)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INFINITE_COEFFICIENT_2, "scale", scale));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.InfiniteCoefficient_2, "scale", scale));
         }
         if (Double.isNaN(offset) || Double.isInfinite(offset)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INFINITE_COEFFICIENT_2, "offset", offset));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.InfiniteCoefficient_2, "offset", offset));
         }
     }
 
@@ -466,7 +466,7 @@ public class Category implements Serializable {
          * except for the legal case catched by the "if" block just above.
          */
         if (!(minimum <= maximum) || Double.isInfinite(minimum) || Double.isInfinite(maximum)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalRange_2,
                                                range.getMinValue(), range.getMaxValue()));
         }
         /*
@@ -492,7 +492,7 @@ public class Category implements Serializable {
         } catch (TransformException exception) {
             cause = exception;
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_1,
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalTransformForType_1,
                 sampleToGeophysics.getClass()), cause);
     }
 
@@ -553,10 +553,10 @@ public class Category implements Serializable {
             throws IllegalArgumentException
     {
         if (scale == 0 || Double.isNaN(scale) || Double.isInfinite(scale)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "scale", scale));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalArgument_2, "scale", scale));
         }
         if (Double.isNaN(offset) || Double.isInfinite(offset)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "offset", offset));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalArgument_2, "offset", offset));
         }
         return (MathTransform1D) MathTransforms.linear(scale, offset);
     }

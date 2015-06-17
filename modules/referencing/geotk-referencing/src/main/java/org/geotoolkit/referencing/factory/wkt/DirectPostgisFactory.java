@@ -122,7 +122,7 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
         CharSequence cs;
         if ((cs=authority.getEdition()) != null) {
             final String identifier = org.apache.sis.metadata.iso.citation.Citations.getIdentifier(authority);
-            table.write(resources.getString(Vocabulary.Keys.VERSION_OF_1, identifier));
+            table.write(resources.getString(Vocabulary.Keys.VersionOf_1, identifier));
             table.write(':');
             table.nextColumn();
             table.write(cs.toString());
@@ -132,17 +132,17 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
             String s;
             final DatabaseMetaData metadata = ((SpatialRefSysMap) definitions).connection.getMetaData();
             if ((s=metadata.getDatabaseProductName()) != null) {
-                table.write(resources.getLabel(Vocabulary.Keys.DATABASE_ENGINE));
+                table.write(resources.getLabel(Vocabulary.Keys.DatabaseEngine));
                 table.nextColumn();
                 table.write(s);
                 if ((s = metadata.getDatabaseProductVersion()) != null) {
                     table.write(' ');
-                    table.write(resources.getString(Vocabulary.Keys.VERSION_1, s));
+                    table.write(resources.getString(Vocabulary.Keys.Version_1, s));
                 }
                 table.nextLine();
             }
             if ((s = metadata.getURL()) != null) {
-                table.write(resources.getLabel(Vocabulary.Keys.DATABASE_URL));
+                table.write(resources.getLabel(Vocabulary.Keys.DatabaseUrl));
                 table.nextColumn();
                 table.write(s);
                 table.nextLine();

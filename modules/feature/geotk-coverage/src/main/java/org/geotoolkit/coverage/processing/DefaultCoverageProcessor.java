@@ -98,7 +98,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
          */
         if (cache.getMemoryCapacity() + (4*1024*1024) >= maxMemory) {
             final LogRecord record = Loggings.format(Level.SEVERE,
-                    Loggings.Keys.EXCESSIVE_TILE_CACHE_1, maxMemory / (1024 * 1024.0));
+                    Loggings.Keys.ExcessiveTileCache_1, maxMemory / (1024 * 1024.0));
             record.setLoggerName(LOGGER.getName());
             LOGGER.log(record);
         }
@@ -201,7 +201,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
         if (old!=null && !old.equals(operation)) {
             operations.put(old.getName().trim(), old);
             throw new IllegalStateException(Errors.getResources(getLocale()).getString(
-                    Errors.Keys.OPERATION_ALREADY_BOUNDS_1, operation.getName()));
+                    Errors.Keys.OperationAlreadyBounds_1, operation.getName()));
         }
     }
 
@@ -236,7 +236,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
             return operation;
         }
         throw new OperationNotFoundException(Errors.getResources(getLocale()).getString(
-                Errors.Keys.NO_SUCH_OPERATION_1, name));
+                Errors.Keys.NoSuchOperation_1, name));
     }
 
     /**
@@ -314,7 +314,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
             op = (AbstractOperation) operation;
         } catch (ClassCastException cause) {
             throw new OperationNotFoundException(Errors.getResources(getLocale()).getString(
-                        Errors.Keys.NO_SUCH_OPERATION_1, operationName), cause);
+                        Errors.Keys.NoSuchOperation_1, operationName), cause);
         }
         Coverage cv = op.doOperation(parameters, hints);
         if (interpolations != null && (cv instanceof GridCoverage2D) && !(cv instanceof Interpolator2D)) {

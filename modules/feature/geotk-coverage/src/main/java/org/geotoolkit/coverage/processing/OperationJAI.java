@@ -214,7 +214,7 @@ public class OperationJAI extends Operation2D {
                 return operation;
             }
         }
-        throw new OperationNotFoundException(Errors.format(Errors.Keys.NO_SUCH_OPERATION_1, name));
+        throw new OperationNotFoundException(Errors.format(Errors.Keys.NoSuchOperation_1, name));
     }
 
     /**
@@ -223,7 +223,7 @@ public class OperationJAI extends Operation2D {
     private static void ensureRenderedImage(final Class<?> classe) throws IllegalArgumentException {
         if (!RenderedImage.class.isAssignableFrom(classe)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_2, classe, RenderedImage.class));
+                    Errors.Keys.IllegalClass_2, classe, RenderedImage.class));
         }
     }
 
@@ -303,7 +303,7 @@ public class OperationJAI extends Operation2D {
             if (!CRS.equalsIgnoreMetadata(crs, source.getCoordinateReferenceSystem2D()) ||
                 !CRS.equalsIgnoreMetadata(gridToCRS, source.getGridGeometry().getGridToCRS2D()))
             {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_GRID_GEOMETRY));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleGridGeometry));
             }
             block.setSource(sourceNames[i], source.getRenderedImage());
         }
@@ -321,7 +321,7 @@ public class OperationJAI extends Operation2D {
      * Returns an error message for an unsupported CRS.
      */
     private static String unsupported(final CoordinateReferenceSystem crs) {
-        return Errors.format(Errors.Keys.UNSUPPORTED_CRS_1, crs.getName().getCode());
+        return Errors.format(Errors.Keys.UnsupportedCrs_1, crs.getName().getCode());
     }
 
     /**
@@ -358,7 +358,7 @@ public class OperationJAI extends Operation2D {
         final int[] source = filter.getSourceDimensions(); Arrays.sort(source);
         final int[] target = filter.getTargetDimensions(); Arrays.sort(target);
         if (!Arrays.equals(source, target)) {
-            throw new InvalidGridGeometryException(Errors.format(Errors.Keys.UNSUPPORTED_TRANSFORM));
+            throw new InvalidGridGeometryException(Errors.format(Errors.Keys.UnsupportedTransform));
         }
     }
 
@@ -494,7 +494,7 @@ public class OperationJAI extends Operation2D {
                 final int  upperDim = Math.max(geometry.gridDimensionX, geometry.gridDimensionY)+1;
                 final int sourceDim = toSource.getSourceDimensions();
                 if (upperDim-lowerDim != toSource2D.getSourceDimensions()) {
-                    throw new InvalidGridGeometryException(Errors.format(Errors.Keys.UNSUPPORTED_TRANSFORM));
+                    throw new InvalidGridGeometryException(Errors.format(Errors.Keys.UnsupportedTransform));
                 }
                 final MathTransformFactory factory = FactoryFinder.getMathTransformFactory(hints);
                 final DimensionFilter       filter = new DimensionFilter(factory);
@@ -517,7 +517,7 @@ public class OperationJAI extends Operation2D {
                     }
                 } catch (FactoryException exception) {
                     throw new CannotReprojectException(Errors.format(
-                            Errors.Keys.CANT_REPROJECT_COVERAGE_1, source.getName()), exception);
+                            Errors.Keys.CantReprojectCoverage_1, source.getName()), exception);
                 }
             }
             final GridGeometry2D targetGeom = new GridGeometry2D(null, toTarget, targetCRS);

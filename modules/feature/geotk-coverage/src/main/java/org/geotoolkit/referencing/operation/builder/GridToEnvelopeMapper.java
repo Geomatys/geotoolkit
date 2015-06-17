@@ -178,7 +178,7 @@ public class GridToEnvelopeMapper {
         final int userDim = envelope.getDimension();
         if (userDim != gridDim) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_2, gridDim, userDim));
+                    Errors.Keys.MismatchedDimension_2, gridDim, userDim));
         }
         this.gridExtent = gridExtent;
         this.envelope   = envelope;
@@ -204,7 +204,7 @@ public class GridToEnvelopeMapper {
             }
             if (dim1 != dim2) {
                 throw new MismatchedDimensionException(Errors.format(
-                        Errors.Keys.MISMATCHED_DIMENSION_3, label, dim1, dim2));
+                        Errors.Keys.MismatchedDimension_3, label, dim1, dim2));
             }
         }
     }
@@ -261,7 +261,7 @@ public class GridToEnvelopeMapper {
     public GridEnvelope getGridExtent() throws IllegalStateException {
         if (gridExtent == null) {
             throw new IllegalStateException(Errors.format(
-                    Errors.Keys.NO_PARAMETER_VALUE_1, "gridEnvelope"));
+                    Errors.Keys.NoParameterValue_1, "gridEnvelope"));
         }
         return gridExtent;
     }
@@ -328,7 +328,7 @@ public class GridToEnvelopeMapper {
     public Envelope getEnvelope() throws IllegalStateException {
         if (envelope == null) {
             throw new IllegalStateException(Errors.format(
-                    Errors.Keys.NO_PARAMETER_VALUE_1, "envelope"));
+                    Errors.Keys.NoParameterValue_1, "envelope"));
         }
         return envelope;
     }
@@ -602,7 +602,7 @@ public class GridToEnvelopeMapper {
                 translate = 0.0;
             } else {
                 throw new IllegalStateException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_2, "gridType", gridType));
+                        Errors.Keys.IllegalArgument_2, "gridType", gridType));
             }
             final Matrix matrix = Matrices.createIdentity(dimension + 1);
             for (int i=0; i<dimension; i++) {
@@ -642,6 +642,6 @@ public class GridToEnvelopeMapper {
         if (transform instanceof AffineTransform) {
             return (AffineTransform) transform;
         }
-        throw new IllegalStateException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
+        throw new IllegalStateException(Errors.format(Errors.Keys.NotAnAffineTransform));
     }
 }

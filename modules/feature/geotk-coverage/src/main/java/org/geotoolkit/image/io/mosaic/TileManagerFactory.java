@@ -104,13 +104,13 @@ public class TileManagerFactory extends Factory {
             managers = create(c);
         } else {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_CLASS_3, "tiles", tiles.getClass(), TileManager.class));
+                    Errors.Keys.IllegalArgumentClass_3, "tiles", tiles.getClass(), TileManager.class));
         }
         if (managers != null) {
             for (int i=0; i<managers.length; i++) {
                 if (managers[i] == null) {
                     throw new NullArgumentException(Errors.format(
-                            Errors.Keys.NULL_ARGUMENT_1, "input[" + i + ']'));
+                            Errors.Keys.NullArgument_1, "input[" + i + ']'));
                 }
             }
         }
@@ -140,7 +140,7 @@ public class TileManagerFactory extends Factory {
         if (file.isFile()) {
             final String suffix = file.getName();
             if (!suffix.endsWith(".serialized")) {
-                throw new IOException(Errors.format(Errors.Keys.UNKNOWN_FILE_SUFFIX_1, suffix));
+                throw new IOException(Errors.format(Errors.Keys.UnknownFileSuffix_1, suffix));
             }
             final Object manager;
             try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
@@ -156,7 +156,7 @@ public class TileManagerFactory extends Factory {
         } else if (file.isDirectory()) {
             return create(file, null, null);
         } else {
-            throw new IOException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_1, file));
+            throw new IOException(Errors.format(Errors.Keys.NotADirectory_1, file));
         }
     }
 
@@ -221,7 +221,7 @@ public class TileManagerFactory extends Factory {
     {
         final File[] list = directory.listFiles(filter);
         if (list == null) {
-            throw new IOException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_1, directory));
+            throw new IOException(Errors.format(Errors.Keys.NotADirectory_1, directory));
         }
         files.ensureCapacity(files.size() + list.length);
         for (final File file : list) {

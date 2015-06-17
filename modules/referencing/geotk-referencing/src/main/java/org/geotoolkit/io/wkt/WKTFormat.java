@@ -223,7 +223,7 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
         if (Strings.isJavaIdentifier(text)) {
             if (definitions == null || (value = definitions.getParsed(text)) == null) {
                 throw new ParseException(Errors.format(
-                        Errors.Keys.NO_SUCH_AUTHORITY_CODE_2, type, text), 0);
+                        Errors.Keys.NoSuchAuthorityCode_2, type, text), 0);
             }
         } else {
             if (definitions != null) {
@@ -243,7 +243,7 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
             return type.cast(value);
         }
         throw new ParseException(Errors.format(
-                Errors.Keys.ILLEGAL_CLASS_2, actualType, type), 0);
+                Errors.Keys.IllegalClass_2, actualType, type), 0);
     }
 
     /**
@@ -290,7 +290,7 @@ public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
 copy:       while (true) {
                 final int ci = in.read();
                 if (ci < 0) {
-                    throw new EOFException(Errors.format(Errors.Keys.UNEXPECTED_END_OF_STRING));
+                    throw new EOFException(Errors.format(Errors.Keys.UnexpectedEndOfString));
                 }
                 c = (char) ci;
                 buffer.append(c);
@@ -305,7 +305,7 @@ copy:       while (true) {
                     if (c == closingBracket) {
                         if (--bracketCount[i] < 0) {
                             throw new ContentFormatException(Errors.format(
-                                    Errors.Keys.NON_EQUILIBRATED_PARENTHESIS_2,
+                                    Errors.Keys.NonEquilibratedParenthesis_2,
                                     closingBracket, symbols.getOpeningBracket(i)));
                         }
                         for (i=0; i<bracketCount.length; i++) { // NOSONAR: The outer loop will not continue.
@@ -329,7 +329,7 @@ copy:       while (true) {
                 reportError(err, wkt, exception.getErrorOffset());
                 continue;
             } catch (InvalidParameterValueException exception) {
-                err.print(Errors.format(Errors.Keys.IN_1, exception.getParameterName()));
+                err.print(Errors.format(Errors.Keys.In_1, exception.getParameterName()));
                 err.print(' ');
                 err.println(exception.getLocalizedMessage());
                 continue;

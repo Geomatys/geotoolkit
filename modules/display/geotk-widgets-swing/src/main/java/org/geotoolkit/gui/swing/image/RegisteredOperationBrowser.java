@@ -219,7 +219,7 @@ public class RegisteredOperationBrowser extends JComponent {
             }
             try {
                 description = resources.getString(key);
-                version = Vocabulary.getResources(locale).getString(Vocabulary.Keys.VERSION_1,
+                version = Vocabulary.getResources(locale).getString(Vocabulary.Keys.Version_1,
                         resources.getString("Version")) + ", " + resources.getString("Vendor");
             } catch (MissingResourceException exception) {
                 /*
@@ -260,7 +260,7 @@ public class RegisteredOperationBrowser extends JComponent {
     public static TreeModel getTree(final OperationRegistry registry, final Locale locale) {
         final Vocabulary resources = Vocabulary.getResources(locale);
         final DefaultMutableTreeNode root = new DefaultMutableTreeNode(
-                resources.getString(Vocabulary.Keys.OPERATIONS));
+                resources.getString(Vocabulary.Keys.Operations));
         /*
          * Add registry modes ("rendered", "renderable", etc.),
          * and gets the operation descriptors for each mode.
@@ -307,7 +307,7 @@ public class RegisteredOperationBrowser extends JComponent {
                 if (products != null) {
                     final DefaultMutableTreeNode productsNode;
                     productsNode = new DefaultMutableTreeNode(
-                            resources.getString(Vocabulary.Keys.IMPLEMENTATIONS));
+                            resources.getString(Vocabulary.Keys.Implementations));
                     for (final String product : products) {
                         final DefaultMutableTreeNode productNode;
                         productNode = new DefaultMutableTreeNode(product);

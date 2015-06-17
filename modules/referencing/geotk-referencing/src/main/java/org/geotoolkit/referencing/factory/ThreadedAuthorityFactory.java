@@ -369,7 +369,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
                 if (factory == null) {
                     factory = createBackingStore();
                     if (factory == null) {
-                        throw new NoSuchFactoryException(Errors.format(Errors.Keys.NO_DATA_SOURCE));
+                        throw new NoSuchFactoryException(Errors.format(Errors.Keys.NoDataSource));
                     }
                 }
                 usage.factory = factory;

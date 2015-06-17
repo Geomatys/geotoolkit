@@ -94,9 +94,9 @@ final class DirectoryPanel extends JComponent {
             this.config = config;
             final Vocabulary resources = data.resources;
             final String[] modes = new String[3];
-            modes[AUTO]   = resources.getString(Vocabulary.Keys.AUTOMATIC);
-            modes[USER]   = resources.getString(Vocabulary.Keys.CURRENT_USER);
-            modes[SYSTEM] = resources.getString(Vocabulary.Keys.ALL_USERS);
+            modes[AUTO]   = resources.getString(Vocabulary.Keys.Automatic);
+            modes[USER]   = resources.getString(Vocabulary.Keys.CurrentUser);
+            modes[SYSTEM] = resources.getString(Vocabulary.Keys.AllUsers);
             mode = new JComboBox<>(modes);
             directory = new JTextField();
             directory.addFocusListener(this);
@@ -220,10 +220,10 @@ final class DirectoryPanel extends JComponent {
         final GridBagConstraints c = new GridBagConstraints();
         c.insets.left=3; c.insets.right=3; c.fill=HORIZONTAL; c.gridy=0;
         items = new Item[] {
-            new Item(c, resources.getLabel (Vocabulary.Keys.ROOT_DIRECTORY),          Installation.ROOT_DIRECTORY),
-            new Item(c, resources.getString(Vocabulary.Keys.DATA_1, "EPSG") + ':',   Installation.EPSG),
-            new Item(c, resources.getString(Vocabulary.Keys.DATA_1, "NADCON") + ':', Installation.NADCON),
-            new Item(c, resources.getLabel (Vocabulary.Keys.GRIDDED_DATA),            Installation.COVERAGES)
+            new Item(c, resources.getLabel (Vocabulary.Keys.RootDirectory),          Installation.ROOT_DIRECTORY),
+            new Item(c, resources.getString(Vocabulary.Keys.Data_1, "EPSG") + ':',   Installation.EPSG),
+            new Item(c, resources.getString(Vocabulary.Keys.Data_1, "NADCON") + ':', Installation.NADCON),
+            new Item(c, resources.getLabel (Vocabulary.Keys.GriddedData),            Installation.COVERAGES)
         };
     }
 

@@ -345,7 +345,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             final Date result = dateFormat.getISODate(date);
             if (result == null) {
                 Warnings.log(this, Level.WARNING, NetcdfMetadataReader.class, "getDateValue",
-                        Errors.Keys.UNPARSABLE_ATTRIBUTE_2, name, date);
+                        Errors.Keys.UnparsableAttribute_2, name, date);
             }
             return result;
         }

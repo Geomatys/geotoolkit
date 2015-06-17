@@ -72,7 +72,7 @@ public class DuplicatedRecordException extends IllegalRecordException {
     public String getLocalizedMessage() {
         final Comparable<?> key = getPrimaryKey();
         if (key != null) {
-            return errors().getString(Errors.Keys.DUPLICATED_RECORD_1, key);
+            return errors().getString(Errors.Keys.DuplicatedRecord_1, key);
         } else {
             return super.getLocalizedMessage();
         }

@@ -1846,7 +1846,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                 dstOffYArray  = new double[destTileStride];
                 break;
             }
-            default: throw new IIOException(error(Errors.Keys.UNSUPPORTED_DATA_TYPE, initRastBuff.getClass()));
+            default: throw new IIOException(error(Errors.Keys.UnsupportedDataType, initRastBuff.getClass()));
         }
 
         if (image.getNumXTiles()  == currentNumXT
@@ -2949,7 +2949,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                     srcVal = Double.doubleToRawLongBits(Array.getDouble(sourceArray, i));
                     break;
                 }
-                default: throw new IOException(error(Errors.Keys.UNSUPPORTED_DATA_TYPE, dataBuffertype));
+                default: throw new IOException(error(Errors.Keys.UnsupportedDataType, dataBuffertype));
             }
 
             int bitOffset, bitOffsetStep;
@@ -3361,7 +3361,7 @@ public class TiffImageWriter extends SpatialImageWriter {
 
         if (channel == null) {
             if (output == null) {
-                throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
+                throw new IllegalStateException(error(Errors.Keys.NoImageInput));
             }
 
             final WritableByteChannel wBC;

@@ -105,7 +105,7 @@ public class PaletteComboBox extends JComponent {
             names = Collections.singleton(SpatialImageReadParam.DEFAULT_PALETTE_NAME);
         }
         final List<Object> items = new ArrayList<>(names.size() + 1);
-        items.add(resources.getString(Vocabulary.Keys.NONE));
+        items.add(resources.getString(Vocabulary.Keys.None));
         for (final String name : names) {
             items.add(new ColorPalette(name));
         }

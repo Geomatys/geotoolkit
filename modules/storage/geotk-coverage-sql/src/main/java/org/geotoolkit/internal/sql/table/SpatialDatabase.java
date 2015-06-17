@@ -251,7 +251,7 @@ public class SpatialDatabase extends Database {
             horizontalSRID = Integer.parseInt(code);
             return;
         } catch (NumberFormatException e) {
-            throw new FactoryException(Errors.format(Errors.Keys.NOT_AN_INTEGER_1, code), e);
+            throw new FactoryException(Errors.format(Errors.Keys.NotAnInteger_1, code), e);
         }
         /*
          * No PostGIS code. Search for an EPSG code...
@@ -269,7 +269,7 @@ public class SpatialDatabase extends Database {
                 return;
             }
         }
-        throw new FactoryException(Errors.format(Errors.Keys.UNDEFINED_PROPERTY_1, "SRID"));
+        throw new FactoryException(Errors.format(Errors.Keys.UndefinedProperty_1, "SRID"));
     }
 
     /**

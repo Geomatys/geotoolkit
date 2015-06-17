@@ -142,7 +142,7 @@ final class DiscreteCompoundCRS extends DiscreteCRS<CompoundCRS> implements Comp
         }
         if (count != axes.length) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_2, axes.length, count));
+                    Errors.Keys.MismatchedDimension_2, axes.length, count));
         }
         return new DiscreteCompoundCRS(crs, new DiscreteCS(cs, axes), components);
     }

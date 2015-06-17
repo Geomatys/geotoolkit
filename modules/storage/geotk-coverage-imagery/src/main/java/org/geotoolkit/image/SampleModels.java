@@ -77,7 +77,7 @@ public final class SampleModels extends Static {
             return ((MultiPixelPackedSampleModel) model).getScanlineStride();
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.UNKNOWN_TYPE_1, Classes.getShortClassName(model)));
+                Errors.Keys.UnknownType_1, Classes.getShortClassName(model)));
     }
 
     /**
@@ -103,7 +103,7 @@ public final class SampleModels extends Static {
             return ((MultiPixelPackedSampleModel) model).getPixelBitStride() / (float) getDataTypeSize(model);
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.UNKNOWN_TYPE_1, Classes.getShortClassName(model)));
+                Errors.Keys.UnknownType_1, Classes.getShortClassName(model)));
     }
 
     /**
@@ -125,6 +125,6 @@ public final class SampleModels extends Static {
             return ((MultiPixelPackedSampleModel) model).getPixelBitStride();
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.UNKNOWN_TYPE_1, Classes.getShortClassName(model)));
+                Errors.Keys.UnknownType_1, Classes.getShortClassName(model)));
     }
 }

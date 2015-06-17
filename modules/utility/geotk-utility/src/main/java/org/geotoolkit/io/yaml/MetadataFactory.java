@@ -141,7 +141,7 @@ final class MetadataFactory extends Factory {
         Class<? extends T> impl = standard.getImplementation(type);
         if (impl == null) {
             if (standard.isMetadata(type)) {
-                throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, type), position);
+                throw new ParseException(Errors.format(Errors.Keys.UnknownType_1, type), position);
             }
             impl = type; // Will try to instantiate the type directly.
         }

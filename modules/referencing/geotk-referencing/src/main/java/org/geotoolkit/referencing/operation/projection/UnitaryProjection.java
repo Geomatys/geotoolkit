@@ -167,7 +167,7 @@ abstract class UnitaryProjection extends NormalizedProjection {
         } else {
             name = String.valueOf(parameter);
         }
-        return new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_1, name));
+        return new IllegalArgumentException(Errors.format(Errors.Keys.UnknownParameter_1, name));
     }
 
     @Override
@@ -327,7 +327,7 @@ abstract class UnitaryProjection extends NormalizedProjection {
         if (isNaN(ts)) {
             return NaN;
         }
-        throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
+        throw new ProjectionException(Errors.format(Errors.Keys.NoConvergence));
     }
 
     /**

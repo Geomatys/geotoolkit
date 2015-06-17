@@ -212,7 +212,7 @@ final class SpatialRefSysEntry {
                 horizontalCRS = (SingleCRS) crs;
             } catch (ClassCastException e) {
                 throw new FactoryException(Errors.format(
-                        Errors.Keys.ILLEGAL_CLASS_2, crs.getClass(), SingleCRS.class), e);
+                        Errors.Keys.IllegalClass_2, crs.getClass(), SingleCRS.class), e);
             }
         }
         if (verticalSRID != 0) {
@@ -228,7 +228,7 @@ final class SpatialRefSysEntry {
         if (temporalCRS   != null) elements[count++] = temporalCRS;
         switch (count) {
             case 0: {
-                throw new FactoryException(Errors.format(Errors.Keys.UNSPECIFIED_CRS));
+                throw new FactoryException(Errors.format(Errors.Keys.UnspecifiedCrs));
             }
             case 1: {
                 spatioTemporalCRS = elements[0];

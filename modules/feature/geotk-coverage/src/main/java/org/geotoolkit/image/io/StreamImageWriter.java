@@ -134,7 +134,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
         if (stream == null) {
             final Object output = getOutput();
             if (output == null) {
-                throw new IllegalStateException(getErrorResources().getString(Errors.Keys.NO_IMAGE_OUTPUT));
+                throw new IllegalStateException(getErrorResources().getString(Errors.Keys.NoImageOutput));
             }
             if (output instanceof OutputStream) {
                 stream = (OutputStream) output;
@@ -165,7 +165,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
                 // Do not define closeOnReset since we don't want to close user-provided output.
             } else {
                 throw new IllegalStateException(getErrorResources().getString(
-                        Errors.Keys.ILLEGAL_CLASS_2, output.getClass(), OutputStream.class));
+                        Errors.Keys.IllegalClass_2, output.getClass(), OutputStream.class));
             }
         }
         return stream;

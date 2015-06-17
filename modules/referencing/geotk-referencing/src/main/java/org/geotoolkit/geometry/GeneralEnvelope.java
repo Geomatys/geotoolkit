@@ -155,7 +155,7 @@ public class GeneralEnvelope extends org.apache.sis.geometry.GeneralEnvelope imp
         try {
             transformed = Envelopes.transform(gridToCRS, this);
         } catch (TransformException exception) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_1,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalTransformForType_1,
                     gridToCRS.getClass()), exception);
         }
         super.setEnvelope(transformed);
@@ -168,7 +168,7 @@ public class GeneralEnvelope extends org.apache.sis.geometry.GeneralEnvelope imp
     private static void ensureSameDimension(final int dim1, final int dim2) throws MismatchedDimensionException {
         if (dim1 != dim2) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_2, dim1, dim2));
+                    Errors.Keys.MismatchedDimension_2, dim1, dim2));
         }
     }
 
@@ -234,7 +234,7 @@ public class GeneralEnvelope extends org.apache.sis.geometry.GeneralEnvelope imp
         final int dimension = getDimension();
         if (dimension != 2) {
             throw new IllegalStateException(Errors.format(
-                    Errors.Keys.NOT_TWO_DIMENSIONAL_1, dimension));
+                    Errors.Keys.NotTwoDimensional_1, dimension));
         }
         return XRectangle2D.createFromExtremums(
                 getMinimum(0), getMinimum(1),

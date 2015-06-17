@@ -149,7 +149,7 @@ public class MetadataHelper implements Localized {
     private void ensureVectorsExist(final List<?> vectors) throws ImageMetadataException {
         ensureMetadataExists("OffsetVectors", -1, vectors);
         if (vectors.isEmpty()) {
-            throw new ImageMetadataException(error(Errors.Keys.NO_PARAMETER_VALUE_1, "OffsetVectors"));
+            throw new ImageMetadataException(error(Errors.Keys.NoParameterValue_1, "OffsetVectors"));
         }
     }
 
@@ -167,7 +167,7 @@ public class MetadataHelper implements Localized {
             if (index >= 0) {
                 name = name + '[' + index + ']';
             }
-            throw new ImageMetadataException(error(Errors.Keys.NO_PARAMETER_1, name));
+            throw new ImageMetadataException(error(Errors.Keys.NoParameter_1, name));
         }
     }
 
@@ -187,7 +187,7 @@ public class MetadataHelper implements Localized {
             if (index >= 0) {
                 name = name + '[' + index + ']';
             }
-            throw new ImageMetadataException(error(Errors.Keys.MISMATCHED_DIMENSION_3,
+            throw new ImageMetadataException(error(Errors.Keys.MismatchedDimension_3,
                     name, dimension, expected));
         }
     }
@@ -488,7 +488,7 @@ public class MetadataHelper implements Localized {
                 return size;
             }
         }
-        throw new ImageMetadataException(error(Errors.Keys.PIXELS_NOT_SQUARE_OR_ROTATED_IMAGE));
+        throw new ImageMetadataException(error(Errors.Keys.PixelsNotSquareOrRotatedImage));
     }
 
     /**
@@ -673,7 +673,7 @@ public class MetadataHelper implements Localized {
                 InternationalString dimensionName = sd.getDescriptor();
                 if (dimensionName == null) {
                     if (untitled == null) {
-                        untitled = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
+                        untitled = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);
                     }
                     dimensionName = untitled;
                 } else {
@@ -731,7 +731,7 @@ public class MetadataHelper implements Localized {
                                     tr = mtFactory.createConcatenatedTransform(tr, exponential);
                                 } else {
                                     throw new ImageMetadataException(Errors.getResources(getLocale())
-                                            .getString(Errors.Keys.UNSUPPORTED_OPERATION_1, type));
+                                            .getString(Errors.Keys.UnsupportedOperation_1, type));
                                 }
                             }
                         } catch (FactoryException e) {

@@ -80,7 +80,7 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
         final int n = grid.getNumBanks();
         if (n != 2) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_3, "grid", n, 2));
+                    Errors.Keys.MismatchedDimension_3, "grid", n, 2));
         }
     }
 
@@ -180,7 +180,7 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
                     return derivative;
                 }
             } while (--i >= 0);
-            throw new TransformException(Errors.format(Errors.Keys.NO_CONVERGENCE));
+            throw new TransformException(Errors.format(Errors.Keys.NoConvergence));
         }
 
         /**

@@ -92,7 +92,7 @@ public class VectorPair implements Serializable {
     public int length() throws MismatchedSizeException {
         final int length = Y.size();
         if (length != X.size()) {
-            throw new MismatchedSizeException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
+            throw new MismatchedSizeException(Errors.format(Errors.Keys.MismatchedArrayLength));
         }
         return length;
     }

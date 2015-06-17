@@ -74,12 +74,12 @@ public class SizeFields extends JComponent implements ChangeListener {
         width  = new JSpinner((new SpinnerNumberModel(size.width,  minSize.width,  null, 1)));
         height = new JSpinner((new SpinnerNumberModel(size.height, minSize.height, null, 1)));
         final Vocabulary resources = Vocabulary.getResources(locale);
-        setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.TILES_SIZE)));
+        setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.TilesSize)));
         final GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.gridx=0; c.insets.left=9;
-        c.gridy=0; add(new JLabel(resources.getLabel(Vocabulary.Keys.WIDTH)),  c);
-        c.gridy++; add(new JLabel(resources.getLabel(Vocabulary.Keys.HEIGHT)), c);
+        c.gridy=0; add(new JLabel(resources.getLabel(Vocabulary.Keys.Width)),  c);
+        c.gridy++; add(new JLabel(resources.getLabel(Vocabulary.Keys.Height)), c);
         c.gridx++; c.weightx=1; c.insets.left=3; c.insets.right=9;
         c.gridy=0; add(width,  c);
         c.gridy++; add(height, c);

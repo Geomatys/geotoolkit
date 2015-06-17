@@ -96,16 +96,16 @@ public final class MosaicWizard extends AbstractWizard {
      * Creates a new wizard.
      */
     public MosaicWizard() {
-        super(Wizards.format(Wizards.Keys.MOSAIC_TITLE), new String[] {
+        super(Wizards.format(Wizards.Keys.MosaicTitle), new String[] {
             SELECT,
             LAYOUT,
             COLORS,
             CONFIRM
         }, new String[] {
-            Wizards.format(Wizards.Keys.SELECT_SOURCE_TILES),
-            Wizards.format(Wizards.Keys.DEFINE_PYRAMID_TILING),
-            Wizards.format(Wizards.Keys.REMOVE_OPAQUE_BORDER),
-            Vocabulary.format(Vocabulary.Keys.CONFIRM)
+            Wizards.format(Wizards.Keys.SelectSourceTiles),
+            Wizards.format(Wizards.Keys.DefinePyramidTiling),
+            Wizards.format(Wizards.Keys.RemoveOpaqueBorder),
+            Vocabulary.format(Vocabulary.Keys.Confirm)
         });
     }
 
@@ -137,9 +137,9 @@ public final class MosaicWizard extends AbstractWizard {
                         final TileManager[] tiles = getSelectedTiles();
                         final String problem;
                         switch (tiles.length) {
-                            case 0:  problem = Wizards.format(Wizards.Keys.NO_SELECTED_TILES); break;
+                            case 0:  problem = Wizards.format(Wizards.Keys.NoSelectedTiles); break;
                             case 1:  problem = null; break; // We can process
-                            default: problem = Wizards.format(Wizards.Keys.INVALID_MOSAIC_LAYOUT); break;
+                            default: problem = Wizards.format(Wizards.Keys.InvalidMosaicLayout); break;
                         }
                         controller.setProblem(problem);
                     }
@@ -163,7 +163,7 @@ public final class MosaicWizard extends AbstractWizard {
 
                     /** Invoked when the values in the form changed. */
                     @Override protected void plotEfficiency(final long delay) {
-                        controller.setProblem(Wizards.format(Wizards.Keys.CALCULATION_PROGESSING));
+                        controller.setProblem(Wizards.format(Wizards.Keys.CalculationProgessing));
                         super.plotEfficiency(delay);
                     }
 
@@ -207,7 +207,7 @@ public final class MosaicWizard extends AbstractWizard {
                 logging.setColumnVisible(LoggingPanel.Column.METHOD, false);
                 logging.setColumnVisible(LoggingPanel.Column.LEVEL,  false);
                 logging.getHandler().setLevel(Level.FINE); // The level used by MosaicImageWriter.
-                final JXLabel label = new JXLabel(Wizards.format(Wizards.Keys.ENOUGH_INFORMATION));
+                final JXLabel label = new JXLabel(Wizards.format(Wizards.Keys.EnoughInformation));
                 label.setLineWrap(true);
                 final JPanel panel = new JPanel(new BorderLayout());
                 panel.add(logging, BorderLayout.CENTER);
@@ -288,7 +288,7 @@ public final class MosaicWizard extends AbstractWizard {
     @SuppressWarnings("rawtypes")
     protected Object finish(final Map settings) {
         final Wizards resources = Wizards.getResources(null);
-        ((JXLabel) settings.get(CONFIRM_LABEL)).setText(resources.getMenuLabel(Wizards.Keys.CREATING_MOSAIC));
+        ((JXLabel) settings.get(CONFIRM_LABEL)).setText(resources.getMenuLabel(Wizards.Keys.CreatingMosaic));
         return new MosaicCreator();
     }
 }

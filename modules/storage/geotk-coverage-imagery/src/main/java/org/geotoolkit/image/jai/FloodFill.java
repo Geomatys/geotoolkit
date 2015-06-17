@@ -181,7 +181,7 @@ public abstract class FloodFill extends OpImage {
             int x = point.x - xmin;
             int y = point.y - ymin;
             if (x < 0 || x >= width || y < 0 || y >= height) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.POINT_OUTSIDE_COVERAGE_1,
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.PointOutsideCoverage_1,
                         new StringBuilder().append(point.x).append(',').append(point.y).toString()));
             }
             stack.addInteger(x);

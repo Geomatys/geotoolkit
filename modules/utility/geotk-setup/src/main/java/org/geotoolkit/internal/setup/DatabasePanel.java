@@ -233,8 +233,8 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
         c.gridx=0; c.gridwidth=REMAINDER;
         if (hasAutoChoice) {
             final Descriptions descriptions = Descriptions.getResources(resources.getLocale());
-            isAutomatic = new JRadioButton(descriptions.getString(Descriptions.Keys.USE_EOS_DATABASE_1, 0));
-            isManual    = new JRadioButton(descriptions.getString(Descriptions.Keys.USE_EOS_DATABASE_1, 1));
+            isAutomatic = new JRadioButton(descriptions.getString(Descriptions.Keys.UseEosDatabase_1, 0));
+            isManual    = new JRadioButton(descriptions.getString(Descriptions.Keys.UseEosDatabase_1, 1));
             isAutomatic.addActionListener(this);
             isManual   .addActionListener(this);
             final ButtonGroup group = new ButtonGroup();
@@ -363,7 +363,7 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
         try {
             settings = installation.getDataSource();
         } catch (IOException ex) {
-            error(Errors.Keys.CANT_READ_FILE_1, ex);
+            error(Errors.Keys.CantReadFile_1, ex);
             return;
         }
         final boolean manual = (settings != null);
@@ -449,7 +449,7 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
                         settings.store(out, "Connection parameters to the " + name + " database");
                     }
                 } catch (IOException ex) {
-                    error(Errors.Keys.CANT_WRITE_FILE_1, ex);
+                    error(Errors.Keys.CantWriteFile_1, ex);
                     return;
                 }
             }

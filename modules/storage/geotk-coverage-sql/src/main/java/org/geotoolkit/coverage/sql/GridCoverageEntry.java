@@ -132,7 +132,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
         this.startTime = (startTime != null) ? startTime.getTime() : Long.MIN_VALUE;
         this.  endTime = (  endTime != null) ?   endTime.getTime() : Long.MAX_VALUE;
         if (identifier.geometry.isEmpty() || this.startTime > this.endTime) {
-            throw new IllegalRecordException(Errors.format(Errors.Keys.EMPTY_ENVELOPE_2D));
+            throw new IllegalRecordException(Errors.format(Errors.Keys.EmptyEnvelope2d));
         }
         this.tiles = tiles;
     }
@@ -176,7 +176,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
             } catch (URISyntaxException e) {
                 throw new IOException(e);
             } else {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, type));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.UnknownType_1, type));
             }
         }
         return type.cast(input);
@@ -413,7 +413,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
             if (cause instanceof IOException) {
                 throw (IOException) cause;
             }
-            throw new IIOException(Errors.format(Errors.Keys.CANT_READ_FILE_1, getName()), e);
+            throw new IIOException(Errors.format(Errors.Keys.CantReadFile_1, getName()), e);
         }
     }
 

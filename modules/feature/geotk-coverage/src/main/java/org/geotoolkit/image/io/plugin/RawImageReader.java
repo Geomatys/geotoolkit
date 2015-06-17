@@ -134,7 +134,7 @@ public class RawImageReader extends SpatialImageReader {
                 return size.width;
             }
         }
-        throw new IIOException(Errors.format(Errors.Keys.UNSPECIFIED_IMAGE_SIZE));
+        throw new IIOException(Errors.format(Errors.Keys.UnspecifiedImageSize));
     }
 
     /**
@@ -153,7 +153,7 @@ public class RawImageReader extends SpatialImageReader {
                 return size.height;
             }
         }
-        throw new IIOException(Errors.format(Errors.Keys.UNSPECIFIED_IMAGE_SIZE));
+        throw new IIOException(Errors.format(Errors.Keys.UnspecifiedImageSize));
     }
 
     /**
@@ -244,7 +244,7 @@ public class RawImageReader extends SpatialImageReader {
         final ImageTypeSpecifier imageType   = getRawImageType(imageIndex);
         final SampleModel        streamModel = imageType.getSampleModel();
         if (SampleModels.getPixelStride(streamModel) != 1) {
-            throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.UNSUPPORTED_FILE_TYPE_1,
+            throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.UnsupportedFileType_1,
                     Classes.getShortClassName(streamModel) + "[pixelStride = " +
                     SampleModels.getPixelStride(streamModel) + ']'));
         }
@@ -373,7 +373,7 @@ public class RawImageReader extends SpatialImageReader {
                         case DataBuffer.TYPE_INT:    {int   [] array = ((DataBufferInt)    buffer).getData(bank); input.readFully(array, offset, length); converter.convert        (array, offset, length); break;}
                         case DataBuffer.TYPE_FLOAT:  {float [] array = ((DataBufferFloat)  buffer).getData(bank); input.readFully(array, offset, length); converter.convert        (array, offset, length); break;}
                         case DataBuffer.TYPE_DOUBLE: {double[] array = ((DataBufferDouble) buffer).getData(bank); input.readFully(array, offset, length); converter.convert        (array, offset, length); break;}
-                        default: throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE));
+                        default: throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.UnsupportedDataType));
                     }
                     position += bytesPerRow * sourceYSubsampling;
                     offset   += dstScanline;
@@ -389,7 +389,7 @@ public class RawImageReader extends SpatialImageReader {
             iter.startBands();
             for (int j=dstBand; --j>=0;) {
                 if (iter.nextBandDone()) {
-                    throw new IIOException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_1, dstBand));
+                    throw new IIOException(Errors.format(Errors.Keys.IllegalBandNumber_1, dstBand));
                 }
             }
             iter.startLines();
@@ -411,7 +411,7 @@ public class RawImageReader extends SpatialImageReader {
                         case DataBuffer.TYPE_INT:    iter.setSample(converter.convert(input.readInt()));           break;
                         case DataBuffer.TYPE_FLOAT:  iter.setSample(converter.convert(input.readFloat()));         break;
                         case DataBuffer.TYPE_DOUBLE: iter.setSample(converter.convert(input.readDouble()));        break;
-                        default: throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE));
+                        default: throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.UnsupportedDataType));
                     }
                     if (iter.nextPixelDone()) {
                         break;
@@ -504,7 +504,7 @@ public class RawImageReader extends SpatialImageReader {
          */
         @Override
         public String getDescription(final Locale locale) {
-            return Descriptions.getResources(locale).getString(Descriptions.Keys.CODEC_RAW);
+            return Descriptions.getResources(locale).getString(Descriptions.Keys.CodecRaw);
         }
 
         /**

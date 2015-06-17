@@ -233,7 +233,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
                             }
                         }
                     }
-                    throw new IllegalArgumentException(Errors.format(Errors.Keys.RANGE_OVERLAP_4, args));
+                    throw new IllegalArgumentException(Errors.format(Errors.Keys.RangeOverlap_4, args));
                 }
                 // Checks if there is a gap between this category and the previous one.
                 if (!isNaN(minimum) && minimum != previous.getRange().getMaxDouble(false)) {
@@ -473,7 +473,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             if (main != null) {
                 buffer.append(main.getName().toString(locale));
             } else {
-                buffer.append('(').append(Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED)).append(')');
+                buffer.append('(').append(Vocabulary.getResources(locale).getString(Vocabulary.Keys.Untitled)).append(')');
             }
             geophysics(true).formatRange(buffer.append(' '), fmtLoc);
             return buffer.toString();
@@ -715,7 +715,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             {
                 category = getCategory(value);
                 if (category == null) {
-                    return Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED);
+                    return Vocabulary.getResources(locale).getString(Vocabulary.Keys.Untitled);
                 }
                 last = category;
             }
@@ -871,7 +871,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         final int dim = point.getDimension();
         if (dim != 1) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_2, 1, dim));
+                    Errors.Keys.MismatchedDimension_2, 1, dim));
         }
     }
 
@@ -916,7 +916,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         {
             category = getCategory(value);
             if (category == null) {
-                throw new TransformException(Errors.format(Errors.Keys.NO_CATEGORY_FOR_VALUE_1, value));
+                throw new TransformException(Errors.format(Errors.Keys.NoCategoryForValue_1, value));
             }
             last = category;
         }
@@ -938,7 +938,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         {
             category = getCategory(value);
             if (category == null) {
-                throw new TransformException(Errors.format(Errors.Keys.NO_CATEGORY_FOR_VALUE_1, value));
+                throw new TransformException(Errors.format(Errors.Keys.NoCategoryForValue_1, value));
             }
             last = category;
         }
@@ -1073,7 +1073,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             }
             category = getCategory(value);
             if (category == null) {
-                throw new TransformException(Errors.format(Errors.Keys.NO_CATEGORY_FOR_VALUE_1, value));
+                throw new TransformException(Errors.format(Errors.Keys.NoCategoryForValue_1, value));
             }
             maximum = category.maximum;
             minimum = category.minimum;
@@ -1210,7 +1210,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             while (!iterator.nextLineDone());
         } catch (TransformException cause) {
             RasterFormatException exception = new RasterFormatException(Errors.format(
-                    Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_1, Classes.getClass(tr)));
+                    Errors.Keys.IllegalTransformForType_1, Classes.getClass(tr)));
             exception.initCause(cause);
             throw exception;
         }

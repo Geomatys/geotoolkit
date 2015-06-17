@@ -208,7 +208,7 @@ final class NetcdfDimension {
                     if (subCRS instanceof TemporalCRS) {
                         converter = DefaultTemporalCRS.castOrCopy((TemporalCRS) subCRS);
                     } else {
-                        throw new ImageMetadataException(Errors.format(Errors.Keys.INCOMPATIBLE_COORDINATE_SYSTEM_TYPE));
+                        throw new ImageMetadataException(Errors.format(Errors.Keys.IncompatibleCoordinateSystemType));
                     }
                 }
                 for (int i=0; i<length; i++) {

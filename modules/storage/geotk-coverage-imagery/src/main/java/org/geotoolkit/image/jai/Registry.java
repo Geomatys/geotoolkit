@@ -96,7 +96,7 @@ public final class Registry extends Static {
             registry.registerDescriptor(new SilhouetteMaskDescriptor());
             RIFRegistry.register(registry, op, PRODUCT_NAME, new SilhouetteMaskCRIF());
 
-            record  = Loggings.format(Level.CONFIG, Loggings.Keys.REGISTERED_JAI_OPERATIONS);
+            record  = Loggings.format(Level.CONFIG, Loggings.Keys.RegisteredJaiOperations);
             op = null;
         } catch (IllegalArgumentException exception) {
             /*
@@ -105,7 +105,7 @@ public final class Registry extends Static {
              * and some of them depend on JAI operations).
              */
             record = Loggings.getResources(null).getLogRecord(Level.WARNING,
-                    Loggings.Keys.CANT_REGISTER_JAI_OPERATION_1, op);
+                    Loggings.Keys.CantRegisterJaiOperation_1, op);
             record.setThrown(exception);
         }
         log("registerGeotoolkitServices", record);
@@ -174,7 +174,7 @@ public final class Registry extends Static {
                         allowed ? nativeFactory : javaFactory,
                         allowed ? javaFactory : nativeFactory);
                 final LogRecord record = Loggings.format(Level.CONFIG,
-                        Loggings.Keys.NATIVE_ACCELERATION_STATE_2,
+                        Loggings.Keys.NativeAccelerationState_2,
                         operation, Integer.valueOf(allowed ? 1 : 0));
                 log("setNativeAccelerationAllowed", record);
             }
@@ -257,7 +257,7 @@ public final class Registry extends Static {
             }
             if (changed) {
                 final LogRecord record = Loggings.format(Level.CONFIG,
-                        Loggings.Keys.NATIVE_CODEC_STATE_3,
+                        Loggings.Keys.NativeCodecState_3,
                         format, Integer.valueOf(allowed ? 1 : 0),
                         Integer.valueOf(ImageWriterSpi.class.isAssignableFrom(category) ? 1 : 0));
                 log("setNativeCodecAllowed", record);

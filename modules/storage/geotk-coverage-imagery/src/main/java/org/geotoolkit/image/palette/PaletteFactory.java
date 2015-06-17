@@ -744,7 +744,7 @@ public class PaletteFactory {
      * Prepares an exception for the specified cause, which may be {@code null}.
      */
     private IIOException syntaxError(final LineNumberReader input, final String name, final Exception cause) {
-        String message = getErrorResources().getString(Errors.Keys.ILLEGAL_LINE_IN_FILE_2,
+        String message = getErrorResources().getString(Errors.Keys.IllegalLineInFile_2,
                 name, input.getLineNumber());
         if (cause != null) {
             message += cause.getLocalizedMessage();
@@ -792,7 +792,7 @@ public class PaletteFactory {
             return value;
         }
         throw new ParseException(getErrorResources().getString(
-                Errors.Keys.RGB_OUT_OF_RANGE_1, value), 0);
+                Errors.Keys.RgbOutOfRange_1, value), 0);
     }
 
     /**

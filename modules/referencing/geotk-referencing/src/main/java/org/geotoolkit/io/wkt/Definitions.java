@@ -188,10 +188,10 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
          */
         ArgumentChecks.ensureNonNull("identifier", identifier);
         if (!Strings.isJavaIdentifier(identifier)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_1, identifier));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalIdentifier_1, identifier));
         }
         if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NO_WKT_DEFINITION));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NoWktDefinition));
         }
         /*
          * The value should be a complete WKT string. But if it is not, if it is an
@@ -204,7 +204,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
                 previous = definitions.put(identifier, parsed);
             } else {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_2, identifier, value));
+                        Errors.Keys.IllegalArgument_2, identifier, value));
             }
         } else {
             /*
@@ -217,7 +217,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
                 object = parser.parseObject(value);
             } catch (ParseException e) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_1, identifier), e);
+                        Errors.Keys.IllegalArgument_1, identifier), e);
             }
             previous = definitions.put(identifier, new Parsed(value, object));
         }
@@ -377,10 +377,10 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
         table.setMultiLinesCells(true);
         table.writeHorizontalSeparator();
         final short[] keys = { // In reverse ordeR.
-            Vocabulary.Keys.DESCRIPTION,
-            Vocabulary.Keys.CLASS,
-            Vocabulary.Keys.TYPE,
-            Vocabulary.Keys.NAME
+            Vocabulary.Keys.Description,
+            Vocabulary.Keys.Class,
+            Vocabulary.Keys.Type,
+            Vocabulary.Keys.Name
         };
         for (int i=keys.length; --i>=0;) {
             if (colors) table.write(X364.BOLD.sequence());
@@ -399,7 +399,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
             if (type != null) {
                 classe = WKTFormat.getClassOf(type);
             } else {
-                type = resources.getString(Vocabulary.Keys.UNKNOWN);
+                type = resources.getString(Vocabulary.Keys.Unknown);
             }
             table.write(type);
             table.nextColumn();

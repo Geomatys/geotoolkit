@@ -414,7 +414,7 @@ public abstract class TileManager implements Serializable {
                 final int width  = reader.getWidth (imageIndex);
                 final int height = reader.getHeight(imageIndex);
                 if (width != size.width || height != size.height) {
-                    message = Errors.format(Errors.Keys.UNEXPECTED_IMAGE_SIZE);
+                    message = Errors.format(Errors.Keys.UnexpectedImageSize);
                 }
                 Tile.dispose(reader);
                 reader = null;

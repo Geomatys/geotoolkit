@@ -186,7 +186,7 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
                 new NamedIdentifier(Citations.EPSG, "Geographic/geocentric conversions"),
                 new IdentifierCode (Citations.EPSG, 9602),
                 new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                    Vocabulary.Keys.GEOCENTRIC_TRANSFORM))
+                                    Vocabulary.Keys.GeocentricTransform))
             }, null, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR, SEMI_MINOR, DIM
             }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
@@ -239,7 +239,7 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
                 default: {
                     final String name = DIM.getName().getCode();
                     throw new InvalidParameterValueException(Errors.format(Errors.Keys.
-                            ILLEGAL_ARGUMENT_2, name, dimension), name, dimension);
+                            IllegalArgument_2, name, dimension), name, dimension);
                 }
             }
         }

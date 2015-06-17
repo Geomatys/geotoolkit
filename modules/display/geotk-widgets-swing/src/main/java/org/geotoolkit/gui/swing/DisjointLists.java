@@ -332,10 +332,10 @@ public class DisjointLists extends JComponent implements Dialog {
         /*
          * Setup buttons
          */
-        final JButton add       = getButton("StepForward", ">",  Widgets.format(Widgets.Keys.ADD_SELECTED_ELEMENTS));
-        final JButton remove    = getButton("StepBack",    "<",  Widgets.format(Widgets.Keys.REMOVE_SELECTED_ELEMENTS));
-        final JButton addAll    = getButton("FastForward", ">>", Widgets.format(Widgets.Keys.ADD_ALL));
-        final JButton removeAll = getButton("Rewind",      "<<", Widgets.format(Widgets.Keys.REMOVE_ALL));
+        final JButton add       = getButton("StepForward", ">",  Widgets.format(Widgets.Keys.AddSelectedElements));
+        final JButton remove    = getButton("StepBack",    "<",  Widgets.format(Widgets.Keys.RemoveSelectedElements));
+        final JButton addAll    = getButton("FastForward", ">>", Widgets.format(Widgets.Keys.AddAll));
+        final JButton removeAll = getButton("Rewind",      "<<", Widgets.format(Widgets.Keys.RemoveAll));
         add      .addActionListener(new Action(left, right, false));
         remove   .addActionListener(new Action(right, left, false));
         addAll   .addActionListener(new Action(left, right,  true));

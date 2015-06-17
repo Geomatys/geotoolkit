@@ -190,7 +190,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     protected Object createOutput(final String writerID) throws IllegalStateException, IOException {
         final Object output = this.output;
         if (output == null) {
-            throw new IllegalStateException(getErrorResources().getString(Errors.Keys.NO_IMAGE_OUTPUT));
+            throw new IllegalStateException(getErrorResources().getString(Errors.Keys.NoImageOutput));
         }
         if (!"main".equalsIgnoreCase(writerID)) {
             return null;

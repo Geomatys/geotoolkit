@@ -78,7 +78,7 @@ final class TableFactory extends SpatialDatabase {
     public TableFactory(final TableFactory toCopy) {
         super(toCopy);
         paletteFactory = toCopy.paletteFactory;
-        log("flush", Loggings.Keys.FLUSH_CACHE_1);
+        log("flush", Loggings.Keys.FlushCache_1);
     }
 
     /**
@@ -95,7 +95,7 @@ final class TableFactory extends SpatialDatabase {
     public TableFactory(final DataSource datasource, final Properties properties) {
         super(datasource, properties);
         paletteFactory = PaletteFactory.getDefault();
-        log("<init>", Loggings.Keys.CREATED_OBJECT_1);
+        log("<init>", Loggings.Keys.CreatedObject_1);
     }
 
     /**

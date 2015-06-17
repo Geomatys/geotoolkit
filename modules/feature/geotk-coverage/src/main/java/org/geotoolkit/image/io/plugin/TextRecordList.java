@@ -273,7 +273,7 @@ final class TextRecordList {
             final float  e = (array[i] - array[i-1]) / delta;
             final float re = (float) Math.rint(e);
             if (Math.abs(e - re) > re*gridTolerance) {
-                throw new IIOException(Errors.format(Errors.Keys.NOT_A_GRID));
+                throw new IIOException(Errors.format(Errors.Keys.NotAGrid));
             }
         }
         return delta;
@@ -324,6 +324,6 @@ final class TextRecordList {
          */
         pointCount[xColumn] = oldX;
         pointCount[yColumn] = oldY;
-        return Vocabulary.format(Vocabulary.Keys.POINT_COUNT_IN_GRID_3, upper, xCount, yCount);
+        return Vocabulary.format(Vocabulary.Keys.PointCountInGrid_3, upper, xCount, yCount);
     }
 }

@@ -441,7 +441,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
                 type = type.getComponentType();
             }
         }
-        return Errors.format(Errors.Keys.CANT_CONVERT_FROM_TYPE_1, type);
+        return Errors.format(Errors.Keys.CantConvertFromType_1, type);
     }
 
     /**
@@ -866,7 +866,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
             if (!(width > 0)) { // Use '!' in order to catch NaN
                 if (!(height > 0)) {
                     throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.UNSPECIFIED_IMAGE_SIZE));
+                            Errors.Keys.UnspecifiedImageSize));
                 }
                 width = (int) Math.round(height * (boundsWidth / boundsHeight));
             } else if (!(height > 0)) {
@@ -977,7 +977,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
                     assert (y == gridBounds.y + gridBounds.height);
                 } catch (NoninvertibleTransformException exception) {
                     throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.ILLEGAL_ARGUMENT_1, "context"), exception);
+                            Errors.Keys.IllegalArgument_1, "context"), exception);
                 }
                 image = tiled;
             }

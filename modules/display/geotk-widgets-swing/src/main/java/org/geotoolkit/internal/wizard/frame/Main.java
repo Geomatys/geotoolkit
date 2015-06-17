@@ -87,7 +87,7 @@ public final class Main extends JFrame implements ActionListener {
         super();
         add(desktop = new JDesktopPane());
         final Wizards resources = Wizards.getResources(getLocale());
-        setTitle(resources.getString(Wizards.Keys.GEOTK_WIZARDS));
+        setTitle(resources.getString(Wizards.Keys.GeotkWizards));
         setMenuBar(resources);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(1000, 600);
@@ -104,53 +104,53 @@ public final class Main extends JFrame implements ActionListener {
         final Vocabulary vocabulary = Vocabulary.getResources(getLocale());
         final int keyMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
-        menu = new JMenu(vocabulary.getString(Vocabulary.Keys.FILE));
-        item = new JMenuItem(vocabulary.getMenuLabel(Vocabulary.Keys.PREFERENCES), KeyEvent.VK_P);
+        menu = new JMenu(vocabulary.getString(Vocabulary.Keys.File));
+        item = new JMenuItem(vocabulary.getMenuLabel(Vocabulary.Keys.Preferences), KeyEvent.VK_P);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, keyMask));
-        item.setToolTipText(resources.getString(Wizards.Keys.SETUP_DESC));
+        item.setToolTipText(resources.getString(Wizards.Keys.SetupDesc));
         item.addActionListener(this);
         item.setActionCommand(SETUP);
         menu.add(item);
 
-        item = new JMenuItem(vocabulary.getString(Vocabulary.Keys.QUIT), KeyEvent.VK_Q);
+        item = new JMenuItem(vocabulary.getString(Vocabulary.Keys.Quit), KeyEvent.VK_Q);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, keyMask));
         item.addActionListener(this);
         item.setActionCommand(QUIT);
         menu.add(item);
         bar.add(menu);
 
-        menu = new JMenu(vocabulary.getString(Vocabulary.Keys.NAVIGATE));
-        item = new JMenuItem(vocabulary.getMenuLabel(Vocabulary.Keys.GRIDDED_DATA), KeyEvent.VK_G);
+        menu = new JMenu(vocabulary.getString(Vocabulary.Keys.Navigate));
+        item = new JMenuItem(vocabulary.getMenuLabel(Vocabulary.Keys.GriddedData), KeyEvent.VK_G);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, keyMask));
         item.addActionListener(this);
         item.setActionCommand(COVERAGES);
         menu.add(item);
         bar.add(menu);
 
-        menu = new JMenu(vocabulary.getString(Vocabulary.Keys.WIZARDS));
-        item = new JMenuItem(resources.getMenuLabel(Wizards.Keys.COVERAGE_DATABASE_TITLE));
-        item.setToolTipText(resources.getString(Wizards.Keys.COVERAGE_DATABASE_DESC));
+        menu = new JMenu(vocabulary.getString(Vocabulary.Keys.Wizards));
+        item = new JMenuItem(resources.getMenuLabel(Wizards.Keys.CoverageDatabaseTitle));
+        item.setToolTipText(resources.getString(Wizards.Keys.CoverageDatabaseDesc));
         item.addActionListener(this);
         item.setActionCommand(COVERAGES_SCHEMA);
         menu.add(item);
 
-        item = new JMenuItem(resources.getMenuLabel(Wizards.Keys.MOSAIC_TITLE), KeyEvent.VK_M);
+        item = new JMenuItem(resources.getMenuLabel(Wizards.Keys.MosaicTitle), KeyEvent.VK_M);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, keyMask));
-        item.setToolTipText(resources.getString(Wizards.Keys.MOSAIC_DESC));
+        item.setToolTipText(resources.getString(Wizards.Keys.MosaicDesc));
         item.addActionListener(this);
         item.setActionCommand(MOSAIC);
         menu.add(item);
         bar.add(menu);
 
-        menu = new JMenu(vocabulary.getString(Vocabulary.Keys.HELP));
-        item = new JMenuItem(vocabulary.getMenuLabel(Vocabulary.Keys.ABOUT), KeyEvent.VK_A);
+        menu = new JMenu(vocabulary.getString(Vocabulary.Keys.Help));
+        item = new JMenuItem(vocabulary.getMenuLabel(Vocabulary.Keys.About), KeyEvent.VK_A);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, keyMask));
         item.addActionListener(this);
         item.setActionCommand(ABOUT);
         menu.add(item);
 
         if (Desktop.isDesktopSupported()) {
-            item = new JMenuItem(resources.getString(Wizards.Keys.GEOTK_SITE));
+            item = new JMenuItem(resources.getString(Wizards.Keys.GeotkSite));
             item.addActionListener(this);
             item.setActionCommand(HOME);
             menu.add(item);
@@ -185,7 +185,7 @@ public final class Main extends JFrame implements ActionListener {
             case COVERAGES: {
                 final CoverageDatabase database = getCoverageDatabase();
                 if (database != null) {
-                    show(Vocabulary.Keys.GRIDDED_DATA, new LayerList(database));
+                    show(Vocabulary.Keys.GriddedData, new LayerList(database));
                 }
                 break;
             }
@@ -237,8 +237,8 @@ public final class Main extends JFrame implements ActionListener {
             if (database == null) {
                 final Locale locale = getLocale();
                 JOptionPane.showInternalMessageDialog(desktop,
-                        Wizards.getResources(locale).getString(Wizards.Keys.UNSPECIFIED_COVERAGES_DATABASE),
-                        Errors.getResources(locale).getString(Errors.Keys.NO_DATA_SOURCE), JOptionPane.WARNING_MESSAGE);
+                        Wizards.getResources(locale).getString(Wizards.Keys.UnspecifiedCoveragesDatabase),
+                        Errors.getResources(locale).getString(Errors.Keys.NoDataSource), JOptionPane.WARNING_MESSAGE);
             }
         } catch (CoverageStoreException e) {
             ExceptionMonitor.show(desktop, e);

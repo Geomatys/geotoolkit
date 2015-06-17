@@ -132,7 +132,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
         final int dimension = cs.getDimension();
         if (dimension != ordinates.length) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_3, "ordinates", ordinates.length, dimension));
+                    Errors.Keys.MismatchedDimension_3, "ordinates", ordinates.length, dimension));
         }
         axes = new DiscreteCoordinateSystemAxis<?>[dimension];
         for (int i=0; i<dimension; i++) {
@@ -240,7 +240,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
     final MathTransform getGridToCRS(final CoordinateReferenceSystem crs) {
         final Matrix matrix = DiscreteReferencingFactory.getAffineTransform(crs, axes);
         if (matrix == null) {
-            throw new UnsupportedOperationException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
+            throw new UnsupportedOperationException(Errors.format(Errors.Keys.NotAnAffineTransform));
         }
         return MathTransforms.linear(matrix);
     }

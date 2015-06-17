@@ -102,8 +102,8 @@ public final strictfp class TreesTest {
      */
     @Test
     public void testLocalized() {
-        final LocalizedTreeNode root = new LocalizedTreeNode(Vocabulary.formatInternational(Vocabulary.Keys.UNDEFINED));
-        final NamedTreeNode child = new NamedTreeNode(Vocabulary.formatInternational(Vocabulary.Keys.UNKNOWN));
+        final LocalizedTreeNode root = new LocalizedTreeNode(Vocabulary.formatInternational(Vocabulary.Keys.Undefined));
+        final NamedTreeNode child = new NamedTreeNode(Vocabulary.formatInternational(Vocabulary.Keys.Unknown));
         root.add(child);
 
         root.locale = Locale.ENGLISH;

@@ -89,7 +89,7 @@ final class MetadataResult extends StatementEntry {
         results = null;
         if (hasNext) {
             final LogRecord record = Errors.getResources(null).getLogRecord(
-                    Level.WARNING, Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, identifier);
+                    Level.WARNING, Errors.Keys.DuplicatedValuesForKey_1, identifier);
             record.setSourceClassName(type.getCanonicalName());
             record.setSourceMethodName("<init>");
             Logging.getLogger(MetadataResult.class).log(record);
@@ -117,7 +117,7 @@ final class MetadataResult extends StatementEntry {
             final String table = results.getMetaData().getTableName(1);
             results.close();
             results = null;
-            throw new SQLException(Errors.format(Errors.Keys.NO_SUCH_RECORD_2, table, identifier));
+            throw new SQLException(Errors.format(Errors.Keys.NoSuchRecord_2, table, identifier));
         }
         this.identifier = identifier;
         return results;

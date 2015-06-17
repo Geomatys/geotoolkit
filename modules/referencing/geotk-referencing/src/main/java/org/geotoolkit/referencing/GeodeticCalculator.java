@@ -250,7 +250,7 @@ public class GeodeticCalculator {
      */
     private GeodeticCalculator(final Ellipsoid ellipsoid, final CoordinateReferenceSystem crs) {
         if (ellipsoid == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, "ellipsoid"));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NullArgument_1, "ellipsoid"));
         }
         this.ellipsoid     = ellipsoid;
         this.semiMajorAxis = ellipsoid.getSemiMajorAxis();
@@ -347,7 +347,7 @@ public class GeodeticCalculator {
                 }
             }
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalCoordinateReferenceSystem));
     }
 
     /**
@@ -383,7 +383,7 @@ public class GeodeticCalculator {
             return toRadians(latitude);
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.LATITUDE_OUT_OF_RANGE_1, new Latitude(latitude)));
+                Errors.Keys.LatitudeOutOfRange_1, new Latitude(latitude)));
     }
 
     /**
@@ -400,7 +400,7 @@ public class GeodeticCalculator {
             return toRadians(longitude);
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.LONGITUDE_OUT_OF_RANGE_1, new Longitude(longitude)));
+                Errors.Keys.LongitudeOutOfRange_1, new Longitude(longitude)));
     }
 
     /**
@@ -417,7 +417,7 @@ public class GeodeticCalculator {
             return toRadians(azimuth);
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.AZIMUTH_OUT_OF_RANGE_1, new Longitude(azimuth)));
+                Errors.Keys.AzimuthOutOfRange_1, new Longitude(azimuth)));
     }
 
     /**
@@ -432,7 +432,7 @@ public class GeodeticCalculator {
             throws IllegalArgumentException
     {
         if (!(distance >= 0.0 && distance <= maxOrthodromicDistance)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.DISTANCE_OUT_OF_RANGE_4,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.DistanceOutOfRange_4,
                     distance, 0.0, maxOrthodromicDistance, ellipsoid.getAxisUnit()));
         }
     }
@@ -448,7 +448,7 @@ public class GeodeticCalculator {
             throws IllegalArgumentException
     {
         if (numberOfPoints < 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalArgument_2,
                         "numberOfPoints", numberOfPoints));
         }
     }
@@ -459,7 +459,7 @@ public class GeodeticCalculator {
      */
     private String getNoConvergenceErrorMessage() {
         final CoordinateFormat cf = new CoordinateFormat();
-        return Errors.format(Errors.Keys.NO_CONVERGENCE_2,
+        return Errors.format(Errors.Keys.NoConvergence_2,
                 format(cf, long1, lat1), format(cf, long2, lat2));
     }
 
@@ -508,7 +508,7 @@ public class GeodeticCalculator {
     public GeographicCRS getGeographicCRS() {
         if (geographicCRS == null) {
             final Map<String,?> name = Collections.singletonMap(
-                    GeographicCRS.NAME_KEY, Vocabulary.format(Vocabulary.Keys.GEODETIC_2D));
+                    GeographicCRS.NAME_KEY, Vocabulary.format(Vocabulary.Keys.Geodetic2d));
             geographicCRS = new DefaultGeographicCRS(name, new DefaultGeodeticDatum(
                     name, getEllipsoid(), CommonCRS.WGS84.primeMeridian()), PredefinedCS.GEODETIC_2D);
         }
@@ -843,7 +843,7 @@ public class GeodeticCalculator {
      */
     private void computeDestinationPoint() throws IllegalStateException {
         if (!directionValid) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.DIRECTION_NOT_SET));
+            throw new IllegalStateException(Errors.format(Errors.Keys.DirectionNotSet));
         }
         // Protect internal variables from changes
         final double lat1     = this.lat1;
@@ -967,7 +967,7 @@ public class GeodeticCalculator {
      */
     private void computeDirection() throws IllegalStateException {
         if (!destinationValid) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.DESTINATION_NOT_SET));
+            throw new IllegalStateException(Errors.format(Errors.Keys.DestinationNotSet));
         }
         // Protect internal variables from change.
         final double long1 = this.long1;
@@ -1314,13 +1314,13 @@ public class GeodeticCalculator {
         final Vocabulary resources = Vocabulary.getResources(null);
         final TableWriter buffer = new TableWriter(null, " ");
         if (coordinateReferenceSystem != null) {
-            buffer.write(resources.getLabel(Vocabulary.Keys.COORDINATE_REFERENCE_SYSTEM));
+            buffer.write(resources.getLabel(Vocabulary.Keys.CoordinateReferenceSystem));
             buffer.nextColumn();
             buffer.write(coordinateReferenceSystem.getName().getCode());
             buffer.nextLine();
         }
         if (ellipsoid != null) {
-            buffer.write(resources.getLabel(Vocabulary.Keys.ELLIPSOID));
+            buffer.write(resources.getLabel(Vocabulary.Keys.Ellipsoid));
             buffer.nextColumn();
             buffer.write(ellipsoid.getName().getCode());
             buffer.nextLine();
@@ -1328,25 +1328,25 @@ public class GeodeticCalculator {
         final CoordinateFormat cf = new CoordinateFormat();
         final Format           nf = cf.getFormat(0);
         if (true) {
-            buffer.write(resources.getLabel(Vocabulary.Keys.SOURCE_POINT));
+            buffer.write(resources.getLabel(Vocabulary.Keys.SourcePoint));
             buffer.nextColumn();
             buffer.write(format(cf, long1, lat1));
             buffer.nextLine();
         }
         if (destinationValid) {
-            buffer.write(resources.getLabel(Vocabulary.Keys.TARGET_POINT));
+            buffer.write(resources.getLabel(Vocabulary.Keys.TargetPoint));
             buffer.nextColumn();
             buffer.write(format(cf, long2, lat2));
             buffer.nextLine();
         }
         if (directionValid) {
-            buffer.write(resources.getLabel(Vocabulary.Keys.AZIMUTH));
+            buffer.write(resources.getLabel(Vocabulary.Keys.Azimuth));
             buffer.nextColumn();
             buffer.write(nf.format(new Angle(toDegrees(azimuth))));
             buffer.nextLine();
         }
         if (directionValid) {
-            buffer.write(resources.getLabel(Vocabulary.Keys.ORTHODROMIC_DISTANCE));
+            buffer.write(resources.getLabel(Vocabulary.Keys.OrthodromicDistance));
             buffer.nextColumn();
             buffer.write(nf.format(distance));
             if (ellipsoid != null) {

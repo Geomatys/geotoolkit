@@ -456,6 +456,6 @@ public final class InternalUtilities extends Static {
             }
         }
         throw new NumberFormatException(Errors.format(
-                Errors.Keys.ILLEGAL_ARGUMENT_2, "color", color));
+                Errors.Keys.IllegalArgument_2, "color", color));
     }
 }

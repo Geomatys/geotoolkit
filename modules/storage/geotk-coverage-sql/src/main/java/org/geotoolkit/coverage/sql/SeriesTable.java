@@ -146,7 +146,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
         if (index != 0) {
             final String layer = getLayer();
             if (layer == null) {
-                throw new CatalogException(errors().getString(Errors.Keys.NO_PARAMETER_1, "layer"));
+                throw new CatalogException(errors().getString(Errors.Keys.NoParameter_1, "layer"));
             }
             statement.setString(index, layer);
         }
@@ -186,7 +186,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
         for (final SeriesEntry entry : entries) {
             final Integer identifier = entry.getIdentifier();
             if (map.put(identifier, entry) != null) {
-                throw new DuplicatedRecordException(errors().getString(Errors.Keys.DUPLICATED_RECORD_1, identifier));
+                throw new DuplicatedRecordException(errors().getString(Errors.Keys.DuplicatedRecord_1, identifier));
             }
         }
         return map;
@@ -235,7 +235,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
                     }
                     if (id != null && id.intValue() != nextID) {
                         // Could happen if there is insufficient conditions in the WHERE clause.
-                        log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DUPLICATED_RECORD_1, id));
+                        log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DuplicatedRecord_1, id));
                         continue;
                     }
                     id = nextID;
@@ -339,7 +339,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
             pathFile = (cf = pathFile).getCanonicalFile();
         } catch (IOException exeption) {
             // Logs with a FINE level rather than WARNING because this exception may be normal.
-            final LogRecord record = errors().getLogRecord(Level.FINE, Errors.Keys.NOT_A_DIRECTORY_1, cf);
+            final LogRecord record = errors().getLogRecord(Level.FINE, Errors.Keys.NotADirectory_1, cf);
             record.setThrown(exeption);
             log("comparePaths", record);
             return false;

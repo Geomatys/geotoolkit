@@ -257,8 +257,8 @@ public class CoordinateChooser extends JComponent implements Dialog {
         final int timeField = Calendar.DAY_OF_YEAR;
         final Vocabulary resources = Vocabulary.getResources(locale);
 
-        radioBestRes = new JRadioButton(resources.getString(Vocabulary.Keys.USE_BEST_RESOLUTION), true);
-        radioPrefRes = new JRadioButton(resources.getString(Vocabulary.Keys.SET_PREFERRED_RESOLUTION));
+        radioBestRes = new JRadioButton(resources.getString(Vocabulary.Keys.UseBestResolution), true);
+        radioPrefRes = new JRadioButton(resources.getString(Vocabulary.Keys.SetPreferredResolution));
 
         tmin = new JSpinner(new SpinnerDateModel(minTime, minTime, maxTime, timeField));
         tmax = new JSpinner(new SpinnerDateModel(maxTime, minTime, maxTime, timeField));
@@ -291,7 +291,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
         timezone = new JComboBox<>(timezones);
         timezone.setSelectedItem(dateFormat.getTimeZone().getID());
 
-        final JLabel labelSize1 = new JLabel(resources.getLabel(Vocabulary.Keys.SIZE_IN_MINUTES));
+        final JLabel labelSize1 = new JLabel(resources.getLabel(Vocabulary.Keys.SizeInMinutes));
         final JLabel labelSize2 = new JLabel("\u00D7"  /* Multiplication symbol */);
         final ButtonGroup group = new ButtonGroup();
         group.add(radioBestRes);
@@ -303,9 +303,9 @@ public class CoordinateChooser extends JComponent implements Dialog {
         timezone    .addActionListener(listeners);
         radioPrefRes.addChangeListener(listeners);
 
-        areaPanel = getPanel(resources.getString(Vocabulary.Keys.GEOGRAPHIC_COORDINATES));
-        timePanel = getPanel(resources.getString(Vocabulary.Keys.TIME_RANGE            ));
-        resoPanel = getPanel(resources.getString(Vocabulary.Keys.PREFERRED_RESOLUTION  ));
+        areaPanel = getPanel(resources.getString(Vocabulary.Keys.GeographicCoordinates));
+        timePanel = getPanel(resources.getString(Vocabulary.Keys.TimeRange            ));
+        resoPanel = getPanel(resources.getString(Vocabulary.Keys.PreferredResolution  ));
         final GridBagConstraints c = new GridBagConstraints();
 
         c.weightx=1;
@@ -316,9 +316,9 @@ public class CoordinateChooser extends JComponent implements Dialog {
 
         JLabel label;
         c.gridx=0; c.anchor=GridBagConstraints.WEST; c.insets.right=3; c.weightx=0;
-        c.gridy=0; timePanel.add(label=new JLabel(resources.getLabel(Vocabulary.Keys.START_TIME)), c); label.setLabelFor(tmin);
-        c.gridy=1; timePanel.add(label=new JLabel(resources.getLabel(Vocabulary.Keys.END_TIME  )), c); label.setLabelFor(tmax);
-        c.gridy=2; timePanel.add(label=new JLabel(resources.getLabel(Vocabulary.Keys.TIME_ZONE )), c); label.setLabelFor(timezone); c.gridwidth=4;
+        c.gridy=0; timePanel.add(label=new JLabel(resources.getLabel(Vocabulary.Keys.StartTime)), c); label.setLabelFor(tmin);
+        c.gridy=1; timePanel.add(label=new JLabel(resources.getLabel(Vocabulary.Keys.EndTime  )), c); label.setLabelFor(tmax);
+        c.gridy=2; timePanel.add(label=new JLabel(resources.getLabel(Vocabulary.Keys.TimeZone )), c); label.setLabelFor(timezone); c.gridwidth=4;
         c.gridy=0; resoPanel.add(radioBestRes,  c);
         c.gridy=1; resoPanel.add(radioPrefRes,  c);
         c.gridy=2; c.gridwidth=1; c.anchor=GridBagConstraints.EAST; c.insets.right=c.insets.left=1; c.weightx=1;
@@ -641,7 +641,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
         final Object angle=field.getValue();
         if (expectLatitude ? (angle instanceof Longitude) : (angle instanceof Latitude)) {
             throw new ParseException(Errors.getResources(getLocale()).getString(
-                    Errors.Keys.ILLEGAL_COORDINATE_1, angle), 0);
+                    Errors.Keys.IllegalCoordinate_1, angle), 0);
         }
     }
 
@@ -752,7 +752,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
      */
     public boolean showDialog(final Component owner) {
         return showDialog(owner, Vocabulary.getResources(getLocale()).
-                getString(Vocabulary.Keys.COORDINATES_SELECTION));
+                getString(Vocabulary.Keys.CoordinatesSelection));
     }
 
     /**

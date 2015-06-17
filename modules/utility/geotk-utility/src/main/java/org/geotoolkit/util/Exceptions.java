@@ -229,7 +229,7 @@ public final class Exceptions extends Static {
         } catch (ClassNotFoundException e) {
             // This is the expected exception if the widget module is not available.
             throw new UnsupportedOperationException(Errors.format(
-                    Errors.Keys.MISSING_MODULE_1, "geotk-widgets-swing"), e);
+                    Errors.Keys.MissingModule_1, "geotk-widgets-swing"), e);
         } catch (NoSuchMethodException | IllegalAccessException e) {
             // Should never happen, since have control on our implementation.
             throw new AssertionError(e);

@@ -215,7 +215,7 @@ public class AnchoredMarshallerPool extends MarshallerPool {
             final URI old = anchors.put(label, linkage);
             if (old != null) {
                 anchors.put(label, old);
-                throw new IllegalStateException(Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_1, label));
+                throw new IllegalStateException(Errors.format(Errors.Keys.ValueAlreadyDefined_1, label));
             }
         }
     }

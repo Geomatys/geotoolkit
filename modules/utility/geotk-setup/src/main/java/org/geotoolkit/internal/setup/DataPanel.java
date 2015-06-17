@@ -97,18 +97,18 @@ final class DataPanel extends JComponent {
             final short button;
             switch (i) {
                 case EPSG: {
-                    label = resources.getString(Vocabulary.Keys.DATA_BASE_1, "EPSG");
-                    button = Vocabulary.Keys.INSTALL;
+                    label = resources.getString(Vocabulary.Keys.DataBase_1, "EPSG");
+                    button = Vocabulary.Keys.Install;
                     break;
                 }
                 case NADCON: {
-                    label = resources.getString(Vocabulary.Keys.DATA_1, "NADCON");
-                    button = Vocabulary.Keys.DOWNLOAD;
+                    label = resources.getString(Vocabulary.Keys.Data_1, "NADCON");
+                    button = Vocabulary.Keys.Download;
                     break;
                 }
                 case RGF93: {
-                    label = resources.getString(Vocabulary.Keys.DATA_1, "RGF93");
-                    button = Vocabulary.Keys.DOWNLOAD;
+                    label = resources.getString(Vocabulary.Keys.Data_1, "RGF93");
+                    button = Vocabulary.Keys.Download;
                     break;
                 }
                 default: throw new AssertionError(i);
@@ -154,7 +154,7 @@ final class DataPanel extends JComponent {
             final JProgressBar state = status[i];
             state.setEnabled(false);
             downloads[i].setEnabled(false);
-            state.setString(resources.getMenuLabel(Vocabulary.Keys.VERIFYING));
+            state.setString(resources.getMenuLabel(Vocabulary.Keys.Verifying));
         }
         refresh(RGF93, NADCON, EPSG); // Fastest refrest first.
     }
@@ -220,7 +220,7 @@ final class DataPanel extends JComponent {
                     final JProgressBar state = status[item];
                     state.setEnabled(true);
                     state.setString(resources.getString(found ?
-                            Vocabulary.Keys.DATA_ARE_PRESENT : Vocabulary.Keys.NODATA));
+                            Vocabulary.Keys.DataArePresent : Vocabulary.Keys.Nodata));
                     state.setValue(found ? 100 : 0);
                     downloads[item].setEnabled(!found);
                 }
@@ -262,7 +262,7 @@ final class DataPanel extends JComponent {
          */
         Download(final int item) {
             this.item = item;
-            status[item].setString(resources.getMenuLabel(Vocabulary.Keys.DOWNLOADING));
+            status[item].setString(resources.getMenuLabel(Vocabulary.Keys.Downloading));
             downloads[item].setEnabled(false);
             addPropertyChangeListener(this);
             /*
@@ -319,7 +319,7 @@ final class DataPanel extends JComponent {
                 // Should not happen since we are done.
             } catch (ExecutionException e) {
                 JOptionPane.showMessageDialog(DataPanel.this, e.getCause().toString(),
-                        resources.getString(Vocabulary.Keys.ERROR), JOptionPane.ERROR_MESSAGE);
+                        resources.getString(Vocabulary.Keys.Error), JOptionPane.ERROR_MESSAGE);
             }
             refresh(item);
         }

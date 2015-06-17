@@ -304,16 +304,16 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * List of resource keys, to construct the menus in the user's language.
      */
     private static final short[] RESOURCE_ID = {
-        /*[0] Left        */ Vocabulary.Keys.LEFT,
-        /*[1] Right       */ Vocabulary.Keys.RIGHT,
-        /*[2] Up          */ Vocabulary.Keys.UP,
-        /*[3] Down        */ Vocabulary.Keys.DOWN,
-        /*[4] ZoomIn      */ Vocabulary.Keys.ZOOM_IN,
-        /*[5] ZoomOut     */ Vocabulary.Keys.ZOOM_OUT,
-        /*[6] ZoomMax     */ Vocabulary.Keys.ZOOM_MAX,
-        /*[7] Reset       */ Vocabulary.Keys.RESET,
-        /*[8] RotateLeft  */ Vocabulary.Keys.ROTATE_LEFT,
-        /*[9] RotateRight */ Vocabulary.Keys.ROTATE_RIGHT
+        /*[0] Left        */ Vocabulary.Keys.Left,
+        /*[1] Right       */ Vocabulary.Keys.Right,
+        /*[2] Up          */ Vocabulary.Keys.Up,
+        /*[3] Down        */ Vocabulary.Keys.Down,
+        /*[4] ZoomIn      */ Vocabulary.Keys.ZoomIn,
+        /*[5] ZoomOut     */ Vocabulary.Keys.ZoomOut,
+        /*[6] ZoomMax     */ Vocabulary.Keys.ZoomMax,
+        /*[7] Reset       */ Vocabulary.Keys.Reset,
+        /*[8] RotateLeft  */ Vocabulary.Keys.RotateLeft,
+        /*[9] RotateRight */ Vocabulary.Keys.RotateRight
     };
 
     /**
@@ -864,7 +864,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
                 firePropertyChange("preferredArea", oldArea, area);
                 log("setPreferredArea", area);
             } else {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_1, area));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.EmptyRectangle_1, area));
             }
         }
         else preferredArea = null;
@@ -935,7 +935,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
          * the user.
          */
         if (!isValid(source)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_1, source));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.EmptyRectangle_1, source));
         }
         if (!isValid(dest)) {
             return new AffineTransform();
@@ -1731,7 +1731,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
                 if (magnifierEnabled) {
                     final Vocabulary resources = Vocabulary.getResources(getLocale());
                     final JMenuItem item = new JMenuItem(
-                            resources.getString(Vocabulary.Keys.SHOW_MAGNIFIER));
+                            resources.getString(Vocabulary.Keys.ShowMagnifier));
                     item.addActionListener(new ActionListener() {
                         @Override public void actionPerformed(final ActionEvent event) {
                             setMagnifierVisible(true, navigationPopupMenu.point);
@@ -1761,8 +1761,8 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      */
     protected JPopupMenu getMagnifierMenu(final MouseEvent event) {
         final Vocabulary resources = Vocabulary.getResources(getLocale());
-        final JPopupMenu menu = new JPopupMenu(resources.getString(Vocabulary.Keys.MAGNIFIER));
-        final JMenuItem  item = new JMenuItem (resources.getString(Vocabulary.Keys.HIDE));
+        final JPopupMenu menu = new JPopupMenu(resources.getString(Vocabulary.Keys.Magnifier));
+        final JMenuItem  item = new JMenuItem (resources.getString(Vocabulary.Keys.Hide));
         item.addActionListener(new ActionListener() {
             @Override public void actionPerformed(final ActionEvent event) {
                 setMagnifierVisible(false);
@@ -2452,7 +2452,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
             }
             final Vocabulary resources = Vocabulary.getResources(null);
             final LogRecord record = resources.getLogRecord(Level.FINER,
-                    Vocabulary.Keys.RECTANGLE_4, areaBounds);
+                    Vocabulary.Keys.Rectangle_4, areaBounds);
             record.setSourceClassName (className);
             record.setSourceMethodName(methodName);
             record.setLoggerName(LOGGER.getName());

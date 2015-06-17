@@ -84,7 +84,7 @@ final class ImageCoverageStore extends Static {
         final boolean write = (store instanceof GridCoverageWriter);
         final Locale locale = store.locale;
         String message = Loggings.getResources(locale).getString(
-                Loggings.Keys.CREATED_CODEC_OF_CLASS_2, write ? 1 : 0, codec.getClass().getName());
+                Loggings.Keys.CreatedCodecOfClass_2, write ? 1 : 0, codec.getClass().getName());
         if (spi != null) {
             final StringBuilder buffer = new StringBuilder(message).append('\n');
             Formats.formatDescription(spi, locale, buffer);
@@ -159,7 +159,7 @@ final class ImageCoverageStore extends Static {
             name = ((AbstractCoverage) coverage).getName();
         }
         if (name == null) {
-            name = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
+            name = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);
         }
         /*
          * Get the view types (PHOTOGRAPHIC, RENDERED, PACKED, NATIVE, GEOPHYSICS).
@@ -169,7 +169,7 @@ final class ImageCoverageStore extends Static {
         if (coverage instanceof GridCoverage2D) {
             viewTypes = ((GridCoverage2D) coverage).getViewTypes().toString();
         } else {
-            viewTypes = Vocabulary.getResources(locale).getString(Vocabulary.Keys.NONE);
+            viewTypes = Vocabulary.getResources(locale).getString(Vocabulary.Keys.None);
         }
         /*
          * Get the coverage dimension. In the special case of ImageCoverageWriter, the
@@ -218,7 +218,7 @@ final class ImageCoverageStore extends Static {
             }
         }
         if (crsName == null) {
-            crsName = Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNDEFINED);
+            crsName = Vocabulary.getResources(locale).getString(Vocabulary.Keys.Undefined);
         }
         /*
          * Get the "source to destination" transform. We will format affine transform
@@ -247,13 +247,13 @@ final class ImageCoverageStore extends Static {
             transform = e.toString();
         }
         if (transform == null) {
-            transform = Vocabulary.getResources(locale).getString(Vocabulary.Keys.NONE);
+            transform = Vocabulary.getResources(locale).getString(Vocabulary.Keys.None);
         }
         /*
          * Put everything in a log record.
          */
         final LogRecord record = Loggings.getResources(locale).getLogRecord(
-                level, Loggings.Keys.COVERAGE_STORE_8, new Object[] {
+                level, Loggings.Keys.CoverageStore_8, new Object[] {
                         write ? 1 : 0, streamName, name.toString(locale), viewTypes,
                         size, crsName, transform, timeNanos / 1E+6
         });

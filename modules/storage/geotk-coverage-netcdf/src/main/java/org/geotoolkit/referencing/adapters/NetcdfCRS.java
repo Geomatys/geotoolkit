@@ -504,7 +504,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
             try {
                 unit = new DateUnit(unitSymbol);
             } catch (Exception e) {
-                throw new IIOException(Errors.format(Errors.Keys.UNKNOWN_UNIT_1, unitSymbol), e);
+                throw new IIOException(Errors.format(Errors.Keys.UnknownUnit_1, unitSymbol), e);
             }
             datum = new DefaultTemporalDatum(singletonMap(NAME_KEY, unitSymbol), unit.getDateOrigin());
             getAxis(0).unit = Units.multiply(SI.SECOND, unit.getTimeUnit().getValueInSeconds());
@@ -788,7 +788,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
             if (projection == null) {
                 final ucar.unidata.geoloc.Projection p = delegate().getProjection();
                 if (p == null) {
-                    throw new IllegalStateException(Errors.format(Errors.Keys.UNSPECIFIED_TRANSFORM));
+                    throw new IllegalStateException(Errors.format(Errors.Keys.UnspecifiedTransform));
                 }
                 projection = new NetcdfProjection(p, getBaseCRS(), this);
             }

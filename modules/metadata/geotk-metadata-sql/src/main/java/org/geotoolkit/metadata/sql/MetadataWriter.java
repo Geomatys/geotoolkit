@@ -496,7 +496,7 @@ public class MetadataWriter extends MetadataSource {
                                             .append(" DROP CONSTRAINT ").appendIdentifier(fkey.keyName);
                                     stmt.executeUpdate(buffer.toString());
                                     final LogRecord record = Errors.getResources(null).getLogRecord(
-                                            Level.WARNING, Errors.Keys.DROPPED_FOREIGNER_KEY_1,
+                                            Level.WARNING, Errors.Keys.DroppedForeignerKey_1,
                                             table + '.' + column + " ⇒ " + fkey.tableName + '.' + ID_COLUMN);
                                     record.setSourceMethodName("add");
                                     record.setSourceClassName(MetadataWriter.class.getName());
@@ -558,7 +558,7 @@ public class MetadataWriter extends MetadataSource {
         }
         String sql = buffer.append(')').toString();
         if (stmt.executeUpdate(sql) != 1) {
-            throw new SQLException(Errors.format(Errors.Keys.DATABASE_UPDATE_FAILURE));
+            throw new SQLException(Errors.format(Errors.Keys.DatabaseUpdateFailure));
         }
         return identifier;
     }
@@ -672,7 +672,7 @@ public class MetadataWriter extends MetadataSource {
                     .append(" (").append(CODE_COLUMN).append(") VALUES (").appendValue(identifier)
                     .append(')').toString();
             if (stmt.executeUpdate(sql) != 1) {
-                throw new SQLException(Errors.format(Errors.Keys.DATABASE_UPDATE_FAILURE));
+                throw new SQLException(Errors.format(Errors.Keys.DatabaseUpdateFailure));
             }
         }
         return identifier;

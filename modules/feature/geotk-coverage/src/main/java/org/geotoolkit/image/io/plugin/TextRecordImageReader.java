@@ -199,7 +199,7 @@ public class TextRecordImageReader extends TextImageReader {
      */
     private static void ensurePositive(final String name, final int column) throws IIOException {
         if (column < 0) {
-            throw new IIOException(Errors.format(Errors.Keys.NEGATIVE_COLUMN_2, name, column));
+            throw new IIOException(Errors.format(Errors.Keys.NegativeColumn_2, name, column));
         }
     }
 
@@ -435,7 +435,7 @@ public class TextRecordImageReader extends TextImageReader {
                     if (abortRequested()) {
                         processReadAborted();
                         if (!allowCancel || records == null) {
-                            throw new IIOException(Errors.format(Errors.Keys.CANCELED_OPERATION));
+                            throw new IIOException(Errors.format(Errors.Keys.CanceledOperation));
                         }
                         return records;
                     }
@@ -487,7 +487,7 @@ public class TextRecordImageReader extends TextImageReader {
                     final int lineCount = records.getLineCount();
                     if (lineCount < 2) {
                         throw new IIOException(getPositionString(Errors.format(
-                                Errors.Keys.FILE_HAS_TOO_FEW_DATA)));
+                                Errors.Keys.FileHasTooFewData)));
                     }
                     if (data == null) {
                         data = new TextRecordList[imageIndex+1];
@@ -749,7 +749,7 @@ public class TextRecordImageReader extends TextImageReader {
          */
         @Override
         public String getDescription(final Locale locale) {
-            return Descriptions.getResources(locale).getString(Descriptions.Keys.CODEC_GRID);
+            return Descriptions.getResources(locale).getString(Descriptions.Keys.CodecGrid);
         }
 
         /**

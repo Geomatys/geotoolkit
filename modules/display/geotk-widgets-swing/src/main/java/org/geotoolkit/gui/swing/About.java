@@ -235,8 +235,8 @@ public class About extends JComponent implements Dialog {
             add(title, gc);
         }
         final JTabbedPane        tabs = new JTabbedPane();
-        final JLabel totalMemoryLabel = new JLabel(resources.getString(Vocabulary.Keys.MEMORY_HEAP_SIZE_1,  totalMemory));
-        final JLabel percentUsedLabel = new JLabel(resources.getString(Vocabulary.Keys.MEMORY_HEAP_USAGE_1, 1 - freeMemory/totalMemory));
+        final JLabel totalMemoryLabel = new JLabel(resources.getString(Vocabulary.Keys.MemoryHeapSize_1,  totalMemory));
+        final JLabel percentUsedLabel = new JLabel(resources.getString(Vocabulary.Keys.MemoryHeapUsage_1, 1 - freeMemory/totalMemory));
         gc.gridx=0; gc.gridy=1; gc.weightx=1; gc.weighty=1; gc.fill=GridBagConstraints.BOTH;
         add(tabs, gc);
         /*
@@ -249,30 +249,30 @@ public class About extends JComponent implements Dialog {
             c.gridy=0; c.insets.top=12;
             pane.add(new JLabel(application), c);
             c.gridy++; c.insets.top=0;
-            pane.add(new JLabel(resources.getString(Vocabulary.Keys.VERSION_1, version)), c);
+            pane.add(new JLabel(resources.getString(Vocabulary.Keys.Version_1, version)), c);
             c.gridy++;
             pane.add(new JLabel(vendor), c);
             c.gridy++; c.insets.top=6;
-            pane.add(new JLabel(resources.getString(Vocabulary.Keys.JAVA_VERSION_1,
+            pane.add(new JLabel(resources.getString(Vocabulary.Keys.JavaVersion_1,
                     System.getProperty("java.version"))), c);
             c.gridy++; c.insets.top=0;
-            pane.add(new JLabel(resources.getString(Vocabulary.Keys.JAVA_VENDOR_1,
+            pane.add(new JLabel(resources.getString(Vocabulary.Keys.JavaVendor_1,
                     System.getProperty("java.vendor" ))), c);
             c.gridy++; c.insets.top=6;
-            pane.add(new JLabel(resources.getString(Vocabulary.Keys.OS_NAME_1,
+            pane.add(new JLabel(resources.getString(Vocabulary.Keys.OsName_1,
                     System.getProperty("os.name"))), c);
             c.gridy++; c.insets.top=0;
-            pane.add(new JLabel(resources.getString(Vocabulary.Keys.OS_VERSION_2,
+            pane.add(new JLabel(resources.getString(Vocabulary.Keys.OsVersion_2,
                     System.getProperty("os.version"), System.getProperty("os.arch"))), c);
             c.gridy++; c.insets.top=12;
-            pane.add(new JLabel(resources.getString(Vocabulary.Keys.TILE_CACHE_CAPACITY_1,
+            pane.add(new JLabel(resources.getString(Vocabulary.Keys.TileCacheCapacity_1,
                  JAI.getDefaultInstance().getTileCache().getMemoryCapacity()/HEAP_SIZE_UNIT)), c);
             c.gridy++; c.insets.top=0;
             pane.add(totalMemoryLabel, c);
             c.gridy++; c.insets.bottom=12;
             pane.add(percentUsedLabel, c);
             pane.setOpaque(false);
-            tabs.addTab(resources.getString(Vocabulary.Keys.SYSTEM), pane);
+            tabs.addTab(resources.getString(Vocabulary.Keys.System), pane);
         }
         /*
          * RUNNING TASKS TAB
@@ -281,11 +281,11 @@ public class About extends JComponent implements Dialog {
             updater = new ThreadList(tasks, totalMemoryLabel, percentUsedLabel, resources);
             final JPanel pane = new JPanel(new BorderLayout());
             final JList<String> list = new JList<>(updater);
-            pane.add(new JLabel(resources.getString(Vocabulary.Keys.RUNNING_TASKS)), BorderLayout.NORTH);
+            pane.add(new JLabel(resources.getString(Vocabulary.Keys.RunningTasks)), BorderLayout.NORTH);
             pane.add(new JScrollPane(list), BorderLayout.CENTER);
             pane.setBorder(BorderFactory.createEmptyBorder(9,9,9,9));
             pane.setOpaque(false);
-            tabs.addTab(resources.getString(Vocabulary.Keys.TASKS), pane);
+            tabs.addTab(resources.getString(Vocabulary.Keys.Tasks), pane);
         } else {
             updater = null;
         }
@@ -305,12 +305,12 @@ public class About extends JComponent implements Dialog {
                 final Class<? extends ImageReaderWriterSpi> category;
                 switch (index) {
                     case 0: {
-                        titleKey = Vocabulary.Keys.DECODERS;
+                        titleKey = Vocabulary.Keys.Decoders;
                         category = ImageReaderSpi.class;
                         break;
                     }
                     case 1: {
-                        titleKey = Vocabulary.Keys.ENCODERS;
+                        titleKey = Vocabulary.Keys.Encoders;
                         category = ImageWriterSpi.class;
                         break;
                     }
@@ -356,14 +356,14 @@ public class About extends JComponent implements Dialog {
             JComponent tree = new JTree(root);
             tree.setBorder(BorderFactory.createEmptyBorder(6,6,0,0));
             tree = new JScrollPane(tree);
-            tabs.addTab(resources.getString(Vocabulary.Keys.IMAGES), setup(tree));
+            tabs.addTab(resources.getString(Vocabulary.Keys.Images), setup(tree));
         }
         /*
          * JAI OPERATIONS TAB
          */
         if (true) {
             final JComponent tree = new RegisteredOperationBrowser();
-            tabs.addTab(resources.getString(Vocabulary.Keys.OPERATIONS), setup(tree));
+            tabs.addTab(resources.getString(Vocabulary.Keys.Operations), setup(tree));
         }
     }
 
@@ -390,7 +390,7 @@ public class About extends JComponent implements Dialog {
         for (int i=0; i<mimes.length; i++) {
             String name = mimes[i].trim();
             if (name.isEmpty()) {
-                name = resources.getString(Vocabulary.Keys.UNTITLED);
+                name = resources.getString(Vocabulary.Keys.Untitled);
             }
             mimes[i] = name;
         }
@@ -504,7 +504,7 @@ public class About extends JComponent implements Dialog {
          */
         public synchronized void start() {
             if (worker == null) {
-                worker = new DaemonThread(SwingUtilities.THREAD_GROUP, this, resources.getString(Vocabulary.Keys.ABOUT));
+                worker = new DaemonThread(SwingUtilities.THREAD_GROUP, this, resources.getString(Vocabulary.Keys.About));
                 worker.setPriority(Thread.NORM_PRIORITY - 1);
                 worker.start();
             }
@@ -524,9 +524,9 @@ public class About extends JComponent implements Dialog {
                 final Runtime     system = Runtime.getRuntime();
                 final float  freeMemoryN = system.freeMemory()  / HEAP_SIZE_UNIT;
                 final float totalMemoryN = system.totalMemory() / HEAP_SIZE_UNIT;
-                String totalMemoryText = resources.getString(Vocabulary.Keys.MEMORY_HEAP_SIZE_1,
+                String totalMemoryText = resources.getString(Vocabulary.Keys.MemoryHeapSize_1,
                         totalMemoryN);
-                String percentUsedText = resources.getString(Vocabulary.Keys.MEMORY_HEAP_USAGE_1,
+                String percentUsedText = resources.getString(Vocabulary.Keys.MemoryHeapUsage_1,
                         1 - freeMemoryN/totalMemoryN);
 
                 Thread[] threadArray = new Thread[tasks.activeCount()];
@@ -606,7 +606,7 @@ public class About extends JComponent implements Dialog {
      * @param owner The component which will be the owner of this component.
      */
     public void showDialog(final Component owner) {
-        showDialog(owner, resources.getMenuLabel(Vocabulary.Keys.ABOUT));
+        showDialog(owner, resources.getMenuLabel(Vocabulary.Keys.About));
     }
 
     /**

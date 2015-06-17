@@ -159,7 +159,7 @@ public final class PixelTranslation extends Static implements Serializable {
             return UPPER_LEFT;
         } else {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "anchor", anchor));
+                    Errors.Keys.IllegalArgument_2, "anchor", anchor));
         }
     }
 
@@ -186,7 +186,7 @@ public final class PixelTranslation extends Static implements Serializable {
             return -0.5;
         } else {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "anchor", anchor));
+                    Errors.Keys.IllegalArgument_2, "anchor", anchor));
         }
     }
 
@@ -215,7 +215,7 @@ public final class PixelTranslation extends Static implements Serializable {
         final PixelTranslation offset = ORIENTATIONS.get(anchor);
         if (offset == null) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "anchor", anchor));
+                    Errors.Keys.IllegalArgument_2, "anchor", anchor));
         }
         return offset;
     }
@@ -337,7 +337,7 @@ public final class PixelTranslation extends Static implements Serializable {
      * Formats an exception for an illegal dimension.
      */
     private static IllegalArgumentException illegalDimension(final String name, final Object dimension) {
-        return new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, name, dimension));
+        return new IllegalArgumentException(Errors.format(Errors.Keys.IllegalArgument_2, name, dimension));
     }
 
     /**

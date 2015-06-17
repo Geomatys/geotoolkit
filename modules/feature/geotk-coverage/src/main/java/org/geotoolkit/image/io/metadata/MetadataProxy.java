@@ -333,7 +333,7 @@ final class MetadataProxy<T> implements InvocationHandler {
                 }
             }
             throw new UnsupportedOperationException(Errors.format(
-                    Errors.Keys.UNKNOWN_COMMAND_1, methodName));
+                    Errors.Keys.UnknownCommand_1, methodName));
         }
         /*
          * If an argument is provided to the method, this is an error since we don't know
@@ -355,7 +355,7 @@ final class MetadataProxy<T> implements InvocationHandler {
                 }
             }
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_1, methodName));
+                    Errors.Keys.UnexpectedArgumentForInstruction_1, methodName));
         }
         /*
          * Gets the name of the attribute to fetch, and set the accessor

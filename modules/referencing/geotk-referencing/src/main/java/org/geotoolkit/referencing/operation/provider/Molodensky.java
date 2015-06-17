@@ -428,7 +428,7 @@ public class Molodensky extends MathTransformProvider {
                 new NamedIdentifier(Citations.EPSG, "Molodensky"),
                 new IdentifierCode (Citations.EPSG,  9604),
                 new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                    Vocabulary.Keys.MOLODENSKY_TRANSFORM))
+                                    Vocabulary.Keys.MolodenskyTransform))
             }, null, new ParameterDescriptor<?>[] {
                 DIM, SRC_DIM, TGT_DIM, DX, DY, DZ,
                 SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
@@ -517,7 +517,7 @@ public class Molodensky extends MathTransformProvider {
         if (dimension != 2 && dimension != 3) {
             final String name = descriptor.getName().getCode();
             throw new InvalidParameterValueException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, name, dimension), name, dimension);
+                    Errors.Keys.IllegalArgument_2, name, dimension), name, dimension);
         }
         return dimension;
     }

@@ -189,7 +189,7 @@ final class Assertions extends Static {
                     return;
                 }
             }
-            throw new ProjectionException(Errors.format(Errors.Keys.TEST_FAILURE_3, variable,
+            throw new ProjectionException(Errors.format(Errors.Keys.TestFailure_3, variable,
                     String.valueOf(expected), String.valueOf(actual)) + // Force full precision.
                     "(Δ" + variable + '=' + delta + " ε=" + tolerance + ')');
         }

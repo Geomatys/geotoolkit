@@ -247,7 +247,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
         assert subsampling.width == xSubsampling && subsampling.height == ySubsampling : subsampling;
         final Rectangle toAdd = tile.getRegion();
         if (toAdd.width > dx || toAdd.height > dy) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNEXPECTED_IMAGE_SIZE));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UnexpectedImageSize));
         }
         int ox = toAdd.x % dx;
         int oy = toAdd.y % dy;
@@ -256,7 +256,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
         if ((ox -= xOffset) < 0 || (ox + toAdd.width)  > dx ||
             (oy -= yOffset) < 0 || (oy + toAdd.height) > dy)
         {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_A_GRID));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NotAGrid));
         }
         mosaic.add(toAdd);
         tiles.add(tile);
@@ -428,7 +428,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      * @return An exception formatted for a duplicated tile at the given coordinate.
      */
     private static IllegalArgumentException duplicatedTile(final Point pt) {
-        return new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1,
+        return new IllegalArgumentException(Errors.format(Errors.Keys.DuplicatedValuesForKey_1,
                 "location=" + pt.x + ',' + pt.y));
     }
 
@@ -532,7 +532,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      */
     private int getIndex(final int tileX, final int tileY) throws IndexOutOfBoundsException {
         if (tileX < 0 || tileX >= nx || tileY < 0 || tileY >= ny) {
-            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_1,
+            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.IndexOutOfBounds_1,
                     "(" + tileX + ',' + tileY + ')'));
         }
         return tileY * nx + tileX;

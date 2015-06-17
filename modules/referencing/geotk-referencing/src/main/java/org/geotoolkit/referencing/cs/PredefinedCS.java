@@ -59,7 +59,7 @@ public final class PredefinedCS extends Static {
      * axis in metres.
      */
     public static final DefaultCartesianCS PROJECTED = new DefaultCartesianCS(
-                    name(Vocabulary.Keys.PROJECTED),
+                    name(Vocabulary.Keys.Projected),
                     Axes.EASTING,
                     Axes.NORTHING);
 
@@ -71,7 +71,7 @@ public final class PredefinedCS extends Static {
      * axis in metres.
      */
     public static final DefaultCartesianCS GEOCENTRIC = new DefaultCartesianCS(
-                    name(Vocabulary.Keys.GEOCENTRIC),
+                    name(Vocabulary.Keys.Geocentric),
                     Axes.GEOCENTRIC_X,
                     Axes.GEOCENTRIC_Y,
                     Axes.GEOCENTRIC_Z);
@@ -83,7 +83,7 @@ public final class PredefinedCS extends Static {
      * axis in metres.
      */
     public static final DefaultCartesianCS CARTESIAN_2D = new DefaultCartesianCS(
-                    name(Vocabulary.Keys.CARTESIAN_2D),
+                    name(Vocabulary.Keys.Cartesian2d),
                     Axes.X,
                     Axes.Y);
 
@@ -95,7 +95,7 @@ public final class PredefinedCS extends Static {
      * axis in metres.
      */
     public static final DefaultCartesianCS CARTESIAN_3D = new DefaultCartesianCS(
-                    name(Vocabulary.Keys.CARTESIAN_3D),
+                    name(Vocabulary.Keys.Cartesian3d),
                     Axes.X,
                     Axes.Y,
                     Axes.Z);
@@ -107,7 +107,7 @@ public final class PredefinedCS extends Static {
      * axis.
      */
     public static final DefaultCartesianCS GRID = new DefaultCartesianCS(
-                    name(Vocabulary.Keys.GRID),
+                    name(Vocabulary.Keys.Grid),
                     Axes.COLUMN,
                     Axes.ROW);
 
@@ -118,7 +118,7 @@ public final class PredefinedCS extends Static {
      * axis.
      */
     public static final DefaultCartesianCS DISPLAY = new DefaultCartesianCS(
-                    name(Vocabulary.Keys.DISPLAY),
+                    name(Vocabulary.Keys.Display),
                     Axes.DISPLAY_X,
                     Axes.DISPLAY_Y);
 
@@ -130,7 +130,7 @@ public final class PredefinedCS extends Static {
      * axis.
      */
     public static final DefaultSphericalCS SPHERICAL = new DefaultSphericalCS(
-                    name(Vocabulary.Keys.GEOCENTRIC),
+                    name(Vocabulary.Keys.Geocentric),
                     Axes.SPHERICAL_LONGITUDE,
                     Axes.SPHERICAL_LATITUDE,
                     Axes.GEOCENTRIC_RADIUS);
@@ -142,7 +142,7 @@ public final class PredefinedCS extends Static {
      * axis in decimal degrees.
      */
     public static final DefaultEllipsoidalCS GEODETIC_2D = new DefaultEllipsoidalCS(
-                    name(Vocabulary.Keys.GEODETIC_2D),
+                    name(Vocabulary.Keys.Geodetic2d),
                     Axes.GEODETIC_LONGITUDE,
                     Axes.GEODETIC_LATITUDE);
 
@@ -154,7 +154,7 @@ public final class PredefinedCS extends Static {
      * axis.
      */
     public static final DefaultEllipsoidalCS GEODETIC_3D = new DefaultEllipsoidalCS(
-                    name(Vocabulary.Keys.GEODETIC_3D),
+                    name(Vocabulary.Keys.Geodetic3d),
                     Axes.GEODETIC_LONGITUDE,
                     Axes.GEODETIC_LATITUDE,
                     Axes.ELLIPSOIDAL_HEIGHT);
@@ -195,7 +195,7 @@ public final class PredefinedCS extends Static {
         final int dimension = cs.getDimension();
         if (coordinates.length != dimension) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_3,
+                    Errors.Keys.MismatchedDimension_3,
                     name, coordinates.length, dimension));
         }
     }
@@ -247,7 +247,7 @@ public final class PredefinedCS extends Static {
         if (cs.getDimension() == 1) {
             return new Measure(Math.abs(coord1[0] - coord2[0]), cs.getAxis(0).getUnit());
         }
-        throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_COORDINATE_SYSTEM_1, cs.getClass()));
+        throw new UnsupportedOperationException(Errors.format(Errors.Keys.UnsupportedCoordinateSystem_1, cs.getClass()));
     }
 
     /**
@@ -272,7 +272,7 @@ public final class PredefinedCS extends Static {
                 converters[i] = axisUnit.getConverterToAny(unit);
             } catch (ConversionException e) {
                 throw new UnsupportedOperationException(Errors.format(
-                        Errors.Keys.INCOMPATIBLE_UNIT_1, axisUnit), e);
+                        Errors.Keys.IncompatibleUnit_1, axisUnit), e);
             }
         }
         final double[] delta = new double[converters.length];
@@ -353,7 +353,7 @@ public final class PredefinedCS extends Static {
         try {
             axes = axisUsingUnit(cs, unit, null);
         } catch (ConversionException e) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
         }
         if (axes == null) {
             return cs;
@@ -375,7 +375,7 @@ public final class PredefinedCS extends Static {
         try {
             axes = PredefinedCS.axisUsingUnit(cs, unit, Units.isLinear(unit) ? SI.RADIAN : SI.METRE);
         } catch (ConversionException e) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
         }
         if (axes == null) {
             return cs;

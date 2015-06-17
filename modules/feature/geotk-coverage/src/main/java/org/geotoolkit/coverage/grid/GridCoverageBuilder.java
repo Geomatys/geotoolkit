@@ -660,7 +660,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             final int expectedDimension) throws MismatchedDimensionException
     {
         if (dimension != expectedDimension) {
-            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_3,
+            throw new MismatchedDimensionException(Errors.format(Errors.Keys.MismatchedDimension_3,
                         name, dimension, expectedDimension));
         }
     }
@@ -776,7 +776,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                     envelope = Envelopes.transform(oldEnvelope, crs);
                 } catch (TransformException exception) {
                     throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), exception);
+                            Errors.Keys.IllegalCoordinateReferenceSystem), exception);
                 }
                 if (envelope.getCoordinateReferenceSystem() != crs) {
                     envelope = new ImmutableEnvelope(crs, envelope);
@@ -811,7 +811,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             crs = CRS.decode(code, true);
         } catch (FactoryException exception) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), exception);
+                    Errors.Keys.IllegalCoordinateReferenceSystem), exception);
         }
         setCoordinateReferenceSystem(crs);
     }
@@ -883,7 +883,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                     newValue = Envelopes.transform(newValue, crs);
                 } catch (TransformException exception) {
                     throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), exception);
+                            Errors.Keys.IllegalCoordinateReferenceSystem), exception);
                 }
                 if (newValue.getCoordinateReferenceSystem() != crs) {
                     newValue = new ImmutableEnvelope(crs, newValue);
@@ -1069,7 +1069,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             }
             return at;
         }
-        throw new IllegalStateException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
+        throw new IllegalStateException(Errors.format(Errors.Keys.NotAnAffineTransform));
     }
 
     /**
@@ -1774,19 +1774,19 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         } else if (image instanceof PlanarImage) {
             gr = ((PlanarImage) image).getGraphics();
         } else {
-            throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_IMAGE_TYPE));
+            throw new UnsupportedOperationException(Errors.format(Errors.Keys.UnsupportedImageType));
         }
         if (crsUnit) {
             final AffineTransform at = getAffineGridToCRS(PixelOrientation.UPPER_LEFT, true);
             if (at == null) {
-                throw new IllegalStateException(Errors.format(Errors.Keys.UNSPECIFIED_TRANSFORM));
+                throw new IllegalStateException(Errors.format(Errors.Keys.UnspecifiedTransform));
             }
             try {
                 ((Graphics2D) gr).transform(at.createInverse());
             } catch (NoninvertibleTransformException e) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.NONINVERTIBLE_TRANSFORM), e);
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.NoninvertibleTransform), e);
             } catch (ClassCastException e) {
-                throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_IMAGE_TYPE), e);
+                throw new UnsupportedOperationException(Errors.format(Errors.Keys.UnsupportedImageType), e);
             }
         }
         return gr;
@@ -1823,7 +1823,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         if (image != null) {
             return ImageUtilities.getBounds(image);
         }
-        throw new InvalidGridGeometryException(Errors.Keys.UNSPECIFIED_IMAGE_SIZE);
+        throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedImageSize);
     }
 
     /**
@@ -2092,7 +2092,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         if (function != null) {
             final AffineTransform at = getAffineGridToCRS(PixelOrientation.CENTER, true);
             if (at == null) {
-                throw new IllegalStateException(Errors.format(Errors.Keys.UNSPECIFIED_TRANSFORM));
+                throw new IllegalStateException(Errors.format(Errors.Keys.UnspecifiedTransform));
             }
             if (at.getShearX()!=0 || at.getShearY()!=0) {
                 // TODO: We may support that in a future version.
@@ -2855,7 +2855,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (old != null) {
                 nodata.put(key, old);
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.VALUE_ALREADY_DEFINED_1, key));
+                        Errors.Keys.ValueAlreadyDefined_1, key));
             }
             sampleDimensionsChanged();
         }
@@ -2949,7 +2949,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                             if (range != null) {
                                 if (range.containsAny(sample)) {
                                     throw new IllegalStateException(Errors.format(
-                                            Errors.Keys.VALUE_ALREADY_DEFINED_1, sample));
+                                            Errors.Keys.ValueAlreadyDefined_1, sample));
                                 }
                             }
                             final NoData n = entry.getValue();

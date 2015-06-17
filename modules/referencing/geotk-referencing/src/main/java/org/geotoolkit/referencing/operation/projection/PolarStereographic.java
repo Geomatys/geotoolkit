@@ -278,7 +278,7 @@ public class PolarStereographic extends Stereographic {
                 break;
             }
             if (--i < 0) {
-                throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
+                throw new ProjectionException(Errors.format(Errors.Keys.NoConvergence));
             }
         }
         dstPts[dstOff  ] = atan2(x, y);

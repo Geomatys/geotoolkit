@@ -53,90 +53,75 @@ public final class Descriptions extends IndexedResourceBundle {
         /**
          * Data distributed over a grid
          */
-        public static final short CODEC_GRID = 0;
+        public static final short CodecGrid = 0;
 
         /**
          * Matrix in text file
          */
-        public static final short CODEC_MATRIX = 1;
+        public static final short CodecMatrix = 1;
 
         /**
          * Raw binary file
          */
-        public static final short CODEC_RAW = 2;
+        public static final short CodecRaw = 2;
 
         /**
          * Usage: {0} [OPTION...] [COMMAND] [PARAMETER...]
          */
-        public static final short COMMAND_USAGE_1 = 3;
+        public static final short CommandUsage_1 = 3;
 
         /**
          * Concatenation of {0} adapted to the 3D domain
          */
-        public static final short CONCATENATED_OPERATION_ADAPTED_1 = 4;
-
-        /**
-         * This result indicates if a datum shift method has been applied.
-         */
-        public static final short CONFORMANCE_MEANS_DATUM_SHIFT = 5;
+        public static final short ConcatenatedOperationAdapted_1 = 4;
 
         /**
          * This result indicates if the factory “{0}” is available for use.
          */
-        public static final short CONFORMANCE_MEANS_FACTORY_AVAILABLE_1 = 6;
+        public static final short ConformanceMeansFactoryAvailable_1 = 13;
 
         /**
          * This result indicates if the parameters are valid.
          */
-        public static final short CONFORMANCE_MEANS_VALID_PARAMETERS = 7;
+        public static final short ConformanceMeansValidParameters = 5;
 
         /**
          * Are the {0} data installed? Some optional data can be downloaded and installed by running
          * the “{2}” module. The default directory for {0} data is “{1}”, but {2} allows to change this
          * setting.
          */
-        public static final short DATA_NOT_INSTALLED_3 = 8;
+        public static final short DataNotInstalled_3 = 6;
 
         /**
          * {0} files have been read successfully but {1} files can not be read. The failure causes are
          * reported below.
          */
-        public static final short ERROR_READING_SOME_FILES_2 = 9;
+        public static final short ErrorReadingSomeFiles_2 = 7;
 
         /**
          * Inserted {0} rows in {1} seconds.
          */
-        public static final short INSERTED_ROWS_2 = 10;
+        public static final short InsertedRows_2 = 8;
 
         /**
          * Parameter “{0}” is not conform. {1}
          */
-        public static final short NON_CONFORM_PARAMETER_2 = 11;
+        public static final short NonConformParameter_2 = 9;
 
         /**
          * Do not use a valuable password, since it will not be encrypted.
          */
-        public static final short PASSWORD_NOT_ENCRYPTED = 12;
-
-        /**
-         * Count: {0}
-         * Minimum: {1}
-         * Maximum: {2}
-         * Mean: {3}
-         * RMS: {4}
-         * Standard deviation: {5}
-         */
-        public static final short STATISTICS_TO_STRING_6 = 13;
+        public static final short PasswordNotEncrypted = 10;
 
         /**
          * Use {0,choice,0#the embedded|1#a specific} database.
          */
-        public static final short USE_EOS_DATABASE_1 = 14;
+        public static final short UseEosDatabase_1 = 11;
 
         /**
          * Use "help" to show available commands.
          */
-        public static final short USE_HELP_COMMAND = 15;
+        public static final short UseHelpCommand = 12;
     }
 
     /**

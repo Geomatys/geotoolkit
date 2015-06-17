@@ -156,7 +156,7 @@ public class AlbersEqualArea extends UnitaryProjection {
             phi2 = φ1; // TODO: use a better mechanism for this default value.
         }
         if (abs(φ1 + phi2) < ANGLE_TOLERANCE * (180/PI)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.LATITUDES_ARE_OPPOSITE_2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.LatitudesAreOpposite_2,
                     new Latitude(φ1), new Latitude(phi2)));
         }
         φ1 = toRadians(φ1);
@@ -166,7 +166,7 @@ public class AlbersEqualArea extends UnitaryProjection {
          * Computes constants.
          */
         if (abs(φ1 + phi2) < ANGLE_TOLERANCE) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.LATITUDES_ARE_OPPOSITE_2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.LatitudesAreOpposite_2,
                     new Latitude(toDegrees(φ1)), new Latitude(toDegrees(phi2))));
         }
         double  sinφ   = sin(φ1);
@@ -257,7 +257,7 @@ public class AlbersEqualArea extends UnitaryProjection {
             if (ρ > -EPSILON) {
                 ρ = 0.0;
             } else {
-                throw new ProjectionException(Errors.format(Errors.Keys.TOLERANCE_ERROR));
+                throw new ProjectionException(Errors.format(Errors.Keys.ToleranceError));
             }
         }
         ρ = sqrt(ρ);
@@ -365,7 +365,7 @@ public class AlbersEqualArea extends UnitaryProjection {
                 if (ρ > -EPSILON) {
                     ρ = 0.0;
                 } else {
-                    throw new ProjectionException(Errors.format(Errors.Keys.TOLERANCE_ERROR));
+                    throw new ProjectionException(Errors.format(Errors.Keys.ToleranceError));
                 }
             }
             ρ = sqrt(ρ);
@@ -452,7 +452,7 @@ public class AlbersEqualArea extends UnitaryProjection {
                 return φ;
             }
         }
-        throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
+        throw new ProjectionException(Errors.format(Errors.Keys.NoConvergence));
     }
 
     /**

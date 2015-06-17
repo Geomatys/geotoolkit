@@ -128,7 +128,7 @@ public class RGF93 extends MathTransformProvider {
     public MathTransform createMathTransform(MathTransformFactory factory, final ParameterValueGroup values) throws FactoryException {
         final String file = Parameters.stringValue(TRANSLATION_FILE, values);
         if (!"gr3df97a.txt".equals(file)) {
-            throw new FactoryException(Errors.format(Errors.Keys.CANT_READ_FILE_1, file));
+            throw new FactoryException(Errors.format(Errors.Keys.CantReadFile_1, file));
         }
         return new NTv2Transform(NTv2Transform.RGF93);
     }

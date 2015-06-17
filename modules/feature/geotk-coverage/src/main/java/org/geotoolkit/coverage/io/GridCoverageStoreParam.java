@@ -130,7 +130,7 @@ public abstract class GridCoverageStoreParam implements Serializable {
             final CoordinateReferenceSystem envelopeCRS = envelope.getCoordinateReferenceSystem();
             if (envelopeCRS != null && !CRS.equalsIgnoreMetadata(crs, envelopeCRS)) {
                 throw new MismatchedReferenceSystemException(Errors.format(
-                        Errors.Keys.MISMATCHED_COORDINATE_REFERENCE_SYSTEM));
+                        Errors.Keys.MismatchedCoordinateReferenceSystem));
             }
         }
     }
@@ -147,7 +147,7 @@ public abstract class GridCoverageStoreParam implements Serializable {
             final int expected = crs.getCoordinateSystem().getDimension();
             if (dimension != expected) {
                 throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_2, dimension, expected));
+                    Errors.Keys.MismatchedDimension_2, dimension, expected));
             }
         }
     }
@@ -164,7 +164,7 @@ public abstract class GridCoverageStoreParam implements Serializable {
             final int expected = envelope.getDimension();
             if (dimension != expected) {
                 throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_2, dimension, expected));
+                    Errors.Keys.MismatchedDimension_2, dimension, expected));
             }
         }
     }
@@ -309,7 +309,7 @@ public abstract class GridCoverageStoreParam implements Serializable {
                 }
             }
             if (dimension < 2) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ENVELOPE_2D));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.EmptyEnvelope2d));
             }
             if (envelope instanceof Cloneable) {
                 envelope = (Envelope) ((Cloneable) envelope).clone();
@@ -444,18 +444,18 @@ public abstract class GridCoverageStoreParam implements Serializable {
     static int[] checkAndClone(int[] bands) throws IllegalArgumentException {
         if (bands != null) {
             if (bands.length == 0) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ARRAY));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.EmptyArray));
             }
             bands = bands.clone();
             for (int i=0; i<bands.length; i++) {
                 final int band = bands[i];
                 if (band < 0) {
-                    throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_1, band));
+                    throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalBandNumber_1, band));
                 }
                 for (int j=i; --j>=0;) {
                     if (band == bands[j]) {
                         throw new IllegalArgumentException(Errors.format(
-                                Errors.Keys.DUPLICATED_VALUE_1, band));
+                                Errors.Keys.DuplicatedValue_1, band));
                     }
                 }
             }

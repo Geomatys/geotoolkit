@@ -123,7 +123,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
     public ImageReaderAdapter(final GridCoverageReader reader) {
         super(null);
         if (reader == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, "reader"));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NullArgument_1, "reader"));
         }
         this.reader = reader;
     }

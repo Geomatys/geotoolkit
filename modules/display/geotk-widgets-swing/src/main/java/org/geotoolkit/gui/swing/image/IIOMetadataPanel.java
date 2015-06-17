@@ -145,7 +145,7 @@ public class IIOMetadataPanel extends JComponent {
             ci.left = 12;
             c.gridy=0; ci.top=6; ci.bottom=0;
             c.gridx=0; c.weightx=0; c.anchor=GridBagConstraints.WEST;
-            controls.add(label(resources, Vocabulary.Keys.FORMAT, formats), c);
+            controls.add(label(resources, Vocabulary.Keys.Format, formats), c);
             c.insets.right = 12; c.insets.left = 0;
             c.gridx=1; c.weightx=1; c.fill=GridBagConstraints.BOTH;
             controls.add(formats, c);
@@ -164,8 +164,8 @@ public class IIOMetadataPanel extends JComponent {
             c.gridy++; ci.top=0; ci.bottom=3; properties.add(validValues = new JLabel(), c);
             ci.left = 6;
             c.gridx=0; c.weightx=0; ci.right=9;
-            c.gridy=0; ci.top=3; ci.bottom=0; properties.add(label(resources, Vocabulary.Keys.DESCRIPTION,  description), c);
-            c.gridy++; ci.top=0; ci.bottom=3; properties.add(label(resources, Vocabulary.Keys.VALID_VALUES, validValues), c);
+            c.gridy=0; ci.top=3; ci.bottom=0; properties.add(label(resources, Vocabulary.Keys.Description,  description), c);
+            c.gridy++; ci.top=0; ci.bottom=3; properties.add(label(resources, Vocabulary.Keys.ValidValues, validValues), c);
             add(properties, BorderLayout.SOUTH);
             properties.setOpaque(false);
         }

@@ -367,7 +367,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
         try (InputStream in = new FileInputStream(file)) {
             p.load(in);
         } catch (IOException exception) {
-            throw new FactoryException(Errors.format(Errors.Keys.CANT_READ_FILE_1, file), exception);
+            throw new FactoryException(Errors.format(Errors.Keys.CantReadFile_1, file), exception);
         }
         return p;
     }
@@ -447,13 +447,13 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
                 }
                 datasource = (DataSource) source;
             } catch (NoInitialContextException | NameNotFoundException exception) {
-                throw new NoSuchFactoryException(Errors.format(Errors.Keys.NO_DATA_SOURCE), exception);
+                throw new NoSuchFactoryException(Errors.format(Errors.Keys.NoDataSource), exception);
             } catch (NamingException | ClassCastException exception) {
                 throw new FactoryException(Errors.format(
-                        Errors.Keys.CANT_GET_DATASOURCE_1, hint), exception);
+                        Errors.Keys.CantGetDatasource_1, hint), exception);
             }
             if (datasource == null) {
-                throw new NoSuchFactoryException(Errors.format(Errors.Keys.NO_DATA_SOURCE));
+                throw new NoSuchFactoryException(Errors.format(Errors.Keys.NoDataSource));
             }
             this.datasource = datasource;
         }
@@ -651,7 +651,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
                 url     = metadata.getURL();
             }
         } catch (SQLException exception) {
-            final String message = Errors.format(Errors.Keys.CANT_CONNECT_DATABASE_1, "EPSG");
+            final String message = Errors.format(Errors.Keys.CantConnectDatabase_1, "EPSG");
             final String state = exception.getSQLState();
             if ("08001".equals(state) || "XJ004".equals(state)) {
                 /*
@@ -674,7 +674,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
         }
         if (isLoggable) {
             if (product == null) {
-                product = '<' + Vocabulary.format(Vocabulary.Keys.UNKNOWN) + '>';
+                product = '<' + Vocabulary.format(Vocabulary.Keys.Unknown) + '>';
             }
             if (url == null) {
                 url = product;
@@ -688,7 +688,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
              * the user continue to request CRS, the cached values will typically be returned.
              */
             final LogRecord record = Loggings.format(Level.INFO,
-                    Loggings.Keys.CONNECTED_EPSG_DATABASE_2, url, product);
+                    Loggings.Keys.ConnectedEpsgDatabase_2, url, product);
             record.setSourceClassName(ThreadedEpsgFactory.class.getName());
             record.setSourceMethodName("createBackingStore");
             record.setLoggerName(LOGGER.getName());

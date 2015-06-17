@@ -254,7 +254,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
             warning = e.getLocalizedMessage();
         }
         if (warning != null) {
-            buffer.append("<p><b>").append(Vocabulary.format(Vocabulary.Keys.WARNING))
+            buffer.append("<p><b>").append(Vocabulary.format(Vocabulary.Keys.Warning))
                     .append(":</b> ").append(warning).append("</p><hr>\n");
         }
         buffer.append("<pre>");

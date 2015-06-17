@@ -229,7 +229,7 @@ public class Orthographic extends UnitaryProjection {
             }
         }
         if (threshold < -EPSILON) {
-            throw new ProjectionException(Errors.format(Errors.Keys.POINT_OUTSIDE_HEMISPHERE));
+            throw new ProjectionException(Errors.format(Errors.Keys.PointOutsideHemisphere));
         }
         if (dstPts != null) {
             dstPts[dstOff  ] = cosφ * sinλ;
@@ -280,7 +280,7 @@ public class Orthographic extends UnitaryProjection {
         double sinc = ρ;
         if (sinc > 1) {
             if (sinc - 1 > ANGLE_TOLERANCE) {
-                throw new ProjectionException(Errors.format(Errors.Keys.POINT_OUTSIDE_HEMISPHERE));
+                throw new ProjectionException(Errors.format(Errors.Keys.PointOutsideHemisphere));
             }
             sinc = 1;
         }

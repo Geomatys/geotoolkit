@@ -196,7 +196,7 @@ public class ProgressPrinter extends ProgressController {
      */
     @Override
     public synchronized void paused() {
-        final String message = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.PAUSED);
+        final String message = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.Paused);
         out.print(message);
         carriageReturn(message.length());
     }
@@ -206,7 +206,7 @@ public class ProgressPrinter extends ProgressController {
      */
     @Override
     public synchronized void resumed() {
-        final String message = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.RESUMED);
+        final String message = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.Resumed);
         out.print(message);
         carriageReturn(message.length());
     }
@@ -282,12 +282,12 @@ public class ProgressPrinter extends ProgressController {
         carriageReturn(0);
         final Locale locale = getLocale();
         if (!hasPrintedWarning) {
-            printInBox(Vocabulary.getResources(locale).getString(Vocabulary.Keys.WARNING));
+            printInBox(Vocabulary.getResources(locale).getString(Vocabulary.Keys.Warning));
             hasPrintedWarning = true;
         }
         if (!Objects.equals(source, lastSource)) {
             out.println();
-            out.println(source != null ? source : Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED));
+            out.println(source != null ? source : Vocabulary.getResources(locale).getString(Vocabulary.Keys.Untitled));
             lastSource = source;
         }
         /*
@@ -339,7 +339,7 @@ public class ProgressPrinter extends ProgressController {
     @Override
     public synchronized void exceptionOccurred(final Throwable exception) {
         carriageReturn(0);
-        printInBox(Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.EXCEPTION));
+        printInBox(Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.Exception));
         exception.printStackTrace(out);
         hasPrintedWarning = false;
         out.flush();

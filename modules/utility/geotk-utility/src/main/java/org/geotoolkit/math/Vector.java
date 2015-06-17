@@ -99,7 +99,7 @@ public abstract class Vector extends AbstractList<Number> implements RandomAcces
                 return new ArrayVector(array);
             }
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1,
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UnknownType_1,
                 (component != null) ? component : type));
     }
 
@@ -565,11 +565,11 @@ public abstract class Vector extends AbstractList<Number> implements RandomAcces
             final short key;
             final Object arg1, arg2;
             if (step == 1) {
-                key  = Errors.Keys.ILLEGAL_RANGE_2;
+                key  = Errors.Keys.IllegalRange_2;
                 arg1 = first;
                 arg2 = first + length;
             } else {
-                key  = Errors.Keys.ILLEGAL_ARGUMENT_2;
+                key  = Errors.Keys.IllegalArgument_2;
                 arg1 = "range";
                 arg2 = "[" + first + ':' + step + ':' + (first + step*length) + ']';
             }

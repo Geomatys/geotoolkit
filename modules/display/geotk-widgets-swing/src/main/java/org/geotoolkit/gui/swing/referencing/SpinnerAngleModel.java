@@ -205,7 +205,7 @@ final class SpinnerAngleModel extends AbstractSpinnerModel implements Serializab
     public void setValue(final Object value) {
         if (!(value instanceof Angle)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "value", value));
+                    Errors.Keys.IllegalArgument_2, "value", value));
         }
         if (!Objects.equals(value, this.value)) {
             this.value = (Angle)value;

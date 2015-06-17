@@ -79,10 +79,10 @@ final class MetadataHandler implements InvocationHandler {
             final short key;
             final Object value;
             if (count == 0) {
-                key = Errors.Keys.NO_PARAMETER_1;
+                key = Errors.Keys.NoParameter_1;
                 value = "arg";
             } else {
-                key = Errors.Keys.UNEXPECTED_PARAMETER_1;
+                key = Errors.Keys.UnexpectedParameter_1;
                 value = args[0];
             }
             throw new MetadataException(Errors.format(key, value));
@@ -115,7 +115,7 @@ final class MetadataHandler implements InvocationHandler {
                         rt = elementType;
                     }
                 }
-                throw new MetadataException(Errors.format(Errors.Keys.DATABASE_FAILURE_2, rt, identifier), e);
+                throw new MetadataException(Errors.format(Errors.Keys.DatabaseFailure_2, rt, identifier), e);
             }
         }
         /*
@@ -154,7 +154,7 @@ final class MetadataHandler implements InvocationHandler {
                 break;
             }
         }
-        throw new MetadataException(Errors.format(Errors.Keys.ILLEGAL_INSTRUCTION_1, name));
+        throw new MetadataException(Errors.format(Errors.Keys.IllegalInstruction_1, name));
     }
 
     /**

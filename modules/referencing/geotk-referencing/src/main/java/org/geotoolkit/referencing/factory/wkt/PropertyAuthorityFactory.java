@@ -246,7 +246,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
          * logs a message for debugging purpose.
          */
         if (definitionFiles.isEmpty()) {
-            log(false, Loggings.Keys.CANT_READ_FILE_1, null, path);
+            log(false, Loggings.Keys.CantReadFile_1, null, path);
         }
         load(definitionFiles);
     }
@@ -302,11 +302,11 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
             if (!currentFile.isEmpty()) {
                 // Note: the 'authorities' array length is never 0 (checked by the constructor).
                 final String authority = String.valueOf(Citations.getIdentifier(authorities[0]));
-                log(false, Loggings.Keys.USING_FILE_AS_FACTORY_2, url, authority);
+                log(false, Loggings.Keys.UsingFileAsFactory_2, url, authority);
             }
             if (currentFile != definitions) {
                 if (currentFile.keySet().removeAll(definitions.keySet())) {
-                    log(true, Loggings.Keys.DUPLICATED_CONTENT_IN_FILE_1, url, null);
+                    log(true, Loggings.Keys.DuplicatedContentInFile_1, url, null);
                 }
                 definitions.putAll(currentFile);
             }

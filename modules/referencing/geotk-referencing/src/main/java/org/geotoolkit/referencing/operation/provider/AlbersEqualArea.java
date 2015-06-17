@@ -375,7 +375,7 @@ public class AlbersEqualArea extends MapProjection {
             new NamedIdentifier(Citations.S57,     "ALA"),
             new IdentifierCode (Citations.S57,      1),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                Vocabulary.Keys.ALBERS_EQUAL_AREA_PROJECTION))
+                                Vocabulary.Keys.AlbersEqualAreaProjection))
         }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,          SEMI_MINOR,
             CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,

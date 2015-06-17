@@ -181,11 +181,11 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
         final Locale     locale    = getLocale();
         final Widgets    guires    = Widgets.getResources(locale);
         final Vocabulary resources = Vocabulary.getResources(locale);
-        newFormat     = new SimpleInternationalString("<html><i>" + resources .getString(Vocabulary.Keys.NEW_FORMAT) + "</i></html>");
+        newFormat     = new SimpleInternationalString("<html><i>" + resources .getString(Vocabulary.Keys.NewFormat) + "</i></html>");
         filename      = new JTextField();
         format        = new JComboBox<>();
         formatNote    = new JLabel();
-        isGeophysics  = new JCheckBox(guires.getString(Widgets.Keys.RASTER_IS_GEOPHYSICS));
+        isGeophysics  = new JCheckBox(guires.getString(Widgets.Keys.RasterIsGeophysics));
         horizontalCRS = new AuthorityCodesComboBox(crsFactory, GeographicCRS.class, ProjectedCRS.class);
         verticalCRS   = new AuthorityCodesComboBox(crsFactory, VerticalCRS.class);
         sampleDimensionEditor = new SampleDimensionPanel();
@@ -199,9 +199,9 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
 
         JXTaskPane pane = new JXTaskPane();
         pane.setLayout(new GridBagLayout());
-        pane.setTitle(resources.getString(Vocabulary.Keys.FILE));
-        addRow(pane, resources.getLabel(Vocabulary.Keys.NAME), filename, c);
-        addRow(pane, resources.getLabel(Vocabulary.Keys.FORMAT), format, c);
+        pane.setTitle(resources.getString(Vocabulary.Keys.File));
+        addRow(pane, resources.getLabel(Vocabulary.Keys.Name), filename, c);
+        addRow(pane, resources.getLabel(Vocabulary.Keys.Format), format, c);
         c.insets.left=6; addRow(pane, null, formatNote, c);
         c.insets.left=0; addRow(pane, null, isGeophysics, c);
         container.add(pane);
@@ -209,20 +209,20 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
         c.gridy=0;
         pane = new JXTaskPane();
         pane.setLayout(new GridBagLayout());
-        pane.setTitle(resources.getString(Vocabulary.Keys.COORDINATE_REFERENCE_SYSTEM));
-        addRow(pane, resources.getLabel(Vocabulary.Keys.HORIZONTAL), horizontalCRS, c);
-        addRow(pane, resources.getLabel(Vocabulary.Keys.VERTICAL), verticalCRS, c);
+        pane.setTitle(resources.getString(Vocabulary.Keys.CoordinateReferenceSystem));
+        addRow(pane, resources.getLabel(Vocabulary.Keys.Horizontal), horizontalCRS, c);
+        addRow(pane, resources.getLabel(Vocabulary.Keys.Vertical), verticalCRS, c);
         container.add(pane);
 
         c.gridy=0;
         pane = new JXTaskPane();
-        pane.setTitle(resources.getString(Vocabulary.Keys.SAMPLE_DIMENSIONS));
+        pane.setTitle(resources.getString(Vocabulary.Keys.SampleDimensions));
         pane.add(sampleDimensionEditor);
         container.add(pane);
 
         final JButton okButton, cancelButton;
-        okButton     = new JButton(resources.getString(Vocabulary.Keys.OK));
-        cancelButton = new JButton(resources.getString(Vocabulary.Keys.CANCEL));
+        okButton     = new JButton(resources.getString(Vocabulary.Keys.Ok));
+        cancelButton = new JButton(resources.getString(Vocabulary.Keys.Cancel));
         okButton.setActionCommand(OK);
         cancelButton.setActionCommand(CANCEL);
         final JPanel buttonBar = new JPanel(new GridLayout(1, 2));
@@ -331,7 +331,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
              * editable. This also update the note label behind the "Format" field.
              */
             formatNote.setText(Widgets.getResources(getLocale()).getString(
-                    editable ? Widgets.Keys.NEW_FORMAT : Widgets.Keys.RENAME_FORMAT_FOR_EDIT));
+                    editable ? Widgets.Keys.NewFormat : Widgets.Keys.RenameFormatForEdit));
             sampleDimensionEditor.setEditable(editable);
             isGeophysics.setEnabled(editable);
             /*
@@ -532,8 +532,8 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
      */
     private void incompleteForm(final int crsType) {
         final Widgets resources = Widgets.getResources(getLocale());
-        final JXLabel label = new JXLabel(resources.getString(Widgets.Keys.CRS_REQUIRED_1, crsType));
-        final String  title = resources.getString(Widgets.Keys.INCOMPLETE_FORM);
+        final JXLabel label = new JXLabel(resources.getString(Widgets.Keys.CrsRequired_1, crsType));
+        final String  title = resources.getString(Widgets.Keys.IncompleteForm);
         label.setLineWrap(true);
         getWindowHandler().showError(this, label, title);
     }

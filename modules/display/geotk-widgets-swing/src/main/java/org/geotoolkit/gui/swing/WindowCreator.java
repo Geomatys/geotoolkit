@@ -287,7 +287,7 @@ public abstract class WindowCreator extends JComponent {
                     return true;
                 } catch (ParseException exception) {
                     SwingUtilities.showMessageDialog(owner, exception.getLocalizedMessage(),
-                            Errors.getResources(content.getLocale()).getString(Errors.Keys.ILLEGAL_ENTRY),
+                            Errors.getResources(content.getLocale()).getString(Errors.Keys.IllegalEntry),
                             JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -301,7 +301,7 @@ public abstract class WindowCreator extends JComponent {
         @Override
         public void showError(final Component owner, final Component content, String title) {
             if (title == null) {
-                title = Vocabulary.getResources(owner.getLocale()).getString(Vocabulary.Keys.ERROR);
+                title = Vocabulary.getResources(owner.getLocale()).getString(Vocabulary.Keys.Error);
             }
             JOptionPane.showMessageDialog(owner, content, title, JOptionPane.ERROR_MESSAGE);
         }

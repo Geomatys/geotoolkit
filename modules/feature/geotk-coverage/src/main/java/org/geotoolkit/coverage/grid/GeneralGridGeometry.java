@@ -356,7 +356,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
         try {
             transformed = Envelopes.transform(gridToCRS.inverse(), envelope);
         } catch (TransformException exception) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_1,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalTransformForType_1,
                     gridToCRS.getClass()), exception);
         }
         extent = new GeneralGridEnvelope(transformed, anchor, false);
@@ -440,7 +440,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     {
         if (dimension != expected) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_3, argument, dimension, expected));
+                    Errors.Keys.MismatchedDimension_3, argument, dimension, expected));
         }
     }
 
@@ -480,7 +480,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             }
         }
         assert !isDefined(CRS);
-        throw new InvalidGridGeometryException(Errors.Keys.UNSPECIFIED_CRS);
+        throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedCrs);
     }
 
     /**
@@ -502,7 +502,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
         }
         assert !isDefined(ENVELOPE);
         throw new InvalidGridGeometryException(gridToCRS == null ?
-                    Errors.Keys.UNSPECIFIED_TRANSFORM : Errors.Keys.UNSPECIFIED_IMAGE_SIZE);
+                    Errors.Keys.UnspecifiedTransform : Errors.Keys.UnspecifiedImageSize);
     }
 
     /**
@@ -536,7 +536,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             return clone(extent);
         }
         assert !isDefined(EXTENT);
-        throw new InvalidGridGeometryException(Errors.Keys.UNSPECIFIED_IMAGE_SIZE);
+        throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedImageSize);
     }
 
     /**
@@ -565,7 +565,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             return gridToCRS;
         }
         assert !isDefined(GRID_TO_CRS);
-        throw new InvalidGridGeometryException(Errors.Keys.UNSPECIFIED_TRANSFORM);
+        throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedTransform);
     }
 
     /**
@@ -587,7 +587,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      */
     public MathTransform getGridToCRS(final PixelInCell anchor) throws InvalidGridGeometryException {
         if (gridToCRS == null) {
-            throw new InvalidGridGeometryException(Errors.Keys.UNSPECIFIED_TRANSFORM);
+            throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedTransform);
         }
         if (PixelInCell.CELL_CENTER.equals(anchor)) {
             return gridToCRS;
@@ -649,7 +649,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     public boolean isDefined(final int bitmask) throws IllegalArgumentException {
         if ((bitmask & ~(CRS | ENVELOPE | EXTENT | GRID_TO_CRS)) != 0) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "bitmask", bitmask));
+                    Errors.Keys.IllegalArgument_2, "bitmask", bitmask));
         }
         return ((bitmask & CRS)         == 0 || (envelope  != null && envelope.getCoordinateReferenceSystem() != null))
             && ((bitmask & ENVELOPE)    == 0 || (envelope  != null && !envelope.isAllNaN()))

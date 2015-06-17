@@ -74,7 +74,7 @@ public class NoSuchRecordException extends CatalogException {
         // the super-class implementation never returns null.
         String message = getMessage();
         if (message == null) {
-            message = errors().getString(Errors.Keys.NO_SUCH_RECORD_IN_TABLE_2, getTableName(), getPrimaryKey());
+            message = errors().getString(Errors.Keys.NoSuchRecordInTable_2, getTableName(), getPrimaryKey());
         }
         return message;
     }

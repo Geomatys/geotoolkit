@@ -421,7 +421,7 @@ public class LoggingPanel extends JComponent implements Disposable {
      *         a {@link javax.swing.JDialog} or a {@link javax.swing.JFrame}.
      */
     public Component show(final Component owner) {
-        final String title = Vocabulary.format(Vocabulary.Keys.EVENT_LOGGER);
+        final String title = Vocabulary.format(Vocabulary.Keys.EventLogger);
         final Window frame = WindowCreator.Handler.DEFAULT.createWindow(owner, this, title);
         frame.addWindowListener(new WindowAdapter() {
             @Override public void windowClosed(WindowEvent event) {

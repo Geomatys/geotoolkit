@@ -88,7 +88,7 @@ final class FutureQueryTask<V> extends FutureTask<V> implements FutureQuery<V> {
     @Override
     public void invokeAfterCompletion(Runnable task) {
         if (task == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, "task"));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NullArgument_1, "task"));
         }
         synchronized (this) {
             Runnable[] tasks = afterCompletion;

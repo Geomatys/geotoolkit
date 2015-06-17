@@ -255,7 +255,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
         JButton button;
         size = new Dimension(24, 20);
         final IconFactory icons = IconFactory.DEFAULT;
-        String label = resources.getString(Vocabulary.Keys.INFORMATIONS);
+        String label = resources.getString(Vocabulary.Keys.Informations);
         button = icons.getButton("crystalProject/16/actions/info.png", label, label);
         button.setEnabled(false);
         button.setFocusable(false);
@@ -266,7 +266,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
         /*
          * Add the "Search" button.
          */
-        label = resources.getString(Vocabulary.Keys.SEARCH);
+        label = resources.getString(Vocabulary.Keys.Search);
         button = icons.getButton("crystalProject/16/actions/find.png", label, label);
         button.setFocusable(false);
         button.setPreferredSize(size);

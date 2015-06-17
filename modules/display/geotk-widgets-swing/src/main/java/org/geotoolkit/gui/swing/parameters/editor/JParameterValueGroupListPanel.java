@@ -207,10 +207,10 @@ public final class JParameterValueGroupListPanel extends GeneralParameterValuePa
             final short key;
             final Object[] param;
             if (groupSize == 0) {
-                key = Errors.Keys.NO_PARAMETER_1;
+                key = Errors.Keys.NoParameter_1;
                 param = new Object[] {name};
             } else {
-                key = Errors.Keys.ILLEGAL_OCCURS_FOR_PARAMETER_4;
+                key = Errors.Keys.IllegalOccursForParameter_4;
                 param = new Object[] {name, groupSize, minOccurs, maxOccurs};
             }
             validationError = Errors.formatInternational(key, param).toString();

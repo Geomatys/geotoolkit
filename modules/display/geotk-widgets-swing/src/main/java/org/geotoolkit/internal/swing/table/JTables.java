@@ -163,7 +163,7 @@ public final class JTables extends Static {
             final int position = target.getColumnIndex(identifier);
             if (position < i) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, identifier));
+                        Errors.Keys.DuplicatedValuesForKey_1, identifier));
             }
             target.moveColumn(position, i);
         }

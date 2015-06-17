@@ -90,7 +90,7 @@ final class GDALGridMapping {
     private static AffineTransform getGeoTransform(final Localized caller, final double... c) {
         if (c.length != 6) {
             throw new MismatchedSizeException(Errors.getResources(caller.getLocale())
-                    .getString(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
+                    .getString(Errors.Keys.MismatchedArrayLength));
         }
         return new AffineTransform(c[1], c[4], c[2], c[5], c[0], c[3]); // X_DIMENSION, Y_DIMENSION
     }

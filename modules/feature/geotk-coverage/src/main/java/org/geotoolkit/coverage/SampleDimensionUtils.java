@@ -42,7 +42,7 @@ public final strictfp class SampleDimensionUtils {
      * Used nodata {@link Category} name.
      * @see Category#getName() 
      */
-    public static InternationalString NODATA_CATEGORY_NAME = Vocabulary.formatInternational(Vocabulary.Keys.NODATA);
+    public static InternationalString NODATA_CATEGORY_NAME = Vocabulary.formatInternational(Vocabulary.Keys.Nodata);
     
     /**
      * Create a {@link Category} adapted for No data value.<br>

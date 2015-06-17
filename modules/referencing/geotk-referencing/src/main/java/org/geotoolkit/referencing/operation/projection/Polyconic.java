@@ -198,7 +198,7 @@ public class Polyconic extends CassiniOrMercator {
             int i = MAXIMUM_ITERATIONS;
             do {
                 if (--i < 0) {
-                    throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
+                    throw new ProjectionException(Errors.format(Errors.Keys.NoConvergence));
                 }
                 final double cosφ = cos(φ);
                 if (abs(cosφ) < ITERATION_TOLERANCE) {
@@ -318,7 +318,7 @@ public class Polyconic extends CassiniOrMercator {
                 int i = MAXIMUM_ITERATIONS;
                 do {
                     if (--i < 0) {
-                        throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
+                        throw new ProjectionException(Errors.format(Errors.Keys.NoConvergence));
                     }
                     final double tanφ = tan(φ);
                     dφ = (y * (φ*tanφ + 1) - φ - 0.5*(φ*φ + B) * tanφ) / ((φ - y) / tanφ - 1);

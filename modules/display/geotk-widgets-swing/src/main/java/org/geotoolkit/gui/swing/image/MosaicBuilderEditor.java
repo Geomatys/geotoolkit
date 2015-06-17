@@ -228,12 +228,12 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
         subsamplingTable.setElements(subsamplings);
         final JTable subsamplingTable = new JTable(this.subsamplingTable);
         subsamplingTable.setDefaultRenderer(Integer.class, new LabeledRenderer.Numeric(locale, true));
-        final JButton removeButton = new JButton(resources.getString(Vocabulary.Keys.REMOVE));
+        final JButton removeButton = new JButton(resources.getString(Vocabulary.Keys.Remove));
         removeButton.setEnabled(false);
         JPanel subsamplingPane = new JPanel(new BorderLayout());
         subsamplingPane.add(new JScrollPane(subsamplingTable), BorderLayout.CENTER);
         subsamplingPane.add(removeButton, BorderLayout.SOUTH);
-        subsamplingPane = new JXTitledPanel(resources.getString(Vocabulary.Keys.SUBSAMPLING), subsamplingPane);
+        subsamplingPane = new JXTitledPanel(resources.getString(Vocabulary.Keys.Subsampling), subsamplingPane);
         /*
          * The panel where to select the tile size, file format and the output directory.
          */
@@ -242,10 +242,10 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
         formatChoices = ImageFormatEntry.comboBox(preferredFormat);
         final JPanel formatPanel = new JPanel(new BorderLayout());
         formatPanel.add(formatChoices, BorderLayout.CENTER);
-        formatPanel.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.FORMAT)));
+        formatPanel.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.Format)));
         directoryField = new FileField(locale, null, true);
         directoryField.setFile(directory);
-        directoryField.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.OUTPUT_DIRECTORY)));
+        directoryField.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.OutputDirectory)));
         final JLabel explain = new JLabel(); // No purpose other than fill space at this time.
         /*
          * Assembles the control panel which is on the right side of the subsampling table.
@@ -418,9 +418,9 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
         Subsamplings(final Vocabulary resources) {
             super(Dimension.class, new ArrayList<Dimension>());
             titles = new String[] {
-                resources.getString(Vocabulary.Keys.LEVEL),
-                resources.getString(Vocabulary.Keys.AXIS_1, "x"),
-                resources.getString(Vocabulary.Keys.AXIS_1, "y")
+                resources.getString(Vocabulary.Keys.Level),
+                resources.getString(Vocabulary.Keys.Axis_1, "x"),
+                resources.getString(Vocabulary.Keys.Axis_1, "y")
             };
             Collections.sort(elements, this);
         }

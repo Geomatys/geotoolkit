@@ -580,7 +580,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
          * the user.
          */
         if (!isValid(source)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_1, source));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.EmptyRectangle_1, source));
         }
         if (!isValid(dest)) {
             return new AffineTransform();
@@ -689,7 +689,7 @@ public abstract class AbstractCanvas2D extends AbstractCanvas{
         if (logger.isLoggable(Level.FINER)) {
             // FINER is the default level for entering, returning, or throwing an exception.
             final LogRecord record = Loggings.getResources(Locale.getDefault()).getLogRecord(Level.FINER,
-                    Loggings.Keys.INITIALIZING_TRANSFORMATION_2,
+                    Loggings.Keys.InitializingTransformation_2,
                     toString(sourceCRS), toString(targetCRS));
             record.setSourceClassName (sourceClassName.getName());
             record.setSourceMethodName(sourceMethodName);

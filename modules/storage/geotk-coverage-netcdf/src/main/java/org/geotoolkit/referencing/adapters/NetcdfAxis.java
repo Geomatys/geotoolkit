@@ -147,7 +147,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
             }
             buffer.append(dimension.getName());
         }
-        throw new IIOException(Errors.format(Errors.Keys.UNEXPECTED_AXIS_DOMAIN_2, axis.getShortName(), buffer));
+        throw new IIOException(Errors.format(Errors.Keys.UnexpectedAxisDomain_2, axis.getShortName(), buffer));
     }
 
     /**
@@ -375,7 +375,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      * @since 3.20
      */
     public double getOrdinateValue(final double[] gridPts, final int srcOff) throws TransformException {
-        throw new TransformException(Errors.format(Errors.Keys.UNSPECIFIED_TRANSFORM));
+        throw new TransformException(Errors.format(Errors.Keys.UnspecifiedTransform));
     }
 
     /**
@@ -392,7 +392,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      * @since 3.21
      */
     void getOrdinateIndex(final double ordinate, final double[] gridPts, final int dstOff) throws TransformException {
-        throw new TransformException(Errors.format(Errors.Keys.NONINVERTIBLE_TRANSFORM));
+        throw new TransformException(Errors.format(Errors.Keys.NoninvertibleTransform));
     }
 
     /**

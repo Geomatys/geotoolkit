@@ -88,7 +88,7 @@ public final class Axes {
      * @see #GEODETIC_LATITUDE
      */
     public static final DefaultCoordinateSystemAxis GEODETIC_LONGITUDE = create(
-            Vocabulary.Keys.GEODETIC_LONGITUDE, "\u03BB", AxisDirection.EAST, NonSI.DEGREE_ANGLE);
+            Vocabulary.Keys.GeodeticLongitude, "\u03BB", AxisDirection.EAST, NonSI.DEGREE_ANGLE);
 
     /**
      * Default axis info for geodetic latitudes in a
@@ -107,7 +107,7 @@ public final class Axes {
      * @see #GEODETIC_LONGITUDE
      */
     public static final DefaultCoordinateSystemAxis GEODETIC_LATITUDE = create(
-            Vocabulary.Keys.GEODETIC_LATITUDE, "\u03C6", AxisDirection.NORTH, NonSI.DEGREE_ANGLE);
+            Vocabulary.Keys.GeodeticLatitude, "\u03C6", AxisDirection.NORTH, NonSI.DEGREE_ANGLE);
 
     /**
      * Default axis info for longitudes.
@@ -124,7 +124,7 @@ public final class Axes {
      * @see #LATITUDE
      */
     public static final DefaultCoordinateSystemAxis LONGITUDE = create(
-            Vocabulary.Keys.LONGITUDE, "\u03BB", AxisDirection.EAST, NonSI.DEGREE_ANGLE);
+            Vocabulary.Keys.Longitude, "\u03BB", AxisDirection.EAST, NonSI.DEGREE_ANGLE);
 
     /**
      * Default axis info for latitudes.
@@ -141,7 +141,7 @@ public final class Axes {
      * @see #LONGITUDE
      */
     public static final DefaultCoordinateSystemAxis LATITUDE = create(
-            Vocabulary.Keys.LATITUDE, "\u03C6", AxisDirection.NORTH, NonSI.DEGREE_ANGLE);
+            Vocabulary.Keys.Latitude, "\u03C6", AxisDirection.NORTH, NonSI.DEGREE_ANGLE);
 
     /**
      * The default axis for height values above the ellipsoid in a
@@ -162,7 +162,7 @@ public final class Axes {
      * @see #DEPTH
      */
     public static final DefaultCoordinateSystemAxis ELLIPSOIDAL_HEIGHT = create(
-            Vocabulary.Keys.ELLIPSOIDAL_HEIGHT, "h", AxisDirection.UP, SI.METRE);
+            Vocabulary.Keys.EllipsoidalHeight, "h", AxisDirection.UP, SI.METRE);
 
     /**
      * The default axis for height values measured from gravity.
@@ -179,7 +179,7 @@ public final class Axes {
      * @see #DEPTH
      */
     public static final DefaultCoordinateSystemAxis GRAVITY_RELATED_HEIGHT = create(
-            Vocabulary.Keys.GRAVITY_RELATED_HEIGHT, "H", AxisDirection.UP, SI.METRE);
+            Vocabulary.Keys.GravityRelatedHeight, "H", AxisDirection.UP, SI.METRE);
 
     /**
      * The default axis for altitude values.
@@ -197,7 +197,7 @@ public final class Axes {
      * @see #DEPTH
      */
     public static final DefaultCoordinateSystemAxis ALTITUDE = create(
-            Vocabulary.Keys.ALTITUDE, "h", AxisDirection.UP, SI.METRE);
+            Vocabulary.Keys.Altitude, "h", AxisDirection.UP, SI.METRE);
 
     /**
      * The default axis for depth.
@@ -213,7 +213,7 @@ public final class Axes {
      * @see #GRAVITY_RELATED_HEIGHT
      */
     public static final DefaultCoordinateSystemAxis DEPTH = create(
-            Vocabulary.Keys.DEPTH, "d", AxisDirection.DOWN, SI.METRE);
+            Vocabulary.Keys.Depth, "d", AxisDirection.DOWN, SI.METRE);
     static {
         OPPOSITES.put(ALTITUDE, DEPTH);
         OPPOSITES.put(DEPTH, ALTITUDE);
@@ -239,7 +239,7 @@ public final class Axes {
      * @see #DEPTH
      */
     public static final DefaultCoordinateSystemAxis GEOCENTRIC_RADIUS = create(
-            Vocabulary.Keys.GEOCENTRIC_RADIUS, "r", AxisDirection.UP, SI.METRE);
+            Vocabulary.Keys.GeocentricRadius, "r", AxisDirection.UP, SI.METRE);
 
     /**
      * Default axis info for longitudes in a
@@ -260,7 +260,7 @@ public final class Axes {
      * @see #SPHERICAL_LATITUDE
      */
     public static final DefaultCoordinateSystemAxis SPHERICAL_LONGITUDE = create(
-            Vocabulary.Keys.SPHERICAL_LONGITUDE, "\u03A9", AxisDirection.EAST, NonSI.DEGREE_ANGLE);
+            Vocabulary.Keys.SphericalLongitude, "\u03A9", AxisDirection.EAST, NonSI.DEGREE_ANGLE);
 
     /**
      * Default axis info for latitudes in a
@@ -281,7 +281,7 @@ public final class Axes {
      * @see #SPHERICAL_LONGITUDE
      */
     public static final DefaultCoordinateSystemAxis SPHERICAL_LATITUDE = create(
-            Vocabulary.Keys.SPHERICAL_LATITUDE, "\u03B8", AxisDirection.NORTH, NonSI.DEGREE_ANGLE);
+            Vocabulary.Keys.SphericalLatitude, "\u03B8", AxisDirection.NORTH, NonSI.DEGREE_ANGLE);
 
     /**
      * Default axis info for <var>x</var> values in a
@@ -354,7 +354,7 @@ public final class Axes {
      * {@link #GEOCENTRIC_Z} set.
      */
     public static final DefaultCoordinateSystemAxis GEOCENTRIC_X = create(
-            Vocabulary.Keys.GEOCENTRIC_X, "X", AxisDirection.GEOCENTRIC_X, SI.METRE);
+            Vocabulary.Keys.GeocentricX, "X", AxisDirection.GEOCENTRIC_X, SI.METRE);
 
     /**
      * Default axis info for <var>y</var> values in a
@@ -373,7 +373,7 @@ public final class Axes {
      * {@link #GEOCENTRIC_Z} set.
      */
     public static final DefaultCoordinateSystemAxis GEOCENTRIC_Y = create(
-            Vocabulary.Keys.GEOCENTRIC_Y, "Y", AxisDirection.GEOCENTRIC_Y, SI.METRE);
+            Vocabulary.Keys.GeocentricY, "Y", AxisDirection.GEOCENTRIC_Y, SI.METRE);
 
     /**
      * Default axis info for <var>z</var> values in a
@@ -392,7 +392,7 @@ public final class Axes {
      * {@link #GEOCENTRIC_Z} set.
      */
     public static final DefaultCoordinateSystemAxis GEOCENTRIC_Z = create(
-            Vocabulary.Keys.GEOCENTRIC_Z, "Z", AxisDirection.GEOCENTRIC_Z, SI.METRE);
+            Vocabulary.Keys.GeocentricZ, "Z", AxisDirection.GEOCENTRIC_Z, SI.METRE);
 
     /**
      * Default axis info for Easting values in a
@@ -411,7 +411,7 @@ public final class Axes {
      * @see #WESTING
      */
     public static final DefaultCoordinateSystemAxis EASTING = create(
-            Vocabulary.Keys.EASTING, "E", AxisDirection.EAST, SI.METRE);
+            Vocabulary.Keys.Easting, "E", AxisDirection.EAST, SI.METRE);
 
     /**
      * Default axis info for Westing values in a
@@ -428,7 +428,7 @@ public final class Axes {
      * @see #WESTING
      */
     public static final DefaultCoordinateSystemAxis WESTING = create(
-            Vocabulary.Keys.WESTING, "W", AxisDirection.WEST, SI.METRE);
+            Vocabulary.Keys.Westing, "W", AxisDirection.WEST, SI.METRE);
     static {
         OPPOSITES.put(EASTING, WESTING);
         OPPOSITES.put(WESTING, EASTING);
@@ -451,7 +451,7 @@ public final class Axes {
      * @see #SOUTHING
      */
     public static final DefaultCoordinateSystemAxis NORTHING = create(
-            Vocabulary.Keys.NORTHING, "N", AxisDirection.NORTH, SI.METRE);
+            Vocabulary.Keys.Northing, "N", AxisDirection.NORTH, SI.METRE);
 
     /**
      * Default axis info for Southing values in a
@@ -468,7 +468,7 @@ public final class Axes {
      * @see #SOUTHING
      */
     public static final DefaultCoordinateSystemAxis SOUTHING = create(
-            Vocabulary.Keys.SOUTHING, "S", AxisDirection.SOUTH, SI.METRE);
+            Vocabulary.Keys.Southing, "S", AxisDirection.SOUTH, SI.METRE);
     static {
         OPPOSITES.put(NORTHING, SOUTHING);
         OPPOSITES.put(SOUTHING, NORTHING);
@@ -483,7 +483,7 @@ public final class Axes {
      * The abbreviation is lower case "<var>t</var>".
      */
     public static final DefaultCoordinateSystemAxis TIME = create(
-            Vocabulary.Keys.TIME, "t", AxisDirection.FUTURE, NonSI.DAY);
+            Vocabulary.Keys.Time, "t", AxisDirection.FUTURE, NonSI.DAY);
 
     /**
      * A default axis for column indices in a {@linkplain org.opengis.coverage.grid.GridCoverage
@@ -493,7 +493,7 @@ public final class Axes {
      * The abbreviation is lower case "<var>i</var>".
      */
     public static final DefaultCoordinateSystemAxis COLUMN = create(
-            Vocabulary.Keys.COLUMN, "i", AxisDirection.COLUMN_POSITIVE, Unit.ONE);
+            Vocabulary.Keys.Column, "i", AxisDirection.COLUMN_POSITIVE, Unit.ONE);
 
     /**
      * A default axis for row indices in a {@linkplain org.opengis.coverage.grid.GridCoverage grid
@@ -503,7 +503,7 @@ public final class Axes {
      * The abbreviation is lower case "<var>j</var>".
      */
     public static final DefaultCoordinateSystemAxis ROW = create(
-            Vocabulary.Keys.ROW, "j", AxisDirection.ROW_POSITIVE, Unit.ONE);
+            Vocabulary.Keys.Row, "j", AxisDirection.ROW_POSITIVE, Unit.ONE);
 
     /**
      * A default axis for <var>x</var> values in a display device. Increasing values go toward
@@ -535,7 +535,7 @@ public final class Axes {
      * @since 3.00
      */
     public static final DefaultCoordinateSystemAxis UNDEFINED = create(
-            Vocabulary.Keys.UNDEFINED, "?", AxisDirection.OTHER, Unit.ONE);
+            Vocabulary.Keys.Undefined, "?", AxisDirection.OTHER, Unit.ONE);
 
     /**
      * Constructs an axis with a name and an abbreviation as a resource bundle key.

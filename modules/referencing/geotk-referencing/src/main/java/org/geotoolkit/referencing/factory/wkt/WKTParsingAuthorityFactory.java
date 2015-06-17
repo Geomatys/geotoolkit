@@ -139,7 +139,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
         this(userHints, definitions);
         ensureNonNull("authorities", authorities);
         if (authorities.length == 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ARRAY));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.EmptyArray));
         }
         this.authorities = authorities = authorities.clone();
         for (final Citation authority : authorities) {
@@ -215,7 +215,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
      */
     Citation[] getAuthorities() {
         if (authorities == null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.DISPOSED_FACTORY));
+            throw new IllegalStateException(Errors.format(Errors.Keys.DisposedFactory));
         }
         return authorities;
     }
@@ -430,9 +430,9 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
             if (type != null) {
                 typeName = type.getSimpleName();
             } else {
-                typeName = Vocabulary.format(Vocabulary.Keys.UNKNOWN);
+                typeName = Vocabulary.format(Vocabulary.Keys.Unknown);
             }
-            message = Errors.format(Errors.Keys.DATABASE_FAILURE_2, typeName, code) + ": " + message;
+            message = Errors.format(Errors.Keys.DatabaseFailure_2, typeName, code) + ": " + message;
         }
         return new FactoryException(message, exception);
     }

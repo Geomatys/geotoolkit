@@ -374,7 +374,7 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
     public int appendChild() throws UnsupportedOperationException {
         if (isReadOnly()) {
             throw new UnsupportedOperationException(getErrorResources()
-                    .getString(Errors.Keys.UNMODIFIABLE_METADATA));
+                    .getString(Errors.Keys.UnmodifiableMetadata));
         }
         final int size = childs.size();
         final Node child = appendChild(parent, childPath);
@@ -396,7 +396,7 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
     public Node removeChild(int childIndex) throws UnsupportedOperationException, IndexOutOfBoundsException {
         if (isReadOnly()) {
             throw new UnsupportedOperationException(getErrorResources()
-                    .getString(Errors.Keys.UNMODIFIABLE_METADATA));
+                    .getString(Errors.Keys.UnmodifiableMetadata));
         }
 
         Node child = childs.get(childIndex);
@@ -414,7 +414,7 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
     public void removeChildren() throws UnsupportedOperationException {
         if (isReadOnly()) {
             throw new UnsupportedOperationException(getErrorResources()
-                    .getString(Errors.Keys.UNMODIFIABLE_METADATA));
+                    .getString(Errors.Keys.UnmodifiableMetadata));
         }
 
         if (childCount() > 0) {
@@ -499,7 +499,7 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
             ((IIOMetadataNode) element).setUserObject(value);
         } else if (value!=null && asText==null) {
             throw new UnsupportedImplementationException(getErrorResources().getString(
-                    Errors.Keys.ILLEGAL_CLASS_2, Classes.getClass(element), IIOMetadataNode.class));
+                    Errors.Keys.IllegalClass_2, Classes.getClass(element), IIOMetadataNode.class));
         }
         element.setNodeValue(asText);
     }
@@ -521,7 +521,7 @@ public class MetadataNodeAccessor extends MetadataNodeParser {
         ensureNonNull("attribute", attribute);
         if (isReadOnly()) {
             throw new UnsupportedOperationException(getErrorResources()
-                    .getString(Errors.Keys.UNMODIFIABLE_METADATA));
+                    .getString(Errors.Keys.UnmodifiableMetadata));
         }
         final Element element = currentElement();
         if (value == null || (value=value.trim()).isEmpty()) {

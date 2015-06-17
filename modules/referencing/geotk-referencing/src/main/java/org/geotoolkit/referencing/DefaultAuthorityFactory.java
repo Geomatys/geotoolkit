@@ -156,7 +156,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
             final CRSAuthorityFactory old = factories.set(i, factory);
             if (old != factory) {
                 final LogRecord record = Loggings.format(Level.FINE,
-                        Loggings.Keys.FACTORY_REPLACED_FOR_AXIS_ORDER_4, authority,
+                        Loggings.Keys.FactoryReplacedForAxisOrder_4, authority,
                         factory.getClass(), old.getClass(), longitudeFirst ? 1 : 0);
                 record.setSourceClassName(DefaultAuthorityFactory.class.getName());
                 record.setSourceMethodName("create");

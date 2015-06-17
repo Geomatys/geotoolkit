@@ -142,7 +142,7 @@ public class NADCON extends MathTransformProvider {
             new NamedIdentifier(Citations.EPSG, "NADCON"),
             new IdentifierCode (Citations.EPSG,  9613),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                Vocabulary.Keys.NADCON_TRANSFORM))
+                                Vocabulary.Keys.NadconTransform))
         }, null, new ParameterDescriptor<?>[] {
             LAT_DIFF_FILE,
             LONG_DIFF_FILE

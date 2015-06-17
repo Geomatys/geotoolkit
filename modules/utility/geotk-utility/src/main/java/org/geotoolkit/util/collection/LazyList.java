@@ -134,7 +134,7 @@ public class LazyList<E> extends AbstractSequentialList<E> {
                 trimToSize();
             }
         }
-        throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_1, index));
+        throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.IndexOutOfBounds_1, index));
     }
 
     /**
@@ -160,7 +160,7 @@ public class LazyList<E> extends AbstractSequentialList<E> {
                 trimToSize();
             }
         }
-        throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_1, index));
+        throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.IndexOutOfBounds_1, index));
     }
 
     /**

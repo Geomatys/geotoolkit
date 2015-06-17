@@ -87,7 +87,7 @@ public class DefaultDataSource implements DataSource {
                 log = DRIVERS.add(name);
             }
             if (log) {
-                final LogRecord record = Loggings.format(Level.CONFIG, Loggings.Keys.JDBC_DRIVER_VERSION_3,
+                final LogRecord record = Loggings.format(Level.CONFIG, Loggings.Keys.JdbcDriverVersion_3,
                         name, metadata.getDriverMajorVersion(), metadata.getDriverMinorVersion());
                 record.setLoggerName(LOGGER.getName());
                 record.setSourceClassName(source.getName());

@@ -335,7 +335,7 @@ public class Query {
                 columnExists = columns.contains(column.name);
                 if (!columnExists) {
                     Logging.log(Query.class, "select", // "select" is the public method invoking this one.
-                            Loggings.format(Level.CONFIG, Loggings.Keys.TABLE_COLUMN_NOT_FOUND_3,
+                            Loggings.format(Level.CONFIG, Loggings.Keys.TableColumnNotFound_3,
                             column.name, table, column.defaultValue));
                 }
             }
@@ -475,7 +475,7 @@ scan:       while (!tables.isEmpty()) {
             final CrossReference ref = entry.getValue();
             if (ref == null) {
                 throw new SQLException(Errors.getResources(database.getLocale())
-                        .getString(Errors.Keys.NO_FOREIGNER_KEY_1, table));
+                        .getString(Errors.Keys.NoForeignerKey_1, table));
             }
             assert table.equals(ref.primaryKey.table) : table;
             buffer.append(" ON ");

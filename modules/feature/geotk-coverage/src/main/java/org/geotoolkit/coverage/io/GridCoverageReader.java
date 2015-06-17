@@ -169,7 +169,7 @@ public abstract class GridCoverageReader extends GridCoverageStore implements Co
         if (IOUtilities.canProcessAsPath(input)) {
             return org.apache.sis.internal.storage.IOUtilities.filename(input);
         } else {
-            return Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED);
+            return Vocabulary.getResources(locale).getString(Vocabulary.Keys.Untitled);
         }
     }
 

@@ -316,8 +316,8 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
                 properties.put("Fill", Boolean.TRUE);
                 if (ns == 0) {
                     final Vocabulary resources = Vocabulary.getResources(getLocale());
-                    addXAxis(resources.getString(Vocabulary.Keys.SUBSAMPLING));
-                    addYAxis(resources.getString(Vocabulary.Keys.EFFICIENCY));
+                    addXAxis(resources.getString(Vocabulary.Keys.Subsampling));
+                    addYAxis(resources.getString(Vocabulary.Keys.Efficiency));
                 }
                 final Series series = addSeries(properties, xs, ys);
                 properties.remove("Fill");

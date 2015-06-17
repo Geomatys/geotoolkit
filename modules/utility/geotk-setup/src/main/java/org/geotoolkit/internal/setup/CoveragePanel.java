@@ -62,12 +62,12 @@ final class CoveragePanel extends DatabasePanel {
         final String[] tz = TimeZone.getAvailableIDs();
         Arrays.sort(tz);
         return new Field[] {
-            new Field(URL.key,            Vocabulary.Keys.URL,                  resources, url, null),
-            new Field(SCHEMA.key,         Vocabulary.Keys.SCHEMA,               resources, new JTextField(),     SCHEMA.defaultValue),
-            new Field(USER.key,           Vocabulary.Keys.USER,                 resources, new JTextField(),     USER.defaultValue),
-            new Field(PASSWORD.key,       Vocabulary.Keys.PASSWORD,             resources, new JPasswordField(), PASSWORD.defaultValue),
-            new Field(TIMEZONE.key,       Vocabulary.Keys.TIME_ZONE,            resources, new JComboBox<>(tz),  TIMEZONE.defaultValue),
-            new Field(ROOT_DIRECTORY.key, Vocabulary.Keys.IMAGE_ROOT_DIRECTORY, resources, new JTextField(),     ROOT_DIRECTORY.defaultValue),
+            new Field(URL.key,            Vocabulary.Keys.Url,                  resources, url, null),
+            new Field(SCHEMA.key,         Vocabulary.Keys.Schema,               resources, new JTextField(),     SCHEMA.defaultValue),
+            new Field(USER.key,           Vocabulary.Keys.User,                 resources, new JTextField(),     USER.defaultValue),
+            new Field(PASSWORD.key,       Vocabulary.Keys.Password,             resources, new JPasswordField(), PASSWORD.defaultValue),
+            new Field(TIMEZONE.key,       Vocabulary.Keys.TimeZone,            resources, new JComboBox<>(tz),  TIMEZONE.defaultValue),
+            new Field(ROOT_DIRECTORY.key, Vocabulary.Keys.ImageRootDirectory, resources, new JTextField(),     ROOT_DIRECTORY.defaultValue),
         };
     }
 }

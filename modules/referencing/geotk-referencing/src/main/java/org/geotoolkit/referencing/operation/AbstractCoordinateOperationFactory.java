@@ -78,14 +78,14 @@ public abstract class AbstractCoordinateOperationFactory
      * The identifier for an identity operation.
      */
     protected static final Identifier IDENTITY =
-            new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.IDENTITY));
+            new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.Identity));
 
     /**
      * The identifier for conversion using an affine transform for axis swapping and/or
      * unit conversions.
      */
     protected static final Identifier AXIS_CHANGES =
-            new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.AXIS_CHANGES));
+            new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.AxisChanges));
 
     /**
      * The identifier for a transformation which is a datum shift.
@@ -93,7 +93,7 @@ public abstract class AbstractCoordinateOperationFactory
      * @see org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_APPLIED
      */
     protected static final Identifier DATUM_SHIFT =
-            new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.DATUM_SHIFT));
+            new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.DatumShift));
 
     /**
      * The identifier for a transformation which is a datum shift without
@@ -105,19 +105,19 @@ public abstract class AbstractCoordinateOperationFactory
      * @see org.apache.sis.metadata.iso.quality.AbstractPositionalAccuracy#DATUM_SHIFT_OMITTED
      */
     protected static final Identifier ELLIPSOID_SHIFT =
-            new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.ELLIPSOID_SHIFT));
+            new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.EllipsoidShift));
 
     /**
      * The identifier for a geocentric conversion.
      */
     protected static final Identifier GEOCENTRIC_CONVERSION =
-            new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.GEOCENTRIC_TRANSFORM));
+            new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.GeocentricTransform));
 
     /**
      * The identifier for an inverse operation.
      */
     protected static final Identifier INVERSE_OPERATION =
-            new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.INVERSE_OPERATION));
+            new NamedIdentifier(GEOTOOLKIT, formatInternational(Vocabulary.Keys.InverseOperation));
 
     @Deprecated
     final Map<RenderingHints.Key, Object> hints;
@@ -656,7 +656,7 @@ public abstract class AbstractCoordinateOperationFactory
         final Map<String,Object> properties = new HashMap<>(4);
         properties.put(NAME_KEY, new TemporaryIdentifier(source.getName()));
         properties.put(IdentifiedObject.REMARKS_KEY, formatInternational(
-                Vocabulary.Keys.DERIVED_FROM_1, getClassName(source)));
+                Vocabulary.Keys.DerivedFrom_1, getClassName(source)));
         return properties;
     }
 
@@ -683,7 +683,7 @@ public abstract class AbstractCoordinateOperationFactory
     protected static String getErrorMessage(final IdentifiedObject source,
                                             final IdentifiedObject target)
     {
-        return Errors.format(Errors.Keys.NO_TRANSFORMATION_PATH_2,
+        return Errors.format(Errors.Keys.NoTransformationPath_2,
                 getClassName(source), getClassName(target));
     }
 }

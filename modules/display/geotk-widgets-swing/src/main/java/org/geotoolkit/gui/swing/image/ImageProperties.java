@@ -217,25 +217,25 @@ public class ImageProperties extends JComponent implements Dialog {
                     c.gridwidth=1; insets.bottom= 0; // Need to be reset for the next loop execution.
                     continue; // Do not add label.
                 }
-                case IMAGE_SIZE:   labelKey = Vocabulary.Keys.IMAGE_SIZE;   break;
-                case TILE_SIZE:    labelKey = Vocabulary.Keys.TILES_SIZE;   break;
-                case DATA_TYPE:    labelKey = Vocabulary.Keys.DATA_TYPE;    break;
-                case SAMPLE_MODEL: labelKey = Vocabulary.Keys.SAMPLE_MODEL; break;
-                case COLOR_MODEL:  labelKey = Vocabulary.Keys.COLOR_MODEL;  break;
-                case COLOR_SPACE:  labelKey = Vocabulary.Keys.COLOR_SPACE;  break;
-                case COLOR_RAMP:   labelKey = Vocabulary.Keys.COLORS;       break;
-                case VALUE_RANGE:  labelKey = Vocabulary.Keys.VALUE_RANGE;  break;
-                case PIXEL_SIZE:   labelKey = Vocabulary.Keys.PIXEL_SIZE;   break;
+                case IMAGE_SIZE:   labelKey = Vocabulary.Keys.ImageSize;   break;
+                case TILE_SIZE:    labelKey = Vocabulary.Keys.TilesSize;   break;
+                case DATA_TYPE:    labelKey = Vocabulary.Keys.DataType;    break;
+                case SAMPLE_MODEL: labelKey = Vocabulary.Keys.SampleModel; break;
+                case COLOR_MODEL:  labelKey = Vocabulary.Keys.ColorModel;  break;
+                case COLOR_SPACE:  labelKey = Vocabulary.Keys.ColorSpace;  break;
+                case COLOR_RAMP:   labelKey = Vocabulary.Keys.Colors;       break;
+                case VALUE_RANGE:  labelKey = Vocabulary.Keys.ValueRange;  break;
+                case PIXEL_SIZE:   labelKey = Vocabulary.Keys.PixelSize;   break;
                 case CRS_NAME: {
                     // Add a separator using HTML style instead than setting
                     // the fonts in order to a have consistent looks.
                     final JXTitledSeparator title = new JXTitledSeparator("<html><h3>" +
-                            resources.getString(Vocabulary.Keys.COORDINATE_REFERENCE_SYSTEM) + "</h3></html>");
+                            resources.getString(Vocabulary.Keys.CoordinateReferenceSystem) + "</h3></html>");
                     c.gridy++;
                     insets.left=9; // No need to reset this particular setting.
                     c.gridwidth=2; info.add(title, c);
                     c.gridwidth=1; // Need to be reset before to add the label.
-                    labelKey = Vocabulary.Keys.DESCRIPTION;
+                    labelKey = Vocabulary.Keys.Description;
                     break;
                 }
                 case LAST: // Just for a compile-time check of wrong values.
@@ -270,7 +270,7 @@ public class ImageProperties extends JComponent implements Dialog {
             label.setLabelFor(description);
             c.anchor=WEST; insets.right=0;
         }
-        tabs.addTab(resources.getString(Vocabulary.Keys.INFORMATIONS), info);
+        tabs.addTab(resources.getString(Vocabulary.Keys.Informations), info);
         /*
          * Build the image's properties tab and the image sample values tab.
          * In the particular case of ImageFileProperties, those two tabs are
@@ -282,21 +282,21 @@ public class ImageProperties extends JComponent implements Dialog {
             properties = new Table(resources);
             final JTable table = new JTable(properties);
             table.setAutoCreateRowSorter(true);
-            tabs.addTab(resources.getString(Vocabulary.Keys.PROPERTIES), new JScrollPane(table));
+            tabs.addTab(resources.getString(Vocabulary.Keys.Properties), new JScrollPane(table));
             samples = new ImageSampleValues();
-            tabs.addTab(resources.getString(Vocabulary.Keys.PIXELS), samples);
+            tabs.addTab(resources.getString(Vocabulary.Keys.Pixels), samples);
         } else {
             metadata.setOpaque(false);
             properties = null;
             samples    = null;
-            tabs.addTab(resources.getString(Vocabulary.Keys.METADATA), metadata);
+            tabs.addTab(resources.getString(Vocabulary.Keys.Metadata), metadata);
         }
         /*
          * Build the image preview tab.
          */
         viewer = new ImagePane();
         viewer.setPaintingWhileAdjusting(true);
-        tabs.addTab(resources.getString(Vocabulary.Keys.PREVIEW), viewer.createScrollPane());
+        tabs.addTab(resources.getString(Vocabulary.Keys.Preview), viewer.createScrollPane());
 
         add(tabs, BorderLayout.CENTER);
         setPreferredSize(new Dimension(600, 400));
@@ -328,7 +328,7 @@ public class ImageProperties extends JComponent implements Dialog {
     final void setOperationDescription(final Object image) {
         final Locale     locale    = getLocale();
         final Vocabulary resources = Vocabulary.getResources(locale);
-        String name        = resources.getString(Vocabulary.Keys.UNDEFINED);
+        String name        = resources.getString(Vocabulary.Keys.Undefined);
         String version     = null;
         String description = null;
         String extra       = null;
@@ -350,10 +350,10 @@ public class ImageProperties extends JComponent implements Dialog {
                 bundle      = ((OperationDescriptor) descriptor).getResourceBundle(locale);
                 name        = bundle   .getString("LocalName");
                 description = bundle   .getString("Description");
-                version     = resources.getString(Vocabulary.Keys.VERSION_1,
+                version     = resources.getString(Vocabulary.Keys.Version_1,
                               bundle   .getString("Version")) + " (" +
                               bundle   .getString("Vendor") + ')';
-                name = resources.getString(Vocabulary.Keys.OPERATION_1, name);
+                name = resources.getString(Vocabulary.Keys.Operation_1, name);
             }
         } else if (image instanceof ImageReaderWriterSpi) {
             /*
@@ -364,7 +364,7 @@ public class ImageProperties extends JComponent implements Dialog {
              */
             final ImageReaderWriterSpi spi = (ImageReaderWriterSpi) image;
             description = spi.getDescription(locale);
-            extra = resources.getString(Vocabulary.Keys.VERSION_1,
+            extra = resources.getString(Vocabulary.Keys.Version_1,
                     spi.getVersion()) + " (" + spi.getVendorName() + ')';
             String[] names = spi.getMIMETypes();
             if (names != null && names.length != 0) {
@@ -380,7 +380,7 @@ public class ImageProperties extends JComponent implements Dialog {
              * Unknown case - typically a BufferedImage.
              */
             name = Classes.getShortClassName(image);
-            name = resources.getString(Vocabulary.Keys.IMAGE_CLASS_1, name);
+            name = resources.getString(Vocabulary.Keys.ImageClass_1, name);
         }
         /*
          * Formats the description field using the information fetched above.
@@ -452,7 +452,7 @@ public class ImageProperties extends JComponent implements Dialog {
         if (image != null) {
             final Vocabulary resources = Vocabulary.getResources(getLocale());
             descriptions[IMAGE_SIZE].setText(resources.getString(
-                    Vocabulary.Keys.SIZE_2, image.getWidth(), image.getHeight()));
+                    Vocabulary.Keys.Size_2, image.getWidth(), image.getHeight()));
         }
         setOperationDescription(image);
         if (properties != null) {
@@ -498,12 +498,12 @@ public class ImageProperties extends JComponent implements Dialog {
             final String text;
             switch (i) {
                 case IMAGE_SIZE: {
-                    final Object numBands = (sm != null) ? sm.getNumBands() : resources.getString(Vocabulary.Keys.UNDEFINED);
-                    text = resources.getString(Vocabulary.Keys.IMAGE_SIZE_3, width, height, numBands);
+                    final Object numBands = (sm != null) ? sm.getNumBands() : resources.getString(Vocabulary.Keys.Undefined);
+                    text = resources.getString(Vocabulary.Keys.ImageSize_3, width, height, numBands);
                     break;
                 }
                 case TILE_SIZE: {
-                    text = resources.getString(Vocabulary.Keys.TILE_SIZE_4, numXTiles, numYTiles, tileWidth, tileHeight);
+                    text = resources.getString(Vocabulary.Keys.TileSize_4, numXTiles, numYTiles, tileWidth, tileHeight);
                     break;
                 }
                 case DATA_TYPE: {
@@ -597,13 +597,13 @@ public class ImageProperties extends JComponent implements Dialog {
         final short key;
         switch (type) {
             case DataBuffer.TYPE_BYTE:      // Fall through
-            case DataBuffer.TYPE_USHORT:    key = Vocabulary.Keys.UNSIGNED_INTEGER_2; break;
+            case DataBuffer.TYPE_USHORT:    key = Vocabulary.Keys.UnsignedInteger_2; break;
             case DataBuffer.TYPE_SHORT:     // Fall through
-            case DataBuffer.TYPE_INT:       key = Vocabulary.Keys.SIGNED_INTEGER_1; break;
+            case DataBuffer.TYPE_INT:       key = Vocabulary.Keys.SignedInteger_1; break;
             case DataBuffer.TYPE_FLOAT:     // Fall through
-            case DataBuffer.TYPE_DOUBLE:    key = Vocabulary.Keys.REAL_NUMBER_1; break;
+            case DataBuffer.TYPE_DOUBLE:    key = Vocabulary.Keys.RealNumber_1; break;
             case DataBuffer.TYPE_UNDEFINED: // Fall through
-            default: return resources.getString(Vocabulary.Keys.UNDEFINED);
+            default: return resources.getString(Vocabulary.Keys.Undefined);
         }
         final Integer  typeSize = DataBuffer.getDataTypeSize(type);
         final Integer pixelSize = (cm != null) ? cm.getPixelSize() : typeSize;
@@ -624,7 +624,7 @@ public class ImageProperties extends JComponent implements Dialog {
                 final String text;
                 switch (cs.getType()) {
                     case ColorSpace.TYPE_GRAY: {
-                        text = resources.getString(Vocabulary.Keys.GRAY_SCALE);
+                        text = resources.getString(Vocabulary.Keys.GrayScale);
                         break;
                     }
                     case ColorSpace.TYPE_RGB:  text = "RGB";  break;
@@ -635,15 +635,15 @@ public class ImageProperties extends JComponent implements Dialog {
                         break;
                     }
                     default: {
-                        text = resources.getString(Vocabulary.Keys.UNKNOWN);
+                        text = resources.getString(Vocabulary.Keys.Unknown);
                         break;
                     }
                 }
                 return text + " (" + resources.getString(
-                        Vocabulary.Keys.COMPONENT_COUNT_1, cs.getNumComponents()) + ')';
+                        Vocabulary.Keys.ComponentCount_1, cs.getNumComponents()) + ')';
             }
         }
-        return resources.getString(Vocabulary.Keys.UNDEFINED);
+        return resources.getString(Vocabulary.Keys.Undefined);
     }
 
     /**
@@ -656,7 +656,7 @@ public class ImageProperties extends JComponent implements Dialog {
      */
     private static String formatClassName(final Object object, final Vocabulary resources) {
         if (object == null) {
-            return resources.getString(Vocabulary.Keys.UNDEFINED);
+            return resources.getString(Vocabulary.Keys.Undefined);
         }
         final String name = Classes.getShortClassName(object);
         final StringBuilder buffer = (StringBuilder) CharSequences.camelCaseToWords(name, true);
@@ -676,7 +676,7 @@ public class ImageProperties extends JComponent implements Dialog {
             }
         }
         if (numColors != 0) {
-            buffer.append(" (").append(resources.getString(Vocabulary.Keys.COLOR_COUNT_1, numColors)).append(')');
+            buffer.append(" (").append(resources.getString(Vocabulary.Keys.ColorCount_1, numColors)).append(')');
         }
         return buffer.toString().trim();
     }
@@ -833,8 +833,8 @@ public class ImageProperties extends JComponent implements Dialog {
         public String getColumnName(final int column) {
             final short key;
             switch (column) {
-                case 0: key=Vocabulary.Keys.NAME;  break;
-                case 1: key=Vocabulary.Keys.VALUE; break;
+                case 0: key=Vocabulary.Keys.Name;  break;
+                case 1: key=Vocabulary.Keys.Value; break;
                 default: throw new IndexOutOfBoundsException(String.valueOf(column));
             }
             return resources.getString(key);
@@ -870,7 +870,7 @@ public class ImageProperties extends JComponent implements Dialog {
                 case 1: {
                     Object value = source.getProperty(name);
                     if (value == Image.UndefinedProperty) {
-                        value = resources.getString(Vocabulary.Keys.UNDEFINED);
+                        value = resources.getString(Vocabulary.Keys.Undefined);
                     }
                     return expandArray(value);
                 }
@@ -968,7 +968,7 @@ public class ImageProperties extends JComponent implements Dialog {
     @Override
     public boolean showDialog(final Component owner, String title) {
         if (title == null) {
-            title = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.PROPERTIES);
+            title = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.Properties);
         }
         return SwingUtilities.showDialog(owner, this, title);
     }
@@ -983,6 +983,6 @@ public class ImageProperties extends JComponent implements Dialog {
      */
     @Debug
     public static void show(final RenderedImage image) {
-        SwingUtilities.show(new ImageProperties(image), Vocabulary.format(Vocabulary.Keys.PROPERTIES));
+        SwingUtilities.show(new ImageProperties(image), Vocabulary.format(Vocabulary.Keys.Properties));
     }
 }

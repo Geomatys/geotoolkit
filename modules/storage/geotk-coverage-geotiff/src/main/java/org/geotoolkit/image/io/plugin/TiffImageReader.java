@@ -765,11 +765,11 @@ public class TiffImageReader extends SpatialImageReader {
                     if ((bits[i] = (int) b) != b) {
                         //-- Verify that 'bitPerSample' values are inside 'int' range (paranoiac check).
                         throw new UnsupportedImageFormatException(error(
-                                Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", b));
+                                Errors.Keys.IllegalParameterValue_2, "bitsPerSample", b));
                     }
                     if (i != 0 && b != sampleBitSize) {
                         //-- Current implementation requires all sample values to be of the same size.
-                        throw new UnsupportedImageFormatException(error(Errors.Keys.INCONSISTENT_VALUE));
+                        throw new UnsupportedImageFormatException(error(Errors.Keys.InconsistentValue));
                     }
                     sampleBitSize = (int) b;
                 }
@@ -783,7 +783,7 @@ public class TiffImageReader extends SpatialImageReader {
                             case 0  :
                             case 1  : samplesPerPixel = 1; break; //-- gray color model --//
                             case 2  : samplesPerPixel = 3; break; //-- RGB color model --//
-                            default : throw new UnsupportedImageFormatException(error(Errors.Keys.FORBIDDEN_ATTRIBUTE_2,
+                            default : throw new UnsupportedImageFormatException(error(Errors.Keys.ForbiddenAttribute_2,
                                 "bitsPerSamples", "sampleFormats"));
                         }
                     }
@@ -805,7 +805,7 @@ public class TiffImageReader extends SpatialImageReader {
                         case Double.SIZE  : sourceDataBufferType = DataBuffer.TYPE_DOUBLE; break;
                         default: {
                             throw new UnsupportedImageFormatException(error(
-                                    Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
+                                    Errors.Keys.IllegalParameterValue_2, "bitsPerSample", sampleBitSize));
                         }
                     }
                 }
@@ -815,7 +815,7 @@ public class TiffImageReader extends SpatialImageReader {
                 for (int i = 1; i < samplesFormat.length; i++) {
                     if (samplesFormat[i] != samplFormat) {
                         //-- Current implementation requires all sample values to be of the same size.
-                        throw new UnsupportedImageFormatException(error(Errors.Keys.INCONSISTENT_VALUE));
+                        throw new UnsupportedImageFormatException(error(Errors.Keys.InconsistentValue));
                     }
                 }
 
@@ -828,14 +828,14 @@ public class TiffImageReader extends SpatialImageReader {
                         case Double.SIZE : sourceDataBufferType = DataBuffer.TYPE_DOUBLE; break;
                         default : {
                             throw new UnsupportedImageFormatException(error(
-                                    Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
+                                    Errors.Keys.IllegalParameterValue_2, "bitsPerSample", sampleBitSize));
                         }
                     }
                 } else {
                     //-- undefined sample format --//
                     if (bitsPerSample == null)
                     throw new UnsupportedImageFormatException(error(
-                            Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "sampleformat value", samplFormat));
+                            Errors.Keys.IllegalParameterValue_2, "sampleformat value", samplFormat));
 
                    /*
                     * We require exact value, because the reading process read all sample values
@@ -848,7 +848,7 @@ public class TiffImageReader extends SpatialImageReader {
                        case Double.SIZE  : sourceDataBufferType = DataBuffer.TYPE_DOUBLE; break;
                        default : {
                            throw new UnsupportedImageFormatException(error(
-                                   Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "bitsPerSample", sampleBitSize));
+                                   Errors.Keys.IllegalParameterValue_2, "bitsPerSample", sampleBitSize));
                        }
                    }
                 }
@@ -883,7 +883,7 @@ public class TiffImageReader extends SpatialImageReader {
                     return rawImageType;
                 }
                 default : {
-                    throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
+                    throw new UnsupportedImageFormatException(error(Errors.Keys.IllegalParameterValue_2,
                             "photometricInterpretation", photoInter));
                 }
             }
@@ -1062,7 +1062,7 @@ public class TiffImageReader extends SpatialImageReader {
                         imageStream.seek(position + n * entrySize);
                         if (!nextImageFileDirectory()) {
                             throw new IndexOutOfBoundsException(error(
-                                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, layerIndex));
+                                    Errors.Keys.IndexOutOfBounds_1, layerIndex));
                         }
                         imageAhead--;
                     }
@@ -1205,7 +1205,7 @@ public class TiffImageReader extends SpatialImageReader {
                     return;
                 }
             }
-            throw new IndexOutOfBoundsException(error(Errors.Keys.INDEX_OUT_OF_BOUNDS_1, layerIndex));
+            throw new IndexOutOfBoundsException(error(Errors.Keys.IndexOutOfBounds_1, layerIndex));
         }
     }
 
@@ -1316,7 +1316,7 @@ public class TiffImageReader extends SpatialImageReader {
      */
     private void ensureDefined(final int value, final String name) throws IIOException {
         if (value < 0) {
-            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_NAME_1, name));
+            throw new IIOException(error(Errors.Keys.NoSuchElementName_1, name));
         }
     }
 
@@ -1329,7 +1329,7 @@ public class TiffImageReader extends SpatialImageReader {
      */
     private void ensureDefined(final long[] value, final String name) throws IIOException {
         if (value == null) {
-            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_NAME_1, name));
+            throw new IIOException(error(Errors.Keys.NoSuchElementName_1, name));
         }
     }
 
@@ -1383,7 +1383,7 @@ public class TiffImageReader extends SpatialImageReader {
             case TYPE_ULONG : {
                 final long value = imageStream.readLong();
                 if (value < 0) {
-                    throw new UnsupportedImageFormatException(error(Errors.Keys.UNSUPPORTED_DATA_TYPE));
+                    throw new UnsupportedImageFormatException(error(Errors.Keys.UnsupportedDataType));
                 }
                 return value;
             }
@@ -1461,7 +1461,7 @@ public class TiffImageReader extends SpatialImageReader {
                         case 8:  nameCompress = "Deflate";   break;
                         default: nameCompress = compression; break;
                     }
-                    throw new UnsupportedImageFormatException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2,
+                    throw new UnsupportedImageFormatException(error(Errors.Keys.IllegalParameterValue_2,
                             "compression", nameCompress));
                 }
                 tagAttributs.put(ATT_VALUE, new int[]{compression});
@@ -1478,7 +1478,7 @@ public class TiffImageReader extends SpatialImageReader {
                     case TYPE_ASCII :
                     case TYPE_BYTE  : {
                         if (count > offsetSize / Byte.SIZE)
-                            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
+                            throw new IIOException(error(Errors.Keys.DuplicatedValue_1, getName(tag)));
                         final long[] result = new long[(int) count];
                         for (int i = 0; i < count; i++) {
                             result[i] = imageStream.readByte();
@@ -1489,7 +1489,7 @@ public class TiffImageReader extends SpatialImageReader {
                     }
                     case TYPE_UBYTE : {
                         if (count > offsetSize / Byte.SIZE)
-                            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
+                            throw new IIOException(error(Errors.Keys.DuplicatedValue_1, getName(tag)));
                         final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
                             result[i] = imageStream.readByte() & 0xFF;
@@ -1500,7 +1500,7 @@ public class TiffImageReader extends SpatialImageReader {
                     }
                     case TYPE_SHORT : {
                         if (count > (offsetSize / Short.SIZE))
-                            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
+                            throw new IIOException(error(Errors.Keys.DuplicatedValue_1, getName(tag)));
                         final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
                             result[i] = imageStream.readShort();
@@ -1511,7 +1511,7 @@ public class TiffImageReader extends SpatialImageReader {
                     }
                     case TYPE_USHORT: {
                         if (count > (offsetSize / Short.SIZE))
-                            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
+                            throw new IIOException(error(Errors.Keys.DuplicatedValue_1, getName(tag)));
                         final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
                             result[i] = (int) (imageStream.readShort() & 0xFFFF);
@@ -1522,7 +1522,7 @@ public class TiffImageReader extends SpatialImageReader {
                     }
                     case TYPE_INT   : {
                         if (count > (offsetSize / Integer.SIZE))
-                            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
+                            throw new IIOException(error(Errors.Keys.DuplicatedValue_1, getName(tag)));
                         final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
                             result[i] = imageStream.readInt();
@@ -1534,7 +1534,7 @@ public class TiffImageReader extends SpatialImageReader {
                     case TYPE_UINT :
                     case TYPE_IFD  : {
                         if (count > (offsetSize / Integer.SIZE))
-                            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
+                            throw new IIOException(error(Errors.Keys.DuplicatedValue_1, getName(tag)));
                         final long[] result = new long[(int)count];
                         for (int i = 0; i < count; i++) {
                             result[i] = imageStream.readInt() & 0xFFFFFFFFL;
@@ -1545,7 +1545,7 @@ public class TiffImageReader extends SpatialImageReader {
                     }
                     case TYPE_FLOAT : {
                         if ((isBigTIFF && count > 2) || ((!isBigTIFF) && count > 1))
-                            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
+                            throw new IIOException(error(Errors.Keys.DuplicatedValue_1, getName(tag)));
                         final float[] result = new float[(int)count];
                         for (int i = 0; i < count; i++) {
                             result[i] = imageStream.readFloat();
@@ -1558,7 +1558,7 @@ public class TiffImageReader extends SpatialImageReader {
                     case TYPE_URATIONAL :
                     case TYPE_DOUBLE    : {
                         if (count > 1)
-                            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
+                            throw new IIOException(error(Errors.Keys.DuplicatedValue_1, getName(tag)));
                         if (!isBigTIFF) {
                             throw new IllegalStateException("in standard tiff offset or value in tiff tag, should not be instance of double or rational.");
                         }
@@ -1575,7 +1575,7 @@ public class TiffImageReader extends SpatialImageReader {
                     case TYPE_ULONG :
                     case TYPE_IFD8  : {
                         if (count > 1)
-                            throw new IIOException(error(Errors.Keys.DUPLICATED_VALUE_1, getName(tag)));
+                            throw new IIOException(error(Errors.Keys.DuplicatedValue_1, getName(tag)));
                         if (!isBigTIFF) {
                             throw new IllegalStateException("in standard tiff offset or value in tiff tag, should not be instance of long.");
                         }
@@ -1590,7 +1590,7 @@ public class TiffImageReader extends SpatialImageReader {
                     case 7 : {
                         break;
                     }
-                    default : throw new IIOException(error(Errors.Keys.ILLEGAL_PARAMETER_TYPE_2, getName(tag), type));
+                    default : throw new IIOException(error(Errors.Keys.IllegalParameterType_2, getName(tag), type));
                 }
             }
         }
@@ -1703,7 +1703,7 @@ public class TiffImageReader extends SpatialImageReader {
 
         if (imageStream == null) {
             if (input == null) {
-                throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
+                throw new IllegalStateException(error(Errors.Keys.NoImageInput));
             }
             final FileInputStream in;
             if (input instanceof String) {
@@ -1823,7 +1823,7 @@ public class TiffImageReader extends SpatialImageReader {
         final Object[] keys = imgAndThumbs.keySet().toArray();
         if (imageIndex >= keys.length)
             throw new IndexOutOfBoundsException(error(
-                                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, imageIndex));
+                                    Errors.Keys.IndexOutOfBounds_1, imageIndex));
         return (int) keys[imageIndex];
     }
 
@@ -1839,7 +1839,7 @@ public class TiffImageReader extends SpatialImageReader {
         final List<Integer> thumbs = imgAndThumbs.get(imgLayIndex);
         if (thumbnailsIndex >= thumbs.size())
             throw new IndexOutOfBoundsException(error(
-                                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, thumbnailsIndex));
+                                    Errors.Keys.IndexOutOfBounds_1, thumbnailsIndex));
         return thumbs.get(thumbnailsIndex);
     }
 

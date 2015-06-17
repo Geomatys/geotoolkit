@@ -248,7 +248,7 @@ public class ImageSampleValues extends JComponent {
         final Vocabulary resources = Vocabulary.getResources(getDefaultLocale());
         final GridBagConstraints c = new GridBagConstraints();
         c.gridy=1; c.insets.bottom=6;
-        c.gridx=0; c.insets.left =9; add(new JLabel(resources.getLabel(Vocabulary.Keys.BAND)), c);
+        c.gridx=0; c.insets.left =9; add(new JLabel(resources.getLabel(Vocabulary.Keys.Band)), c);
         c.gridx=1; c.insets.left =0; add(spinner, c); c.fill=GridBagConstraints.BOTH;
         c.gridx=3; c.insets.right=9; add(current, c);
         c.gridx=2; c.weightx=1;

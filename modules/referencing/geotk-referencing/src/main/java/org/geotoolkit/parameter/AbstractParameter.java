@@ -131,7 +131,7 @@ abstract class AbstractParameter extends FormattableObject
          */
         final Class<T> type = descriptor.getValueClass();
         if (!type.isInstance(value)) {
-            error = Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_1, value.getClass());
+            error = Errors.format(Errors.Keys.IllegalOperationForValueClass_1, value.getClass());
         } else {
             final T typedValue = type.cast(value);
             final Comparable<T> minimum = descriptor.getMinimumValue();
@@ -139,11 +139,11 @@ abstract class AbstractParameter extends FormattableObject
             if ((minimum != null && minimum.compareTo(typedValue) > 0) ||
                 (maximum != null && maximum.compareTo(typedValue) < 0))
             {
-                error = Errors.format(Errors.Keys.VALUE_OUT_OF_BOUNDS_3, value, minimum, maximum);
+                error = Errors.format(Errors.Keys.ValueOutOfBounds_3, value, minimum, maximum);
             } else {
                 final Set<T> validValues = descriptor.getValidValues();
                 if (validValues!=null && !validValues.contains(value)) {
-                    error = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, getName(descriptor), value);
+                    error = Errors.format(Errors.Keys.IllegalArgument_2, getName(descriptor), value);
                 } else {
                     /*
                      * Passed every tests - the value is valid.
@@ -161,7 +161,7 @@ abstract class AbstractParameter extends FormattableObject
      */
     static IllegalStateException unitlessParameter(final GeneralParameterDescriptor descriptor) {
         return new IllegalStateException(Errors.format(
-                Errors.Keys.UNITLESS_PARAMETER_1, getName(descriptor)));
+                Errors.Keys.UnitlessParameter_1, getName(descriptor)));
     }
 
     /**
@@ -178,11 +178,11 @@ abstract class AbstractParameter extends FormattableObject
      * error message formatting if needed.
      */
     static short getUnitMessageID(final Unit<?> unit) {
-        if (Units.isLinear  (unit)) return Errors.Keys.NON_LINEAR_UNIT_1;
-        if (Units.isAngular (unit)) return Errors.Keys.NON_ANGULAR_UNIT_1;
-        if (Units.isTemporal(unit)) return Errors.Keys.NON_TEMPORAL_UNIT_1;
-        if (Units.isScale   (unit)) return Errors.Keys.NON_SCALE_UNIT_1;
-        return Errors.Keys.INCOMPATIBLE_UNIT_1;
+        if (Units.isLinear  (unit)) return Errors.Keys.NonLinearUnit_1;
+        if (Units.isAngular (unit)) return Errors.Keys.NonAngularUnit_1;
+        if (Units.isTemporal(unit)) return Errors.Keys.NonTemporalUnit_1;
+        if (Units.isScale   (unit)) return Errors.Keys.NonScaleUnit_1;
+        return Errors.Keys.IncompatibleUnit_1;
     }
 
     /**

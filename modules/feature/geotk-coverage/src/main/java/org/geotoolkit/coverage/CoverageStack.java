@@ -317,7 +317,7 @@ public class CoverageStack extends AbstractCoverage {
             if (getClass() == Adapter.class) {
                 if (coverage == null) {
                     throw new IllegalArgumentException(
-                            Errors.format(Errors.Keys.NULL_ARGUMENT_1, "coverage"));
+                            Errors.format(Errors.Keys.NullArgument_1, "coverage"));
                 }
             }
         }
@@ -770,9 +770,9 @@ public class CoverageStack extends AbstractCoverage {
          */
         Envelope[] envelopes = null;
         int zDimension = 0;
-        short errorCode = Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM; // In case of error
+        short errorCode = Errors.Keys.IllegalCoordinateReferenceSystem; // In case of error
         if (crs == null) {
-            errorCode = Errors.Keys.MISMATCHED_COORDINATE_REFERENCE_SYSTEM;
+            errorCode = Errors.Keys.MismatchedCoordinateReferenceSystem;
             FrequencySortedSet<CoordinateReferenceSystem> frequency = null;
             for (int i=0; i<elements.length; i++) {
                 final Envelope envelope = elements[i].getEnvelope();
@@ -804,7 +804,7 @@ public class CoverageStack extends AbstractCoverage {
                     default: {
                         final int[] f = frequency.frequencies();
                         final LogRecord record = Loggings.format(Level.WARNING, Loggings.Keys.
-                                FOUND_MISMATCHED_CRS_4, size, elements.length, f[0], f[size-1]);
+                                FoundMismatchedCRS_4, size, elements.length, f[0], f[size-1]);
                         record.setSourceClassName(CoverageStack.class.getName());
                         record.setSourceMethodName("<init>"); // This is the public method invoked.
                         final Logger logger = Logging.getLogger(CoverageStack.class);
@@ -829,7 +829,7 @@ public class CoverageStack extends AbstractCoverage {
             zDimension = crs.getCoordinateSystem().getDimension() - 1;
         }
         if (zDimension <= 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNSUPPORTED_CRS_1,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UnsupportedCrs_1,
                     (crs == null) ? "null" : crs.getName().getCode()));
         }
         /*
@@ -1107,7 +1107,7 @@ public class CoverageStack extends AbstractCoverage {
      * @todo provides a better formatting of the point coordinate.
      */
     private static String cannotEvaluate(final DirectPosition point) {
-        return Errors.format(Errors.Keys.CANT_EVALUATE_FOR_COORDINATE_1, point);
+        return Errors.format(Errors.Keys.CantEvaluateForCoordinate_1, point);
     }
 
     /**
@@ -1149,7 +1149,7 @@ public class CoverageStack extends AbstractCoverage {
     private void load(final int index) throws IOException {
         final Element element = elements[index];
         final NumberRange<?> zRange = element.getZRange();
-        logLoading(Vocabulary.Keys.LOADING_IMAGE_1, new String[] {element.getName()});
+        logLoading(Vocabulary.Keys.LoadingImage_1, new String[] {element.getName()});
         lower      = upper      = load(element);
         lowerZ     = upperZ     = getZ(element);
         lowerRange = upperRange = zRange;
@@ -1161,7 +1161,7 @@ public class CoverageStack extends AbstractCoverage {
      * @throws IOException if an error occurred while loading images.
      */
     private void load(final Element lowerElement, final Element upperElement) throws IOException {
-        logLoading(Vocabulary.Keys.LOADING_IMAGES_2, new String[] {
+        logLoading(Vocabulary.Keys.LoadingImages_2, new String[] {
             lowerElement.getName(),
             upperElement.getName()
         });
@@ -1289,7 +1289,7 @@ public class CoverageStack extends AbstractCoverage {
             Zp = Z;
         }
         throw new OrdinateOutsideCoverageException(Errors.format(
-                  Errors.Keys.ZVALUE_OUTSIDE_COVERAGE_2, getName(), Zp), zDimension, getEnvelope());
+                  Errors.Keys.ZvalueOutsideCoverage_2, getName(), Zp), zDimension, getEnvelope());
     }
 
     /**

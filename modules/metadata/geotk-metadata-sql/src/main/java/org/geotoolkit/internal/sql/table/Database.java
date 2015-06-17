@@ -223,11 +223,11 @@ public class Database implements Localized {
                         final Locale locale = table.getLocale();
                         String url = connection.getMetaData().getURL();
                         if (url == null) {
-                            url = Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNKNOWN);
+                            url = Vocabulary.getResources(locale).getString(Vocabulary.Keys.Unknown);
                         }
                         // "getStatement" is name of the Table method which invoke this method.
                         table.log("getStatement", Loggings.getResources(locale).getLogRecord(
-                                Level.FINE, Loggings.Keys.CONNECTED_DATABASE_FOR_THREAD_2, threadName, url));
+                                Level.FINE, Loggings.Keys.ConnectedDatabaseForThread_2, threadName, url));
                     }
                 }
             }
@@ -250,7 +250,7 @@ public class Database implements Localized {
                     final Logger logger = DefaultDataSource.LOGGER;
                     if (logger.isLoggable(Level.FINE)) {
                         final LogRecord record = Loggings.format(Level.FINE,
-                                Loggings.Keys.CLOSED_DATABASE_FOR_THREAD_2, threadName, numQueries);
+                                Loggings.Keys.ClosedDatabaseForThread_2, threadName, numQueries);
                         record.setLoggerName(logger.getName());
                         record.setSourceClassName(StatementPool.class.getName());
                         record.setSourceMethodName("run");
@@ -611,7 +611,7 @@ public class Database implements Localized {
                 transactionLock.unlock();
             }
         } else {
-            throw new SQLTimeoutException(Errors.getResources(getLocale()).getString(Errors.Keys.TIMEOUT));
+            throw new SQLTimeoutException(Errors.getResources(getLocale()).getString(Errors.Keys.Timeout));
         }
     }
 
@@ -648,7 +648,7 @@ public class Database implements Localized {
     final void ensureOngoingTransaction() throws SQLException {
         if (!transactionLock.isHeldByCurrentThread()) {
             throw new SQLNonTransientException(Errors.getResources(getLocale())
-                    .getString(Errors.Keys.THREAD_DOESNT_HOLD_LOCK));
+                    .getString(Errors.Keys.ThreadDoesntHoldLock));
         }
     }
 

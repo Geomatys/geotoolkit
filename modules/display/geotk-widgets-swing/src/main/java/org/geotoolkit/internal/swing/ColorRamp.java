@@ -461,7 +461,7 @@ public class ColorRamp implements Serializable {
      * Formats an error message for an illegal sample dimension.
      */
     private String illegalBand(final SampleDimension band) {
-        return Errors.getResources(getLocale()).getString(Errors.Keys.ILLEGAL_ARGUMENT_2, "band", band);
+        return Errors.getResources(getLocale()).getString(Errors.Keys.IllegalArgument_2, "band", band);
     }
 
     /**
@@ -748,7 +748,7 @@ public class ColorRamp implements Serializable {
             } else {
                 final Logger logger = Logging.getLogger("org.geotoolkit.image");
                 final LogRecord record = Loggings.getResources(locale).getLogRecord(Level.WARNING,
-                        Loggings.Keys.UNRECOGNIZED_SCALE_TYPE_1, Classes.getShortClassName(tr));
+                        Loggings.Keys.UnrecognizedScaleType_1, Classes.getShortClassName(tr));
                 record.setLoggerName(logger.getName());
                 logger.log(record);
                 graduation = new NumberGraduation(units);

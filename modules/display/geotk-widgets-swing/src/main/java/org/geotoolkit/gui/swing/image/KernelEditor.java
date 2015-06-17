@@ -127,7 +127,7 @@ public class KernelEditor extends JComponent implements Dialog {
         setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
         final Vocabulary resources = Vocabulary.getResources(getDefaultLocale());
 
-        categorySelector.addItem(resources.getString(Vocabulary.Keys.ALL)); // Must be first category
+        categorySelector.addItem(resources.getString(Vocabulary.Keys.All)); // Must be first category
         categorySelector.addItemListener(model);
         widthSelector.   addChangeListener(model);
         heightSelector.  addChangeListener(model);
@@ -146,8 +146,8 @@ public class KernelEditor extends JComponent implements Dialog {
         ////                                            ////
         ////////////////////////////////////////////////////
         c.gridx=0; c.fill=HORIZONTAL;
-        c.gridy=2; predefinedKernels.add(new JLabel(resources.getLabel(Vocabulary.Keys.CATEGORY), JLabel.RIGHT ), c);
-        c.gridy=3; predefinedKernels.add(new JLabel(resources.getLabel(Vocabulary.Keys.KERNEL),   JLabel.RIGHT ), c);
+        c.gridy=2; predefinedKernels.add(new JLabel(resources.getLabel(Vocabulary.Keys.Category), JLabel.RIGHT ), c);
+        c.gridy=3; predefinedKernels.add(new JLabel(resources.getLabel(Vocabulary.Keys.Kernel),   JLabel.RIGHT ), c);
 
         c.gridx=1; c.weightx=1; c.insets.left=0;
         c.gridy=2; predefinedKernels.add(categorySelector, c);
@@ -156,7 +156,7 @@ public class KernelEditor extends JComponent implements Dialog {
         c.gridx=0; c.gridy=2; c.gridwidth=REMAINDER; add(predefinedKernels, c);
         predefinedKernels.setBorder(
             BorderFactory.createCompoundBorder(
-            BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.PREDEFINED_KERNELS)),
+            BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.PredefinedKernels)),
             BorderFactory.createEmptyBorder(/*top*/3,/*left*/9,/*bottom*/6,/*right*/6)));
 
 
@@ -166,9 +166,9 @@ public class KernelEditor extends JComponent implements Dialog {
         ////                                      ////
         //////////////////////////////////////////////
         c.weightx=0; c.gridwidth=1; c.insets.bottom=3;
-        c.gridy=0; add(new JLabel(    resources.getLabel (Vocabulary.Keys.SIZE), JLabel.RIGHT), c);
-        c.gridx=2; add(new JLabel(' '+resources.getString(Vocabulary.Keys.LINES).toLowerCase()+" \u00D7 ", JLabel.CENTER), c);
-        c.gridx=4; add(new JLabel(' '+resources.getString(Vocabulary.Keys.COLUMNS).toLowerCase(), JLabel.LEFT),  c);
+        c.gridy=0; add(new JLabel(    resources.getLabel (Vocabulary.Keys.Size), JLabel.RIGHT), c);
+        c.gridx=2; add(new JLabel(' '+resources.getString(Vocabulary.Keys.Lines).toLowerCase()+" \u00D7 ", JLabel.CENTER), c);
+        c.gridx=4; add(new JLabel(' '+resources.getString(Vocabulary.Keys.Columns).toLowerCase(), JLabel.LEFT),  c);
 
         c.weightx=1;
         c.gridx=1; add(heightSelector, c);
@@ -207,8 +207,8 @@ public class KernelEditor extends JComponent implements Dialog {
      */
     public void addDefaultKernels() {
         final Vocabulary resources  = getResources();
-        final String ERROR_FILTERS  = resources.getString(Vocabulary.Keys.ERROR_FILTERS);
-        final String GRADIENT_MASKS = resources.getString(Vocabulary.Keys.GRADIENT_MASKS);
+        final String ERROR_FILTERS  = resources.getString(Vocabulary.Keys.ErrorFilters);
+        final String GRADIENT_MASKS = resources.getString(Vocabulary.Keys.GradientMasks);
         addKernel(ERROR_FILTERS,  "Floyd & Steinberg (1975)",      KernelJAI.ERROR_FILTER_FLOYD_STEINBERG);
         addKernel(ERROR_FILTERS,  "Jarvis, Judice & Ninke (1976)", KernelJAI.ERROR_FILTER_JARVIS);
         addKernel(ERROR_FILTERS,  "Stucki (1981)",                 KernelJAI.ERROR_FILTER_STUCKI);
@@ -286,7 +286,7 @@ public class KernelEditor extends JComponent implements Dialog {
      */
     public void addKernel(String category, final String name, final KernelJAI kernel) {
         if (category == null) {
-            category = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.OTHERS);
+            category = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.Others);
         }
         model.addKernel(category, name, kernel);
     }
@@ -559,7 +559,7 @@ public class KernelEditor extends JComponent implements Dialog {
          */
         @Override
         public Object getSelectedItem() {
-            return (name != null) ? name : getString(Vocabulary.Keys.PERSONALIZED);
+            return (name != null) ? name : getString(Vocabulary.Keys.Personalized);
         }
 
         /**
@@ -763,7 +763,7 @@ public class KernelEditor extends JComponent implements Dialog {
             names = null;
             fireListChanged(ListDataEvent.INTERVAL_REMOVED, 0, size-1);
             categorySelector.removeAllItems();
-            categorySelector.addItem(getResources().getString(Vocabulary.Keys.ALL));
+            categorySelector.addItem(getResources().getString(Vocabulary.Keys.All));
         }
 
         /**
@@ -792,7 +792,7 @@ public class KernelEditor extends JComponent implements Dialog {
                         names[count++] = entry.getKey();
                     }
                 }
-                names[count++] = getString(Vocabulary.Keys.PERSONALIZED);
+                names[count++] = getString(Vocabulary.Keys.Personalized);
                 names = ArraysExt.resize(names, count);
             }
             return names;
@@ -821,7 +821,7 @@ public class KernelEditor extends JComponent implements Dialog {
                 }
             }
             if (newName == null) {
-                newName = getString(Vocabulary.Keys.PERSONALIZED);
+                newName = getString(Vocabulary.Keys.Personalized);
             }
             if (!newName.equals(name)) {
                 // Set the name now in order to avoid that

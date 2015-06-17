@@ -149,7 +149,7 @@ public final class DimensionManager extends DimensionSet {
             }
         } else {
             if (names.length == 0) {
-                throw new IllegalArgumentException(errors().getString(Errors.Keys.EMPTY_ARRAY));
+                throw new IllegalArgumentException(errors().getString(Errors.Keys.EmptyArray));
             }
             if (bandNames == null) {
                 bandNames = new HashMap<>();
@@ -218,7 +218,7 @@ public final class DimensionManager extends DimensionSet {
                     case 0:  break;
                     case 1:  variableName = variableNames.get(0); break;
                     default: throw new IllegalImageDimensionException(errors().getString(
-                            Errors.Keys.DUPLICATED_VALUE_1, "variableName"));
+                            Errors.Keys.DuplicatedValue_1, "variableName"));
                 }
             }
             if (bandNames != null) {
@@ -226,13 +226,13 @@ public final class DimensionManager extends DimensionSet {
                     final int index = entry.getKey();
                     if (index != DEFAULT_IMAGE_INDEX) {
                         throw new IllegalImageDimensionException(errors().getString(
-                                Errors.Keys.UNEXPECTED_PARAMETER_1, "bandNames(" + index + ')'));
+                                Errors.Keys.UnexpectedParameter_1, "bandNames(" + index + ')'));
                     }
                     if (variableName != null) {
                         final List<String> names = entry.getValue();
                         if (!names.isEmpty() && !names.contains(variableName)) {
                             throw new IllegalImageDimensionException(errors().getString(
-                                    Errors.Keys.INCONSISTENT_VALUE));
+                                    Errors.Keys.InconsistentValue));
                         }
                     }
                 }
@@ -253,7 +253,7 @@ public final class DimensionManager extends DimensionSet {
             final String name = names[i];
             if (name == null) {
                 throw new NullArgumentException(errors().getString(
-                        Errors.Keys.NULL_ARGUMENT_1, "names[" + i + ']'));
+                        Errors.Keys.NullArgument_1, "names[" + i + ']'));
             }
         }
     }

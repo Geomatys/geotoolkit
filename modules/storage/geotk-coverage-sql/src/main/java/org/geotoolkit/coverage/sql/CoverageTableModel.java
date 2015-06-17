@@ -218,12 +218,12 @@ public class CoverageTableModel extends AbstractTableModel {
         timeFormat   = new SimpleDateFormat("HH:mm", fmtLoc);
         timeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         final Vocabulary resources = Vocabulary.getResources(locale);
-        DAY  = resources.getString(Vocabulary.Keys.DAY);
-        DAYS = resources.getString(Vocabulary.Keys.DAYS);
+        DAY  = resources.getString(Vocabulary.Keys.Day);
+        DAYS = resources.getString(Vocabulary.Keys.Days);
         titles = new String[CLASSES.length];
-        titles[NAME]     = resources.getString(Vocabulary.Keys.NAME);
-        titles[DATE]     = resources.getString(Vocabulary.Keys.END_TIME);
-        titles[DURATION] = resources.getString(Vocabulary.Keys.DURATION);
+        titles[NAME]     = resources.getString(Vocabulary.Keys.Name);
+        titles[DATE]     = resources.getString(Vocabulary.Keys.EndTime);
+        titles[DURATION] = resources.getString(Vocabulary.Keys.Duration);
     }
 
     /**
@@ -319,7 +319,7 @@ public class CoverageTableModel extends AbstractTableModel {
         }
         entries = newEntries;
         fireTableDataChanged();
-        commitEdit(oldEntries, newEntries, Vocabulary.Keys.DEFINE);
+        commitEdit(oldEntries, newEntries, Vocabulary.Keys.Define);
     }
 
     /**
@@ -516,7 +516,7 @@ public class CoverageTableModel extends AbstractTableModel {
             }
         }
         this.entries = ArraysExt.resize(entries, entriesLength);
-        commitEdit(oldEntries, this.entries, Vocabulary.Keys.DELETE);
+        commitEdit(oldEntries, this.entries, Vocabulary.Keys.Delete);
     }
 
     /**
@@ -545,9 +545,9 @@ public class CoverageTableModel extends AbstractTableModel {
          */
         final StringBuffer buffer = new StringBuffer(256);
         final short[] keys = {
-            Vocabulary.Keys.NAME,
-            Vocabulary.Keys.START_TIME,
-            Vocabulary.Keys.END_TIME
+            Vocabulary.Keys.Name,
+            Vocabulary.Keys.StartTime,
+            Vocabulary.Keys.EndTime
         };
         final Vocabulary resources = Vocabulary.getResources(locale);
         for (int i=0; i<keys.length;) {

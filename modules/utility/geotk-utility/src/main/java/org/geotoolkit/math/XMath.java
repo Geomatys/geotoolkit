@@ -100,7 +100,7 @@ public final class XMath extends Static {
             }
             value = vf;
         } else {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE_1, type));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UnsupportedDataType_1, type));
         }
         if (down) {
             value = -value;

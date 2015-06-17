@@ -328,7 +328,7 @@ public class TransverseMercator extends MapProjection {
             new NamedIdentifier(Citations.S57,      "TME"),
             new IdentifierCode (Citations.S57,       13),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                Vocabulary.Keys.TRANSVERSE_MERCATOR_PROJECTION)),
+                                Vocabulary.Keys.TransverseMercatorProjection)),
         }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,

@@ -254,7 +254,7 @@ public class LayerList extends WindowCreator {
         setLayerNames(database.getLayers());
         layerList.addListSelectionListener(listeners);
         final JXTitledPanel layerPanel = new JXTitledPanel(
-                resources.getString(Vocabulary.Keys.LAYERS), new JScrollPane(layerList));
+                resources.getString(Vocabulary.Keys.Layers), new JScrollPane(layerList));
         /*
          * List of available elevations.
          */
@@ -281,22 +281,22 @@ public class LayerList extends WindowCreator {
         geographicPanel.add(filler());
         geographicPanel.setVisible(false);
         geographicPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.GEOGRAPHIC_COORDINATES)),
+                BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.GeographicCoordinates)),
                 BorderFactory.createEmptyBorder(9, 9, 9, 9)));
         /*
          * The time range of the currently selected layer.
          * The resolution of the currently selected layer.
          */
-        timeRange = createField(resources, Vocabulary.Keys.TIME_RANGE);
-        typicalResolution = createField(resources, Vocabulary.Keys.RESOLUTION);
+        timeRange = createField(resources, Vocabulary.Keys.TimeRange);
+        typicalResolution = createField(resources, Vocabulary.Keys.Resolution);
         busyDomain = new JXBusyLabel();
         final JPanel domainPane = combine(busyDomain, geographicPanel, timeRange, typicalResolution);
         /*
          * The list of formats.
          * The range of sample values.
          */
-        imageFormat = createField(resources, Vocabulary.Keys.DECODERS);
-        sampleValueRanges = createField(resources, Vocabulary.Keys.VALUE_RANGE);
+        imageFormat = createField(resources, Vocabulary.Keys.Decoders);
+        sampleValueRanges = createField(resources, Vocabulary.Keys.ValueRange);
         busyFormat = new JXBusyLabel();
         final JPanel formatPane = combine(busyFormat, imageFormat, sampleValueRanges);
         /*
@@ -304,9 +304,9 @@ public class LayerList extends WindowCreator {
          * Include the list of available elevations.
          */
         final JTabbedPane propertiesTabs = new JTabbedPane();
-        propertiesTabs.addTab(resources.getString(Vocabulary.Keys.DOMAIN), domainPane);
-        propertiesTabs.addTab(resources.getString(Vocabulary.Keys.FORMAT), formatPane);
-        propertiesTabs.addTab(resources.getString(Vocabulary.Keys.ALTITUDES), new JScrollPane(elevationList));
+        propertiesTabs.addTab(resources.getString(Vocabulary.Keys.Domain), domainPane);
+        propertiesTabs.addTab(resources.getString(Vocabulary.Keys.Format), formatPane);
+        propertiesTabs.addTab(resources.getString(Vocabulary.Keys.Altitudes), new JScrollPane(elevationList));
         layerProperties = new JXTitledPanel(getPropertiesTitle(null), propertiesTabs);
         /*
          * The central component. Include the list of layers
@@ -321,10 +321,10 @@ public class LayerList extends WindowCreator {
          * The buttons bar.
          */
         final JButton refreshButton, addButton;
-        refreshButton   = new JButton(resources.getString(Vocabulary.Keys.REFRESH));
-        addButton       = new JButton(resources.getString(Vocabulary.Keys.ADD));
-        removeButton    = new JButton(resources.getString(Vocabulary.Keys.DELETE));
-        coveragesButton = new JButton(resources.getString(Vocabulary.Keys.IMAGE_LIST));
+        refreshButton   = new JButton(resources.getString(Vocabulary.Keys.Refresh));
+        addButton       = new JButton(resources.getString(Vocabulary.Keys.Add));
+        removeButton    = new JButton(resources.getString(Vocabulary.Keys.Delete));
+        coveragesButton = new JButton(resources.getString(Vocabulary.Keys.ImageList));
 
         refreshButton.setActionCommand(REFRESH);
         refreshButton.addActionListener(listeners);
@@ -506,9 +506,9 @@ public class LayerList extends WindowCreator {
     private String getPropertiesTitle(String layer) {
         final Vocabulary resources = Vocabulary.getResources(getLocale());
         if (layer == null) {
-            layer = '(' + resources.getString(Vocabulary.Keys.NONE) + ')';
+            layer = '(' + resources.getString(Vocabulary.Keys.None) + ')';
         }
-        return resources.getString(Vocabulary.Keys.PROPERTIES_OF_1, layer);
+        return resources.getString(Vocabulary.Keys.PropertiesOf_1, layer);
     }
 
     /**
@@ -533,7 +533,7 @@ public class LayerList extends WindowCreator {
         geographicPanel.setVisible(bbox != null);
         String text = null;
         if (startTime != null && endTime != null) {
-            text = Widgets.getResources(getLocale()).getString(Widgets.Keys.TIME_RANGE_2,
+            text = Widgets.getResources(getLocale()).getString(Widgets.Keys.TimeRange_2,
                     dateFormat.format(startTime), dateFormat.format(endTime));
         }
         setText(timeRange, text);
@@ -766,8 +766,8 @@ public class LayerList extends WindowCreator {
      */
     private void addNewLayer() {
         final Vocabulary resources = Vocabulary.getResources(getLocale());
-        final String title = resources.getString(Vocabulary.Keys.NEW_LAYER);
-        String name = JOptionPane.showInputDialog(this, resources.getLabel(Vocabulary.Keys.NAME),
+        final String title = resources.getString(Vocabulary.Keys.NewLayer);
+        String name = JOptionPane.showInputDialog(this, resources.getLabel(Vocabulary.Keys.Name),
                 title, JOptionPane.QUESTION_MESSAGE);
         if (name != null && !(name = name.trim()).isEmpty()) {
             final FutureQuery<Boolean> result = database.addLayer(name);
@@ -789,7 +789,7 @@ public class LayerList extends WindowCreator {
                         refresh(false);
                     } else {
                         JOptionPane.showMessageDialog(LayerList.this,
-                                "<html>" + Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_1,
+                                "<html>" + Errors.format(Errors.Keys.ValueAlreadyDefined_1,
                                 "<cite>" + layer + "</cite>") + "</html>",
                                 title, JOptionPane.WARNING_MESSAGE);
                     }
@@ -807,12 +807,12 @@ public class LayerList extends WindowCreator {
             final Locale locale = getLocale();
             final Widgets resources = Widgets.getResources(locale);
             final Vocabulary vocabulary = Vocabulary.getResources(locale);
-            final String remove = vocabulary.getString(Vocabulary.Keys.REMOVE);
-            final String cancel = vocabulary.getString(Vocabulary.Keys.CANCEL);
-            final JLabel confirm = new JLabel(resources.getString(Widgets.Keys.CONFIRM_DELETE_LAYER_1, layer));
+            final String remove = vocabulary.getString(Vocabulary.Keys.Remove);
+            final String cancel = vocabulary.getString(Vocabulary.Keys.Cancel);
+            final JLabel confirm = new JLabel(resources.getString(Widgets.Keys.ConfirmDeleteLayer_1, layer));
             confirm.setPreferredSize(new Dimension(450, 80));
             if (0 == JOptionPane.showOptionDialog(this, confirm,
-                    resources.getString(Widgets.Keys.CONFIRM_DELETE), JOptionPane.OK_CANCEL_OPTION,
+                    resources.getString(Widgets.Keys.ConfirmDelete), JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.WARNING_MESSAGE, null, new String[] {remove, cancel}, cancel))
             {
                 final FutureQuery<Boolean> result = database.removeLayer(layer);
@@ -875,7 +875,7 @@ public class LayerList extends WindowCreator {
             domain.setSelectorVisible(hide, false);
             final Locale locale = getLocale();
             final Widgets resources = Widgets.getResources(locale);
-            if (domain.showDialog(this, resources.getString(Widgets.Keys.DOMAIN_OF_ENTRIES))) {
+            if (domain.showDialog(this, resources.getString(Widgets.Keys.DomainOfEntries))) {
                 /*
                  * Create the CoverageEnvelope from the user selection.
                  * TODO: Current implementation assumes that the CoverageEnvelope CRS is WGS84.
@@ -896,7 +896,7 @@ public class LayerList extends WindowCreator {
                 final CoverageList coverages = new CoverageList(new CoverageTableModel(locale));
                 coverages.setData(layer, envelope);
                 final Window frame = getWindowHandler().createWindow(LayerList.this, coverages,
-                        resources.getString(Widgets.Keys.LAYER_ELEMENTS_1, layerName));
+                        resources.getString(Widgets.Keys.LayerElements_1, layerName));
                 frame.setVisible(true);
             }
         }

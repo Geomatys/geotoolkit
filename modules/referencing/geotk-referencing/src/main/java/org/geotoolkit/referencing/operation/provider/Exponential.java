@@ -128,7 +128,7 @@ public class Exponential extends MathTransformProvider {
      */
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(
             new NamedIdentifier[] {
-                new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(Vocabulary.Keys.EXPONENTIAL))
+                new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(Vocabulary.Keys.Exponential))
             }, null, new ParameterDescriptor<?>[] {
                 BASE, SCALE
             }, 0);

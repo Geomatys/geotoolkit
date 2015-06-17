@@ -409,7 +409,7 @@ public final class NewGridCoverageReference {
          */
         input = IOUtilities.tryToFile(input);
         if (!(input instanceof File)) {
-            throw new IIOException(Errors.format(Errors.Keys.ILLEGAL_CLASS_2,
+            throw new IIOException(Errors.format(Errors.Keys.IllegalClass_2,
                     Classes.getShortClassName(input), File.class));
         }
         final File inputFile = (File) input;
@@ -433,7 +433,7 @@ public final class NewGridCoverageReference {
             imageFormat = org.apache.sis.internal.storage.IOUtilities.extension(inputFile);
         }
         if (imageFormat.isEmpty()) {
-            throw new IOException(Errors.format(Errors.Keys.UNDEFINED_FORMAT));
+            throw new IOException(Errors.format(Errors.Keys.UndefinedFormat));
         }
         final MetadataHelper helper = (metadata != null) ? new MetadataHelper(
                 (reader instanceof Localized) ? (Localized) reader : null) : null;
@@ -690,7 +690,7 @@ public final class NewGridCoverageReference {
                     if (id != null) try {
                         return Integer.valueOf(code);
                     } catch (NumberFormatException e) {
-                        throw new FactoryException(Errors.format(Errors.Keys.UNPARSABLE_NUMBER_1, id), e);
+                        throw new FactoryException(Errors.format(Errors.Keys.UnparsableNumber_1, id), e);
                     }
                 }
             }

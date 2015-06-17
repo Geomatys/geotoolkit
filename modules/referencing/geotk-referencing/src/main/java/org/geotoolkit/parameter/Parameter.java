@@ -132,7 +132,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
      * Formats an error message for illegal method call for the current value type.
      */
     private String getClassTypeError() {
-        return Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_1,
+        return Errors.format(Errors.Keys.IllegalOperationForValueClass_1,
                ((ParameterDescriptor<?>) descriptor).getValueClass());
     }
 
@@ -186,7 +186,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         try {
             return actual.getConverterToAny(unit).convert(doubleValue());
         } catch (ConversionException e) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
         }
     }
 
@@ -219,7 +219,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         if (value == null) {
             // This is the kind of exception expected by org.geotoolkit.io.wkt.Formatter.
             // If a default value existed, it should has been copied by the constructor or setter methods.
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_1, name));
+            throw new IllegalStateException(Errors.format(Errors.Keys.NoParameter_1, name));
         }
         // Reminder: the following is a specialization of IllegalStateException.
         throw new InvalidParameterTypeException(getClassTypeError(), name);
@@ -247,7 +247,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         }
         final String name = getName(descriptor);
         if (value == null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_1, name));
+            throw new IllegalStateException(Errors.format(Errors.Keys.NoParameter_1, name));
         }
         throw new InvalidParameterTypeException(getClassTypeError(), name);
     }
@@ -270,7 +270,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         }
         final String name = getName(descriptor);
         if (value == null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_1, name));
+            throw new IllegalStateException(Errors.format(Errors.Keys.NoParameter_1, name));
         }
         throw new InvalidParameterTypeException(getClassTypeError(), name);
     }
@@ -294,7 +294,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         }
         final String name = getName(descriptor);
         if (value == null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_1, name));
+            throw new IllegalStateException(Errors.format(Errors.Keys.NoParameter_1, name));
         }
         throw new InvalidParameterTypeException(getClassTypeError(), name);
     }
@@ -329,7 +329,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         try {
             converter = actual.getConverterToAny(unit);
         } catch (ConversionException e) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
         }
         final double[] values = doubleValueList().clone();
         for (int i=0; i<values.length; i++) {
@@ -358,7 +358,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         }
         final String name = getName(descriptor);
         if (value == null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_1, name));
+            throw new IllegalStateException(Errors.format(Errors.Keys.NoParameter_1, name));
         }
         throw new InvalidParameterTypeException(getClassTypeError(), name);
     }
@@ -382,7 +382,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         }
         final String name = getName(descriptor);
         if (value == null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_1, name));
+            throw new IllegalStateException(Errors.format(Errors.Keys.NoParameter_1, name));
         }
         throw new InvalidParameterTypeException(getClassTypeError(), name);
     }
@@ -425,7 +425,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
          */
         final String name = getName(descriptor);
         if (value == null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_1, name));
+            throw new IllegalStateException(Errors.format(Errors.Keys.NoParameter_1, name));
         }
         throw new InvalidParameterTypeException(getClassTypeError(), cause, name);
     }
@@ -482,7 +482,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         try {
             converted = unit.getConverterToAny(targetUnit).convert(value);
         } catch (ConversionException e) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
         }
         ensureValidValue(descriptor, converted);
         /*
@@ -614,7 +614,7 @@ public class Parameter<T> extends AbstractParameterValue<T> {
         try {
             converter = unit.getConverterToAny(targetUnit);
         } catch (ConversionException e) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleUnit_1, unit), e);
         }
         for (int i=0; i<converted.length; i++) {
             converted[i] = converter.convert(converted[i]);

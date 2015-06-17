@@ -203,7 +203,7 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
              * means that the application failed to delete itself the temporary file.
              */
             Logging.log(TemporaryFile.class, "delete",
-                    Loggings.format(Level.WARNING, Loggings.Keys.TEMPORARY_FILE_GC_1, this));
+                    Loggings.format(Level.WARNING, Loggings.Keys.TemporaryFileGc_1, this));
         }
     }
 

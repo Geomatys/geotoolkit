@@ -318,7 +318,7 @@ public class Orthographic extends MapProjection {
             new NamedIdentifier(Citations.S57,     "ORT"),
             new IdentifierCode (Citations.S57,      10),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                Vocabulary.Keys.ORTHOGRAPHIC_PROJECTION))
+                                Vocabulary.Keys.OrthographicProjection))
         }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR,
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,

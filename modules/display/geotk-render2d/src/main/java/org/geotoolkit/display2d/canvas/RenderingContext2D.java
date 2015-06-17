@@ -594,7 +594,7 @@ public class RenderingContext2D implements RenderingContext{
             graphics.setTransform(at);
         } catch (FactoryException e) {
             throw new TransformException(Errors.format(
-                        Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), e);
+                        Errors.Keys.IllegalCoordinateReferenceSystem), e);
         }
 
     }
@@ -612,7 +612,7 @@ public class RenderingContext2D implements RenderingContext{
         try {
             return (AffineTransform) mt;
         } catch (ClassCastException cause) {
-            throw new FactoryException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM), cause);
+            throw new FactoryException(Errors.format(Errors.Keys.NotAnAffineTransform), cause);
         }
     }
 

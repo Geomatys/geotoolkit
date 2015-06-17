@@ -159,8 +159,8 @@ public class SampleDimensionPanel extends JComponent {
 
         nameField = new JComboBox<>();
         unitField = new JFormattedTextField(new UnitFormatter(locale));
-        final JLabel nameLabel = new JLabel(resources.getLabel(Vocabulary.Keys.BAND));
-        final JLabel unitLabel = new JLabel(resources.getLabel(Vocabulary.Keys.UNITS));
+        final JLabel nameLabel = new JLabel(resources.getLabel(Vocabulary.Keys.Band));
+        final JLabel unitLabel = new JLabel(resources.getLabel(Vocabulary.Keys.Units));
         nameLabel.setLabelFor(nameField);
         unitLabel.setLabelFor(unitField);
 
@@ -264,7 +264,7 @@ public class SampleDimensionPanel extends JComponent {
                     name = desc.toString(locale);
                 }
                 if (name == null) {
-                    name = resources.getString(Vocabulary.Keys.BAND_1, i+1);
+                    name = resources.getString(Vocabulary.Keys.Band_1, i+1);
                 }
                 nameList.addElement(new BandName(i, name));
             }

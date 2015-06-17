@@ -118,7 +118,7 @@ final class HelpAction {
     void help(final String command) {
         final Locale locale = cmd.locale;
         out.println(cmd.bold(Descriptions.getResources(locale).getString(
-                    Descriptions.Keys.COMMAND_USAGE_1, command)));
+                    Descriptions.Keys.CommandUsage_1, command)));
         out.println();
 
         // Writer to be used for the remainding of this method, which trim trailing spaces.
@@ -221,7 +221,7 @@ final class HelpAction {
                 if (option.mandatory()) {
                     if (mandatory == null) {
                         mandatory = Vocabulary.getResources(locale)
-                                .getString(Vocabulary.Keys.MANDATORY).toLowerCase(locale);
+                                .getString(Vocabulary.Keys.Mandatory).toLowerCase(locale);
                     }
                     buffer.append("\n  ");
                     color(X364.FOREGROUND_GREEN);
@@ -244,10 +244,10 @@ final class HelpAction {
         final Vocabulary resources = Vocabulary.getResources(locale);
         try {
             if (!actions.isEmpty()) {
-                print(table, resources.getLabel(Vocabulary.Keys.COMMANDS), actions.values());
+                print(table, resources.getLabel(Vocabulary.Keys.Commands), actions.values());
             }
             if (!options.isEmpty()) {
-                print(table, resources.getLabel(Vocabulary.Keys.OPTIONS), options.values());
+                print(table, resources.getLabel(Vocabulary.Keys.Options), options.values());
             }
             table.flush();
         } catch (IOException e) {
@@ -358,7 +358,7 @@ final class HelpAction {
      */
     private String examplesLabel() {
         if (examples == null) {
-            examples = Vocabulary.getResources(cmd.locale).getLabel(Vocabulary.Keys.EXAMPLES);
+            examples = Vocabulary.getResources(cmd.locale).getLabel(Vocabulary.Keys.Examples);
         }
         return examples;
     }

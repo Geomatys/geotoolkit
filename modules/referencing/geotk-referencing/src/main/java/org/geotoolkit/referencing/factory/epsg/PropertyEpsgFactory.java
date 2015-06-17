@@ -221,7 +221,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
                 (AbstractAuthorityFactory) AuthorityFactoryFinder.getCRSAuthorityFactory(
                 "EPSG", new Hints(Hints.CRS_AUTHORITY_FACTORY, ThreadedEpsgFactory.class));
         final Vocabulary resources = Vocabulary.getResources(null);
-        out.println(resources.getLabel(Vocabulary.Keys.COMPARE_WITH));
+        out.println(resources.getLabel(Vocabulary.Keys.CompareWith));
         try {
             final IndentedLineWriter w = new IndentedLineWriter(out);
             w.setIndentation(4);
@@ -249,10 +249,10 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
             }
         }
         if (duplicated.isEmpty()) {
-            out.println(resources.getString(Vocabulary.Keys.NO_DUPLICATION_FOUND));
+            out.println(resources.getString(Vocabulary.Keys.NoDuplicationFound));
         } else {
             for (final String code : duplicated) {
-                out.print(resources.getLabel(Vocabulary.Keys.DUPLICATED_VALUE));
+                out.print(resources.getLabel(Vocabulary.Keys.DuplicatedValue));
                 out.println(code);
             }
         }

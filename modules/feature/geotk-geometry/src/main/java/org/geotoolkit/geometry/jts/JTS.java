@@ -119,7 +119,7 @@ public final class JTS {
     private static void ensureNonNull(final String name, final Object object)
             throws IllegalArgumentException {
         if (object == null) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, name));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NullArgument_1, name));
         }
     }
 
@@ -179,7 +179,7 @@ public final class JTS {
         ensureNonNull("transform", transform);
 
         if ((transform.getSourceDimensions() != 2) || (transform.getTargetDimensions() != 2)) {
-            throw new MismatchedDimensionException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_1,
+            throw new MismatchedDimensionException(Errors.format(Errors.Keys.IllegalTransformForType_1,
                     Classes.getShortClassName(transform)));
         }
 
@@ -301,7 +301,7 @@ public final class JTS {
             transform = org.geotoolkit.referencing.CRS.findMathTransform(crs, CommonCRS.WGS84.normalizedGeographic(), true);
         } catch (FactoryException exception) {
             throw new TransformPathNotFoundException(Errors.format(
-                    Errors.Keys.CANT_TRANSFORM_ENVELOPE, exception));
+                    Errors.Keys.CantTransformEnvelope, exception));
         }
 
         return transform(envelope, transform);
@@ -552,7 +552,7 @@ public final class JTS {
         if (crs2D == null) {
             throw new MismatchedDimensionException(
                     Errors.format(
-                    Errors.Keys.CANT_SEPARATE_CRS_1, crs));
+                    Errors.Keys.CantSeparateCrs_1, crs));
         }
 
 

@@ -240,7 +240,7 @@ public abstract class Operation2D extends AbstractOperation {
         ensureNonNull("sources",     sources);
         if (sources.length != sourceNames.length) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.MISMATCHED_ARRAY_LENGTH_2, "sources", "sourceNames"));
+                    Errors.Keys.MismatchedArrayLength_2, "sources", "sourceNames"));
         }
         final ViewType computationView = getComputationView(parameters);
         ensureNonNull("computationView", computationView);
@@ -248,7 +248,7 @@ public abstract class Operation2D extends AbstractOperation {
         for (int i=0; i<sourceNames.length; i++) {
             final Object candidate = parameters.parameter(sourceNames[i]).getValue();
             if (!(candidate instanceof GridCoverage2D)) {
-                throw new InvalidParameterValueException(Errors.format(Errors.Keys.ILLEGAL_CLASS_2,
+                throw new InvalidParameterValueException(Errors.format(Errors.Keys.IllegalClass_2,
                         Classes.getClass(candidate), GridCoverage2D.class), sourceNames[i], candidate);
             }
             final GridCoverage2D old = (GridCoverage2D) candidate;

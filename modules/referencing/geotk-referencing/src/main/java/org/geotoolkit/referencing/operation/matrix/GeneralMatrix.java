@@ -112,7 +112,7 @@ public class GeneralMatrix extends GMatrix implements Matrix {
         final int numCol = getNumCol();
         for (int j=0; j<numRow; j++) {
             if (matrix[j].length != numCol) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.MATRIX_NOT_REGULAR));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.MatrixNotRegular));
             }
             setRow(j, matrix[j]);
         }
@@ -234,7 +234,7 @@ public class GeneralMatrix extends GMatrix implements Matrix {
                 if (search.equals(AxisDirections.absolute(srcAxe))) {
                     if (hasFound) {
                         throw new IllegalArgumentException(Errors.format(
-                                Errors.Keys.COLINEAR_AXIS_2, srcAxe.name(), dstAxe.name()));
+                                Errors.Keys.ColinearAxis_2, srcAxe.name(), dstAxe.name()));
                     }
                     hasFound = true;
                     /*
@@ -258,7 +258,7 @@ public class GeneralMatrix extends GMatrix implements Matrix {
             }
             if (!hasFound) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.NO_SOURCE_AXIS_1, dstAxis[dstIndex].name()));
+                        Errors.Keys.NoSourceAxis_1, dstAxis[dstIndex].name()));
             }
         }
         setElement(dstAxis.length, srcAxis.length, 1);
@@ -280,7 +280,7 @@ public class GeneralMatrix extends GMatrix implements Matrix {
         final int dim = envelope.getDimension();
         if (dimension != dim) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_3, name, dim, dimension));
+                    Errors.Keys.MismatchedDimension_3, name, dim, dimension));
         }
     }
 

@@ -63,24 +63,24 @@ final class VersionAction {
         final Vocabulary resources = Vocabulary.getResources(locale);
         out.print("Geotoolkit.org ");
         out.println(Utilities.VERSION);
-        out.print(resources.getString(Vocabulary.Keys.JAVA_VERSION_1, System.getProperty("java.version")));
+        out.print(resources.getString(Vocabulary.Keys.JavaVersion_1, System.getProperty("java.version")));
         out.print(faint);
         out.print(" (");
-        out.print(resources.getString(Vocabulary.Keys.JAVA_VENDOR_1, System.getProperty("java.vendor")));
+        out.print(resources.getString(Vocabulary.Keys.JavaVendor_1, System.getProperty("java.vendor")));
         out.print(')');
         out.println(normal);
-        out.print(resources.getString(Vocabulary.Keys.OS_NAME_1, System.getProperty("os.name")));
+        out.print(resources.getString(Vocabulary.Keys.OsName_1, System.getProperty("os.name")));
         out.print(faint);
         out.print(" (");
-        out.print(resources.getString(Vocabulary.Keys.OS_VERSION_2, new String[] {
+        out.print(resources.getString(Vocabulary.Keys.OsVersion_2, new String[] {
             System.getProperty("os.version"), System.getProperty("os.arch")
         }));
         out.print(')');
         out.println(normal);
-        out.print(resources.getString(Vocabulary.Keys.MEMORY_HEAP_SIZE_1,
+        out.print(resources.getString(Vocabulary.Keys.MemoryHeapSize_1,
                 Math.round(Runtime.getRuntime().maxMemory() / (1024 * 1024.0))));
         out.print(" (");
-        out.print(resources.getString(Vocabulary.Keys.MAXIMUM));
+        out.print(resources.getString(Vocabulary.Keys.Maximum));
         out.println(')');
         /*
          * Test for the presence of extensions for which the class may not be on the classpath:
@@ -104,7 +104,7 @@ final class VersionAction {
                         Class.forName(Dialect.DERBY.driverClass);
                         final Driver d = DriverManager.getDriver(Dialect.DERBY.protocol);
                         result = Loggings.getResources(locale).getString(
-                                Loggings.Keys.JDBC_DRIVER_VERSION_3, "Derby",
+                                Loggings.Keys.JdbcDriverVersion_3, "Derby",
                                 d.getMajorVersion(), d.getMinorVersion());
                         break;
                     }
@@ -118,7 +118,7 @@ final class VersionAction {
                         header = "Image I/O extensions";
                         final Package p = Package.getPackage("com.sun.media.jai.operator");
                         if (p != null) {
-                            result = resources.getString(Vocabulary.Keys.VERSION_1,
+                            result = resources.getString(Vocabulary.Keys.Version_1,
                                     p.getImplementationVersion());
                         }
                         break;
@@ -135,7 +135,7 @@ final class VersionAction {
                 out.print((String) result);
                 out.println(normal);
             } else {
-                out.print(resources.getString(Vocabulary.Keys.NOT_INSTALLED));
+                out.print(resources.getString(Vocabulary.Keys.NotInstalled));
                 if (result != null) {
                     out.print(faint);
                     out.print(" (");

@@ -103,7 +103,7 @@ public abstract class AbstractMathTransform extends org.apache.sis.referencing.o
      * @param expected  The expected dimension.
      */
     static String mismatchedDimension(final String argument, final int dimension, final int expected) {
-        return Errors.format(Errors.Keys.MISMATCHED_DIMENSION_3, argument, dimension, expected);
+        return Errors.format(Errors.Keys.MismatchedDimension_3, argument, dimension, expected);
     }
 
     /**
@@ -199,7 +199,7 @@ public abstract class AbstractMathTransform extends org.apache.sis.referencing.o
         final double[] coordinate = new double[] {point.getX(), point.getY()};
         final Matrix derivative = transform(coordinate, 0, null, 0, true);
         if (derivative == null) {
-            throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+            throw new TransformException(Errors.format(Errors.Keys.CantComputeDerivative));
         }
         return derivative;
     }
@@ -217,7 +217,7 @@ public abstract class AbstractMathTransform extends org.apache.sis.referencing.o
     {
         if (object == null) {
             throw new InvalidParameterValueException(Errors.format(
-                        Errors.Keys.NULL_ARGUMENT_1, name), name, object);
+                        Errors.Keys.NullArgument_1, name), name, object);
         }
     }
 
@@ -262,7 +262,7 @@ public abstract class AbstractMathTransform extends org.apache.sis.referencing.o
         @Override
         public String getName() {
             return AbstractMathTransform.this.getName() +
-                    " (" + Vocabulary.format(Vocabulary.Keys.INVERSE_TRANSFORM) + ')';
+                    " (" + Vocabulary.format(Vocabulary.Keys.InverseTransform) + ')';
         }
 
         /**

@@ -175,13 +175,13 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
                 // Skip the "values" column if it doesn't exist.
             }
             switch (column) {
-                case 0:            key = Vocabulary.Keys.NAME;         break;
-                case 1:            key = Vocabulary.Keys.DESCRIPTION;  break;
-                case 2:            key = Vocabulary.Keys.TYPE;         break;
-                case 3:            key = Vocabulary.Keys.OCCURRENCE;   break;
-                case VALUE_COLUMN: key = Vocabulary.Keys.VALUE;        break;
-                case 5:            key = Vocabulary.Keys.DEFAULT;      break;
-                case 6:            key = Vocabulary.Keys.VALID_VALUES; break;
+                case 0:            key = Vocabulary.Keys.Name;         break;
+                case 1:            key = Vocabulary.Keys.Description;  break;
+                case 2:            key = Vocabulary.Keys.Type;         break;
+                case 3:            key = Vocabulary.Keys.Occurrence;   break;
+                case VALUE_COLUMN: key = Vocabulary.Keys.Value;        break;
+                case 5:            key = Vocabulary.Keys.Default;      break;
+                case 6:            key = Vocabulary.Keys.ValidValues; break;
                 case COLUMN_COUNT:
                 // The later is added only for making sure at compile-time that
                 // we are not declaring more columns than the expected number.

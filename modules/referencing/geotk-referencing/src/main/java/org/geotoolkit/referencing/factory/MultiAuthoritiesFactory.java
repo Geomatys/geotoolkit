@@ -507,8 +507,8 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
          */
         String message = null;
         if (authority == null) {
-            authority = Vocabulary.format(Vocabulary.Keys.UNKNOWN);
-            message   = Errors.format(Errors.Keys.NO_AUTHORITY_1, code);
+            authority = Vocabulary.format(Vocabulary.Keys.Unknown);
+            message   = Errors.format(Errors.Keys.NoAuthority_1, code);
         } else {
             /*
              * Gets the message of the very last cause, since it is often the most pertinent
@@ -523,9 +523,9 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
                 }
             }
             if (message != null) {
-                message = Errors.format(Errors.Keys.UNKNOWN_AUTHORITY_2, authority, message);
+                message = Errors.format(Errors.Keys.UnknownAuthority_2, authority, message);
             } else {
-                message = Errors.format(Errors.Keys.UNKNOWN_AUTHORITY_1, authority);
+                message = Errors.format(Errors.Keys.UnknownAuthority_1, authority);
             }
         }
         final NoSuchAuthorityCodeException exception;
@@ -867,7 +867,7 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
                     return FACTORY_TYPES[i];
                 }
             }
-            throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_TYPE_1, type));
+            throw new IllegalStateException(Errors.format(Errors.Keys.UnknownType_1, type));
         }
 
         /**

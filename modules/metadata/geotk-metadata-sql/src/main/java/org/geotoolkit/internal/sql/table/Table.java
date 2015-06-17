@@ -130,7 +130,7 @@ public abstract class Table implements Localized {
     public final Database getDatabase() throws IllegalStateException {
         final Database database = query.database;
         if (database == null) {
-            throw new IllegalStateException(errors().getString(Errors.Keys.NO_DATA_SOURCE));
+            throw new IllegalStateException(errors().getString(Errors.Keys.NoDataSource));
         }
         return database;
     }
@@ -258,7 +258,7 @@ public abstract class Table implements Localized {
         switch (type) {
             case COUNT: sql = query.count(lc, type, column); break;
             default: throw new IllegalArgumentException(errors().getString(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "type", type));
+                    Errors.Keys.IllegalArgument_2, "type", type));
         }
         this.type = type;
         fireStateChanged(); // Because the column may be different on every call.
@@ -283,7 +283,7 @@ public abstract class Table implements Localized {
         if (logger.isLoggable(level)) {
             final Locale locale = getLocale();
             final LogRecord record = new LogRecord(level, String.format(locale, "(%s: %.4f s) %s",
-                    Vocabulary.getResources(locale).getString(Vocabulary.Keys.DURATION),
+                    Vocabulary.getResources(locale).getString(Vocabulary.Keys.Duration),
                     duration / 1E9, statement));
             record.setSourceClassName(getClass().getName());
             record.setSourceMethodName(type.method);
@@ -388,8 +388,8 @@ public abstract class Table implements Localized {
         }
         final IndexedResourceBundle errors = errors();
         throw new SQLDataException(
-                errors.getString(Errors.Keys.UNSUPPORTED_OPERATION_1, type) + ". " +
-                errors.getString(Errors.Keys.CANT_READ_DATABASE_TABLE_2, column.table, column.name));
+                errors.getString(Errors.Keys.UnsupportedOperation_1, type) + ". " +
+                errors.getString(Errors.Keys.CantReadDatabaseTable_2, column.table, column.name));
     }
 
     /**
@@ -408,7 +408,7 @@ public abstract class Table implements Localized {
         if (index > 0) {
             return index;
         }
-        throw new SQLDataException(errors().getString(Errors.Keys.UNSUPPORTED_OPERATION_1, type));
+        throw new SQLDataException(errors().getString(Errors.Keys.UnsupportedOperation_1, type));
     }
 
     /**

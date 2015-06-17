@@ -349,7 +349,7 @@ public class CoverageDatabase implements Localized {
     private void ensureNonNull(final String name, final Object value) {
         if (value == null) {
             throw new NullArgumentException(Errors.getResources(getLocale())
-                    .getString(Errors.Keys.NULL_ARGUMENT_1, name));
+                    .getString(Errors.Keys.NullArgument_1, name));
         }
     }
 
@@ -753,7 +753,7 @@ public class CoverageDatabase implements Localized {
                 throw new CoverageStoreException(e);
             } catch (TransformException e) {
                 throw new CoverageStoreException(Errors.format(
-                        Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), e);
+                        Errors.Keys.IllegalCoordinateReferenceSystem), e);
             }
             return entry.read(envelope, listeners);
         }
@@ -895,7 +895,7 @@ public class CoverageDatabase implements Localized {
                         method = "layerListChange";
                     }
                     final LogRecord record = new LogRecord(Level.WARNING,
-                            Errors.getResources(getLocale()).getString(Errors.Keys.VETO_TOO_LATE));
+                            Errors.getResources(getLocale()).getString(Errors.Keys.VetoTooLate));
                     record.setSourceClassName(CoverageDatabaseListener.class.getName());
                     record.setSourceMethodName(method);
                     record.setThrown(veto);

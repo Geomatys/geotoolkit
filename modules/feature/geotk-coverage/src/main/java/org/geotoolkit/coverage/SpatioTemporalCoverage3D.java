@@ -158,7 +158,7 @@ public class SpatioTemporalCoverage3D extends AbstractCoverage {
         final int dimension = cs.getDimension();
         if (dimension != 3) {
             throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_2, 3, dimension));
+                    Errors.Keys.MismatchedDimension_2, 3, dimension));
         }
         if (coverage instanceof SpatioTemporalCoverage3D) {
             final SpatioTemporalCoverage3D source = (SpatioTemporalCoverage3D) coverage;
@@ -173,7 +173,7 @@ public class SpatioTemporalCoverage3D extends AbstractCoverage {
             temporalCRS = DefaultTemporalCRS.castOrCopy(CRS.getTemporalComponent(crs));
             if (temporalCRS == null) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
+                        Errors.Keys.IllegalCoordinateReferenceSystem));
             }
             temporalDimension = CRSUtilities.getDimensionOf(crs, temporalCRS.getClass());
             final int  xDimension = (temporalDimension!=0) ? 0 : 1;
@@ -548,7 +548,7 @@ control:    for (int p=0; p<=1; p++) {
         final CoordinateReferenceSystem crs = CRS.getHorizontalComponent(this.crs);
         if (crs == null) {
             throw new CannotEvaluateException(
-                    Errors.format(Errors.Keys.CANT_SEPARATE_CRS_1, this.crs.getName()));
+                    Errors.format(Errors.Keys.CantSeparateCrs_1, this.crs.getName()));
         }
         final RenderedImage           image = getRenderableImage(time).createDefaultRendering();
         final GridSampleDimension[]   bands = new GridSampleDimension[getNumSampleDimensions()];

@@ -65,7 +65,7 @@ final class NetcdfGridToCRS2D extends NetcdfGridToCRS implements MathTransform2D
             grid.removeSingularities();
             inverse = grid.getMathTransform().inverse();
         } catch (TransformException e) {
-            throw new NoninvertibleTransformException(Errors.format(Errors.Keys.NONINVERTIBLE_TRANSFORM), e);
+            throw new NoninvertibleTransformException(Errors.format(Errors.Keys.NoninvertibleTransform), e);
         }
         return (MathTransform2D) inverse;
     }

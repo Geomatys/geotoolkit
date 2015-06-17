@@ -170,7 +170,7 @@ public class NewZealandMapGrid extends UnitaryProjection {
             dstPts[dstOff+1] = z.real;
         }
         if (derivate) {
-            throw new ProjectionException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+            throw new ProjectionException(Errors.format(Errors.Keys.CantComputeDerivative));
         }
         return null;
     }

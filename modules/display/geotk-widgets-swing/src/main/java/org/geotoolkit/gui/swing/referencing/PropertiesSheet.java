@@ -92,11 +92,11 @@ public class PropertiesSheet extends JComponent {
         final JPanel info = new JPanel(new GridBagLayout());
         final GridBagConstraints c = new GridBagConstraints();
         c.gridy=0; c.fill=GridBagConstraints.HORIZONTAL;
-        name       = addField(info, resources.getLabel(Vocabulary.Keys.NAME),       c);
-        authority  = addField(info, resources.getLabel(Vocabulary.Keys.AUTHORITY),  c);
-        identifier = addField(info, resources.getLabel(Vocabulary.Keys.IDENTIFIER), c);
-        type       = addField(info, resources.getLabel(Vocabulary.Keys.TYPE),       c);
-        info.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.IDENTIFICATION)));
+        name       = addField(info, resources.getLabel(Vocabulary.Keys.Name),       c);
+        authority  = addField(info, resources.getLabel(Vocabulary.Keys.Authority),  c);
+        identifier = addField(info, resources.getLabel(Vocabulary.Keys.Identifier), c);
+        type       = addField(info, resources.getLabel(Vocabulary.Keys.Type),       c);
+        info.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.Identification)));
         info.setOpaque(false);
 
         remarks = new JXLabel();
@@ -105,7 +105,7 @@ public class PropertiesSheet extends JComponent {
         remarks.setBorder(BorderFactory.createEmptyBorder(0, 18, 0, 0));
         final Box rem = Box.createVerticalBox();
         rem.add(remarks);
-        rem.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.REMARKS)));
+        rem.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.Remarks)));
 
         final JPanel general = new JPanel(new BorderLayout(0, 6));
         general.add(info, BorderLayout.BEFORE_FIRST_LINE);
@@ -124,7 +124,7 @@ public class PropertiesSheet extends JComponent {
          * Add the tabs.
          */
         final JTabbedPane tabs = new JTabbedPane();
-        tabs.addTab(resources.getString(Vocabulary.Keys.GENERAL), general);
+        tabs.addTab(resources.getString(Vocabulary.Keys.General), general);
         tabs.addTab("WKT", new JScrollPane(wktArea));
         setLayout(new BorderLayout());
         add(tabs, BorderLayout.CENTER);
@@ -211,7 +211,7 @@ public class PropertiesSheet extends JComponent {
             warning = e.getLocalizedMessage();
         }
         if (warning != null) {
-            buffer.append("<p><b>").append(Vocabulary.getResources(locale).getString(Vocabulary.Keys.WARNING))
+            buffer.append("<p><b>").append(Vocabulary.getResources(locale).getString(Vocabulary.Keys.Warning))
                     .append(":</b> ").append(warning).append("</p><hr>\n");
         }
         buffer.append("<pre>");
@@ -255,7 +255,7 @@ public class PropertiesSheet extends JComponent {
         message = buffer.toString();
         buffer.setLength(0);
         buffer.append("<html><p><b>")
-              .append(Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.ERROR))
+              .append(Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.Error))
               .append(":</b> ");
         makeItalic(message, buffer, '"');
         wktArea.setText(buffer.append("</p></html>").toString());

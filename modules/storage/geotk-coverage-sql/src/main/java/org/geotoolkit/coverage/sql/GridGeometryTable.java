@@ -128,7 +128,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
         try {
             return Integer.parseInt(code);
         } catch (NumberFormatException e) {
-            throw new FactoryException(Errors.format(Errors.Keys.UNPARSABLE_NUMBER_1, code), e);
+            throw new FactoryException(Errors.format(Errors.Keys.UnparsableNumber_1, code), e);
         }
     }
 
@@ -193,7 +193,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
             throw new IllegalRecordException(exception, this, results, indexOf(query.identifier), identifier);
         }
         if (entry.isEmpty()) {
-            throw new IllegalRecordException(errors().getString(Errors.Keys.EMPTY_ENVELOPE_2D), this, results,
+            throw new IllegalRecordException(errors().getString(Errors.Keys.EmptyEnvelope2d), this, results,
                     indexOf(width == 0 ? query.width : height == 0 ? query.height : query.identifier), identifier);
         }
         return entry;
@@ -332,7 +332,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                         }
                         if (foundStrictlyEquals) {
                             // Could happen if there is insufficient conditions in the WHERE clause.
-                            log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DUPLICATED_RECORD_1, id));
+                            log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DuplicatedRecord_1, id));
                             continue;
                         }
                     }

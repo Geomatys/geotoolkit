@@ -327,7 +327,7 @@ final class TileTable extends Table implements Comparator<TileManager> {
         if (fallback != null) {
             return fallback;
         }
-        throw new IIOException(Errors.format(Errors.Keys.NO_IMAGE_READER));
+        throw new IIOException(Errors.format(Errors.Keys.NoImageReader));
     }
 
     /**

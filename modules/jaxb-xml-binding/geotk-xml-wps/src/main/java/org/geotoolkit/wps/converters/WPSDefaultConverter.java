@@ -34,7 +34,7 @@ public abstract class WPSDefaultConverter<S, T> extends SimpleConverter<S, T> im
      * @return The error message.
      */
     static String formatErrorMessage(final String name, final Object value, final Exception cause) {
-        String message = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, name, value);
+        String message = Errors.format(Errors.Keys.IllegalArgument_2, name, value);
         if (cause != null) {
             final String cm = cause.getLocalizedMessage();
             if (cm != null) {

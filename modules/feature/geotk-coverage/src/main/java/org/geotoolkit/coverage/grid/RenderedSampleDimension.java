@@ -122,11 +122,11 @@ final class RenderedSampleDimension extends GridSampleDimension {
     {
         final int numBands = model.getNumBands();
         if (src != null && src.length != numBands) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_3,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedNumberOfBands_3,
                     numBands, src.length, "SampleDimension"));
         }
         if (dst.length != numBands) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_3,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedNumberOfBands_3,
                     numBands, dst.length, "SampleDimension"));
         }
         /*
@@ -170,7 +170,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
         if (countIndexed == numBands) {
             return false;
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.MIXED_CATEGORIES));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.MixedCategories));
     }
 
     /**
@@ -280,15 +280,15 @@ final class RenderedSampleDimension extends GridSampleDimension {
     {
         final int numBands = dst.length;
         if (min != null && min.length != numBands) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_3,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedNumberOfBands_3,
                     numBands, min.length, "min[i]"));
         }
         if (max != null && max.length != numBands) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_3,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedNumberOfBands_3,
                     numBands, max.length, "max[i]"));
         }
         if (colors != null && colors.length != numBands) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_3,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedNumberOfBands_3,
                     numBands, colors.length, "colors[i]"));
         }
         /*
@@ -383,11 +383,11 @@ final class RenderedSampleDimension extends GridSampleDimension {
             CharSequence name = (names != null) ? names[b] : null;
             if (name == null) {
                 if (untitled == null) {
-                    untitled = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
+                    untitled = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);
                 }
                 name = untitled;
                 if (numBands != 1) {
-                    name = Vocabulary.formatInternational(Vocabulary.Keys.HYPHEN_2, name, (b+1));
+                    name = Vocabulary.formatInternational(Vocabulary.Keys.Hyphen_2, name, (b+1));
                 }
             }
             NumberRange<?> sourceRange = TypeMap.getRange(sourceType);

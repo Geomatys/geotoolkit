@@ -171,7 +171,7 @@ public class TransverseMercator extends CassiniOrMercator {
             return computeZone(centralMeridian, -52.5, -3);
         }
         // unknown
-        throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_PROJECTION_TYPE));
+        throw new IllegalStateException(Errors.format(Errors.Keys.UnknownProjectionType));
     }
 
     /**
@@ -195,7 +195,7 @@ public class TransverseMercator extends CassiniOrMercator {
             return computeCentralMedirian(centralMeridian, -52.5, -3);
         }
         // unknown
-        throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_PROJECTION_TYPE));
+        throw new IllegalStateException(Errors.format(Errors.Keys.UnknownProjectionType));
     }
 
     /**

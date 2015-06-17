@@ -421,7 +421,7 @@ otherAxis:      for (final CoordinateAxis axis : entry.getValue()) {
      */
     private static void ensureDefined(final String name, final Object value) throws IllegalStateException {
         if (value == null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.UNDEFINED_PROPERTY_1, name));
+            throw new IllegalStateException(Errors.format(Errors.Keys.UndefinedProperty_1, name));
         }
     }
 

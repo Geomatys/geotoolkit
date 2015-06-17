@@ -85,7 +85,7 @@ final class IdentifierCode extends ImmutableIdentifier {
         if (supersededBy == 0) {
             return null;
         }
-        return Vocabulary.formatInternational(Vocabulary.Keys.SUPERSEDED_BY_1, supersededBy);
+        return Vocabulary.formatInternational(Vocabulary.Keys.SupersededBy_1, supersededBy);
     }
 
     /**

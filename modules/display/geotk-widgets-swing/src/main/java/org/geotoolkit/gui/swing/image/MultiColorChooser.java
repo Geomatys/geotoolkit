@@ -92,9 +92,9 @@ public class MultiColorChooser extends JComponent implements Dialog {
         colorsTable.setDefaultRenderer(Integer.class, new LabeledRenderer.Numeric(locale, true));
         colorsTable.getColumnModel().getColumn(0).setPreferredWidth(30);
         final JScrollPane scroll = new JScrollPane(colorsTable);
-        final JLabel  title      = new JLabel (resources.getString(Vocabulary.Keys.SELECTED_COLORS), JLabel.CENTER);
-        final JButton add        = new JButton(resources.getString(Vocabulary.Keys.ADD));
-        final JButton remove     = new JButton(resources.getString(Vocabulary.Keys.REMOVE));
+        final JLabel  title      = new JLabel (resources.getString(Vocabulary.Keys.SelectedColors), JLabel.CENTER);
+        final JButton add        = new JButton(resources.getString(Vocabulary.Keys.Add));
+        final JButton remove     = new JButton(resources.getString(Vocabulary.Keys.Remove));
         final JPanel  buttons    = new JPanel(new GridLayout(1,2));
         buttons.add(add);
         buttons.add(remove);
@@ -165,8 +165,8 @@ public class MultiColorChooser extends JComponent implements Dialog {
         Colors(final Vocabulary resources) {
             super(Integer.class, new IntegerList(8, 0xFFFFFF));
             titles = new String[] {
-                resources.getString(Vocabulary.Keys.INDEX),
-                resources.getString(Vocabulary.Keys.COLORS) + " (RGB)"
+                resources.getString(Vocabulary.Keys.Index),
+                resources.getString(Vocabulary.Keys.Colors) + " (RGB)"
             };
         }
 

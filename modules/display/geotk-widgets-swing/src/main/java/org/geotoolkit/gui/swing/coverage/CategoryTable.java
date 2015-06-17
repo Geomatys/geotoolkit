@@ -206,15 +206,15 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
         for (int i=0; i<TYPES.length; i++) {
             final short key;
             switch (i) {
-                case NAME:       key = Vocabulary.Keys.NAME;    break;
+                case NAME:       key = Vocabulary.Keys.Name;    break;
                 case SAMPLE_MIN:
-                case MINIMUM:    key = Vocabulary.Keys.MINIMUM; break;
+                case MINIMUM:    key = Vocabulary.Keys.Minimum; break;
                 case SAMPLE_MAX:
-                case MAXIMUM:    key = Vocabulary.Keys.MAXIMUM; break;
-                case TYPE:       key = Vocabulary.Keys.TYPE;    break;
-                case OFFSET:     key = Vocabulary.Keys.OFFSET;  break;
-                case SCALE:      key = Vocabulary.Keys.SCALE;   break;
-                case COLORS:     key = Vocabulary.Keys.COLORS;  break;
+                case MAXIMUM:    key = Vocabulary.Keys.Maximum; break;
+                case TYPE:       key = Vocabulary.Keys.Type;    break;
+                case OFFSET:     key = Vocabulary.Keys.Offset;  break;
+                case SCALE:      key = Vocabulary.Keys.Scale;   break;
+                case COLORS:     key = Vocabulary.Keys.Colors;  break;
                 default: throw new AssertionError(i);
             }
             headers[i] = resources.getString(key);
@@ -551,7 +551,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
          */
         CellRenderer(final NumberFormat format) {
             functionLabels = new String[4];
-            functionLabels[NONE]        = Vocabulary.getResources(locale).getString(Vocabulary.Keys.NONE);
+            functionLabels[NONE]        = Vocabulary.getResources(locale).getString(Vocabulary.Keys.None);
             functionLabels[LINEAR]      = "<html><var>y</var> = A + B&middot;<var>x</var></html>";
             functionLabels[LOGARITHMIC] = "<html><var>y</var> = A + B&middot;log(<var>x</var>)</html>";
             functionLabels[EXPONENTIAL] = "<html><var>y</var> = 10<sup>A + B&middot;<var>x</var></sup></html>";

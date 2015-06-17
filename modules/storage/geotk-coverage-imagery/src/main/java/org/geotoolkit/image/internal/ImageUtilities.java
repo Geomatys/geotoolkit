@@ -413,7 +413,7 @@ public final class ImageUtilities extends Static {
                 }
             }
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_INTERPOLATION_1, type));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UnknownInterpolation_1, type));
     }
 
     /**
@@ -640,7 +640,7 @@ public final class ImageUtilities extends Static {
                 Arrays.fill(data.getData(i), offset, offset + size, n);
             }
         } else {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UnsupportedDataType));
         }
     }
 

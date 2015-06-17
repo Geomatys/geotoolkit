@@ -121,7 +121,7 @@ public class DateRange extends Range<Date> {
      */
     private static UnitConverter getConverter(final Unit<?> source) throws ConversionException {
         if (source == null) {
-            throw new ConversionException(Errors.format(Errors.Keys.NO_UNIT));
+            throw new ConversionException(Errors.format(Errors.Keys.NoUnit));
         }
         return source.getConverterToAny(Units.MILLISECOND);
     }

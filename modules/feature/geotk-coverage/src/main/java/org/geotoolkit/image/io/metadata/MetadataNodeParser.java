@@ -451,7 +451,7 @@ public class MetadataNodeParser implements WarningProducer {
             }
             if (format == null) {
                 throw new IllegalArgumentException(getErrorResources().getString(
-                        Errors.Keys.UNDEFINED_FORMAT_1, formatName));
+                        Errors.Keys.UndefinedFormat_1, formatName));
             }
             // If the user did not provided a Class<?> argument, we are done.
             if (type == null) {
@@ -473,7 +473,7 @@ public class MetadataNodeParser implements WarningProducer {
                 // Found too many paths.
                 final String lineSeparator = System.lineSeparator();
                 final StringBuilder buffer = new StringBuilder(getErrorResources().getString(
-                        Errors.Keys.AMBIGUOUS_VALUE_1, type)).append(lineSeparator);
+                        Errors.Keys.AmbiguousValue_1, type)).append(lineSeparator);
                 for (final String path : paths) {
                     buffer.append(" \u2022 ").append(path).append(lineSeparator);
                 }
@@ -491,7 +491,7 @@ public class MetadataNodeParser implements WarningProducer {
                 }
             }
             throw new IllegalArgumentException(getErrorResources()
-                    .getString(Errors.Keys.UNKNOWN_TYPE_1, type));
+                    .getString(Errors.Keys.UnknownType_1, type));
         }
         /*
          * End of the pseudo-goto block construct.
@@ -513,7 +513,7 @@ public class MetadataNodeParser implements WarningProducer {
             final int count = childs.size();
             switch (count) {
                 default: {
-                    warning("<init>", Errors.Keys.TOO_MANY_OCCURRENCES_2, parentPath, count);
+                    warning("<init>", Errors.Keys.TooManyOccurrences_2, parentPath, count);
                     // Fall through for picking the first node.
                 }
                 case 1: {
@@ -524,7 +524,7 @@ public class MetadataNodeParser implements WarningProducer {
                 case 0: {
                     if (isReadOnly()) {
                         throw new NoSuchElementException(getErrorResources().getString(
-                                Errors.Keys.NO_SUCH_ELEMENT_NAME_1, parentPath));
+                                Errors.Keys.NoSuchElementName_1, parentPath));
                     }
                     parent = appendChild(root, parentPath);
                     break;
@@ -1130,7 +1130,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         final String value = getAttribute(attribute);
         final T code = Types.forCodeName(codeType, value, false);
         if (code == null && value != null) {
-            warning("getAttributeAsCode", Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, attribute, value);
+            warning("getAttributeAsCode", Errors.Keys.IllegalParameterValue_2, attribute, value);
         }
         return code;
     }
@@ -1151,7 +1151,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         final String value = getAttribute(attribute);
         final T code = Types.forEnumName(codeType, value);
         if (code == null && value != null) {
-            warning("getAttributeAsEnum", Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, attribute, value);
+            warning("getAttributeAsEnum", Errors.Keys.IllegalParameterValue_2, attribute, value);
         }
         return code;
     }
@@ -1184,7 +1184,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             {
                 return Boolean.FALSE;
             }
-            warning("getAttributeAsBoolean", Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, attribute, value);
+            warning("getAttributeAsBoolean", Errors.Keys.IllegalParameterValue_2, attribute, value);
         }
         return null;
     }
@@ -1207,7 +1207,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             try {
                 return Integer.valueOf(value);
             } catch (NumberFormatException e) {
-                warning("getAttributeAsInteger", Errors.Keys.UNPARSABLE_NUMBER_1, value);
+                warning("getAttributeAsInteger", Errors.Keys.UnparsableNumber_1, value);
             }
         }
         return null;
@@ -1247,7 +1247,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         if (value != null) try {
             return Float.valueOf(value);
         } catch (NumberFormatException e) {
-            warning("getAttributeAsFloat", Errors.Keys.UNPARSABLE_NUMBER_1, value);
+            warning("getAttributeAsFloat", Errors.Keys.UnparsableNumber_1, value);
         }
         return null;
     }
@@ -1286,7 +1286,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         if (value != null) try {
             return Double.valueOf(value);
         } catch (NumberFormatException e) {
-            warning("getAttributeAsDouble", Errors.Keys.UNPARSABLE_NUMBER_1, value);
+            warning("getAttributeAsDouble", Errors.Keys.UnparsableNumber_1, value);
         }
         return null;
     }
@@ -1385,7 +1385,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             try {
                 return unit.asType(quantity);
             } catch (ClassCastException e) {
-                warning("getAttributeAsUnit", Errors.Keys.INCOMPATIBLE_UNIT_1, unit);
+                warning("getAttributeAsUnit", Errors.Keys.IncompatibleUnit_1, unit);
             }
         } catch (IllegalArgumentException e) {
             warning(null, MetadataNodeParser.class, "getAttributeAsUnit", e);
@@ -1451,7 +1451,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                 if (caller == null) {
                     throw e;
                 }
-                warning(caller, Errors.Keys.UNPARSABLE_NUMBER_1, token);
+                warning(caller, Errors.Keys.UnparsableNumber_1, token);
                 continue;
             }
             values.add(value);

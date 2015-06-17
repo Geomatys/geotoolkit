@@ -146,7 +146,7 @@ public class LayerCoverageReader extends GridCoverageReader {
      */
     private void ensureInputSet() throws CoverageStoreException, IllegalStateException {
         if (super.getInput() == null) { // Use 'super' because we don't want to wait for Future.
-            throw new IllegalStateException(errors().getString(Errors.Keys.NO_IMAGE_INPUT));
+            throw new IllegalStateException(errors().getString(Errors.Keys.NoImageInput));
         }
     }
 
@@ -161,7 +161,7 @@ public class LayerCoverageReader extends GridCoverageReader {
         ensureInputSet();
         if (index != 0) {
             throw new IndexOutOfBoundsException(errors().getString(
-                    Errors.Keys.INDEX_OUT_OF_BOUNDS_1, index));
+                    Errors.Keys.IndexOutOfBounds_1, index));
         }
     }
 
@@ -192,7 +192,7 @@ public class LayerCoverageReader extends GridCoverageReader {
             if (input instanceof CharSequence) {
                 input = database.getLayer(input.toString());
             } else if (!(input instanceof Layer)) {
-                throw new IllegalArgumentException(errors().getString(Errors.Keys.ILLEGAL_CLASS_2,
+                throw new IllegalArgumentException(errors().getString(Errors.Keys.IllegalClass_2,
                         input.getClass(), Layer.class));
             }
         }
@@ -359,7 +359,7 @@ public class LayerCoverageReader extends GridCoverageReader {
                 }
             } catch (TransformException e) {
                 throw new CoverageStoreException(errors().getString(
-                        Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), e);
+                        Errors.Keys.IllegalCoordinateReferenceSystem), e);
             } catch (FactoryException e) {
                 throw new CoverageStoreException(e);
             }

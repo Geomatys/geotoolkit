@@ -112,13 +112,13 @@ final class FactoryPrinter implements Comparator<Class<?>> {
         final TableWriter table  = new TableWriter(out);
         table.setMultiLinesCells(true);
         table.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        table.write(resources.getString(Vocabulary.Keys.SERVICE));
+        table.write(resources.getString(Vocabulary.Keys.Service));
         table.nextColumn();
-        table.write(resources.getString(Vocabulary.Keys.IMPLEMENTATIONS));
+        table.write(resources.getString(Vocabulary.Keys.Implementations));
         table.nextColumn();
-        table.write(resources.getString(Vocabulary.Keys.VENDOR));
+        table.write(resources.getString(Vocabulary.Keys.Vendor));
         table.nextColumn();
-        table.write(resources.getString(Vocabulary.Keys.AUTHORITY));
+        table.write(resources.getString(Vocabulary.Keys.Authority));
         table.nextLine();
         table.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         final StringBuilder vendors     = new StringBuilder();

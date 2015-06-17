@@ -223,7 +223,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
         ensureStrictlyPositive("width",  width);
         ensureStrictlyPositive("height", height);
         if (grid.getSize() != width*height) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedArrayLength));
         }
         if (area != null) {
             final double longitudeSign = (type == GridType.NTv2) ? -1 : +1;
@@ -647,7 +647,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
             field.set(this, buffer);
         } catch (ReflectiveOperationException e) {
             InvalidObjectException exception = new InvalidObjectException(
-                    Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE));
+                    Errors.format(Errors.Keys.UnsupportedDataType));
             exception.initCause(e);
             throw exception;
         }

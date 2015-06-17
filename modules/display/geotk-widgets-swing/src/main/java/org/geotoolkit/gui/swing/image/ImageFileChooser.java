@@ -274,7 +274,7 @@ public class ImageFileChooser extends JFileChooser {
             case SAVE_DIALOG: category = ImageWriterSpi.class; break;
             case CUSTOM_DIALOG: resetChoosableFileFilters(); return;
             default: throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "mode", mode));
+                    Errors.Keys.IllegalArgument_2, "mode", mode));
         }
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         final Iterator<? extends ImageReaderWriterSpi> it = registry.getServiceProviders(category, true);
@@ -351,7 +351,7 @@ skip:   while (it.hasNext()) {
         if (isListFileFilterUsed()) {
             final Vocabulary resources = Vocabulary.getResources(getLocale());
             listFileFilter = new FileNameExtensionFilter(resources.getString(
-                    Vocabulary.Keys.IMAGE_LIST), "txt", "lst", "csv");
+                    Vocabulary.Keys.ImageList), "txt", "lst", "csv");
             filters.add(listFileFilter);
         }
         for (final FileFilter filter : filters) {

@@ -342,7 +342,7 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
                 if (resources == null) {
                     resources = Vocabulary.getResources(locale);
                 }
-                name = resources.getString(Vocabulary.Keys.PARAMETER_1, i);
+                name = resources.getString(Vocabulary.Keys.Parameter_1, i);
             }
             root.add(new NamedTreeNode(name, param.getObjectParameter(i), false));
         }
@@ -488,7 +488,7 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
     @Override
     public boolean showDialog(final Component owner, String title) {
         if (title == null) {
-            title = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.OPERATIONS);
+            title = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.Operations);
         }
         return SwingUtilities.showDialog(owner, this, title);
     }

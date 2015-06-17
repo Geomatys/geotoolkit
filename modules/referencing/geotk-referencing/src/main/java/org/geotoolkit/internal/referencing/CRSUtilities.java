@@ -151,7 +151,7 @@ public final class CRSUtilities extends Static {
                     crs = CRS.getHorizontalComponent(crs);
                     if (crs == null) {
                         throw new TransformException(Errors.format(
-                                Errors.Keys.CANT_REDUCE_TO_TWO_DIMENSIONS_1, original.getName()));
+                                Errors.Keys.CantReduceToTwoDimensions_1, original.getName()));
                     }
                 }
             }

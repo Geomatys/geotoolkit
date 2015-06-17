@@ -142,8 +142,8 @@ public class FormatChooser extends JComponent implements Dialog {
         final Vocabulary resources = Vocabulary.getResources(getDefaultLocale());
         final GridBagConstraints c = new GridBagConstraints();
         c.gridx=0; c.insets.right=6;
-        c.gridy=0;                 add(new JLabel(resources.getLabel(Vocabulary.Keys.FORMAT )), c);
-        c.gridy++; c.insets.top=3; add(new JLabel(resources.getLabel(Vocabulary.Keys.PREVIEW)), c);
+        c.gridy=0;                 add(new JLabel(resources.getLabel(Vocabulary.Keys.Format )), c);
+        c.gridy++; c.insets.top=3; add(new JLabel(resources.getLabel(Vocabulary.Keys.Preview)), c);
         c.insets.right=0; c.gridx++; c.weightx=1; c.fill=HORIZONTAL;
         c.gridy=0; c.insets.top=0; add(choices, c);
         c.gridy++; c.insets.top=3; add(preview, c);

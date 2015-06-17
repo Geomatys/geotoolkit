@@ -93,7 +93,7 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
             }
         }
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.ILLEGAL_ARGUMENT_2, "sourceDimension", sourceDimension));
+                Errors.Keys.IllegalArgument_2, "sourceDimension", sourceDimension));
     }
 
     /**
@@ -121,7 +121,7 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
                                   final boolean derivate) throws TransformException
     {
         if (derivate) {
-            throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+            throw new TransformException(Errors.format(Errors.Keys.CantComputeDerivative));
         }
         /*
          * We need to store the result in a temporary array before to write in the destination
@@ -161,7 +161,7 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
                                 final boolean derivate) throws TransformException
         {
             if (derivate) {
-                throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+                throw new TransformException(Errors.format(Errors.Keys.CantComputeDerivative));
             }
             final NetcdfAxis[] axes = NetcdfGridToCRS.this.axes;
             final double[] tmpPts;

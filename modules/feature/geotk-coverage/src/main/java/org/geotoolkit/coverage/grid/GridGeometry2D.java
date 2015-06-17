@@ -639,7 +639,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
                 cause = exception;
             }
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.NO_TRANSFORM2D_AVAILABLE), cause);
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.NoTransform2dAvailable), cause);
     }
 
     /**
@@ -657,7 +657,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         } else try {
             return gridToCRS2D.inverse();
         } catch (NoninvertibleTransformException exception) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_1,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalTransformForType_1,
                     gridToCRS2D.getClass()), exception);
         }
     }
@@ -680,7 +680,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
             crs = reduce(crs);
         } catch (FactoryException exception) {
             throw new InvalidGridGeometryException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "crs", crs.getName()), exception);
+                    Errors.Keys.IllegalArgument_2, "crs", crs.getName()), exception);
         }
         return crs;
     }
@@ -765,7 +765,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
             return crs2D;
         }
         assert !isDefined(CRS);
-        throw new InvalidGridGeometryException(Errors.Keys.UNSPECIFIED_CRS);
+        throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedCrs);
     }
 
     /**
@@ -794,7 +794,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         }
         assert !isDefined(ENVELOPE);
         throw new InvalidGridGeometryException(gridToCRS == null ?
-                    Errors.Keys.UNSPECIFIED_TRANSFORM : Errors.Keys.UNSPECIFIED_IMAGE_SIZE);
+                    Errors.Keys.UnspecifiedTransform : Errors.Keys.UnspecifiedImageSize);
     }
 
     /**
@@ -820,7 +820,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
                                       extent.getSpan(gridDimensionY));
         }
         assert !isDefined(EXTENT);
-        throw new InvalidGridGeometryException(Errors.Keys.UNSPECIFIED_IMAGE_SIZE);
+        throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedImageSize);
     }
 
     /**
@@ -842,7 +842,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         if (gridToCRS2D != null) {
             return gridToCRS2D;
         }
-        throw new InvalidGridGeometryException(Errors.Keys.NO_TRANSFORM2D_AVAILABLE);
+        throw new InvalidGridGeometryException(Errors.Keys.NoTransform2dAvailable);
     }
 
     /**
@@ -861,7 +861,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      */
     public MathTransform2D getGridToCRS2D(final PixelOrientation orientation) {
         if (gridToCRS2D == null) {
-            throw new InvalidGridGeometryException(Errors.Keys.NO_TRANSFORM2D_AVAILABLE);
+            throw new InvalidGridGeometryException(Errors.Keys.NoTransform2dAvailable);
         }
         if (!PixelOrientation.UPPER_LEFT.equals(orientation)) {
             return computeGridToCRS2D(orientation);
@@ -913,7 +913,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      */
     public MathTransform getGridToCRS(final PixelOrientation orientation) {
         if (gridToCRS == null) {
-            throw new InvalidGridGeometryException(Errors.Keys.UNSPECIFIED_TRANSFORM);
+            throw new InvalidGridGeometryException(Errors.Keys.UnspecifiedTransform);
         }
         return PixelTranslation.translate(gridToCRS, PixelOrientation.CENTER, orientation,
                 gridDimensionX, gridDimensionY);
@@ -933,11 +933,11 @@ public class GridGeometry2D extends GeneralGridGeometry {
             try {
                 return gridFromCRS2D.transform(point, null);
             } catch (TransformException exception) {
-                throw new CannotEvaluateException(Errors.format(Errors.Keys.CANT_EVALUATE_FOR_COORDINATE_1,
+                throw new CannotEvaluateException(Errors.format(Errors.Keys.CantEvaluateForCoordinate_1,
                           AbstractGridCoverage.toString(point, Locale.getDefault(Locale.Category.FORMAT)), exception));
             }
         }
-        throw new InvalidGridGeometryException(Errors.Keys.NO_TRANSFORM2D_AVAILABLE);
+        throw new InvalidGridGeometryException(Errors.Keys.NoTransform2dAvailable);
     }
 
     /**

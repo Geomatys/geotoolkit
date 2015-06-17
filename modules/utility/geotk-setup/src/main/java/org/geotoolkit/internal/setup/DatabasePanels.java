@@ -72,7 +72,7 @@ final class DatabasePanels extends JComponent implements ActionListener {
      */
     DatabasePanels(final Vocabulary resources, final DataPanel dataPanel) {
         setLayout(new BorderLayout());
-        applyButton = new JButton(resources.getString(Vocabulary.Keys.APPLY));
+        applyButton = new JButton(resources.getString(Vocabulary.Keys.Apply));
         applyButton.setEnabled(false);
         final EPSGPanel epsgPanel = new EPSGPanel(resources, dataPanel, applyButton);
         dataPanel.epsgPanel = epsgPanel;
@@ -80,7 +80,7 @@ final class DatabasePanels extends JComponent implements ActionListener {
         connectionPanels.setOpaque(false);
         final String[] databaseNames = new String[CONNECTION_PANELS.length];
         for (int i=0; i<CONNECTION_PANELS.length; i++) {
-            databaseNames[i] = resources.getString(Vocabulary.Keys.DATA_BASE_1, CONNECTION_PANELS[i]);
+            databaseNames[i] = resources.getString(Vocabulary.Keys.DataBase_1, CONNECTION_PANELS[i]);
             final JComponent panel;
             switch (i) {
                 case 0: panel = epsgPanel; break;
@@ -104,7 +104,7 @@ final class DatabasePanels extends JComponent implements ActionListener {
         final JPanel messagePanel = new JPanel(new BorderLayout());
         messagePanel.setOpaque(false);
         final JLabel message = new JLabel(Descriptions.getResources(resources.getLocale())
-                .getString(Descriptions.Keys.PASSWORD_NOT_ENCRYPTED));
+                .getString(Descriptions.Keys.PasswordNotEncrypted));
         message.setForeground(Color.RED);
         messagePanel.add(applyButton, BorderLayout.LINE_END);
         messagePanel.add(message, BorderLayout.LINE_START);

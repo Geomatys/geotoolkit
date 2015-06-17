@@ -187,6 +187,6 @@ abstract class CassiniOrMercator extends UnitaryProjection {
                 return φ;
             }
         } while (--i >= 0);
-        throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
+        throw new ProjectionException(Errors.format(Errors.Keys.NoConvergence));
     }
 }

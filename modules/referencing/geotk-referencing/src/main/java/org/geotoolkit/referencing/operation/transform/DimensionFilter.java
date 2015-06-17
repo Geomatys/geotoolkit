@@ -352,7 +352,7 @@ public class DimensionFilter {
                      *
                      * TODO: provide a more accurate error message.
                      */
-                    throw new FactoryException(Errors.format(Errors.Keys.INSEPARABLE_TRANSFORM));
+                    throw new FactoryException(Errors.format(Errors.Keys.InseparableTransform));
                 }
                 targetDimensions[i] = j;
             }
@@ -396,7 +396,7 @@ public class DimensionFilter {
         assert ArraysExt.isSorted(sourceDimensions, true);
         if (upper > dimSource) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "sourceDimensions", upper-1));
+                    Errors.Keys.IllegalArgument_2, "sourceDimensions", upper-1));
         }
         /*
          * Check for easiest cases: same transform, identity transform or concatenated transforms.
@@ -533,7 +533,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
             // to any input dimension. But in this particuler case, our matrix has such
             // dependencies. TODO: is there anything we could do about that?
         }
-        throw new FactoryException(Errors.format(Errors.Keys.INSEPARABLE_TRANSFORM));
+        throw new FactoryException(Errors.format(Errors.Keys.InseparableTransform));
     }
 
     /**
@@ -560,7 +560,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
         assert ArraysExt.isSorted(targetDimensions, true);
         if (upper > dimTarget) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "targetDimensions", upper));
+                    Errors.Keys.IllegalArgument_2, "targetDimensions", upper));
         }
         if (dimOutput == dimTarget) {
             assert lower==0 && upper==dimTarget;
@@ -669,7 +669,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
     private static int[] add(int[] sequence, int dimension) throws IllegalArgumentException {
         if (dimension < 0) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "dimension", dimension));
+                    Errors.Keys.IllegalArgument_2, "dimension", dimension));
         }
         if (sequence == null) {
             return new int[] {dimension};
@@ -720,7 +720,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
             throws IllegalArgumentException
     {
         if (lower<0 || lower>=upper) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_2, lower, upper));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalRange_2, lower, upper));
         }
         if (sequence == null) {
             sequence = series(lower, upper);
@@ -758,7 +758,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
             final int value = dimensions[i];
             if (value <= last) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_2, "dimensions[" + i + ']', value));
+                        Errors.Keys.IllegalArgument_2, "dimensions[" + i + ']', value));
             }
             last = value;
         }

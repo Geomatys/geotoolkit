@@ -326,7 +326,7 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
              */
             if (MASK_NON_CONVERGENCE) {
                 Logging.getLogger(LocalizationGridTransform2D.class)
-                       .fine(Errors.format(Errors.Keys.NO_CONVERGENCE));
+                       .fine(Errors.format(Errors.Keys.NoConvergence));
                 if (bestX >= 0 && bestX < width && bestY >= 0 && bestY < height) {
                     target.x = bestX;
                     target.y = bestY;
@@ -336,9 +336,9 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
                 return;
             }
         } catch (NoninvertibleTransformException exception) {
-            throw new TransformException(Errors.format(Errors.Keys.NONINVERTIBLE_TRANSFORM), exception);
+            throw new TransformException(Errors.format(Errors.Keys.NoninvertibleTransform), exception);
         }
-        throw new TransformException(Errors.format(Errors.Keys.NO_CONVERGENCE));
+        throw new TransformException(Errors.format(Errors.Keys.NoConvergence));
     }
 
     /**

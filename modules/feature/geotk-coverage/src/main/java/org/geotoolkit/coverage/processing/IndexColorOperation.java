@@ -127,7 +127,7 @@ public abstract class IndexColorOperation extends Operation2D {
                     ARGB[j] = j;
                 }
             } else {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_2,
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalClass_2,
                         Classes.getClass(sourceModel), IndexColorModel.class));
             }
             band = transformColormap(ARGB, i, band, parameters);

@@ -137,7 +137,7 @@ public class ProgressWindow extends ProgressController implements Disposable {
          */
         Dimension parentSize;
         final Vocabulary  resources = Vocabulary.getResources(parent!=null ? parent.getLocale() : null);
-        final String title = resources.getString(Vocabulary.Keys.PROGRESSION);
+        final String title = resources.getString(Vocabulary.Keys.Progression);
         final JDesktopPane desktop = JOptionPane.getDesktopPaneForComponent(parent);
         if (desktop != null) {
             final JInternalFrame frame;
@@ -181,7 +181,7 @@ public class ProgressWindow extends ProgressController implements Disposable {
         /*
          * Creates the cancel button.
          */
-        cancel = new JButton(resources.getString(Vocabulary.Keys.CANCEL));
+        cancel = new JButton(resources.getString(Vocabulary.Keys.Cancel));
         cancel.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 cancel();
@@ -221,7 +221,7 @@ public class ProgressWindow extends ProgressController implements Disposable {
      */
     public void setTitle(String name) {
         if (name == null) {
-            name = getString(Vocabulary.Keys.PROGRESSION);
+            name = getString(Vocabulary.Keys.Progression);
         }
         set(Caller.TITLE, name);
     }
@@ -559,7 +559,7 @@ public class ProgressWindow extends ProgressController implements Disposable {
                     final JPanel namedArea = new JPanel(new BorderLayout());
                     ProgressWindow.this.warningArea = warningArea;
                     namedArea.setBorder(BorderFactory.createEmptyBorder(0, HMARGIN, VMARGIN, HMARGIN));
-                    namedArea.add(new JLabel(getString(Vocabulary.Keys.WARNING)), BorderLayout.NORTH);
+                    namedArea.add(new JLabel(getString(Vocabulary.Keys.Warning)), BorderLayout.NORTH);
                     namedArea.add(scroll, BorderLayout.CENTER);
                     content.add(namedArea, BorderLayout.CENTER);
                     if (window instanceof JDialog) {
@@ -586,7 +586,7 @@ public class ProgressWindow extends ProgressController implements Disposable {
                 if (!Objects.equals(source, lastSource)) {
                     lastSource = source;
                     if (source == null) {
-                        source = getString(Vocabulary.Keys.UNTITLED);
+                        source = getString(Vocabulary.Keys.Untitled);
                     }
                     c.gridwidth = 2;
                     c.insets.top += VMARGIN;

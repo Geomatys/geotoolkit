@@ -159,7 +159,7 @@ final class NewGridCoverageIterator {
                     final String[] names = new String[numImages];
                     final Vocabulary resources = Vocabulary.getResources(listeners.getLocale());
                     for (int i=0; i<names.length; i++) {
-                        names[i] = resources.getString(Vocabulary.Keys.IMAGE_1, i+1);
+                        names[i] = resources.getString(Vocabulary.Keys.Image_1, i+1);
                     }
                     variables = Arrays.asList(names);
                 }
@@ -177,7 +177,7 @@ final class NewGridCoverageIterator {
                     final int[] index = new int[selected.size()];
                     for (final String variable : selected) {
                         if ((index[numSelected++] = variables.indexOf(variable)) < 0) {
-                            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_NAME_1, variable));
+                            throw new IIOException(error(Errors.Keys.NoSuchElementName_1, variable));
                         }
                     }
                     if (numSelected != 0) {
@@ -191,7 +191,7 @@ final class NewGridCoverageIterator {
                             store.setBandNames(0, names);
                             // Leave the imageIndex to 0: it may be used for images at different dates.
                         } else if (numSelected != 1) {
-                            throw new IIOException(error(Errors.Keys.UNEXPECTED_PARAMETER_1, "images[2]"));
+                            throw new IIOException(error(Errors.Keys.UnexpectedParameter_1, "images[2]"));
                         } else {
                             imageIndex = index[0];
                         }

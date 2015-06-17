@@ -324,7 +324,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
                 envelope = org.geotoolkit.referencing.CRS.transform(userToStandard, envelope);
             }
         } catch (FactoryException e) {
-            throw new TransformException(Errors.format(Errors.Keys.CANT_TRANSFORM_ENVELOPE), e);
+            throw new TransformException(Errors.format(Errors.Keys.CantTransformEnvelope), e);
         }
         boolean changed = false;
         sourceCRS = envelope.getCoordinateReferenceSystem();
@@ -574,13 +574,13 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
             double dy = size.height;
             if (!(dx > 0 && dy > 0)) {
                 throw new IllegalArgumentException(errors()
-                        .getString(Errors.Keys.ILLEGAL_ARGUMENT_2, "size", size));
+                        .getString(Errors.Keys.IllegalArgument_2, "size", size));
             }
             dx = (xMax - xMin) / dx;
             dy = (yMax - yMin) / dy;
             if (Double.isInfinite(dx) || Double.isInfinite(dy)) {
                 throw new IllegalStateException(errors()
-                        .getString(Errors.Keys.UNDEFINED_PROPERTY_1, "envelope"));
+                        .getString(Errors.Keys.UndefinedProperty_1, "envelope"));
             }
             resolution = new DoubleDimension2D(dx, dy);
         }

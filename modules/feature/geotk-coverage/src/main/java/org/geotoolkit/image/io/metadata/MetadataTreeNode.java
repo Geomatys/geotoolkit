@@ -471,24 +471,24 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     public void setUserObject(Object value) throws IllegalArgumentException {
         final Class<?> type = getValueType();
         if (type == null) {
-            throw new IllegalArgumentException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, value));
+            throw new IllegalArgumentException(error(Errors.Keys.IllegalParameterValue_2, value));
         }
         if (value != null) {
             value = convert(value);
             if (!type.isInstance(value)) {
-                throw new IllegalArgumentException(error(Errors.Keys.ILLEGAL_PARAMETER_TYPE_2, value.getClass()));
+                throw new IllegalArgumentException(error(Errors.Keys.IllegalParameterType_2, value.getClass()));
             }
             final ValueRestriction r = getValueRestriction();
             if (r != null) {
                 final Set<?> validValues = r.validValues;
                 if (validValues != null && !validValues.contains(value)) {
-                    throw new IllegalArgumentException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, value));
+                    throw new IllegalArgumentException(error(Errors.Keys.IllegalParameterValue_2, value));
                 }
                 final NumberRange<?> range = r.range;
                 // We know we can cast to Comparable since 'value' is an instance of 'type'.
                 if (range != null && !((NumberRange) range).contains((Comparable) value)) {
                     throw new IllegalArgumentException(Errors.getResources(tree.getLocale())
-                            .getString(Errors.Keys.VALUE_OUT_OF_BOUNDS_3,
+                            .getString(Errors.Keys.ValueOutOfBounds_3,
                             value, range.getMinDouble(true), range.getMaxDouble(true)));
                 }
             }

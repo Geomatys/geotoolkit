@@ -181,13 +181,13 @@ public final class RequestsUtilities {
             final double value = toDouble(tokens.nextToken());
             if (index >= coordinates.length) {
                 throw new IllegalArgumentException(
-                        Errors.format(Errors.Keys.ILLEGAL_CS_DIMENSION_1, coordinates.length));
+                        Errors.format(Errors.Keys.IllegalCsDimension_1, coordinates.length));
             }
             coordinates[index++] = value;
         }
         if ((index & 1) != 0) {
             throw new IllegalArgumentException(
-                    Errors.format(Errors.Keys.ODD_ARRAY_LENGTH_1, index));
+                    Errors.format(Errors.Keys.OddArrayLength_1, index));
         }
         // Fallthrough in every cases.
         switch (index) {
@@ -214,7 +214,7 @@ public final class RequestsUtilities {
             final double maximum = envelope.getMaximum(index);
             if (!(minimum < maximum)) {
                 throw new IllegalArgumentException(
-                        Errors.format(Errors.Keys.ILLEGAL_RANGE_2, minimum, maximum));
+                        Errors.format(Errors.Keys.IllegalRange_2, minimum, maximum));
             }
         }
         return envelope;
@@ -255,13 +255,13 @@ public final class RequestsUtilities {
             while (tokens.hasMoreTokens()) {
                     values[index] = toDouble(tokens.nextToken());
                 if (index >= 4) {
-                    throw new IllegalArgumentException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_1, index));
+                    throw new IllegalArgumentException(Errors.format(Errors.Keys.IndexOutOfBounds_1, index));
                 }
                 index++;
             }
 
             if (index != 5) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_1, index));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalArgument_1, index));
             }
 
             dimX[0] = values[0];

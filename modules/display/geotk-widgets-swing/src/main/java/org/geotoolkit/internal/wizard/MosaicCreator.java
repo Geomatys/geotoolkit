@@ -70,7 +70,7 @@ final class MosaicCreator extends DeferredWizardResult implements IIOWriteProgre
     @SuppressWarnings("rawtypes")
     public void start(final Map settings, final ResultProgressHandle progress) {
         this.progress = progress;
-        progress.setBusy(Wizards.format(Wizards.Keys.CREATING_MOSAIC));
+        progress.setBusy(Wizards.format(Wizards.Keys.CreatingMosaic));
         final TileManager tiles;
         try {
             final TileManager[] inputs  = ((MosaicChooser)       settings.get(MosaicWizard.SELECT)).getSelectedTiles();
@@ -112,7 +112,7 @@ final class MosaicCreator extends DeferredWizardResult implements IIOWriteProgre
      */
     @Override
     public void imageStarted(ImageWriter source, int imageIndex) {
-        progress.setProgress(Wizards.format(Wizards.Keys.CREATING_MOSAIC), 0, 100);
+        progress.setProgress(Wizards.format(Wizards.Keys.CreatingMosaic), 0, 100);
     }
 
     /**

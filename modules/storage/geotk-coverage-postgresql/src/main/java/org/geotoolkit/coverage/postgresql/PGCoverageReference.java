@@ -679,7 +679,7 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
                         categories.add(new Category("data", Color.BLACK, NumberRange.create(min, true, max, true)));
                         if (pNoData != null && pNoData.length > 0) {
                             for (int k = 0; k < pNoData.length; k++) {
-                                categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.NODATA) + String.valueOf(k), new Color(0,0,0,0), pNoData[k]));
+                                categories.add(new Category(Vocabulary.formatInternational(Vocabulary.Keys.Nodata) + String.valueOf(k), new Color(0,0,0,0), pNoData[k]));
                             }
                         }
                     }

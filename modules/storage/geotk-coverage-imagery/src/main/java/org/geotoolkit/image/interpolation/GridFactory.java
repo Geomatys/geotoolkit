@@ -287,7 +287,7 @@ public class GridFactory {
             throws TransformException, ArithmeticException
     {
         if (!(xmax - xmin >= MIN_SIZE) || !(ymax - ymin >= MIN_SIZE)) { // Use ! for catching NaN.
-            throw new ArithmeticException(Errors.format(Errors.Keys.NO_CONVERGENCE));
+            throw new ArithmeticException(Errors.format(Errors.Keys.NoConvergence));
         }
         /*
          * All derivatives will be compared to the derivative at (centerX, centerY).

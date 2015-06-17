@@ -289,7 +289,7 @@ public class ReferencingConsole extends InteractiveConsole {
                     // -------------------------------
                     if (key0.equalsIgnoreCase("print")) {
                         if (value != null) {
-                            throw unexpectedArgument(Errors.Keys.UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_1, "print");
+                            throw unexpectedArgument(Errors.Keys.UnexpectedArgumentForInstruction_1, "print");
                         }
                         if (key1.equalsIgnoreCase("set")) {
                             printDefinitions();
@@ -307,14 +307,14 @@ public class ReferencingConsole extends InteractiveConsole {
                             printPts();
                             return;
                         }
-                        throw unexpectedArgument(Errors.Keys.ILLEGAL_INSTRUCTION_1, key1);
+                        throw unexpectedArgument(Errors.Keys.IllegalInstruction_1, key1);
                     }
                     // -------------------------------
                     //   load <filename>
                     // -------------------------------
                     if (key0.equalsIgnoreCase("load")) {
                         if (value != null) {
-                            throw unexpectedArgument(Errors.Keys.UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_1, "load");
+                            throw unexpectedArgument(Errors.Keys.UnexpectedArgumentForInstruction_1, "load");
                         }
                         try (BufferedReader in = new BufferedReader(new FileReader(key1))) {
                             loadDefinitions(in);
@@ -340,7 +340,7 @@ public class ReferencingConsole extends InteractiveConsole {
                             toleranceInverse = parseVector(value, true);
                             return;
                         }
-                        throw unexpectedArgument(Errors.Keys.ILLEGAL_INSTRUCTION_1, key1);
+                        throw unexpectedArgument(Errors.Keys.IllegalInstruction_1, key1);
                     }
                     // -------------------------------
                     //   source|target crs = <wkt>
@@ -401,7 +401,7 @@ public class ReferencingConsole extends InteractiveConsole {
             table.setMultiLinesCells(true);
             table.writeHorizontalSeparator();
             if (sourceCRS != null) {
-                header(table, resources.getString(Vocabulary.Keys.SOURCE_CRS));
+                header(table, resources.getString(Vocabulary.Keys.SourceCrs));
                 table.writeHorizontalSeparator();
                 table.write(parser.format(sourceCRS));
                 if (targetCRS != null) {
@@ -410,7 +410,7 @@ public class ReferencingConsole extends InteractiveConsole {
                 }
             }
             if (targetCRS != null) {
-                header(table, resources.getString(Vocabulary.Keys.TARGET_CRS));
+                header(table, resources.getString(Vocabulary.Keys.TargetCrs));
                 table.writeHorizontalSeparator();
                 table.write(parser.format(targetCRS));
             }
@@ -429,9 +429,9 @@ public class ReferencingConsole extends InteractiveConsole {
             final TableWriter table = new TableWriter(out, TableWriter.SINGLE_VERTICAL_LINE);
             table.setMultiLinesCells(true);
             table.writeHorizontalSeparator();
-            header(table, resources.getString(Vocabulary.Keys.MATH_TRANSFORM));
+            header(table, resources.getString(Vocabulary.Keys.MathTransform));
             table.nextColumn();
-            header(table, resources.getString(Vocabulary.Keys.INVERSE_TRANSFORM));
+            header(table, resources.getString(Vocabulary.Keys.InverseTransform));
             table.nextLine();
             table.writeHorizontalSeparator();
             table.write(parser.format(transform));
@@ -480,19 +480,19 @@ public class ReferencingConsole extends InteractiveConsole {
         table.writeHorizontalSeparator();
         table.setAlignment(TableWriter.ALIGN_RIGHT);
         if (sourcePosition != null) {
-            table.write(resources.getLabel(Vocabulary.Keys.SOURCE_POINT));
+            table.write(resources.getLabel(Vocabulary.Keys.SourcePoint));
             print(sourcePosition,    table);
             print(transformedSource, table);
             table.nextLine();
         }
         if (targetPosition != null) {
-            table.write(resources.getLabel(Vocabulary.Keys.TARGET_POINT));
+            table.write(resources.getLabel(Vocabulary.Keys.TargetPoint));
             print(transformedTarget, table);
             print(targetPosition,    table);
             table.nextLine();
         }
         if (sourceCRS!=null && targetCRS!=null) {
-            table.write(resources.getLabel(Vocabulary.Keys.DISTANCE));
+            table.write(resources.getLabel(Vocabulary.Keys.Distance));
             printDistance(sourceCRS, sourcePosition, transformedTarget, table);
             printDistance(targetCRS, targetPosition, transformedSource, table);
             table.nextLine();
@@ -616,7 +616,7 @@ public class ReferencingConsole extends InteractiveConsole {
                 final int expectedDim = target.getDimension();
                 if (actualDim != expectedDim) {
                     throw new MismatchedDimensionException(Errors.format(
-                            Errors.Keys.MISMATCHED_DIMENSION_2, actualDim, expectedDim));
+                            Errors.Keys.MismatchedDimension_2, actualDim, expectedDim));
                 }
                 /*
                  * Check the ordinate values.
@@ -635,7 +635,7 @@ public class ReferencingConsole extends InteractiveConsole {
                         }
                     }
                     if (!(delta <= tolerance[Math.min(i, tolerance.length-1)])) { // Use '!' for catching NaN.
-                        throw new TransformException(Errors.format(Errors.Keys.UNEXPECTED_TRANSFORM_RESULT_5,
+                        throw new TransformException(Errors.format(Errors.Keys.UnexpectedTransformResult_5,
                                 new Number[] {expected, actual, delta, i, inverse ? 1 : 0}));
                     }
                 }

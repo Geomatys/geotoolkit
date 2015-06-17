@@ -71,7 +71,7 @@ public class FileField extends JComponent implements ActionListener {
         }
         add(file, BorderLayout.CENTER);
         final JButton open = new JButton(vertical ?
-                Vocabulary.getResources(locale).getMenuLabel(Vocabulary.Keys.CHOOSE) : "...");
+                Vocabulary.getResources(locale).getMenuLabel(Vocabulary.Keys.Choose) : "...");
         add(open, vertical ? BorderLayout.AFTER_LAST_LINE : BorderLayout.AFTER_LINE_ENDS);
         open.addActionListener(this);
     }

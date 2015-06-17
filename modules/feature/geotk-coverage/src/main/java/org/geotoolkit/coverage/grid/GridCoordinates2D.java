@@ -129,7 +129,7 @@ public class GridCoordinates2D extends Point implements GridCoordinates, Cloneab
      * Formats a message for an index out of 2D bounds.
      */
     static String indexOutOfBounds(final int dimension) {
-        return Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_1, dimension);
+        return Errors.format(Errors.Keys.IndexOutOfBounds_1, dimension);
     }
 
     /**

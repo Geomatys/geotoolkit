@@ -279,7 +279,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             tb = (TableFactory) tables;
         }
         if (tb == null) {
-            throw new IllegalStateException(errors().getString(Errors.Keys.NO_DATA_SOURCE));
+            throw new IllegalStateException(errors().getString(Errors.Keys.NoDataSource));
         }
         return tb;
     }
@@ -691,7 +691,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                  .invoke(null, range, category.getColors(), category.getSampleToGeophysics(), getLocale(), properties);
         } catch (ClassNotFoundException exception) {
             throw new UnsupportedOperationException(errors().getString(
-                    Errors.Keys.MISSING_MODULE_1, "geotk-display"), exception);
+                    Errors.Keys.MissingModule_1, "geotk-display"), exception);
         } catch (InvocationTargetException exception) {
             final Throwable cause = exception.getCause();
             if (cause instanceof RuntimeException) {
@@ -707,7 +707,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
         }
         if (conversionError != null) {
             throw new IllegalArgumentException(errors().getString(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "range", range), conversionError);
+                    Errors.Keys.IllegalArgument_2, "range", range), conversionError);
         }
         return null;
     }
@@ -995,7 +995,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             throw new CoverageStoreException(exception);
         } catch (TransformException exception) {
             throw new MismatchedReferenceSystemException(errors()
-                    .getString(Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM, exception));
+                    .getString(Errors.Keys.IllegalCoordinateReferenceSystem, exception));
         }
         return (Set) entries; // See implementation note above.
     }
@@ -1021,7 +1021,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             throw new CoverageStoreException(exception);
         } catch (TransformException exception) {
             throw new MismatchedReferenceSystemException(errors()
-                    .getString(Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM, exception));
+                    .getString(Errors.Keys.IllegalCoordinateReferenceSystem, exception));
         }
         return entry;
     }

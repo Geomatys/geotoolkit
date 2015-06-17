@@ -346,7 +346,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
     private static void checkDimension(final String name, final int length, final int expected) {
         if (length != expected) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_3, name, length, expected));
+                    Errors.Keys.MismatchedDimension_3, name, length, expected));
         }
     }
 

@@ -155,10 +155,10 @@ public class ResampleProcess extends AbstractProcess {
             target = reproject(source, targetCRS, targetGG, interpolation, background, null);
         } catch (FactoryException exception) {
             throw new CannotReprojectException(Errors.format(
-                    Errors.Keys.CANT_REPROJECT_COVERAGE_1, source.getName()), exception);
+                    Errors.Keys.CantReprojectCoverage_1, source.getName()), exception);
         } catch (TransformException exception) {
             throw new CannotReprojectException(Errors.format(
-                    Errors.Keys.CANT_REPROJECT_COVERAGE_1, source.getName()), exception);
+                    Errors.Keys.CantReprojectCoverage_1, source.getName()), exception);
         }
 
         Parameters.getOrCreate(OUT_COVERAGE, outputParameters).setValue(target);
@@ -369,7 +369,7 @@ public class ResampleProcess extends AbstractProcess {
             }
         } else {
             if (sourceCRS == null) {
-                throw new CannotReprojectException(Errors.format(Errors.Keys.UNSPECIFIED_CRS));
+                throw new CannotReprojectException(Errors.format(Errors.Keys.UnspecifiedCrs));
             }
             final Envelope        sourceEnvelope;
             final GeneralEnvelope targetEnvelope;
@@ -424,7 +424,7 @@ public class ResampleProcess extends AbstractProcess {
         if (!(allSteps2D instanceof MathTransform2D)) {
             // Should not happen with Geotk implementations. May happen
             // with some external implementations, but should stay unusual.
-            throw new TransformException(Errors.format(Errors.Keys.NO_TRANSFORM2D_AVAILABLE));
+            throw new TransformException(Errors.format(Errors.Keys.NoTransform2dAvailable));
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////
@@ -626,7 +626,7 @@ public class ResampleProcess extends AbstractProcess {
         if (candidate instanceof MathTransform2D) {
             return (MathTransform2D) candidate;
         }
-        throw new FactoryException(Errors.format(Errors.Keys.NO_TRANSFORM2D_AVAILABLE));
+        throw new FactoryException(Errors.format(Errors.Keys.NoTransform2dAvailable));
     }
 
     /**

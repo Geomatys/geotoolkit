@@ -177,7 +177,7 @@ public class LoggedFormat<T> extends Format {
             doLogWarning(formatUnparsable(text, 0, index, getWarningLocale(), level));
         } else if (value!=null && !type.isInstance(value)) {
             doLogWarning(Errors.getResources(getWarningLocale()).getLogRecord(level,
-                    Errors.Keys.ILLEGAL_CLASS_2, value.getClass(), type));
+                    Errors.Keys.IllegalClass_2, value.getClass(), type));
             return null;
         }
         return type.cast(value);
@@ -343,16 +343,16 @@ public class LoggedFormat<T> extends Format {
         }
         if (errorIndex == length) {
             if (level != null) {
-                return resources.getLogRecord(level, Errors.Keys.UNEXPECTED_END_OF_STRING);
+                return resources.getLogRecord(level, Errors.Keys.UnexpectedEndOfString);
             }
-            return resources.getString(Errors.Keys.UNEXPECTED_END_OF_STRING);
+            return resources.getString(Errors.Keys.UnexpectedEndOfString);
         }
         final String error = CharSequences.token(text, errorIndex).toString();
         text = text.substring(index);
         if (level != null) {
-            return resources.getLogRecord(level, Errors.Keys.UNPARSABLE_STRING_2, text, error);
+            return resources.getLogRecord(level, Errors.Keys.UnparsableString_2, text, error);
         }
-        return resources.getString(Errors.Keys.UNPARSABLE_STRING_2, text, error);
+        return resources.getString(Errors.Keys.UnparsableString_2, text, error);
     }
 
     /**

@@ -85,7 +85,7 @@ final class CachingMosaicReader extends MosaicImageReader {
                 // Prefer an other implementation (typically JAI) if one is found.
             }
             if (reader == null) {
-                throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_READER));
+                throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NoImageReader));
             }
         }
         IOUtilities.close(reader.getInput());

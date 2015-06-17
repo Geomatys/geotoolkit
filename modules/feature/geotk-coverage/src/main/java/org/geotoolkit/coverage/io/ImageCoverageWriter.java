@@ -260,10 +260,10 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                                 final short messageKey;
                                 final Object argument;
                                 if (IOUtilities.canProcessAsPath(output)) {
-                                    messageKey = Errors.Keys.CANT_WRITE_FILE_1;
+                                    messageKey = Errors.Keys.CantWriteFile_1;
                                     argument = org.apache.sis.internal.storage.IOUtilities.filename(output);
                                 } else {
-                                    messageKey = Errors.Keys.UNKNOWN_TYPE_1;
+                                    messageKey = Errors.Keys.UnknownType_1;
                                     argument = output.getClass();
                                 }
                                 throw new CoverageStoreException(Errors.getResources(locale).getString(messageKey, argument));
@@ -483,7 +483,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         final long startTime = isLoggable() ? System.nanoTime() : Long.MIN_VALUE;
         final Iterator<? extends GridCoverage> it = coverages.iterator();
         if (!it.hasNext()) {
-            throw new CoverageStoreException(Errors.format(Errors.Keys.NO_SUCH_ELEMENT_1, GridCoverage.class));
+            throw new CoverageStoreException(Errors.format(Errors.Keys.NoSuchElement_1, GridCoverage.class));
         }
         boolean hasNext;
         write(it.next(), param, true, !(hasNext = it.hasNext()), startTime);
@@ -541,10 +541,10 @@ public class ImageCoverageWriter extends GridCoverageWriter {
          */
         final ImageWriter imageWriter = this.imageWriter; // Protect from changes.
         if (imageWriter == null) {
-            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_OUTPUT));
+            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NoImageOutput));
         }
         if (!isLast && !imageWriter.canWriteSequence()) {
-            throw new CoverageStoreException(Errors.format(Errors.Keys.UNSUPPORTED_MULTI_OCCURRENCE_1, GridCoverage.class));
+            throw new CoverageStoreException(Errors.format(Errors.Keys.UnsupportedMultiOccurrence_1, GridCoverage.class));
         }
         final boolean isNetcdfHack = imageWriter.getClass().getName().equals("org.geotoolkit.image.io.plugin.NetcdfImageWriter"); // TODO: DEPRECATED: to be removed in Apache SIS.
         final boolean isTiffHack = imageWriter.getClass().getName().equals("org.geotoolkit.image.io.plugin.TiffImageWriter");
@@ -575,7 +575,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 interp = Interpolation.INTERP_BICUBIC;
             } else {
                 throw new CoverageStoreException(Errors.getResources(locale).getString(
-                        Errors.Keys.ILLEGAL_ARGUMENT_2, "interpolation", interpolation.name()));
+                        Errors.Keys.IllegalArgument_2, "interpolation", interpolation.name()));
             }
             destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam, isNetcdfHack);
             imageParam.setSourceBands(param.getSourceBands());

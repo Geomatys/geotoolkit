@@ -148,12 +148,12 @@ public class RequestGenerator {
      */
     public void setMinimalGridSize(final int... size) {
         if (size.length != minimalGridSize.length) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedArrayLength));
         }
         for (int i=0; i<size.length; i++) {
             if (size[i] < 1) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_2, "size[" + i + ']', size[i]));
+                        Errors.Keys.IllegalArgument_2, "size[" + i + ']', size[i]));
             }
         }
         System.arraycopy(size, 0, minimalGridSize, 0, size.length);
@@ -189,12 +189,12 @@ public class RequestGenerator {
      */
     public void setMaximalGridSize(final int... size) {
         if (size.length != maximalGridSize.length) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MismatchedArrayLength));
         }
         for (int i=0; i<size.length; i++) {
             if (size[i] < minimalGridSize[i]) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_2, "size[" + i + ']', size[i]));
+                        Errors.Keys.IllegalArgument_2, "size[" + i + ']', size[i]));
             }
         }
         System.arraycopy(size, 0, maximalGridSize, 0, size.length);

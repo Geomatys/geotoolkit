@@ -213,7 +213,7 @@ final class NetcdfParameter<T> extends NetcdfIdentifiedObject implements
             final Parameter parameter, final Class<?> requested)
     {
         return new InvalidParameterTypeException(Errors.format(
-                Errors.Keys.CANT_CONVERT_FROM_TYPE_2, getValueClass(parameter), requested),
+                Errors.Keys.CantConvertFromType_2, getValueClass(parameter), requested),
                 parameter.getName());
     }
 
@@ -224,7 +224,7 @@ final class NetcdfParameter<T> extends NetcdfIdentifiedObject implements
      */
     @Override
     public double doubleValue(final Unit<?> unit) throws IllegalArgumentException {
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNDEFINED_PROPERTY_1, "unit"));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UndefinedProperty_1, "unit"));
     }
 
     /**
@@ -314,7 +314,7 @@ final class NetcdfParameter<T> extends NetcdfIdentifiedObject implements
      */
     @Override
     public double[] doubleValueList(final Unit<?> unit) throws IllegalArgumentException {
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNDEFINED_PROPERTY_1, "unit"));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UndefinedProperty_1, "unit"));
     }
 
     /**
@@ -399,7 +399,7 @@ final class NetcdfParameter<T> extends NetcdfIdentifiedObject implements
         else if (type.isAssignableFrom(Boolean .class)) value = booleanValue();
         else if (type.isAssignableFrom(URI     .class)) value = valueFile();
         else throw new InvalidParameterTypeException(Errors.format(
-                Errors.Keys.UNKNOWN_TYPE_1, type), parameter.getName());
+                Errors.Keys.UnknownType_1, type), parameter.getName());
         return type.cast(value);
     }
 
@@ -414,7 +414,7 @@ final class NetcdfParameter<T> extends NetcdfIdentifiedObject implements
             final Parameter parameter, final Object value)
     {
         return new InvalidParameterValueException(Errors.format(
-                Errors.Keys.CANT_CONVERT_FROM_TYPE_2, value.getClass(), getValueClass(parameter)),
+                Errors.Keys.CantConvertFromType_2, value.getClass(), getValueClass(parameter)),
                 parameter.getName(), value);
     }
 
@@ -426,7 +426,7 @@ final class NetcdfParameter<T> extends NetcdfIdentifiedObject implements
      */
     @Override
     public void setValue(final double[] values, final Unit<?> unit) throws IllegalArgumentException {
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNEXPECTED_PARAMETER_1, "unit"));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UnexpectedParameter_1, "unit"));
     }
 
     /**
@@ -437,7 +437,7 @@ final class NetcdfParameter<T> extends NetcdfIdentifiedObject implements
      */
     @Override
     public void setValue(final double value, final Unit<?> unit) throws IllegalArgumentException {
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNEXPECTED_PARAMETER_1, "unit"));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UnexpectedParameter_1, "unit"));
     }
 
     /**

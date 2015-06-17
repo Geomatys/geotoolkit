@@ -498,7 +498,7 @@ public class TextMatrixImageReader extends TextImageReader {
          */
         @Override
         public String getDescription(final Locale locale) {
-            return Descriptions.getResources(locale).getString(Descriptions.Keys.CODEC_MATRIX);
+            return Descriptions.getResources(locale).getString(Descriptions.Keys.CodecMatrix);
         }
 
         /**

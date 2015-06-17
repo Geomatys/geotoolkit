@@ -131,7 +131,7 @@ public final class TemporalUtilities extends Static {
             level = Level.WARNING;
         }
         final LogRecord record = new LogRecord(level, Errors.format(
-                Errors.Keys.MISSING_MODULE_1, "geotk-temporal"));
+                Errors.Keys.MissingModule_1, "geotk-temporal"));
         record.setMessage(Exceptions.formatChainedMessages(null, record.getMessage(), e));
         return record;
     }

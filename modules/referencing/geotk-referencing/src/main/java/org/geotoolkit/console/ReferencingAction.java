@@ -188,7 +188,7 @@ final class ReferencingAction {
             final String warning = formatter.getWarning();
             if (warning != null) {
                 out.println();
-                out.print(resources.getString(Vocabulary.Keys.WARNING));
+                out.print(resources.getString(Vocabulary.Keys.Warning));
                 out.print(": ");
                 out.println(warning);
             }
@@ -209,11 +209,11 @@ final class ReferencingAction {
         notes.setMultiLinesCells(true);
         table.setMultiLinesCells(true);
         table.writeHorizontalSeparator();
-        table.write(bold(Vocabulary.Keys.AUTHORITY));
+        table.write(bold(Vocabulary.Keys.Authority));
         table.nextColumn();
-        table.write(bold(Vocabulary.Keys.DESCRIPTION));
+        table.write(bold(Vocabulary.Keys.Description));
         table.nextColumn();
-        table.write(bold(Vocabulary.Keys.NOTE));
+        table.write(bold(Vocabulary.Keys.Note));
         table.writeHorizontalSeparator();
         for (AuthorityFactory factory : AuthorityFactoryFinder.getCRSAuthorityFactories(HINTS)) {
             final Citation authority = factory.getAuthority();
@@ -272,9 +272,9 @@ final class ReferencingAction {
         }
         final TableWriter table = new TableWriter(cmd.out);
         table.writeHorizontalSeparator();
-        table.write(bold(Vocabulary.Keys.CODE));
+        table.write(bold(Vocabulary.Keys.Code));
         table.nextColumn();
-        table.write(bold(Vocabulary.Keys.DESCRIPTION));
+        table.write(bold(Vocabulary.Keys.Description));
         table.writeHorizontalSeparator();
         try {
             final Set<String> codes = factory.getAuthorityCodes(CoordinateReferenceSystem.class);
@@ -328,8 +328,8 @@ final class ReferencingAction {
         } else {
             final PrintWriter err = cmd.err;
             final Errors resources = Errors.getResources(cmd.locale);
-            err.println(resources.getString(Errors.Keys.ILLEGAL_ARGUMENT_1, "list"));
-            err.println(resources.getString(Errors.Keys.UNKNOWN_TYPE_1, list));
+            err.println(resources.getString(Errors.Keys.IllegalArgument_1, "list"));
+            err.println(resources.getString(Errors.Keys.UnknownType_1, list));
             cmd.exit(ILLEGAL_ARGUMENT_EXIT_CODE);
             return;
         }
@@ -354,7 +354,7 @@ final class ReferencingAction {
         final TableWriter table = new TableWriter(cmd.out);
         table.writeHorizontalSeparator();
         final String[] titles = {
-            resources.getString(Vocabulary.Keys.TARGET),
+            resources.getString(Vocabulary.Keys.Target),
             "dx", "dy", "dz", "ex", "ey", "ez", "ppm"
         };
         for (int i=0; i<titles.length; i++) {
@@ -511,7 +511,7 @@ final class ReferencingAction {
         else if (test.equalsIgnoreCase("duplicates")) code = 2;
         else {
             final Errors resources = Errors.getResources(cmd.locale);
-            cmd.err.println(resources.getString(Errors.Keys.ILLEGAL_ARGUMENT_2, "test", test));
+            cmd.err.println(resources.getString(Errors.Keys.IllegalArgument_2, "test", test));
             cmd.exit(ILLEGAL_ARGUMENT_EXIT_CODE);
             return;
         }
@@ -527,7 +527,7 @@ final class ReferencingAction {
                     case 1: {
                         out.println("CRS failures:");
                         if (pf.reportInstantiationFailures(out).isEmpty()) {
-                            out.println(resources.getString(Vocabulary.Keys.NONE));
+                            out.println(resources.getString(Vocabulary.Keys.None));
                         }
                         out.println();
                         if (code != 0) break;
@@ -535,7 +535,7 @@ final class ReferencingAction {
                     case 2: {
                         out.println("CRS duplicates:");
                         if (pf.reportDuplicates(out).isEmpty()) {
-                            out.println(resources.getString(Vocabulary.Keys.NO_DUPLICATION_FOUND));
+                            out.println(resources.getString(Vocabulary.Keys.NoDuplicationFound));
                         }
                         out.println();
                         if (code != 0) break;

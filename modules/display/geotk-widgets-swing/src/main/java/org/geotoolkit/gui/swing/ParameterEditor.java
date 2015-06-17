@@ -660,9 +660,9 @@ public class ParameterEditor extends JComponent {
             final Vocabulary resources = Vocabulary.getResources(getLocale());
             final GridBagConstraints c = new GridBagConstraints();
             c.gridx=0; c.gridwidth=1; c.insets.left=9; c.fill=HORIZONTAL;
-            c.gridy=0; add(new JLabel(resources.getLabel(Vocabulary.Keys.TYPE )), c);
-            c.gridy++; add(new JLabel(resources.getLabel(Vocabulary.Keys.RANGE)), c);
-            c.gridy++; add(new JLabel(resources.getLabel(Vocabulary.Keys.VALUE)), c);
+            c.gridy=0; add(new JLabel(resources.getLabel(Vocabulary.Keys.Type )), c);
+            c.gridy++; add(new JLabel(resources.getLabel(Vocabulary.Keys.Range)), c);
+            c.gridy++; add(new JLabel(resources.getLabel(Vocabulary.Keys.Value)), c);
             c.gridx=1; c.weightx=1; c.insets.right=9;
             c.gridy=0; add(type,  c);
             c.gridy++; add(range, c);
@@ -707,8 +707,8 @@ public class ParameterEditor extends JComponent {
                 classe = primitiveToWrapper(classe);
                 boolean isInteger = false;
                 if (isFloat(classe) || (isInteger = isInteger(classe)) == true) {
-                    type = Vocabulary.format(isInteger ? Vocabulary.Keys.SIGNED_INTEGER_1 :
-                            Vocabulary.Keys.REAL_NUMBER_1, primitiveBitCount(classe)) +
+                    type = Vocabulary.format(isInteger ? Vocabulary.Keys.SignedInteger_1 :
+                            Vocabulary.Keys.RealNumber_1, primitiveBitCount(classe)) +
                             " (" + type + ')';
                 }
             }
@@ -843,8 +843,8 @@ public class ParameterEditor extends JComponent {
         @Override
         public String getColumnName(final int index) {
             switch (index) {
-                case 0:  return Vocabulary.format(Vocabulary.Keys.INDEX);
-                default: return Vocabulary.format(Vocabulary.Keys.VALUE);
+                case 0:  return Vocabulary.format(Vocabulary.Keys.Index);
+                default: return Vocabulary.format(Vocabulary.Keys.Value);
             }
         }
 

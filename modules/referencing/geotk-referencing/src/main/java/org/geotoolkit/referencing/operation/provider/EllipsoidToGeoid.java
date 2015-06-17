@@ -77,7 +77,7 @@ public class EllipsoidToGeoid extends MathTransformProvider {
      */
     public static final ParameterDescriptor<String> DATUM = new DefaultParameterDescriptor<>(
             Collections.singletonMap(NAME_KEY, new NamedIdentifier(Citations.GEOTOOLKIT,
-                    Vocabulary.formatInternational(Vocabulary.Keys.DATUM))),
+                    Vocabulary.formatInternational(Vocabulary.Keys.Datum))),
             String.class, new String[] {"WGS84", "WGS72"}, "WGS84", null, null, null, true);
 
     /**
@@ -86,7 +86,7 @@ public class EllipsoidToGeoid extends MathTransformProvider {
      */
     public static final ParameterDescriptor<Integer> ORDER = DefaultParameterDescriptor.create(
             Collections.singletonMap(NAME_KEY, new NamedIdentifier(Citations.GEOTOOLKIT,
-                    Vocabulary.formatInternational(Vocabulary.Keys.ORDER))),
+                    Vocabulary.formatInternational(Vocabulary.Keys.Order))),
             DEFAULT_ORDER, 2, 180, false);
 
     /**
@@ -165,7 +165,7 @@ public class EllipsoidToGeoid extends MathTransformProvider {
         } else if ("WGS72".equalsIgnoreCase(name)) {
             datum = CommonCRS.WGS72.datum();
         } else {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNSUPPORTED_DATUM_1, name));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UnsupportedDatum_1, name));
         }
         final Integer order = integerValue(ORDER, values);
         int nmax = (order != null) ? order : DEFAULT_ORDER;

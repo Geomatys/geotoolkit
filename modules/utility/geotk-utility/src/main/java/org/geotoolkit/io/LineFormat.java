@@ -162,7 +162,7 @@ public class LineFormat extends Format {
      */
     public LineFormat(final Format format) {
         if (format == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_FORMAT_2, 0, 1));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NullFormat_2, 0, 1));
         }
         this.data    = new Object[16];
         this.limits  = new int[data.length + 1];
@@ -179,7 +179,7 @@ public class LineFormat extends Format {
      */
     public LineFormat(Format[] formats) {
         if (formats.length == 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ARRAY));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.EmptyArray));
         }
         this.formats = formats = formats.clone();
         this.data    = new Object[formats.length];
@@ -187,7 +187,7 @@ public class LineFormat extends Format {
         for (int i=0; i<formats.length; i++) {
             if (formats[i] == null) {
                 throw new NullArgumentException(Errors.format(
-                        Errors.Keys.NULL_FORMAT_2, i+1, formats.length));
+                        Errors.Keys.NullFormat_2, i+1, formats.length));
             }
         }
     }
@@ -297,7 +297,7 @@ load:   while (true) {
                 final int error = position.getErrorIndex();
                 int end = error;
                 while (end < upper && !Character.isWhitespace(line.charAt(end))) end++;
-                throw new ParseException(Errors.format(Errors.Keys.PARSE_EXCEPTION_2,
+                throw new ParseException(Errors.format(Errors.Keys.ParseException_2,
                           line.substring(lower, end).trim(),
                           line.substring(error, Math.min(error+1, end))), error);
             }
@@ -359,7 +359,7 @@ load:   while (true) {
             throw new ArrayIndexOutOfBoundsException(index);
         }
         if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, "value"));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NullArgument_1, "value"));
         }
         if (index == count) {
             if (index == data.length) {
@@ -408,7 +408,7 @@ load:   while (true) {
             return n;
         } catch (UnconvertibleObjectException cause) {
             ParseException exception = new ParseException(Errors.format(
-                    Errors.Keys.UNPARSABLE_NUMBER_1, data[index]), limits[index]);
+                    Errors.Keys.UnparsableNumber_1, data[index]), limits[index]);
             exception.initCause(cause);
             throw exception;
         }
@@ -588,7 +588,7 @@ load:   while (true) {
             final int lower = limits[Math.min(count, expected  )];
             final int upper = limits[Math.min(count, expected+1)];
             throw new ParseException(Errors.format(count<expected ?
-                                     Errors.Keys.LINE_TOO_SHORT_2 : Errors.Keys.LINE_TOO_LONG_3,
+                                     Errors.Keys.LineTooShort_2 : Errors.Keys.LineTooLong_3,
                                      count, expected, line.substring(lower,upper).trim()), lower);
         }
     }
@@ -600,7 +600,7 @@ load:   while (true) {
      * @return The exception.
      */
     private ParseException notAnInteger(final int i) {
-        return new ParseException(Errors.format(Errors.Keys.NOT_AN_INTEGER_1,
+        return new ParseException(Errors.format(Errors.Keys.NotAnInteger_1,
                 line.substring(limits[i], limits[i+1])), limits[i]);
     }
 

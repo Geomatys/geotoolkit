@@ -138,7 +138,7 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
             tileRegion.width  = divide(tileRegion.width,  hx, true); // See above comment.
             tileRegion.height = divide(tileRegion.height, hy, true);
             if (tileRegion.width < THRESHOLD || tileRegion.height < THRESHOLD) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.UNEXPECTED_IMAGE_SIZE));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.UnexpectedImageSize));
             }
             List<Tile> list = byRegions.get(tileRegion);
             if (list == null) {
@@ -162,7 +162,7 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
                  * We require every region to contain at least one overview,
                  * otherwise the mosaic geometry may not be a GDAL one.
                  */
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_GRID_GEOMETRY));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.IncompatibleGridGeometry));
             }
             final Tile[] overviews = list.toArray(new Tile[n]);
             Arrays.sort(overviews, BY_SUBSAMPLING);

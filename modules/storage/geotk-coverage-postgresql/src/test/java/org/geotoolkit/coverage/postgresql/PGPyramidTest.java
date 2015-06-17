@@ -209,7 +209,7 @@ public class PGPyramidTest {
         final Category dataCat = new Category("data", new Color[]{Color.WHITE, Color.BLACK},
                 NumberRange.create(1, true, 100, true), NumberRange.create(-50.0, true, 45.6, true));
         final Category nodataCat = new Category(
-                Vocabulary.formatInternational(Vocabulary.Keys.NODATA), new Color(0,0,0,0), Double.NaN);
+                Vocabulary.formatInternational(Vocabulary.Keys.Nodata), new Color(0,0,0,0), Double.NaN);
         final GridSampleDimension dim1 = new GridSampleDimension("dim0",new Category[]{dataCat,nodataCat}, SI.CELSIUS);
         dimensions.add(0, dim1);
 

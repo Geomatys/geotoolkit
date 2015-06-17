@@ -710,7 +710,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     private int getFormatCode(final String formatName) throws IllegalArgumentException {
         ensureNonNull("formatName", formatName);
         if (format == null) {
-            throw new IllegalStateException(getErrorResources().getString(Errors.Keys.UNDEFINED_FORMAT));
+            throw new IllegalStateException(getErrorResources().getString(Errors.Keys.UndefinedFormat));
         }
         if (format.getRootName().equalsIgnoreCase(formatName)) {
             return MAIN;
@@ -724,7 +724,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
             return FALLBACK;
         }
         throw new IllegalArgumentException(getErrorResources().getString(
-                Errors.Keys.ILLEGAL_ARGUMENT_2, "formatName", formatName));
+                Errors.Keys.IllegalArgument_2, "formatName", formatName));
     }
 
     /**
@@ -805,7 +805,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     public void mergeTree(final String formatName, final Node root) throws IIOInvalidTreeException {
         if (isReadOnly()) {
             throw new IllegalStateException(getErrorResources()
-                    .getString(Errors.Keys.UNMODIFIABLE_METADATA));
+                    .getString(Errors.Keys.UnmodifiableMetadata));
         }
         switch (getFormatCode(formatName)) {
             case MAIN: this.root = root; break;
@@ -1073,7 +1073,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     public void reset() {
         if (isReadOnly()) {
             throw new IllegalStateException(getErrorResources()
-                    .getString(Errors.Keys.UNMODIFIABLE_METADATA));
+                    .getString(Errors.Keys.UnmodifiableMetadata));
         }
         root = null;
         if (fallback != null) {

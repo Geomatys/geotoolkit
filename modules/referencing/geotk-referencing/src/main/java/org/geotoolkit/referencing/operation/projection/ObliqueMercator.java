@@ -252,10 +252,10 @@ public class ObliqueMercator extends UnitaryProjection {
 //        }
 //        if (isTwoPoints) {
 //            throw new ParameterNotFoundException(Errors.format(
-//                    Errors.Keys.NO_PARAMETER_1, problem), problem);
+//                    Errors.Keys.NoParameter_1, problem), problem);
 //        } else {
 //            throw new InvalidParameterNameException(Errors.format(
-//                    Errors.Keys.UNEXPECTED_PARAMETER_1, problem), problem);
+//                    Errors.Keys.UnexpectedParameter_1, problem), problem);
 //        }
 //    }
 
@@ -359,7 +359,7 @@ public class ObliqueMercator extends UnitaryProjection {
                 final String name = org.geotoolkit.referencing.operation.provider.ObliqueMercator.AZIMUTH.getName().getCode();
                 final Angle value = new Angle(toDegrees(azimuth));
                 throw new InvalidParameterValueException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_2, name, value), name, value);
+                        Errors.Keys.IllegalArgument_2, name, value), name, value);
             }
             if (isNaN(rectifiedGridAngle)) {
                 rectifiedGridAngle = azimuth;
@@ -370,7 +370,7 @@ public class ObliqueMercator extends UnitaryProjection {
             t = 0.5 * (F - 1/F) * tan(gamma0);
             if (abs(t) > 1) { // Check for asin(±1.00000001)
                 if (abs(abs(t) - 1) > EPSILON) {
-                    throw new IllegalArgumentException(Errors.format(Errors.Keys.TOLERANCE_ERROR));
+                    throw new IllegalArgumentException(Errors.format(Errors.Keys.ToleranceError));
                 }
                 t = copySign(1, t);
             }
@@ -440,7 +440,7 @@ public class ObliqueMercator extends UnitaryProjection {
             final double V    = sin(B * λ);
             final double U    = (S*singamma0 - V*cosgamma0) / Sp;
             if (abs(abs(U) - 1) < EPSILON) {
-                throw new ProjectionException(Errors.format(Errors.Keys.INFINITE_VALUE_1, "v"));
+                throw new ProjectionException(Errors.format(Errors.Keys.InfiniteValue_1, "v"));
             }
             final double dV_dλ = cos(B * λ);
             if (abs(dV_dλ) < FINER_EPSILON) {

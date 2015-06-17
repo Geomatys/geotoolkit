@@ -166,7 +166,7 @@ public final class IOUtilities extends Static {
                  * because the scheme pretended that we had a file URI.
                  */
                 final IOException e = new MalformedURLException(concatenate(
-                        Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "URI", path), cause));
+                        Errors.format(Errors.Keys.IllegalArgument_2, "URI", path), cause));
                 e.initCause(cause);
                 throw e;
             }
@@ -213,7 +213,7 @@ public final class IOUtilities extends Static {
                  * because the scheme pretended that we had a file URI.
                  */
                 final IOException e = new MalformedURLException(concatenate(
-                        Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "URI", path), cause));
+                        Errors.format(Errors.Keys.IllegalArgument_2, "URI", path), cause));
                 e.initCause(cause);
                 throw e;
             }
@@ -386,13 +386,13 @@ public final class IOUtilities extends Static {
     {
         final String line = in.readLine();
         if (line == null) {
-            throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
+            throw new EOFException(Errors.format(Errors.Keys.EndOfDataFile));
         }
         final StringTokenizer tokens = new StringTokenizer(line);
         for (int i=0; i<numCol; i++) {
             if (!tokens.hasMoreTokens()) {
                 throw new ContentFormatException(Errors.format(
-                        Errors.Keys.LINE_TOO_SHORT_2, i, numCol));
+                        Errors.Keys.LineTooShort_2, i, numCol));
             }
             final String token = tokens.nextToken();
             final double value;
@@ -400,12 +400,12 @@ public final class IOUtilities extends Static {
                 value = Double.parseDouble(token);
             } catch (NumberFormatException e) {
                 throw new ContentFormatException(concatenate(
-                        Errors.format(Errors.Keys.UNPARSABLE_NUMBER_1, token), e), e);
+                        Errors.format(Errors.Keys.UnparsableNumber_1, token), e), e);
             }
             grid[offset + i] = value;
         }
         if (tokens.hasMoreElements()) {
-            throw new ContentFormatException(Errors.format(Errors.Keys.LINE_TOO_LONG_3,
+            throw new ContentFormatException(Errors.format(Errors.Keys.LineTooLong_3,
                     numCol+tokens.countTokens(), numCol, tokens.nextToken()));
         }
     }
@@ -424,13 +424,13 @@ public final class IOUtilities extends Static {
     {
         final String line = in.readLine();
         if (line == null) {
-            throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
+            throw new EOFException(Errors.format(Errors.Keys.EndOfDataFile));
         }
         final StringTokenizer tokens = new StringTokenizer(line);
         for (int i=0; i<numCol; i++) {
             if (!tokens.hasMoreTokens()) {
                 throw new ContentFormatException(Errors.format(
-                        Errors.Keys.LINE_TOO_SHORT_2, i, numCol));
+                        Errors.Keys.LineTooShort_2, i, numCol));
             }
             final String token = tokens.nextToken();
             final float value;
@@ -438,12 +438,12 @@ public final class IOUtilities extends Static {
                 value = Float.parseFloat(token);
             } catch (NumberFormatException e) {
                 throw new ContentFormatException(concatenate(
-                        Errors.format(Errors.Keys.UNPARSABLE_NUMBER_1, token), e), e);
+                        Errors.format(Errors.Keys.UnparsableNumber_1, token), e), e);
             }
             grid[offset + i] = value;
         }
         if (tokens.hasMoreElements()) {
-            throw new ContentFormatException(Errors.format(Errors.Keys.LINE_TOO_LONG_3,
+            throw new ContentFormatException(Errors.format(Errors.Keys.LineTooLong_3,
                     numCol+tokens.countTokens(), numCol, tokens.nextToken()));
         }
     }
@@ -477,7 +477,7 @@ public final class IOUtilities extends Static {
                 final File file = new File(target, entry.getName());
                 if (entry.isDirectory()) {
                     if (!file.isDirectory() && !file.mkdir()) {
-                        throw new IOException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_1, file));
+                        throw new IOException(Errors.format(Errors.Keys.CantCreateDirectory_1, file));
                     }
                     continue;
                 }

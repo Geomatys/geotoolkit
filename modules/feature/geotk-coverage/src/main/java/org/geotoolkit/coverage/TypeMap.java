@@ -126,7 +126,7 @@ public final class TypeMap extends Static {
      */
     private final InternationalString name = new AbstractInternationalString() {
         @Override public String toString(final Locale locale) {
-            return Vocabulary.getResources(locale).getString(Vocabulary.Keys.DATA_TYPE_2,
+            return Vocabulary.getResources(locale).getString(Vocabulary.Keys.DataType_2,
                     Integer.valueOf(real ? 2 : signed ? 1 : 0), size);
         }
     };
@@ -316,7 +316,7 @@ public final class TypeMap extends Static {
             throws IllegalArgumentException
     {
         if (band < 0 || band >= model.getNumBands()) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_1, band));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalBandNumber_1, band));
         }
         /*
          * TODO: we have a bug with some types like BufferedImage.TYPE_RGB: the model use DataBuffer.TYPE_INT
@@ -462,7 +462,7 @@ public final class TypeMap extends Static {
                 }
             }
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "type", type));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalArgument_2, "type", type));
     }
 
     /**
@@ -545,10 +545,10 @@ public final class TypeMap extends Static {
                 return Double.valueOf(value);
             }
             default: {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "type", type));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalArgument_2, "type", type));
             }
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_2, "value", value));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalArgument_2, "value", value));
     }
 
     /**
@@ -564,7 +564,7 @@ public final class TypeMap extends Static {
             throws IllegalArgumentException
     {
         if (band < 0 || band >= ColorUtilities.getNumBands(model)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_1, band));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalBandNumber_1, band));
         }
         if (model instanceof IndexColorModel) {
             return ColorInterpretation.PALETTE_INDEX;

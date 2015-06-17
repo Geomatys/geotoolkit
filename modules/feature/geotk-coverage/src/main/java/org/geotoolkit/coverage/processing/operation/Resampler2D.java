@@ -355,7 +355,7 @@ final class Resampler2D extends GridCoverage2D {
             }
         } else {
             if (sourceCRS == null) {
-                throw new CannotReprojectException(Errors.format(Errors.Keys.UNSPECIFIED_CRS));
+                throw new CannotReprojectException(Errors.format(Errors.Keys.UnspecifiedCrs));
             }
             final Envelope        sourceEnvelope;
             final GeneralEnvelope targetEnvelope;
@@ -414,7 +414,7 @@ final class Resampler2D extends GridCoverage2D {
         if (!(allSteps2D instanceof MathTransform2D)) {
             // Should not happen with Geotk implementations. May happen
             // with some external implementations, but should stay unusual.
-            throw new TransformException(Errors.format(Errors.Keys.NO_TRANSFORM2D_AVAILABLE));
+            throw new TransformException(Errors.format(Errors.Keys.NoTransform2dAvailable));
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////
@@ -658,7 +658,7 @@ final class Resampler2D extends GridCoverage2D {
             if (!automaticGR) {
                 final InternationalString name = sourceCoverage.getName();
                 log(Loggings.getResources(locale).getLogRecord(Level.WARNING,
-                    Loggings.Keys.ADJUSTED_GRID_GEOMETRY_1, (name != null) ?
+                    Loggings.Keys.AdjustedGridGeometry_1, (name != null) ?
                         name.toString(locale) : sourceCoverage.getClass()));
             }
         }
@@ -686,7 +686,7 @@ final class Resampler2D extends GridCoverage2D {
             }
             final InternationalString name = sourceCoverage.getName();
             log(Loggings.getResources(locale).getLogRecord(LOGGING_LEVEL,
-                Loggings.Keys.APPLIED_RESAMPLE_11, new Object[] {
+                Loggings.Keys.AppliedResample_11, new Object[] {
                 /*  {0} */ (name != null) ? name.toString(locale) : sourceCoverage.getClass(),
                 /*  {1} */ sourceCoverage.getCoordinateReferenceSystem().getName().getCode(),
                 /*  {2} */ sourceImage.getWidth(),
@@ -808,7 +808,7 @@ final class Resampler2D extends GridCoverage2D {
         if (candidate instanceof MathTransform2D) {
             return (MathTransform2D) candidate;
         }
-        throw new FactoryException(Errors.format(Errors.Keys.NO_TRANSFORM2D_AVAILABLE));
+        throw new FactoryException(Errors.format(Errors.Keys.NoTransform2dAvailable));
     }
 
     /**
@@ -924,7 +924,7 @@ final class Resampler2D extends GridCoverage2D {
             // The loop below intentionally tries one more iteration than the constant in case we need
             // to apply slightly more than the above scale and translation because of rounding errors.
         } while (step++ <= EMPIRICAL_ADJUSTMENT_STEPS);
-        throw new FactoryException(Errors.format(Errors.Keys.CANT_REPROJECT_COVERAGE_1, name));
+        throw new FactoryException(Errors.format(Errors.Keys.CantReprojectCoverage_1, name));
     }
 
     /**

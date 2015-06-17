@@ -296,7 +296,7 @@ public class CassiniSoldner extends MapProjection {
             new IdentifierCode (Citations.GEOTIFF,  18),
             new NamedIdentifier(Citations.PROJ4,   "cass"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                Vocabulary.Keys.CASSINI_SOLDNER_PROJECTION))
+                                Vocabulary.Keys.CassiniSoldnerProjection))
         }, null, new ParameterDescriptor<?>[] {
             sameParameterAs(new Equirectangular().getParameters(), "semi_major"),   // TODO
             sameParameterAs(new Equirectangular().getParameters(), "semi_minor"),

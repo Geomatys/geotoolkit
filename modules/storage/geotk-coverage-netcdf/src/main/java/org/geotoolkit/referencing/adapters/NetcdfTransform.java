@@ -123,7 +123,7 @@ final class NetcdfTransform extends AbstractMathTransform implements MathTransfo
             throws TransformException
     {
         if (derivate) {
-            throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+            throw new TransformException(Errors.format(Errors.Keys.CantComputeDerivative));
         }
         transform(srcPts, srcOff, dstPts, dstOff, 1);
         return null;

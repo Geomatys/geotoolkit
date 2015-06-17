@@ -264,7 +264,7 @@ public abstract class InteractiveConsole implements Runnable {
         ensureNonNull("closingBrackets", closingBrackets);
         if (openingBrackets.length != closingBrackets.length) {
             throw new MismatchedSizeException(Errors.format(
-                    Errors.Keys.MISMATCHED_ARRAY_LENGTH_2, "openingBrackets", "closingBrackets"));
+                    Errors.Keys.MismatchedArrayLength_2, "openingBrackets", "closingBrackets"));
         }
         this.openingBrackets = openingBrackets.clone();
         this.closingBrackets = closingBrackets.clone();
@@ -483,7 +483,7 @@ public abstract class InteractiveConsole implements Runnable {
          * Note that we don't reach this point if we delegated to the command line,
          * because the later already provided an error message.
          */
-        throw unexpectedArgument(Errors.Keys.ILLEGAL_INSTRUCTION_1, instruction);
+        throw unexpectedArgument(Errors.Keys.IllegalInstruction_1, instruction);
     }
 
     /**
@@ -579,7 +579,7 @@ public abstract class InteractiveConsole implements Runnable {
             final Number result = numberFormat.parse(token, position);
             if (position.getIndex() != token.length()) {
                 throw new ParseException(Errors.format(
-                        Errors.Keys.UNPARSABLE_NUMBER_1, token), position.getErrorIndex());
+                        Errors.Keys.UnparsableNumber_1, token), position.getErrorIndex());
             }
             values[i] = result.doubleValue();
         }

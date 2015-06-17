@@ -294,7 +294,7 @@ public class ImagePane extends ZoomPane {
      * Returns the default progress label localized in the given locale.
      */
     static String getDefaultProgressLabel(final Locale locale) {
-        return Vocabulary.getResources(locale).getString(Vocabulary.Keys.LOADING);
+        return Vocabulary.getResources(locale).getString(Vocabulary.Keys.Loading);
     }
 
     /**

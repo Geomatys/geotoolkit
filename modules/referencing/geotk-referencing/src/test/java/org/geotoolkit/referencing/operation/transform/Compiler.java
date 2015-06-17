@@ -92,7 +92,7 @@ public final class Compiler {
                      *   - NumberFormatException       if a number can't be parsed.
                      *   - IndexOutOfBoundsException   if 'n' or 'm' values are illegal.
                      */
-                    throw new IOException(Errors.format(Errors.Keys.ILLEGAL_LINE_IN_FILE_2,
+                    throw new IOException(Errors.format(Errors.Keys.IllegalLineInFile_2,
                             filename, in.getLineNumber()), cause);
                 }
             }

@@ -665,7 +665,7 @@ public final class Citations extends Static {
     public static final Citation UNKNOWN;
     static {
         final DefaultCitation c = create(
-                Vocabulary.formatInternational(Vocabulary.Keys.UNKNOWN), "UNKNOWN", null);
+                Vocabulary.formatInternational(Vocabulary.Keys.Unknown), "UNKNOWN", null);
         c.freeze();
         UNKNOWN = c;
     }

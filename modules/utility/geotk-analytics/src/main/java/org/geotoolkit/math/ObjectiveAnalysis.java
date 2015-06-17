@@ -108,7 +108,7 @@ public class ObjectiveAnalysis {
             final PixelOrientation cellLocation)
     {
         if (gridRegion.isEmpty()) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_1, gridRegion));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.EmptyRectangle_1, gridRegion));
         }
         ensureStrictlyPositive("nx", nx);
         ensureStrictlyPositive("ny", ny);
@@ -228,7 +228,7 @@ public class ObjectiveAnalysis {
      */
     private static void ensureInputSet(final String name, final double[] value) {
         if (value == null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_1, name));
+            throw new IllegalStateException(Errors.format(Errors.Keys.NoParameter_1, name));
         }
     }
 

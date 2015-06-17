@@ -234,7 +234,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     protected Object createInput(final String readerID) throws IllegalStateException, IOException {
         final Object input = this.input;
         if (input == null) {
-            throw new IllegalStateException(getErrorResources().getString(Errors.Keys.NO_IMAGE_INPUT));
+            throw new IllegalStateException(getErrorResources().getString(Errors.Keys.NoImageInput));
         }
         if (!"main".equalsIgnoreCase(readerID)) {
             return null;

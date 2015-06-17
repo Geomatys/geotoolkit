@@ -162,7 +162,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
     public void write(final Iterable<? extends GridCoverage> coverages, final GridCoverageWriteParam param)
             throws CoverageStoreException, CancellationException
     {
-        short errorKey = Errors.Keys.NO_SUCH_ELEMENT_1;
+        short errorKey = Errors.Keys.NoSuchElement_1;
         final Iterator<? extends GridCoverage> it = coverages.iterator();
         if (it.hasNext()) {
             final GridCoverage coverage = it.next();
@@ -170,7 +170,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
                 write(coverage, param);
                 return;
             }
-            errorKey = Errors.Keys.UNSUPPORTED_MULTI_OCCURRENCE_1;
+            errorKey = Errors.Keys.UnsupportedMultiOccurrence_1;
         }
         throw new CoverageStoreException(Errors.format(errorKey, GridCoverage.class));
     }
@@ -192,7 +192,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
                 PixelInCell.CELL_CORNER, false);
         for (int i=gridEnvelope.getDimension(); --i>=0;) {
             if (gridEnvelope.getSpan(i) <= 0) {
-                String message = formatErrorMessage(Errors.Keys.VALUE_TEND_TOWARD_INFINITY);
+                String message = formatErrorMessage(Errors.Keys.ValueTendTowardInfinity);
                 if (requestCRS != null) {
                     message = requestCRS.getCoordinateSystem().getAxis(i).getName().getCode() + ": " + message;
                 }

@@ -384,7 +384,7 @@ public final class Envelopes extends Static {
         }
         final MathTransform transform = operation.getMathTransform();
         if (!(transform instanceof MathTransform2D)) {
-            throw new MismatchedDimensionException(Errors.format(Errors.Keys.NO_TRANSFORM2D_AVAILABLE));
+            throw new MismatchedDimensionException(Errors.format(Errors.Keys.NoTransform2dAvailable));
         }
         MathTransform2D mt = (MathTransform2D) transform;
         final double[] center = new double[2];

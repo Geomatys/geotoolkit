@@ -204,7 +204,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     static void ensureNotSmaller(final String name, final int value, final int minimum) {
         if (value < minimum) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, name, value));
+                    Errors.Keys.IllegalArgument_2, name, value));
         }
     }
 
@@ -243,7 +243,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     AbstractAuthorityFactory getBackingStore() throws FactoryException {
         final AbstractAuthorityFactory backingStore = this.backingStore;
         if (backingStore == null) {
-            throw new FactoryException(Errors.format(Errors.Keys.DISPOSED_FACTORY));
+            throw new FactoryException(Errors.format(Errors.Keys.DisposedFactory));
         }
         return backingStore;
     }
@@ -364,10 +364,10 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
             }
         }
         if (title == null) {
-            title = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
+            title = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);
         }
         final LogRecord record = new LogRecord(level, Exceptions.formatChainedMessages(null, Loggings.getResources(null).
-                getString(Loggings.Keys.UNAVAILABLE_AUTHORITY_FACTORY_1, title), exception));
+                getString(Loggings.Keys.UnavailableAuthorityFactory_1, title), exception));
         record.setSourceClassName(getClass().getCanonicalName());
         record.setSourceMethodName("availability");
         record.setThrown(exception);

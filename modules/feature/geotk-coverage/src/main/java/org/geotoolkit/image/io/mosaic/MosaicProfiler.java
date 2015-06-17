@@ -203,7 +203,7 @@ public class MosaicProfiler {
         final Rectangle old = region;
         if ((region = mosaic.getRegion().intersection(bounds)).isEmpty()) {
             region = old;
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_1, bounds));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.EmptyRectangle_1, bounds));
         }
     }
 

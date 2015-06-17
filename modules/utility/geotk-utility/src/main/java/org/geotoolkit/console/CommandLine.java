@@ -323,7 +323,7 @@ public abstract class CommandLine implements Runnable {
                     arg = arg.trim();
                     if (arg.startsWith(OPTION_PREFIX)) {
                         status = new IllegalArgumentException(error(
-                                Errors.Keys.UNKNOWN_PARAMETER_1, arg));
+                                Errors.Keys.UnknownParameter_1, arg));
                     }
                 }
             }
@@ -434,7 +434,7 @@ public abstract class CommandLine implements Runnable {
                 if (text == null && option.mandatory() && status == null) {
                     if (!ignoreMandatoryOption) {
                         status = new IllegalArgumentException(error(
-                                Errors.Keys.NO_PARAMETER_1, name));
+                                Errors.Keys.NoParameter_1, name));
                     }
                     continue;
                 }
@@ -533,7 +533,7 @@ public abstract class CommandLine implements Runnable {
                         split = 0;
                     }
                     throw new IllegalArgumentException(error(
-                            Errors.Keys.NO_PARAMETER_VALUE_1, arg));
+                            Errors.Keys.NoParameterValue_1, arg));
                 }
             }
         }
@@ -605,13 +605,13 @@ public abstract class CommandLine implements Runnable {
                 final int count = arguments.length;
                 int limit = candidate.minimalArgumentCount();
                 if (count < limit) {
-                    err.println(error(Errors.Keys.TOO_FEW_ARGUMENTS_2, limit, count));
+                    err.println(error(Errors.Keys.TooFewArguments_2, limit, count));
                     exit(ILLEGAL_ARGUMENT_EXIT_CODE);
                     return;
                 }
                 limit = candidate.maximalArgumentCount();
                 if (count > limit) {
-                    err.println(error(Errors.Keys.TOO_MANY_ARGUMENTS_2, limit, count));
+                    err.println(error(Errors.Keys.TooManyArguments_2, limit, count));
                     exit(ILLEGAL_ARGUMENT_EXIT_CODE);
                     return;
                 }
@@ -662,7 +662,7 @@ public abstract class CommandLine implements Runnable {
             summary();
             exit(0);
         } else {
-            err.println(error(Errors.Keys.UNKNOWN_COMMAND_1, action));
+            err.println(error(Errors.Keys.UnknownCommand_1, action));
             exit(ILLEGAL_ARGUMENT_EXIT_CODE);
         }
     }
@@ -677,7 +677,7 @@ public abstract class CommandLine implements Runnable {
     protected void summary() {
         final PrintWriter out = this.out;
         final Descriptions resources = Descriptions.getResources(locale);
-        out.println(resources.getString(Descriptions.Keys.COMMAND_USAGE_1, command));
+        out.println(resources.getString(Descriptions.Keys.CommandUsage_1, command));
         final Vocabulary vocabulary = Vocabulary.getResources(locale);
         final Set<String> options = new TreeSet<>();
         boolean action = true;
@@ -695,7 +695,7 @@ public abstract class CommandLine implements Runnable {
                     options.add(name);
                 }
             } while (CommandLine.class.isAssignableFrom(c = c.getSuperclass()));
-            out.print(vocabulary.getString(action ? Vocabulary.Keys.COMMANDS : Vocabulary.Keys.OPTIONS));
+            out.print(vocabulary.getString(action ? Vocabulary.Keys.Commands : Vocabulary.Keys.Options));
             String separator = ": ";
             String next = action ? " | " : ", ";
             for (final String option : options) {
@@ -709,7 +709,7 @@ public abstract class CommandLine implements Runnable {
             options.clear();
             out.println();
         } while ((action = !action) == false);
-        out.println(resources.getString(Descriptions.Keys.USE_HELP_COMMAND));
+        out.println(resources.getString(Descriptions.Keys.UseHelpCommand));
     }
 
     /**
@@ -811,7 +811,7 @@ public abstract class CommandLine implements Runnable {
             final String type = Classes.getShortClassName(exception);
             String message = exception.getLocalizedMessage();
             if (message == null) {
-                message = Vocabulary.getResources(locale).getString(Vocabulary.Keys.NO_DETAILS_1, type);
+                message = Vocabulary.getResources(locale).getString(Vocabulary.Keys.NoDetails_1, type);
             } else {
                 color(buffer, X364.FOREGROUND_RED);
                 color(buffer, X364.BOLD);

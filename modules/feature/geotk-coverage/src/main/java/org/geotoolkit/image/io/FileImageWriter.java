@@ -111,7 +111,7 @@ public abstract class FileImageWriter extends StreamImageWriter {
         }
         final Object output = this.output;
         if (output == null) {
-            throw new IllegalStateException(getErrorResources().getString(Errors.Keys.NO_IMAGE_OUTPUT));
+            throw new IllegalStateException(getErrorResources().getString(Errors.Keys.NoImageOutput));
         }
         if (output instanceof String) {
             outputFile = new File((String) output);

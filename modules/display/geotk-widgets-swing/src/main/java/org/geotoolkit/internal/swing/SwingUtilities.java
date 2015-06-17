@@ -164,12 +164,12 @@ public final class SwingUtilities extends Static {
             if (reset instanceof Action) {
                 button = new JButton((Action)reset);
             } else {
-                button = new JButton(resources.getString(Vocabulary.Keys.RESET));
+                button = new JButton(resources.getString(Vocabulary.Keys.Reset));
                 button.addActionListener(reset);
             }
             options = new Object[] {
-                resources.getString(Vocabulary.Keys.OK),
-                resources.getString(Vocabulary.Keys.CANCEL),
+                resources.getString(Vocabulary.Keys.Ok),
+                resources.getString(Vocabulary.Keys.Cancel),
                 button
             };
             initialValue = options[okChoice=0];

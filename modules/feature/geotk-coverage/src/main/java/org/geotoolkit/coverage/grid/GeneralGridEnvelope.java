@@ -90,7 +90,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
             final int upper = index[dimension+i];
             if (!(lower <= upper)) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_GRID_ENVELOPE_3, i, lower, upper-1));
+                        Errors.Keys.IllegalGridEnvelope_3, i, lower, upper-1));
             }
         }
     }
@@ -139,7 +139,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     public GeneralGridEnvelope(final int[] low, final int[] high, final boolean isHighIncluded) {
         if (low.length != high.length) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_2, low.length, high.length));
+                    Errors.Keys.MismatchedDimension_2, low.length, high.length));
         }
         index = Arrays.copyOf(low, low.length + high.length);
         System.arraycopy(high, 0, index, low.length, high.length);
@@ -207,7 +207,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     private GeneralGridEnvelope(int x, int y, int width, int height, int dimension) {
         if (dimension < 2) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "dimension", dimension));
+                    Errors.Keys.IllegalArgument_2, "dimension", dimension));
         }
         index = new int[dimension << 1];
         index[0] = x;
@@ -377,11 +377,11 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
         final int newDim = upper - lower;
         if (lower<0 || lower>curDim) {
             throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "lower", lower));
+                    Errors.Keys.IllegalArgument_2, "lower", lower));
         }
         if (newDim<0 || upper>curDim) {
             throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "upper", upper));
+                    Errors.Keys.IllegalArgument_2, "upper", upper));
         }
         final GeneralGridEnvelope sub = new GeneralGridEnvelope(newDim);
         System.arraycopy(index, lower,        sub.index, 0,      newDim);
@@ -401,7 +401,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
             return new Rectangle(index[0], index[1], index[2]-index[0], index[3]-index[1]);
         } else {
             throw new IllegalStateException(Errors.format(
-                    Errors.Keys.NOT_TWO_DIMENSIONAL_1, getDimension()));
+                    Errors.Keys.NotTwoDimensional_1, getDimension()));
         }
     }
 

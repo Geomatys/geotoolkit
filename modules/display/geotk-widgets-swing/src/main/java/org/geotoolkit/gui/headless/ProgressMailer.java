@@ -168,13 +168,13 @@ public class ProgressMailer extends ProgressController {
         final NumberFormat  format = NumberFormat.getPercentInstance(locale);
         CharSequence task = getTask();
         if (task == null) {
-            task = resources.getString(Vocabulary.Keys.PROGRESSION);
+            task = resources.getString(Vocabulary.Keys.Progression);
         }
         final StringBuffer buffer = new StringBuffer(task).append(": ");
         format.format(percent/100, buffer, new FieldPosition(0)).append('\n');
-        buffer.append(resources.getString(Vocabulary.Keys.MEMORY_HEAP_SIZE_1, totalMemory)).append('\n')
-              .append(resources.getString(Vocabulary.Keys.MEMORY_HEAP_USAGE_1, 1f - freeMemory/totalMemory)).append('\n');
-        send(method, Vocabulary.Keys.PROGRESSION, buffer.toString());
+        buffer.append(resources.getString(Vocabulary.Keys.MemoryHeapSize_1, totalMemory)).append('\n')
+              .append(resources.getString(Vocabulary.Keys.MemoryHeapUsage_1, 1f - freeMemory/totalMemory)).append('\n');
+        send(method, Vocabulary.Keys.Progression, buffer.toString());
     }
 
     /**
@@ -182,7 +182,7 @@ public class ProgressMailer extends ProgressController {
      */
     @Override
     public synchronized void started() {
-        send(Vocabulary.format(Vocabulary.Keys.STARTED), 0);
+        send(Vocabulary.format(Vocabulary.Keys.Started), 0);
     }
 
     /**
@@ -196,7 +196,7 @@ public class ProgressMailer extends ProgressController {
             nextTime = time + timeInterval;
             if (percent <  1f) percent =  1f;
             if (percent > 99f) percent = 99f;
-            send(Vocabulary.format(Vocabulary.Keys.PROGRESSION), percent);
+            send(Vocabulary.format(Vocabulary.Keys.Progression), percent);
         }
     }
 
@@ -207,7 +207,7 @@ public class ProgressMailer extends ProgressController {
      */
     @Override
     public void paused() {
-        send(Vocabulary.format(Vocabulary.Keys.PAUSED), getProgress());
+        send(Vocabulary.format(Vocabulary.Keys.Paused), getProgress());
     }
 
     /**
@@ -217,7 +217,7 @@ public class ProgressMailer extends ProgressController {
      */
     @Override
     public void resumed() {
-        send(Vocabulary.format(Vocabulary.Keys.RESUMED), getProgress());
+        send(Vocabulary.format(Vocabulary.Keys.Resumed), getProgress());
     }
 
     /**
@@ -225,7 +225,7 @@ public class ProgressMailer extends ProgressController {
      */
     @Override
     public synchronized void completed() {
-        send(Vocabulary.format(Vocabulary.Keys.COMPLETED), 100);
+        send(Vocabulary.format(Vocabulary.Keys.Completed), 100);
     }
 
     /**
@@ -254,7 +254,7 @@ public class ProgressMailer extends ProgressController {
             buffer.append(location).append(": ");
         }
         buffer.append(warning);
-        send("warningOccurred", Vocabulary.Keys.WARNING, buffer.toString());
+        send("warningOccurred", Vocabulary.Keys.Warning, buffer.toString());
     }
 
     /**
@@ -264,6 +264,6 @@ public class ProgressMailer extends ProgressController {
     public synchronized void exceptionOccurred(final Throwable exception) {
         final CharArrayWriter buffer = new CharArrayWriter();
         exception.printStackTrace(new PrintWriter(buffer));
-        send("exceptionOccurred", Vocabulary.Keys.EXCEPTION, buffer.toString());
+        send("exceptionOccurred", Vocabulary.Keys.Exception, buffer.toString());
     }
 }

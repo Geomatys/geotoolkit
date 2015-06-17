@@ -175,7 +175,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
             ensureValidIndex(tiles.length, imageIndex);
             return tiles[imageIndex];
         }
-        throw new IllegalStateException(Errors.format(Errors.Keys.NO_IMAGE_INPUT));
+        throw new IllegalStateException(Errors.format(Errors.Keys.NoImageInput));
     }
 
     /**
@@ -1265,7 +1265,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                     level = PerformanceLevel.forDuration(duration, TimeUnit.NANOSECONDS);
                 }
                 table.writeHorizontalSeparator();
-                final String message = Loggings.getResources(locale).getString(Loggings.Keys.LOADING_REGION_6,
+                final String message = Loggings.getResources(locale).getString(Loggings.Keys.LoadingRegion_6,
                         new Number[] {
                             sourceRegion.x, sourceRegion.x + sourceRegion.width  - 1,
                             sourceRegion.y, sourceRegion.y + sourceRegion.height - 1,

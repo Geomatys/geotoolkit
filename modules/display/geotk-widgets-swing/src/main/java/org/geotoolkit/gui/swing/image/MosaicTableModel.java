@@ -174,10 +174,10 @@ public class MosaicTableModel extends ListTableModel<Tile> {
     public String getColumnName(final int column) {
         final short key;
         switch (column) {
-            case 0: key = Vocabulary.Keys.FILE;   break;
-            case 1: key = Vocabulary.Keys.INDEX;  break;
-            case 2: key = Vocabulary.Keys.WIDTH;  break;
-            case 3: key = Vocabulary.Keys.HEIGHT; break;
+            case 0: key = Vocabulary.Keys.File;   break;
+            case 1: key = Vocabulary.Keys.Index;  break;
+            case 2: key = Vocabulary.Keys.Width;  break;
+            case 3: key = Vocabulary.Keys.Height; break;
             case 4: return  "x";
             case 5: return  "y";
             case 6: return "sx";
@@ -299,7 +299,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
             throws UnsupportedOperationException
     {
         if (progress != null) {
-            progress.setTask(Vocabulary.formatInternational(Vocabulary.Keys.LOADING_HEADERS));
+            progress.setTask(Vocabulary.formatInternational(Vocabulary.Keys.LoadingHeaders));
             progress.started();
         }
         final List<Tile> toAdd = new ArrayList<>(files.length);
@@ -337,9 +337,9 @@ public class MosaicTableModel extends ListTableModel<Tile> {
                     failures = new DefaultTableModel();
                     final Vocabulary resources = Vocabulary.getResources(locale);
                     failures.setColumnIdentifiers(new String[] {
-                        resources.getString(Vocabulary.Keys.FILE),
-                        resources.getString(Vocabulary.Keys.ERROR),
-                        resources.getString(Vocabulary.Keys.MESSAGE)
+                        resources.getString(Vocabulary.Keys.File),
+                        resources.getString(Vocabulary.Keys.Error),
+                        resources.getString(Vocabulary.Keys.Message)
                     });
                 }
                 failures.addRow(new String[] {

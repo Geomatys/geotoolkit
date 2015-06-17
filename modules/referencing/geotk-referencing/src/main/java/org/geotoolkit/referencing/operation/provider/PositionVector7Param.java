@@ -586,7 +586,7 @@ public class PositionVector7Param extends MathTransformProvider {
                 default: {
                     final String name = dim.getName().getCode();
                     throw new InvalidParameterValueException(Errors.format(
-                            Errors.Keys.ILLEGAL_ARGUMENT_2, name, dimension), name, dimension);
+                            Errors.Keys.IllegalArgument_2, name, dimension), name, dimension);
                 }
             }
         }
@@ -610,7 +610,7 @@ public class PositionVector7Param extends MathTransformProvider {
     private static void ensureValid(final ParameterDescriptor<?> param, double value) {
         if (!(value > 0)) {
             throw new IllegalStateException(Errors.format(
-                    Errors.Keys.NO_PARAMETER_1, param.getName().getCode()));
+                    Errors.Keys.NoParameter_1, param.getName().getCode()));
         }
     }
 

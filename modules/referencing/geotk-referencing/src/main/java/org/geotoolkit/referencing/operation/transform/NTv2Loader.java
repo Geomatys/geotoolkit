@@ -183,8 +183,8 @@ final class NTv2Loader extends GridLoader {
             loader.longitudeGridFile = gridFile;
             loader.latitudeGridFile  = gridFile;
         } catch (IOException cause) {
-            String message = Errors.format(Errors.Keys.CANT_READ_FILE_1, gridFile);
-            message = message + ' ' + Descriptions.format(Descriptions.Keys.DATA_NOT_INSTALLED_3,
+            String message = Errors.format(Errors.Keys.CantReadFile_1, gridFile);
+            message = message + ' ' + Descriptions.format(Descriptions.Keys.DataNotInstalled_3,
                     "NTv2", NTv2.directory(true), "geotk-setup");
             final FactoryException ex;
             if (cause instanceof FileNotFoundException) {
@@ -303,7 +303,7 @@ final class NTv2Loader extends GridLoader {
             readFully(channel, buffer);
             String key = new String(array, 0, HEADER_KEY_LENGTH, charset).trim().toUpperCase(Locale.US);
             if (!key.equals("END")) {
-                throw new IOException(Errors.format(Errors.Keys.FILE_HAS_TOO_MANY_DATA));
+                throw new IOException(Errors.format(Errors.Keys.FileHasTooManyData));
             }
         }
     }
@@ -320,7 +320,7 @@ final class NTv2Loader extends GridLoader {
     {
         while (buffer.hasRemaining()) {
             if (channel.read(buffer) < 0) {
-                throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
+                throw new EOFException(Errors.format(Errors.Keys.EndOfDataFile));
             }
         }
     }
@@ -342,7 +342,7 @@ final class NTv2Loader extends GridLoader {
         if (value instanceof Number) {
             return ((Number) value).doubleValue();
         }
-        throw new ContentFormatException(Errors.format(Errors.Keys.NO_SUCH_ATTRIBUTE_1, key));
+        throw new ContentFormatException(Errors.format(Errors.Keys.NoSuchAttribute_1, key));
     }
 
     /**
@@ -354,7 +354,7 @@ final class NTv2Loader extends GridLoader {
         if (value instanceof Number) {
             return ((Number) value).intValue();
         }
-        throw new ContentFormatException(Errors.format(Errors.Keys.NO_SUCH_ATTRIBUTE_1, key));
+        throw new ContentFormatException(Errors.format(Errors.Keys.NoSuchAttribute_1, key));
     }
 
     /**

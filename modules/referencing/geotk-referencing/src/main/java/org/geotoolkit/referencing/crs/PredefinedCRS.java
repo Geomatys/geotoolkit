@@ -115,7 +115,7 @@ public final class PredefinedCRS {
      * The <var>Z</var> axis points North.
      */
     public static final DefaultGeocentricCRS GEOCENTRIC = new DefaultGeocentricCRS(
-                        name(Vocabulary.Keys.CARTESIAN),
+                        name(Vocabulary.Keys.Cartesian),
                         CommonCRS.WGS84.datum(), PredefinedCS.GEOCENTRIC);
 
     /**
@@ -124,7 +124,7 @@ public final class PredefinedCRS {
      * Prime meridian is Greenwich, geodetic datum is WGS84 and linear units are metres.
      */
     public static final DefaultGeocentricCRS SPHERICAL = new DefaultGeocentricCRS(
-                        name(Vocabulary.Keys.SPHERICAL),
+                        name(Vocabulary.Keys.Spherical),
                         CommonCRS.WGS84.datum(), PredefinedCS.SPHERICAL);
 
 
@@ -141,7 +141,7 @@ public final class PredefinedCRS {
          * assumed Cartesian, but will not have any transformation path to other CRS.
          */
         public static final DefaultEngineeringDatum UNKNOWN =
-                new DefaultEngineeringDatum(name(Vocabulary.Keys.UNKNOWN));
+                new DefaultEngineeringDatum(name(Vocabulary.Keys.Unknown));
 
         /** Constructs a coordinate system with the given name. */
         public Cartesian(final int key, final CoordinateSystem cs) {
@@ -181,7 +181,7 @@ public final class PredefinedCRS {
      * {@linkplain DefaultGeographicCRS geographic coordinate reference system} for example).
      */
     public static final DefaultEngineeringCRS CARTESIAN_2D =
-            new Cartesian(Vocabulary.Keys.CARTESIAN_2D, PredefinedCS.CARTESIAN_2D);
+            new Cartesian(Vocabulary.Keys.Cartesian2d, PredefinedCS.CARTESIAN_2D);
 
     /**
      * A three-dimensional Cartesian coordinate reference system with
@@ -193,7 +193,7 @@ public final class PredefinedCRS {
      * {@linkplain DefaultGeographicCRS geographic coordinate reference system} for example).
      */
     public static final DefaultEngineeringCRS CARTESIAN_3D =
-            new Cartesian(Vocabulary.Keys.CARTESIAN_3D, PredefinedCS.CARTESIAN_3D);
+            new Cartesian(Vocabulary.Keys.Cartesian3d, PredefinedCS.CARTESIAN_3D);
 
     /**
      * A two-dimensional wildcard coordinate system with
@@ -208,7 +208,7 @@ public final class PredefinedCRS {
      * transform. This CRS is useful as a kind of wildcard when no CRS were explicitly specified.
      */
     public static final DefaultEngineeringCRS GENERIC_2D =
-            new Cartesian(Vocabulary.Keys.GENERIC_CARTESIAN_2D, PredefinedCS.CARTESIAN_2D);
+            new Cartesian(Vocabulary.Keys.GenericCartesian2d, PredefinedCS.CARTESIAN_2D);
 
     /**
      * A three-dimensional wildcard coordinate system with
@@ -224,7 +224,7 @@ public final class PredefinedCRS {
      * transform. This CRS is useful as a kind of wildcard when no CRS were explicitly specified.
      */
     public static final DefaultEngineeringCRS GENERIC_3D =
-            new Cartesian(Vocabulary.Keys.GENERIC_CARTESIAN_3D, PredefinedCS.CARTESIAN_3D);
+            new Cartesian(Vocabulary.Keys.GenericCartesian3d, PredefinedCS.CARTESIAN_3D);
 
     /**
      * A two-dimensional Cartesian coordinate reference system with
@@ -241,7 +241,7 @@ public final class PredefinedCRS {
      */
     public static final DefaultImageCRS GRID_2D;
     static {
-        final Map<String,?> properties = name(Vocabulary.Keys.GRID);
+        final Map<String,?> properties = name(Vocabulary.Keys.Grid);
         GRID_2D = new DefaultImageCRS(properties, new DefaultImageDatum(properties,
                 PixelInCell.CELL_CENTER), PredefinedCS.GRID);
     }

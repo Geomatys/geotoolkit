@@ -245,7 +245,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     private static CategoryList list(final CharSequence[] names, final Color[] colors) {
         if (names.length != colors.length) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.MISMATCHED_ARRAY_LENGTH_2, "names", "colors"));
+                    Errors.Keys.MismatchedArrayLength_2, "names", "colors"));
         }
         final int length = names.length;
         final Category[] categories = new Category[length];
@@ -395,16 +395,16 @@ public class GridSampleDimension implements SampleDimension, Serializable {
                                final Unit<?>              unit)
     {
         if (description == null) {
-            description = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
+            description = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);
         }
         if (Double.isInfinite(minimum) || Double.isInfinite(maximum) || !(minimum < maximum)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_2, minimum, maximum));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalRange_2, minimum, maximum));
         }
         if (Double.isNaN(scale) || Double.isInfinite(scale) || scale == 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "scale", scale));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalParameterValue_2, "scale", scale));
         }
         if (Double.isNaN(offset) || Double.isInfinite(offset)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "offset", offset));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalParameterValue_2, "offset", offset));
         }
         if (type == null) {
             type = TypeMap.getSampleDimensionType(minimum, maximum);
@@ -627,7 +627,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
         final CategoryList list = new CategoryList(categories, units);
         if (CategoryList.isGeophysics(categories, false)) return list;
         if (CategoryList.isGeophysics(categories, true )) return list.inverse;
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.MIXED_CATEGORIES));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.MixedCategories));
     }
 
     /**
@@ -655,7 +655,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
             if (list != null) {
                 this.description = list.new Name();
             } else {
-                this.description = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
+                this.description = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);
             }
         }
         /*
@@ -708,7 +708,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
             hasQualitative     = false;
             hasQuantitative    = false;
             sampleToGeophysics = null;
-            description        = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
+            description        = Vocabulary.formatInternational(Vocabulary.Keys.Untitled);
         }
     }
 
@@ -811,7 +811,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
             if (lower != category.minimum || lower < 0 ||
                 upper != category.maximum || upper < 0)
             {
-                throw new IllegalStateException(Errors.format(Errors.Keys.NON_INTEGER_CATEGORY));
+                throw new IllegalStateException(Errors.format(Errors.Keys.NonIntegerCategory));
             }
             if (names == null) {
                 names = new InternationalString[upper+1];
@@ -932,7 +932,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
                             !Numbers.isInteger(category.getRange().getElementType()))
                         {
                             throw new IllegalStateException(Errors.format(
-                                    Errors.Keys.NON_INTEGER_CATEGORY));
+                                    Errors.Keys.NonIntegerCategory));
                         }
                         final int requiredLength = count + (upper-lower);
                         if (requiredLength > padValues.length) {
@@ -1176,7 +1176,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
         } catch (TransformException exception) {
             cause = exception;
         }
-        throw new IllegalStateException(Errors.format(Errors.Keys.NON_LINEAR_RELATION), cause);
+        throw new IllegalStateException(Errors.format(Errors.Keys.NonLinearRelation), cause);
     }
 
     /**

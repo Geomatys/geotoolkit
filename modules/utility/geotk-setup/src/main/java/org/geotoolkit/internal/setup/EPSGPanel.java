@@ -85,10 +85,10 @@ final class EPSGPanel extends DatabasePanel {
         });
         url.setEditable(true);
         return new Field[] {
-            new Field("URL",      Vocabulary.Keys.URL,      resources, url, null),
-            new Field("schema",   Vocabulary.Keys.SCHEMA,   resources, new JTextField(DEFAULT_SCHEMA), DEFAULT_SCHEMA),
-            new Field("user",     Vocabulary.Keys.USER,     resources, new JTextField(), null),
-            new Field("password", Vocabulary.Keys.PASSWORD, resources, new JPasswordField(), null)
+            new Field("URL",      Vocabulary.Keys.Url,      resources, url, null),
+            new Field("schema",   Vocabulary.Keys.Schema,   resources, new JTextField(DEFAULT_SCHEMA), DEFAULT_SCHEMA),
+            new Field("user",     Vocabulary.Keys.User,     resources, new JTextField(), null),
+            new Field("password", Vocabulary.Keys.Password, resources, new JPasswordField(), null)
         };
     }
 

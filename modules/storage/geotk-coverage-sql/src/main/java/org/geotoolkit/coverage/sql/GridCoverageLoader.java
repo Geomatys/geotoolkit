@@ -139,7 +139,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
     private void ensureValidIndex(final int index) {
         if (index != 0 && !disableIndexCheck) {
             throw new IllegalArgumentException(Errors.getResources(getLocale())
-                    .getString(Errors.Keys.ILLEGAL_ARGUMENT_2, "imageIndex", index));
+                    .getString(Errors.Keys.IllegalArgument_2, "imageIndex", index));
         }
     }
 
@@ -150,7 +150,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
         final GridCoverageEntry entry = this.entry;
         if (entry == null) {
             throw new IllegalArgumentException(Errors.getResources(getLocale())
-                    .getString(Errors.Keys.NO_IMAGE_INPUT));
+                    .getString(Errors.Keys.NoImageInput));
         }
         return entry;
     }
@@ -469,7 +469,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
             final int imageWidth     = imageReader.getWidth (index);
             final int imageHeight    = imageReader.getHeight(index);
             if (expectedWidth != imageWidth || expectedHeight != imageHeight) {
-                throw new CoverageStoreException(Errors.getResources(getLocale()).getString(Errors.Keys.MISMATCHED_IMAGE_SIZE_5,
+                throw new CoverageStoreException(Errors.getResources(getLocale()).getString(Errors.Keys.MismatchedImageSize_5,
                         org.apache.sis.internal.storage.IOUtilities.filename(getInputName()), imageWidth, imageHeight, expectedWidth, expectedHeight));
             }
         } catch (IOException e) {
@@ -511,7 +511,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     private String formatErrorMessage(final Exception e) throws CoverageStoreException {
         final String cause = e.getLocalizedMessage();
-        String message = Errors.getResources(getLocale()).getString(Errors.Keys.CANT_READ_FILE_1, getInputName());
+        String message = Errors.getResources(getLocale()).getString(Errors.Keys.CantReadFile_1, getInputName());
         if (cause != null && cause.indexOf(' ') > 0) { // Append only if we have a sentence.
             message = message + '\n' + cause;
         }

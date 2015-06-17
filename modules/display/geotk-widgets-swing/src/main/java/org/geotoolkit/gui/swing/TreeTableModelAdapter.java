@@ -171,8 +171,8 @@ public class TreeTableModelAdapter extends AbstractTreeTableModel {
             return (TreeTableNode) node;
         }
         throw new IllegalArgumentException(node == null ?
-            Errors.format(Errors.Keys.NULL_ARGUMENT_1, "node") :
-            Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_CLASS_3, "node", node.getClass(), TreeTableNode.class));
+            Errors.format(Errors.Keys.NullArgument_1, "node") :
+            Errors.format(Errors.Keys.IllegalArgumentClass_3, "node", node.getClass(), TreeTableNode.class));
     }
 
     /**

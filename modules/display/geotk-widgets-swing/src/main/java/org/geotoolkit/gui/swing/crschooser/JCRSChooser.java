@@ -261,7 +261,7 @@ public class JCRSChooser extends javax.swing.JDialog {
             warning = e.getLocalizedMessage();
         }
         if (warning != null) {
-            buffer.append("<p><b>").append(Vocabulary.format(Vocabulary.Keys.WARNING))
+            buffer.append("<p><b>").append(Vocabulary.format(Vocabulary.Keys.Warning))
                     .append(":</b> ").append(warning).append("</p><hr>\n");
         }
         buffer.append("<pre>");
@@ -347,7 +347,7 @@ public class JCRSChooser extends javax.swing.JDialog {
      * @param message The error message.
      */
     private void setErrorMessage(final String message) {
-        wktArea.setText("<html>"+Vocabulary.format(Vocabulary.Keys.ERROR_1, message)+"</html>");
+        wktArea.setText("<html>"+Vocabulary.format(Vocabulary.Keys.Error_1, message)+"</html>");
     }
 
     public ACTION showDialog() {

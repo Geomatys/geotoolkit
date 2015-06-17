@@ -390,7 +390,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
          * Note that this map will be modified again in the remaining of this method.
          */
         if (descriptor == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_1, "descriptor"));
+            throw new NullArgumentException(Errors.format(Errors.Keys.NullArgument_1, "descriptor"));
         }
         final Map<String,ParameterDescriptor<?>> replacements = new LinkedHashMap<>();
         if (extension != null) {
@@ -398,7 +398,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
                 final String name = d.getName().getCode().trim().toLowerCase();
                 if (replacements.put(name, d) != null) {
                     throw new InvalidParameterNameException(Errors.format(
-                            Errors.Keys.DUPLICATED_VALUES_FOR_KEY_1, name), name);
+                            Errors.Keys.DuplicatedValuesForKey_1, name), name);
                 }
             }
         }

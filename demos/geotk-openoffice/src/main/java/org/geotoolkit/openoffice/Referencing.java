@@ -208,7 +208,7 @@ public final class Referencing extends Formulas implements XReferencing {
                 calculator = new GeodeticCalculator((CoordinateReferenceSystem) object);
             } else {
                 throw new FactoryException(Errors.format(
-                        Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
+                        Errors.Keys.IllegalCoordinateReferenceSystem));
             }
             calculatorCRS = authorityString;
         }

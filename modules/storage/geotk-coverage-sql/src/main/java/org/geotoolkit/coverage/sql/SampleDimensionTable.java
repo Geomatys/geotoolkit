@@ -158,7 +158,7 @@ final class SampleDimensionTable extends Table {
                             } catch (ParseException e) {
                                 // The constructor of this exception will close the ResultSet.
                                 final IllegalRecordException ex = new IllegalRecordException(errors().getString(
-                                        Errors.Keys.UNPARSABLE_STRING_2, "unit(" + unitSymbol + ')',
+                                        Errors.Keys.UnparsableString_2, "unit(" + unitSymbol + ')',
                                         unitSymbol.substring(Math.max(0, e.getErrorOffset()))),
                                         this, results, unitIndex, name);
                                 ex.initCause(e);
@@ -175,7 +175,7 @@ final class SampleDimensionTable extends Table {
                     if (band != ++numSampleDimensions) {
                         // The constructor of this exception will close the ResultSet.
                         throw new IllegalRecordException(errors().getString(
-                                Errors.Keys.NON_CONSECUTIVE_BANDS_2, numSampleDimensions, band),
+                                Errors.Keys.NonConsecutiveBands_2, numSampleDimensions, band),
                                 this, results, bandIndex, format);
                     }
                 }

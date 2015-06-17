@@ -328,7 +328,7 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
     private void derivativeAndTransform(final double[] coords) throws TransformException {
         derivative = MathTransforms.derivativeAndTransform(projection, coords, 0, coords, 0);
         if (derivative == null) {
-            throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+            throw new TransformException(Errors.format(Errors.Keys.CantComputeDerivative));
         }
         x = coords[0];
         y = coords[1];

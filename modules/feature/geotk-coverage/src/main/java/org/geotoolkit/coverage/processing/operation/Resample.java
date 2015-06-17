@@ -250,7 +250,7 @@ public class Resample extends Operation2D {
             target = Resampler2D.reproject(source, targetCRS, targetGG, interpolation, background, hints);
         } catch (FactoryException | TransformException exception) {
             throw new CannotReprojectException(Errors.format(
-                    Errors.Keys.CANT_REPROJECT_COVERAGE_1, source.getName()), exception);
+                    Errors.Keys.CantReprojectCoverage_1, source.getName()), exception);
         }
         return target;
     }

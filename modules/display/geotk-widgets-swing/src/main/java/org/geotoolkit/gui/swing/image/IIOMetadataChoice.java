@@ -134,20 +134,20 @@ final class IIOMetadataChoice implements Serializable {
         final Vocabulary resources = Vocabulary.getResources(locale);
         final String part;
         if (imageIndex < 0) {
-            part = resources.getString(Vocabulary.Keys.FILE);
+            part = resources.getString(Vocabulary.Keys.File);
         } else if (isFormat) {
-            part = resources.getString(Vocabulary.Keys.IMAGES);
+            part = resources.getString(Vocabulary.Keys.Images);
         } else {
-            part = resources.getString(Vocabulary.Keys.IMAGE_1, imageIndex + 1);
+            part = resources.getString(Vocabulary.Keys.Image_1, imageIndex + 1);
         }
         String rootName = getFormatName();
         switch (rootName) {
             case SpatialMetadataFormat.GEOTK_FORMAT_NAME: {
-                rootName = resources.getString(Vocabulary.Keys.GEOSPATIAL);
+                rootName = resources.getString(Vocabulary.Keys.Geospatial);
                 break;
             }
             case IIOMetadataFormatImpl.standardMetadataFormatName: {
-                rootName = resources.getString(Vocabulary.Keys.STANDARD);
+                rootName = resources.getString(Vocabulary.Keys.Standard);
                 break;
             }
             default: {

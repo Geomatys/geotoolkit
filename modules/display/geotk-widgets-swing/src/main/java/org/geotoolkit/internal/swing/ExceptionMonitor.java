@@ -147,7 +147,7 @@ public final class ExceptionMonitor extends JOptionPane implements ActionListene
          * we should be happy with JDialog. The exception trace will not be written immediately.
          */
         final String classname = Classes.getShortClassName(exception);
-        final String title = resources.getString(Vocabulary.Keys.ERROR_1, classname);
+        final String title = resources.getString(Vocabulary.Keys.Error_1, classname);
         final JDesktopPane desktop = getDesktopPaneForComponent(owner);
         if (desktop != null) {
             final JInternalFrame dialog = createInternalFrame(desktop, title);
@@ -176,7 +176,7 @@ public final class ExceptionMonitor extends JOptionPane implements ActionListene
             message = exception.getLocalizedMessage();
             if (message == null) {
                 final String classname = Classes.getShortClassName(exception);
-                message = resources.getString(Vocabulary.Keys.NO_DETAILS_1, classname);
+                message = resources.getString(Vocabulary.Keys.NoDetails_1, classname);
             }
         }
         final JXLabel textArea = new JXLabel(message);
@@ -185,8 +185,8 @@ public final class ExceptionMonitor extends JOptionPane implements ActionListene
         final JComponent messageBox = new JPanel(new BorderLayout());
         messageBox.add(textArea, BorderLayout.NORTH);
         final ExceptionMonitor pane = new ExceptionMonitor(owner, exception, messageBox, new AbstractButton[] {
-                new JButton(resources.getString(Vocabulary.Keys.DEBUG)),
-                new JButton(resources.getString(Vocabulary.Keys.CLOSE))
+                new JButton(resources.getString(Vocabulary.Keys.Debug)),
+                new JButton(resources.getString(Vocabulary.Keys.Close))
         }, resources);
         pane.dialog.setVisible(true);
     }
@@ -276,7 +276,7 @@ public final class ExceptionMonitor extends JOptionPane implements ActionListene
          * redisplay it.
          */
         traceButton.setText(resources.getString(traceVisible ?
-                Vocabulary.Keys.DEBUG : Vocabulary.Keys.HIDE));
+                Vocabulary.Keys.Debug : Vocabulary.Keys.Hide));
         traceVisible = !traceVisible;
         if (dialog instanceof Dialog) {
             ((Dialog) dialog).setResizable(traceVisible);

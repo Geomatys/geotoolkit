@@ -166,7 +166,7 @@ final class CoverageDatabaseCreator extends DeferredWizardResult implements Runn
                 message = Classes.getShortClassName(exception);
             }
             if (installer != null) {
-                message = Vocabulary.format(Vocabulary.Keys.ERROR_1,
+                message = Vocabulary.format(Vocabulary.Keys.Error_1,
                         installer.getCurrentPosition()) + ": " + message;
             }
             progress.failed(message, false);
@@ -174,7 +174,7 @@ final class CoverageDatabaseCreator extends DeferredWizardResult implements Runn
             return;
         }
         Object result = null;
-        result = Summary.create(new JLabel(Wizards.format(Wizards.Keys.COVERAGE_DATABASE_CREATED)), result);
+        result = Summary.create(new JLabel(Wizards.format(Wizards.Keys.CoverageDatabaseCreated)), result);
         progress.finished(result);
     }
 

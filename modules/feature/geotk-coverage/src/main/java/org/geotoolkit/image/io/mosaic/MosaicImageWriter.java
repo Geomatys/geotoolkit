@@ -289,7 +289,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
             }
             return;
         }
-        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_WRITER));
+        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NoImageWriter));
     }
 
     /**
@@ -374,7 +374,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
         }
         if (onlyOneImage) {
             throw new InvalidImageStoreException(Errors.getResources(locale)
-                    .getString(Errors.Keys.ILLEGAL_MOSAIC_INPUT));
+                    .getString(Errors.Keys.IllegalMosaicInput));
         }
         return success;
     }
@@ -408,7 +408,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
          */
         final TileManager[] managers = getOutput();
         if (managers == null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_IMAGE_OUTPUT));
+            throw new IllegalStateException(Errors.format(Errors.Keys.NoImageOutput));
         }
         final List<Tile> tiles;
         final int bytesPerPixel;
@@ -474,7 +474,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
                 // TODO: Not yet supported. May be supported in a future version
                 // if we have time to implement such support.
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_1, "writeFromInput"));
+                        Errors.Keys.UnexpectedArgumentForInstruction_1, "writeFromInput"));
             }
             readParam.setSourceBands(writeParam.getSourceBands());
         }
@@ -526,7 +526,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
                 ((MosaicImageReadParam) readParam).setNullForEmptyImage(true);
             }
             if (logReads) {
-                log(false, Vocabulary.Keys.LOADING_1, imageTile);
+                log(false, Vocabulary.Keys.Loading_1, imageTile);
             }
             /*
              * Before to attempt image loading, ask explicitly for a garbage collection cycle.
@@ -548,7 +548,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
                     throw error;
                 }
                 if (logWrites) {
-                    log(true, Loggings.Keys.RECOVERABLE_OUT_OF_MEMORY_1,
+                    log(true, Loggings.Keys.RecoverableOutOfMemory_1,
                             ((float) imageRegion.width * imageRegion.height) / (1024 * 1024f));
                 }
                 // Go back to the while(!tiles.isEmpty()) condition, which will ask for a
@@ -633,7 +633,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
                                     return null;
                                 }
                                 if (logWrites) {
-                                    log(false, Vocabulary.Keys.SAVING_1, tile);
+                                    log(false, Vocabulary.Keys.Saving_1, tile);
                                 }
                                 tileInput = tile.getInput();
                                 final ImageWriter writer = cacheEntry.writer;
@@ -1020,8 +1020,8 @@ search: for (final Tile tile : tiles) {
         final long totalMemory = runtime.totalMemory();
         final double usage = 1 - (float) runtime.freeMemory() / totalMemory;
         final LogRecord record = new LogRecord(getFineLevel(),
-                resources.getString(Vocabulary.Keys.MEMORY_HEAP_SIZE_1, totalMemory / (1024*1024L)) + ". " +
-                resources.getString(Vocabulary.Keys.MEMORY_HEAP_USAGE_1, usage) + '.');
+                resources.getString(Vocabulary.Keys.MemoryHeapSize_1, totalMemory / (1024*1024L)) + ". " +
+                resources.getString(Vocabulary.Keys.MemoryHeapUsage_1, usage) + '.');
         record.setSourceClassName(MosaicImageWriter.class.getName());
         record.setSourceMethodName("writeFromInput"); // The public API invoking this method.
         record.setLoggerName(LOGGER.getName());
@@ -1375,7 +1375,7 @@ search: for (final Tile tile : tiles) {
                 reader.dispose();
             }
         }
-        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_READER), cause);
+        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NoImageReader), cause);
     }
 
     /**
@@ -1589,7 +1589,7 @@ search: for (final Tile tile : tiles) {
         if (stream != null) {
             stream.close();
         }
-        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_WRITER));
+        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NoImageWriter));
     }
 
     /**

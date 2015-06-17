@@ -196,7 +196,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
     final LayerEntry getLayerEntry(final boolean required) throws CatalogException {
         final LayerEntry layer = this.layer;
         if (layer == null && required) {
-            throw new CatalogException(errors().getString(Errors.Keys.NO_LAYER_SPECIFIED));
+            throw new CatalogException(errors().getString(Errors.Keys.NoLayerSpecified));
         }
         return layer;
     }
@@ -220,7 +220,7 @@ class GridCoverageTable extends BoundedSingletonTable<GridCoverageEntry> {
                 return series;
             }
         }
-        throw new CatalogException(errors().getString(Errors.Keys.NO_SERIES_SPECIFIED));
+        throw new CatalogException(errors().getString(Errors.Keys.NoSeriesSpecified));
     }
 
     /**

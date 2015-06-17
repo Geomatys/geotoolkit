@@ -56,12 +56,12 @@ final class LoggingTableModel extends Handler implements TableModel {
      * {@link LoggingPanel} must be updated.
      */
     private static final short[] COLUMN_NAMES = {
-        Vocabulary.Keys.LOGGER,
-        Vocabulary.Keys.CLASS,
-        Vocabulary.Keys.METHOD,
-        Vocabulary.Keys.TIME_OF_DAY,
-        Vocabulary.Keys.LEVEL,
-        Vocabulary.Keys.MESSAGE
+        Vocabulary.Keys.Logger,
+        Vocabulary.Keys.Class,
+        Vocabulary.Keys.Method,
+        Vocabulary.Keys.TimeOfDay,
+        Vocabulary.Keys.Level,
+        Vocabulary.Keys.Message
     };
 
     /**

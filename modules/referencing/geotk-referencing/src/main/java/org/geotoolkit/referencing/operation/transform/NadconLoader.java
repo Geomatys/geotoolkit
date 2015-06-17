@@ -137,7 +137,7 @@ abstract class NadconLoader extends GridLoader {
             longitudeGridFile = NADCON.toFileOrURL(NadconLoader.class, longitudeGrid);
             final boolean longitudeIsBinary = isBinary(longitudeGridFile, "loa", "los");
             if (latitudeIsBinary != longitudeIsBinary) {
-                throw new FactoryException(Errors.format(Errors.Keys.INCONSISTENT_VALUE));
+                throw new FactoryException(Errors.format(Errors.Keys.InconsistentValue));
             }
             final NadconLoader loader;
             if (latitudeIsBinary) {
@@ -162,8 +162,8 @@ abstract class NadconLoader extends GridLoader {
             loader.latitudeGridFile  = latitudeGrid;
             return loader;
         } catch (IOException cause) {
-            String message = Errors.format(Errors.Keys.CANT_READ_FILE_1, rx ? longitudeGrid : latitudeGrid);
-            message = message + ' ' + Descriptions.format(Descriptions.Keys.DATA_NOT_INSTALLED_3,
+            String message = Errors.format(Errors.Keys.CantReadFile_1, rx ? longitudeGrid : latitudeGrid);
+            message = message + ' ' + Descriptions.format(Descriptions.Keys.DataNotInstalled_3,
                     "NADCON", NADCON.directory(true), "geotk-setup");
             final FactoryException ex;
             if (cause instanceof FileNotFoundException) {
@@ -193,7 +193,7 @@ abstract class NadconLoader extends GridLoader {
         } else if (ext.equalsIgnoreCase(text)) {
             return false;
         } else {
-            throw new IOException(Errors.format(Errors.Keys.UNSUPPORTED_FILE_TYPE_1, ext));
+            throw new IOException(Errors.format(Errors.Keys.UnsupportedFileType_1, ext));
         }
     }
 
@@ -286,13 +286,13 @@ abstract class NadconLoader extends GridLoader {
             in.readLine(); // Skip header description.
             String line = in.readLine();
             if (line == null) {
-                throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
+                throw new EOFException(Errors.format(Errors.Keys.EndOfDataFile));
             }
             final StringTokenizer tokens = new StringTokenizer(line);
             int tokenCount = tokens.countTokens();
             if (tokenCount != 8) {
                 throw new ContentFormatException(Errors.format(
-                        Errors.Keys.UNEXPECTED_HEADER_LENGTH_1, tokenCount));
+                        Errors.Keys.UnexpectedHeaderLength_1, tokenCount));
             }
             String n = null;
             try {
@@ -307,7 +307,7 @@ abstract class NadconLoader extends GridLoader {
                     Float.parseFloat(n = tokens.nextToken())
                 };
             } catch (NumberFormatException e) {
-                throw new ContentFormatException(Errors.format(Errors.Keys.UNPARSABLE_NUMBER_1, n), e);
+                throw new ContentFormatException(Errors.format(Errors.Keys.UnparsableNumber_1, n), e);
             }
         }
 
@@ -321,7 +321,7 @@ abstract class NadconLoader extends GridLoader {
             rx = false; latitudeReader = openLatin(latitudeGridFile);
             final Number[] header = readHeader(latitudeReader); rx = true;
             if (!Arrays.equals(header, readHeader(longitudeReader))) {
-                throw new ContentFormatException(Errors.format(Errors.Keys.GRID_LOCATIONS_UNEQUAL));
+                throw new ContentFormatException(Errors.format(Errors.Keys.GridLocationsUnequal));
             }
             NADCON(header);
             rx = false; read(latitudeReader,  latitudeShift);
@@ -343,17 +343,17 @@ abstract class NadconLoader extends GridLoader {
                         value = Float.parseFloat(token);
                     } catch (NumberFormatException e) {
                         throw new ContentFormatException(Errors.format(
-                                Errors.Keys.UNPARSABLE_NUMBER_1, token), e);
+                                Errors.Keys.UnparsableNumber_1, token), e);
                     }
                     if (offset >= grid.length) {
-                        throw new IOException(Errors.format(Errors.Keys.FILE_HAS_TOO_MANY_DATA));
+                        throw new IOException(Errors.format(Errors.Keys.FileHasTooManyData));
                     }
                     grid[offset++] = value;
                 }
             }
             in.close();
             if (offset < grid.length) {
-                throw new EOFException(Errors.format(Errors.Keys.FILE_HAS_TOO_FEW_DATA));
+                throw new EOFException(Errors.format(Errors.Keys.FileHasTooFewData));
             }
         }
     }
@@ -397,7 +397,7 @@ abstract class NadconLoader extends GridLoader {
         {
             while ((buffer.remaining() != 0)) {
                 if (channel.read(buffer) < 0) {
-                    throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
+                    throw new EOFException(Errors.format(Errors.Keys.EndOfDataFile));
                 }
             }
         }
@@ -440,7 +440,7 @@ abstract class NadconLoader extends GridLoader {
             rx = true;
             buffer.rewind();
             if (!Arrays.equals(header, readHeader(longitudeChannel, buffer))) {
-                throw new ContentFormatException(Errors.format(Errors.Keys.GRID_LOCATIONS_UNEQUAL));
+                throw new ContentFormatException(Errors.format(Errors.Keys.GridLocationsUnequal));
             }
             NADCON(header);
             /*
@@ -502,7 +502,7 @@ abstract class NadconLoader extends GridLoader {
                 final int r = channel.read(buffer);
                 channel.close();
                 if (r >= 0) {
-                    throw new IOException(Errors.format(Errors.Keys.FILE_HAS_TOO_MANY_DATA));
+                    throw new IOException(Errors.format(Errors.Keys.FileHasTooManyData));
                 }
             } while ((rx = !rx) == true);
         }

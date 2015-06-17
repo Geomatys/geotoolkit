@@ -158,8 +158,8 @@ public class GradientKernelEditor extends JComponent implements Dialog {
         kernelH.setBorder(border);
         kernelV.setBorder(border);
         final JLabel labelH, labelV;
-        labelH = new JLabel(resources.getString(Vocabulary.Keys.HORIZONTAL_COMPONENT), JLabel.CENTER);
-        labelV = new JLabel(resources.getString(Vocabulary.Keys.VERTICAL_COMPONENT),   JLabel.CENTER);
+        labelH = new JLabel(resources.getString(Vocabulary.Keys.HorizontalComponent), JLabel.CENTER);
+        labelV = new JLabel(resources.getString(Vocabulary.Keys.VerticalComponent),   JLabel.CENTER);
         final GridBagConstraints c = new GridBagConstraints();
 
         c.insets.top = 6;
@@ -230,7 +230,7 @@ public class GradientKernelEditor extends JComponent implements Dialog {
          */
         @Override
         public void addDefaultKernels() {
-            final String GRADIENT_MASKS = getResources().getString(Vocabulary.Keys.GRADIENT_MASKS);
+            final String GRADIENT_MASKS = getResources().getString(Vocabulary.Keys.GradientMasks);
             final KernelJAI prewitt, isotropic, kirsch, sobel;
             if (horizontal) {
                 prewitt   = PREWITT_HORIZONTAL;

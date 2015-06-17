@@ -323,7 +323,7 @@ public class Stereographic extends MapProjection {
             new NamedIdentifier(Citations.PROJ4,   "stere"),
             new IdentifierCode (Citations.MAP_INFO, 20),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                Vocabulary.Keys.STEREOGRAPHIC_PROJECTION))
+                                Vocabulary.Keys.StereographicProjection))
         }, new Citation[] {
             Citations.EPSG
         },

@@ -52,11 +52,11 @@ public final class ControlPanel extends JPanel implements ActionListener {
         setBorder(BorderFactory.createEmptyBorder(12, 0, 12, 0));
         final DataPanel dataPanel = new DataPanel(resources);
         final JTabbedPane tabs = new JTabbedPane();
-        tabs.addTab(resources.getString(Vocabulary.Keys.DIRECTORIES), new DirectoryPanel(dataPanel));
-        tabs.addTab(resources.getString(Vocabulary.Keys.CONNECTION_PARAMETERS), new DatabasePanels(resources, dataPanel));
-        tabs.addTab(resources.getString(Vocabulary.Keys.DATA), dataPanel);
+        tabs.addTab(resources.getString(Vocabulary.Keys.Directories), new DirectoryPanel(dataPanel));
+        tabs.addTab(resources.getString(Vocabulary.Keys.ConnectionParameters), new DatabasePanels(resources, dataPanel));
+        tabs.addTab(resources.getString(Vocabulary.Keys.Data), dataPanel);
         add(tabs, BorderLayout.CENTER);
-        final JButton close = new JButton(resources.getString(Vocabulary.Keys.CLOSE));
+        final JButton close = new JButton(resources.getString(Vocabulary.Keys.Close));
         Box box = Box.createHorizontalBox();
         box.add(Box.createHorizontalGlue());
         box.add(close);
@@ -89,7 +89,7 @@ public final class ControlPanel extends JPanel implements ActionListener {
     public static void show(final Locale locale) {
         Installation.allowSystemPreferences = true;
         final Vocabulary resources = Vocabulary.getResources(locale);
-        final JFrame frame = new JFrame(resources.getString(Vocabulary.Keys.INSTALLATION_1, "Geotoolkit.org"));
+        final JFrame frame = new JFrame(resources.getString(Vocabulary.Keys.Installation_1, "Geotoolkit.org"));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(new ControlPanel(resources));
         frame.pack();
@@ -108,7 +108,7 @@ public final class ControlPanel extends JPanel implements ActionListener {
         final Vocabulary resources = Vocabulary.getResources(desktop.getLocale());
         final ControlPanel panel = new ControlPanel(resources);
         final JInternalFrame frame = new JInternalFrame(resources.getString(
-                Vocabulary.Keys.INSTALLATION_1, "Geotoolkit.org"), true, true);
+                Vocabulary.Keys.Installation_1, "Geotoolkit.org"), true, true);
         desktop.add(frame);
         panel.disposeOnClose = frame;
         frame.add(panel);

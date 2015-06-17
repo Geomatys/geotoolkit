@@ -355,7 +355,7 @@ public class FactoryRegistry extends ServiceRegistry {
                 if (debug) {
                     debug("THROW", category, key, "unexpected type:", valueClass);
                 }
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_KEY_1, key));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalKey_1, key));
             }
             if (hints != null) {
                 final Object hint = hints.get(key);
@@ -446,7 +446,7 @@ public class FactoryRegistry extends ServiceRegistry {
          * cause is not-null, because the DynamicFactoryRegistry subclass may perform an other
          * attempt to set the failure cause.
          */
-        final String message = Errors.format(Errors.Keys.FACTORY_NOT_FOUND_1,
+        final String message = Errors.format(Errors.Keys.FactoryNotFound_1,
                 (implementationType != null) ? implementationType : category);
         final FactoryNotFoundException e = new FactoryNotFoundException(message);
         initCause(e);
@@ -953,7 +953,7 @@ public class FactoryRegistry extends ServiceRegistry {
             cause.append(": ").append(message);
         }
         final LogRecord record = Loggings.format(Level.WARNING,
-                Loggings.Keys.CANT_LOAD_SERVICE_2, name, cause.toString());
+                Loggings.Keys.CantLoadService_2, name, cause.toString());
         if (showStackTrace) {
             record.setThrown(error);
         }
@@ -968,7 +968,7 @@ public class FactoryRegistry extends ServiceRegistry {
      */
     private static StringBuilder getLogHeader(final Class<?> category) {
         return new StringBuilder(Loggings.getResources(null).getString(
-                Loggings.Keys.FACTORY_IMPLEMENTATIONS_1, category));
+                Loggings.Keys.FactoryImplementations_1, category));
     }
 
     /**

@@ -231,7 +231,7 @@ public class NumberGraduation extends AbstractGraduation {
                     converter = oldUnit.getConverterToAny(unit);
                 } catch (ConversionException e) {
                     throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.INCOMPATIBLE_UNIT_1, unit), e);
+                            Errors.Keys.IncompatibleUnit_1, unit), e);
                 }
                 min = converter.convert(min);
                 max = converter.convert(max);

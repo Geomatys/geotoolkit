@@ -295,7 +295,7 @@ public final class IdentifiedObjects extends Static {
             try {
                 return Integer.parseInt(code);
             } catch (NumberFormatException e) {
-                throw new FactoryException(Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_1, identifier), e);
+                throw new FactoryException(Errors.format(Errors.Keys.IllegalIdentifier_1, identifier), e);
             }
         }
         return null;

@@ -100,7 +100,7 @@ public final class CombineCRIF extends CRIFImpl {
     static Vector<RenderedImage> cast(final Vector<?> sources) {
         for (final Object element : sources) {
             if (!(element instanceof RenderedImage)) {
-                throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_CLASS_2,
+                throw new ClassCastException(Errors.format(Errors.Keys.IllegalClass_2,
                         element.getClass(), RenderedImage.class));
             }
         }

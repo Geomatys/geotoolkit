@@ -139,7 +139,7 @@ final class GridCoverageIdentifier extends MultiColumnIdentifier<GridCoverageIde
         final int i = imageIndex - 1; // Convert from 1-based index.
         if (i < 0) {
             throw new CoverageStoreException(Errors.format(
-                    Errors.Keys.ILLEGAL_PARAMETER_VALUE_2, "imageIndex", i));
+                    Errors.Keys.IllegalParameterValue_2, "imageIndex", i));
         }
         return i;
     }

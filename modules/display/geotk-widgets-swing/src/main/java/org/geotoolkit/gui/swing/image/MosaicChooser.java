@@ -179,8 +179,8 @@ public class MosaicChooser extends JComponent implements Dialog {
          * Builds the "Add" and "Remove" buttons, together with their actions.
          * Those buttons will be inserted below the table created above.
          */
-        final JButton add = new JButton(resources.getMenuLabel(Vocabulary.Keys.ADD));
-        final JButton remove = new JButton(resources.getString(Vocabulary.Keys.REMOVE));
+        final JButton add = new JButton(resources.getMenuLabel(Vocabulary.Keys.Add));
+        final JButton remove = new JButton(resources.getString(Vocabulary.Keys.Remove));
         add.addActionListener(new ActionListener() {
             @Override public void actionPerformed(final ActionEvent event) {
                 promptForTiles();
@@ -503,9 +503,9 @@ public class MosaicChooser extends JComponent implements Dialog {
             final Locale locale = getLocale();
             final int count = failures.getRowCount();
             final JXHeader label = new JXHeader(
-                    Vocabulary.getResources(locale).getString(Vocabulary.Keys.ERROR),
+                    Vocabulary.getResources(locale).getString(Vocabulary.Keys.Error),
                     Descriptions.getResources(locale).getString(
-                    Descriptions.Keys.ERROR_READING_SOME_FILES_2, files.length-count, count));
+                    Descriptions.Keys.ErrorReadingSomeFiles_2, files.length-count, count));
             final JPanel panel = new JPanel(new BorderLayout());
             panel.add(label, BorderLayout.NORTH);
             panel.add(new JScrollPane(this.failures), BorderLayout.CENTER);

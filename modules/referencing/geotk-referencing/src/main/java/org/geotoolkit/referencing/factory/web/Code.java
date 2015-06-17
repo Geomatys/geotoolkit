@@ -181,7 +181,7 @@ parse:  for (int i=0; i<MAXIMUM_FIELDS; i++) {
         this.latitude  = latitude;
         this.type      = type;
         if (this.unit == null) {
-            throw new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.UNKNOWN_UNIT_1, unit),
+            throw new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.UnknownUnit_1, unit),
                     authority, text.substring(splitIndices[0]).trim(), text);
         }
     }
@@ -199,7 +199,7 @@ parse:  for (int i=0; i<MAXIMUM_FIELDS; i++) {
             final String authority, final String identifier, final int[] splitIndices)
     {
         final String code = identifier.substring(splitIndices[0]).trim();
-        return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.NO_SUCH_AUTHORITY_CODE_3,
+        return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.NoSuchAuthorityCode_3,
                 code, authority, type), authority, code, identifier);
     }
 

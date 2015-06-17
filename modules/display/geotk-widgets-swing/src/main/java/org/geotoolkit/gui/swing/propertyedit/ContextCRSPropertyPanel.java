@@ -269,10 +269,10 @@ public class ContextCRSPropertyPanel extends AbstractPropertyPane {
             }
             final String lineSeparator = System.getProperty("line.separator", "\n");
             if (e instanceof UnformattableObjectException) {
-                text = Vocabulary.format(Vocabulary.Keys.WARNING) + ": " + text +
+                text = Vocabulary.format(Vocabulary.Keys.Warning) + ": " + text +
                         lineSeparator + lineSeparator + item + lineSeparator;
             } else {
-                text = Vocabulary.format(Vocabulary.Keys.ERROR) + ": " + text + lineSeparator;
+                text = Vocabulary.format(Vocabulary.Keys.Error) + ": " + text + lineSeparator;
             }
         }
         wktArea.setText(text);
@@ -284,7 +284,7 @@ public class ContextCRSPropertyPanel extends AbstractPropertyPane {
      * @param message The error message.
      */
     private void setErrorMessage(final String message) {
-        wktArea.setText(Vocabulary.format(Vocabulary.Keys.ERROR_1, message));
+        wktArea.setText(Vocabulary.format(Vocabulary.Keys.Error_1, message));
     }
     
 }

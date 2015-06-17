@@ -426,7 +426,7 @@ public abstract class AbstractGridCoverage extends AbstractCoverage implements G
      */
     private String indexOutOfBounds(final int index) {
         return Errors.getResources(getLocale()).
-                getString(Errors.Keys.ILLEGAL_ARGUMENT_2, "index", index);
+                getString(Errors.Keys.IllegalArgument_2, "index", index);
     }
 
     /**
@@ -458,7 +458,7 @@ public abstract class AbstractGridCoverage extends AbstractCoverage implements G
     protected String formatEvaluateError(final DirectPosition point, final boolean outside) {
         final Locale locale = getLocale();
         return Errors.getResources(locale).getString(outside ?
-                Errors.Keys.POINT_OUTSIDE_COVERAGE_1 : Errors.Keys.CANT_EVALUATE_FOR_COORDINATE_1, toString(point, locale));
+                Errors.Keys.PointOutsideCoverage_1 : Errors.Keys.CantEvaluateForCoordinate_1, toString(point, locale));
     }
 
     /**

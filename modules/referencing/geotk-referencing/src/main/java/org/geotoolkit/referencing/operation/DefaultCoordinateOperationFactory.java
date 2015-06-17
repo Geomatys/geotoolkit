@@ -1044,7 +1044,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                     identifier = ELLIPSOID_SHIFT;
                 } else {
                     throw new OperationNotFoundException(Errors.format(
-                                Errors.Keys.BURSA_WOLF_PARAMETERS_REQUIRED));
+                                Errors.Keys.BursaWolfParametersRequired));
                 }
             }
             final Matrix normalizeSource = swapAndScaleAxis(sourceCS, STANDARD);

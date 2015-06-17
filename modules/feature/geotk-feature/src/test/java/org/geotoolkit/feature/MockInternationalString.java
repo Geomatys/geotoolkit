@@ -150,7 +150,7 @@ public class MockInternationalString extends AbstractInternationalString impleme
                     return;
                 }
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.VALUE_ALREADY_DEFINED_1, locale));
+                        Errors.Keys.ValueAlreadyDefined_1, locale));
             }
             localeMap.put(locale, string);
             defaultVar = null; // Will be recomputed when first needed.

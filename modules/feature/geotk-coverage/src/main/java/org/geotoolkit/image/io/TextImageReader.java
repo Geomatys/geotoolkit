@@ -234,12 +234,12 @@ public abstract class TextImageReader extends StreamImageReader {
         final String position;
         if (file != null) {
             if (line != null) {
-                position = resources.getString(Vocabulary.Keys.FILE_POSITION_2, file, line);
+                position = resources.getString(Vocabulary.Keys.FilePosition_2, file, line);
             } else {
-                position = resources.getString(Vocabulary.Keys.FILE_1, file);
+                position = resources.getString(Vocabulary.Keys.File_1, file);
             }
         } else if (line != null) {
-            position = resources.getString(Vocabulary.Keys.LINE_1, line);
+            position = resources.getString(Vocabulary.Keys.Line_1, line);
         } else {
             position = null;
         }

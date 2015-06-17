@@ -217,12 +217,12 @@ public class CoverageList extends JComponent {
         /*
          * The buttons bar.
          */
-        toolbar = new ToolBar(resources.getString(Vocabulary.Keys.EDIT), ToolBar.VERTICAL);
+        toolbar = new ToolBar(resources.getString(Vocabulary.Keys.Edit), ToolBar.VERTICAL);
         toolbar.setRollover(true);
-        button(resources, Vocabulary.Keys.ADD, "toolbarButtonGraphics/table/RowInsertBefore24.gif", ADD);
-        removeButton = button(resources, Vocabulary.Keys.REMOVE, "toolbarButtonGraphics/table/RowDelete24.gif", REMOVE);
+        button(resources, Vocabulary.Keys.Add, "toolbarButtonGraphics/table/RowInsertBefore24.gif", ADD);
+        removeButton = button(resources, Vocabulary.Keys.Remove, "toolbarButtonGraphics/table/RowDelete24.gif", REMOVE);
         removeButton.setEnabled(false);
-        button(resources, Vocabulary.Keys.REFRESH, "toolbarButtonGraphics/general/Refresh24.gif", REFRESH);
+        button(resources, Vocabulary.Keys.Refresh, "toolbarButtonGraphics/general/Refresh24.gif", REFRESH);
         /*
          * Put the components in this panel.
          */
@@ -487,7 +487,7 @@ public class CoverageList extends JComponent {
                     }
                 }
                 selectionPanel.add(new JXTitledPanel(Widgets.getResources(getLocale())
-                        .getString(Widgets.Keys.SELECT_FILE), fileChooser), FILES);
+                        .getString(Widgets.Keys.SelectFile), fileChooser), FILES);
                 /*
                  * Creates the busy panel.
                  */
@@ -509,8 +509,8 @@ public class CoverageList extends JComponent {
         if (variableChooser == null) {
             variableChooser = new JList<>();
             final Vocabulary resources = Vocabulary.getResources(getLocale());
-            final JButton ok     = new JButton(resources.getString(Vocabulary.Keys.OK));
-            final JButton cancel = new JButton(resources.getString(Vocabulary.Keys.CANCEL));
+            final JButton ok     = new JButton(resources.getString(Vocabulary.Keys.Ok));
+            final JButton cancel = new JButton(resources.getString(Vocabulary.Keys.Cancel));
             final JPanel buttons = new JPanel(new GridLayout(1, 2, 6, 0));
             ok    .addActionListener(addController);
             cancel.addActionListener(addController);
@@ -529,7 +529,7 @@ public class CoverageList extends JComponent {
             panel.add(variableChooser, BorderLayout.CENTER);
             panel.add(buttonBar, BorderLayout.AFTER_LAST_LINE);
             selectionPanel.add(new JXTitledPanel(Widgets.getResources(getLocale())
-                    .getString(Widgets.Keys.SELECT_VARIABLES), panel), VARIABLES);
+                    .getString(Widgets.Keys.SelectVariables), panel), VARIABLES);
         }
         variableChooser.setListData(images);
         variableChooser.setSelectionMode(multiSelectionAllowed ?

@@ -128,16 +128,16 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
      * Creates a new wizard.
      */
     public CoverageDatabaseWizard() {
-        super(Wizards.format(Wizards.Keys.COVERAGE_DATABASE_TITLE), new String[] {
+        super(Wizards.format(Wizards.Keys.CoverageDatabaseTitle), new String[] {
             CONNECTION,
             POSTGIS,
             CONFIGURE,
             CONFIRM
         }, new String[] {
-            Vocabulary.format(Vocabulary.Keys.CONNECTION_PARAMETERS),
-            Vocabulary.format(Vocabulary.Keys.SPATIAL_OBJECTS),
-            Vocabulary.format(Vocabulary.Keys.CONFIGURE),
-            Vocabulary.format(Vocabulary.Keys.CONFIRM)
+            Vocabulary.format(Vocabulary.Keys.ConnectionParameters),
+            Vocabulary.format(Vocabulary.Keys.SpatialObjects),
+            Vocabulary.format(Vocabulary.Keys.Configure),
+            Vocabulary.format(Vocabulary.Keys.Confirm)
         });
     }
 
@@ -172,14 +172,14 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                 schema   = new JTextField(CoverageDatabaseInstaller.SCHEMA);
                 admin    = new JTextField(CoverageDatabaseInstaller.ADMINISTRATOR);
                 user     = new JTextField(CoverageDatabaseInstaller.USER);
-                add(panel, resources, Vocabulary.Keys.DATABASE_ENGINE, engine,   c);
-                add(panel, resources, Vocabulary.Keys.SERVER,          server,   c);
-                add(panel, resources, Vocabulary.Keys.PORT,            port,     c);
-                add(panel, resources, Vocabulary.Keys.DATABASE,        database, c);
-                add(panel, resources, Vocabulary.Keys.SCHEMA,          schema,   c);
-                add(panel, resources, Vocabulary.Keys.ADMINISTRATOR,   admin ,   c);
-                add(panel, resources, Vocabulary.Keys.USER,            user,     c);
-                final String problem = wizardRes.getString(Wizards.Keys.DATABASE_REQUIRED);
+                add(panel, resources, Vocabulary.Keys.DatabaseEngine, engine,   c);
+                add(panel, resources, Vocabulary.Keys.Server,          server,   c);
+                add(panel, resources, Vocabulary.Keys.Port,            port,     c);
+                add(panel, resources, Vocabulary.Keys.Database,        database, c);
+                add(panel, resources, Vocabulary.Keys.Schema,          schema,   c);
+                add(panel, resources, Vocabulary.Keys.Administrator,   admin ,   c);
+                add(panel, resources, Vocabulary.Keys.User,            user,     c);
+                final String problem = wizardRes.getString(Wizards.Keys.DatabaseRequired);
                 final DocumentChangeListener listener = new DocumentChangeListener() {
                     /** The set of documents having a non-blank text value. */
                     private final Set<Document> hasText = Collections.newSetFromMap(new IdentityHashMap<Document,Boolean>());
@@ -211,7 +211,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
             //     Panel 2:  Spatial objects
             // -------------------------------------------------------------------
             case POSTGIS: {
-                final JXLabel desc = new JXLabel(wizardRes.getString(Wizards.Keys.POSTGIS_DIRECTORY));
+                final JXLabel desc = new JXLabel(wizardRes.getString(Wizards.Keys.PostgisDirectory));
                 desc.setLineWrap(true);
                 panel = new JPanel(new BorderLayout());
                 panel.add(desc, BorderLayout.BEFORE_FIRST_LINE);
@@ -220,7 +220,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                 postgis.setControlButtonsAreShown(false);
                 postgis.setMultiSelectionEnabled(false);
                 postgis.setAcceptAllFileFilterUsed(false);
-                postgis.addChoosableFileFilter(new FileNameExtensionFilter(resources.getString(Vocabulary.Keys.FILES_1, "SQL"), "sql"));
+                postgis.addChoosableFileFilter(new FileNameExtensionFilter(resources.getString(Vocabulary.Keys.Files_1, "SQL"), "sql"));
                 postgis.addPropertyChangeListener(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY, new PropertyChangeListener() {
                     @Override public void propertyChange(final PropertyChangeEvent event) {
                         String missing = PostgisInstaller.INSTALL;
@@ -236,12 +236,12 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                             }
                         }
                         if (missing != null) {
-                            missing = Errors.format(Errors.Keys.FILE_DOES_NOT_EXIST_1, missing);
+                            missing = Errors.format(Errors.Keys.FileDoesNotExist_1, missing);
                         }
                         controller.setProblem(missing);
                     }
                 });
-                controller.setProblem(Widgets.format(Widgets.Keys.SELECT_DIRECTORY));
+                controller.setProblem(Widgets.format(Widgets.Keys.SelectDirectory));
                 final File directory = new File(preferences().get(POSTGIS_PREFS, System.getProperty("user.dir", ".")));
                 postgis.setCurrentDirectory(directory.getParentFile());
                 panel.add(postgis, BorderLayout.CENTER);
@@ -252,10 +252,10 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
             //     Panel 3:  Configure whatever we want roles, EPSG database, etc.
             // -------------------------------------------------------------------
             case CONFIGURE: {
-                createRoles      = new JCheckBox(wizardRes.getString(Wizards.Keys.CREATE_ROLES_2, admin.getText(), user.getText()), true);
-                createEPSG       = new JCheckBox(wizardRes.getString(Wizards.Keys.CREATE_EPSG), true);
-                setAsDefaultEPSG = new JCheckBox(wizardRes.getString(Wizards.Keys.SET_AS_DEFAULT_1, "EPSG"));
-                setAsDefault     = new JCheckBox(wizardRes.getString(Wizards.Keys.SET_AS_DEFAULT_1, "Coverages"));
+                createRoles      = new JCheckBox(wizardRes.getString(Wizards.Keys.CreateRoles_2, admin.getText(), user.getText()), true);
+                createEPSG       = new JCheckBox(wizardRes.getString(Wizards.Keys.CreateEpsg), true);
+                setAsDefaultEPSG = new JCheckBox(wizardRes.getString(Wizards.Keys.SetAsDefault_1, "EPSG"));
+                setAsDefault     = new JCheckBox(wizardRes.getString(Wizards.Keys.SetAsDefault_1, "Coverages"));
                 createEPSG.addActionListener(new ActionListener() {
                     @Override public void actionPerformed(final ActionEvent event) {
                         setAsDefaultEPSG.setEnabled(createEPSG.isSelected());
@@ -265,7 +265,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                 // We do not use the 'setVisible(boolean)' method because we want to keep the
                 // layout unchanged.
                 final JLabel passwordWarning = new JLabel(Descriptions.getResources(locale)
-                        .getString(Descriptions.Keys.PASSWORD_NOT_ENCRYPTED));
+                        .getString(Descriptions.Keys.PasswordNotEncrypted));
                 passwordWarning.setForeground(passwordWarning.getBackground());
                 final ActionListener listener = new ActionListener() {
                     @Override public void actionPerformed(final ActionEvent event) {
@@ -296,7 +296,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                 choices.add(passwordWarning, c);
                 panel = new JPanel(new BorderLayout());
                 panel.add(choices, BorderLayout.CENTER);
-                panel.add(new JLabel(wizardRes.getString(Wizards.Keys.COVERAGE_DATABASE_NOTES_1,
+                panel.add(new JLabel(wizardRes.getString(Wizards.Keys.CoverageDatabaseNotes_1,
                         server.getText())), BorderLayout.PAGE_END);
                 break;
             }
@@ -323,7 +323,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                 c.anchor=GridBagConstraints.LINE_START;
                 c.insets.top = c.insets.bottom = 6;
                 for (int i=0; i<schemas.length; i++) {
-                    panel.add(new JLabel(wizardRes.getString(Wizards.Keys.CREATING_SCHEMA_1, schemas[i])), c);
+                    panel.add(new JLabel(wizardRes.getString(Wizards.Keys.CreatingSchema_1, schemas[i])), c);
                     c.gridy++;
                 }
                 addSetting(settings, CONFIRM, panel);

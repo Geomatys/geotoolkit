@@ -574,7 +574,7 @@ final class TreeFormat {
             } else if (tree instanceof Iterable<?>) {
                 format((Iterable<?>) tree, toAppendTo);
             } else {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_CLASS_3,
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.IllegalArgumentClass_3,
                         "tree", tree.getClass(), TreeModel.class));
             }
         } catch (IOException e) {

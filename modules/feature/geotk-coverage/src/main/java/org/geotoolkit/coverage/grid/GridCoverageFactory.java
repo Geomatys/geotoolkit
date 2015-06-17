@@ -190,7 +190,7 @@ public class GridCoverageFactory extends Factory {
             case  2: return CommonCRS.WGS84.normalizedGeographic();
             case  3: return PredefinedCRS.WGS84_3D;
             default: throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_2, "dimension", dimension));
+                    Errors.Keys.IllegalArgument_2, "dimension", dimension));
         }
     }
 
@@ -220,7 +220,7 @@ public class GridCoverageFactory extends Factory {
     {
         final MathTransform transform = gridGeometry.getGridToCRS2D();
         if (!(transform instanceof AffineTransform)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NotAnAffineTransform));
         }
         final AffineTransform at = (AffineTransform) transform;
         if (at.getShearX()!=0 || at.getShearY()!=0) {

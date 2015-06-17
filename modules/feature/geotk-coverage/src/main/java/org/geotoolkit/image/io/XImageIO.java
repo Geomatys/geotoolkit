@@ -376,10 +376,10 @@ public final class XImageIO extends Static {
                  */
                 if (input instanceof File) {
                     File file = (File) input;
-                    short messageKey = Errors.Keys.FILE_DOES_NOT_EXIST_1;
+                    short messageKey = Errors.Keys.FileDoesNotExist_1;
                     File parent;
                     while ((parent = file.getParentFile()) != null && !parent.isDirectory()) {
-                        messageKey = Errors.Keys.NOT_A_DIRECTORY_1;
+                        messageKey = Errors.Keys.NotADirectory_1;
                         file = parent;
                     }
                     throw new FileNotFoundException(Errors.format(messageKey, file));
@@ -387,10 +387,10 @@ public final class XImageIO extends Static {
                     final short messageKey;
                     final Object argument;
                     if (IOUtilities.canProcessAsPath(input)) {
-                        messageKey = Errors.Keys.CANT_READ_FILE_1;
+                        messageKey = Errors.Keys.CantReadFile_1;
                         argument = org.apache.sis.internal.storage.IOUtilities.filename(input);
                     } else {
-                        messageKey = Errors.Keys.UNKNOWN_TYPE_1;
+                        messageKey = Errors.Keys.UnknownType_1;
                         argument = input.getClass();
                     }
                     throw new IIOException(Errors.format(messageKey, argument));
@@ -411,23 +411,23 @@ public final class XImageIO extends Static {
      */
     private static String errorMessage(final boolean write, final int mode, final String name, final boolean hasFound) {
         if (name == null || hasFound) {
-            return Errors.format(write ? Errors.Keys.NO_IMAGE_WRITER : Errors.Keys.NO_IMAGE_READER);
+            return Errors.format(write ? Errors.Keys.NoImageWriter : Errors.Keys.NoImageReader);
         }
         final short key;
         String[] choices;
         switch (mode) {
             case NAME:   {
-                key = Errors.Keys.UNKNOWN_IMAGE_FORMAT_1;
+                key = Errors.Keys.UnknownImageFormat_1;
                 choices = write ? ImageIO.getWriterFormatNames() : ImageIO.getReaderFormatNames();
                 break;
             }
             case SUFFIX: {
-                key = Errors.Keys.UNKNOWN_FILE_SUFFIX_1;
+                key = Errors.Keys.UnknownFileSuffix_1;
                 choices = write ? ImageIO.getWriterFileSuffixes() : ImageIO.getReaderFileSuffixes();
                 break;
             }
             case MIME: {
-                key = Errors.Keys.UNKNOWN_MIME_TYPE_1;
+                key = Errors.Keys.UnknownMimeType_1;
                 choices = write ? ImageIO.getWriterMIMETypes() : ImageIO.getReaderMIMETypes();
                 break;
             }
@@ -438,11 +438,11 @@ public final class XImageIO extends Static {
         final Errors resources = Errors.getResources(null);
         String message;
         if (mode == NAME && hasChoices) {
-            message = resources.getString(Errors.Keys.NO_IMAGE_FORMAT_2, name, Arrays.toString(choices));
+            message = resources.getString(Errors.Keys.NoImageFormat_2, name, Arrays.toString(choices));
         } else {
             message = resources.getString(key, name);
             if (hasChoices) {
-                message = message + ' ' + resources.getString(Errors.Keys.EXPECTED_ONE_OF_1, Arrays.toString(choices));
+                message = message + ' ' + resources.getString(Errors.Keys.ExpectedOneOf_1, Arrays.toString(choices));
             }
         }
         return message;

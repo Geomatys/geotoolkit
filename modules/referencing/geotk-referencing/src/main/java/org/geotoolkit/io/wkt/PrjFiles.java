@@ -164,7 +164,7 @@ public final class PrjFiles extends Static {
             wkt = buffer.toString();
         }
         if (wkt == null) {
-            throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
+            throw new EOFException(Errors.format(Errors.Keys.EndOfDataFile));
         }
         try {
             return CRS.parseWKT(wkt);

@@ -165,7 +165,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
             identifiers = new Comparable<?>[] {identifier};
         }
         if (identifiers.length != pkParam.length) {
-            throw new CatalogException(errors().getString(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
+            throw new CatalogException(errors().getString(Errors.Keys.MismatchedArrayLength));
         }
         for (int i=0; i<identifiers.length; i++) {
             final Comparable<?> id = identifiers[i];
@@ -224,7 +224,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
         if (pkIndices.length == 1) {
             return null; // Special value to be handled by getEntries().
         }
-        throw new CatalogException(errors().getString(Errors.Keys.UNSUPPORTED_OPERATION_1, getQueryType()));
+        throw new CatalogException(errors().getString(Errors.Keys.UnsupportedOperation_1, getQueryType()));
     }
 
     /**

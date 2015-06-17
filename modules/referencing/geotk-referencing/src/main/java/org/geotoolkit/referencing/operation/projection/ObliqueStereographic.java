@@ -210,7 +210,7 @@ public class ObliqueStereographic extends Stereographic {
             }
             φ = φi;
             if (--i < 0) {
-                throw new ProjectionException(Errors.format(Errors.Keys.NO_CONVERGENCE));
+                throw new ProjectionException(Errors.format(Errors.Keys.NoConvergence));
             }
         }
         // End pj_inv_gauss(...) method inlined

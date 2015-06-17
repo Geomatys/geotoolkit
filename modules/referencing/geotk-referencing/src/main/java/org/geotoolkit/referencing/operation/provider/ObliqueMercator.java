@@ -390,7 +390,7 @@ public class ObliqueMercator extends MapProjection {
             new NamedIdentifier(Citations.S57,     "OME"),
             new IdentifierCode (Citations.S57,      9),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                Vocabulary.Keys.OBLIQUE_MERCATOR_PROJECTION))
+                                Vocabulary.Keys.ObliqueMercatorProjection))
         }, null, new ParameterDescriptor<?>[] {
             sameParameterAs(new Equirectangular().getParameters(), "semi_major"),   // TODO
             sameParameterAs(new Equirectangular().getParameters(), "semi_minor"),
