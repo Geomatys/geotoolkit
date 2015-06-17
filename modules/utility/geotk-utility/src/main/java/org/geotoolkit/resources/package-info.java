@@ -21,9 +21,5 @@
  * and may change in any Geotk version without notice.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
- *
- * @since 1.2
- * @module
  */
 package org.geotoolkit.resources;
