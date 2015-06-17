@@ -46,6 +46,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Control;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTablePosition;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
@@ -275,5 +276,24 @@ public final class FXUtilities {
         });
     }
     
+    /**
+     * Bug in javafx ?
+     *
+     * Something wrong in javafx treetableview selection.
+     * When removing a treetiem which was selection, the previous node gets
+     * selected but is not hilghted, we can't unselected it.
+     *
+     * @param tree 
+     * @return List<TreeItem>
+     */
+    public static List<TreeItem> getSelectionItems(TreeTableView tree){
+        final List<TreeItem> selection = new ArrayList<>();
+        for(Object i : tree.getSelectionModel().getSelectedCells()){
+            final TreeTablePosition ttp = (TreeTablePosition) i;
+            final TreeItem ti = tree.getTreeItem(ttp.getRow());
+            if(ti!=null && !selection.contains(ti)) selection.add(ti);
+        }
+        return selection;
+    }
 
 }

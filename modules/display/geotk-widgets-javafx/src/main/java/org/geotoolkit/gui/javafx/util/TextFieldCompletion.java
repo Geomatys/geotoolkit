@@ -121,7 +121,7 @@ public class TextFieldCompletion {
             if (!popup.isShowing()) {
                 final Point2D popupPos = textField.localToScreen(0, textField.getHeight());
                 if (popupPos != null) {
-                    popup.setWidth(list.getPrefWidth()+10);
+                    popup.sizeToScene();
                     popup.show(textField,popupPos.getX(),popupPos.getY());
                 }
             }
@@ -143,7 +143,7 @@ public class TextFieldCompletion {
         } else {
             final Point2D popupPos = textField.localToScreen(0, textField.getHeight());
             if (popupPos != null) {
-                popup.setWidth(list.getPrefWidth() + 10);
+                popup.sizeToScene();
                 popup.show(textField, popupPos.getX(), popupPos.getY());
             }
         }

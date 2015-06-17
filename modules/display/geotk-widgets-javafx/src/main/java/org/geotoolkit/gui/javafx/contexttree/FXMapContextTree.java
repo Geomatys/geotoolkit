@@ -33,6 +33,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTablePosition;
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.DataFormat;
@@ -57,7 +58,6 @@ public class FXMapContextTree extends BorderPane{
     
     private final ObservableList<Object> menuItems = FXCollections.observableArrayList();
     private final TreeTableView<MapItem> treetable = new TreeTableView();
-    private final ScrollPane scroll = new ScrollPane(treetable);
     private final ObjectProperty<MapContext> itemProperty = new SimpleObjectProperty<>();
     
     
@@ -66,9 +66,7 @@ public class FXMapContextTree extends BorderPane{
     }
     
     public FXMapContextTree(MapContext item){    
-        scroll.setFitToHeight(true);
-        scroll.setFitToWidth(true);
-        setCenter(scroll);
+        setCenter(treetable);
         
         //configure treetable
         treetable.getColumns().add(new MapItemNameColumn());
@@ -100,7 +98,7 @@ public class FXMapContextTree extends BorderPane{
             public void onChanged(ListChangeListener.Change change) {
                 final ObservableList items = menu.getItems();
                 items.clear();
-                final List<? extends TreeItem> selection = treetable.getSelectionModel().getSelectedItems();
+                final List<? extends TreeItem> selection = FXUtilities.getSelectionItems(treetable);
                 for(int i=0,n=menuItems.size(); i<n; i++){
                     final Object candidate = menuItems.get(i);
                     if(candidate instanceof TreeMenuItem){
