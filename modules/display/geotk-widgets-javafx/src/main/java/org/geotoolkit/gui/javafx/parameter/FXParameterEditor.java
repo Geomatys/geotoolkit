@@ -17,7 +17,7 @@
 
 package org.geotoolkit.gui.javafx.parameter;
 
-import java.util.List;
+import java.util.Optional;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -46,7 +46,6 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class FXParameterEditor extends BorderPane {
     
-    private List<FXValueEditor> availableEditors = FXValueEditor.getDefaultEditors();
     private final TreeTableView treetable = new TreeTableView();
     private ParameterValueGroup parameter;
 
@@ -105,12 +104,7 @@ public class FXParameterEditor extends BorderPane {
         }
         
         return root;
-    }
-
-    public void setAvailableEditors(List<FXValueEditor> editors) {
-        this.availableEditors = editors;
-    }
-    
+    }    
     
     private static class ParamEntry {
         
@@ -193,20 +187,16 @@ public class FXParameterEditor extends BorderPane {
             
             setText(null);
             setGraphic(null);
-            if(!empty && availableEditors !=null && entry !=null && entry.value.getValue() != null){
-                for(FXValueEditor editor : availableEditors){
-                    if(entry.desc instanceof ParameterDescriptor && editor.canHandle((ParameterDescriptor)entry.desc)) {                        
-                        final FXValueEditor valEditor = editor.copy();
-                        valEditor.setParamDesc((ParameterDescriptor)entry.desc);
-                        
-                        final ParameterValue pval = (ParameterValue) entry.value.getValue();
-                        valEditor.valueProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
-                            pval.setValue(newValue);
-                        });
-                        
-                        setGraphic(valEditor.getComponent());
-                        break;
-                    }
+            if (!empty && entry != null && entry.value.getValue() != null && entry.desc instanceof ParameterDescriptor) {
+                Optional<FXValueEditor> opt = FXValueEditorSpi.findEditor((ParameterDescriptor) entry.desc);
+                if (opt.isPresent()) {
+                    final FXValueEditor valEditor = opt.get();
+                    final ParameterValue pval = (ParameterValue) entry.value.getValue();
+                    valEditor.valueProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
+                        pval.setValue(newValue);
+                    });
+
+                    setGraphic(valEditor.getComponent());
                 }
             }
         }

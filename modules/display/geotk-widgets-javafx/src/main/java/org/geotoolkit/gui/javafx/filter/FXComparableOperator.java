@@ -18,9 +18,9 @@ package org.geotoolkit.gui.javafx.filter;
 
 import java.util.Optional;
 import java.util.WeakHashMap;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import org.geotoolkit.gui.javafx.parameter.FXValueEditor;
+import org.geotoolkit.gui.javafx.parameter.FXValueEditorSpi;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.PropertyType;
 
@@ -45,15 +45,13 @@ public abstract class FXComparableOperator implements FXFilterOperator {
     public Optional<Node> createFilterEditor(PropertyType target) {
         if (target instanceof AttributeType) {
             final AttributeType tmpType = (AttributeType) target;
-            for (final FXValueEditor editor : FXValueEditor.getDefaultEditors()) {
-                if (editor.canHandle(tmpType)) {
-                    final FXValueEditor editorCopy = editor.copy();
-                    editorCopy.setAttributeType(tmpType);
-                    final Node node = editorCopy.getComponent();
-                    EDITORS_IN_USE.put(node, editorCopy);
+            Optional<FXValueEditor> opt = FXValueEditorSpi.findEditor(tmpType);
+                if (opt.isPresent()) {
+                    final FXValueEditor editor = opt.get();
+                    final Node node = editor.getComponent();
+                    EDITORS_IN_USE.put(node, editor);
                     return Optional.of(node);
                 }
-            }
         }
         return Optional.empty();
     }
@@ -62,7 +60,7 @@ public abstract class FXComparableOperator implements FXFilterOperator {
     public boolean canExtractSettings(PropertyType propertyType, Node settingsContainer) {
         if (propertyType instanceof AttributeType) {
             FXValueEditor editor = EDITORS_IN_USE.get(settingsContainer);
-            return editor != null && editor.canHandle((AttributeType)propertyType);
+            return editor != null && editor.spi.canHandle((AttributeType)propertyType);
         } else {
             return false;
         }

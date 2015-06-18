@@ -46,7 +46,7 @@ public class FXAddCoverageStoreAction extends FXMapAction {
     @Override
     public void accept(ActionEvent t) {
         try {
-            final List<MapLayer> layers = FXStoreChooser.showLayerDialog(null,FXStoreChooser.COVERAGEFACTORY_ONLY,null);
+            final List<MapLayer> layers = FXStoreChooser.showLayerDialog(null,FXStoreChooser.COVERAGEFACTORY_ONLY);
 
             for(MapLayer layer : layers){
                 if(layer == null) continue;

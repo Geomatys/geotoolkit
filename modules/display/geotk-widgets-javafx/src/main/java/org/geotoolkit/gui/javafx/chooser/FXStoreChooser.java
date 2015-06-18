@@ -250,19 +250,18 @@ public class FXStoreChooser extends SplitPane {
      * @throws DataStoreException
      */
     public static Object showDialog(Node parent) throws DataStoreException{
-        return showDialog(parent, null, null);
+        return showDialog(parent, null);
     }
 
     /**
      * Display a modal dialog.
      *
-     * @param parent
-     * @param editors : additional FeatureOutline editors
+     * @param parent Parent region over which dialog will be displayed.
      * @return FeatureStore, CoverageStore or Client
      * @throws DataStoreException
      */
-    public static Object showDialog(Node parent, Predicate predicate, List<FXValueEditor> editors) throws DataStoreException{
-        final List lst = showDialog(parent,predicate,editors,false);
+    public static Object showDialog(Node parent, Predicate predicate) throws DataStoreException{
+        final List lst = showDialog(parent, predicate, false);
         if(lst.isEmpty()){
             return null;
         }else{
@@ -273,21 +272,16 @@ public class FXStoreChooser extends SplitPane {
     /**
      * Display a modal dialog choosing layers.
      *
-     * @param editors : additional FeatureOutline editors
      * @return
      * @throws DataStoreException
      */
-    public static List<MapLayer> showLayerDialog(Node parent, Predicate predicate, List<FXValueEditor> editors) throws DataStoreException{
-        return showDialog(parent,predicate, editors, true);
+    public static List<MapLayer> showLayerDialog(Node parent, Predicate predicate) throws DataStoreException{
+        return showDialog(parent, predicate, true);
     }
 
-    private static List showDialog(Node parent, Predicate predicate, List<FXValueEditor> editors, boolean layerVisible) throws DataStoreException{
+    private static List showDialog(Node parent, Predicate predicate, boolean layerVisible) throws DataStoreException{
         final FXStoreChooser chooser = new FXStoreChooser(predicate);
-        if(editors != null){
-            chooser.paramEditor.setAvailableEditors(editors);
-        }
-        chooser.setLayerSelectionVisible(layerVisible);
-        
+        chooser.setLayerSelectionVisible(layerVisible);        
         
         final boolean res = FXOptionDialog.showOkCancel(parent, chooser, "", true);
 
@@ -305,7 +299,6 @@ public class FXStoreChooser extends SplitPane {
         } else {
             return Collections.EMPTY_LIST;
         }
-
     }
 
     

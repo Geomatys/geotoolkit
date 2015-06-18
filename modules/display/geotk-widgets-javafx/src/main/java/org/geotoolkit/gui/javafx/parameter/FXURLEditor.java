@@ -29,7 +29,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.Node;
 import javafx.util.StringConverter;
 import org.apache.sis.util.ObjectConverter;
 import org.apache.sis.util.ObjectConverters;
@@ -59,7 +58,8 @@ public class FXURLEditor extends FXValueEditor {
 
     private final SimpleObjectProperty valueProperty = new SimpleObjectProperty();
 
-    public FXURLEditor() {
+    public FXURLEditor(final Spi originatingSpi) {
+        super(originatingSpi);
         String previousPath = getPreviousPath();
         if (previousPath != null && !previousPath.isEmpty()) {
             try {
@@ -117,18 +117,6 @@ public class FXURLEditor extends FXValueEditor {
             }
         }
     }
-    
-    @Override
-    public boolean canHandle(Class binding) {
-        if (binding == null)
-            return false;
-        for (final Class current : ALLOWED_CLASSES) {
-            if (current.isAssignableFrom(binding)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
     public FXFileTextField getComponent() {
@@ -136,7 +124,7 @@ public class FXURLEditor extends FXValueEditor {
     }
 
     public FXURLEditor copy(){
-        final FXURLEditor cp = new FXURLEditor();
+        final FXURLEditor cp = new FXURLEditor((Spi)spi);
         cp.pathField.showOpenProperty().setValue(pathField.showOpenProperty().getValue());
         return cp;
     }
@@ -161,4 +149,24 @@ public class FXURLEditor extends FXValueEditor {
             return chosenPath;
         }        
     }
+
+    public static final class Spi extends FXValueEditorSpi {
+
+        @Override
+        public boolean canHandle(Class binding) {
+            if (binding == null)
+                return false;
+            for (final Class current : ALLOWED_CLASSES) {
+                if (current.isAssignableFrom(binding)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public FXValueEditor createEditor() {
+            return new FXURLEditor(this);
+        }
+    } 
 }

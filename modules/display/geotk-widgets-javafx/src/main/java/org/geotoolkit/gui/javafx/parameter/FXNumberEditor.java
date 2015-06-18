@@ -20,7 +20,6 @@ package org.geotoolkit.gui.javafx.parameter;
 import java.util.Collection;
 import java.util.logging.Level;
 import javafx.beans.property.Property;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
@@ -42,21 +41,11 @@ public class FXNumberEditor extends FXValueEditor {
 
     private final Spinner spinner = new Spinner();
     
-    public FXNumberEditor() {
+    public FXNumberEditor(Spi originatingSpi) {
+        super(originatingSpi);
         currentAttributeType.addListener(this::updateValueFactory);
         currentParamDesc.addListener(this::updateValueFactory);
         updateValueFactory(null, null, null);
-    }
-    
-    @Override
-    public boolean canHandle(Class binding) {
-        return Number.class.isAssignableFrom(binding)
-                || byte.class.equals(binding)
-                || short.class.equals(binding)
-                || int.class.equals(binding)
-                || long.class.equals(binding)
-                || float.class.equals(binding)
-                || double.class.equals(binding);
     }
     
     @Override
@@ -113,7 +102,11 @@ public class FXNumberEditor extends FXValueEditor {
         if (valueList != null && !valueList.isEmpty()) {
             factory = new SpinnerValueFactory.ListSpinnerValueFactory(FXCollections.observableArrayList(valueList));
             
-        } else if (Double.class.isAssignableFrom(valueClass) || Float.class.isAssignableFrom(valueClass)) {
+        } else if (Float.class.isAssignableFrom(valueClass)) {
+            Float minF = (minValue == null? Float.NaN : ObjectConverters.convert(minValue, Float.class));
+            Float maxF = (maxValue == null? Float.NaN : ObjectConverters.convert(maxValue, Float.class));
+            factory = new SpinnerValueFactory.DoubleSpinnerValueFactory(Float.isNaN(minF)? -Float.MAX_VALUE : minF, Float.isNaN(maxF)? Float.MAX_VALUE : maxF, 0);
+        } else if (Double.class.isAssignableFrom(valueClass)) {
             Double minD = (minValue == null? Double.NaN : ObjectConverters.convert(minValue, Double.class));
             Double maxD = (maxValue == null? Double.NaN : ObjectConverters.convert(maxValue, Double.class));
             factory = new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.isNaN(minD)? -Double.MAX_VALUE : minD, Double.isNaN(maxD)? Double.MAX_VALUE : maxD, 0);
@@ -148,4 +141,24 @@ public class FXNumberEditor extends FXValueEditor {
         
         spinner.setValueFactory(factory);
     }
+    
+    
+    public static final class Spi extends FXValueEditorSpi {
+    
+        @Override
+        public boolean canHandle(Class binding) {
+            return Number.class.isAssignableFrom(binding)
+                    || byte.class.equals(binding)
+                    || short.class.equals(binding)
+                    || int.class.equals(binding)
+                    || long.class.equals(binding)
+                    || float.class.equals(binding)
+                    || double.class.equals(binding);
+        }
+        
+        @Override
+        public FXValueEditor createEditor() {
+            return new FXNumberEditor(this);
+        }
+    }    
 }

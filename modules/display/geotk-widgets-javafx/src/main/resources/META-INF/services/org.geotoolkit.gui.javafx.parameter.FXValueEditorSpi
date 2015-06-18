@@ -1,0 +1,7 @@
+org.geotoolkit.gui.javafx.parameter.FXDateEditor$Spi
+org.geotoolkit.gui.javafx.parameter.FXBooleanEditor$Spi
+org.geotoolkit.gui.javafx.parameter.FXChoiceEditor$Spi
+org.geotoolkit.gui.javafx.parameter.FXNumberEditor$Spi
+org.geotoolkit.gui.javafx.parameter.FXStringEditor$Spi
+org.geotoolkit.gui.javafx.parameter.FXURLEditor$Spi
+org.geotoolkit.gui.javafx.parameter.FXCRSEditor$Spi

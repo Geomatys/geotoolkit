@@ -47,7 +47,7 @@ public class FXAddFeatureStoreAction extends FXMapAction {
     public void accept(ActionEvent event) {
         
         try {
-            final List<MapLayer> layers = FXStoreChooser.showLayerDialog(null,FXStoreChooser.FEATUREFACTORY_ONLY,null);
+            final List<MapLayer> layers = FXStoreChooser.showLayerDialog(null,FXStoreChooser.FEATUREFACTORY_ONLY);
 
             for(MapLayer layer : layers){
                 if(layer == null) continue;

@@ -43,7 +43,7 @@ public class FXAddDataStoreAction extends FXMapAction {
     public void accept(ActionEvent event) {
         
         try {
-            final List<MapLayer> layers = FXStoreChooser.showLayerDialog(null,null,null);
+            final List<MapLayer> layers = FXStoreChooser.showLayerDialog(null,null);
 
             for(MapLayer layer : layers){
                 if(layer == null) continue;

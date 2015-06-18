@@ -28,12 +28,11 @@ import javafx.scene.control.CheckBox;
 public class FXBooleanEditor extends FXValueEditor {
 
     private final CheckBox checkbox = new CheckBox();
-    
-    @Override
-    public boolean canHandle(Class binding) {
-        return Boolean.class.isAssignableFrom(binding) || boolean.class.isAssignableFrom(binding);
+
+    public FXBooleanEditor(Spi originatingSpi) {
+        super(originatingSpi);
     }
-    
+
     @Override
     public Node getComponent() {
         return checkbox;
@@ -43,5 +42,17 @@ public class FXBooleanEditor extends FXValueEditor {
     public BooleanProperty valueProperty() {
         return checkbox.selectedProperty();
     }
-    
+
+    public static final class Spi extends FXValueEditorSpi {
+
+        @Override
+        public boolean canHandle(Class binding) {
+            return Boolean.class.isAssignableFrom(binding) || boolean.class.isAssignableFrom(binding);
+        }
+
+        @Override
+        public FXValueEditor createEditor() {
+            return new FXBooleanEditor(this);
+        }
+    }
 }

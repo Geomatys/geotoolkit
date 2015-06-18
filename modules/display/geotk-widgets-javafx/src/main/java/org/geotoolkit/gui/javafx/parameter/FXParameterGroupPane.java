@@ -202,30 +202,32 @@ public class FXParameterGroupPane extends BorderPane {
      */
     protected Optional<Node> getValueEditor(final ParameterValue value) {
         final ParameterDescriptor descriptor = value.getDescriptor();
-        // If it's a locked value, we don't bother displaying it.
-        Set validValues = descriptor.getValidValues();
-        if (validValues != null && validValues.size() < 2) {
-            return Optional.empty();
-        }
 
-        for (FXValueEditor tmpEditor : FXValueEditor.getDefaultEditors()) {
-            if (tmpEditor.canHandle(descriptor)) {
-                final FXValueEditor editor = tmpEditor.copy();
-                editor.setParamDesc(descriptor);
-                // Bind editor input to parameter value.
-                editor.valueProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
-                    value.setValue(newValue);
-                });
-                
-                final Node component = editor.getComponent();
-
-                final HBox container = new HBox(5, component);
-                container.setMaxWidth(Double.MAX_VALUE);
-                container.setFillHeight(true);
-                HBox.setHgrow(component, Priority.ALWAYS);
-
-                return Optional.of(container);
+        Optional<FXValueEditor> opt = FXValueEditorSpi.findEditor(descriptor);
+        if (opt.isPresent()) {
+            final FXValueEditor editor = opt.get();
+            // Bind editor input to parameter value.
+            if (descriptor.getDefaultValue() != null) {
+                editor.valueProperty().setValue(descriptor.getDefaultValue());
             }
+            editor.valueProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
+                value.setValue(newValue);
+            });
+
+            final Node component = editor.getComponent();
+
+            // If it's a locked value, we prevent its edition.
+            Set validValues = descriptor.getValidValues();
+            if (validValues != null && validValues.size() < 2) {
+                component.setDisable(true);
+            }
+
+            final HBox container = new HBox(5, component);
+            container.setMaxWidth(Double.MAX_VALUE);
+            container.setFillHeight(true);
+            HBox.setHgrow(component, Priority.ALWAYS);
+
+            return Optional.of(container);
         }
         return Optional.empty();
     }

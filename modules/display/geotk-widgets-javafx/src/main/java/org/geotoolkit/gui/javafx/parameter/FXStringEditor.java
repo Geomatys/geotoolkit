@@ -28,12 +28,11 @@ import javafx.scene.control.TextField;
 public class FXStringEditor extends FXValueEditor {
 
     private final TextField textField = new TextField();
-    
-    @Override
-    public boolean canHandle(Class binding) {
-        return CharSequence.class.isAssignableFrom(binding) || Character.class.isAssignableFrom(binding);
+
+    public FXStringEditor(FXValueEditorSpi originatingSpi) {
+        super(originatingSpi);
     }
-    
+        
     @Override
     public Node getComponent() {
         return textField;
@@ -43,5 +42,17 @@ public class FXStringEditor extends FXValueEditor {
     public StringProperty valueProperty() {
         return textField.textProperty();
     }
-    
+        
+    public static final class Spi extends FXValueEditorSpi {
+
+        @Override
+        public boolean canHandle(Class binding) {
+            return CharSequence.class.isAssignableFrom(binding) || Character.class.isAssignableFrom(binding);
+        }
+
+        @Override
+        public FXValueEditor createEditor() {
+            return new FXStringEditor(this);
+        }
+    }
 }

@@ -25,13 +25,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXCRSEditor extends FXValueEditor{
+public class FXCRSEditor extends FXValueEditor {
 
     private final FXCRSButton button = new FXCRSButton();
 
-    @Override
-    public boolean canHandle(Class binding) {
-        return CoordinateReferenceSystem.class.isAssignableFrom(binding);
+    public FXCRSEditor(FXValueEditorSpi originatingSpi) {
+        super(originatingSpi);
     }
 
     @Override
@@ -44,4 +43,16 @@ public class FXCRSEditor extends FXValueEditor{
         return button;
     }
 
+    public static final class Spi extends FXValueEditorSpi {
+
+        @Override
+        public boolean canHandle(Class binding) {
+            return CoordinateReferenceSystem.class.isAssignableFrom(binding);
+        }
+
+        @Override
+        public FXValueEditor createEditor() {
+            return new FXCRSEditor(this);
+        }
+    }
 }

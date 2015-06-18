@@ -16,8 +16,10 @@
  */
 package org.geotoolkit.gui.javafx.parameter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import javafx.beans.property.Property;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -25,9 +27,8 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import org.geotoolkit.feature.FeatureTypeUtilities;
+import static org.geotoolkit.gui.javafx.parameter.FXValueEditor.extractChoices;
 import org.opengis.feature.AttributeType;
-import org.opengis.feature.PropertyType;
 import org.opengis.parameter.ParameterDescriptor;
 
 /**
@@ -39,7 +40,8 @@ public class FXChoiceEditor extends FXValueEditor{
     private final BorderPane pane = new BorderPane();
     private final ComboBox guiCombo = new ComboBox();
 
-    public FXChoiceEditor() {
+    public FXChoiceEditor(Spi originatingSpi) {
+        super(originatingSpi);
         currentAttributeType.addListener(this::updateChoices);
         currentParamDesc.addListener(this::updateChoices);
     }
@@ -50,10 +52,10 @@ public class FXChoiceEditor extends FXValueEditor{
         if (newValue instanceof AttributeType) {
             choices = extractChoices((AttributeType) newValue);
         } else if (newValue instanceof ParameterDescriptor) {
-            final PropertyType pt = FeatureTypeUtilities.toPropertyType((ParameterDescriptor) newValue);
-            if (pt instanceof AttributeType) {
-                choices = extractChoices((AttributeType) pt);
-            }else{
+            Set validValues = ((ParameterDescriptor)newValue).getValidValues();
+            if (validValues != null && !validValues.isEmpty()) {
+                choices = new ArrayList(validValues);
+            } else {
                 choices = Collections.EMPTY_LIST;
             }
         }else{
@@ -70,25 +72,6 @@ public class FXChoiceEditor extends FXValueEditor{
             pane.setCenter(guiCombo);
         }
     }
-    
-    @Override
-    public boolean canHandle(AttributeType property) {
-        return extractChoices(property) != null;
-    }
-
-    @Override
-    public boolean canHandle(ParameterDescriptor param) {
-        final PropertyType pt = FeatureTypeUtilities.toPropertyType(param);
-        if(pt instanceof AttributeType){
-            return canHandle((AttributeType)pt);
-        }
-        return false;
-    }
-    
-    @Override
-    public boolean canHandle(Class binding) {
-        return false;
-    }
 
     @Override
     public Node getComponent() {
@@ -100,4 +83,27 @@ public class FXChoiceEditor extends FXValueEditor{
         return guiCombo.valueProperty();
     }
 
+    public static final class Spi extends FXValueEditorSpi {
+
+        @Override
+        public boolean canHandle(AttributeType property) {
+            return extractChoices(property) != null;
+        }
+
+        @Override
+        public boolean canHandle(ParameterDescriptor param) {
+            Set validValues = param.getValidValues();
+            return validValues != null && !validValues.isEmpty();
+        }
+
+        @Override
+        public boolean canHandle(Class binding) {
+            return false;
+        }
+
+        @Override
+        public FXValueEditor createEditor() {
+            return new FXChoiceEditor(this);
+        }
+    }
 }

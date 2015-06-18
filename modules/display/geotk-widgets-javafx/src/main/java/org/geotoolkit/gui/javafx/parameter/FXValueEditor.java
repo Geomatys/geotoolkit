@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.gui.javafx.parameter;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import java.util.List;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
-import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.opengis.feature.AttributeType;
 import org.opengis.filter.Filter;
@@ -45,48 +44,46 @@ import org.opengis.parameter.ParameterDescriptor;
  */
 public abstract class FXValueEditor {
     
-    private static final List<FXValueEditor> DEFAULTS;
-    static {
-        final FXURLEditor editor = new FXURLEditor();
-        editor.getComponent().showOpenProperty().setValue(false);
-
-        DEFAULTS = UnmodifiableArrayList.wrap(new FXValueEditor[]{
-            new FXChoiceEditor(),
-            new FXBooleanEditor(),
-            new FXStringEditor(),
-            new FXNumberEditor(),
-            editor,
-            new FXCRSEditor()
-        });
-    }
-    
     protected final SimpleObjectProperty<ParameterDescriptor> currentParamDesc = new SimpleObjectProperty<>();
     protected final SimpleObjectProperty<AttributeType> currentAttributeType = new SimpleObjectProperty<>();
     
-    public boolean canHandle(AttributeType property){
-        return canHandle(property.getValueClass());
-    }
-        
-    public boolean canHandle(ParameterDescriptor param){
-        return canHandle(param.getValueClass());
-    }
+    public final FXValueEditorSpi spi;
     
-    public abstract boolean canHandle(Class binding);
-
+    protected FXValueEditor(final FXValueEditorSpi originatingSpi) {
+        ArgumentChecks.ensureNonNull("Originating Spi", originatingSpi);
+        spi = originatingSpi;
+    }
+            
+    /**
+     * Configure current editor data type, to specify what type of data it must provide.
+     * @param attType An attribute type definning data type to work on.
+     */
     public void setAttributeType(AttributeType attType) {
+        if (!spi.canHandle(attType))
+            throw new IllegalArgumentException("Given attribute type ("+attType+") cannot be handled by current editor !");
         this.currentAttributeType.set(attType);
     }
 
+    /**
+     * Configure current editor data type, to specify what type of data it must provide.
+     * @param paramDesc A parameter descriptor definning data type to work on.
+     */
     public void setParamDesc(ParameterDescriptor paramDesc) {
+        if (!spi.canHandle(paramDesc))
+            throw new IllegalArgumentException("Given descriptor ("+paramDesc+") cannot be handled by current editor !");
         this.currentParamDesc.set(paramDesc);
     }
-
+    
     /**
      *   
      * @return Editor current input, compliant with given type/descriptor. Never null, but property value can be null.
      */
     public abstract Property valueProperty();
     
+    /**
+     * 
+     * @return Type of object required by set type/descriptor.
+     */
     protected Class getValueClass() {
         if (currentParamDesc.get() != null) {
             return currentParamDesc.get().getValueClass();
@@ -97,19 +94,10 @@ public abstract class FXValueEditor {
         }
     }
 
+    /**
+     * @return JavaFX node in which editor is displayed.
+     */
     public abstract Node getComponent();
-    
-    public FXValueEditor copy(){
-        try {
-            return this.getClass().newInstance();
-        } catch (InstantiationException | IllegalAccessException ex) {
-            throw new IllegalStateException("Editor "+FXValueEditor.class+" can not be copied.");
-        }
-    }
-    
-    public static List<FXValueEditor> getDefaultEditors(){
-        return DEFAULTS;
-    }
     
     /**
      * Search for a 'In' restriction filter.
