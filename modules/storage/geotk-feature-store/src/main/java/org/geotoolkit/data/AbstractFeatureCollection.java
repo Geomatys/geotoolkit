@@ -47,7 +47,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.storage.StorageListener;
@@ -56,6 +55,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.util.GenericName;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
@@ -319,7 +319,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
         if(properties != null){
             try {
                 mask = FeatureTypeUtilities.createSubType(mask, properties);
-            } catch (SchemaException ex) {
+            } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }
         }
@@ -327,7 +327,7 @@ public abstract class AbstractFeatureCollection extends AbstractCollection<Featu
             try {
                 //remove primary key properties
                 mask = FeatureTypeUtilities.excludePrimaryKeyFields(mask);
-            } catch (SchemaException ex) {
+            } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }
         }

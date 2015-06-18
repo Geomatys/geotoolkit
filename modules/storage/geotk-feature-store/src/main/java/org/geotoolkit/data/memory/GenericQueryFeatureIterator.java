@@ -28,11 +28,11 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -116,7 +116,7 @@ public class GenericQueryFeatureIterator {
             
             try {
                 mask = FeatureTypeUtilities.createSubType(mask, names.toArray(new GenericName[0]));
-            } catch (SchemaException ex) {
+            } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }
         }
@@ -124,7 +124,7 @@ public class GenericQueryFeatureIterator {
             try {
                 //remove primary key properties
                 mask = FeatureTypeUtilities.excludePrimaryKeyFields(mask);
-            } catch (SchemaException ex) {
+            } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }
         }
@@ -144,7 +144,7 @@ public class GenericQueryFeatureIterator {
                 reader = GenericReprojectFeatureIterator.wrap(reader, crs, hints);
             } catch (FactoryException ex) {
                 throw new DataStoreException(ex);
-            } catch (SchemaException ex) {
+            } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }
         }

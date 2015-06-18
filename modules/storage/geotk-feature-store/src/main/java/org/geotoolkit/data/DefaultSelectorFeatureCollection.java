@@ -34,11 +34,11 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
@@ -98,7 +98,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
             return ft;
         } catch (DataStoreException ex) {
             throw new FeatureStoreRuntimeException(ex);
-        } catch (SchemaException ex) {
+        } catch (MismatchedFeatureException ex) {
             throw new FeatureStoreRuntimeException(ex);
         }
     }

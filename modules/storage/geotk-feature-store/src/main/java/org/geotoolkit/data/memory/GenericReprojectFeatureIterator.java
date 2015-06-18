@@ -34,7 +34,6 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.DefaultFeature;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
@@ -54,6 +53,7 @@ import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -79,7 +79,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
      * @param maxFeatures maximum number of feature
      */
     private GenericReprojectFeatureIterator(final R iterator, final CoordinateReferenceSystem targetCRS)
-                            throws FactoryException, SchemaException {
+                            throws FactoryException, MismatchedFeatureException {
         super(iterator,findTransformer(iterator.getFeatureType(), targetCRS));
 
         final FeatureType type = iterator.getFeatureType();
@@ -135,7 +135,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
      */
     private static final class GenericReprojectFeatureReader extends GenericReprojectFeatureIterator{
 
-        private GenericReprojectFeatureReader(final FeatureReader reader, final CoordinateReferenceSystem targetCRS) throws FactoryException, SchemaException{
+        private GenericReprojectFeatureReader(final FeatureReader reader, final CoordinateReferenceSystem targetCRS) throws FactoryException, MismatchedFeatureException{
             super(reader,targetCRS);
         }
 
@@ -221,7 +221,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
         private final AbstractFeature feature;
 
         private GenericReuseReprojectFeatureReader(final FeatureReader reader, final CoordinateReferenceSystem targetCRS)
-                                            throws FactoryException, SchemaException{
+                                            throws FactoryException, MismatchedFeatureException{
             super(reader, targetCRS);
             feature = new DefaultFeature(Collections.EMPTY_LIST, schema, null);
             properties = feature.getProperties();
@@ -311,7 +311,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
         private final boolean[] geomIndexes;
 
         private GenericSimpleReuseReprojectFeatureReader(final FeatureReader reader, final CoordinateReferenceSystem targetCRS)
-                                            throws FactoryException, SchemaException{
+                                            throws FactoryException, MismatchedFeatureException{
             super(reader, targetCRS);
 
             final SimpleFeatureType ft = (SimpleFeatureType) reader.getFeatureType();
@@ -411,7 +411,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
             try {
                 return FeatureTypeUtilities.transform(
                         getOriginalFeatureCollection().getFeatureType(), targetCrs);
-            } catch (SchemaException ex) {
+            } catch (MismatchedFeatureException ex) {
                 Logger.getLogger(GenericReprojectFeatureIterator.class.getName()).log(Level.WARNING, null, ex);
             }
             return super.getFeatureType();
@@ -427,7 +427,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
                 return wrap((FeatureReader) ite, targetCrs, hints);
             } catch (FactoryException ex) {
                 throw new FeatureStoreRuntimeException(ex);
-            } catch (SchemaException ex) {
+            } catch (MismatchedFeatureException ex) {
                 throw new FeatureStoreRuntimeException(ex);
             }
         }
@@ -442,7 +442,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
     /**
      * Wrap a FeatureReader with a reprojection.
      */
-    public static FeatureReader wrap(final FeatureReader reader, final CoordinateReferenceSystem crs, final Hints hints) throws FactoryException, SchemaException {
+    public static FeatureReader wrap(final FeatureReader reader, final CoordinateReferenceSystem crs, final Hints hints) throws FactoryException, MismatchedFeatureException {
         final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
         if (desc != null) {
 
@@ -479,7 +479,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
         return new GenericReprojectFeatureCollection(original, crs);
     }
 
-    public static Feature apply(Feature next, final CoordinateReferenceSystem targetCRS) throws SchemaException, FactoryException{
+    public static Feature apply(Feature next, final CoordinateReferenceSystem targetCRS) throws MismatchedFeatureException, FactoryException{
 
         final FeatureType schema = FeatureTypeUtilities.transform(next.getType(), targetCRS);
         final GeometryTransformer geoTransformer = findTransformer(next.getType(), targetCRS);

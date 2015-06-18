@@ -53,7 +53,6 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
@@ -67,6 +66,7 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
@@ -411,7 +411,7 @@ public class GenericIteratorTest extends TestCase{
     }
 
     @Test
-    public void testReprojectFeatureIterator() throws DataStoreException, FactoryException, SchemaException{
+    public void testReprojectFeatureIterator() throws DataStoreException, FactoryException, MismatchedFeatureException{
         QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(originalType.getName());
         Query query = qb.buildQuery();

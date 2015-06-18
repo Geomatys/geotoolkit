@@ -18,11 +18,11 @@ package org.geotoolkit.processing.util.converter;
 
 
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.SchemaException;
 import org.apache.sis.util.UnconvertibleObjectException;
 
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.util.converter.SimpleConverter;
+import org.opengis.feature.MismatchedFeatureException;
 
 
 /**
@@ -92,7 +92,7 @@ public class StringToFeatureTypeConverter extends SimpleConverter<String, Featur
                 throw new UnconvertibleObjectException("Invalid FeatureType");
             }
 
-        } catch (SchemaException ex) {
+        } catch (MismatchedFeatureException ex) {
             throw new UnconvertibleObjectException(ex);
         }
 

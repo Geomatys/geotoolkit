@@ -34,7 +34,6 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.data.wfs.v110.*;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.StorageListener;
@@ -48,6 +47,7 @@ import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
@@ -315,7 +315,7 @@ public class WebFeatureClient extends AbstractFeatureClient {
     }
 
     @Override
-    public FeatureType getFeatureType(Query query) throws DataStoreException, SchemaException {
+    public FeatureType getFeatureType(Query query) throws DataStoreException, MismatchedFeatureException {
         return getStore().getFeatureType(query);
     }
 

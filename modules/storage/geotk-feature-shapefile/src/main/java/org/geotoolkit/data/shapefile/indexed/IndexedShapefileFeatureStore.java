@@ -49,7 +49,6 @@ import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.filter.visitor.ExtractBoundsFilterVisitor;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
@@ -68,6 +67,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
@@ -306,7 +306,7 @@ public class IndexedShapefileFeatureStore extends ShapefileFeatureStore {
 
     protected FeatureReader createFeatureReader(
             final IndexedShapefileAttributeReader r, final SimpleFeatureType featureType, final Hints hints)
-            throws SchemaException, IOException,DataStoreException {
+            throws MismatchedFeatureException, IOException,DataStoreException {
 
         final FeatureIDReader fidReader;
         if (!indexUseable(FIX)) {

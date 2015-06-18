@@ -27,10 +27,10 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 
@@ -80,7 +80,7 @@ public class DefaultTextStmtFeatureCollection extends AbstractFeatureCollection{
                 ft = getSession().getFeatureStore().getFeatureType(query);
             } catch (DataStoreException ex) {
                 throw new FeatureStoreRuntimeException(ex);
-            } catch (SchemaException ex) {
+            } catch (MismatchedFeatureException ex) {
                 throw new FeatureStoreRuntimeException(ex);
             }
         }

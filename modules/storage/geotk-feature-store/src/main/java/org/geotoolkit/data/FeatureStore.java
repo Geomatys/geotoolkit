@@ -27,7 +27,6 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.StorageListener;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
@@ -37,6 +36,7 @@ import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
@@ -199,7 +199,7 @@ public abstract class FeatureStore extends DataStore{
      * @return FeatureType
      * @throws DataStoreException
      */
-    public abstract FeatureType getFeatureType(Query query) throws DataStoreException, SchemaException;
+    public abstract FeatureType getFeatureType(Query query) throws DataStoreException, MismatchedFeatureException;
 
     /**
      * Ask if the given type is editable. if true you can

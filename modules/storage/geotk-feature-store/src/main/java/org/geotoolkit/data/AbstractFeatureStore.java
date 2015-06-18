@@ -44,7 +44,6 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.memory.GenericQueryFeatureIterator;
@@ -60,6 +59,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
@@ -196,7 +196,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     }
 
     @Override
-    public FeatureType getFeatureType(final Query query) throws DataStoreException, SchemaException {
+    public FeatureType getFeatureType(final Query query) throws DataStoreException, MismatchedFeatureException {
 
         final Source source = query.getSource();
 

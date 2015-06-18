@@ -64,7 +64,6 @@ import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -86,6 +85,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
+import org.opengis.feature.MismatchedFeatureException;
 
 /**
  *
@@ -338,7 +338,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
                 reader = handleRemaining(reader, remaining.buildQuery());
 
                 return reader;
-            } catch (SchemaException se) {
+            } catch (MismatchedFeatureException se) {
                 throw new DataStoreException("Error creating schema", se);
             }
         }else{
@@ -364,7 +364,7 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
                 reader = handleRemaining(reader, query2.buildQuery());
 
                 return reader;
-            } catch (SchemaException se) {
+            } catch (MismatchedFeatureException se) {
                 throw new DataStoreException("Error creating schema", se);
             }
         }

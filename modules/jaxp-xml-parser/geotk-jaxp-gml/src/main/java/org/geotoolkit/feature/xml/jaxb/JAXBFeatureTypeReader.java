@@ -45,7 +45,6 @@ import org.apache.sis.util.collection.Cache;
 
 import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
 import org.geotoolkit.xml.AbstractConfigurable;
@@ -95,6 +94,7 @@ import org.geotoolkit.xsd.xml.v2001.Restriction;
 import org.geotoolkit.xsd.xml.v2001.SimpleContent;
 import org.geotoolkit.xsd.xml.v2001.SimpleRestrictionType;
 import org.geotoolkit.xsd.xml.v2001.Union;
+import org.opengis.feature.MismatchedFeatureException;
 import org.w3c.dom.Node;
 
 /**
@@ -399,7 +399,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
     }
 
-    public List<FeatureType> getAllFeatureTypeFromSchema(final Schema schema, final String baseLocation) throws SchemaException {
+    public List<FeatureType> getAllFeatureTypeFromSchema(final Schema schema, final String baseLocation) throws MismatchedFeatureException {
         final List<FeatureType> result = new ArrayList<>();
         // first we look for imported xsd
         // NOTE : we must list and fill the knownshemas map before analyzing
@@ -415,7 +415,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return result;
     }
 
-    private void listAllSchemas(final Schema schema, final String baseLocation, List<Entry<Schema,String>> refs) throws SchemaException{
+    private void listAllSchemas(final Schema schema, final String baseLocation, List<Entry<Schema,String>> refs) throws MismatchedFeatureException{
         fillAllSubstitution(schema);
 
         for (OpenAttrs attr: schema.getIncludeOrImportOrRedefine()) {
@@ -433,7 +433,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                             }
                         });
                     }catch(Exception ex){
-                        throw new SchemaException(ex.getMessage(),ex);
+                        throw new MismatchedFeatureException(ex.getMessage(),ex);
                     }
 
                     if (importedSchema != null) {
@@ -481,7 +481,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
     }
 
-    private void listFeatureTypes(Schema schema, List<FeatureType> result) throws SchemaException{
+    private void listFeatureTypes(Schema schema, List<FeatureType> result) throws MismatchedFeatureException{
         // then we look for feature type and groups
         for (OpenAttrs opAtts : schema.getSimpleTypeOrComplexTypeOrGroup()) {
 
@@ -560,7 +560,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return subs;
     }
 
-    public FeatureType getFeatureTypeFromSchema(final Schema schema, final String name) throws SchemaException {
+    public FeatureType getFeatureTypeFromSchema(final Schema schema, final String name) throws MismatchedFeatureException {
         final TopLevelElement element = schema.getElementByName(name);
         if (element != null) {
             final QName typeName = element.getType();
@@ -592,33 +592,33 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return false;
     }
 
-    public org.geotoolkit.feature.type.ComplexType getComplexType(GenericName name) throws SchemaException{
+    public org.geotoolkit.feature.type.ComplexType getComplexType(GenericName name) throws MismatchedFeatureException{
         return getType(new QName(NamesExt.getNamespace(name), name.tip().toString()));
     }
 
-    public PropertyDescriptor getElementType(GenericName name) throws SchemaException{
+    public PropertyDescriptor getElementType(GenericName name) throws MismatchedFeatureException{
         final Element parentElement = findGlobalElement(new QName(NamesExt.getNamespace(name), name.tip().toString()));
         return elementToAttribute(parentElement, NamesExt.getNamespace(name)).get(0);
     }
 
-    private org.geotoolkit.feature.type.ComplexType getType(QName qname) throws SchemaException{
+    private org.geotoolkit.feature.type.ComplexType getType(QName qname) throws MismatchedFeatureException{
         final org.geotoolkit.feature.type.ComplexType ct = typeCache.get(qname);
         if(ct!=null) return ct;
 
         final ComplexType type = findComplexType(qname);
 
         if(type==null){
-            throw new SchemaException("Unable to find complex type for name : "+ qname);
+            throw new MismatchedFeatureException("Unable to find complex type for name : "+ qname);
         }else{
             return getType(qname.getNamespaceURI(), type, null);
         }
     }
 
-    private org.geotoolkit.feature.type.ComplexType getType(String namespace, ComplexType type, String elementName) throws SchemaException{
+    private org.geotoolkit.feature.type.ComplexType getType(String namespace, ComplexType type, String elementName) throws MismatchedFeatureException{
         return getType(namespace, type, elementName, false);
     }
 
-    private org.geotoolkit.feature.type.ComplexType getType(String namespace, ComplexType type, String elementName, boolean delay) throws SchemaException{
+    private org.geotoolkit.feature.type.ComplexType getType(String namespace, ComplexType type, String elementName, boolean delay) throws MismatchedFeatureException{
         String typeName = type.getName();
         if(typeName==null || typeName.isEmpty()) typeName = elementName;
         final QName qname = new QName(namespace, typeName);
@@ -664,7 +664,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return finalType;
     }
 
-    private void completeType(ComplexType type, ModifiableType finalType) throws SchemaException{
+    private void completeType(ComplexType type, ModifiableType finalType) throws MismatchedFeatureException{
 
         if(finalType.isLock()) return;
 
@@ -867,7 +867,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         }
     }
 
-    private List<PropertyDescriptor> getGroupAttributes(String namespace, Group group) throws SchemaException {
+    private List<PropertyDescriptor> getGroupAttributes(String namespace, Group group) throws MismatchedFeatureException {
         if(group==null) return Collections.EMPTY_LIST;
 
         final List<PropertyDescriptor> atts = new ArrayList<>();
@@ -904,14 +904,14 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 final ExplicitGroup eg = (ExplicitGroup) particle;
                 atts.addAll(getGroupAttributes(namespace, eg));
             }else{
-                throw new SchemaException("Unexpected TYPE : "+particle);
+                throw new MismatchedFeatureException("Unexpected TYPE : "+particle);
             }
         }
 
         return atts;
     }
 
-    private AttributeDescriptor getAnnotatedAttributes(String namespace, final Attribute att) throws SchemaException{
+    private AttributeDescriptor getAnnotatedAttributes(String namespace, final Attribute att) throws MismatchedFeatureException{
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
         adb.reset();
@@ -956,7 +956,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return adb.buildDescriptor();
     }
 
-    private List<PropertyDescriptor> getAnnotatedAttributes(final String namespace, final AttributeGroup group) throws SchemaException{
+    private List<PropertyDescriptor> getAnnotatedAttributes(final String namespace, final AttributeGroup group) throws MismatchedFeatureException{
         final List<PropertyDescriptor> descs = new ArrayList<>();
         final List<Annotated> atts = group.getAttributeOrAttributeGroup();
         if(atts!=null){
@@ -976,7 +976,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return descs;
     }
 
-    private List<PropertyDescriptor> elementToAttribute(final Element attributeElement, final String namespace) throws SchemaException {
+    private List<PropertyDescriptor> elementToAttribute(final Element attributeElement, final String namespace) throws MismatchedFeatureException {
         return elementToAttribute(attributeElement, namespace, false);
     }
     /**
@@ -989,7 +989,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      * @return
      * @throws SchemaException
      */
-    private List<PropertyDescriptor> elementToAttribute(final Element attributeElement, final String namespace, boolean isSubstitute) throws SchemaException {
+    private List<PropertyDescriptor> elementToAttribute(final Element attributeElement, final String namespace, boolean isSubstitute) throws MismatchedFeatureException {
         final List<PropertyDescriptor> results = new ArrayList<>();
 
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
@@ -998,7 +998,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         if (attributeElement.getRef() != null) {
             final Element parentElement = findGlobalElement(attributeElement.getRef());
             if (parentElement == null) {
-                throw new SchemaException("unable to find referenced element : "+ attributeElement.getRef());
+                throw new MismatchedFeatureException("unable to find referenced element : "+ attributeElement.getRef());
             }
             final List<PropertyDescriptor> parentAtt = elementToAttribute(parentElement, namespace);
             for(int i=1,n=parentAtt.size();i<n;i++){
@@ -1048,7 +1048,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 if(Utils.isPrimitiveType(elementType)){
                     final Class c = Utils.getTypeFromQName(elementType);
                     if (c == null) {
-                        throw new SchemaException("The attribute : " + attributeElement + " does no have a declared type.");
+                        throw new MismatchedFeatureException("The attribute : " + attributeElement + " does no have a declared type.");
                     }
                     atb.setBinding(c);
                     atb.setName(elementType.getNamespaceURI(), elementType.getLocalPart());
@@ -1224,7 +1224,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return null;
     }
 
-    private PropertyType resolveAttributeValueName(Attribute att) throws SchemaException{
+    private PropertyType resolveAttributeValueName(Attribute att) throws MismatchedFeatureException{
         //test direct type
         final QName type = att.getType();
         if(type!=null){
@@ -1236,7 +1236,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         if(ref!=null){
             final Attribute parentAtt = findGlobalAttribute(ref);
             if(parentAtt==null){
-                throw new SchemaException("The attribute : " + ref + " has not been found.");
+                throw new MismatchedFeatureException("The attribute : " + ref + " has not been found.");
             }
             return resolveAttributeValueName(parentAtt);
         }
@@ -1267,7 +1267,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         return null;
     }
 
-    private PropertyType resolveSimpleType(QName name) throws SchemaException{
+    private PropertyType resolveSimpleType(QName name) throws MismatchedFeatureException{
 
         //check if primitive type
         if(Utils.existPrimitiveType(name.getLocalPart())){
@@ -1286,13 +1286,13 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             //could be a complex type ... for a simple content, that's not an error. xsd/xml makes no sense at all sometimes
             final org.geotoolkit.feature.type.ComplexType sct = getType(name);
             if(sct==null){
-                throw new SchemaException("Could not find type : "+name);
+                throw new MismatchedFeatureException("Could not find type : "+name);
             }
             return sct;
         }
     }
 
-    private PropertyType resolveSimpleType(SimpleType simpleType) throws SchemaException{
+    private PropertyType resolveSimpleType(SimpleType simpleType) throws MismatchedFeatureException{
         final Restriction restriction = simpleType.getRestriction();
         if(restriction!=null){
             QName base = restriction.getBase();
@@ -1315,7 +1315,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 final QName name = union.getMemberTypes().get(0);
                 final SimpleType refType = findSimpleType(name);
                 if(refType==null){
-                    throw new SchemaException("Could not find type : "+name);
+                    throw new MismatchedFeatureException("Could not find type : "+name);
                 }
                 return resolveSimpleType(refType);
             }else if(union.getSimpleType()!=null && !union.getSimpleType().isEmpty()){

@@ -26,6 +26,7 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.MismatchedFeatureException;
 
 
 /**
@@ -200,7 +201,7 @@ public class SampleFeatureFixtures {
      *
      * @throws SchemaException
      */
-    public static FeatureType createTestType() throws SchemaException {
+    public static FeatureType createTestType() throws MismatchedFeatureException {
         FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName(NamesExt.create("test"));
 

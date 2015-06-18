@@ -57,7 +57,6 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
@@ -76,6 +75,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
@@ -334,7 +334,7 @@ public class WFSFeatureStore extends AbstractFeatureStore{
                 reader = GenericReprojectFeatureIterator.wrap(reader, query.getCoordinateSystemReproject(), null);
             } catch (FactoryException ex) {
                 getLogger().log(Level.WARNING, ex.getMessage(), ex);
-            } catch (SchemaException ex) {
+            } catch (MismatchedFeatureException ex) {
                 getLogger().log(Level.WARNING, ex.getMessage(), ex);
             }
         }

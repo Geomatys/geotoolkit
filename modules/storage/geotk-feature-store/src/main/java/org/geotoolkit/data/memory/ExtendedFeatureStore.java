@@ -36,13 +36,13 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.data.session.SessionDecorator;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.StorageListener;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
@@ -142,7 +142,7 @@ public final class ExtendedFeatureStore extends AbstractFeatureStore{
                 final FeatureType ft = wrapped.getFeatureType(original);
                 featureTypes.put(typeName, ft);
                 return ft;
-            } catch (SchemaException ex) {
+            } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }
         }

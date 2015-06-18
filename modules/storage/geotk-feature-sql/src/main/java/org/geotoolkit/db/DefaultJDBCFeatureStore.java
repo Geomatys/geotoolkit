@@ -58,7 +58,6 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.visitor.CRSAdaptorVisitor;
 import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
@@ -78,6 +77,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
@@ -244,7 +244,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
     }
 
     @Override
-    public FeatureType getFeatureType(Query query) throws DataStoreException, SchemaException {
+    public FeatureType getFeatureType(Query query) throws DataStoreException, MismatchedFeatureException {
         if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
             final TextStatement txt = (TextStatement) query.getSource();
             final String sql = txt.getStatement();
@@ -422,7 +422,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
                 reader = GenericReprojectFeatureIterator.wrap(reader, reproject,query.getHints());
             } catch (FactoryException ex) {
                 throw new DataStoreException(ex);
-            } catch (SchemaException ex) {
+            } catch (MismatchedFeatureException ex) {
                 throw new DataStoreException(ex);
             }
         }
@@ -461,7 +461,7 @@ public class DefaultJDBCFeatureStore extends JDBCFeatureStore{
             
             final JDBCFeatureReader reader = new JDBCFeatureReader(this, sql, ft, cnx, release, null);
             return reader;
-        } catch (SchemaException ex) {
+        } catch (MismatchedFeatureException ex) {
             throw new DataStoreException(ex);
         } catch (SQLException ex) {
             throw new DataStoreException(ex);

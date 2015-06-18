@@ -71,6 +71,7 @@ import java.util.Objects;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.function.string.LengthFunction;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Function;
 import org.opengis.util.GenericName;
@@ -190,7 +191,7 @@ public final class FeatureTypeUtilities {
     /**
      * Remove properties that are used for generating the primary key.
      */
-    public static FeatureType excludePrimaryKeyFields(final FeatureType ft) throws SchemaException{
+    public static FeatureType excludePrimaryKeyFields(final FeatureType ft) throws MismatchedFeatureException {
         final List<GenericName> pkeys = new ArrayList<GenericName>();
         for(PropertyDescriptor desc : ft.getDescriptors()){
             if(!isPartOfPrimaryKey(desc)) pkeys.add(desc.getName());
@@ -217,7 +218,7 @@ public final class FeatureTypeUtilities {
      * @throws SchemaException
      */
     public static FeatureType createSubType(final FeatureType featureType,
-            final GenericName[] properties, final CoordinateReferenceSystem override) throws SchemaException{
+            final GenericName[] properties, final CoordinateReferenceSystem override) throws MismatchedFeatureException{
         URI namespaceURI = null;
         final String ns = NamesExt.getNamespace(featureType.getName());
         if (ns != null) {
@@ -233,7 +234,7 @@ public final class FeatureTypeUtilities {
 
     public static FeatureType createSubType(final FeatureType featureType,
             GenericName[] properties, final CoordinateReferenceSystem override, String typeName, URI namespace)
-            throws SchemaException {
+            throws MismatchedFeatureException {
 
         if ((properties == null) && (override == null)) {
             return featureType;
@@ -323,7 +324,7 @@ public final class FeatureTypeUtilities {
     }
 
     public static FeatureType createSubType(final FeatureType featureType,
-            final String[] properties) throws SchemaException{
+            final String[] properties) throws MismatchedFeatureException{
         if (properties == null) {
             return featureType;
         }
@@ -345,7 +346,7 @@ public final class FeatureTypeUtilities {
      * @throws SchemaException DOCUMENT ME!
      */
     public static FeatureType createSubType(final FeatureType featureType,
-            final GenericName[] properties) throws SchemaException{
+            final GenericName[] properties) throws MismatchedFeatureException{
         if (properties == null) {
             return featureType;
         }
@@ -376,7 +377,7 @@ public final class FeatureTypeUtilities {
         for (int i=0; i<properties.length; i++) {
             PropertyDescriptor desc = featureType.getDescriptor(properties[i]);
             if(desc == null){
-                throw new SchemaException("Property not found : " + properties[i] +'\n'+featureType);
+                throw new MismatchedFeatureException("Property not found : " + properties[i] +'\n'+featureType);
             }
             tb.add(desc);
         }
@@ -414,7 +415,7 @@ public final class FeatureTypeUtilities {
      * @throws SchemaException
      */
     public static FeatureType createType(final String identification, final String typeSpec)
-            throws SchemaException
+            throws MismatchedFeatureException
     {
         final int split = identification.lastIndexOf('.');
         final String namespace = (split == -1) ? null
@@ -455,7 +456,7 @@ public final class FeatureTypeUtilities {
      * @throws SchemaException
      */
     public static FeatureType createType(final String namespace, final String typeName,
-            final String typeSpec) throws SchemaException
+            final String typeSpec) throws MismatchedFeatureException
     {
         final FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName(NamesExt.create(namespace, typeName));
@@ -525,7 +526,7 @@ public final class FeatureTypeUtilities {
      *
      * @throws SchemaException If typeSpect could not be interpreted
      */
-    private static AttributeDescriptor createAttribute(final String namespace, final String typeSpec) throws SchemaException {
+    private static AttributeDescriptor createAttribute(final String namespace, final String typeSpec) throws MismatchedFeatureException {
         final int split = typeSpec.indexOf(':');
 
         final String name;
@@ -572,7 +573,7 @@ public final class FeatureTypeUtilities {
                             crs = CRS.decode("EPSG:" + srid);
                         } catch (Exception e) {
                             final String msg = "Error decoding srs: " + srid;
-                            throw new SchemaException(msg, e);
+                            throw new MismatchedFeatureException(msg, e);
                         }
                     }
                 }
@@ -589,7 +590,7 @@ public final class FeatureTypeUtilities {
                 return new DefaultAttributeDescriptor(at, NamesExt.create(namespace, name), 1, 1, nillable, null);
             }
         } catch (ClassNotFoundException e) {
-            throw new SchemaException("Could not type " + name + " as:" + type, e);
+            throw new MismatchedFeatureException("Could not type " + name + " as:" + type, e);
         }
     }
 
@@ -724,7 +725,7 @@ public final class FeatureTypeUtilities {
      * @throws SchemaException
      */
     public static FeatureType transform(final FeatureType schema, final CoordinateReferenceSystem crs)
-            throws SchemaException{
+            throws MismatchedFeatureException{
         return transform(schema, crs, false);
     }
 
@@ -738,7 +739,7 @@ public final class FeatureTypeUtilities {
      * @throws SchemaException
      */
     public static FeatureType transform(final FeatureType schema, final CoordinateReferenceSystem crs,
-            final boolean forceOnlyMissing) throws SchemaException{
+            final boolean forceOnlyMissing) throws MismatchedFeatureException{
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(schema.getName());
         ftb.setAbstract(schema.isAbstract());
@@ -812,7 +813,7 @@ public final class FeatureTypeUtilities {
      */
     public static FeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
             final URI ns, final boolean isAbstract, final FeatureType[] superTypes)
-            throws FactoryRegistryException, SchemaException{
+            throws FactoryRegistryException, MismatchedFeatureException{
         return newFeatureType(types, name, ns, isAbstract, superTypes, null);
     }
 
@@ -831,7 +832,7 @@ public final class FeatureTypeUtilities {
      */
     public static FeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
             final URI ns, final boolean isAbstract, final FeatureType[] superTypes,
-            final AttributeDescriptor defaultGeometry) throws FactoryRegistryException, SchemaException{
+            final AttributeDescriptor defaultGeometry) throws FactoryRegistryException, MismatchedFeatureException{
 
         final FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName(NamesExt.create(ns.toString(), name));
@@ -854,7 +855,7 @@ public final class FeatureTypeUtilities {
         }
         if (superTypes != null && superTypes.length > 0) {
             if (superTypes.length > 1) {
-                throw new SchemaException("Can only specify a single super type");
+                throw new MismatchedFeatureException("Can only specify a single super type");
             }
             tb.setSuperType(superTypes[0]);
 
@@ -880,7 +881,7 @@ public final class FeatureTypeUtilities {
      */
     public static FeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
             final URI ns, final boolean isAbstract, final FeatureType[] superTypes,
-            final GeometryDescriptor defaultGeometry) throws FactoryRegistryException, SchemaException{
+            final GeometryDescriptor defaultGeometry) throws FactoryRegistryException, MismatchedFeatureException{
         return newFeatureType(types, name, ns, isAbstract, superTypes, (AttributeDescriptor) defaultGeometry);
     }
 
@@ -897,7 +898,7 @@ public final class FeatureTypeUtilities {
      * @throws SchemaException If the AttributeTypes provided are invalid in some way.
      */
     public static FeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
-            final URI ns, final boolean isAbstract) throws FactoryRegistryException, SchemaException{
+            final URI ns, final boolean isAbstract) throws FactoryRegistryException, MismatchedFeatureException{
         return newFeatureType(types, name, ns, isAbstract, null);
     }
 
@@ -913,7 +914,7 @@ public final class FeatureTypeUtilities {
      * @throws SchemaException If the AttributeTypes provided are invalid in some way.
      */
     public static FeatureType newFeatureType(final AttributeDescriptor[] types, final String name,
-            final URI ns) throws FactoryRegistryException, SchemaException{
+            final URI ns) throws FactoryRegistryException, MismatchedFeatureException{
         return newFeatureType(types, name, ns, false);
     }
 
@@ -929,7 +930,7 @@ public final class FeatureTypeUtilities {
      * @throws SchemaException If the AttributeTypes provided are invalid in some way.
      */
     public static FeatureType newFeatureType(final AttributeDescriptor[] types, final String name)
-            throws FactoryRegistryException, SchemaException{
+            throws FactoryRegistryException, MismatchedFeatureException{
         return newFeatureType(types, name, DEFAULT_NAMESPACE, false);
     }
 

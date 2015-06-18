@@ -23,7 +23,6 @@ import com.vividsolutions.jts.geom.Point;
 
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.Feature;
@@ -34,6 +33,7 @@ import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.geometry.BoundingBox;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import static org.junit.Assert.*;
+import org.opengis.feature.MismatchedFeatureException;
 
 public class DefaultSimpleFeatureTest {
 
@@ -43,7 +43,7 @@ public class DefaultSimpleFeatureTest {
     private FeatureType schema;
     private Feature feature;
 
-    public DefaultSimpleFeatureTest() throws SchemaException {
+    public DefaultSimpleFeatureTest() throws MismatchedFeatureException {
         schema = FeatureTypeUtilities.createType("buildings", "the_geom:MultiPolygon,name:String,ADDRESS:String");
         feature = FeatureBuilder.build(schema, new Object[] {null, "ABC", "Random Road, 12"}, "building.1");
     }

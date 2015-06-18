@@ -27,7 +27,6 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.FeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -42,6 +41,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -98,7 +98,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader {
      * @throws SchemaException if we could not determine the correct FeatureType
      */
     private ShapefileFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
-            FeatureType schema) throws SchemaException {
+            FeatureType schema) throws MismatchedFeatureException {
         this.attributeReader = attributeReader;
         this.fidReader = fidReader;
 
@@ -132,7 +132,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader {
     }
 
     public ShapefileFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader)
-            throws SchemaException {
+            throws MismatchedFeatureException {
         this(attributeReader, fidReader, null);
     }
 
@@ -242,7 +242,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader {
     /**
      * Create a FeatureType based on the attributs described in the attribut reader.
      */
-    private static FeatureType createSchema(final ShapefileAttributeReader attributeReader) throws SchemaException {
+    private static FeatureType createSchema(final ShapefileAttributeReader attributeReader) throws MismatchedFeatureException {
         final FeatureTypeBuilder b = new FeatureTypeBuilder();
         b.setName("noTypeName");
         b.addAll(getDescriptors(attributeReader));
@@ -258,7 +258,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader {
     }
 
     public static ShapefileFeatureReader create(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
-            final FeatureType schema, final Hints hints) throws SchemaException {
+            final FeatureType schema, final Hints hints) throws MismatchedFeatureException {
         final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
         if (detached == null || detached) {
             //default behavior, make separate features
@@ -274,7 +274,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader {
         protected final FeatureBuilder builder;
 
         private DefaultSeparateFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
-                final FeatureType schema) throws SchemaException {
+                final FeatureType schema) throws MismatchedFeatureException {
             super(attributeReader, fidReader, schema);
 
             this.builder = new FeatureBuilder(schema);
@@ -315,7 +315,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader {
         protected final DefaultSimpleFeature feature;
 
         private DefaultReuseFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
-                final FeatureType schema) throws SchemaException {
+                final FeatureType schema) throws MismatchedFeatureException {
             super(attributeReader, fidReader, schema);
 
             feature = new DefaultSimpleFeature((SimpleFeatureType) schema, null, new Object[schema.getDescriptors().size()], false);

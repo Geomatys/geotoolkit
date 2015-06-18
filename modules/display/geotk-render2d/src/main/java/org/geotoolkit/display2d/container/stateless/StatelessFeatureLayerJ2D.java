@@ -64,7 +64,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
@@ -81,6 +80,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.StyleUtilities;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
@@ -570,7 +570,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
             try {
                 expected = FeatureTypeUtilities.createSubType(schema, atts);
-            } catch (SchemaException ex) {
+            } catch (MismatchedFeatureException ex) {
                 throw new PortrayalException(ex);
             }
         }
