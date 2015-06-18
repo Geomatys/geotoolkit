@@ -171,7 +171,7 @@ public final class FeatureTestings {
      *         attribtueType
      */
     public static Object testingPropertyValue(final PropertyDescriptor attributeType)
-            throws IllegalAttributeException {
+            throws IllegalArgumentException {
 
         if(attributeType instanceof AttributeDescriptor){
             final AttributeDescriptor attDesc = (AttributeDescriptor) attributeType;

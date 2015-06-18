@@ -21,7 +21,6 @@ import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.feature.type.FeatureType;
 
 import java.io.*;
@@ -93,7 +92,7 @@ public class MIFFeatureWriter implements FeatureWriter {
         if (reader.hasNext()) {
             try {
                 return currentFeature = reader.next();
-            } catch (IllegalAttributeException iae) {
+            } catch (IllegalArgumentException iae) {
                 throw new FeatureStoreRuntimeException("Error in reading", iae);
             }
         }
@@ -103,7 +102,7 @@ public class MIFFeatureWriter implements FeatureWriter {
         try {
             final String featureID = getFeatureType().getName().tip().toString()+"."+(featureCount++);
             return currentFeature = FeatureUtilities.defaultFeature(writeType, featureID);
-        } catch (IllegalAttributeException iae) {
+        } catch (IllegalArgumentException iae) {
             throw new FeatureStoreRuntimeException("Error creating empty Feature", iae);
         }
     }

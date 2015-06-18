@@ -477,11 +477,11 @@ public final class FeatureUtilities {
      *
      * @param attributeType
      * @return null for nillable attributeType, attempt at reflection
-     * @throws IllegalAttributeException If value cannot be constructed for
+     * @throws IllegalArgumentException If value cannot be constructed for
      *         attribtueType
      */
     public static Object defaultPropertyValue(final PropertyDescriptor attributeType)
-            throws IllegalAttributeException {
+            throws IllegalArgumentException {
 
         if(attributeType instanceof AttributeDescriptor){
             final Object value = ((AttributeDescriptor)attributeType).getDefaultValue();

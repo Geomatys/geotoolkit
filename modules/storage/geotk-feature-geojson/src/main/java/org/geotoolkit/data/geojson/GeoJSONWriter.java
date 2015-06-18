@@ -12,7 +12,6 @@ import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.GeometryAttribute;
-import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -119,7 +118,7 @@ class GeoJSONWriter implements Closeable, Flushable {
      * @throws IOException
      * @throws IllegalAttributeException
      */
-    void writeSingleFeature(Feature feature) throws IOException, IllegalAttributeException {
+    void writeSingleFeature(Feature feature) throws IOException, IllegalArgumentException {
         assert(!isFeatureCollection && !isSingleFeature && !isSingleGeometry) :
                 "writeSingleFeature can called only once per GeoJSONWriter.";
 
@@ -127,7 +126,7 @@ class GeoJSONWriter implements Closeable, Flushable {
         writeFeature(feature, true);
     }
 
-    void writeFeature(Feature feature) throws IOException, IllegalAttributeException {
+    void writeFeature(Feature feature) throws IOException, IllegalArgumentException {
         assert(isFeatureCollection && !isSingleFeature && !isSingleGeometry) :
                 "Can't write a Feature before writeStartFeatureCollection.";
         writeFeature(feature, false);
@@ -140,7 +139,7 @@ class GeoJSONWriter implements Closeable, Flushable {
      * @throws IOException
      * @throws IllegalAttributeException
      */
-    private void writeFeature(Feature feature, boolean single) throws IOException, IllegalAttributeException {
+    private void writeFeature(Feature feature, boolean single) throws IOException, IllegalArgumentException {
         if (!single) {
             if (first) {
                 writer.writeArrayFieldStart(FEATURES);
@@ -201,7 +200,7 @@ class GeoJSONWriter implements Closeable, Flushable {
      * @throws IllegalAttributeException
      */
     private void writeProperties(ComplexAttribute edited, String fieldName, boolean writeFieldName)
-            throws IOException, IllegalAttributeException {
+            throws IOException, IllegalArgumentException {
         if (writeFieldName) {
             writer.writeObjectFieldStart(fieldName);
         } else {
@@ -235,7 +234,7 @@ class GeoJSONWriter implements Closeable, Flushable {
      * @param writeFieldName
      * @throws IOException
      */
-    private void writeProperty(Property property, boolean writeFieldName) throws IOException, IllegalAttributeException {
+    private void writeProperty(Property property, boolean writeFieldName) throws IOException, IllegalArgumentException {
         if (property instanceof ComplexAttribute) {
             writeProperties((ComplexAttribute) property, property.getName().tip().toString(), writeFieldName);
         } else {
@@ -253,7 +252,7 @@ class GeoJSONWriter implements Closeable, Flushable {
      * @param writeFieldName
      * @throws IOException
      */
-    private void writeAttribute(org.opengis.feature.Attribute property, boolean writeFieldName) throws IOException, IllegalAttributeException {
+    private void writeAttribute(org.opengis.feature.Attribute property, boolean writeFieldName) throws IOException, IllegalArgumentException {
 
         if (writeFieldName) {
             String fieldName = property.getName().toString();

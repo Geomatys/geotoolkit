@@ -784,7 +784,7 @@ public final class FeatureTypeUtilities {
      * @throws IllegalAttributeException
      */
     public static Feature transform(Feature feature, final FeatureType schema, final MathTransform transform)
-            throws MismatchedDimensionException, TransformException, SimpleIllegalAttributeException{
+            throws MismatchedDimensionException, TransformException, IllegalArgumentException{
         feature = FeatureUtilities.copy(feature);
 
         final GeometryDescriptor geomType = schema.getGeometryDescriptor();
@@ -1198,12 +1198,12 @@ public final class FeatureTypeUtilities {
     }
 
     public static Object[] defaultValues(final FeatureType featureType)
-            throws IllegalAttributeException {
+            throws IllegalArgumentException {
         return defaultValues(featureType, null);
     }
 
     public static Object[] defaultValues(final FeatureType featureType,
-            Object[] values) throws IllegalAttributeException {
+            Object[] values) throws IllegalArgumentException {
         if (values == null) {
             values = new Object[featureType.getDescriptors().size()];
         } else if (values.length != featureType.getDescriptors().size()) {
@@ -1236,7 +1236,7 @@ public final class FeatureTypeUtilities {
      *         attribtueType
      */
     public static Object defaultValue(final PropertyDescriptor attributeType)
-            throws IllegalAttributeException {
+            throws IllegalArgumentException {
 
         if(attributeType instanceof AttributeDescriptor){
 
@@ -1278,22 +1278,22 @@ public final class FeatureTypeUtilities {
      *         instance with acceptable default values
      */
     public static Feature template(final FeatureType featureType)
-            throws IllegalAttributeException {
+            throws IllegalArgumentException {
         return FeatureBuilder.build(featureType, defaultValues(featureType), null);
     }
 
     public static Feature template(final FeatureType featureType, final String featureID)
-            throws IllegalAttributeException {
+            throws IllegalArgumentException {
         return FeatureBuilder.build(featureType, defaultValues(featureType), featureID);
     }
 
     public static Feature template(final FeatureType featureType, final Object[] atts)
-            throws IllegalAttributeException {
+            throws IllegalArgumentException {
         return FeatureBuilder.build(featureType, defaultValues(featureType, atts), null);
     }
 
     public static Feature template(final FeatureType featureType, final String featureID,
-            final Object[] atts) throws IllegalAttributeException {
+            final Object[] atts) throws IllegalArgumentException {
         return FeatureBuilder.build(featureType, defaultValues(featureType, atts), featureID);
     }
 
@@ -1325,7 +1325,7 @@ public final class FeatureTypeUtilities {
      * @throws IllegalAttributeException If opperation could not be performed
      */
     public static Feature reType(final FeatureType featureType, final Feature feature)
-            throws IllegalAttributeException {
+            throws IllegalArgumentException {
         final FeatureType original = feature.getType();
 
         if (featureType.equals(original)) {

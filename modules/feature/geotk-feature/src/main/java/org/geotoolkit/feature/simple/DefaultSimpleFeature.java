@@ -35,15 +35,14 @@ import org.geotoolkit.feature.DefaultAttribute;
 import org.geotoolkit.feature.DefaultGeometryAttribute;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.GeometryAttribute;
-import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
+import org.opengis.feature.PropertyNotFoundException;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.util.GenericName;
@@ -274,7 +273,7 @@ public final class DefaultSimpleFeature extends AbstractFeature<List<Property>> 
     public void setAttribute(final String name, final Object value) {
         final Integer idx = getIndex().get(name);
         if (idx == null) {
-            throw new SimpleIllegalAttributeException("Unknown attribute " + name);
+            throw new PropertyNotFoundException("Unknown attribute " + name);
         }
         setAttribute(idx, value);
     }
@@ -283,7 +282,7 @@ public final class DefaultSimpleFeature extends AbstractFeature<List<Property>> 
     public void setAttribute(final GenericName name, final Object value) {
         final Integer idx = getIndex().get(name);
         if (idx == null) {
-            throw new SimpleIllegalAttributeException("Unknown attribute " + name);
+            throw new PropertyNotFoundException("Unknown attribute " + name);
         }
         setAttribute(idx, value);
     }
@@ -577,7 +576,7 @@ public final class DefaultSimpleFeature extends AbstractFeature<List<Property>> 
     }
 
     @Override
-    public void validate() throws IllegalAttributeException {
+    public void validate() throws IllegalArgumentException {
         final List<Property> properties = getProperties();
         final SimpleFeatureType type = getFeatureType();
 

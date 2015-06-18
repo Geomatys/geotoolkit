@@ -8,7 +8,6 @@ import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.data.geojson.binding.GeoJSONObject;
-import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -226,7 +225,7 @@ public final class GeoJSONUtils extends Static {
      * @throws IOException
      * @throws IllegalAttributeException
      */
-    public static void writeValue(Object value, JsonGenerator writer) throws IOException, IllegalAttributeException {
+    public static void writeValue(Object value, JsonGenerator writer) throws IOException, IllegalArgumentException {
 
         if (value == null) {
             writer.writeNull();

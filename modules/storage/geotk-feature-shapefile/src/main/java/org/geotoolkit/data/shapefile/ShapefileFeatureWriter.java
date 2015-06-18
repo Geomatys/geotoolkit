@@ -39,7 +39,6 @@ import org.geotoolkit.data.shapefile.shp.ShapeType;
 import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 
-import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -380,7 +379,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
                 currentFeature = (SimpleFeature) featureReader.next();
                 originalFeature = FeatureUtilities.copy(currentFeature);
                 return currentFeature;
-            } catch (IllegalAttributeException iae) {
+            } catch (IllegalArgumentException iae) {
                 throw new FeatureStoreRuntimeException("Error in reading", iae);
             }
         }
@@ -391,7 +390,7 @@ public class ShapefileFeatureWriter implements FeatureWriter {
             final String featureID = getFeatureType().getName().tip().toString()+"."+(records+1);
             originalFeature = null;
             return currentFeature = (SimpleFeature) FeatureTypeUtilities.template(getFeatureType(),featureID,emptyAtts);
-        } catch (IllegalAttributeException iae) {
+        } catch (IllegalArgumentException iae) {
             throw new FeatureStoreRuntimeException("Error creating empty Feature", iae);
         }
     }

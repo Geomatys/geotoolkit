@@ -160,7 +160,7 @@ abstract class WrapProperty<P extends org.geotoolkit.feature.Property> extends A
         }
 
         @Override
-        public void validate() throws IllegalAttributeException {
+        public void validate() throws IllegalArgumentException {
             prop.validate();
         }
     }

@@ -21,7 +21,6 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.IllegalAttributeException;
 import org.geotoolkit.feature.*;
 import org.geotoolkit.feature.type.FeatureType;
 
@@ -91,7 +90,7 @@ class GeoJSONFileWriter extends GeoJSONReader implements FeatureWriter {
             writer.flush();
         } catch (IOException e) {
             throw new FeatureStoreRuntimeException(e.getMessage(), e);
-        } catch (IllegalAttributeException e) {
+        } catch (IllegalArgumentException e) {
             throw new FeatureStoreRuntimeException(e.getMessage(), e);
         }
     }

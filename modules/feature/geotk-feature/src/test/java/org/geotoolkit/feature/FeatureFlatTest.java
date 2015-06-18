@@ -199,7 +199,7 @@ public class FeatureFlatTest extends TestCase {
         return adb.buildDescriptor();
     }
 
-    public void testModify() throws IllegalAttributeException {
+    public void testModify() throws IllegalArgumentException {
         String newData = "new test string data";
         testFeature.setPropertyValue("testString", newData);
         assertEquals("match modified (string) attribute", testFeature.getPropertyValue("testString"), newData);

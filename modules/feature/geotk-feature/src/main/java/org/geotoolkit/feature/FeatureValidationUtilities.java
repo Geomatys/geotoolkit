@@ -31,6 +31,8 @@ import org.opengis.filter.Filter;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.apache.sis.util.logging.Logging;
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.opengis.feature.InvalidPropertyValueException;
+import org.opengis.feature.PropertyNotFoundException;
 
 
 /**
@@ -61,7 +63,7 @@ public final class FeatureValidationUtilities {
         try {
             validate(attribute.getType(), attribute, attribute.getValue(), false);
             return true;
-        } catch (IllegalAttributeException invalid) {
+        } catch (IllegalArgumentException invalid) {
             return false;
         }
     }
@@ -74,12 +76,12 @@ public final class FeatureValidationUtilities {
      * @param attributeContent
      *            Content of attribute (often attribute.getValue()
      *
-     * @throws IllegalAttributeException
+     * @throws IllegalArgumentException
      *             In the event that content violates any restrictions specified
      *             by the attribute.
      */
     public static void validate(final Attribute attribute, final Object attributeContent)
-            throws IllegalAttributeException {
+            throws IllegalArgumentException {
         validate(attribute.getType(), attribute, attributeContent, false);
     }
 
@@ -91,7 +93,7 @@ public final class FeatureValidationUtilities {
      * @throws IllegalAttributeException
      */
     public static void validate(final AttributeType type, final Attribute attribute,
-            final Object attributeContent) throws IllegalAttributeException{
+            final Object attributeContent) throws IllegalArgumentException{
         validate(type, attribute, attributeContent, false);
     }
 
@@ -104,15 +106,15 @@ public final class FeatureValidationUtilities {
      * @throws IllegalAttributeException
      */
     protected static void validate(final AttributeType type, final Attribute attribute,
-            final Object attributeContent, final boolean isSuper) throws IllegalAttributeException{
+            final Object attributeContent, final boolean isSuper) throws IllegalArgumentException{
 
         if (type == null) {
-            throw new SimpleIllegalAttributeException("null type");
+            throw new InvalidPropertyValueException("null type");
         }
 
         if (attributeContent == null) {
             if (!attribute.isNillable()) {
-                throw new SimpleIllegalAttributeException(type.getName() + " not nillable");
+                throw new InvalidPropertyValueException(type.getName() + " not nillable");
             }
             return;
         }
@@ -132,14 +134,14 @@ public final class FeatureValidationUtilities {
             final Class clazz = attributeContent.getClass();
             final Class binding = type.getBinding();
             if (binding != null && binding != clazz && !binding.isAssignableFrom(clazz)) {
-                throw new SimpleIllegalAttributeException(clazz.getName() + " is not an acceptable class for " + type.getName() + " as it is not assignable from " + binding);
+                throw new InvalidPropertyValueException(clazz.getName() + " is not an acceptable class for " + type.getName() + " as it is not assignable from " + binding);
             }
         }
 
         if (type.getRestrictions() != null) {
             for (Filter f : type.getRestrictions()) {
                 if (!f.evaluate(attribute)) {
-                    throw new SimpleIllegalAttributeException("Attribute instance (" + attribute.getIdentifier() + ")" + "fails to pass filter: " + f);
+                    throw new InvalidPropertyValueException("Attribute instance (" + attribute.getIdentifier() + ")" + "fails to pass filter: " + f);
                 }
             }
         }
@@ -153,7 +155,7 @@ public final class FeatureValidationUtilities {
     /**
      * Ensure that attributeContent is a good value for descriptor.
      */
-    public static void validate(final AttributeDescriptor descriptor, final Object value) throws IllegalAttributeException {
+    public static void validate(final AttributeDescriptor descriptor, final Object value) throws IllegalArgumentException {
         ensureNonNull("descriptor", descriptor);
 
         if (value == null) {
@@ -203,7 +205,7 @@ public final class FeatureValidationUtilities {
     }
 
     protected static void validate(final AttributeType type, final Object value, final boolean isSuper)
-            throws IllegalAttributeException{
+            throws IllegalArgumentException{
         if (!isSuper) {
             // JD: This is an issue with how the xml simpel type hierarchy
             // maps to our current Java Type hiearchy, the two are inconsitent.
@@ -215,14 +217,14 @@ public final class FeatureValidationUtilities {
             final Class binding = type.getBinding();
 
             if (binding != null && !binding.isAssignableFrom(clazz)) {
-                throw new SimpleIllegalAttributeException(clazz.getName() + " is not an acceptable class for " + type.getName() + " as it is not assignable from " + binding);
+                throw new InvalidPropertyValueException(clazz.getName() + " is not an acceptable class for " + type.getName() + " as it is not assignable from " + binding);
             }
         }
 
         if (type.getRestrictions() != null && type.getRestrictions().size() > 0) {
             for (Filter filter : type.getRestrictions()) {
                 if (!filter.evaluate(value)) {
-                    throw new SimpleIllegalAttributeException(type.getName() + " restriction " + filter + " not met by: " + value);
+                    throw new InvalidPropertyValueException(type.getName() + " restriction " + filter + " not met by: " + value);
                 }
             }
         }
@@ -261,14 +263,14 @@ public final class FeatureValidationUtilities {
      *
      * @param expected Expected FeatureType being used to compare against
      * @param actual Actual FeatureType
-     * @throws SimpleIllegalAttributeException if assertion is false
+     * @throws IllegalArgumentException if assertion is false
      */
-    public static void assertNameAssignable(final FeatureType expected, final FeatureType actual) throws SimpleIllegalAttributeException{
+    public static void assertNameAssignable(final FeatureType expected, final FeatureType actual) throws IllegalArgumentException{
         // check feature type name
         String expectedName = expected.getName().tip().toString();
         final String actualName = actual.getName().tip().toString();
         if (!expectedName.equals(actualName)) {
-            throw new SimpleIllegalAttributeException("Expected '" + expectedName + "' but was supplied '" + actualName + "'.");
+            throw new PropertyNotFoundException("Expected '" + expectedName + "' but was supplied '" + actualName + "'.");
         }
         // check attributes names
         final Set<String> names = new TreeSet<String>();
@@ -280,11 +282,11 @@ public final class FeatureValidationUtilities {
             if (names.contains(expectedName)) {
                 names.remove(expectedName); // only use once!
             } else {
-                throw new SimpleIllegalAttributeException("Expected to find a match for '" + expectedName + "' but was not available remaining names: " + names);
+                throw new PropertyNotFoundException("Expected to find a match for '" + expectedName + "' but was not available remaining names: " + names);
             }
         }
         if (!names.isEmpty()) {
-            throw new SimpleIllegalAttributeException("Expected to find attributes '" + expectedName + "' but was not available remaining names: " + names);
+            throw new PropertyNotFoundException("Expected to find attributes '" + expectedName + "' but was not available remaining names: " + names);
         }
 
         // check attribute bindings
