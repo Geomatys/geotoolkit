@@ -2,6 +2,8 @@ package org.geotoolkit.gui.javafx.util;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -285,7 +287,11 @@ public class ProgressMonitor extends HBox {
         public ErrorMenuItem(final Task failedTask) {
             ArgumentChecks.ensureNonNull("task in error", failedTask);
             this.failedTask = failedTask;
-            textProperty().bind(this.failedTask.titleProperty());
+            // No need for binding here. Task failed, its state should not change anymore.
+            String title = failedTask.getTitle();
+            if (title == null || title.isEmpty())
+                title = "opération anonyme";
+            setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))+" - "+title);
             Dialog d = GeotkFX.newExceptionDialog(failedTask.getMessage(), failedTask.getException());
             d.setResizable(true);
 
