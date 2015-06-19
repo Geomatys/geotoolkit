@@ -105,6 +105,7 @@
     <module>geotk-client-wps</module>
     <module>geotk-client-ignrm</module>
     <module>geotk-client-googlemaps</module>
+    <module>geotk-client-wms-swing</module>
   </modules>
 
 </project>
