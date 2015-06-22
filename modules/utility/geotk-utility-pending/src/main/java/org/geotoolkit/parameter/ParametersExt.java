@@ -335,7 +335,11 @@ public final class ParametersExt {
         paramMap.put(IdentifiedObject.NAME_KEY, code);
         paramMap.put(IdentifiedObject.REMARKS_KEY, remarks);
 
-        return new DefaultParameterDescriptor(paramMap, required?1:0, 1, valueClass, new Range(valueClass, minValue, true, maxValue, true), validValues, defaultValue);
+        Range range = null;
+        if(minValue!=null || maxValue!=null){
+            range = new Range(valueClass, minValue, true, maxValue, true);
+        }
+        return new DefaultParameterDescriptor(paramMap, required?1:0, 1, valueClass, range, validValues, defaultValue);
     }
 
 
