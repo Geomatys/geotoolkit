@@ -40,6 +40,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.op.AliasOperation;
 import org.geotoolkit.feature.type.ComplexType;
@@ -53,8 +54,23 @@ import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.gml.JTStoGeometry;
+import org.geotoolkit.gml.xml.AbstractCurve;
 import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.gml.xml.AbstractSurface;
+import org.geotoolkit.gml.xml.CurveProperty;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
+import org.geotoolkit.gml.xml.MultiCurve;
+import org.geotoolkit.gml.xml.MultiSurface;
+import org.geotoolkit.gml.xml.SurfaceProperty;
+import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v321.AbstractSolidType;
+import org.geotoolkit.gml.xml.v321.GeometryPropertyType;
+import org.geotoolkit.gml.xml.v321.MultiGeometryType;
+import org.geotoolkit.gml.xml.v321.MultiPointType;
+import org.geotoolkit.gml.xml.v321.MultiSolidType;
+import org.geotoolkit.gml.xml.v321.PointPropertyType;
+import org.geotoolkit.gml.xml.v321.PointType;
+import org.geotoolkit.gml.xml.v321.SolidPropertyType;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.Citations;
@@ -195,12 +211,12 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         final GenericName typeName    = type.getName();
         final String namespace = NamesExt.getNamespace(typeName);
         final String localPart = typeName.tip().toString();
-        final Identifier featureId = feature.getIdentifier();
+        final String gmlid = getId(feature, null);
         if (namespace != null && !namespace.isEmpty()) {
             final Prefix prefix = getPrefix(namespace);
             writer.writeStartElement(prefix.prefix, localPart, namespace);
-            if (featureId != null) {
-                writer.writeAttribute("gml", gmlNamespace, "id", (String)featureId.getID());
+            if (gmlid != null) {
+                writer.writeAttribute("gml", gmlNamespace, "id", gmlid);
             }
             if (prefix.unknow && !root) {
                 writer.writeNamespace(prefix.prefix, namespace);
@@ -214,12 +230,12 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
         } else {
             writer.writeStartElement(localPart);
-            if (featureId != null) {
-                writer.writeAttribute("gml", gmlNamespace, "id", (String)featureId.getID());
+            if (gmlid != null) {
+                writer.writeAttribute("gml", gmlNamespace, "id", gmlid);
             }
         }
 
-        writeComplexProperties(feature, getId(feature, null));
+        writeComplexProperties(feature, gmlid);
 
         writer.writeEndElement();
         writer.flush();
@@ -235,10 +251,10 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             if(((String)id).isEmpty()){
                 return fallback;
             }else{
-                return (String) id;
+                return ((String)id).replace(':', '_');
             }
         }else{
-            return String.valueOf(id);
+            return String.valueOf(id).replace(':', '_');
         }
     }
 
@@ -298,7 +314,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
         if(nil){
             //add the xsi:nill attribute
-            writer.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "nil","true");
+            writer.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "nil","1");
         }
 
         return nil;
@@ -348,9 +364,23 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 //                }
 
                 final Collection<Property> props = feature.getProperties(desc.getName());
-                for (Property a : props) {
-                    writeProperty(feature,a,false, id);
-                    allProps.remove(a);
+                if(!props.isEmpty()){
+                    for (Property a : props) {
+                        writeProperty(feature,a,false, id);
+                        allProps.remove(a);
+                    }
+                }else if(desc.isNillable()){
+                    //we must have at least one tag with nil=1
+                    final GenericName nameA = desc.getName();
+                    final String namespaceProperty = NamesExt.getNamespace(nameA);
+                    final String nameProperty = nameA.tip().toString();
+                    if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
+                        writer.writeStartElement(namespaceProperty, nameProperty);
+                    } else {
+                        writer.writeStartElement(nameProperty);
+                    }
+                    writer.writeAttribute("http://www.w3.org/2001/XMLSchema-instance", "nil", "1");
+                    writer.writeEndElement();
                 }
             }
 
@@ -470,12 +500,13 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }else{
                 //simple type
                 String value = (valueA instanceof Property) ? null : Utils.getStringValue(valueA);
-                if (valueA instanceof Property || value != null || (value == null && !a.isNillable())) {
 
-                    if ((nameProperty.equals("name") || nameProperty.equals("description")) && !gmlNamespace.equals(namespaceProperty)) {
-                        namespaceProperty = gmlNamespace;
-                        LOGGER.finer("the property name and description of a feature must have the GML namespace");
-                    }
+                if ((nameProperty.equals("name") || nameProperty.equals("description")) && !gmlNamespace.equals(namespaceProperty)) {
+                    namespaceProperty = gmlNamespace;
+                    LOGGER.finer("the property name and description of a feature must have the GML namespace");
+                }
+
+                if (valueA instanceof Property || value != null) {
                     if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
                         writer.writeStartElement(namespaceProperty, nameProperty);
                     } else {
@@ -507,6 +538,14 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     }else if (value != null) {
                         writer.writeCharacters(value);
                     }
+                    writer.writeEndElement();
+                }else if(value==null && a.isNillable()){
+                    if (namespaceProperty != null && !namespaceProperty.isEmpty()) {
+                        writer.writeStartElement(namespaceProperty, nameProperty);
+                    } else {
+                        writer.writeStartElement(nameProperty);
+                    }
+                    writer.writeAttribute("http://www.w3.org/2001/XMLSchema-instance", "nil", "1");
                     writer.writeEndElement();
                 }
             }
@@ -543,7 +582,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         //id is requiered in version 3.2.1
                         //NOTE we often see gml where the geometry id is the same as the feature
                         // we use the last parent with an id, seems acceptable.
-                        gmlGeometry.setId(id);
+                        final String gid = (id+"_g").replace(':', '_');
+                        setId(gmlGeometry, gid, new int[1]);
                     }
                     element = GML32_FACTORY.buildAnyGeometry(gmlGeometry);
                     POOL = GML_32_POOL;
@@ -564,6 +604,55 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 if(!descIsType)writer.writeEndElement();
             }
         }
+    }
+
+    /**
+     * 
+     * @param gmlGeometry
+     * @param id
+     * @param inc auto increment value, ids must be unique
+     */
+    private static void setId(AbstractGeometry gmlGeometry, String id, int[] inc){
+        gmlGeometry.setId(id+(inc[0]));
+        inc[0] = inc[0]+1;
+
+        if(gmlGeometry instanceof MultiCurve){
+            for(CurveProperty po : ((MultiCurve)gmlGeometry).getCurveMember()){
+                final AbstractCurve child = po.getAbstractCurve();
+                if(child instanceof AbstractGeometry){
+                    setId((AbstractGeometry) child, id, inc);
+                }
+            }
+        }else if(gmlGeometry instanceof MultiSurface){
+            for(SurfaceProperty po : ((MultiSurface)gmlGeometry).getSurfaceMember()){
+                final AbstractSurface child = po.getAbstractSurface();
+                if(child instanceof AbstractGeometry){
+                    setId((AbstractGeometry) child, id, inc);
+                }
+            }
+        }else if(gmlGeometry instanceof MultiGeometryType){
+            for(GeometryPropertyType po : ((MultiGeometryType)gmlGeometry).getGeometryMember()){
+                final AbstractGeometryType child = po.getAbstractGeometry();
+                if(child instanceof AbstractGeometry){
+                    setId((AbstractGeometry) child, id, inc);
+                }
+            }
+        }else if(gmlGeometry instanceof MultiSolidType){
+            for(SolidPropertyType po : ((MultiSolidType)gmlGeometry).getSolidMember()){
+                final AbstractSolidType child = po.getAbstractSolid().getValue();
+                if(child instanceof AbstractGeometry){
+                    setId((AbstractGeometry) child, id, inc);
+                }
+            }
+        }else if(gmlGeometry instanceof MultiPointType){
+            for(PointPropertyType po : ((MultiPointType)gmlGeometry).getPointMember()){
+                final PointType child = po.getPoint();
+                if(child instanceof AbstractGeometry){
+                    setId((AbstractGeometry) child, id, inc);
+                }
+            }
+        }
+
     }
 
     /**
