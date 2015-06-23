@@ -60,7 +60,7 @@ import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 @Deprecated
-abstract class AbstractParameter extends FormattableObject
+public abstract class AbstractParameter extends FormattableObject
            implements GeneralParameterValue, Serializable, Cloneable, Formattable
 {
     /**
@@ -71,7 +71,7 @@ abstract class AbstractParameter extends FormattableObject
     /**
      * The abstract definition of this parameter or group of parameters.
      */
-    final GeneralParameterDescriptor descriptor;
+    protected final GeneralParameterDescriptor descriptor;
 
     /**
      * Constructs a parameter value from the specified descriptor.
@@ -159,7 +159,7 @@ abstract class AbstractParameter extends FormattableObject
      * Returns an exception initialized with a "Unitless parameter" error message for the
      * specified descriptor.
      */
-    static IllegalStateException unitlessParameter(final GeneralParameterDescriptor descriptor) {
+    protected static IllegalStateException unitlessParameter(final GeneralParameterDescriptor descriptor) {
         return new IllegalStateException(Errors.format(
                 Errors.Keys.UnitlessParameter_1, getName(descriptor)));
     }
@@ -169,7 +169,7 @@ abstract class AbstractParameter extends FormattableObject
      * mostly for output to be read by human, not for processing. Consequently, we may consider
      * to returns a localized name in a future version.
      */
-    static String getName(final GeneralParameterDescriptor descriptor) {
+    protected static String getName(final GeneralParameterDescriptor descriptor) {
         return descriptor.getName().getCode();
     }
 

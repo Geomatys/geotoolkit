@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.observation.xml;
+package org.geotoolkit.observation.store.xml;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,8 +37,10 @@ import org.geotoolkit.gml.xml.Point;
 import org.geotoolkit.gml.xml.Polygon;
 import org.geotoolkit.observation.AbstractObservationStore;
 import org.geotoolkit.observation.ObservationReader;
-import static org.geotoolkit.observation.xml.XmlObservationStoreFactory.FILE_PATH;
-import static org.geotoolkit.observation.xml.XmlObservationUtils.*;
+import static org.geotoolkit.observation.store.xml.XmlObservationStoreFactory.FILE_PATH;
+
+import org.geotoolkit.observation.xml.*;
+import org.geotoolkit.observation.xml.Process;
 import org.geotoolkit.sampling.xml.SamplingFeature;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.ExtractionResult.ProcedureTree;
@@ -83,7 +85,7 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
         if (obj instanceof ObservationCollection) {
             final ObservationCollection collection = (ObservationCollection)obj;
             for (Observation obs : collection.getMember()) {
-                final Process process = (Process)obs.getProcedure();
+                final org.geotoolkit.observation.xml.Process process = (Process)obs.getProcedure();
                 names.add(NamesExt.create(process.getHref()));
             }
             
@@ -121,13 +123,13 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
                         result.procedures.add(procedure);
                     }
                     final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                    final List<String> fields = getPhenomenonsFields(phenProp);
+                    final List<String> fields = XmlObservationUtils.getPhenomenonsFields(phenProp);
                     for (String field : fields) {
                         if (!result.fields.contains(field)) {
                             result.fields.add(field);
                         }
                     }
-                    final Phenomenon phen = getPhenomenons(phenProp);
+                    final Phenomenon phen = XmlObservationUtils.getPhenomenons(phenProp);
                     if (!result.phenomenons.contains(phen)) {
                         result.phenomenons.add(phen);
                     }
@@ -145,8 +147,8 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
             if (sensorIDs == null || sensorIDs.contains(procedure.id)) {
                 result.observations .add(obs);
                 final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                result.fields.addAll(getPhenomenonsFields(phenProp));
-                result.phenomenons.add(getPhenomenons(phenProp));
+                result.fields.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
+                result.phenomenons.add(XmlObservationUtils.getPhenomenons(phenProp));
                 result.procedures.add(procedure);
                 appendTime(obs.getSamplingTime(), result.spatialBound);
                 appendTime(obs.getSamplingTime(), procedure.spatialBound);
@@ -172,7 +174,7 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
                     result.add(procedure);
                 }
                 final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                final List<String> fields = getPhenomenonsFields(phenProp);
+                final List<String> fields = XmlObservationUtils.getPhenomenonsFields(phenProp);
                 for (String field : fields) {
                     if (!procedure.fields.contains(field)) {
                         procedure.fields.add(field);
@@ -187,7 +189,7 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
             final ProcedureTree procedure = new ProcedureTree(obs.getProcedure().getHref(), "Component");
             
             final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-            procedure.fields.addAll(getPhenomenonsFields(phenProp));
+            procedure.fields.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
             result.add(procedure);
             appendTime(obs.getSamplingTime(), procedure.spatialBound);
             appendGeometry(obs.getFeatureOfInterest(), procedure.spatialBound);
@@ -277,13 +279,13 @@ public class XmlObservationStore extends AbstractObservationStore implements Dat
             for (Observation obs : collection.getMember()) {
                 final AbstractObservation o = (AbstractObservation)obs;
                 final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                phenomenons.addAll(getPhenomenonsFields(phenProp));
+                phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
             }
             
         } else if (obj instanceof AbstractObservation) {
             final AbstractObservation obs = (AbstractObservation)obj;
             final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-            phenomenons.addAll(getPhenomenonsFields(phenProp));
+            phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
         }
         return phenomenons;
     }

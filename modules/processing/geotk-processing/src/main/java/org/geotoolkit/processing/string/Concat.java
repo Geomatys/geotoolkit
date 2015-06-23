@@ -18,7 +18,7 @@
 package org.geotoolkit.processing.string;
 
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.processing.string.ConcatDescriptor.INSTANCE;

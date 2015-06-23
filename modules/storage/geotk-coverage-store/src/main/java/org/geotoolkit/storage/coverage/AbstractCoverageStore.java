@@ -30,7 +30,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.TreeTable.Node;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.storage.AbstractDataStore;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.StorageEvent;

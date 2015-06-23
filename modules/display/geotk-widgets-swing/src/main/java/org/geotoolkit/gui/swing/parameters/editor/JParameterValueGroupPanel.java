@@ -29,7 +29,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;

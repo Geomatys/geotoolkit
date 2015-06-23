@@ -91,7 +91,7 @@ public abstract class AbstractParameterValue<T> extends AbstractParameter implem
     /**
      * Informs every listeners that the value changed.
      */
-    final void fireValueChanged() {
+    protected final void fireValueChanged() {
         Listeners.fireChanged(this, listeners);
     }
 

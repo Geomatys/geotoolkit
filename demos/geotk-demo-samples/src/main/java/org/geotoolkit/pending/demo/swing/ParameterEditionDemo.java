@@ -8,7 +8,7 @@ import java.util.List;
 import javax.swing.*;
 import org.geotoolkit.gui.swing.parameters.editor.JParameterValuesEditor;
 import org.geotoolkit.gui.swing.propertyedit.JAttributeEditor;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 

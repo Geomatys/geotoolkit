@@ -17,7 +17,7 @@
 package org.geotoolkit.gui.swing.etl;
 
 import java.awt.Color;
-import org.geotoolkit.parameter.ExtendedParameterDescriptor;
+import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.processing.chain.ChainProcessDescriptor;
 import org.geotoolkit.processing.chain.model.ClassFull;
 import org.geotoolkit.processing.chain.model.ElementProcess;

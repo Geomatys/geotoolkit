@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.observation.xml;
+package org.geotoolkit.observation.store.xml;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,7 +27,9 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.FeatureProperty;
 import org.geotoolkit.observation.ObservationReader;
-import static org.geotoolkit.observation.xml.XmlObservationUtils.*;
+
+import org.geotoolkit.observation.xml.*;
+import org.geotoolkit.observation.xml.Process;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.GeoSpatialBound;
 import org.geotoolkit.sos.xml.ObservationOffering;
@@ -61,7 +63,7 @@ public class XmlObservationReader implements ObservationReader {
             if (xmlObject instanceof ObservationCollection) {
                 final ObservationCollection collection = (ObservationCollection)xmlObject;
                 for (Observation obs : collection.getMember()) {
-                    final Process process = (Process)obs.getProcedure();
+                    final org.geotoolkit.observation.xml.Process process = (Process)obs.getProcedure();
                     names.add(process.getHref());
                 }
 
@@ -83,13 +85,13 @@ public class XmlObservationReader implements ObservationReader {
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                    phenomenons.addAll(getPhenomenonsFields(phenProp));
+                    phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
                 }
 
             } else if (xmlObject instanceof AbstractObservation) {
                 final AbstractObservation obs = (AbstractObservation)xmlObject;
                 final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                phenomenons.addAll(getPhenomenonsFields(phenProp));
+                phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
             }
         }
         return phenomenons;
@@ -104,7 +106,7 @@ public class XmlObservationReader implements ObservationReader {
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                    final List<String> phen = getPhenomenonsFields(phenProp);
+                    final List<String> phen = XmlObservationUtils.getPhenomenonsFields(phenProp);
                     if (phen.contains(observedProperty)) {
                         procedures.add(o.getProcedure().getHref());
                     }
@@ -113,7 +115,7 @@ public class XmlObservationReader implements ObservationReader {
             } else if (xmlObject instanceof AbstractObservation) {
                 final AbstractObservation obs = (AbstractObservation)xmlObject;
                 final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                final List<String> phen = getPhenomenonsFields(phenProp);
+                final List<String> phen = XmlObservationUtils.getPhenomenonsFields(phenProp);
                 if (phen.contains(observedProperty)) {
                     procedures.add(obs.getProcedure().getHref());
                 }
@@ -132,7 +134,7 @@ public class XmlObservationReader implements ObservationReader {
                     final AbstractObservation o = (AbstractObservation)obs;
                     if (o.getProcedure().getHref().equals(sensorID)) {
                         final PhenomenonProperty phenProp = o.getPropertyObservedProperty();
-                        phenomenons.addAll(getPhenomenonsFields(phenProp));
+                        phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
                     }
                 }
 
@@ -140,7 +142,7 @@ public class XmlObservationReader implements ObservationReader {
                 final AbstractObservation obs = (AbstractObservation)xmlObject;
                 if (obs.getProcedure().getHref().equals(sensorID)) {
                     final PhenomenonProperty phenProp = obs.getPropertyObservedProperty();
-                    phenomenons.addAll(getPhenomenonsFields(phenProp));
+                    phenomenons.addAll(XmlObservationUtils.getPhenomenonsFields(phenProp));
                 }
             }
         }
@@ -196,13 +198,13 @@ public class XmlObservationReader implements ObservationReader {
                 for (Observation obs : collection.getMember()) {
                     final AbstractObservation o = (AbstractObservation)obs;
                     final FeatureProperty foiProp = o.getPropertyFeatureOfInterest();
-                    featureOfInterest.add(getFOIName(foiProp));
+                    featureOfInterest.add(XmlObservationUtils.getFOIName(foiProp));
                 }
 
             } else if (xmlObject instanceof AbstractObservation) {
                 final AbstractObservation obs = (AbstractObservation)xmlObject;
                 final FeatureProperty foiProp = obs.getPropertyFeatureOfInterest();
-                featureOfInterest.add(getFOIName(foiProp));
+                featureOfInterest.add(XmlObservationUtils.getFOIName(foiProp));
             }
         }
         return featureOfInterest;
@@ -288,7 +290,7 @@ public class XmlObservationReader implements ObservationReader {
 
     @Override
     public List<String> getResponseFormats() throws DataStoreException {
-        return Arrays.asList(RESPONSE_FORMAT_V100, RESPONSE_FORMAT_V200);
+        return Arrays.asList(XmlObservationUtils.RESPONSE_FORMAT_V100, XmlObservationUtils.RESPONSE_FORMAT_V200);
     }
 
     @Override

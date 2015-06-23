@@ -67,7 +67,7 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.shadedrelief.ShadedReliefDescriptor;

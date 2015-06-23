@@ -28,7 +28,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.observation.ObservationReader;
 import org.geotoolkit.observation.xml.AbstractObservation;
-import static org.geotoolkit.observation.xml.XmlObservationUtils.*;
+import static org.geotoolkit.observation.store.xml.XmlObservationUtils.*;
 import org.geotoolkit.sos.netcdf.ExtractionResult;
 import org.geotoolkit.sos.netcdf.Field;
 import org.geotoolkit.sos.netcdf.NCFieldAnalyze;

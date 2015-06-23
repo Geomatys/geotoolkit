@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 import org.geotoolkit.gui.swing.parameters.creator.JParameterDescriptorsEditor;
 import org.geotoolkit.gui.swing.propertyedit.JAttributeEditor;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 

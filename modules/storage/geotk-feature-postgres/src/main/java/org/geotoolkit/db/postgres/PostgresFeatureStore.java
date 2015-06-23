@@ -17,7 +17,6 @@
 package org.geotoolkit.db.postgres;
 
 import java.io.IOException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,14 +25,11 @@ import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
-import static org.geotoolkit.db.JDBCFeatureStore.CUSTOM_SQL;
 import org.geotoolkit.db.JDBCFeatureStoreUtilities;
 import org.geotoolkit.db.dialect.SQLQueryBuilder;
 import org.geotoolkit.internal.sql.ScriptRunner;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.parameter.ParametersExt;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import org.geotoolkit.feature.type.FeatureType;

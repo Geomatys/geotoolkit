@@ -18,7 +18,7 @@
 package org.geotoolkit.filter.binding;
 
 import java.io.Serializable;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.apache.sis.util.ObjectConverters;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterNotFoundException;

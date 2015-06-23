@@ -24,7 +24,7 @@ import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import static org.geotoolkit.processing.image.replace.ReplaceDescriptor.*;

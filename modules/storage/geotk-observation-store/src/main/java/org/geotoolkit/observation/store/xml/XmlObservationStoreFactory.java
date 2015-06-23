@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.observation.xml;
+package org.geotoolkit.observation.store.xml;
 
 import java.io.File;
 import java.util.Collections;
@@ -25,9 +25,7 @@ import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.observation.AbstractObservationStoreFactory;
-import static org.geotoolkit.observation.AbstractObservationStoreFactory.createFixedIdentifier;
 import org.geotoolkit.observation.ObservationStore;
-import org.geotoolkit.observation.file.FileObservationStore;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;

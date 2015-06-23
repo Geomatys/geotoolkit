@@ -27,6 +27,9 @@ import javax.media.jai.OperationRegistry;
 import javax.media.jai.RegistryElementDescriptor;
 import javax.media.jai.registry.RenderedRegistryMode;
 
+import org.geotoolkit.coverage.parameter.ImagingParameterDescription;
+import org.geotoolkit.coverage.parameter.ImagingParameterDescriptors;
+import org.geotoolkit.coverage.parameter.ImagingParameters;
 import org.opengis.test.Validators;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValue;

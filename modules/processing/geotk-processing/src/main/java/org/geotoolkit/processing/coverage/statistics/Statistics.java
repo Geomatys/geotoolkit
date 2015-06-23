@@ -27,7 +27,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.image.internal.SampleType;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.CRS;

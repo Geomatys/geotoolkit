@@ -24,7 +24,7 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.FontIconJButton;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.util.InternationalString;

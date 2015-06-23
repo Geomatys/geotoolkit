@@ -27,7 +27,7 @@ import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.WrapFilterFactory2;
 import static org.geotoolkit.parameter.Parameters.value;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.CRS;

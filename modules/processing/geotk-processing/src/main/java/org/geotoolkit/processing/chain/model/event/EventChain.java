@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.event.EventListenerList;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.parameter.ExtendedParameterDescriptor;
+import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.ProcessingRegistry;

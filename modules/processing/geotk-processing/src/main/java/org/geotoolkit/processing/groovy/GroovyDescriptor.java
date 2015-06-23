@@ -28,7 +28,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.util.Map;
-import org.geotoolkit.parameter.ExtendedParameterDescriptor;
+import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 
 /**
  * Definition of the process allows you to run a condition written in groovy and retrieve the result.

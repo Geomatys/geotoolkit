@@ -39,7 +39,7 @@ import org.geotoolkit.ows.xml.v110.ExceptionReport;
 import org.geotoolkit.ows.xml.v110.ExceptionType;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.parameter.ExtendedParameterDescriptor;
+import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.*;
 import org.geotoolkit.process.Process;

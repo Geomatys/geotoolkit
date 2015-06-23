@@ -36,13 +36,12 @@ import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.gui.swing.util.SwingUtilities;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.InternationalString;
-import org.openide.util.NbBundle;
 
 /**
  *

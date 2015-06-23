@@ -52,7 +52,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.opengis.coverage.Coverage;
 import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;

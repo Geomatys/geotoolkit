@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.parameter;
+package org.geotoolkit.coverage.parameter;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -39,6 +39,8 @@ import javax.media.jai.ParameterListDescriptor;
 import javax.media.jai.RegistryElementDescriptor;
 
 
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.Citation;
@@ -47,7 +49,6 @@ import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterNameException;
-import org.opengis.metadata.Identifier;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.metadata.citation.Responsibility;
 import org.opengis.util.InternationalString;
@@ -64,7 +65,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.Citations;
-import org.apache.sis.metadata.iso.citation.DefaultContact;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.citation.DefaultOnlineResource;
 import org.apache.sis.metadata.iso.citation.DefaultResponsibility;

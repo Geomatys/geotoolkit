@@ -101,7 +101,7 @@ import org.geotoolkit.style.visitor.PrepareStyleVisitor;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.collection.Cache;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.coverage.resample.ResampleDescriptor;
@@ -120,7 +120,6 @@ import org.geotoolkit.renderer.style.WKMMarkFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -144,7 +143,6 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Style;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
-import org.opengis.util.GenericName;
 
 /**
  *

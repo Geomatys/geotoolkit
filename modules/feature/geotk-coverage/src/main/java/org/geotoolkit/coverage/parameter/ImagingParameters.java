@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.parameter;
+package org.geotoolkit.coverage.parameter;
 
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +33,7 @@ import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.OperationDescriptor;
 import javax.media.jai.EnumeratedParameter;
 
+import org.geotoolkit.parameter.AbstractParameter;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;

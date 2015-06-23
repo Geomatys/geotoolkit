@@ -48,7 +48,7 @@ import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import static org.geotoolkit.internal.coverage.CoverageUtilities.hasRenderingCategories;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.processing.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 

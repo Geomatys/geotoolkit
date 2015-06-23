@@ -1,2 +1,2 @@
 org.geotoolkit.observation.file.FileObservationStoreFactory
-org.geotoolkit.observation.xml.XmlObservationStoreFactory
+org.geotoolkit.observation.store.xml.XmlObservationStoreFactory

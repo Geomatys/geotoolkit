@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.parameter;
+package org.geotoolkit.coverage.parameter;
 
 import java.util.Objects;
 import java.util.Locale;
@@ -37,7 +37,7 @@ import org.apache.sis.util.iso.AbstractInternationalString;
  * @since 2.2
  * @module
  */
-final class ImagingParameterDescription extends AbstractInternationalString implements Serializable {
+public final class ImagingParameterDescription extends AbstractInternationalString implements Serializable {
     /**
      * Serial number for inter-operability with different versions.
      */

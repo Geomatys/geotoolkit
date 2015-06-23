@@ -48,16 +48,14 @@ import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.db.postgres.PostgresFeatureStoreFactory.*;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.type.NamesExt;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.ParametersExt;
+import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.version.Version;
 import org.geotoolkit.version.VersionControl;
 import org.geotoolkit.version.VersioningException;
 import static org.junit.Assert.*;
 import org.junit.Assume;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;

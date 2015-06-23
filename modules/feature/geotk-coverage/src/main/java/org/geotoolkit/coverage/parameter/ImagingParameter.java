@@ -15,13 +15,16 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.parameter;
+package org.geotoolkit.coverage.parameter;
 
 import java.net.URI;
 import java.util.Objects;
 import javax.measure.unit.Unit;
 import javax.media.jai.ParameterList;
 
+import org.geotoolkit.parameter.AbstractParameter;
+import org.geotoolkit.parameter.AbstractParameterValue;
+import org.geotoolkit.parameter.Parameter;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -39,7 +42,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.2
  * @module
  */
-final class ImagingParameter<T> extends AbstractParameterValue<T> {
+public final class ImagingParameter<T> extends AbstractParameterValue<T> {
     /**
      * Serial number for inter-operability with different versions.
      */
