@@ -123,6 +123,9 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
+    //automatic id increment for geometries id
+    private int gidInc = 0;
+
     public JAXPStreamFeatureWriter() {
         this("3.1.1", "1.1.0", null);
     }
@@ -205,6 +208,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * @throws XMLStreamException
      */
     private void writeFeature(final ComplexAttribute feature, final boolean root) throws XMLStreamException {
+        //reset geometry id increment
+        gidInc = 0;
 
         //the root element of the xml document (type of the feature)
         final ComplexType type = feature.getType();
@@ -583,7 +588,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         //NOTE we often see gml where the geometry id is the same as the feature
                         // we use the last parent with an id, seems acceptable.
                         final String gid = (id+"_g").replace(':', '_');
-                        setId(gmlGeometry, gid, new int[1]);
+                        setId(gmlGeometry, gid);
                     }
                     element = GML32_FACTORY.buildAnyGeometry(gmlGeometry);
                     POOL = GML_32_POOL;
@@ -612,43 +617,46 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * @param id
      * @param inc auto increment value, ids must be unique
      */
-    private static void setId(AbstractGeometry gmlGeometry, String id, int[] inc){
-        gmlGeometry.setId(id+(inc[0]));
-        inc[0] = inc[0]+1;
+    private void setId(AbstractGeometry gmlGeometry, String id){
+        if(gmlGeometry.getId()==null || gmlGeometry.getId().isEmpty()){
+            //do not override ids if they exist
+            gmlGeometry.setId(id+(gidInc));
+            gidInc++;
+        }
 
         if(gmlGeometry instanceof MultiCurve){
             for(CurveProperty po : ((MultiCurve)gmlGeometry).getCurveMember()){
                 final AbstractCurve child = po.getAbstractCurve();
                 if(child instanceof AbstractGeometry){
-                    setId((AbstractGeometry) child, id, inc);
+                    setId((AbstractGeometry) child, id);
                 }
             }
         }else if(gmlGeometry instanceof MultiSurface){
             for(SurfaceProperty po : ((MultiSurface)gmlGeometry).getSurfaceMember()){
                 final AbstractSurface child = po.getAbstractSurface();
                 if(child instanceof AbstractGeometry){
-                    setId((AbstractGeometry) child, id, inc);
+                    setId((AbstractGeometry) child, id);
                 }
             }
         }else if(gmlGeometry instanceof MultiGeometryType){
             for(GeometryPropertyType po : ((MultiGeometryType)gmlGeometry).getGeometryMember()){
                 final AbstractGeometryType child = po.getAbstractGeometry();
                 if(child instanceof AbstractGeometry){
-                    setId((AbstractGeometry) child, id, inc);
+                    setId((AbstractGeometry) child, id);
                 }
             }
         }else if(gmlGeometry instanceof MultiSolidType){
             for(SolidPropertyType po : ((MultiSolidType)gmlGeometry).getSolidMember()){
                 final AbstractSolidType child = po.getAbstractSolid().getValue();
                 if(child instanceof AbstractGeometry){
-                    setId((AbstractGeometry) child, id, inc);
+                    setId((AbstractGeometry) child, id);
                 }
             }
         }else if(gmlGeometry instanceof MultiPointType){
             for(PointPropertyType po : ((MultiPointType)gmlGeometry).getPointMember()){
                 final PointType child = po.getPoint();
                 if(child instanceof AbstractGeometry){
-                    setId((AbstractGeometry) child, id, inc);
+                    setId((AbstractGeometry) child, id);
                 }
             }
         }

@@ -24,37 +24,37 @@
         </gml32:Point>
     </gml:geomPoint>
     <gml:geomMultiPoint>
-        <gml32:MultiPoint  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g0">
+        <gml32:MultiPoint  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g1">
             <gml32:pointMember>
-                <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g1">
+                <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g2">
                     <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">5.0 10.0</gml32:pos>
                 </gml32:Point>
             </gml32:pointMember>
             <gml32:pointMember>
-                <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g2">
+                <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g3">
                     <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">15.0 20.0</gml32:pos>
                 </gml32:Point>
             </gml32:pointMember>
         </gml32:MultiPoint>
     </gml:geomMultiPoint>
     <gml:geomLine>
-        <gml32:LineString  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g0">
+        <gml32:LineString  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g4">
             <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">10.0 10.0</gml32:pos>
             <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">20.0 20.0</gml32:pos>
             <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">30.0 30.0</gml32:pos>
         </gml32:LineString>
     </gml:geomLine>
     <gml:geomMultiLine>
-        <gml32:MultiCurve  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g0">
+        <gml32:MultiCurve  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g5">
             <gml32:curveMember>
-                <gml32:LineString srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g1">
+                <gml32:LineString srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g6">
                     <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">10.0 10.0</gml32:pos>
                     <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">20.0 20.0</gml32:pos>
                     <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">30.0 30.0</gml32:pos>
                 </gml32:LineString>
             </gml32:curveMember>
             <gml32:curveMember>
-                <gml32:LineString srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g2">
+                <gml32:LineString srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g7">
                     <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">11.0 11.0</gml32:pos>
                     <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">21.0 21.0</gml32:pos>
                     <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">31.0 31.0</gml32:pos>
@@ -63,7 +63,7 @@
         </gml32:MultiCurve>
     </gml:geomMultiLine>
     <gml:geomPolygon>
-        <gml32:Polygon  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g0">
+        <gml32:Polygon  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g8">
             <gml32:exterior>
                 <gml32:LinearRing>
                     <gml32:posList>0.0 0.0 10.0 0.0 10.0 10.0 0.0 0.0</gml32:posList>
@@ -72,9 +72,9 @@
         </gml32:Polygon>
     </gml:geomPolygon>
     <gml:geomMultiPolygon>
-        <gml32:MultiSurface  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g0">
+        <gml32:MultiSurface  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g9">
             <gml32:surfaceMember>
-                <gml32:Polygon srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g1">
+                <gml32:Polygon srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g10">
                     <gml32:exterior>
                         <gml32:LinearRing>
                             <gml32:posList>0.0 0.0 10.0 0.0 10.0 10.0 0.0 0.0</gml32:posList>
@@ -83,7 +83,7 @@
                 </gml32:Polygon>
             </gml32:surfaceMember>
             <gml32:surfaceMember>
-                <gml32:Polygon srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g2">
+                <gml32:Polygon srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g11">
                     <gml32:exterior>
                         <gml32:LinearRing>
                             <gml32:posList>1.0 1.0 11.0 1.0 11.0 11.0 1.0 1.0</gml32:posList>
@@ -94,21 +94,21 @@
         </gml32:MultiSurface>
     </gml:geomMultiPolygon>
     <gml:geomMultiGeometry>
-        <gml32:MultiPoint  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g0">
+        <gml32:MultiPoint  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g12">
             <gml32:pointMember>
-                <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g1">
+                <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g13">
                     <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">5.0 10.0</gml32:pos>
                 </gml32:Point>
             </gml32:pointMember>
             <gml32:pointMember>
-                <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g2">
+                <gml32:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g14">
                     <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">15.0 20.0</gml32:pos>
                 </gml32:Point>
             </gml32:pointMember>
         </gml32:MultiPoint>
     </gml:geomMultiGeometry>
     <gml:geomAnyGeometry>
-        <gml32:Point  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g0">
+        <gml32:Point  srsName="urn:ogc:def:crs:epsg:7.9:4326" gml32:id="id-156_g15">
             <gml32:pos srsName="urn:ogc:def:crs:epsg:7.9:4326" srsDimension="2">5.0 10.0</gml32:pos>
         </gml32:Point>
     </gml:geomAnyGeometry>
