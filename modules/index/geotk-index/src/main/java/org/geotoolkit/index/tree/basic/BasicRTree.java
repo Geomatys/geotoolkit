@@ -43,7 +43,7 @@ import org.geotoolkit.index.tree.TreeElementMapper;
  * @author Remi Marechal (Geomatys).
  * @see SplitCase.
  */
-abstract class BasicRTree<E> extends AbstractTree<E> {
+public class BasicRTree<E> extends AbstractTree<E> {
     
     /**
      * Split made choice.

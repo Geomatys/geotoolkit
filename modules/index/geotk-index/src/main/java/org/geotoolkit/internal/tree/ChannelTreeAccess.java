@@ -365,26 +365,30 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
      * @throws IOException 
      */
     protected void adjustBuffer(final int nodeID) throws IOException {
+        assert inOutChannel.position() == currentBufferPosition;
         rwIndex = beginPosition + (nodeID - 1) * nodeSize;
         if (rwIndex < currentBufferPosition || (rwIndex + nodeSize) > currentBufferPosition + bufferLength) { //-- pense ici
             // write current data within bytebuffer in channel.
             byteBuffer.position(0);
             byteBuffer.limit(writeBufferLimit);
-            long tempPos = inOutChannel.position();
-            inOutChannel.position(currentBufferPosition);
             int writtenByte = 0;
             while (writtenByte < writeBufferLimit) {
                 writtenByte += inOutChannel.write(byteBuffer);
             }
-            inOutChannel.position(tempPos);
-            writeBufferLimit = 0;
-            byteBuffer.clear();
+            
+            //-- define new appropriate window position
             final int div = (rwIndex - beginPosition) / bufferLength;
             currentBufferPosition = div * bufferLength + beginPosition;
-            tempPos = inOutChannel.position();
+            writeBufferLimit = 0;
+            
+            //-- read current data
+            byteBuffer.clear();
             inOutChannel.position(currentBufferPosition);
             inOutChannel.read(byteBuffer);
-            inOutChannel.position(tempPos);
+            byteBuffer.flip();
+            
+            //-- get back to appropriate position after reading 
+            inOutChannel.position(currentBufferPosition);
         }
         rwIndex -= currentBufferPosition;
         byteBuffer.limit(rwIndex + nodeSize);
@@ -495,6 +499,13 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
         }
         inOutChannel.position(beginPosition);
         currentBufferPosition = beginPosition;
+        
+        //-- fill buffer
+        byteBuffer.clear();
+        inOutChannel.read(byteBuffer);
+        byteBuffer.flip();
+        inOutChannel.position(beginPosition);
+        //-- 
         writeBufferLimit = 0;
     }
     
@@ -549,6 +560,15 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
         byteBuffer.putInt(eltNumber);
         byteBuffer.flip();
         inOutChannel.write(byteBuffer);
+        
+        //-- fill buffer
+        inOutChannel.position(currentBufferPosition);
+        byteBuffer.clear();
+        inOutChannel.read(byteBuffer);
+        byteBuffer.flip();
+        inOutChannel.position(currentBufferPosition);
+        writeBufferLimit = 0;
+        //-- 
         
         adjustBuffer(nodeId);
     }

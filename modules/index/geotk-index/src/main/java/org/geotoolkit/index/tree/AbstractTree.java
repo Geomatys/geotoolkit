@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
+import org.geotoolkit.index.tree.hilbert.HilbertAccessByteArray;
 import static org.geotoolkit.internal.tree.TreeUtilities.*;
 import org.geotoolkit.internal.tree.TreeAccess;
 import org.geotoolkit.referencing.CRS;
@@ -262,7 +263,6 @@ public abstract class AbstractTree<E> implements Tree<E> {
     protected Node[] splitNode(final Node candidate) throws IllegalArgumentException, IOException {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
         assert candidate.checkInternal() : "splitNode : begin.";
-        
         final Node[] children          = candidate.getChildren();
         final byte candidateProperties = candidate.getProperties();
         final int splitIndex           = defineSplitAxis(children);

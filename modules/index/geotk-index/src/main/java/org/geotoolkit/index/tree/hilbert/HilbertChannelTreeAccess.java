@@ -22,6 +22,7 @@ import java.nio.channels.SeekableByteChannel;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.internal.tree.ChannelTreeAccess;
+import org.geotoolkit.internal.tree.SeekableByteArrayChannel;
 import static org.geotoolkit.internal.tree.TreeUtilities.intersects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -125,7 +126,6 @@ abstract strictfp class HilbertChannelTreeAccess extends ChannelTreeAccess {
     public synchronized void writeNode(final Node candidate) throws IOException {
         final int indexNode    = candidate.getNodeId();
         adjustBuffer(indexNode);
-//        writeBufferLimit = Math.max(writeBufferLimit, byteBuffer.limit());
         double[] candidateBound = candidate.getBoundary();
         if (candidateBound == null) candidateBound = nanBound;
         for (int i = 0; i < boundLength; i++) {

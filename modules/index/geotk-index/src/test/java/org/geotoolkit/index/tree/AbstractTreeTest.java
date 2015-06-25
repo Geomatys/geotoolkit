@@ -150,15 +150,15 @@ new double[]{-866150.3602601975, -626952.0041214986, -834064.9229295708, -866136
             minMax[i + dimension] = ( ! Double.isInfinite(maxV)) ? maxV : (maxV < 0) ? -cartesianValue : cartesianValue;
         }
         final double[] centerEntry = new double[dimension];
-//        for (int i = 0; i < lSize; i++) {
-//            for (int d = 0; d < dimension; d++) {
-//                centerEntry[d] = (minMax[d+dimension]-minMax[d]) * Math.random() * Math.random() + minMax[d];
-//            }
-//            lData.add(createEntry(centerEntry));
-//        }
-        for (double[] entry : arrayDebug) {
-            lData.add(entry);
+        for (int i = 0; i < lSize; i++) {
+            for (int d = 0; d < dimension; d++) {
+                centerEntry[d] = (minMax[d+dimension]-minMax[d]) * Math.random() * Math.random() + minMax[d];
+            }
+            lData.add(createEntry(centerEntry));
         }
+//        for (double[] entry : arrayDebug) {
+//            lData.add(entry);
+//        }
     } 
     
     /**
@@ -195,18 +195,18 @@ new double[]{-866150.3602601975, -626952.0041214986, -834064.9229295708, -866136
 //                }
 //                
 //            }
-            if (i == 42) {
-                System.out.println("bloup");
-            }
+//            if (i == 42) {
+//                System.out.println("bloup");
+//            }
             tree.insert(envData);
-            if (i != 0) {
-                try{
-                    checkNode(tree.getRoot(), lData);
-                }catch (Exception ex) {
-                    System.out.println(" i = "+i);
-                    checkNode(tree.getRoot(), lData);
-                }
-            }
+//            if (i != 0) {
+//                try{
+//                    checkNode(tree.getRoot(), lData);
+//                }catch (Exception ex) {
+//                    System.out.println(" i = "+i);
+//                    checkNode(tree.getRoot(), lData);
+//                }
+//            }
                 
             
             tree.flush(); //-- add persistence comportement 
@@ -220,7 +220,7 @@ new double[]{-866150.3602601975, -626952.0041214986, -834064.9229295708, -866136
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    @Ignore
+//    @Ignore
     public void insertTest() throws StoreIndexException, IOException {
         tree.setRoot(null);
         insert();
@@ -302,7 +302,7 @@ new double[]{-866150.3602601975, -626952.0041214986, -834064.9229295708, -866136
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    @Ignore
+//    @Ignore
     public void queryOnBorderTest() throws StoreIndexException, IOException {
         tree.setRoot(null);
         tEM.clear();
@@ -359,7 +359,7 @@ new double[]{-866150.3602601975, -626952.0041214986, -834064.9229295708, -866136
      * Test search query inside tree.
      */
     @Test
-    @Ignore
+//    @Ignore
     public void queryInsideTest() throws StoreIndexException, IOException {
         if (tree.getRoot() == null) insert();
         final List<double[]> lDataTemp = new ArrayList<double[]>();
@@ -387,7 +387,7 @@ new double[]{-866150.3602601975, -626952.0041214986, -834064.9229295708, -866136
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    @Ignore
+//    @Ignore
     public void queryOutsideTest() throws StoreIndexException, IOException {
         if (tree.getRoot() == null) insert();
         final double[] areaSearch = new double[dimension<<1];
@@ -416,7 +416,7 @@ new double[]{-866150.3602601975, -626952.0041214986, -834064.9229295708, -866136
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    @Ignore
+//    @Ignore
     public void insertDelete() throws StoreIndexException, IOException {
         if (tree.getRoot() == null) insert();
         Collections.shuffle(lData);
