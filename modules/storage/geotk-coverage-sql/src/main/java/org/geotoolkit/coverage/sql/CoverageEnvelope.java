@@ -37,7 +37,7 @@ import org.geotoolkit.util.DateRange;
 import org.apache.sis.measure.NumberRange;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.geometry.AbstractEnvelope;
-import org.apache.sis.internal.referencing.AxisDirections;
+import org.apache.sis.internal.metadata.AxisDirections;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.FloatDimension2D;
 import org.geotoolkit.display.shape.DoubleDimension2D;

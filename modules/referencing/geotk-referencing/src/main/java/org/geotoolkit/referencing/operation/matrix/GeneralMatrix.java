@@ -30,7 +30,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.math.Statistics;
 import org.geotoolkit.resources.Errors;
-import org.apache.sis.internal.referencing.AxisDirections;
+import org.apache.sis.internal.metadata.AxisDirections;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 
 

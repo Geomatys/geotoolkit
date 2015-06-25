@@ -30,7 +30,7 @@ import org.apache.sis.measure.Units;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
-import org.apache.sis.internal.referencing.AxisDirections;
+import org.apache.sis.internal.metadata.AxisDirections;
 import org.geotoolkit.referencing.cs.Axes;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.measure.Angle;
