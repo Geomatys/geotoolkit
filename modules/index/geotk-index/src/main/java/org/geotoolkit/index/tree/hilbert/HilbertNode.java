@@ -383,11 +383,11 @@ final class HilbertNode extends Node {
                             add(dataBound, fdat.getBoundary());
                         }
                         if (fdat.getParentId() != currNID)
-                            throw new IllegalStateException("data parent ID should be equals to its parent cell ID.");
+                            throw new IllegalStateException("data parent ID should be equals to its parent cell ID. Expected : "+currNID+". Found : "+fdat.getParentId());
                         nbrData++;
                     }
                     if (!Arrays.equals(dataBound, currBound))
-                        throw new IllegalStateException("add data boundary should have same boundary than its cell boundary. expected : "+Arrays.toString(dataBound)+"  found : "+Arrays.toString(currBound));
+                        throw new IllegalStateException("add data boundary should have same boundary than its cell boundary for node : "+currSC.getNodeId()+". \nExpected : "+Arrays.toString(dataBound)+"\nFound : "+Arrays.toString(currBound));
                 }
             }
             if (!Arrays.equals(superBound, getBoundary()))

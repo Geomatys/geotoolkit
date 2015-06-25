@@ -34,6 +34,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import org.junit.Ignore;
 
 /**
  * Test static TreeX methods.<br/><br/>
@@ -68,7 +69,7 @@ public class TreeXTest extends TreeTest {
     /**
      * Find and return objects which match with them tree identifiers.
      *
-     * @param tabID integer table which contain tree identifier return by seach action.
+     * @param tabID integer table which contain tree identifier return by search action.
      * @return objects which match with them tree identifiers.
      */
     private List<Envelope> getresult(int[] tabID) {

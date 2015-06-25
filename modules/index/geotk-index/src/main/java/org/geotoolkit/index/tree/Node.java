@@ -510,7 +510,7 @@ public class Node {
             while (sibl != 0) {
                 final Node cuChild = tAF.readNode(sibl);
                 if (cuChild.getParentId() != getNodeId()) {
-                    throw new IllegalStateException("Child sibling should have parent ID equals to this.nodeID.");
+                    throw new IllegalStateException("Child sibling should have parent ID equals to this.nodeID. Expected : "+getNodeId()+". Found : "+cuChild.getParentId());
                 }
                 if (boundTemp == null) {
                     boundTemp = cuChild.getBoundary().clone();
@@ -524,10 +524,10 @@ public class Node {
                 throw new IllegalStateException("with childID > 0 isData() should return false.");
             }
             if (verifChildCount != childCount) {
-                throw new IllegalStateException("sibling number and child count should have same value.");
+                throw new IllegalStateException("sibling number and child count should have same value. Expected : "+childCount+". Found : "+verifChildCount);
             }
             if (!Arrays.equals(getBoundary(), boundTemp)) {
-                throw new IllegalStateException("children boundary adding should be same as this.boundary."+Arrays.toString(boundTemp)+"   "+Arrays.toString(getBoundary()));
+                throw new IllegalStateException("children boundary adding should be same as this.boundary.\n"+Arrays.toString(boundTemp)+"\n"+Arrays.toString(getBoundary()));
             }
         }
         return true;

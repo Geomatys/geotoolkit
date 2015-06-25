@@ -17,11 +17,11 @@
 package org.geotoolkit.index.tree.hilbert;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.apache.sis.util.ArraysExt;
-import static org.geotoolkit.internal.tree.TreeUtilities.intersects;
+import java.io.RandomAccessFile;
+import java.nio.channels.SeekableByteChannel;
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.internal.tree.TreeAccessFile;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -30,18 +30,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Remi Marechal (Geomatys).
  */
-final class HilbertTreeAccessFile extends TreeAccessFile {
+final class HilbertTreeAccessFile extends HilbertChannelTreeAccess {
 
-    /**
-     * Hilbert Node attributs Number.<br/>
-     * parent ID<br/>
-     * sibling ID <br/>
-     * child ID<br/>
-     * current Hilbert Order<br/>
-     * children number<br/>
-     * data number.
-     */
-    private static final int INT_NUMBER = 6;
+    
     
     /**
      * Build a {@link Tree} from a already filled {@link File}.
@@ -53,7 +44,7 @@ final class HilbertTreeAccessFile extends TreeAccessFile {
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
     HilbertTreeAccessFile( final File input, final int magicNumber, final double versionNumber ) throws IOException, ClassNotFoundException {
-        super(input, magicNumber, versionNumber, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
+        this(input, magicNumber, versionNumber, DEFAULT_BUFFER_LENGTH);
     }
     
     /**
@@ -67,7 +58,7 @@ final class HilbertTreeAccessFile extends TreeAccessFile {
      * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
     HilbertTreeAccessFile( final File input, final int magicNumber, final double versionNumber, final int byteBufferLength) throws IOException, ClassNotFoundException {
-        super(input, magicNumber, versionNumber, byteBufferLength, INT_NUMBER);
+        super(getChannel(input), magicNumber, versionNumber, byteBufferLength);
     }
     
     /**
@@ -86,7 +77,7 @@ final class HilbertTreeAccessFile extends TreeAccessFile {
      */
     HilbertTreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs) throws IOException {
-        super(outPut, magicNumber, versionNumber, maxElements, hilbertOrder, null, crs, DEFAULT_BUFFER_LENGTH, INT_NUMBER);
+        this(outPut, magicNumber, versionNumber, maxElements, hilbertOrder, crs, DEFAULT_BUFFER_LENGTH);
     }
     
     /**
@@ -105,96 +96,100 @@ final class HilbertTreeAccessFile extends TreeAccessFile {
      */
     HilbertTreeAccessFile(final File outPut, final int magicNumber, final double versionNumber, 
             final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
-        super(outPut, magicNumber, versionNumber, maxElements, hilbertOrder, null, crs, byteBufferLength, INT_NUMBER);
+        super(getChannel(outPut), magicNumber, versionNumber, maxElements, hilbertOrder, crs, byteBufferLength);
     }
         
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void internalSearch(int nodeID) throws IOException {
-        adjustBuffer(nodeID);
-        final double[] boundary = new double[boundLength];
-        for (int i = 0; i < boundLength; i++) {
-            boundary[i] = byteBuffer.getDouble();
-        }
-        byteBuffer.position(byteBuffer.position() + 5);// step properties (1 byte) and step parent ID (int : 4 bytes)
-        final int sibling = byteBuffer.getInt();
-        final int child   = byteBuffer.getInt();
-        byteBuffer.position(byteBuffer.position() + 12);// step hilbertOrder, step child count and step dataCount
-        if (sibling != 0) {
-            internalSearch(sibling);
-        }
-        // trouver a ameliorer avec les valeurs de hilbert qui aide en cas de feuille
-        if (!ArraysExt.hasNaN(boundary) && intersects(boundary, regionSearch, true)) {
-            if (child > 0) {
-                internalSearch(child);
-            } else {
-                if (child == 0)
-                    throw new IllegalStateException("child index should never be 0.");
-                if (currentPosition == currentLength) {
-                    currentLength = currentLength << 1;
-                    final int[] tabTemp = tabSearch;
-                    tabSearch = new int[currentLength];
-                    System.arraycopy(tabTemp, 0, tabSearch, 0, currentPosition);
-                }
-                tabSearch[currentPosition++] = -child;
-            }
-        } 
+    private static SeekableByteChannel getChannel(File inOutFile) throws FileNotFoundException {
+        return new RandomAccessFile(inOutFile, "rw").getChannel();
     }
-        
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public synchronized Node readNode(final int indexNode) throws IOException {
-        adjustBuffer(indexNode);
-        final double[] boundary = new double[boundLength];
-        for (int i = 0; i < boundLength; i++) {
-            boundary[i] = byteBuffer.getDouble();
-        }
-        final byte properties         = byteBuffer.get();
-        final int parentId            = byteBuffer.getInt();
-        final int siblingId           = byteBuffer.getInt();
-        final int childId             = byteBuffer.getInt();
-        final int currentHilbertOrder = byteBuffer.getInt();
-        final int childCount          = byteBuffer.getInt();
-        final int dataCount           = byteBuffer.getInt();
-        final HilbertNode redNode = new HilbertNode(this, indexNode, boundary, properties, parentId, siblingId, childId);
-        redNode.setCurrentHilbertOrder(currentHilbertOrder);
-        redNode.setChildCount(childCount);
-        redNode.setDataCount(dataCount);
-        return redNode;
-    }
-        
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public synchronized void writeNode(final Node candidate) throws IOException {
-        final int indexNode    = candidate.getNodeId();
-        adjustBuffer(indexNode);
-        writeBufferLimit = Math.max(writeBufferLimit, byteBuffer.limit());
-        double[] candidateBound = candidate.getBoundary();
-        if (candidateBound == null) candidateBound = nanBound;
-        for (int i = 0; i < boundLength; i++) {
-            byteBuffer.putDouble(candidateBound[i]);
-        }
-        byteBuffer.put(candidate.getProperties());
-        byteBuffer.putInt(candidate.getParentId());
-        byteBuffer.putInt(candidate.getSiblingId());
-        byteBuffer.putInt(candidate.getChildId());
-        byteBuffer.putInt(((HilbertNode)candidate).getCurrentHilbertOrder());
-        byteBuffer.putInt(candidate.getChildCount());
-        byteBuffer.putInt(((HilbertNode)candidate).getDataCount());
-    }
-       
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-     public synchronized Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
-         final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
-            return new HilbertNode(this, currentID, (boundary == null) ? nanBound : boundary, properties, parentId, siblingId, childId);
-     }
+    
+////    /**
+////     * {@inheritDoc }.
+////     */
+////    @Override
+////    public void internalSearch(int nodeID) throws IOException {
+////        adjustBuffer(nodeID);
+////        final double[] boundary = new double[boundLength];
+////        for (int i = 0; i < boundLength; i++) {
+////            boundary[i] = byteBuffer.getDouble();
+////        }
+////        byteBuffer.position(byteBuffer.position() + 5);// step properties (1 byte) and step parent ID (int : 4 bytes)
+////        final int sibling = byteBuffer.getInt();
+////        final int child   = byteBuffer.getInt();
+////        byteBuffer.position(byteBuffer.position() + 12);// step hilbertOrder, step child count and step dataCount
+////        if (sibling != 0) {
+////            internalSearch(sibling);
+////        }
+////        // trouver a ameliorer avec les valeurs de hilbert qui aide en cas de feuille
+////        if (!ArraysExt.hasNaN(boundary) && intersects(boundary, regionSearch, true)) {
+////            if (child > 0) {
+////                internalSearch(child);
+////            } else {
+////                if (child == 0)
+////                    throw new IllegalStateException("child index should never be 0.");
+////                if (currentPosition == currentLength) {
+////                    currentLength = currentLength << 1;
+////                    final int[] tabTemp = tabSearch;
+////                    tabSearch = new int[currentLength];
+////                    System.arraycopy(tabTemp, 0, tabSearch, 0, currentPosition);
+////                }
+////                tabSearch[currentPosition++] = -child;
+////            }
+////        } 
+////    }
+////        
+////    /**
+////     * {@inheritDoc }.
+////     */
+////    @Override
+////    public synchronized Node readNode(final int indexNode) throws IOException {
+////        adjustBuffer(indexNode);
+////        final double[] boundary = new double[boundLength];
+////        for (int i = 0; i < boundLength; i++) {
+////            boundary[i] = byteBuffer.getDouble();
+////        }
+////        final byte properties         = byteBuffer.get();
+////        final int parentId            = byteBuffer.getInt();
+////        final int siblingId           = byteBuffer.getInt();
+////        final int childId             = byteBuffer.getInt();
+////        final int currentHilbertOrder = byteBuffer.getInt();
+////        final int childCount          = byteBuffer.getInt();
+////        final int dataCount           = byteBuffer.getInt();
+////        final HilbertNode redNode = new HilbertNode(this, indexNode, boundary, properties, parentId, siblingId, childId);
+////        redNode.setCurrentHilbertOrder(currentHilbertOrder);
+////        redNode.setChildCount(childCount);
+////        redNode.setDataCount(dataCount);
+////        return redNode;
+////    }
+////        
+////    /**
+////     * {@inheritDoc }.
+////     */
+////    @Override
+////    public synchronized void writeNode(final Node candidate) throws IOException {
+////        final int indexNode    = candidate.getNodeId();
+////        adjustBuffer(indexNode);
+////        writeBufferLimit = Math.max(writeBufferLimit, byteBuffer.limit());
+////        double[] candidateBound = candidate.getBoundary();
+////        if (candidateBound == null) candidateBound = nanBound;
+////        for (int i = 0; i < boundLength; i++) {
+////            byteBuffer.putDouble(candidateBound[i]);
+////        }
+////        byteBuffer.put(candidate.getProperties());
+////        byteBuffer.putInt(candidate.getParentId());
+////        byteBuffer.putInt(candidate.getSiblingId());
+////        byteBuffer.putInt(candidate.getChildId());
+////        byteBuffer.putInt(((HilbertNode)candidate).getCurrentHilbertOrder());
+////        byteBuffer.putInt(candidate.getChildCount());
+////        byteBuffer.putInt(((HilbertNode)candidate).getDataCount());
+////    }
+////       
+////    /**
+////     * {@inheritDoc }.
+////     */
+////    @Override
+////     public synchronized Node createNode(double[] boundary, byte properties, int parentId, int siblingId, int childId) {
+////         final int currentID = (!recycleID.isEmpty()) ? recycleID.remove(0) : nodeId++;
+////            return new HilbertNode(this, currentID, (boundary == null) ? nanBound : boundary, properties, parentId, siblingId, childId);
+////     }
 }

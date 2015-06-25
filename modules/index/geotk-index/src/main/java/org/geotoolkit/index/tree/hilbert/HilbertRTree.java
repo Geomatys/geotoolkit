@@ -42,7 +42,7 @@ import org.geotoolkit.index.tree.TreeElementMapper;
  * @author Remi Marechal (Geomatys).
  * @see HilbertNode
  */
-abstract class HilbertRTree<E> extends AbstractTree<E> {
+public strictfp class HilbertRTree<E> extends AbstractTree<E> {
     
     /**
      * Create a Hilbert RTree implementation.
@@ -53,7 +53,7 @@ abstract class HilbertRTree<E> extends AbstractTree<E> {
      * @see TreeAccess
      * @see TreeElementMapper
      */
-    protected HilbertRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
+    public HilbertRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);

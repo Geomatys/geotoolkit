@@ -42,7 +42,7 @@ import org.geotoolkit.index.tree.TreeElementMapper;
  * 
  * @author Remi Marechal (Geomatys).
  */
-abstract class StarRTree<E> extends AbstractTree<E> {
+public strictfp class StarRTree<E> extends AbstractTree<E> {
     
     /**
      * In accordance with R* Tree properties.
