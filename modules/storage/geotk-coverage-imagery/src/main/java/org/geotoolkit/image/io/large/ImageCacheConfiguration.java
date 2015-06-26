@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  *
  * @author Quentin Boileau (Geomatys)
  */
-public class ImageCacheConfiguration extends Static {
+public final class ImageCacheConfiguration extends Static {
 
     private static final Logger LOGGER = Logging.getLogger(ImageCacheConfiguration.class);
 
@@ -62,7 +62,7 @@ public class ImageCacheConfiguration extends Static {
      */
     private static final long DEFAULT_MEMORY_SIZE = 67108864l;
 
-
+    
     /**
      * Check in {@linkplain System#getProperties() system properties} for cache memory size configuration
      * or use {@link #DEFAULT_MEMORY_SIZE} value is not found or doesn't respect <size>[g|G|m|M|k|K] format.
@@ -70,7 +70,7 @@ public class ImageCacheConfiguration extends Static {
      * @return cache memory size in bytes.
      */
     public static long getCacheMemorySize() {
-        final String memoryProp = System.getProperties().getProperty(KEY_CACHE_MEMORY_SIZE);
+        final String memoryProp = System.getProperty(KEY_CACHE_MEMORY_SIZE);
 
         if (memoryProp == null) {
             return DEFAULT_MEMORY_SIZE;
@@ -88,7 +88,7 @@ public class ImageCacheConfiguration extends Static {
      * @param candidate memory property value String formatted as <size>[g|G|m|M|k|K]
      * @throws IllegalArgumentException if candidate String doesn't respect <size>[g|G|m|M|k|K] format.
      */
-    public static synchronized void setCacheMemorySize(String candidate) throws IllegalArgumentException{
+    public static void setCacheMemorySize(String candidate) throws IllegalArgumentException{
 
         try {
             Long.valueOf(candidate.substring(0, candidate.length() - 1));
@@ -102,7 +102,7 @@ public class ImageCacheConfiguration extends Static {
             throw new IllegalArgumentException("Invalid cache memory format : '"+candidate+"' should be formatted as <size>[g|G|m|M|k|K]");
         }
 
-        System.getProperties().setProperty(KEY_CACHE_MEMORY_SIZE, candidate);
+        System.setProperty(KEY_CACHE_MEMORY_SIZE, candidate);
     }
 
     /**
@@ -147,7 +147,7 @@ public class ImageCacheConfiguration extends Static {
      * @return return property value or {@code true} if property not found.
      */
     public static boolean isCacheSwapEnable() {
-        final String swap = System.getProperties().getProperty(KEY_CACHE_SWAP);
+        final String swap = System.getProperty(KEY_CACHE_SWAP);
         return swap == null || Boolean.parseBoolean(swap);
     }
 
@@ -158,7 +158,7 @@ public class ImageCacheConfiguration extends Static {
      *
      * @param allowSwap flag that enable memory swapping on filesystem.
      */
-    public static synchronized void setCacheSwapEnable(boolean allowSwap) {
-        System.getProperties().setProperty(KEY_CACHE_SWAP, String.valueOf(allowSwap));
+    public static void setCacheSwapEnable(boolean allowSwap) {
+        System.setProperty(KEY_CACHE_SWAP, String.valueOf(allowSwap));
     }
 }

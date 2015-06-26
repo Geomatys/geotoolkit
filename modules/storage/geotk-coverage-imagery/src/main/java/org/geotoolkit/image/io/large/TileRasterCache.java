@@ -7,7 +7,7 @@ import java.awt.image.Raster;
  *
  * @author Remi Marechal (Geomatys).
  */
-class LargeRaster {
+final class TileRasterCache {
     private final int gridX;
     private final int gridY;
     private final long weight;
@@ -21,7 +21,7 @@ class LargeRaster {
      * @param weight raster weight.
      * @param raster
      */
-    LargeRaster(int gridX, int gridY, long weight, Raster raster) {
+    TileRasterCache(int gridX, int gridY, long weight, Raster raster) {
         this.gridX  = gridX;
         this.gridY  = gridY;
         this.weight = weight;
@@ -66,8 +66,8 @@ class LargeRaster {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof LargeRaster)) return false;
-        LargeRaster lr = (LargeRaster) obj;
+        if (!(obj instanceof TileRasterCache)) return false;
+        TileRasterCache lr = (TileRasterCache) obj;
         return (gridX == lr.getGridX() && gridY == lr.getGridY() && raster == lr.getRaster());
     }
 }

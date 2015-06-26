@@ -21,8 +21,12 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -120,12 +124,14 @@ public final class FileUtilities extends Static {
      * @param file The File or directory to delete.
      */
     public static boolean deleteDirectory(final File dir) {
+        boolean res = true;
         if (dir.isDirectory()) {
             for (File f : dir.listFiles()) {
-                deleteDirectory(f);
+                boolean state = deleteDirectory(f);
+                res = res ? state : res;
             }
         }
-        return dir.delete();
+        return dir.delete() && res;
     }
 
     /**

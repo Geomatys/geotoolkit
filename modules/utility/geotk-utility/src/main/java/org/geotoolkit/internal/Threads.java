@@ -18,8 +18,10 @@
 package org.geotoolkit.internal;
 
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
@@ -172,6 +174,19 @@ public final class Threads extends AtomicInteger implements ThreadFactory, Rejec
      */
     public static void executeWork(final Runnable task) {
         WORK_EXECUTOR.execute(task);
+    }
+
+    /**
+     * Executes the given task in a worker thread.
+     *
+     * @param <T>
+     * @param task The work to execute.
+     * @return Futur result of the Callable
+     *
+     * @since 4.0.0
+     */
+    public static <T> Future<T> submitWork(final Callable<T> task) {
+        return WORK_EXECUTOR.submit(task);
     }
 
     /**

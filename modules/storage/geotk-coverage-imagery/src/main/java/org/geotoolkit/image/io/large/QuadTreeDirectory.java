@@ -69,6 +69,15 @@ public class QuadTreeDirectory {
         LOGGER.log(Level.FINE, "Quad-tree have been successfully initialized for path" + treeRootPath);
     }
 
+    /**
+     * Root directory where tiles are stored.
+     * 
+     * @return root directory
+     */
+    public String getTreeRootPath() {
+        return treeRootPath;
+    }
+
     private void create4rchitecture(final StringBuilder strBuilder, int numXTiles, int numYTiles) throws IOException {
         LOGGER.log(Level.FINE, "Begin creation of an entire quadTree level");
         if (numXTiles <= 2 && numYTiles <= 2) return;
@@ -267,9 +276,7 @@ public class QuadTreeDirectory {
      * Delete root directory recursively.
      */
     void cleanDirectory() {
-        File rootDir = new File(treeRootPath);
-        if (rootDir.exists()) {
-            FileUtilities.deleteDirectory(rootDir);
-        }
+        final File rootDir = new File(treeRootPath);
+        FileUtilities.deleteDirectory(rootDir);
     }
 }
