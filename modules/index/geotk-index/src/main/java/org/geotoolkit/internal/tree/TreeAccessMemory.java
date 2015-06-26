@@ -63,7 +63,7 @@ public class TreeAccessMemory extends TreeAccess {
      * {@inheritDoc }.
      */
     @Override
-    protected void internalSearch(int nodeID) throws IOException {
+    public void internalSearch(int nodeID) throws IOException {
         final Node candidate = readNode(nodeID);
         if (!candidate.isEmpty() && intersects(regionSearch, candidate.getBoundary(), true)) {
             if (candidate.isData()) {

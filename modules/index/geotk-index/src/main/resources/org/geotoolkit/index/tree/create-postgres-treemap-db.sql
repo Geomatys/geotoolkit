@@ -1,6 +1,6 @@
-CREATE SCHEMA "µSCHEMANAMEµ";
+CREATE SCHEMA "ÂµSCHEMANAMEÂµ";
 
-CREATE TABLE "µSCHEMANAMEµ"."records"(
+CREATE TABLE "ÂµSCHEMANAMEÂµ"."records"(
   "id"          INTEGER NOT NULL,
   "identifier"  VARCHAR(1024) NOT NULL UNIQUE,
   "nbenv"       INTEGER NOT NULL,
@@ -10,5 +10,12 @@ CREATE TABLE "µSCHEMANAMEµ"."records"(
   "maxy"        DOUBLE PRECISION
 );
 
-ALTER TABLE "µSCHEMANAMEµ"."records" ADD CONSTRAINT records_pk PRIMARY KEY ("id");
+ALTER TABLE "ÂµSCHEMANAMEÂµ"."records" ADD CONSTRAINT records_pk PRIMARY KEY ("id");
+
+
+CREATE TABLE "ÂµSCHEMANAMEÂµ"."tree"(
+  "data"      BYTEA NOT NULL
+);
+
+ALTER TABLE "ÂµSCHEMANAMEÂµ"."tree" ADD CONSTRAINT tree_pk PRIMARY KEY ("data");
 

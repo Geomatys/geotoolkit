@@ -39,6 +39,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.apache.sis.util.ArgumentChecks.ensureNonNull;
@@ -79,10 +80,6 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
         this.conn = source.getConnection();
         //this.conn.setAutoCommit(false);
     }
-
-
-
-
 
     public static TreeElementMapper createTreeEltMapperWithDB(File directory) throws SQLException, IOException {
         final DataSource dataSource = PGDataSource.getDataSource();
@@ -154,6 +151,19 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
                 return Thread.currentThread().getContextClassLoader();
             }
         });
+    }
+    
+    public static boolean treeExist(final DataSource source, File directory) {
+        try {
+            Connection conn = source.getConnection();
+            boolean exist = schemaExist(conn, directory.getAbsolutePath());
+            conn.close();
+            return exist;
+            
+        } catch (SQLException ex) {
+            LOGGER.log(Level.WARNING, "Error sxhile looking for postgres tree existence", ex);
+            return false;
+        }
     }
 
     private static boolean schemaExist(Connection connection, String absolutePath) throws SQLException {

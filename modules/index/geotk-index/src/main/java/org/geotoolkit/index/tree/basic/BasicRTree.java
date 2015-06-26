@@ -61,7 +61,7 @@ public class BasicRTree<E> extends AbstractTree<E> {
      * @see SplitCase
      * @see TreeElementMapper
      */
-    protected BasicRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
+    public BasicRTree(final TreeAccess treeAccess, final TreeElementMapper treeEltMap) throws StoreIndexException {
         super(treeAccess, treeAccess.getCRS(), treeEltMap);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : treeAF", treeAccess);
         ArgumentChecks.ensureNonNull("Create AbstractBasicRTree : CRS", crs);

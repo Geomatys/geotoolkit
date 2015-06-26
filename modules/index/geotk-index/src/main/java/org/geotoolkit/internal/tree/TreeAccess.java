@@ -156,7 +156,7 @@ public abstract class TreeAccess {
      * @param nodeID current Node identifier search
      * @throws IOException if read or write Exception in {@link TreeAccessFile} implementation.
      */
-    protected abstract void internalSearch(int nodeID) throws IOException;
+    public abstract void internalSearch(int nodeID) throws IOException;
     
     /**
      * Read Node at specified Node identifier.

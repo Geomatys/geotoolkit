@@ -401,7 +401,7 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
      * @throws IOException 
      */
     @Override
-    protected void internalSearch(int nodeID) throws IOException {
+    public void internalSearch(int nodeID) throws IOException {
         adjustBuffer(nodeID);
         final double[] boundary = new double[boundLength];
         for (int i = 0; i < boundLength; i++) {
