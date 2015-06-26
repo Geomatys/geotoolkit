@@ -3,12 +3,16 @@ package org.geotoolkit.internal.tree;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.sql.DataSource;
+import static org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper.SCHEMA;
+import org.geotoolkit.index.tree.manager.util.AeSimpleSHA1;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -32,10 +36,13 @@ public class TreeAccessSQLByteArray extends TreeAccessByteArray {
         this.directory = directory;
     }
 
-    private void printTree() throws SQLException {
+    private void printTree() throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
         final byte[] array = getData();
         final Connection c = source.getConnection();
-        final PreparedStatement stmt = c.prepareStatement("INSERT INTO \"" + directory.getAbsolutePath() + "\".\"tree\" VALUES(?)");
+        final Statement dstmt  = c.createStatement();
+        dstmt.executeUpdate("DELETE FROM \"" + getSchemaName(directory.getAbsolutePath()) + "\".\"tree\"");
+        
+        final PreparedStatement stmt = c.prepareStatement("INSERT INTO \"" + getSchemaName(directory.getAbsolutePath()) + "\".\"tree\" VALUES(?)");
         stmt.setBytes(1, array);
         stmt.execute();
         stmt.close();
@@ -47,17 +54,17 @@ public class TreeAccessSQLByteArray extends TreeAccessByteArray {
         super.flush();
         try {
             printTree();
-        } catch (SQLException ex) {
+        } catch (SQLException | NoSuchAlgorithmException | UnsupportedEncodingException ex) {
             throw new IOException(ex);
-        }
+        } 
     }
     
-    public static byte[] getData(final File directory, final DataSource source) throws SQLException {
+    public static byte[] getData(final File directory, final DataSource source) throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
         byte[] data = null;
         
         final Connection c = source.getConnection();
         final Statement stmt = c.createStatement();
-        final ResultSet rs = stmt.executeQuery("SELECT \"data\" FROM \"" + directory.getAbsolutePath() + "\".\"tree\"");
+        final ResultSet rs = stmt.executeQuery("SELECT \"data\" FROM \"" + getSchemaName(directory.getAbsolutePath()) + "\".\"tree\"");
         if (rs.next()) {
             data = rs.getBytes("data");
         }
@@ -65,5 +72,10 @@ public class TreeAccessSQLByteArray extends TreeAccessByteArray {
         stmt.close();
         c.close();
         return data;
+    }
+    
+    private static String getSchemaName(String absolutePath) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        final String sha1 = AeSimpleSHA1.SHA1(absolutePath);
+        return SCHEMA+sha1;
     }
 }

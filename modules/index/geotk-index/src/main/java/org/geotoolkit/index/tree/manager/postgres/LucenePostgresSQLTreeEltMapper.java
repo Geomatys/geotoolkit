@@ -122,9 +122,10 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
             final InputStream stream = getResourceAsStream("org/geotoolkit/index/tree/create-postgres-treemap-db.sql");
             final ScriptRunner scriptRunner = new ScriptRunner(connection);
             StringWriter writer = new StringWriter();
-            IOUtils.copy(stream, writer, "ISO-8859-1");
+            IOUtils.copy(stream, writer, "UTF-8");
             String sqlQuery = writer.toString();
             sqlQuery = sqlQuery.replaceAll("µSCHEMANAMEµ",schemaName);
+            sqlQuery = sqlQuery.replaceAll("µPATHµ",absolutePath);
             scriptRunner.run(sqlQuery);
             scriptRunner.close(false);
 

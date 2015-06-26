@@ -17,5 +17,8 @@ CREATE TABLE "µSCHEMANAMEµ"."tree"(
   "data"      BYTEA NOT NULL
 );
 
-ALTER TABLE "µSCHEMANAMEµ"."tree" ADD CONSTRAINT tree_pk PRIMARY KEY ("data");
+CREATE TABLE "µSCHEMANAMEµ"."infos"(
+  "directory"      VARCHAR(4096) NOT NULL
+);
 
+INSERT INTO "µSCHEMANAMEµ"."infos" VALUES ('µPATHµ');

@@ -3,6 +3,7 @@ package org.geotoolkit.index.tree.manager.postgres;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
@@ -146,8 +147,14 @@ public class PGTreeWrapper implements Tree {
                 lastUpdate     = System.currentTimeMillis();
                 LOGGER.info("The R-tree has been updated");
             }
-        } catch (SQLException | IOException | ClassNotFoundException ex) {
+        } catch (SQLException | IOException | ClassNotFoundException | NoSuchAlgorithmException ex) {
             throw new StoreIndexException(ex);
         }
     }
+
+    @Override
+    public String toString() {
+        return rTree.toString();
+    }
+   
 }

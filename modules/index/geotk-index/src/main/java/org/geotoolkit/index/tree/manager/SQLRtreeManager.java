@@ -19,6 +19,7 @@ package org.geotoolkit.index.tree.manager;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
                             byte[] data                  = TreeAccessSQLByteArray.getData(directory, ds);
                             tree                         = new PGTreeWrapper(data, directory, ds, treeMapper);
                             
-                        } catch ( SQLException | StoreIndexException | IOException | ClassNotFoundException e) {
+                        } catch ( SQLException | StoreIndexException | IOException | ClassNotFoundException | NoSuchAlgorithmException e) {
                             LOGGER.log(Level.SEVERE, null, e);
                             return null;
                         }
