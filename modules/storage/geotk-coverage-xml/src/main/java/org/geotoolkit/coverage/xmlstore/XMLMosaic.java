@@ -83,10 +83,10 @@ public class XMLMosaic implements GridMosaic {
     /** Executor used to write images */
     private static final RejectedExecutionHandler LOCAL_REJECT_EXECUTION_HANDLER = new ThreadPoolExecutor.CallerRunsPolicy();
 
-    private static final BlockingQueue IMAGEQUEUE = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors()*2);
+    private static final BlockingQueue IMAGEQUEUE = new ArrayBlockingQueue(getMaxExecutors()*2);
 
     private static final ThreadPoolExecutor TILEWRITEREXECUTOR = new ThreadPoolExecutor(
-            0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, IMAGEQUEUE, LOCAL_REJECT_EXECUTION_HANDLER);
+            0, getMaxExecutors(), 1, TimeUnit.MINUTES, IMAGEQUEUE, LOCAL_REJECT_EXECUTION_HANDLER);
 
     /*
      * Used only if we use the tile state cache mechanism, which means we don't use XML document to read / write tile states.
@@ -123,6 +123,26 @@ public class XMLMosaic implements GridMosaic {
     File folder;
     
     final ReentrantReadWriteLock bitsetLock = new ReentrantReadWriteLock();
+
+    /**
+     * Read the maximum number of threads in {@link #TILEWRITEREXECUTOR} from
+     * {@code geotk.pyramid.xml.max.painters} system property.
+     *
+     * @return value of {@code geotk.pyramid.xml.max.painters} system property} or
+     * number of available processors - 1.
+     */
+    private static int getMaxExecutors() {
+        final int availableProcessors = Runtime.getRuntime().availableProcessors();
+        final String property = System.getProperty("geotk.pyramid.xml.max.painters");
+        final int nbPainters;
+        if (property != null) {
+            nbPainters = Integer.valueOf(property);
+        } else {
+            nbPainters = availableProcessors > 1 ? availableProcessors - 1 : 1;
+        }
+        LOGGER.log(Level.FINE, "Initialize XML tile writer executor pool with a size of "+nbPainters);
+        return nbPainters;
+    }
 
     /**
      * Mosaic initialization. Should ALWAYS be called at mosaic instantiation, before doing anything else.
