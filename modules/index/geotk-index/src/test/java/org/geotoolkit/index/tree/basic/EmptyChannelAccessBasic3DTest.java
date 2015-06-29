@@ -1,7 +1,18 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2015, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree.basic;
 
@@ -10,13 +21,13 @@ import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 
 /**
+ * Test open close without any data and try to re-open.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys)
  */
-public class EmptyChannelAccessBasic3DTest extends ReadChannelAccessBasicTest {
+public final class EmptyChannelAccessBasic3DTest extends ReadChannelAccessBasicTest {
 
     public EmptyChannelAccessBasic3DTest() throws IOException, StoreIndexException, ClassNotFoundException {
         super(PredefinedCRS.CARTESIAN_3D, false);
     }
-    
 }

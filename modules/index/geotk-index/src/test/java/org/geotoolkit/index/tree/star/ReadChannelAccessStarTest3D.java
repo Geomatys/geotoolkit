@@ -21,13 +21,22 @@ import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 
 /**
+ * Create a generic StarRTree Test suite where Tree is store into byte array in 3D Cartesian space.<br/>
+ * Test is effectuate with byte array already filled by tree architecture.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
+ * @see PredefinedCRS#CARTESIAN_3D
  */
-public class ReadChannelAccessStarTest3D extends ReadChannelAccessStarTest {
+public final class ReadChannelAccessStarTest3D extends ReadChannelAccessStarTest {
 
+    /**
+     * Create a generic StarRTree Test suite with byte array already filled by tree architecture in 3D cartesian space.
+     *
+     * @throws IOException if problem during head reading from already filled file.
+     * @throws StoreIndexException if file isn't already filled by {@link StarRTree} implementation.
+     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
+     */
     public ReadChannelAccessStarTest3D() throws IOException, StoreIndexException, ClassNotFoundException {
         super(PredefinedCRS.CARTESIAN_3D, true);
     }
-    
 }

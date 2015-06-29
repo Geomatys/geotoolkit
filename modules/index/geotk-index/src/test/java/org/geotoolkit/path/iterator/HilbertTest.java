@@ -15,11 +15,9 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.path.iterator;
-import org.geotoolkit.path.iterator.HilbertIterator;
 import java.util.BitSet;
 import java.util.Iterator;
 import static org.junit.Assert.assertTrue;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -42,55 +40,46 @@ public abstract class HilbertTest {
     }
 
     @Test
-@Ignore
     public void order1Test(){
         orderNTest(1);
     }
 
     @Test
-@Ignore
     public void order2Test(){
         orderNTest(2);
     }
 
     @Test
-@Ignore
     public void order3Test(){
         orderNTest(3);
     }
 
     @Test
-@Ignore
     public void order4Test(){
         orderNTest(4);
     }
 
     @Test
-@Ignore
     public void order5Test(){
         orderNTest(5);
     }
 
     @Test
-@Ignore
     public void order6Test(){
         orderNTest(6);
     }
 
     @Test
-@Ignore
     public void order7Test(){
         orderNTest(7);
     }
 
     @Test
-@Ignore
     public void order8Test(){
         orderNTest(8);
     }
 
     @Test
-@Ignore
     public void order9Test(){
         orderNTest(9);
     }

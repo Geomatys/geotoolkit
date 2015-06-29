@@ -2,7 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,7 @@ import org.geotoolkit.referencing.crs.PredefinedCRS;
  *
  * @author Remi Marechal (Geomatys)
  */
-public class EmptyReadeableStarRTree2D extends ReadeableStarRTreeTest {
+public final class EmptyReadeableStarRTree2D extends ReadeableStarRTreeTest {
     public EmptyReadeableStarRTree2D() throws Exception { 
         super(PredefinedCRS.CARTESIAN_2D, false);
     }

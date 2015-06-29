@@ -23,7 +23,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.ByteChannel;
 import java.nio.channels.Channel;
 import java.nio.channels.SeekableByteChannel;
 import java.util.Arrays;
@@ -313,7 +312,6 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
     }
         /*****************************  end head ******************************/
         
-        
         // ByteBuffer
         byteBuffer = ByteBuffer.allocate((int)bufferLength);
 //        byteBuffer.order(bO);//-- stand by byte order comportement
@@ -325,37 +323,6 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
         // root 
         root = null;
     }
-    
-    
-//    /**
-//     * Adjust buffer position relative to filechanel which contain data, 
-//     * and prepare bytebuffer position and limit for reading or writing action.
-//     * 
-//     * @param treeIdentifier 
-//     * @throws IOException 
-//     */
-//    protected void adjustBuffer(final int nodeID) throws IOException {
-//        rwIndex = beginPosition + (nodeID - 1) * nodeSize;
-//        if (rwIndex < currentBufferPosition || ((rwIndex + nodeSize) > (currentBufferPosition + bufferLength))) {
-//            // write current data within bytebuffer in channel.
-//            byteBuffer.position(0);
-//            byteBuffer.limit(writeBufferLimit);
-//            inOutChannel.position(currentBufferPosition);
-//            int writtenByte = 0;
-//            while (writtenByte < writeBufferLimit) {
-//                writtenByte += inOutChannel.write(byteBuffer);
-//            }
-//            writeBufferLimit = 0;
-//            byteBuffer.clear();
-//            final int div = (rwIndex - beginPosition) / bufferLength;
-//            currentBufferPosition = div * bufferLength + beginPosition;
-//            inOutChannel.position(currentBufferPosition);
-//            inOutChannel.read(byteBuffer);
-//        }
-//        rwIndex -= currentBufferPosition;
-//        byteBuffer.limit(rwIndex + nodeSize);
-//        byteBuffer.position(rwIndex);
-//    }
     
     /**
      * Adjust buffer position relative to filechanel which contain data, 
@@ -396,9 +363,7 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
     }
     
     /**
-     * 
-     * @param nodeID
-     * @throws IOException 
+     * {@inheritDoc }
      */
     @Override
     public void internalSearch(int nodeID) throws IOException {
@@ -432,10 +397,7 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
     }
 
     /**
-     * 
-     * @param indexNode
-     * @return
-     * @throws IOException 
+     * {@inheritDoc }
      */
     @Override
     public Node readNode(int indexNode) throws IOException {
@@ -455,9 +417,7 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
     }
 
     /**
-     * 
-     * @param candidate
-     * @throws IOException 
+     * {@inheritDoc }
      */
     @Override
     public void writeNode(Node candidate) throws IOException {
@@ -477,7 +437,7 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
     }
 
     /**
-     * {@inheritDoc }.
+     * {@inheritDoc }
      */
     @Override
     public synchronized void removeNode(final Node candidate) {
@@ -485,7 +445,7 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
     }
 
     /**
-     * {@inheritDoc }.
+     * {@inheritDoc }
      */
     @Override
     public synchronized void rewind() throws IOException {
@@ -510,36 +470,19 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
     }
     
     /**
-     * 
-     * @throws IOException 
+     * {@inheritDoc }
+     * <br>
+     * When you call this method the {@link #flush() } method is internaly invoked.
      */
     @Override
     public void close() throws IOException {
-        byteBuffer.position(0);
-        byteBuffer.limit(writeBufferLimit);
-        inOutChannel.position(currentBufferPosition);
-        int writtenByte = 0;
-        while (writtenByte < writeBufferLimit) {
-            writtenByte += inOutChannel.write(byteBuffer);
-        }
-        
-        
-        byteBuffer.clear();
-        // write nodeID
-        inOutChannel.position(22); 
-        byteBuffer.putInt(nodeId);
-        byteBuffer.putInt(treeIdentifier);
-        byteBuffer.putInt(eltNumber);
-        byteBuffer.flip();
-        inOutChannel.write(byteBuffer);
-        
+        flush();
         //close
         inOutChannel.close();
     }
 
     /**
-     * 
-     * @throws IOException 
+     * {@inheritDoc }
      */
     @Override
     public void flush() throws IOException {
@@ -574,8 +517,7 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
     }
 
     /**
-     * 
-     * @return 
+     * {@inheritDoc }
      */
     @Override
     public boolean isClose() {

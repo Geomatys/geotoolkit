@@ -18,22 +18,31 @@ package org.geotoolkit.index.tree.hilbert;
 
 import java.io.File;
 import java.io.IOException;
-import org.geotoolkit.index.tree.AbstractTreeTest;
 import org.geotoolkit.index.tree.FileTreeElementMapperTest;
 import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.internal.tree.TreeUtilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Create a generic HilbertRTree Test suite where Tree architecture is stored into byte array.<br/>
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
+ * @see HilbertAccessByteArray
  */
 abstract class WriteChannelAccessHilbertTest extends HilbertTest {
+    
+    /**
+     * Create a generic HilbertRTree Test suite where Tree is stored into byte array.
+     *
+     * @author Remi Marechal (Geomatys).
+     * @param crs
+     * @throws StoreIndexException
+     * @throws IOException 
+     */
     protected WriteChannelAccessHilbertTest(final CoordinateReferenceSystem crs) throws StoreIndexException, IOException {
         super(crs);
-//        inOutFile      = File.createTempFile("starRTree", "tree", tempDir);
         final File treeMapperFile = File.createTempFile("mapper", "test", tempDir);
-        tEM = new FileTreeElementMapperTest(crs, treeMapperFile);
+        tEM  = new FileTreeElementMapperTest(crs, treeMapperFile);
         tree = new HilbertRTree<double[]>(new HilbertAccessByteArray(TreeUtilities.HILBERT_NUMBER, TreeUtilities.VERSION_NUMBER, 4, 2, crs), tEM);
     }
 }

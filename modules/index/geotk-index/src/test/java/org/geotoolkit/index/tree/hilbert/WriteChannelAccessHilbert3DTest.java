@@ -21,13 +21,21 @@ import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 
 /**
+ * Create a generic HilbertRTree Test suite where Tree architecture is stored into byte array in 3D Cartesian space.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
+ * @see PredefinedCRS#CARTESIAN_3D
+ * @see HilbertAccessByteArray
  */
-public class WriteChannelAccessHilbert3DTest extends WriteChannelAccessHilbertTest {
+public final class WriteChannelAccessHilbert3DTest extends WriteChannelAccessHilbertTest {
 
+    /**
+     * Create a HilbertRTree Test suite in a Cartesian 3D space stored into byte array.
+     * 
+     * @throws StoreIndexException
+     * @throws IOException 
+     */
     public WriteChannelAccessHilbert3DTest() throws StoreIndexException, IOException {
         super(PredefinedCRS.CARTESIAN_3D);
     }
-    
 }

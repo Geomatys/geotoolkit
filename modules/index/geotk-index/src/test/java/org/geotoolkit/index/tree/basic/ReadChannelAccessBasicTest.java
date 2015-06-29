@@ -1,7 +1,18 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2015, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree.basic;
 
@@ -16,11 +27,24 @@ import static org.junit.Assert.assertTrue;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Create a generic BasicRTree Test suite where Tree is store into byte array.<br/>
+ * Test is effectuate with byte array already filled by tree architecture.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
+ * @see TreeAccessByteArray
  */
 abstract class ReadChannelAccessBasicTest extends AbstractTreeTest {
 
+    /**
+     * Create a generic BasicRTree Test suite with {@link TreeAccess} already filled by tree architecture
+     * and a {@link CoordinateReferenceSystem} define by user.
+     * 
+     * @param crs
+     * @param insert {@code true} to insert data into tree during test constructor else no insertion.
+     * @throws IOException if problem during head reading from already filled file.
+     * @throws StoreIndexException should never append.
+     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
+     */
     ReadChannelAccessBasicTest(final CoordinateReferenceSystem crs, final boolean insert) throws IOException, StoreIndexException, ClassNotFoundException {
         super(crs);
         

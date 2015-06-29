@@ -21,8 +21,11 @@ import org.geotoolkit.internal.tree.SeekableByteArrayChannel;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * {@link TreeAccess} implementation adapted for {@link HilbertRTree}.<br/>
+ * Store all {@link Node} architecture use by {@link Tree} into byte array.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
+ * @see HilbertRTree
  */
 public class HilbertAccessByteArray extends HilbertChannelTreeAccess {
     /**

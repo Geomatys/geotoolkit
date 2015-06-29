@@ -18,6 +18,7 @@ package org.geotoolkit.internal.tree;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SeekableByteChannel;
 import java.util.Arrays;
@@ -90,6 +91,11 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
     
     /**
      * Reads a sequence of bytes from this channel into the given buffer.
+     * 
+     * @param dst {@link ByteBuffer} which will be filled by reading action.
+     * 
+     * @return number of reading byte.
+     * @throws java.io.IOException if this {@link Channel} is closed.
      */
     @Override
     public int read(final ByteBuffer dst) throws IOException {
@@ -105,6 +111,10 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
 
     /**
      * Writes a sequence of bytes to this channel from the given buffer.
+     * 
+     * @param src {@link ByteBuffer} which will be written.
+     * @return number of written byte.
+     * @throws java.io.IOException if this {@link Channel} is closed.
      */
     @Override
     public int write(final ByteBuffer src) throws IOException {
@@ -119,6 +129,8 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
 
     /**
      * Returns this channel position.
+     * 
+     * @throws java.io.IOException if this {@link Channel} is closed.
      */
     @Override
     public long position() throws IOException {
@@ -128,6 +140,9 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
 
     /**
      * Sets this channel position.
+     * 
+     * @param newPosition the new position 
+     * @throws java.io.IOException if this {@link Channel} is closed.
      */
     @Override
     public SeekableByteChannel position(final long newPosition) throws IOException {
@@ -138,7 +153,9 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
     }
 
     /**
-     * Returns the current size.
+     * Returns the current size
+     * 
+     * @throws java.io.IOException if this {@link Channel} is closed.
      */
     @Override
     public long size() throws IOException {
@@ -148,6 +165,8 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
 
     /**
      * Truncates the data to the given size.
+     * 
+     * @throws java.io.IOException if this {@link Channel} is closed.
      */
     @Override
     public SeekableByteChannel truncate(final long size) throws IOException {
@@ -167,6 +186,8 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
 
     /**
      * Closes this channel.
+     * 
+     * @throws java.io.IOException if problem to close this {@link Channel}.
      */
     @Override
     public void close() throws IOException {
@@ -177,9 +198,8 @@ public strictfp class SeekableByteArrayChannel implements SeekableByteChannel {
      * Verifies that the channel is open.
      */
     private void ensureOpen() throws IOException {
-        if (isClosed) {
+        if (isClosed) 
             throw new ClosedChannelException();
-        }
     }
     
     /**

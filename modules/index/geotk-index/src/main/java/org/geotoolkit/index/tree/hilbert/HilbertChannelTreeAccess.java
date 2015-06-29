@@ -16,19 +16,22 @@
  */
 package org.geotoolkit.index.tree.hilbert;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.channels.SeekableByteChannel;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.internal.tree.ChannelTreeAccess;
-import org.geotoolkit.internal.tree.SeekableByteArrayChannel;
 import static org.geotoolkit.internal.tree.TreeUtilities.intersects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * {@link TreeAccess} implementation adapted for {@link HilbertRTree}.<br/>
+ * Store all {@link Node} architecture use by {@link Tree} into a {@link SeekableByteChannel}.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
+ * @see #internalSearch(int) 
+ * @see #readNode(int) 
+ * @see #writeNode(org.geotoolkit.index.tree.Node) 
  */
 abstract strictfp class HilbertChannelTreeAccess extends ChannelTreeAccess {
     
@@ -43,22 +46,40 @@ abstract strictfp class HilbertChannelTreeAccess extends ChannelTreeAccess {
      */
     private static final int HILBERT_INT_NUMBER = 6;
     
-    //-- lecture 
+    //------------------------------ reading mode ------------------------------ 
+    /**
+     * Build a {@link Tree} from a already filled {@link Channel}, in other words, open in reading mode.
+     * 
+     * @param channel {@link SeekableByteChannel} to read already filled object.
+     * @param magicNumber {@code Integer} single {@link Tree} code.
+     * @param versionNumber tree version.
+     * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk. 
+     * @throws IOException if problem during channel read / write action.
+     */
     public HilbertChannelTreeAccess(final SeekableByteChannel channel, final int magicNumber, 
             final double versionNumber, final int byteBufferLength) 
             throws IOException, ClassNotFoundException {
         super(channel, magicNumber, versionNumber, byteBufferLength, HILBERT_INT_NUMBER);
     }
-            
-    
-    
-    //-- ecriture
+         
+    //-------------------------- Writing mode ----------------------------------
+    /**
+     * Build an empty {@link TreeAccess} adapted for {@link HilbertRTree} and store {@link Node} architecture,
+     * in other words, open in writing mode.
+     * 
+     * @param channel {@link SeekableByteChannel} to read already filled object.
+     * @param magicNumber {@code Integer} single {@link Tree} code.
+     * @param versionNumber tree version.
+     * @param maxElements element number per cell.
+     * @param hilbertOrder
+     * @param crs
+     * @param byteBufferLength length in Byte unit of the buffer which read and write on hard disk.
+     * @throws IOException 
+     */
     public HilbertChannelTreeAccess(final SeekableByteChannel channel, final int magicNumber, final double versionNumber, 
             final int maxElements, final int hilbertOrder, final CoordinateReferenceSystem crs, final int byteBufferLength) throws IOException {
         super(channel, magicNumber, versionNumber, maxElements, hilbertOrder, null, crs, byteBufferLength, HILBERT_INT_NUMBER);
     }
-    
-    
     
     /**
      * {@inheritDoc }.

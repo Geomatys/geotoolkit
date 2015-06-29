@@ -24,27 +24,31 @@ import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.internal.tree.TreeAccess;
 import org.geotoolkit.internal.tree.TreeAccessByteArray;
 import org.geotoolkit.internal.tree.TreeUtilities;
-import org.geotoolkit.referencing.crs.PredefinedCRS;
 import static org.junit.Assert.assertTrue;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Create a generic StarRTree Test suite where Tree is store into byte array.<br/>
+ * Test is effectuate with byte array already filled by tree architecture.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys).
+ * @see TreeAccessByteArray
  */
 abstract class ReadChannelAccessStarTest extends AbstractTreeTest {
     
     /**
-     * Create a Star RTree test suite adapted for Tree Access which use channel and byte array.
+     * Create a generic StarRTree Test suite with {@link TreeAccess} already filled by tree architecture
+     * and a {@link CoordinateReferenceSystem} define by user.
      * 
      * @param crs
-     * @param insert
-     * @throws IOException 
+     * @param insert {@code true} to insert data into tree during test constructor else no insertion.
+     * @throws IOException if problem during head reading from already filled file.
+     * @throws StoreIndexException should never append.
+     * @throws ClassNotFoundException if there is a problem during {@link CoordinateReferenceSystem} invert serialization.
      */
     ReadChannelAccessStarTest(final CoordinateReferenceSystem crs, final boolean insert) throws IOException, StoreIndexException, ClassNotFoundException{
         super(crs);
         
-//        final File inOutFile      = File.createTempFile("test", "tree", tempDir);
         final File treeMapperFile = File.createTempFile("test", "mapper", tempDir);
         
         // data insertion

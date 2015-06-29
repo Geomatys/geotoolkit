@@ -21,10 +21,11 @@ import org.geotoolkit.index.tree.StoreIndexException;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 
 /**
+ * Test open close without any data and try to re-open.
  *
- * @author rmarechal
+ * @author Remi Marechal (Geomatys)
  */
-public class EmptyChannelAccessStar2DTest extends ReadChannelAccessStarTest{
+public final class EmptyChannelAccessStar2DTest extends ReadChannelAccessStarTest{
      public EmptyChannelAccessStar2DTest() throws IOException, StoreIndexException, ClassNotFoundException {
         super(PredefinedCRS.CARTESIAN_3D, false);
     }
