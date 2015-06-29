@@ -34,7 +34,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Border;
-import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 
 /**
@@ -112,11 +111,7 @@ public class ButtonTableCell<S,T> extends TableCell<S,T> {
     @Override
     protected void updateItem(T item, boolean empty) {
         super.updateItem(item, empty);
-        button.setVisible(!empty);
-        if(visiblePredicate!=null && !empty){
-            final boolean visible = visiblePredicate.test(getItem());
-            setVisible(visible);
-        }
+        button.setVisible(!empty && (visiblePredicate==null || visiblePredicate.test(item)));
     }
     
 }
