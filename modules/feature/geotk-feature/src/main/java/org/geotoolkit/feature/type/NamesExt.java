@@ -38,11 +38,17 @@ public final class NamesExt extends Static {
     public static GenericName create(final String local) {
         return create(null,local);
     }
-    
+
+    /**
+     *
+     * @param namespace if null or empty will not be used for the name
+     * @param local mandatory
+     * @return GenericName
+     */
     public static GenericName create(final String namespace, final String local) {
 
         // WARNING: DefaultFactories.NAMES is not a public API and may change in any future SIS version.
-        if(namespace==null){
+        if(namespace==null || namespace.isEmpty()){
             return DefaultFactories.forBuildin(NameFactory.class).createGenericName(null, local);
         }else{
             return DefaultFactories.forBuildin(NameFactory.class).createGenericName(null, namespace, local);
