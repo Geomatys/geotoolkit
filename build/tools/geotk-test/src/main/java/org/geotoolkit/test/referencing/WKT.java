@@ -66,7 +66,7 @@ public final strictfp class WKT {
             "    TOWGS84[-3,142,183,0,0,0,0],\n" +
             "    AUTHORITY[“EPSG”,“6267”]],\n" +
             "  PRIMEM[“Greenwich”, 0, AUTHORITY[“EPSG”, “8901”]],\n" +
-            "  UNIT[“DMSH”,0.0174532925199433, AUTHORITY[“EPSG”, “9108”]],\n" +
+            "  UNIT[“DMSH”,0.0174532925199433],\n" +
             "  AXIS[“Lat”,NORTH],\n" +
             "  AXIS[“Long”,EAST],\n" +
             "  AUTHORITY[“EPSG”, “4267”]]");
@@ -146,7 +146,7 @@ public final strictfp class WKT {
             "    TOWGS84[0,0,0,0,0,0,0],\n" +
             "    AUTHORITY[“EPSG”, “6326”]],\n" +
             "  PRIMEM[“Greenwich”, 0, AUTHORITY[“EPSG”, “8901”]],\n" +
-            "  UNIT[“DMSH”,0.0174532925199433, AUTHORITY[“EPSG”, “9108”]],\n" +
+            "  UNIT[“DMSH”,0.0174532925199433],\n" +
             "  AXIS[“Lat”,NORTH],\n" +
             "  AXIS[“Long”,EAST],\n" +
             "  AUTHORITY[“EPSG”, “4326”]]");

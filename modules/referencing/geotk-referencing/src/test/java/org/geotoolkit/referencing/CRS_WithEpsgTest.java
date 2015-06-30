@@ -332,7 +332,7 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
                    + "    SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],\n"
                    + "    TOWGS84[0,0,0,0,0,0,0], AUTHORITY[\"EPSG\",\"6326\"]],\n"
                    + "  PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],\n"
-                   + "  UNIT[\"DMSH\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9108\"]],\n"
+                   + "  UNIT[\"DMSH\",0.0174532925199433],\n"
                    + "  AXIS[\"Lat\",NORTH], AXIS[\"Long\",EAST],\n"
                    + "  AUTHORITY[\"EPSG\",\"4326\"]]";
         CoordinateReferenceSystem crs = CRS.parseWKT(wkt);
@@ -628,6 +628,7 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
      * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-71">GEOTK-71</a>
      */
     @Test
+    @Ignore("JSR-275 does not accept unit named 'level'.")
     public void testProjected3D_to_2D() throws FactoryException {
         CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
         CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:3035");

@@ -404,7 +404,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
                 "    SPHEROID[“Airy 1830”,6377563.396,299.3249646,AUTHORITY[“EPSG”, “7001”]],\n" +
                 "    TOWGS84[375,-111,431,0,0,0,0],AUTHORITY[“EPSG”, “6277”]],\n" +
                 "    PRIMEM[“Greenwich”,0,AUTHORITY[“EPSG”, “8901”]],\n" +
-                "    UNIT[“DMSH”,0.0174532925199433,AUTHORITY[“EPSG”, “9108”]],\n" +
+                "    UNIT[“DMSH”,0.0174532925199433],\n" +
                 "    AXIS[“Lat”,NORTH],AXIS[“Long”,EAST],AUTHORITY[“EPSG”, “4277”]],\n" +
                 "  PROJECTION[“Transverse_Mercator”],\n" +
                 "  PARAMETER[“latitude_of_origin”,49],\n" +
