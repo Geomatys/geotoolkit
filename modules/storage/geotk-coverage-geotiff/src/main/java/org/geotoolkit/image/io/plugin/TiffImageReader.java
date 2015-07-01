@@ -867,7 +867,7 @@ public class TiffImageReader extends SpatialImageReader {
                 case 0 :   //-- minIsWhite
                 case 1 : { //-- minIsBlack
                         //-- faire un echantillonnage sur l'ensemble de l'image et recup min et max.
-                        if (sourceDataBufferType == DataBuffer.TYPE_DOUBLE || sourceDataBufferType == DataBuffer.TYPE_FLOAT) {
+                        if (bits.length > 1) {
                             final double minCs = (minSampleValue != null) ? minSampleValue : Double.MIN_VALUE;
                             final double maxCs = (maxSampleValue != null) ? maxSampleValue : Double.MAX_VALUE;
                             cs = new ScaledColorSpace(bits.length, 0, minCs, maxCs);//-- attention au choix de la bande !!!!
@@ -899,6 +899,12 @@ public class TiffImageReader extends SpatialImageReader {
                             "photometricInterpretation", photoInter));
                 }
             }
+            
+//            final boolean hasAlpha = hasAlpha();
+//            final boolean isAlphaPreMulti = hasAlpha && getAlphaValue() == 1;
+//            final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, isAlphaPreMulti,
+//                    hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, sourceDataBufferType);
+            
             final boolean hasAlpha = bits.length > cs.getNumComponents();
             final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, false,
                     hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, sourceDataBufferType);
@@ -910,7 +916,75 @@ public class TiffImageReader extends SpatialImageReader {
         }
         return rawImageType;
     }
+    
+    /**
+     * Returns {@code true} if read image own an alpha band else return {@code false}.<br><br>
+     * 
+     * Alpha band exist if geotiff tag {@link GeoTiffConstants#ExtraSamples} exist 
+     * and stipule that one band is considered as alpha canal.
+     * 
+     * @return {@code true} if read image own an alpha band else return {@code false}.
+     * @see #getAlphaBandIndex() 
+     * @see #getAlphaValue() 
+     */
+    private boolean hasAlpha() {
+        final Map<String, Object> extraSObj = headProperties.get(ExtraSamples);
+        if (extraSObj == null) return false;
+        final long[] extraSamples = (long[]) extraSObj.get(ATT_VALUE);
+        boolean alpha = false;
+        for (int i = 0, l = extraSamples.length; i < l; i++) {
+            if (extraSamples[i] != 0) {
+                if (alpha)
+                    throw new IllegalArgumentException("It must exist only one unique alpha canal. Impossible to choose correct canal.");
+                alpha = true;
+            }
+        }
+        return alpha;
+    }
+    
+    /**
+     * Returns the tiff tag value of the expected Alpha band.<br><br>
+     * 
+     * Return 1 for pre-multiplied alpha raster.<br>
+     * Return 2 for none pre-multiplied alpha raster.
+     * 
+     * @return tiff tag value of the expected Alpha band.
+     * @see #hasAlpha() 
+     * @see #getAlphaBandIndex() 
+     * @see GeoTiffConstants#ExtraSamples
+     * @throws IllegalStateException if image do not have any Alpha canal.
+     */
+    private short getAlphaValue() {
+        if (!hasAlpha())
+            throw new IllegalStateException("getAlphaValue : image do not own Alpha canal.");
+        final short[] extraSamples = ((short[]) headProperties.get(ExtraSamples).get(ATT_VALUE));
+        assert extraSamples != null;
+        for (short extraSample : extraSamples) {
+            if (extraSample != 0) return extraSample;
+        }
+        throw new IllegalStateException("Alpha value not found. Should never append.");
+    }
 
+    /**
+     * Returns band index of Alpha canal.<br><br>
+     * 
+     * Return extraSample Alpha band index added by 3, with 3 related with RGB components.
+     * 
+     * @return band index of Alpha canal.
+     * @see GeoTiffConstants#ExtraSamples
+     * @throws IllegalStateException if image do not have any Alpha canal.
+     */
+    private int getAlphaBandIndex() {
+        if (!hasAlpha())
+            throw new IllegalStateException("getAlphaBandIndex : image do not own Alpha canal.");
+        final short[] extraSamples = ((short[]) headProperties.get(ExtraSamples).get(ATT_VALUE));
+        assert extraSamples != null;
+        for (int i = 0, l = extraSamples.length; i < l; i++) {
+            if (extraSamples[i] != 0) return i + 3;//-- In tiff specification extrasample are define after RGB component -> +3.
+        }
+        throw new IllegalStateException("Alpha value not found. Should never append.");
+    }
+    
     /**
      * Returns a collection of {@link ImageTypeSpecifier} containing possible image types to which
      * the given image may be decoded. The default implementation returns a singleton containing
@@ -1925,7 +1999,38 @@ public class TiffImageReader extends SpatialImageReader {
         if (image.getRaster().getDataBuffer().getDataType() != sourceDataBufferType)
             throw new IllegalArgumentException("The destination image datatype doesn't match with read source image datatype. "
                     + "Expected Datatype : "+sourceDataBufferType+" found : "+image.getRaster().getDataBuffer().getDataType());
-
+        
+//        /**
+//         * permettre la lecture d'une image ou les bandes sont selectionnées
+//         * dans une premier temps voir pour readFromStrip()
+//         * etendre a tout les modes de lectures
+//         * 
+//         * Dans le cas d'images ou le nombre de band sources differe du nombre de band dest
+//         * ajouter les param dans image read param
+//         * Dans un premier temps prendre les bands source de 0 a n
+//         * ou n est le nombre de band dest.
+//         */
+//        final int destNumBands = image.getSampleModel().getNumBands();
+//        if (destNumBands != samplesPerPixel) {
+//            if (param == null) param = new ImageReadParam();
+//            int[] sourceBands = param.getSourceBands();
+//            int[] destBands   = param.getDestinationBands();
+//            if (sourceBands == null) {
+//                sourceBands = new int[destNumBands];
+//                for (int i = 0; i < destNumBands; i++) {//-- voir plus tard pour mettre le alpha au bon endroit
+//                    sourceBands[i] = i;
+//                }
+//                param.setSourceBands(sourceBands);
+//            }
+//            if (destBands == null) {
+//                destBands = new int[destNumBands];
+//                for (int i = 0; i < destNumBands; i++) {
+//                    destBands[i] = i;
+//                }
+//                param.setDestinationBands(destBands);
+//            }
+//        }
+        
         /*
          * compute region : ajust les 2 rectangles src region et dest region en fonction des coeff subsampling present dans Imagereadparam.
          */
@@ -2150,6 +2255,8 @@ public class TiffImageReader extends SpatialImageReader {
             int readLength, srcStepX, srcStepY, planarDenum, planarBankStep;
 
             if (pC == 1) {
+//                if (sourceXSubsampling == 1 
+//                 && checkBandsSettings(sourceBands, destinationBands, samplesPerPixel, numBands)) {
                 if (sourceXSubsampling == 1) {
                     /*
                      * if we want to read all image which mean : srcRegion = dstRegion
@@ -2170,6 +2277,7 @@ public class TiffImageReader extends SpatialImageReader {
                 } else {
                     //-- read pixel by pixel
                     readLength = samplesPerPixel;
+//                    readLength = numBands;//-- ici c destbands number plutot, oui longueur a lire = longueur sample dest
                     srcStepX   = sourceXSubsampling;
                 }
                 planarDenum = 1;
@@ -2215,7 +2323,9 @@ public class TiffImageReader extends SpatialImageReader {
                         currentMaxRowPerStrip = currentStripOffset + rowsPerStrip;
                         assert stripOffsets.length % planarDenum == 0;
                         //-- row begining exprimate in byte.
-                        srcBuffPos = stripOffsets[currentStripOffset + s * stripOffsets.length / planarDenum] + (y - currentStripOffset * rowsPerStrip) * sourceScanlineStride * sampleSize / planarDenum + srcRegion.x * samplesPerPixel * sampleSize / planarDenum ;//+ s * sampleSize;
+                        srcBuffPos = stripOffsets[currentStripOffset + s * stripOffsets.length / planarDenum] 
+                                   + (y - currentStripOffset * rowsPerStrip) * sourceScanlineStride * sampleSize / planarDenum 
+                                   + srcRegion.x * samplesPerPixel * sampleSize / planarDenum ;//+ s * sampleSize;
                         nextSrcBuffPos = srcBuffPos + sourceYSubsampling * sourceScanlineStride * sampleSize / planarDenum;
                     }
 
@@ -2268,7 +2378,60 @@ public class TiffImageReader extends SpatialImageReader {
             }
         }
     }
-
+    
+    /**
+     * Effectuate some other verification to allow or not allow reading optimizations.<br>
+     * Returns {@code true} if reading operation may be optimizate, else return {@code false}.<br><br>
+     * 
+     * Criterions are : <br>
+     * - same band number for source and destination.<br>
+     * - destination and source array organize in ascending order.
+     * 
+     * @param sourceBands selected source bands.
+     * @param destBands selected destination bands.
+     * @param srcNumBand source image numbands.
+     * @param destNumBand destination image numbands.
+     * @return {@code true} if reading operation may be optimizate, else return {@code false}.
+     */
+    private boolean checkBandsSettings(int[] sourceBands, int[] destBands, 
+                                       int srcNumBand, int destNumBand) {
+        if (sourceBands == null) {
+            if (destBands == null) {
+                return srcNumBand == destNumBand;
+            }
+            return destBands.length == srcNumBand
+                && destNumBand      == srcNumBand
+                && checkArrayInAscendingOrder(destBands);
+        }
+        if (destBands == null) {
+            assert sourceBands != null;
+            return sourceBands.length == destNumBand
+                && destNumBand      == srcNumBand
+                && checkArrayInAscendingOrder(sourceBands);
+        }
+        assert sourceBands != null && destBands != null;
+        return sourceBands.length == destBands.length 
+            && destNumBand        == srcNumBand
+            && sourceBands.length == srcNumBand
+            && checkArrayInAscendingOrder(sourceBands)
+            && checkArrayInAscendingOrder(destBands);
+    }
+    
+    /**
+     * Returns {@code true} if internal integer from array is organize in ascending order, 
+     * else return {@code false}.
+     * 
+     * @param array the checked array.
+     * @return {@code true} if internal integer from array is organize in ascending order, 
+     * else return {@code false}.
+     */
+    private boolean checkArrayInAscendingOrder(int[] array) {
+        for (int i = 0, l = array.length; i < l; i++) {
+            if (array[i] != i) return false;
+        }
+        return true;
+    }
+    
     /**
      * Process to the image reading, and stores the pixels in the given raster.<br/>
      * Process fill raster from informations stored in stripOffset made.<br/>
