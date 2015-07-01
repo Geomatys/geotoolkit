@@ -26,6 +26,7 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.Numbers;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.util.InternationalString;
@@ -112,7 +113,11 @@ public final strictfp class SampleDimensionUtils {
     }
     
     /**
-     * Build {@linkplain Category categories} {@link List} from sample and noData values from band. 
+     * Build {@linkplain Category categories} {@link List} from sample and noData values from band.<br><br>
+     * 
+     * Particularity cases : <br>
+     * - if scale is not {@code null} and define as 1 and offset define as {@code null}, {@link ViewType#PHOTOGRAPHIC} is considered.<br>
+     * - if offset is not {@code null} and define as 0 and scale define as {@code null}, {@link ViewType#PHOTOGRAPHIC} is assume.
      * 
      * @param minSampleValue minimum sample value for current {@link SampleDimension} (band).
      * @param maxSampleValue maximum sample value for current {@link SampleDimension} (band).
@@ -124,10 +129,22 @@ public final strictfp class SampleDimensionUtils {
      * @throws NullArgumentException if nodataValues {@link Set} or typeClass is {@code null}.
      */
     public static List<Category> buildCategories(final double minSampleValue, final double maxSampleValue, 
-                                                  final Double scale,         final Double offset,
+                                                  Double scale,         Double offset,
                                                   final Class typeClass,       final TreeSet<Double> nodataValues) {
         ArgumentChecks.ensureNonNull("noDataValues", nodataValues);
         ArgumentChecks.ensureNonNull("typeClass",    typeClass);
+        
+        //-- in case where scale is define as 1 and offset as null 
+        //-- we assume View.PHOTOMETRIC comportement
+        if (offset == null && scale != null) 
+            if (StrictMath.abs(scale - 1) <= 1E-9) scale = null;
+        
+        //-- in case where no scale and offset define as 0 
+        //-- we assume View.PHOTOMETRIC comportement
+        if (scale == null && offset != null)
+            if (StrictMath.abs(offset) < 1E-9) offset = null;
+        
+        
         if ((scale != null && offset == null)
           || scale == null && offset != null) 
             throw new IllegalArgumentException("Impossible to build conform category : "
