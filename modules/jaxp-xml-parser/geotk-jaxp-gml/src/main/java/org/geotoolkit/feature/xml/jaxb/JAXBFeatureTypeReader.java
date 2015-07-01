@@ -214,7 +214,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
     }
 
 
-    private boolean skipStandardObjectProperties = true;
+    private boolean skipStandardObjectProperties = false;
     private final Map<String, Schema> knownSchemas = new HashMap<>();
     private final Map<String,String> locationMap = new HashMap<>();
 
