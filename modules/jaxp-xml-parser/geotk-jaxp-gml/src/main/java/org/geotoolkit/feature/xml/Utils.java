@@ -478,7 +478,7 @@ NamesExt.create(GML_321_NAMESPACE, "@id"), NamesExt.create(GML_321_NAMESPACE, "b
             return  obj.toString() + 'Z';
         } else if (obj instanceof java.util.Date) {
             return dateFormatter.format((java.util.Date) obj);
-        } else if (obj instanceof Number || obj instanceof Boolean) {
+        } else if (obj instanceof Number || obj instanceof Boolean || obj instanceof URI) {
             return obj.toString();
         } else if (obj instanceof byte[]) {
             return Base64.encodeBytes((byte[])obj);

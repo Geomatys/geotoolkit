@@ -66,6 +66,12 @@ public class ComplexAttributeBinding extends AbstractBinding<ComplexAttribute>{
             return null;
         }else if(prop instanceof DefaultAssociation){
             return (T) ((DefaultAssociation)prop).getLink();
+        }else if(prop instanceof ComplexAttribute){
+            ComplexAttribute ca = (ComplexAttribute) prop;
+            if (ca.getType().getDescriptor("_value") != null) {
+                return (T) ca.getPropertyValue("_value");
+            }
+            return (T) prop.getValue();
         }else{
             return (T) prop.getValue();
         }
