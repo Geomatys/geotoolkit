@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.geotoolkit.referencing.CRS;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -83,7 +84,7 @@ public class TreeXTest extends TreeTest {
 
     @Test
     public void readCRSTest() throws IOException, ClassNotFoundException, FactoryException {
-        assertEquals("Read CRS must be the same as the tree one.", CRS_TEST, TreeAccessFile.getTreeCRS(treeFile));
+        assertTrue(CRS.equalsIgnoreMetadata(CRS_TEST, TreeAccessFile.getTreeCRS(treeFile)));
     }
 
     /**
