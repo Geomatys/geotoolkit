@@ -925,6 +925,8 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             adb.copy(atDesc);
             adb.setName(namespace, atDesc.getName().tip().toString());
             atb.copy(atDesc.getType());
+        } else {
+            namespace = null;
         }
 
         final String id = att.getId();

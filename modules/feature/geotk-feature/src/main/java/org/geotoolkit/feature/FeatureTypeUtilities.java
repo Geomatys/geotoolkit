@@ -277,7 +277,7 @@ public final class FeatureTypeUtilities {
         final AttributeTypeBuilder ab = new AttributeTypeBuilder();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
 
-        final PropertyDescriptor[] types = new AttributeDescriptor[properties.length];
+        final PropertyDescriptor[] types = new PropertyDescriptor[properties.length];
         boolean crsSetted = false;
 
         for (i=0; i<properties.length; i++) {
