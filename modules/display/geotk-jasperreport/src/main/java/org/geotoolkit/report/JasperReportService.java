@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -41,11 +41,13 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.export.oasis.JROdtExporter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOdtReportConfiguration;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 
 import org.geotoolkit.data.FeatureStoreRuntimeException;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.lang.Static;
@@ -69,6 +71,7 @@ public final class JasperReportService extends Static {
 
     public static final String MIME_PDF = "application/pdf";
     public static final String MIME_HTML = "text/html";
+    public static final String MIME_ODT = "application/vnd.oasis.opendocument.text";
 
     static {
         final ServiceLoader<JRFieldRenderer> service = ServiceLoader.load(JRFieldRenderer.class);
@@ -184,6 +187,19 @@ public final class JasperReportService extends Static {
         }else if(mime.equalsIgnoreCase(MIME_HTML)){
             if(target instanceof File){
                 JasperExportManager.exportReportToHtmlFile(print, ((File) target).getPath());
+            }else{
+                throw new IllegalArgumentException("Unsupported output : " + target + " for mime type : "+ mime);
+            }
+        }else if(mime.equalsIgnoreCase(MIME_ODT)){
+            if(target instanceof File){
+
+                final JROdtExporter exporter = new JROdtExporter();
+                exporter.setExporterInput(new SimpleExporterInput(print));
+                exporter.setExporterOutput(new SimpleOutputStreamExporterOutput((File)target));
+                SimpleOdtReportConfiguration config = new SimpleOdtReportConfiguration();
+                exporter.setConfiguration(config);
+                exporter.exportReport();
+
             }else{
                 throw new IllegalArgumentException("Unsupported output : " + target + " for mime type : "+ mime);
             }
