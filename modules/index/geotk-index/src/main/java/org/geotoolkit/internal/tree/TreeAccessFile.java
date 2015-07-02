@@ -16,18 +16,18 @@
  */
 package org.geotoolkit.internal.tree;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.SeekableByteChannel;
+import org.apache.sis.referencing.CRS;
 
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  * {@link TreeAccess} implementation.<br/>
@@ -202,10 +202,9 @@ public class TreeAccessFile extends ChannelTreeAccess {
      * @param treeFile The file containing the tree.
      * @return The {@link org.opengis.referencing.crs.CoordinateReferenceSystem} in which teh tree is expressed.
      * @throws java.lang.IllegalArgumentException if input file is null.
-     * @throws java.io.IOException if input file does not exists, or is a directory, or a problem happens at reading.
-     * @throws java.lang.ClassNotFoundException If the read object is corrupted,
+     * @throws java.io.IOException if input file does not exists, or is a directory, or a problem happens at reading, or if problem during CRS WKT serialization.
      */
-    public static CoordinateReferenceSystem getTreeCRS(final File treeFile) throws IOException, ClassNotFoundException {
+    public static CoordinateReferenceSystem getTreeCRS(final File treeFile) throws IOException {
         ArgumentChecks.ensureNonNull("Input tree file", treeFile);
         if (!treeFile.isFile()) {
             throw new IOException("Input file is not a regular file : "+treeFile);
@@ -215,11 +214,11 @@ public class TreeAccessFile extends ChannelTreeAccess {
         final int byteTabLength   = raf.readInt();
         final byte[] crsByteArray = new byte[byteTabLength];
         raf.read(crsByteArray, 0, byteTabLength);
-
-        try (final ObjectInputStream crsInputS =
-                     new ObjectInputStream(new ByteArrayInputStream(crsByteArray))) {
-
-            return (CoordinateReferenceSystem) crsInputS.readObject();
+        final String wktCrs = new String(crsByteArray);
+        try {
+            return CRS.fromWKT(wktCrs);
+        } catch (FactoryException ex) {
+            throw new IOException(ex);
         }
     }
     

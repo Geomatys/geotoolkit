@@ -16,20 +16,20 @@
  */
 package org.geotoolkit.internal.tree;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.Channel;
 import java.nio.channels.SeekableByteChannel;
 import java.util.Arrays;
+import org.apache.sis.referencing.CRS;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import static org.geotoolkit.internal.tree.TreeUtilities.intersects;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  * {@link TreeAccess} implementation.<br/>
@@ -170,11 +170,15 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
         
         inOutChannel.read(crsBuffer);
         
-        assert inOutChannel.position() == 38 + crsByteArray.length;
-        try (final ObjectInputStream crsInputS =
-                     new ObjectInputStream(new ByteArrayInputStream(crsByteArray))) {
-            crs = (CoordinateReferenceSystem) crsInputS.readObject();
+        String wktCRS = new String(crsByteArray);
+        
+        try {
+            crs = CRS.fromWKT(wktCRS);
+        } catch (FactoryException ex) {
+            throw new IOException(ex);
         }
+        
+        assert inOutChannel.position() == 38 + crsByteArray.length;
         /*****************************  end head ******************************/
         
         this.boundLength = crs.getCoordinateSystem().getDimension() << 1;
@@ -291,9 +295,8 @@ public abstract strictfp class ChannelTreeAccess extends TreeAccess {
             // write element number within tree
             headBuffer.putInt(0);
             // write CRS
-            objOutput.writeObject(crs);
-            objOutput.flush();
-            final byte[] crsByteArray = temp.toByteArray();
+            final String wktCRS = crs.toWKT();
+            final byte[] crsByteArray = wktCRS.getBytes();
             headBuffer.putInt(crsByteArray.length);
             
             //-- write head

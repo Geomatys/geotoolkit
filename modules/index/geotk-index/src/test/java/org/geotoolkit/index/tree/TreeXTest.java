@@ -34,7 +34,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Ignore;
+import org.opengis.util.FactoryException;
 
 /**
  * Test static TreeX methods.<br/><br/>
@@ -82,7 +82,7 @@ public class TreeXTest extends TreeTest {
 
 
     @Test
-    public void readCRSTest() throws IOException, ClassNotFoundException {
+    public void readCRSTest() throws IOException, ClassNotFoundException, FactoryException {
         assertEquals("Read CRS must be the same as the tree one.", CRS_TEST, TreeAccessFile.getTreeCRS(treeFile));
     }
 
