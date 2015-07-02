@@ -44,7 +44,7 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.report.FeatureCollectionDataSource;
+import org.geotoolkit.report.CollectionDataSource;
 import org.geotoolkit.report.JasperReportService;
 import org.geotoolkit.report.graphic.chart.ChartDef;
 import org.geotoolkit.report.graphic.legend.LegendDef;
@@ -197,7 +197,7 @@ public class ReportDemo {
                 } catch (DataStoreException ex) {
                     ex.printStackTrace();
                 }
-                modified.getProperty("table8").setValue(new FeatureCollectionDataSource(subcol));
+                modified.getProperty("table8").setValue(new CollectionDataSource(subcol));
 
                 return modified;
             }
@@ -207,7 +207,6 @@ public class ReportDemo {
         //Generate the report --------------------------------------------------------
         final OutputDef output = new OutputDef(JasperReportService.MIME_PDF, new File("atlas.pdf"));
         JasperReportService.generateReport(report, mapped, null, output);
-
     }
 
 

@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -126,14 +127,14 @@ public final class JasperReportService extends Static {
      * provided in the FeatureCollection.
      *
      * @param report : report to generate
-     * @param col : feature type must match the given one from the prepareTemplace method.
+     * @param col : if featureCollection, feature type must match the given one from the prepareTemplace method.
      * @param parameters : Map of parameters passed to the JasperFillManager.
      * @param output : output definition
      * @throws JRException
      */
-    public static void generateReport(final JasperReport report, final FeatureCollection col, final Map parameters,
+    public static void generateReport(final JasperReport report, final Collection col, final Map parameters,
                                   final OutputDef output) throws JRException, FeatureStoreRuntimeException{
-        final FeatureCollectionDataSource source = new FeatureCollectionDataSource(col);
+        final CollectionDataSource source = new CollectionDataSource(col);
         final JasperPrint print = JasperFillManager.fillReport(report, parameters, source);
         generate(print, output);
     }
@@ -143,14 +144,14 @@ public final class JasperReportService extends Static {
      * provided in the FeatureIterator.
      *
      * @param report : report to generate
-     * @param ite : feature type must match the given one from the prepareTemplace method.
+     * @param ite : if featureCollection, feature type must match the given one from the prepareTemplace method.
      * @param parameters : Map of parameters passed to the JasperFillManager.
      * @param output : output definition
      * @throws JRException
      */
-    public static void generateReport(final JasperReport report, final FeatureIterator ite, final Map parameters,
+    public static void generateReport(final JasperReport report, final Iterator ite, final Map parameters,
                                   final OutputDef output) throws JRException, FeatureStoreRuntimeException{
-        final FeatureCollectionDataSource source = new FeatureCollectionDataSource(ite);
+        final CollectionDataSource source = new CollectionDataSource(ite);
         final JasperPrint print = JasperFillManager.fillReport(report, parameters, source);
         generate(print, output);
     }
