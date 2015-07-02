@@ -104,6 +104,9 @@ public final strictfp class ConformanceTest extends ReferencingTestBase {
         final Map<String, Map<OperationMethod,OperationMethod>> names = new LinkedHashMap<>();
         final MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
 skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(SingleOperation.class)) {
+            if (method.getClass().getName().endsWith("Mock")) {
+                continue;  // Skip mock providers defined in sis-referencing test jar.
+            }
             for (final Identifier id : method.getIdentifiers()) {
                 if (org.apache.sis.metadata.iso.citation.Citations.identifierMatches(authority, id.getAuthority())) {
                     final String code = id.getCode().trim();
