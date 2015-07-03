@@ -46,6 +46,7 @@ import org.opengis.util.FactoryException;
 import org.w3c.dom.Node;
 
 import static com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet.*;
+import java.util.Map;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils.*;
 import static org.geotoolkit.util.DomUtilities.*;
@@ -204,34 +205,71 @@ public final class GeoTiffMetaDataReader {
         final CellGeometry cellGeometry = (orientation == PixelOrientation.UPPER_LEFT)
                                           ? CellGeometry.AREA : CellGeometry.POINT;
 
-        //read the image bounds
+        //-- read the image bounds
         final Rectangle bounds = readBounds();
 
-        //check if a transformation is present /////////////////////////////////
+        //-- check if a transformation is present /////////////////////////////////
         AffineTransform gridToCRS = readTransformation();
         if (gridToCRS == null) {
-            //check for pixel scale and tie points /////////////////////////////////
+            //-- check for pixel scale and tie points /////////////////////////////////
             final double[] pixelScale = readPixelScale();
-            final double[] tiePoint = readTiePoint();
+            final double[] tiePoint   = readTiePoint();
 
             if (pixelScale == null && tiePoint != null) {
-
+                
+                final int l = tiePoint.length;
+                assert l % 6 == 0 : "In tiff specification tiePoint array length should be congrue 6.";
+                
                 final LocalizationGrid grid = new LocalizationGrid(2, 2);
-                grid.setLocalizationPoint(0, 0, tiePoint[3], tiePoint[4]);
-                grid.setLocalizationPoint(1, 0, tiePoint[9], tiePoint[10]);
-                grid.setLocalizationPoint(1, 1, tiePoint[15], tiePoint[16]);
-                grid.setLocalizationPoint(0, 1, tiePoint[21], tiePoint[22]);
+                
+                //-- build the 2 maximums coordinates
+                final int maxX = bounds.x + bounds.width - 1;
+                final int maxY = bounds.y + bounds.height - 1;
+                
+                int nbPointFound = 0;
+                
+                for (int i = 0; i < l; i += 6) {
+                    final double currentX = tiePoint[i];
+                    final double currentY = tiePoint[i+1];
+                    
+                    if (StrictMath.abs(currentX - bounds.x) < 1E-9
+                     && StrictMath.abs(currentY - bounds.y) < 1E-9) {//-- lowerLeftCorner
+                        
+                        grid.setLocalizationPoint(0, 0, tiePoint[i + 3], tiePoint[i + 4]);
+                        if (++nbPointFound == 4) break;//-- 4 corners found.
+                        
+                    } else if (StrictMath.abs(currentX - bounds.x) < 1E-9
+                            && StrictMath.abs(currentY - maxY) < 1E-9) {//-- upperLeftCorner
+                        
+                        grid.setLocalizationPoint(0, 1, tiePoint[i + 3], tiePoint[i + 4]);
+                        if (++nbPointFound == 4) break;//-- 4 corners found.
+                        
+                    } else if (StrictMath.abs(currentX - maxX) < 1E-9
+                            && StrictMath.abs(currentY - bounds.y) < 1E-9) {//-- lowerRightCorner
+                        
+                        grid.setLocalizationPoint(1, 0, tiePoint[i + 3], tiePoint[i + 4]);
+                        if (++nbPointFound == 4) break;//-- 4 corners found.
+                        
+                    } else if (StrictMath.abs(currentX - maxX) < 1E-9
+                            && StrictMath.abs(currentY - maxY) < 1E-9) {//-- upperRightCorner
+                        
+                        grid.setLocalizationPoint(1, 1, tiePoint[i + 3], tiePoint[i + 4]);
+                        if (++nbPointFound == 4) break;//-- 4 corners found.
+                    } 
+                }
+
+                assert nbPointFound == 4 : "Envelope Corner Point must be equal to 4 : Found Point number : "+nbPointFound;
                 gridToCRS = grid.getAffineTransform();
                 gridToCRS.scale(1f / bounds.width, 1f / bounds.height);
 
             } else if (pixelScale != null && tiePoint != null) {
                 //TODO the is a third value in the tie point
-                final double scaleX = pixelScale[0];
-                final double scaleY = -pixelScale[1];
+                final double scaleX         = pixelScale[0];
+                final double scaleY         = -pixelScale[1];
                 final double tiePointColumn = tiePoint[0];
-                final double tiePointRow = tiePoint[1];
-                final double translateX = tiePoint[3] - (scaleX * tiePointColumn);
-                final double translateY = tiePoint[4] - (scaleY * tiePointRow);
+                final double tiePointRow    = tiePoint[1];
+                final double translateX     = tiePoint[3] - (scaleX * tiePointColumn);
+                final double translateY     = tiePoint[4] - (scaleY * tiePointRow);
                 gridToCRS = new AffineTransform(scaleX, 0, 0, scaleY, translateX, translateY);
             }
         }
