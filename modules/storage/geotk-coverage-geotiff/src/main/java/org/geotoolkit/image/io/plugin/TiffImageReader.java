@@ -752,15 +752,18 @@ public class TiffImageReader extends SpatialImageReader {
     public ImageTypeSpecifier getRawImageType(final int layerIndex) throws IOException {
         selectLayer(layerIndex);
         if (rawImageType == null) {
-            // switch photo metrique interpretation
-            final ColorSpace cs;
-            final int photoInter = ((short[]) headProperties.get(PhotometricInterpretation).get(ATT_VALUE))[0];
+            //-- switch PhotoMetricInterpretation
+            final short photoInter = ((short[]) headProperties.get(PhotometricInterpretation).get(ATT_VALUE))[0];
             final Map<String, Object> bitsPerSamples = (headProperties.get(BitsPerSample));
             final Map<String, Object> sampleFormat   = (headProperties.get(SampleFormat));
 
-            //-- find appropriate databuffer image type from bit per sample or sample format, planar configuration or both of them. --//
-//            int sourceDataBufferType;
-
+            Map<String, Object> colorMod = headProperties.get(ColorMap);
+            long[] index  = null;
+            if (colorMod != null) {
+                index = (long[]) colorMod.get(ATT_VALUE);
+                assert index != null;
+            }
+            
             //-- bits per sample study --//
             int[] bits = null;
             int sampleBitSize = 0;
@@ -782,139 +785,57 @@ public class TiffImageReader extends SpatialImageReader {
                     }
                     sampleBitSize = (int) b;
                 }
+            } else {
+                bits           = new int[samplesPerPixel]; //-- assume BYTE
+                sampleBitSize = 8;
+                Arrays.fill(bits, sampleBitSize);
             }
 
+            if (samplesPerPixel == 0) {
+                switch (photoInter) {
+                    case 0  :
+                    case 1  : samplesPerPixel = 1; break; //-- gray color model --//
+                    case 2  : samplesPerPixel = 3; break; //-- RGB color model --//
+                    default : throw new UnsupportedImageFormatException(error(Errors.Keys.ForbiddenAttribute_2,
+                        "bitsPerSamples", "sampleFormats"));
+                }
+            }
+            
+            short samplFormat = -1;
+            
             //-- sample format study --//
             if (sampleFormat == null) {
-                if (bitsPerSamples == null) {
-                    if (samplesPerPixel == 0) {
-                        switch (photoInter) {
-                            case 0  :
-                            case 1  : samplesPerPixel = 1; break; //-- gray color model --//
-                            case 2  : samplesPerPixel = 3; break; //-- RGB color model --//
-                            default : throw new UnsupportedImageFormatException(error(Errors.Keys.ForbiddenAttribute_2,
-                                "bitsPerSamples", "sampleFormats"));
-                        }
-                    }
-                    /*
-                    * If bitsPerSample and sample format fields were not specified, assume bytes.
-                    */
-                   sourceDataBufferType = DataBuffer.TYPE_BYTE;
-                   bits           = new int[samplesPerPixel];
-                   Arrays.fill(bits, 8);
-                } else {
-                    /*
-                     * We require exact value, because the reading process read all sample values
-                     * in one contiguous read operation.
-                     */
-                    switch (sampleBitSize) {
-                        case Byte   .SIZE : sourceDataBufferType = DataBuffer.TYPE_BYTE;   break;
-                        case Short  .SIZE : sourceDataBufferType = DataBuffer.TYPE_USHORT; break;
-                        case Integer.SIZE : sourceDataBufferType = DataBuffer.TYPE_INT;    break;
-                        case Double.SIZE  : sourceDataBufferType = DataBuffer.TYPE_DOUBLE; break;
-                        default: {
-                            throw new UnsupportedImageFormatException(error(
-                                    Errors.Keys.IllegalParameterValue_2, "bitsPerSample", sampleBitSize));
-                        }
-                    }
-                }
+                samplFormat = 1; //-- assume UINT
             } else {
                 final long[] samplesFormat = ((long[]) sampleFormat.get(ATT_VALUE));
-                short samplFormat = (short) samplesFormat[0];
+                samplFormat = (short) samplesFormat[0];
                 for (int i = 1; i < samplesFormat.length; i++) {
                     if (samplesFormat[i] != samplFormat) {
                         //-- Current implementation requires all sample values to be of the same size.
                         throw new UnsupportedImageFormatException(error(Errors.Keys.InconsistentValue));
                     }
                 }
-
-                if (samplFormat == 3) {
-                    /*
-                     * Case to defferency 32 bits Float to 32 bits Integer.
-                     */
-                    switch (sampleBitSize) {
-                        case Float.SIZE  : sourceDataBufferType = DataBuffer.TYPE_FLOAT; break;
-                        case Double.SIZE : sourceDataBufferType = DataBuffer.TYPE_DOUBLE; break;
-                        default : {
-                            throw new UnsupportedImageFormatException(error(
-                                    Errors.Keys.IllegalParameterValue_2, "bitsPerSample", sampleBitSize));
-                        }
-                    }
-                } else {
-                    //-- undefined sample format --//
-                    if (bitsPerSample == null)
-                    throw new UnsupportedImageFormatException(error(
-                            Errors.Keys.IllegalParameterValue_2, "sampleformat value", samplFormat));
-
-                   /*
-                    * We require exact value, because the reading process read all sample values
-                    * in one contiguous read operation.
-                    */
-                   switch (sampleBitSize) {
-                       case Byte   .SIZE : sourceDataBufferType = DataBuffer.TYPE_BYTE;   break;
-                       case Short  .SIZE : sourceDataBufferType = (samplFormat == 2) ? DataBuffer.TYPE_SHORT : DataBuffer.TYPE_USHORT; break;
-                       case Integer.SIZE : sourceDataBufferType = DataBuffer.TYPE_INT;    break;
-                       case Double.SIZE  : sourceDataBufferType = DataBuffer.TYPE_DOUBLE; break;
-                       default : {
-                           throw new UnsupportedImageFormatException(error(
-                                   Errors.Keys.IllegalParameterValue_2, "bitsPerSample", sampleBitSize));
-                       }
-                   }
-                }
-            }
-
-            switch (photoInter) {
-                case 0 :   //-- minIsWhite
-                case 1 : { //-- minIsBlack
-                        //-- faire un echantillonnage sur l'ensemble de l'image et recup min et max.
-                        if (bits.length > 1 
-                         || sourceDataBufferType == DataBuffer.TYPE_FLOAT 
-                         || sourceDataBufferType == DataBuffer.TYPE_DOUBLE) {
-                            final double minCs = (minSampleValue != null) ? minSampleValue : Double.MIN_VALUE;
-                            final double maxCs = (maxSampleValue != null) ? maxSampleValue : Double.MAX_VALUE;
-                            cs = new ScaledColorSpace(bits.length, 0, minCs, maxCs);//-- attention au choix de la bande !!!!
-                        } else {
-                            cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-                        }
-                    break;
-                }
-                case 2 : { //-- RGB
-                    cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-                    break;
-                }
-                case 3 : {//-- palette
-                    Map<String, Object> colorMod = headProperties.get(ColorMap);
-                    if (colorMod == null)
-                        throw new UnsupportedImageFormatException("image should own colorMap informations.");
-                    final long[] index  = (long[]) colorMod.get(ATT_VALUE);
-                    final int[] indexes = buildColorMapArray(index);
-                    final ColorModel cm = new IndexColorModel(sampleBitSize, indexes.length, indexes, 0, true, -1, sourceDataBufferType);
-                    /*
-                     * Create a SampleModel with size of 1x1 volontary just to know image properties.
-                     * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
-                     */
-                    rawImageType        = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
-                    return rawImageType;
-                }
-                default : {
-                    throw new UnsupportedImageFormatException(error(Errors.Keys.IllegalParameterValue_2,
-                            "photometricInterpretation", photoInter));
-                }
             }
             
+            //-- code in attempt to upgrade TiffImageReader
 //            final boolean hasAlpha = hasAlpha();
 //            final boolean isAlphaPreMulti = hasAlpha && getAlphaValue() == 1;
 //            final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, isAlphaPreMulti,
 //                    hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, sourceDataBufferType);
             
-            final boolean hasAlpha = bits.length > cs.getNumComponents();
-            final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, false,
-                    hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, sourceDataBufferType);
-           /*
+            assert sampleBitSize > 0;
+            assert samplesPerPixel > 0;
+            assert samplFormat > 0;
+            final Double minSV  = (minSampleValue == null) ? null : (double) minSampleValue;
+            final Double maxSV  = (maxSampleValue == null) ? null : (double) maxSampleValue;
+            final ColorModel cm = ImageUtils.createColorModel(sampleBitSize, samplesPerPixel, photoInter, samplFormat, minSV, maxSV, index);
+           
+            /*
             * Create a SampleModel with size of 1x1 volontary just to know image properties.
             * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
             */
             rawImageType = new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
+            sourceDataBufferType = rawImageType.getSampleModel().getDataType();
         }
         return rawImageType;
     }
