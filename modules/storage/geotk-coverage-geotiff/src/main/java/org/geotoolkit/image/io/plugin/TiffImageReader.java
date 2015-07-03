@@ -867,7 +867,9 @@ public class TiffImageReader extends SpatialImageReader {
                 case 0 :   //-- minIsWhite
                 case 1 : { //-- minIsBlack
                         //-- faire un echantillonnage sur l'ensemble de l'image et recup min et max.
-                        if (bits.length > 1) {
+                        if (bits.length > 1 
+                         || sourceDataBufferType == DataBuffer.TYPE_FLOAT 
+                         || sourceDataBufferType == DataBuffer.TYPE_DOUBLE) {
                             final double minCs = (minSampleValue != null) ? minSampleValue : Double.MIN_VALUE;
                             final double maxCs = (maxSampleValue != null) ? maxSampleValue : Double.MAX_VALUE;
                             cs = new ScaledColorSpace(bits.length, 0, minCs, maxCs);//-- attention au choix de la bande !!!!

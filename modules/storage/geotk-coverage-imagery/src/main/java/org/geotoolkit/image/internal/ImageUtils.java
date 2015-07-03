@@ -788,7 +788,9 @@ public class ImageUtils extends Static{
         switch (photometricInterpretation) {
             case 0 :   //--minIsWhite
             case 1 : { //-- minIsBlack
-                if (numBand > 1) {
+                if (numBand > 1 
+                 || dataBufferType == DataBuffer.TYPE_FLOAT 
+                 || dataBufferType == DataBuffer.TYPE_DOUBLE) {
                     final double minCs = (minSampleValue != null) ? minSampleValue : Double.MIN_VALUE;
                     final double maxCs = (maxSampleValue != null) ? maxSampleValue : Double.MAX_VALUE;
                     cs = new ScaledColorSpace(numBand, 0, minCs, maxCs);//-- attention au choix de la bande !!!!
