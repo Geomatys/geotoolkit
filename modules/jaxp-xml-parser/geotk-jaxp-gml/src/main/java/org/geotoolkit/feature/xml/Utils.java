@@ -235,6 +235,9 @@ NamesExt.create(GML_321_NAMESPACE, "@id"), NamesExt.create(GML_321_NAMESPACE, "b
         CLASS_BINDING.put("MultiLineString",               MultiLineString.class);
         CLASS_BINDING.put("MultiLineStringType",           MultiLineString.class);
         CLASS_BINDING.put("MultiLineStringPropertyType",   MultiLineString.class);
+        CLASS_BINDING.put("MultiCurve",                    MultiLineString.class);
+        CLASS_BINDING.put("MultiCurveType",                MultiLineString.class);
+        CLASS_BINDING.put("MultiCurvePropertyType",        MultiLineString.class);
         CLASS_BINDING.put("Envelope",                      Envelope.class);
         CLASS_BINDING.put("EnvelopeType",                  Envelope.class);
         CLASS_BINDING.put("EnvelopePropertyType",          Envelope.class);
