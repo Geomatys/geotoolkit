@@ -99,7 +99,7 @@ public final strictfp class XImageIOTest extends ImageTestBase {
      */
     @Test
     public void testGetBySuffixIgnoreCase() throws IOException {
-        final ImageReader reader = XImageIO.getReaderBySuffix("TIFF", null, null, null);
+        final ImageReader reader = XImageIO.getReaderBySuffix("PnG", null, null, null);
         reader.dispose();
     }
 
