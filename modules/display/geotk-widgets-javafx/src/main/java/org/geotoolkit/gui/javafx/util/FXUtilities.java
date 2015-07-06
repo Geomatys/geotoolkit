@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
-import javafx.beans.property.Property;
 import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanDoublePropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanFloatPropertyBuilder;
@@ -40,6 +39,9 @@ import javafx.beans.property.adapter.JavaBeanProperty;
 import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableListBase;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -53,7 +55,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.geotoolkit.image.palette.PaletteFactory;
-import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.style.interval.DefaultIntervalPalette;
 import org.geotoolkit.style.interval.DefaultRandomPalette;
@@ -294,6 +295,98 @@ public final class FXUtilities {
             if(ti!=null && !selection.contains(ti)) selection.add(ti);
         }
         return selection;
+    }
+
+    /**
+     * Create a view of given collections.
+     * view content are concatenated.
+     * Unlike FXCollections.concat this list is not editable but has events.
+     *
+     * @param listes
+     * @return
+     */
+    public static ObservableList view(ObservableList ... listes){
+        return new ViewList(listes);
+    }
+
+    private static final class ViewList extends ObservableListBase implements ListChangeListener{
+
+        private final ObservableList[] listes;
+
+        public ViewList(ObservableList ... listes) {
+            this.listes = listes;
+
+            for(ObservableList lst : listes){
+                lst.addListener(this);
+            }
+        }
+
+        @Override
+        public Object get(int index) {
+            for(int i=0;i<listes.length;i++){
+                int size = listes[i].size();
+                if(size<=index){
+                    index -= size;
+                }else{
+                    return listes[i].get(index);
+                }
+            }
+            throw new ArrayIndexOutOfBoundsException(index);
+        }
+
+        @Override
+        public int size() {
+            int size = 0;
+            for (ObservableList liste : listes) {
+                size += liste.size();
+            }
+            return size;
+        }
+
+        private int getOffset(ObservableList lst){
+            int size = 0;
+            for (ObservableList liste : listes) {
+                if(lst==liste) break;
+                size += liste.size();
+            }
+            return size;
+        }
+
+        @Override
+        public void onChanged(Change c) {
+            final int offset = getOffset(c.getList());
+
+            beginChange();
+            while (c.next()) {
+                if (c.wasPermutated()) {
+                    //permutate
+                    beginChange();
+                    final int[] perms = new int[c.getTo()-c.getFrom()];
+                    for (int i = c.getFrom(),k=0; i < c.getTo(); ++i,k++) {
+                        perms[k] = c.getPermutation(i);
+                    }
+                    nextPermutation(offset+c.getFrom(), offset+c.getTo(), perms);
+                    endChange();
+                } else if (c.wasUpdated()) {
+                    //update item
+                    beginChange();
+                    nextUpdate(offset+c.getFrom());
+                    endChange();
+                } else {
+                    beginChange();
+                    if(c.wasUpdated()){
+                        throw new UnsupportedOperationException("Update events not supported.");
+                    }else if(c.wasAdded()){
+                        nextAdd(offset+c.getFrom(), offset+c.getTo());
+                    }else if(c.wasRemoved()){
+                        nextReplace(offset+c.getFrom(), offset+c.getTo(), c.getRemoved());
+                    }
+                    endChange();
+                }
+            }
+            endChange();
+        }
+
     }
 
 }
