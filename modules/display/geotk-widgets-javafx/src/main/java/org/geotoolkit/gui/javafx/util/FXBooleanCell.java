@@ -69,7 +69,7 @@ public class FXBooleanCell<S> extends FXTableCell<S, Boolean> {
     @Override
     public void updateItem(Boolean item, boolean empty) {
         super.updateItem(item, empty);
-        if(empty || getTableRow().getItem()==null){
+        if(empty || item == null){
             setGraphic(null);
         }else{
             setGraphic(checkBox);
