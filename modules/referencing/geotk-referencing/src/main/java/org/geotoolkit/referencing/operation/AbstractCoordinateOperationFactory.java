@@ -49,6 +49,7 @@ import org.apache.sis.internal.referencing.provider.Affine;
 import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
+import org.apache.sis.internal.metadata.ReferencingServices;
 import org.apache.sis.referencing.cs.CoordinateSystems;
 import org.apache.sis.referencing.operation.matrix.Matrices;
 
@@ -376,7 +377,7 @@ public abstract class AbstractCoordinateOperationFactory
         OperationMethod method = createOperationMethod(properties,
                 sourceCRS.getCoordinateSystem().getDimension(),
                 targetCRS.getCoordinateSystem().getDimension(), null);
-        return createFromMathTransform(properties, sourceCRS, targetCRS, transform, method, CoordinateOperation.class);
+        return createFromMathTransform(properties, sourceCRS, targetCRS, transform, method, SingleOperation.class);
     }
 
     /**
@@ -399,12 +400,11 @@ public abstract class AbstractCoordinateOperationFactory
             final CoordinateReferenceSystem sourceCRS,
             final CoordinateReferenceSystem targetCRS,
             final MathTransform             transform,
-            final OperationMethod           method,
+                  OperationMethod           method,
             final Class<? extends CoordinateOperation> type) throws FactoryException
     {
-        CoordinateOperation operation;
         if (transform instanceof CoordinateOperation) {
-            operation = (CoordinateOperation) transform;
+            final CoordinateOperation operation = (CoordinateOperation) transform;
             if (Objects.equals(operation.getSourceCRS(),     sourceCRS) &&
                 Objects.equals(operation.getTargetCRS(),     targetCRS) &&
                 Objects.equals(operation.getMathTransform(), transform))
@@ -418,9 +418,12 @@ public abstract class AbstractCoordinateOperationFactory
                 }
             }
         }
-        operation = AbstractCoordinateOperation.create(properties, sourceCRS, targetCRS, transform, method, type);
-        operation = pool.unique(operation);
-        return operation;
+        if (method == null) {
+            method = AbstractCoordinateOperation.findMethod(transform);
+        }
+        final Map<String,Object> p = new HashMap<>(properties); // TODO: avoid copy.
+        p.put(ReferencingServices.OPERATION_TYPE_KEY, type);
+        return createSingleOperation(p, sourceCRS, targetCRS, null, method, transform);
     }
 
     /*
@@ -477,7 +480,7 @@ public abstract class AbstractCoordinateOperationFactory
             final MathTransformFactory mtFactory = getMathTransformFactory();
             return createFromMathTransform(IdentifiedObjects.getProperties(step),
                    sourceCRS, targetCRS, mtFactory.createConcatenatedTransform(mt1, mt2),
-                   ((SingleOperation) step).getMethod(), CoordinateOperation.class);
+                   ((SingleOperation) step).getMethod(), SingleOperation.class);
         }
         return createConcatenatedOperation(getTemporaryName(sourceCRS, targetCRS), step1, step2);
     }
@@ -558,7 +561,9 @@ public abstract class AbstractCoordinateOperationFactory
                     inverted.toArray(new CoordinateOperation[inverted.size()]));
         }
         final MathTransform transform = operation.getMathTransform().inverse();
-        final Class<? extends CoordinateOperation> type = AbstractCoordinateOperation.getType(operation);
+        final Class<? extends SingleOperation> type =
+                (operation instanceof Conversion) ? Conversion.class :
+                (operation instanceof Transformation) ? Transformation.class : SingleOperation.class;
         final OperationMethod method = (operation instanceof SingleOperation) ?
                                        ((SingleOperation) operation).getMethod() : null;
         return createFromMathTransform(properties, targetCRS, sourceCRS, transform, method, type);

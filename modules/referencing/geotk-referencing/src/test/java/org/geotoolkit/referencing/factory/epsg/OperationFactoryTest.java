@@ -100,7 +100,7 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
         assertSame(targetCRS, operation.getTargetCRS());
         assertSame(operation, opFactory.createOperation(sourceCRS, targetCRS));
         assertEquals("1133", getIdentifier(operation)); // See comment in DefaultDataSourceTest.
-        assertEquals(10.0, AbstractCoordinateOperation.getAccuracy(operation), 1E-6);
+        assertEquals(10.0, org.apache.sis.referencing.operation.AbstractCoordinateOperation.castOrCopy(operation).getLinearAccuracy(), 1E-6);
         assertTrue(operation instanceof Transformation);
     }
 
@@ -138,7 +138,7 @@ public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
             }
         }
         assertEquals("The coordinate operation should contains exactly 1 transformation", 1, count);
-        assertTrue(AbstractCoordinateOperation.getAccuracy(operation) <= 25);
+        assertTrue(org.apache.sis.referencing.operation.AbstractCoordinateOperation.castOrCopy(operation).getLinearAccuracy() <= 25);
     }
 
     /**

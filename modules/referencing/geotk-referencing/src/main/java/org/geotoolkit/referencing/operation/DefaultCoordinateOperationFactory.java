@@ -142,7 +142,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
             }
             candidate = userHints.get(Hints.LENIENT_DATUM_SHIFT);
             if (candidate instanceof Boolean) {
-                lenientDatumShift = ((Boolean) candidate).booleanValue();
+                lenientDatumShift = (Boolean) candidate;
             }
         }
         //
@@ -1428,9 +1428,9 @@ search: for (int j=0; j<targets.size(); j++) {
                 if (subOperation instanceof SingleOperation) {
                     op = (SingleOperation) subOperation;
                 } else {
-                    op = (SingleOperation) AbstractCoordinateOperation.create(properties,
-                            subOperation.getSourceCRS(), subOperation.getTargetCRS(), subTransform,
-                            new DefaultOperationMethod(subTransform), subOperation.getClass());
+                    op = createSingleOperation(properties,
+                            subOperation.getSourceCRS(), subOperation.getTargetCRS(), null,
+                            new DefaultOperationMethod(subTransform), subTransform);
                 }
                 subOperation = new DefaultPassThroughOperation(properties, stepSourceCRS, stepTargetCRS, op, lower, orderedSourceDim - upper);
             }

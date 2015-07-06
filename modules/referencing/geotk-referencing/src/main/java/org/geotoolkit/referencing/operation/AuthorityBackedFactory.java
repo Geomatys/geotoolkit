@@ -396,7 +396,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
             if (bestChoice != null && !(area >= largestArea)) { // Use '!' for catching NaN.
                 continue;
             }
-            final double accuracy = AbstractCoordinateOperation.getAccuracy(candidate);
+            final double accuracy = org.apache.sis.referencing.operation.AbstractCoordinateOperation.castOrCopy(candidate).getLinearAccuracy();
             if (bestChoice != null && area == largestArea && !(accuracy < finestAccuracy)) { // Use '!' for catching NaN.
                 continue;
             }

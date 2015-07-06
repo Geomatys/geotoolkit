@@ -38,7 +38,6 @@ import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.referencing.crs.AbstractCRS;
 import org.apache.sis.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.ThreadedAuthorityFactory;
@@ -46,6 +45,7 @@ import org.apache.sis.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.InternalUtilities;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.referencing.operation.AbstractCoordinateOperation;
 import org.apache.sis.util.ComparisonMode;
 
 import org.junit.*;
@@ -658,7 +658,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         assertFalse  (operation1.getMathTransform().isIdentity());
         if (isEpsgDatabaseUpToDate()) {
             // EPSG databases before version 7.6 declared a precision of 999.
-            assertEquals(2.5, AbstractCoordinateOperation.getAccuracy(operation1), 1E-6);
+            assertEquals(2.5, AbstractCoordinateOperation.castOrCopy(operation1).getLinearAccuracy(), 1E-6);
         }
         /*
          * ED50 (4230)  -->  WGS 84 (4326)  using
@@ -672,7 +672,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         assertSame (targetCRS, operation2.getTargetCRS());
         assertFalse(operation2.getMathTransform().isIdentity());
         assertFalse(transform.equals(operation2.getMathTransform()));
-        assertEquals(1.5, AbstractCoordinateOperation.getAccuracy(operation2), 1E-6);
+        assertEquals(1.5, AbstractCoordinateOperation.castOrCopy(operation2).getLinearAccuracy(), 1E-6);
         /*
          * ED50 (4230)  -->  WGS 84 (4326)  using
          * Coordinate Frame rotation (9607).
@@ -685,7 +685,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         assertSame (targetCRS, operation3.getTargetCRS());
         assertFalse(operation3.getMathTransform().isIdentity());
         assertFalse(transform.equals(operation3.getMathTransform()));
-        assertEquals(1.0, AbstractCoordinateOperation.getAccuracy(operation3), 1E-6);
+        assertEquals(1.0, AbstractCoordinateOperation.castOrCopy(operation3).getLinearAccuracy(), 1E-6);
         if (false) {
             System.out.println(operation3);
             System.out.println(operation3.getSourceCRS());
@@ -698,7 +698,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
          * (EPSG:9201) instead of the usual "parts per million" (EPSG:9202). It was used to thrown
          * an exception in older EPSG factory implementations.
          */
-        assertEquals(1.0, AbstractCoordinateOperation.getAccuracy(factory.createCoordinateOperation("1609")), 1E-6);
+        assertEquals(1.0, AbstractCoordinateOperation.castOrCopy(factory.createCoordinateOperation("1609")).getLinearAccuracy(), 1E-6);
         /*
          * Creates from CRS codes. There is 40 such operations in EPSG version 6.7.
          * The preferred one (according the "supersession" table) is EPSG:1612.
@@ -762,7 +762,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
             }
             created++;
             assertNotNull(operation);
-            final double accuracy = AbstractCoordinateOperation.getAccuracy(operation);
+            final double accuracy = AbstractCoordinateOperation.castOrCopy(operation).getLinearAccuracy();
             assertFalse(accuracy < 0);
             if (!Double.isNaN(accuracy)) {
                 if (accuracy < min) min=accuracy;
