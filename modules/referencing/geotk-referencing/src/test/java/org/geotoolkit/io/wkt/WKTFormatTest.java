@@ -27,7 +27,6 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultProjectedCRS;
 import org.apache.sis.io.wkt.Symbols;
-import org.apache.sis.test.DependsOn;
 import org.apache.sis.io.wkt.Convention;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.junit.*;

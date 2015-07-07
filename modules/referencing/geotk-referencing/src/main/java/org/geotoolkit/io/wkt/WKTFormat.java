@@ -29,11 +29,9 @@ import java.text.ParseException;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
-import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.apache.sis.io.wkt.Symbols;
-import org.apache.sis.io.wkt.Formatter;
 import org.apache.sis.io.wkt.Convention;
 import org.geotoolkit.util.Strings;
 import org.apache.sis.util.CharSequences;
@@ -45,56 +43,9 @@ import static org.apache.sis.util.collection.Containers.isNullOrEmpty;
 
 
 /**
- * Parser and formatter for <cite>Well Known Text</cite> (WKT) objects. This format handles a
- * pair of {@link Parser} and {@link Formatter}, to be used by {@code parse} and {@code format}
- * methods respectively.
- * <p>
- * {@code WKTFormat} objects allow the following configuration:
- * <p>
- * <ul>
- *   <li>The {@linkplain Symbols symbols} to use (curly braces or brackets, <i>etc.</i>)</li>
- *   <li>The preferred authority of {@linkplain IdentifiedObject#getName() object name} to
- *       format (see {@link Formatter#getName(IdentifiedObject)} for more information)</li>
- *   <li>Whatever ANSI X3.64 colors are allowed or not (default is not)</li>
- *   <li>The indentation</li>
- * </ul>
- *
- * {@section String expansion}
- * Because the strings to be parsed by this class are long and tend to contain repetitive
- * substrings, {@code WKTFormat} provides a mechanism for performing string substitutions
- * before the parsing take place. Long strings can be assigned short names by calls to the
- * <code>{@linkplain #definitions()}.put(<var>key</var>,<var>value</var>)</code> method.
- * After definitions have been added, any call to a parsing method will replace all occurrences
- * of a short name by the associated long string.
- * <p>
- * The short names must comply with the rules of Java identifiers. It is recommended, but not
- * required, to prefix the names by some symbol like {@code "$"} in order to avoid ambiguity.
- * Note however that this class doesn't replace occurrences between quoted text, so string
- * expansion still relatively safe even when used with non-prefixed identifiers.
- * <p>
- * In the example below, the {@code $WGS84} substring which appear in the argument given to the
- * {@code parseObject} method will be expanded into the full {@code GEOGCS["WGS84", ...]} string
- * before the parsing proceed.
- *
- * <blockquote><code>
- * {@linkplain #definitions()}.put("$WGS84",
- * "GEOGCS[\"WGS84\", DATUM[</code> ...<i>etc</i>... <code>]]);<br>
- * Object crs = {@linkplain #parseObject(String) parseObject}("PROJCS[\"Mercator_1SP\",
- * <strong>$WGS84</strong>, PROJECTION[</code> ...<i>etc</i>... <code>]]");
- * </code></blockquote>
- *
- * {@section Synchronization}
- * {@code WKTFormat}s are not synchronized. It is recommended to create separate format instances
- * for each thread. If multiple threads access a format concurrently, it must be synchronized
- * externally.
- *
- * @author Martin Desruisseaux (IRD, Geomatys)
- * @author Rémi Eve (IRD)
- * @version 3.20
- *
- * @since 3.00
- * @module
+ * @deprecated Moved to Apache SIS as {@link org.apache.sis.io.wkt.WKTFormat}.
  */
+@Deprecated
 public class WKTFormat extends org.apache.sis.io.wkt.WKTFormat {
     /**
      * For cross-version compatibility.
