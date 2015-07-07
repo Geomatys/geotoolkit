@@ -96,6 +96,9 @@ public class MPCoverageReference extends AbstractPyramidalCoverageReference {
      */
     @Override
     public void setColorModel(ColorModel colorModel) {
+        if (this.colorModel != null)
+            assert colorModel.equals(this.colorModel) : "Into Pyramid, internal data ColorModel must be equals. "
+                    + "                                 Expected : "+this.colorModel+", found : "+colorModel;
         this.colorModel = colorModel;
     }
 
@@ -190,7 +193,9 @@ public class MPCoverageReference extends AbstractPyramidalCoverageReference {
     @Override
     public void writeTile(String pyramidId, String mosaicId, int tileX, int tileY, RenderedImage image) throws DataStoreException {
         final Pyramid pyram = findPyramidByID(pyramidId);
-
+        
+        if (getColorModel() == null) setColorModel(image.getColorModel());
+        
         final List<GridMosaic> listGM = pyram.getMosaics();
         for (int id = 0, len = listGM.size(); id < len; id++) {
             final MPGridMosaic gm = (MPGridMosaic) listGM.get(id);

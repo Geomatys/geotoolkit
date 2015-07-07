@@ -61,7 +61,7 @@ public class XMLPyramidSet extends AbstractPyramidSet{
     public String getFormatName() {
         final String format = ref.getPreferredFormat();
         if(format!=null && !format.isEmpty()) return format;
-        return ref.getPackMode().equals(ViewType.GEOPHYSICS) ? "GEOTIFF" : "PNG";
+        return ref.getPackMode().equals(ViewType.GEOPHYSICS) ? "tiff" : "PNG";
     }
 
     public XMLCoverageReference getRef() {

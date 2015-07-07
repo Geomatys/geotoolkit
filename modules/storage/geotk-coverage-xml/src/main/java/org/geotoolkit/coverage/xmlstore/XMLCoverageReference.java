@@ -284,9 +284,11 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      * Save the coverage reference in the file
      * @throws DataStoreException
      */
-    synchronized void save() throws DataStoreException{
+    synchronized void save() throws DataStoreException {
+        
         if (minColorSampleValue == null) {
             assert maxColorSampleValue == null;
+            if (colorModel != null)
             assert !(colorModel.getColorSpace() instanceof ScaledColorSpace) : "with min and max NULL sample value color space should not be instance of ScaledColorSpace.";
         } else {
             assert maxColorSampleValue != null;
@@ -400,6 +402,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             if (checkAttributs()) {
                 if (minColorSampleValue == null) {
                     assert maxColorSampleValue == null;
+                    if (colorModel != null)
                     assert !(colorModel.getColorSpace() instanceof ScaledColorSpace) : "with min and max NULL sample value color space should not be instance of ScaledColorSpace.";
                 } else {
                     assert maxColorSampleValue != null;
@@ -611,8 +614,8 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             this.colorModel = null; //-- see : getColorModel()
         }
         
-        if (cm != null) {
-            if (ImageUtils.getPhotometricInterpretation(cm) != photometricInterpretation) 
+        if (this.colorModel != null) {
+            if (ImageUtils.getPhotometricInterpretation(this.colorModel) != photometricInterpretation) 
                 throw new IllegalArgumentException(String.format("Mismatch photometric interpretation. Expected : %d .Found : %d", photometricInterpretation, ImageUtils.getPhotometricInterpretation(cm)));
         } else {
             setColorModel(imgCm);

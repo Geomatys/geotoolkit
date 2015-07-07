@@ -51,6 +51,8 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
@@ -539,12 +541,21 @@ public class PyramidalModelReader extends GridCoverageReader{
                             cm = tileImage.getColorModel();
                         }
                         image = new BufferedImage(cm, 
-                                tileImage.getTile(0, 0).createCompatibleWritableRaster((int)(tileMaxCol-tileMinCol)*tileSize.width, 
+                                cm.createCompatibleWritableRaster((int)(tileMaxCol-tileMinCol)*tileSize.width, 
                                                                                        (int)(tileMaxRow-tileMinRow)*tileSize.height), 
                                 cm.isAlphaPremultiplied(), new Hashtable<>());
                     }
+                    //-- write current read tile into destination image.
+                    final Rectangle tileBound = new Rectangle(offset.x, offset.y, tileImage.getWidth(), tileImage.getHeight());
+                    final PixelIterator destPix = PixelIteratorFactory.createDefaultWriteableIterator((BufferedImage)image, (BufferedImage)image, tileBound);
+                    final PixelIterator tilePix = PixelIteratorFactory.createDefaultIterator(tileImage);
+                    while(destPix.next()) {
+                        tilePix.next();
+                        destPix.setSampleDouble(tilePix.getSampleDouble());
+                    }
+                    assert !tilePix.next();
                     
-                    ((BufferedImage)image).getRaster().setDataElements(offset.x, offset.y, tileImage.getData());
+//                    ((BufferedImage)image).getRaster().setDataElements(offset.x, offset.y, tileImage.getData());
                     //we consider all images have the same data model
                     //g2d.drawRenderedImage(tileImage, new AffineTransform(1, 0, 0, 1, offset.x, offset.y));
                 }
