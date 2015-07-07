@@ -276,6 +276,8 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
                 getProperties().add(prop);
                 prop.setValue(value);
             }
+        }else if (value == null && prop instanceof ComplexAttribute){
+            getProperties().remove(prop);
         }else{
             prop.setValue(value);
         }
