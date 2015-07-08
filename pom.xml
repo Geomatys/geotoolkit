@@ -173,8 +173,8 @@
            Global properties.
        =========================================================== -->
   <properties>
-    <geoapi.version>4.0-SNAPSHOT</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>0.6-jdk7-MC0017</sis.version>
+    <geoapi.version>4.0.0-MC0004</geoapi.version> <!-- Must be same than the version used by SIS. -->
+    <sis.version>0.6-jdk7-MC0019</sis.version>
     <derby.version>10.10.1.1</derby.version> <!-- If updated, need to search occurrences in APT files. -->
     <netcdf.version>4.3.21</netcdf.version>
     <lucene.version>4.10.4</lucene.version>
