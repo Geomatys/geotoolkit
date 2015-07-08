@@ -121,7 +121,15 @@ public class XMLPyramid implements Pyramid {
             return crsobj;
         }
 
-        if (crs != null) {
+        if (serializedCrs != null) {
+            try {
+                crsobj = (CoordinateReferenceSystem) Base64.decodeToObject(serializedCrs);
+            } catch (Exception ex) {
+                Logging.getLogger(this.getClass()).log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
+        
+        if (crs != null && crsobj == null) {
             try {
                 if (crs.startsWith("EPSG")) {
                     crsobj = CRS.decode(crs);
@@ -133,15 +141,6 @@ public class XMLPyramid implements Pyramid {
                 throw new RuntimeException(e);
             }
         }
-        
-        if (serializedCrs != null) {
-            try {
-                crsobj = (CoordinateReferenceSystem) Base64.decodeToObject(serializedCrs);
-            } catch (Exception ex) {
-                Logging.getLogger(this.getClass()).log(Level.WARNING, ex.getMessage(), ex);
-            }
-        }
-
         return crsobj;
     }
 
@@ -157,16 +156,25 @@ public class XMLPyramid implements Pyramid {
         f.setConvention(Convention.WKT2);
         this.crs = f.format(crs);
         
-        //-- if problem try to serialize  CRS
-        if (f.getWarnings() != null) {
-            if (crs instanceof Serializable) {
-                try {
-                    this.serializedCrs = Base64.encodeObject((Serializable)crs);
-                } catch (IOException serializedEx) {
-                    throw new DataStoreException(serializedEx);
-                }
+        if (crs instanceof Serializable) {
+            try {
+                this.serializedCrs = Base64.encodeObject((Serializable)crs);
+            } catch (IOException serializedEx) {
+                Logging.getLogger(this.getClass()).log(Level.WARNING, serializedEx.getMessage(), serializedEx);
             }
         }
+        
+        
+//////        //-- if problem try to serialize  CRS
+//////        if (f.getWarnings() != null) {
+//////            if (crs instanceof Serializable) {
+//////                try {
+//////                    this.serializedCrs = Base64.encodeObject((Serializable)crs);
+//////                } catch (IOException serializedEx) {
+//////                    throw new DataStoreException(serializedEx);
+//////                }
+//////            }
+//////        }
         assert (this.crs != null || serializedCrs != null);
     }
 
