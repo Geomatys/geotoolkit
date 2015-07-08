@@ -24,6 +24,9 @@ import org.geotoolkit.referencing.operation.provider.NADCON;
 
 import org.junit.*;
 
+import static org.geotoolkit.referencing.Commons.isEpsgFactoryAvailable;
+import static org.junit.Assume.assumeTrue;
+
 
 /**
  * Run the test scripts. Each script contains a list of source and target coordinates
@@ -38,6 +41,18 @@ import org.junit.*;
  * @since 2.1
  */
 public final strictfp class ScriptTest extends ReferencingTestBase {
+
+    /**
+     * Ensures that the EPSG database is available. If no EPSG database is installed,
+     * then the tests will be skipped. We do not cause a test failure because the EPSG
+     * database is not expected to be installed when Geotk is built for the first time
+     * on a new machine.
+     */
+    @Before
+    public void ensureEpsgAvailable() {
+        assumeTrue(isEpsgFactoryAvailable());
+    }
+
     /**
      * Runs the specified test script.
      *

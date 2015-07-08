@@ -52,16 +52,6 @@ import static org.geotoolkit.referencing.Commons.isEpsgFactoryAvailable;
  */
 @DependsOn(PropertyEpsgFactoryTest.class)
 public final strictfp class FallbackAuthorityFactoryTest extends ReferencingTestBase {
-    /**
-     * Ensures that the EPSG database is available. If no EPSG database is installed,
-     * then the tests will be skipped. We do not cause a test failure because the EPSG
-     * database is not expected to be installed when Geotk is built for the first time
-     * on a new machine.
-     */
-    @Before
-    public void ensureEpsgAvailable() {
-        assumeTrue(isEpsgFactoryAvailable());
-    }
 
     /**
      * The extra factory.
@@ -78,6 +68,7 @@ public final strictfp class FallbackAuthorityFactoryTest extends ReferencingTest
         assertNull(extra);
         extra = new ExtraEpsgFactory();
         AuthorityFactoryFinder.addAuthorityFactory(extra);
+        assumeTrue(isEpsgFactoryAvailable());
     }
 
     /**

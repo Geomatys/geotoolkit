@@ -27,6 +27,7 @@ import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 
 import org.junit.*;
 
+import static org.geotoolkit.referencing.Commons.isEpsgFactoryAvailable;
 import static org.junit.Assume.*;
 import static org.junit.Assert.*;
 import static java.util.Collections.singletonMap;
@@ -44,6 +45,18 @@ import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
  * @since 3.16 (derived from 3.07)
  */
 public final strictfp class AuthorityBackedFactoryTest extends COFactoryUsingMolodenskyTest {
+
+    /**
+     * Ensures that the EPSG database is available. If no EPSG database is installed,
+     * then the tests will be skipped. We do not cause a test failure because the EPSG
+     * database is not expected to be installed when Geotk is built for the first time
+     * on a new machine.
+     */
+    @Before
+    public void ensureEpsgAvailable() {
+        assumeTrue(isEpsgFactoryAvailable());
+    }
+
     /**
      * Creates a new test suite.
      */
