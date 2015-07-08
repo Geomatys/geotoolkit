@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.iharder.Base64;
 import org.apache.sis.io.wkt.*;
@@ -48,6 +49,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name="XMLPyramid")
 public class XMLPyramid implements Pyramid {
 
     @XmlElement(name="id")
@@ -62,7 +64,7 @@ public class XMLPyramid implements Pyramid {
     @XmlTransient
     private XMLPyramidSet set;
     @XmlTransient
-    private CoordinateReferenceSystem crsobj;
+    protected CoordinateReferenceSystem crsobj;
 
     /**
      * Default constructor is reserved for JAXB usage. If an user wants to create a pyramid, he MUST initialize it with
@@ -119,15 +121,7 @@ public class XMLPyramid implements Pyramid {
             return crsobj;
         }
 
-        if (serializedCrs != null) {
-            try {
-                crsobj = (CoordinateReferenceSystem) Base64.decodeToObject(serializedCrs);
-            } catch (Exception ex) {
-                Logging.getLogger(this.getClass()).log(Level.WARNING, ex.getMessage(), ex);
-            }
-        }
-
-        if (crsobj == null) {
+        if (crs != null) {
             try {
                 if (crs.startsWith("EPSG")) {
                     crsobj = CRS.decode(crs);
@@ -139,35 +133,41 @@ public class XMLPyramid implements Pyramid {
                 throw new RuntimeException(e);
             }
         }
+        
+        if (serializedCrs != null) {
+            try {
+                crsobj = (CoordinateReferenceSystem) Base64.decodeToObject(serializedCrs);
+            } catch (Exception ex) {
+                Logging.getLogger(this.getClass()).log(Level.WARNING, ex.getMessage(), ex);
+            }
+        }
 
         return crsobj;
     }
 
     void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) throws DataStoreException {
         ArgumentChecks.ensureNonNull("Input CRS", crs);
+        //-- init 
         crsobj = crs;
         this.crs = null;
         this.serializedCrs = null;
-        if (crs instanceof FormattableObject) {
-            this.crs = ((FormattableObject)crs).toString(Convention.WKT1);
-        } else if (crs instanceof org.geotoolkit.io.wkt.Formattable) {
-            WKTFormat f = new WKTFormat(null, null);
-            f.setConvention(Convention.WKT1);
-
-            this.crs = f.format(crs);
-        }
-
-        if (crs instanceof Serializable) {
-            try {
-                this.serializedCrs = Base64.encodeObject((Serializable)crs);
-            } catch (IOException ex) {
-                Logging.getLogger(this.getClass()).log(Level.WARNING, ex.getMessage(), ex);
+        
+        //-- try wkt2 writing
+        final WKTFormat f = new WKTFormat(null, null);
+        f.setConvention(Convention.WKT2);
+        this.crs = f.format(crs);
+        
+        //-- if problem try to serialize  CRS
+        if (f.getWarnings() != null) {
+            if (crs instanceof Serializable) {
+                try {
+                    this.serializedCrs = Base64.encodeObject((Serializable)crs);
+                } catch (IOException serializedEx) {
+                    throw new DataStoreException(serializedEx);
+                }
             }
         }
-
-        if (this.crs == null && serializedCrs == null) {
-            throw new DataStoreException("Input CRS cannot be serialized :\n"+crs);
-        }
+        assert (this.crs != null || serializedCrs != null);
     }
 
     @Override
