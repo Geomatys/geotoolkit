@@ -52,6 +52,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.PropertyDescriptor;
+import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.opengis.filter.Id;
@@ -103,7 +104,7 @@ public class FXFeatureTable extends FXPropertyPane{
             }
         });
         
-        final Button loadButton = new Button("Load datas");
+        final Button loadButton = new Button(GeotkFX.getString(FXFeatureTable.class, "loadData"));
         loadButton.setOnAction(this::loadData);
         table.setPlaceholder(loadButton);
     }
