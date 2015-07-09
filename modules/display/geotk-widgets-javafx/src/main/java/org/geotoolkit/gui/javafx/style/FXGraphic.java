@@ -123,7 +123,7 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
         };
 
         uiOpacity.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1, 1, 0.1));
-        uiSize.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 16, 1));
+        uiSize.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 200, 16, 1));
         
         uiSize.valueProperty().addListener(changeListener);
         uiOpacity.valueProperty().addListener(changeListener);

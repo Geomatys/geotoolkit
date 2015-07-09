@@ -206,7 +206,8 @@ public class CachedMark extends Cache<Mark>{
 
         if(wkn != null || external != null){
             j2dSize = (size != null) ? size.intValue() : 16;
-            if(j2dSize <0) j2dSize = 0;
+            if(j2dSize < 0) j2dSize = 0;
+            if(j2dSize > 1000) j2dSize = 1000;
             margin = cachedStroke.getMargin(candidate,1);
             maxWidth = (int)(margin*2+0.5f)+ j2dSize ;
             center = maxWidth/2  ;

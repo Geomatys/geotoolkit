@@ -56,7 +56,7 @@ public class FXFont extends FXStyleElementController<Font>{
     public void initialize() {
         super.initialize();        
 
-        uiSize.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 10, 1));
+        uiSize.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 100, 10, 1));
                 
         //Initialize family font list with available font family
         final GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();

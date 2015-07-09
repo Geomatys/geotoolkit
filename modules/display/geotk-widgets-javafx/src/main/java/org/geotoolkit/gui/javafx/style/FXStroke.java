@@ -56,11 +56,11 @@ public class FXStroke extends FXStyleElementController<Stroke> {
     public void initialize() {
         super.initialize();     
         
-        uiWidth.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 1, 1));
+        uiWidth.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 200, 1, 1));
         uiOpacity.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1, 1, 0.1));
-        uiDash1.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 0, 1));
-        uiDash2.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 0, 1));
-        uiDash3.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 0, 1));
+        uiDash1.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1000, 0, 1));
+        uiDash2.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1000, 0, 1));
+        uiDash3.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1000, 0, 1));
         
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
