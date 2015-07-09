@@ -218,9 +218,9 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         this.sampleDimensions           = ref.sampleDimensions;
         this.preferredFormat            = ref.preferredFormat;
         this.nbBands                    = ref.nbBands;
-        this.sampleType                 = ref.sampleType;
+//        this.sampleType                 = ref.sampleType;
         this.bitPerSample               = ref.bitPerSample;
-        this.samplePerPixel             = ref.samplePerPixel;
+//        this.samplePerPixel             = ref.samplePerPixel;
         this.planarConfiguration        = ref.planarConfiguration;
         this.sampleFormat               = ref.sampleFormat;
         this.photometricInterpretation  = ref.photometricInterpretation;
@@ -498,7 +498,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             if (colMod != null && planarConfiguration != -1) {
                 //-- we can directly create sample model, attributs have already been checked.
                 sampleModel = ImageUtils.createSampleModel((short) planarConfiguration, colorModel);
-                sampleType  = sampleModel.getDataType();
+//                sampleType  = sampleModel.getDataType();
             }
             //-- else do nothing case where unmarshall old pyramid. older comportement.
         }
@@ -514,7 +514,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     private boolean checkAttributs() {
         return (bitPerSample != -1) 
             && (nbBands != -1) 
-            && (samplePerPixel != -1) 
+//            && (samplePerPixel != -1) 
             && (sampleFormat != -1) 
             && (planarConfiguration != -1) 
             && (photometricInterpretation != -1);
@@ -532,11 +532,11 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      */
     @Override
     public void setSampleModel(SampleModel sampleModel) throws DataStoreException {
-        this.sampleType          = sampleModel.getDataType();
+//        this.sampleType          = sampleModel.getDataType();
         this.nbBands             = sampleModel.getNumBands();
         sampleFormat             = ImageUtils.getSampleFormat(sampleModel);
         final int[] bitPerSample = sampleModel.getSampleSize();
-        samplePerPixel           = bitPerSample.length;
+//        samplePerPixel           = bitPerSample.length;
         assert bitPerSample.length == nbBands;
         this.bitPerSample        = bitPerSample[0];
         planarConfiguration      = ImageUtils.getPlanarConfiguration(sampleModel);
@@ -557,8 +557,8 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         final SampleModel imgSm = image.getSampleModel();
         final SampleModel sm = getSampleModel();
         if (sm != null) {
-            if (imgSm.getDataType() != sampleType) 
-                throw new IllegalArgumentException(String.format("Mismatch sample type. Expected : %d .Found : %d", sampleType, imgSm.getDataType()));
+//            if (imgSm.getDataType() != sampleType) 
+//                throw new IllegalArgumentException(String.format("Mismatch sample type. Expected : %d .Found : %d", sampleType, imgSm.getDataType()));
             
             if (imgSm.getNumBands() != nbBands) 
                 throw new IllegalArgumentException(String.format("Mismatch bands number. Expected : %d .Found : %d", nbBands, imgSm.getNumBands()));
@@ -569,8 +569,8 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             if (imgSm.getSampleSize()[0] != bitPerSample) 
                 throw new IllegalArgumentException(String.format("Mismatch sample size (bits per samples). Expected : %d .Found : %d", bitPerSample, imgSm.getSampleSize()[0]));
             
-            if (imgSm.getSampleSize().length != samplePerPixel) 
-                throw new IllegalArgumentException(String.format("Mismatch sample per pixel. Expected : %d .Found : %d", samplePerPixel, imgSm.getSampleSize().length));
+//            if (imgSm.getSampleSize().length != samplePerPixel) 
+//                throw new IllegalArgumentException(String.format("Mismatch sample per pixel. Expected : %d .Found : %d", samplePerPixel, imgSm.getSampleSize().length));
             
             if (ImageUtils.getPlanarConfiguration(imgSm) != planarConfiguration) 
                 throw new IllegalArgumentException(String.format("Mismatch planar configuration. Expected : %d .Found : %d", planarConfiguration, ImageUtils.getPlanarConfiguration(imgSm)));
