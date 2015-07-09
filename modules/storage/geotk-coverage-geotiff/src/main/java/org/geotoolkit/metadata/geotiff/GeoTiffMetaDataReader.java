@@ -222,9 +222,14 @@ public final class GeoTiffMetaDataReader {
                 
                 final LocalizationGrid grid = new LocalizationGrid(2, 2);
                 
+                //-- pixelOrientation Offset
+                final int pIOffset = (orientation.equals(PixelOrientation.CENTER)) ? 1 : 0;
+                
                 //-- build the 2 maximums coordinates
-                final int maxX = bounds.x + bounds.width - 1;
-                final int maxY = bounds.y + bounds.height - 1;
+                final int minX = bounds.x + pIOffset;
+                final int minY = bounds.y + pIOffset;
+                final int maxX = bounds.x + bounds.width  - 1 + pIOffset;
+                final int maxY = bounds.y + bounds.height - 1 + pIOffset;
                 
                 int nbPointFound = 0;
                 
@@ -232,20 +237,20 @@ public final class GeoTiffMetaDataReader {
                     final double currentX = tiePoint[i];
                     final double currentY = tiePoint[i+1];
                     
-                    if (StrictMath.abs(currentX - bounds.x) < 1E-9
-                     && StrictMath.abs(currentY - bounds.y) < 1E-9) {//-- lowerLeftCorner
+                    if (StrictMath.abs(currentX - minX) < 1E-9
+                     && StrictMath.abs(currentY - minY) < 1E-9) {//-- lowerLeftCorner
                         
                         grid.setLocalizationPoint(0, 0, tiePoint[i + 3], tiePoint[i + 4]);
                         if (++nbPointFound == 4) break;//-- 4 corners found.
                         
-                    } else if (StrictMath.abs(currentX - bounds.x) < 1E-9
+                    } else if (StrictMath.abs(currentX - minX) < 1E-9
                             && StrictMath.abs(currentY - maxY) < 1E-9) {//-- upperLeftCorner
                         
                         grid.setLocalizationPoint(0, 1, tiePoint[i + 3], tiePoint[i + 4]);
                         if (++nbPointFound == 4) break;//-- 4 corners found.
                         
                     } else if (StrictMath.abs(currentX - maxX) < 1E-9
-                            && StrictMath.abs(currentY - bounds.y) < 1E-9) {//-- lowerRightCorner
+                            && StrictMath.abs(currentY - minY) < 1E-9) {//-- lowerRightCorner
                         
                         grid.setLocalizationPoint(1, 0, tiePoint[i + 3], tiePoint[i + 4]);
                         if (++nbPointFound == 4) break;//-- 4 corners found.
