@@ -36,7 +36,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class StatelessContextParams<T extends MapLayer> {
 
-    public static final int CLIP_PIXEL_MARGIN = 5;
+    /**
+     * 50pixels ensure large strokes of graphics won't show on the map.
+     * TODO : need to find a better way to reduce the geometry preserving length
+     */
+    public static final int CLIP_PIXEL_MARGIN = 50;
     
     public RenderingContext2D context;
     public final AbstractCanvas2D canvas;
