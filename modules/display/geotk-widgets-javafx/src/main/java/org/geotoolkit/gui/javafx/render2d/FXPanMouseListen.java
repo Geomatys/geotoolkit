@@ -41,14 +41,14 @@ public class FXPanMouseListen extends AbstractMouseHandler {
     
     protected MouseButton mousebutton = null;
 
-    protected final FXAbstractNavigationHandler owner;
+    protected final AbstractNavigationHandler owner;
     private final double zoomFactor;
 
-    public FXPanMouseListen(final FXAbstractNavigationHandler owner) {
+    public FXPanMouseListen(final AbstractNavigationHandler owner) {
         this(owner, DEFAULT_ZOOM_FACTOR);
     }
 
-    public FXPanMouseListen(final FXAbstractNavigationHandler owner, final double zoomFactor) {
+    public FXPanMouseListen(final AbstractNavigationHandler owner, final double zoomFactor) {
         ArgumentChecks.ensureNonNull("Parent map handler", owner);
         this.owner = owner;
         if (zoomFactor >= 0 && zoomFactor <= Double.MAX_VALUE) {

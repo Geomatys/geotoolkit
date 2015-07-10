@@ -53,7 +53,7 @@ public final class FXPanAction extends FXMapAction {
     @Override
     public void accept(ActionEvent event) {
         if (map != null) {
-            map.setHandler(new FXPanHandler(map, infoOnClick));
+            map.setHandler(new FXPanHandler(infoOnClick));
         }
     }
     

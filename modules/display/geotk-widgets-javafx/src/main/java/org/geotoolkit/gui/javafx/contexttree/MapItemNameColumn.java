@@ -22,7 +22,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
@@ -98,28 +97,30 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
                 setGraphic(pane);
             }else if(ti instanceof TreeMapItem){
                 final MapItem mapItem = (MapItem) ((TreeMapItem)ti).getValue();
-                if(mapItem instanceof FeatureMapLayer){
-                    final FeatureStore store = ((FeatureMapLayer)mapItem).getCollection().getSession().getFeatureStore();
-                    if(store!=null && store.getFactory() instanceof ClientFactory){
-                        setGraphic(new ImageView(ICON_SERVICE));
-                    }else{
-                        setGraphic(new ImageView(ICON_VECTOR));
-                    }
-                }else if(mapItem instanceof CoverageMapLayer){
-                    final CoverageStore store = ((CoverageMapLayer)mapItem).getCoverageReference().getStore();
-                    if(store!=null && store.getFactory() instanceof ClientFactory){
-                        setGraphic(new ImageView(ICON_SERVICE));
-                    }else{
-                        setGraphic(new ImageView(ICON_RASTER));
-                    }
-                }else{
-                    //container
-                    setGraphic(new ImageView(ICON_FOLDER));
-                }
+                setGraphic(new ImageView(getTypeIcon(mapItem)));
             }
-
         }
+    }
 
+    public static Image getTypeIcon(MapItem mapItem){
+        if(mapItem instanceof FeatureMapLayer){
+            final FeatureStore store = ((FeatureMapLayer)mapItem).getCollection().getSession().getFeatureStore();
+            if(store!=null && store.getFactory() instanceof ClientFactory){
+                return ICON_SERVICE;
+            }else{
+                return ICON_VECTOR;
+            }
+        }else if(mapItem instanceof CoverageMapLayer){
+            final CoverageStore store = ((CoverageMapLayer)mapItem).getCoverageReference().getStore();
+            if(store!=null && store.getFactory() instanceof ClientFactory){
+                return ICON_SERVICE;
+            }else{
+                return ICON_RASTER;
+            }
+        }else{
+            //container
+            return ICON_FOLDER;
+        }
     }
 
 }

@@ -129,7 +129,7 @@ public final class GeotkFX {
 
     public static InternationalString getI18NString(final String key){
         try{
-            String text =  BUNDLE.getString(key);
+            String text = BUNDLE.getString(key);
             if(text.startsWith("$")){
                 return getI18NString(text.substring(1));
             }
@@ -139,7 +139,10 @@ public final class GeotkFX {
         return new ResourceInternationalString(BUNDLE_PATH, key);
     }
 
-    
+    public static InternationalString getI18NString(Class clazz, final String key){
+        return getI18NString(clazz.getName()+"."+key);
+    }
+
     public static final BufferedImage EMPTY_ICON_16;
     static {
         try {

@@ -17,9 +17,7 @@
 
 package org.geotoolkit.gui.javafx.render2d.navigation;
 
-import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import java.util.logging.Level;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -37,7 +35,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CommonCRS;
-import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.crs.FXCRSButton;
@@ -48,7 +45,6 @@ import org.geotoolkit.internal.Loggers;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
 /**

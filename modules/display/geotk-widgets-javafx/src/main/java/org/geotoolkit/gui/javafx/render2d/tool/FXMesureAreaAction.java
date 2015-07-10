@@ -50,7 +50,7 @@ public class FXMesureAreaAction extends FXMapAction {
     @Override
     public void accept(ActionEvent event) {
         if (map != null) {
-            map.setHandler(new FXMesureAreaHandler(map));
+            map.setHandler(new FXMesureAreaHandler());
         }
     }
     

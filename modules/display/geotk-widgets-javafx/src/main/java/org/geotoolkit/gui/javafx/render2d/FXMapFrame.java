@@ -55,6 +55,7 @@ public class FXMapFrame {
     private final FXContextBar contextBar;
     private final FXAddDataBar dataBar;
     private final FXNavigationBar navBar;
+    private final FXEditionBar editBar;
     private final FXGeoToolBar geotoolBar;
     private final FXCoordinateBar coordBar;
     private final FXMapContextTree tree;
@@ -83,6 +84,7 @@ public class FXMapFrame {
         contextBar = new FXContextBar(map);
         dataBar = new FXAddDataBar(map,true);
         navBar = new FXNavigationBar(map);
+        editBar = new FXEditionBar(map);
         geotoolBar = new FXGeoToolBar(map);
         coordBar = new FXCoordinateBar(map);
 
@@ -93,20 +95,23 @@ public class FXMapFrame {
         contextBar.setMaxHeight(Double.MAX_VALUE);
         dataBar.setMaxHeight(Double.MAX_VALUE);
         navBar.setMaxHeight(Double.MAX_VALUE);
+        editBar.setMaxHeight(Double.MAX_VALUE);
         geotoolBar.setMaxHeight(Double.MAX_VALUE);
         topgrid.add(contextBar,  0, 0);
         topgrid.add(dataBar,  1, 0);
         topgrid.add(navBar,  2, 0);
-        topgrid.add(geotoolBar, 3, 0);
+        topgrid.add(editBar,  3, 0);
+        topgrid.add(geotoolBar, 4, 0);
         
         final ColumnConstraints col0 = new ColumnConstraints();
         final ColumnConstraints col1 = new ColumnConstraints();
         final ColumnConstraints col2 = new ColumnConstraints();
         final ColumnConstraints col3 = new ColumnConstraints();
-        col3.setHgrow(Priority.ALWAYS);
+        final ColumnConstraints col4 = new ColumnConstraints();
+        col4.setHgrow(Priority.ALWAYS);
         final RowConstraints row0 = new RowConstraints();
         row0.setVgrow(Priority.ALWAYS);
-        topgrid.getColumnConstraints().addAll(col0,col1,col2,col3);
+        topgrid.getColumnConstraints().addAll(col0,col1,col2,col3,col4);
         topgrid.getRowConstraints().addAll(row0);
         
         

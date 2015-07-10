@@ -31,7 +31,6 @@ import org.geotoolkit.internal.GeotkFX;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @module pending
  */
 public class FXZoomOutAction extends FXMapAction {
     
@@ -54,7 +53,7 @@ public class FXZoomOutAction extends FXMapAction {
     @Override
     public void accept(ActionEvent event) {
         if (map != null ) {
-            map.setHandler(new FXZoomOutHandler(map));
+            map.setHandler(new FXZoomOutHandler());
         }
     }
 

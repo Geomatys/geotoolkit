@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.render2d.navigation;
 
-import org.geotoolkit.gui.javafx.render2d.FXAbstractNavigationHandler;
+import org.geotoolkit.gui.javafx.render2d.AbstractNavigationHandler;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +35,14 @@ import org.geotoolkit.gui.javafx.render2d.FXPanMouseListen;
  * 
  * @author Johann Sorel (Geomatys)
  */
-public class FXPanHandler extends FXAbstractNavigationHandler {
+public class FXPanHandler extends AbstractNavigationHandler {
 
     //we could use this cursor, but java do not handle translucent cursor correctly on every platform
     private static final Cursor CUR_ZOOM_PAN = Cursor.MOVE;
     private final FXPanMouseListen mouseInputListener = new FXPanMouseListen(this);    
     
-    public FXPanHandler(final FXMap map, boolean infoOnRightClick) {
-        super(map);
+    public FXPanHandler(boolean infoOnRightClick) {
+        super();
     }
 
     /**
@@ -50,10 +50,10 @@ public class FXPanHandler extends FXAbstractNavigationHandler {
      */
     @Override
     public void install(final FXMap component) {
-        super.install(component);
         component.addEventHandler(MouseEvent.ANY, mouseInputListener);
         component.addEventHandler(ScrollEvent.ANY, mouseInputListener);
         map.setCursor(CUR_ZOOM_PAN);
+        super.install(component);
     }
 
     /**

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2014, Geomatys
+ *    (C) 2014-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import javafx.scene.input.GestureEvent;
 import javafx.scene.input.MouseEvent;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
 
 
 /**
@@ -39,13 +38,11 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class FXAbstractNavigationHandler implements FXCanvasHandler{
+public class AbstractNavigationHandler extends AbstractCanvasHandler{
 
-    protected final FXMap map;
     protected final FXZoomDecoration decorationPane = new FXZoomDecoration();
 
-    public FXAbstractNavigationHandler(final FXMap map) {
-        this.map = map;
+    public AbstractNavigationHandler() {
     }
 
     protected boolean isStateFull(){
@@ -109,15 +106,8 @@ public class FXAbstractNavigationHandler implements FXCanvasHandler{
      * {@inheritDoc }
      */
     @Override
-    public J2DCanvas getCanvas() {
-        return map.getCanvas();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public void install(final FXMap component) {
+        super.install(component);
         map.addDecoration(0,decorationPane);
     }
 
@@ -127,6 +117,7 @@ public class FXAbstractNavigationHandler implements FXCanvasHandler{
     @Override
     public boolean uninstall(final FXMap component) {
         map.removeDecoration(decorationPane);
+        super.uninstall(component);
         return true;
     }
 

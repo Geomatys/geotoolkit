@@ -17,7 +17,7 @@
 package org.geotoolkit.gui.javafx.render2d.navigation;
 
 
-import org.geotoolkit.gui.javafx.render2d.FXAbstractNavigationHandler;
+import org.geotoolkit.gui.javafx.render2d.AbstractNavigationHandler;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import java.awt.geom.Point2D;
 import javafx.scene.Cursor;
@@ -30,14 +30,14 @@ import javafx.scene.input.ScrollEvent;
  * 
  * @author Johann Sorel (Geomatys)
  */
-public class FXZoomInHandler extends FXAbstractNavigationHandler {
+public class FXZoomInHandler extends AbstractNavigationHandler {
 
     private static  final Cursor CUR_ZOOM_IN = Cursor.CROSSHAIR;
     private final MouseListen mouseInputListener = new MouseListen();
     private double zoomFactor = 2;
 
-    public FXZoomInHandler(final FXMap map) {
-        super(map);
+    public FXZoomInHandler() {
+        super();
     }
     
     /**
@@ -56,10 +56,10 @@ public class FXZoomInHandler extends FXAbstractNavigationHandler {
      */
     @Override
     public boolean uninstall(final FXMap component) {
-        super.uninstall(component);
         component.removeEventHandler(MouseEvent.ANY, mouseInputListener);
         component.removeEventHandler(ScrollEvent.ANY, mouseInputListener);
         map.setCursor(null);
+        super.uninstall(component);
         return true;
     }
 

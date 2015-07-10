@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,7 +17,7 @@
 package org.geotoolkit.gui.javafx.render2d.navigation;
 
 
-import org.geotoolkit.gui.javafx.render2d.FXAbstractNavigationHandler;
+import org.geotoolkit.gui.javafx.render2d.AbstractNavigationHandler;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import java.awt.geom.Point2D;
 import javafx.scene.Cursor;
@@ -27,21 +26,20 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
 /**
- * Zoom in Handler for GoMap2D.
+ * Zoom out Handler for FXMap.
  * 
  * @author Johann Sorel
- * @module pending
  */
-public class FXZoomOutHandler extends FXAbstractNavigationHandler {
+public class FXZoomOutHandler extends AbstractNavigationHandler {
 
     //we could use this cursor, but java do not handle translucent cursor correctly on every platform
     //private static final Cursor CUR_ZOOM_OUT = cleanCursor(ZoomOutAction.ICON.getImage(),new Point(0,0),"zoomout");
     private static  final Cursor CUR_ZOOM_OUT = Cursor.CROSSHAIR;
     private final MouseListen mouseInputListener = new MouseListen();
-    private double zoomFactor = 2;
+    private final double zoomFactor = 2;
 
-    public FXZoomOutHandler(final FXMap map) {
-        super(map);
+    public FXZoomOutHandler() {
+        super();
     }
     
     /**
@@ -60,10 +58,10 @@ public class FXZoomOutHandler extends FXAbstractNavigationHandler {
      */
     @Override
     public boolean uninstall(final FXMap component) {
-        super.uninstall(component);
         component.removeEventHandler(MouseEvent.ANY, mouseInputListener);
         component.removeEventHandler(ScrollEvent.ANY, mouseInputListener);
         map.setCursor(null);
+        super.uninstall(component);
         return true;
     }
 

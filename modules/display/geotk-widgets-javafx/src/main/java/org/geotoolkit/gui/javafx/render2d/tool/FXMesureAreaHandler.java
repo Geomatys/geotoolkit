@@ -49,7 +49,7 @@ import javax.measure.unit.Unit;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.geotoolkit.display.MeasureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.gui.javafx.render2d.FXAbstractNavigationHandler;
+import org.geotoolkit.gui.javafx.render2d.AbstractNavigationHandler;
 import org.geotoolkit.gui.javafx.render2d.FXGridDecoration;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXPanMouseListen;
@@ -61,7 +61,7 @@ import org.geotoolkit.internal.Loggers;
  * 
  * @author Johann Sorel (Geomatys)
  */
-public class FXMesureAreaHandler extends FXAbstractNavigationHandler {
+public class FXMesureAreaHandler extends AbstractNavigationHandler {
 
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
     private final MouseListen mouseInputListener = new MouseListen();
@@ -73,8 +73,8 @@ public class FXMesureAreaHandler extends FXAbstractNavigationHandler {
     private final HBox pane = new HBox(10,uiArea,uiUnit);
     
     
-    public FXMesureAreaHandler(final FXMap map) {
-        super(map);       
+    public FXMesureAreaHandler() {
+        super();       
         uiArea.setMaxHeight(Double.MAX_VALUE);
         uiUnit.setItems(FXCollections.observableArrayList(Unit.valueOf("km2"),SI.SQUARE_METRE));
         uiUnit.getSelectionModel().selectFirst();
@@ -112,11 +112,11 @@ public class FXMesureAreaHandler extends FXAbstractNavigationHandler {
      */
     @Override
     public boolean uninstall(final FXMap component) {
-        super.uninstall(component);
         component.removeEventHandler(MouseEvent.ANY, mouseInputListener);
         component.removeEventHandler(ScrollEvent.ANY, mouseInputListener);
         map.removeDecoration(layer);
         map.removeDecoration(deco);
+        super.uninstall(component);
         return true;
     }
     

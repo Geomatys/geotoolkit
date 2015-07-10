@@ -40,15 +40,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
-import org.geotoolkit.gui.javafx.layer.FXPropertiesPane;
 import org.geotoolkit.gui.javafx.layer.style.FXStyleAggregatedPane;
 import org.geotoolkit.gui.javafx.util.ButtonTreeTableCell;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 
 /**

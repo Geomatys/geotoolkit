@@ -28,3 +28,81 @@
     -fx-background-insets: 0, 1, 2;
     -fx-background-radius: 5, 4, 3;
 }
+
+.buttongroup-top-left {
+    -fx-body-color: linear (0%,0%) to (0%,100%) stops (0,derive(-fx-color,34%)) (0.5,-fx-color);
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 3 0 0 0;
+    -fx-background-insets: -2 0 0 -2, 0, 1 0 0 1, 2 0 0 2;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+}
+
+.buttongroup-center-left {
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-color;
+    -fx-background-radius: 0 0 0 0;
+    -fx-background-insets: 0 0 0 -2, 0, 0 0 0 1, 0 0 0 2;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+}
+
+.buttongroup-bottom-left {
+    -fx-body-color: linear (0%,0%) to (0%,100%) stops (0.5,-fx-color) (1,derive(-fx-color,-18%));
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 0 0 0 3;
+    -fx-background-insets: 0 0 -2 -2, 0, 0 0 1 1, 0 0 2 2;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+}
+
+.buttongroup-top-center {
+    -fx-body-color: linear (0%,0%) to (0%,100%) stops (0,derive(-fx-color,34%)) (0.5,-fx-color);
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 0 0 0 0;
+    -fx-background-insets: -2 0 0 0, 0, 1 0 0 0, 2 0 0 0;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+}
+
+.buttongroup-center-center {
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-color;
+    -fx-background-radius: 0 0 0 0;
+    -fx-background-insets: 0 0 0 0, 0, 0 0 0 0, 0 0 0 0;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+}
+
+.buttongroup-bottom-center {
+    -fx-body-color: linear (0%,0%) to (0%,100%) stops (0.5,-fx-color) (1,derive(-fx-color,-18%));
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 0 0 0 0;
+    -fx-background-insets: 0 0 -2 0, 0, 0 0 1 0, 0 0 2 0;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+}
+
+.buttongroup-top-right {
+    -fx-body-color: linear (0%,0%) to (0%,100%) stops (0,derive(-fx-color,34%)) (0.5,-fx-color);
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 0 3 0 0;
+    -fx-background-insets: -2 -2 0 0, 0, 1 1 0 0, 2 2 0 0;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+}
+
+.buttongroup-center-right {
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-color;
+    -fx-background-radius: 0 0 0 0;
+    -fx-background-insets: 0 -2 0 0, 0, 0 1 0 0, 0 2 0 0;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+}
+
+.buttongroup-bottom-right {
+    -fx-body-color: linear (0%,0%) to (0%,100%) stops (0.5,-fx-color) (1,derive(-fx-color,-18%));
+    -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+    -fx-background-radius: 0 0 3 0;
+    -fx-background-insets: 0 -2 -2 0, 0, 0 1 1 0, 0 2 2 0;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+}

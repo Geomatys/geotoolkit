@@ -51,7 +51,7 @@ public final class FXZoomInAction extends FXMapAction {
     @Override
     public void accept(ActionEvent event) {
         if (map != null) {
-            map.setHandler(new FXZoomInHandler(map));
+            map.setHandler(new FXZoomInHandler());
         }
     }
     
