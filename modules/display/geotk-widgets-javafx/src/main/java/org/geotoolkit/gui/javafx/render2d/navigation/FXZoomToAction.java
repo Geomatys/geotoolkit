@@ -17,7 +17,9 @@
 
 package org.geotoolkit.gui.javafx.render2d.navigation;
 
+import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -28,12 +30,14 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CommonCRS;
+import org.apache.sis.util.resources.Vocabulary;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.javafx.crs.FXCRSButton;
@@ -41,7 +45,11 @@ import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapAction;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
+import org.opengis.metadata.Identifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.util.GenericName;
+import org.opengis.util.InternationalString;
 
 /**
  *
@@ -64,6 +72,8 @@ public final class FXZoomToAction extends FXMapAction {
             crsButton.crsProperty().set(CommonCRS.WGS84.normalizedGeographic());
             
             final GridPane grid = new GridPane();
+            grid.setMaxHeight(Double.MAX_VALUE);
+            grid.setMaxWidth(Double.MAX_VALUE);
             grid.getColumnConstraints().add(new ColumnConstraints());
             grid.getColumnConstraints().add(new ColumnConstraints());
             grid.getRowConstraints().add(new RowConstraints());
@@ -72,15 +82,17 @@ public final class FXZoomToAction extends FXMapAction {
             grid.setHgap(10);
             grid.setVgap(10);
             
-            final Label lblx = new Label(crsButton.crsProperty().get().getCoordinateSystem().getAxis(0).getAbbreviation());
-            final Label lbly = new Label(crsButton.crsProperty().get().getCoordinateSystem().getAxis(1).getAbbreviation());
+            final Label lblx = new Label();
+            final Label lbly = new Label();
             final Label lcrs = new Label(GeotkFX.getString(this, "crs"));
+            fillLabel(lblx, crsButton.crsProperty().get().getCoordinateSystem().getAxis(0));
+            fillLabel(lbly, crsButton.crsProperty().get().getCoordinateSystem().getAxis(1));
             
             crsButton.crsProperty().addListener(new ChangeListener<CoordinateReferenceSystem>() {
                 @Override
                 public void changed(ObservableValue<? extends CoordinateReferenceSystem> observable, CoordinateReferenceSystem oldValue, CoordinateReferenceSystem newValue) {
-                    lblx.setText(newValue.getCoordinateSystem().getAxis(0).getAbbreviation());
-                    lbly.setText(newValue.getCoordinateSystem().getAxis(1).getAbbreviation());
+                    fillLabel(lblx, newValue.getCoordinateSystem().getAxis(0));
+                    fillLabel(lbly, newValue.getCoordinateSystem().getAxis(1));
                 }
             });
             
@@ -96,6 +108,8 @@ public final class FXZoomToAction extends FXMapAction {
             
             final DialogPane pane = new DialogPane();
             pane.setContent(grid);
+            pane.setMaxHeight(Double.MAX_VALUE);
+            pane.setMaxWidth(Double.MAX_VALUE);
             pane.getButtonTypes().addAll(ButtonType.OK,ButtonType.CANCEL);
             alert.setDialogPane(pane);
             alert.setTitle(GeotkFX.getString(FXZoomToAction.class,"zoom_at"));
@@ -115,5 +129,18 @@ public final class FXZoomToAction extends FXMapAction {
             
         }
     }
-    
+
+    private static void fillLabel(Label label, CoordinateSystemAxis axis){
+        final String abr = axis.getAbbreviation();
+        final Identifier name = axis.getName();
+        label.setText(name.getCode()+" ("+abr+")");
+
+        final InternationalString remarks = axis.getRemarks();
+        if(remarks!=null){
+            label.setTooltip(new Tooltip(remarks.toString()));
+        }else{
+            label.setTooltip(null);
+        }
+    }
+
 }
