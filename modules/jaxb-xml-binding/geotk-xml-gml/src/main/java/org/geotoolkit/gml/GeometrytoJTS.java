@@ -114,7 +114,8 @@ public class GeometrytoJTS {
     /**
      * Transform A GML envelope into JTS Polygon
      *
-     * @param GMLenvelope A GML envelope.
+     * @param gmlEnvelope A GML envelope.
+     * @param longitudeFirst
      *
      * @return A JTS Polygon
      * @throws org.opengis.referencing.NoSuchAuthorityCodeException
@@ -303,15 +304,25 @@ public class GeometrytoJTS {
     }
 
     public static LineString toJTS(final org.geotoolkit.gml.xml.LineString gmlLine) throws FactoryException{
-        return toJTS(gmlLine, true);
+        return toJTS(gmlLine, true, null);
     }
     
     public static LineString toJTS(final org.geotoolkit.gml.xml.LineString gmlLine, boolean longitudeFirst) throws FactoryException{
-        final String crsName = gmlLine.getSrsName();
-        if (crsName == null) {
-            throw new FactoryException("A CRS (coordinate Reference system) must be specified for the line.");
+        return toJTS(gmlLine, longitudeFirst, null);
+    }
+    
+    public static LineString toJTS(final org.geotoolkit.gml.xml.LineString gmlLine, boolean longitudeFirst, CoordinateReferenceSystem parentCrs) throws FactoryException{
+        
+        final CoordinateReferenceSystem crs;
+        if (parentCrs == null) {
+            final String crsName = gmlLine.getSrsName();
+            if (crsName == null) {
+                throw new FactoryException("A CRS (coordinate Reference system) must be specified for the line.");
+            }
+            crs = toCRS(crsName, longitudeFirst);
+        } else {
+            crs = parentCrs;
         }
-        final CoordinateReferenceSystem crs = toCRS(crsName, longitudeFirst);
 
         final com.vividsolutions.jts.geom.LineString ls;
         final Coordinates coord = gmlLine.getCoordinates();
@@ -346,11 +357,21 @@ public class GeometrytoJTS {
     }
     
     public static List<LineString> toJTS(final Curve gmlLine, boolean longitudeFirst) throws FactoryException{
-        final String crsName = gmlLine.getSrsName();
-        if (crsName == null) {
-            throw new FactoryException("A CRS (coordinate Reference system) must be specified for the line.");
+        return toJTS(gmlLine, longitudeFirst, null);
+    }
+    
+    public static List<LineString> toJTS(final Curve gmlLine, boolean longitudeFirst, CoordinateReferenceSystem parentCrs) throws FactoryException{
+        
+        final CoordinateReferenceSystem crs;
+        if (parentCrs == null) {
+            final String crsName = gmlLine.getSrsName();
+            if (crsName == null) {
+                throw new FactoryException("A CRS (coordinate Reference system) must be specified for the line.");
+            }
+            crs = toCRS(crsName, longitudeFirst);
+        } else {
+            crs = parentCrs;
         }
-        final CoordinateReferenceSystem crs = toCRS(crsName, longitudeFirst);
 
         final List<com.vividsolutions.jts.geom.LineString> lineList = new ArrayList<>();
         final CurveSegmentArrayProperty arrayProperty = gmlLine.getSegments();
@@ -489,13 +510,15 @@ public class GeometrytoJTS {
     public static MultiLineString toJTS(final org.geotoolkit.gml.xml.MultiCurve gml, boolean longitudeFirst) throws FactoryException{
         final List<? extends CurveProperty> pos = gml.getCurveMember();
         final List<LineString> members = new ArrayList<>();
+        
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
 
         for (int i=0,n=pos.size(); i<n; i++) {
             AbstractCurve curve = pos.get(i).getAbstractCurve();
             if (curve instanceof org.geotoolkit.gml.xml.LineString) {
-                members.add(toJTS((org.geotoolkit.gml.xml.LineString)curve));
+                members.add(toJTS((org.geotoolkit.gml.xml.LineString)curve, longitudeFirst, crs));
             } else if (curve instanceof org.geotoolkit.gml.xml.Curve) {
-                members.addAll(toJTS((org.geotoolkit.gml.xml.Curve)curve));
+                members.addAll(toJTS((org.geotoolkit.gml.xml.Curve)curve, longitudeFirst, crs));
             } else {
                 throw new IllegalArgumentException("unexpected Curve type:" + curve);
             }
@@ -503,7 +526,7 @@ public class GeometrytoJTS {
 
         final MultiLineString geom = GF.createMultiLineString(members.toArray(new LineString[members.size()]));
 
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem(longitudeFirst);
+        
         JTS.setCRS(geom, crs);
         return geom;
     }

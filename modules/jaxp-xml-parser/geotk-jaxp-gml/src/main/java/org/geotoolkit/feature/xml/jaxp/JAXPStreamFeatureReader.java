@@ -552,6 +552,9 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 event = reader.getEventType();
             }
             while (event != START_ELEMENT) {
+                if (event == END_ELEMENT) {
+                    return null;
+                }
                 event = reader.next();
             }
             try {

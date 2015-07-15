@@ -339,6 +339,9 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             for(Property prop : feature.getProperties()){
                 if(Utils.VALUE_PROPERTY_NAME.equals(prop.getName().tip().toString())){
                     value = prop.getValue();
+                    if (value == null) {
+                        value = "";
+                    }
                     break;
                 }
             }

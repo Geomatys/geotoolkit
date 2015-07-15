@@ -18,6 +18,7 @@
 package org.geotoolkit.filter;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -30,6 +31,8 @@ import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.expression.Expression;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.apache.sis.util.ObjectConverters;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 
 /**
  * Defines a like filter, which checks to see if an attribute matches a REGEXP.
@@ -274,14 +277,16 @@ public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
         //LOGGER.finest("pattern: " + pattern);
         //LOGGER.finest("string: " + attribute.getValue(feature));
         //return attribute.getValue(feature).toString().matches(pattern);
-        final Object value = attribute.evaluate(feature);
+        Object value = attribute.evaluate(feature);
 
         if (null == value) {
             return false;
+        } else if (value instanceof Date) {
+            value = TemporalUtilities.toISO8601((Date) value);
         }
-
+        
         final Matcher matcher = getMatcher();
-        matcher.reset(attribute.evaluate(feature).toString());
+        matcher.reset(String.valueOf(value));
 
         return matcher.matches();
     }
