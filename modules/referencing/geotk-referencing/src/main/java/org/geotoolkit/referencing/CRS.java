@@ -480,7 +480,10 @@ public final class CRS extends Static {
      * @see CoordinateReferenceSystem#toWKT()
      *
      * @category factory
+     *
+     * @deprecated Moved to Apache SIS as {@link org.apache.sis.referencing.CRS#fromWKT(String)}.
      */
+    @Deprecated
     public static CoordinateReferenceSystem parseWKT(final String wkt) throws FactoryException {
         ensureNonNull("wkt", wkt);
         return getCRSFactory().createFromWKT(wkt);
