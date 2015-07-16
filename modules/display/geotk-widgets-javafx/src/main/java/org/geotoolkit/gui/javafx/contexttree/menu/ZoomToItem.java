@@ -28,12 +28,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.referencing.CRS;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -66,7 +69,16 @@ public class ZoomToItem extends TreeMenuItem{
                 
                 if(map == null) return;
                 try {
-                    map.getCanvas().setVisibleArea( ((MapLayer)candidate).getBounds());
+                    Envelope bounds = ((MapLayer)candidate).getBounds();
+                    if (bounds.getSpan(0) == 0 && bounds.getSpan(1) == 0) {
+                        bounds = CRS.transform(bounds, map.getCanvas().getObjectiveCRS2D());
+                        final GeneralEnvelope genBounds = new GeneralEnvelope(bounds);
+                        final double scale = map.getCanvas().getScale();
+                        genBounds.setRange(0, genBounds.getLower(0) - 50 * scale, genBounds.getLower(0) + 50 * scale);
+                        genBounds.setRange(1, genBounds.getLower(1) - 50 * scale, genBounds.getLower(1) + 50 * scale);
+                        bounds = genBounds;
+                    }
+                    map.getCanvas().setVisibleArea(bounds);
                 } catch (NoninvertibleTransformException | TransformException ex) {
                     Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(),ex);
                 }
