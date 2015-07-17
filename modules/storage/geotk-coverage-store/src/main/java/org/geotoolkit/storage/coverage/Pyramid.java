@@ -18,6 +18,7 @@ package org.geotoolkit.storage.coverage;
 
 import java.util.Collection;
 import java.util.List;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -65,4 +66,12 @@ public interface Pyramid {
      */
     Collection<GridMosaic> getMosaics(int index);
     
+    /**
+     * Get pyramid envelope.
+     * This is the aggregation of all mosaic envelopes.
+     * 
+     * @return Envelope
+     */
+    Envelope getEnvelope();
+
 }

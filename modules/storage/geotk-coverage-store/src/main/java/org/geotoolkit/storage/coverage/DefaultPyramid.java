@@ -23,9 +23,11 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.Classes;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -120,6 +122,19 @@ public class DefaultPyramid implements Pyramid{
                 +" "+IdentifiedObjects.getIdentifierOrName(getCoordinateReferenceSystem())
                 +" "+getId(),
                 getMosaicsInternal());
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        GeneralEnvelope env = null;
+        for(GridMosaic mosaic : getMosaics()){
+            if(env==null){
+                env = new GeneralEnvelope(mosaic.getEnvelope());
+            }else{
+                env.add(mosaic.getEnvelope());
+            }
+        }
+        return env;
     }
 
 }

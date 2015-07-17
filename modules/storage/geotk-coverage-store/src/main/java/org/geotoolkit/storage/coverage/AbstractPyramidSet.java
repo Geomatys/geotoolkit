@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.storage.coverage;
 
-import org.apache.sis.geometry.GeneralEnvelope;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -53,15 +52,7 @@ public abstract class AbstractPyramidSet implements PyramidSet {
     public Envelope getEnvelope() {
         for(Pyramid pyramid : getPyramids()){
             //we consider the first pyramid to be in the main data crs
-            GeneralEnvelope env = null;
-            for(GridMosaic mosaic : pyramid.getMosaics()){
-                if(env==null){
-                    env = new GeneralEnvelope(mosaic.getEnvelope());
-                }else{
-                    env.add(mosaic.getEnvelope());
-                }
-            }
-            return env;
+            return pyramid.getEnvelope();
         }
         return null;
     }

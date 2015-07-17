@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.iharder.Base64;
+import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.io.wkt.*;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.storage.DataStoreException;
@@ -41,6 +42,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -210,6 +212,19 @@ public class XMLPyramid implements Pyramid {
     @Override
     public List<GridMosaic> getMosaics() {
         return new ArrayList<GridMosaic>(mosaics());
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        GeneralEnvelope env = null;
+        for(GridMosaic mosaic : getMosaics()){
+            if(env==null){
+                env = new GeneralEnvelope(mosaic.getEnvelope());
+            }else{
+                env.add(mosaic.getEnvelope());
+            }
+        }
+        return env;
     }
 
     @Override
