@@ -387,7 +387,7 @@ public final class GeoTiffCRSWriter {
             stack.addAscii(PCSCitationGeoKey, name);
 
             // params
-            stack.addDouble(ProjNatOriginLongGeoKey,    value(parameters,Mercator1SP.CENTRAL_MERIDIAN));
+            stack.addDouble(ProjNatOriginLongGeoKey,    value(parameters,Mercator1SP.LONGITUDE_OF_ORIGIN));
             //stack.addDouble(ProjNatOriginLatGeoKey,     value(parameters,Mercator1SP.LATITUDE_OF_ORIGIN));
             stack.addDouble(ProjScaleAtNatOriginGeoKey, value(parameters,Mercator1SP.SCALE_FACTOR));
             stack.addDouble(ProjFalseEastingGeoKey,     value(parameters,Mercator1SP.FALSE_EASTING));
@@ -404,7 +404,7 @@ public final class GeoTiffCRSWriter {
             stack.addAscii(PCSCitationGeoKey, name);
 
             // params
-            stack.addDouble(ProjNatOriginLongGeoKey,    value(parameters,LambertConformal1SP.CENTRAL_MERIDIAN));
+            stack.addDouble(ProjNatOriginLongGeoKey,    value(parameters,LambertConformal1SP.LONGITUDE_OF_ORIGIN));
             stack.addDouble(ProjNatOriginLatGeoKey,     value(parameters,LambertConformal1SP.LATITUDE_OF_ORIGIN));
             stack.addDouble(ProjScaleAtNatOriginGeoKey, value(parameters,LambertConformal1SP.SCALE_FACTOR));
             stack.addDouble(ProjFalseEastingGeoKey,     value(parameters,LambertConformal1SP.FALSE_EASTING));

@@ -756,7 +756,7 @@ final class GeoTiffCRSReader {
                     || code == CT_Equirectangular) {
                 parameters = mtFactory.getDefaultParameters("Equirectangular");
                 parameters.parameter(code(Equirectangular.STANDARD_PARALLEL)).setValue(getOriginLat(metadata));
-                parameters.parameter(code(Equirectangular.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata));
+                parameters.parameter(code(Equirectangular.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(Equirectangular.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(Equirectangular.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
                 return parameters;
@@ -778,7 +778,7 @@ final class GeoTiffCRSReader {
                     parameters = mtFactory.getDefaultParameters("Mercator_1SP");
                 }
 
-                parameters.parameter(code(Mercator1SP.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata));
+                parameters.parameter(code(Mercator1SP.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(Mercator1SP.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(Mercator2SP.FALSE_EASTING)).setValue(getFalseEasting(metadata));
                 parameters.parameter(code(Mercator2SP.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
@@ -796,7 +796,7 @@ final class GeoTiffCRSReader {
             if (name.equalsIgnoreCase("lambert_conformal_conic_1SP")
                     || code == CT_LambertConfConic_Helmert) {
                 parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_1SP");
-                parameters.parameter(code(LambertConformal1SP.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata));
+                parameters.parameter(code(LambertConformal1SP.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(LambertConformal1SP.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(LambertConformal1SP.SCALE_FACTOR)).setValue(metadata.getAsDouble(ProjScaleAtNatOriginGeoKey));
                 parameters.parameter(code(LambertConformal1SP.FALSE_EASTING)).setValue(getFalseEasting(metadata));
