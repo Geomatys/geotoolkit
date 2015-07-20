@@ -26,9 +26,13 @@ import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CylindricalProjection;
+import javax.measure.unit.NonSI;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.apache.sis.measure.Latitude;
+import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.metadata.Citations;
 import org.apache.sis.internal.referencing.provider.Mercator2SP;
 import org.apache.sis.internal.referencing.provider.PseudoMercator;
@@ -112,7 +116,15 @@ public class TransverseMercator extends MapProjection {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN = PolarStereographic.LATITUDE_OF_ORIGIN; // TODO: was Mercator1SP, but without constraint on range.
+    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN; // TODO: was Mercator1SP, but without constraint on range.
+    static {
+        ParameterBuilder builder = new ParameterBuilder();
+        builder.addNamesAndIdentifiers(LambertConformal1SP.LATITUDE_OF_ORIGIN);
+        LATITUDE_OF_ORIGIN = builder.createBounded(MeasurementRange.create(
+                Latitude.MIN_VALUE, true,
+                Latitude.MAX_VALUE, true,
+                NonSI.DEGREE_ANGLE), 0.0);
+    }
 
     /**
      * The operation parameter descriptor for the {@linkplain

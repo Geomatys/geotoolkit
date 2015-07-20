@@ -77,7 +77,7 @@ import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
 import org.geotoolkit.referencing.operation.provider.ObliqueMercator;
 import org.geotoolkit.referencing.operation.provider.ObliqueStereographic;
 import org.geotoolkit.referencing.operation.provider.Orthographic;
-import org.geotoolkit.referencing.operation.provider.PolarStereographic;
+import org.apache.sis.internal.referencing.provider.PolarStereographicA;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
 import org.geotoolkit.referencing.operation.provider.TransverseMercator;
 import org.geotoolkit.resources.Vocabulary;
@@ -100,8 +100,8 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.crs.ProjectedCRS;
-
 import org.opengis.referencing.cs.CartesianCS;
+
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader.*;
 
@@ -852,12 +852,12 @@ final class GeoTiffCRSReader {
              */
             if (name.equalsIgnoreCase("polar_stereographic")
                     || code == CT_PolarStereographic) {
-                parameters = mtFactory.getDefaultParameters(code(PolarStereographic.PARAMETERS));
-                parameters.parameter(code(PolarStereographic.LATITUDE_OF_ORIGIN)).setValue(this.getOriginLat(metadata));
-                parameters.parameter(code(PolarStereographic.SCALE_FACTOR)).setValue(metadata.getAsDouble(ProjScaleAtNatOriginGeoKey));
-                parameters.parameter(code(PolarStereographic.FALSE_EASTING)).setValue(getFalseEasting(metadata));
-                parameters.parameter(code(PolarStereographic.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
-                parameters.parameter(code(PolarStereographic.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata));
+                parameters = mtFactory.getDefaultParameters("Polar_Stereographic");
+                parameters.parameter(code(PolarStereographicA.LATITUDE_OF_ORIGIN)).setValue(this.getOriginLat(metadata));
+                parameters.parameter(code(PolarStereographicA.SCALE_FACTOR)).setValue(metadata.getAsDouble(ProjScaleAtNatOriginGeoKey));
+                parameters.parameter(code(PolarStereographicA.FALSE_EASTING)).setValue(getFalseEasting(metadata));
+                parameters.parameter(code(PolarStereographicA.FALSE_NORTHING)).setValue(getFalseNorthing(metadata));
+                parameters.parameter(code(PolarStereographicA.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 return parameters;
             }
 

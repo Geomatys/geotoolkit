@@ -198,7 +198,8 @@ public class Stereographic extends UnitaryProjection {
         final double latitudeOfOrigin = toRadians(parameters.doubleValue(org.geotoolkit.referencing.operation.provider.Stereographic.LATITUDE_OF_ORIGIN));
         final Stereographic projection;
         if (abs(latitudeOfOrigin - PI/2) < ANGLE_TOLERANCE) {
-            projection = PolarStereographic.create(descriptor, parameters);
+            throw new IllegalArgumentException("Latitude to close to a pole.");
+            //projection = PolarStereographic.create(descriptor, parameters);
         } else {
             final boolean isSpherical = isSpherical(parameters);
             final boolean isEPSG = nameMatches(parameters, PARAMETERS);
