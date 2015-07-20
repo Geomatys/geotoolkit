@@ -676,13 +676,16 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                     low[1] = extent.getLow(1);
                     high[1] = extent.getHigh(1);
                     GeneralEnvelope sliceExtent = new GeneralEnvelope(gridGeometry.getCoordinateReferenceSystem());
+                    final double[] res = new double[dim];
                     for (int i = 0; i < dim; i++) {
                         sliceExtent.setRange(i, low[i], high[i]);
+                        res[i] = Double.MAX_VALUE;
                     }
 
                     GridCoverageReadParam readParam = new GridCoverageReadParam();
                     readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
+                    readParam.setResolution(res);
 
                     final GridCoverage coverage = reader.read(covRef.getImageIndex(), readParam);
                     final int nbBands = coverage.getNumSampleDimensions() - 1;
