@@ -53,8 +53,12 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -93,6 +97,13 @@ public class DimapAccessorTest {
 
     @After
     public void tearDown() {
+    }
+
+    @Test
+    public void testReadCreationDate() {
+        final Date imagingDate = DimapAccessor.getImagingDate(docSample);
+        // date should be 2007-03-01T07:11:39+0000 (1172733099000l)
+        assertEquals(1172733099000l, imagingDate.getTime());
     }
 
     @Test

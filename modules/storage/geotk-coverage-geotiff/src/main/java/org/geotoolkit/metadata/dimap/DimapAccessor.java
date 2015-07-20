@@ -1213,7 +1213,7 @@ public final class DimapAccessor extends Static {
 
             if (imagingDate != null && imagingTime != null) {
                 final ISODateParser dateParser = new ISODateParser();
-                return dateParser.parseToDate(imagingDate + "T" + imagingTime);
+                return dateParser.parseToDate(imagingDate + "T" + imagingTime+ "Z"); //UTC
             }
 
         }
