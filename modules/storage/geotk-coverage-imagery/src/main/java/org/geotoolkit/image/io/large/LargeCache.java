@@ -17,6 +17,7 @@
 package org.geotoolkit.image.io.large;
 
 import java.awt.Point;
+import java.awt.image.ImagingOpException;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -25,6 +26,7 @@ import java.lang.ref.ReferenceQueue;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -204,7 +206,7 @@ public final class LargeCache implements TileCache {
         try {
             return cache.getRaster(tileX, tileY);
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw (RuntimeException)(new ImagingOpException(ex.getMessage()).initCause(ex));
         }
     }
 
