@@ -52,8 +52,8 @@ public class FXPanHandler extends AbstractNavigationHandler {
     public void install(final FXMap component) {
         component.addEventHandler(MouseEvent.ANY, mouseInputListener);
         component.addEventHandler(ScrollEvent.ANY, mouseInputListener);
-        map.setCursor(CUR_ZOOM_PAN);
         super.install(component);
+        map.setCursor(CUR_ZOOM_PAN);
     }
 
     /**
