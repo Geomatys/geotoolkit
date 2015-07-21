@@ -37,8 +37,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
@@ -62,7 +60,6 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.storage.coverage.AbstractGridMosaic;
 import org.geotoolkit.storage.coverage.DefaultTileReference;
@@ -169,7 +166,7 @@ public class XMLMosaic implements GridMosaic {
         try {
             if (existMask != null && !existMask.isEmpty()) {
                 try {
-                    tileExist = BitSet.valueOf(decompress(Base64.decode(existMask)));
+                    tileExist = BitSet.valueOf(Base64.decode(existMask));
                     /*
                      * Caching tile state can only be determined at pyramid creation, because a switch of behavior after
                      * that seems a little bit tricky.
@@ -185,7 +182,7 @@ public class XMLMosaic implements GridMosaic {
 
             if (emptyMask != null && !emptyMask.isEmpty()) {
                 try {
-                    tileEmpty = BitSet.valueOf(decompress(Base64.decode(emptyMask)));
+                    tileEmpty = BitSet.valueOf(Base64.decode(emptyMask));
                 } catch (IOException ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                     tileEmpty = new BitSet(gridWidth * gridHeight);
@@ -290,8 +287,8 @@ public class XMLMosaic implements GridMosaic {
         return emptyTileEncoded;
     }
 
-    private static String updateCompletionString(BitSet input) {
-        return Base64.encodeBytes(compress(input.toByteArray()));
+    private static String updateCompletionString(BitSet input) throws IOException {
+        return Base64.encodeBytes(input.toByteArray(),Base64.GZIP);
     }
 
     /**
@@ -690,6 +687,9 @@ public class XMLMosaic implements GridMosaic {
                 return null;
             }
             return existMask = updateCompletionString(tileExist);
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            return existMask = null;
         } finally {
             bitsetLock.readLock().unlock();
         }
@@ -699,7 +699,7 @@ public class XMLMosaic implements GridMosaic {
         existMask = newValue;
         if (existMask != null && !existMask.isEmpty()) {
             try {
-                tileExist = BitSet.valueOf(decompress(Base64.decode(existMask)));
+                tileExist = BitSet.valueOf(Base64.decode(existMask));
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
@@ -715,6 +715,9 @@ public class XMLMosaic implements GridMosaic {
                 return null;
             }
             return emptyMask = updateCompletionString(tileEmpty);
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            return existMask = null;
         } finally {
             bitsetLock.readLock().unlock();
         }
@@ -724,7 +727,7 @@ public class XMLMosaic implements GridMosaic {
         emptyMask = newValue;
         if (emptyMask != null && !emptyMask.isEmpty()) {
             try {
-                tileEmpty = BitSet.valueOf(decompress(Base64.decode(emptyMask)));
+                tileEmpty = BitSet.valueOf(Base64.decode(emptyMask,Base64.GZIP));
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
@@ -902,25 +905,6 @@ public class XMLMosaic implements GridMosaic {
      */
     private Double getupperleftY() {
         return null;
-    }
-
-    public static byte[] compress(byte[] data){
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try{
-            final GZIPOutputStream gzip = new GZIPOutputStream(out);
-            gzip.write(data);
-            gzip.close();
-        }catch(IOException ex){
-            //should not happen, we are in memory, no IOExcepion
-            throw new RuntimeException(ex.getMessage(),ex);
-        }
-        return out.toByteArray();
-    }
-
-    public static byte[] decompress(byte[] data) throws IOException{
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        IOUtilities.copy(new GZIPInputStream(new ByteArrayInputStream(data)), out);
-        return out.toByteArray();
     }
 
 }
