@@ -172,11 +172,11 @@ public class ProjectedGeometryTest {
         //the display shape should have been clipped on x=0
         testArray(pg.getDisplayShape(),
                 createPath(new int[][]{
-                    {SEG_MOVETO,  0-StatelessContextParams.CLIP_PIXEL_MARGIN, 90},
-                    {SEG_LINETO,  0-StatelessContextParams.CLIP_PIXEL_MARGIN, 80},
+                    {SEG_MOVETO,  0-10, 90},
+                    {SEG_LINETO,  0-10, 80},
                     {SEG_LINETO, 10, 80},
                     {SEG_LINETO, 10, 90},
-                    {SEG_LINETO,  0-StatelessContextParams.CLIP_PIXEL_MARGIN, 90},
+                    {SEG_LINETO,  0-10, 90},
                     {SEG_CLOSE}
                 }));
     }
