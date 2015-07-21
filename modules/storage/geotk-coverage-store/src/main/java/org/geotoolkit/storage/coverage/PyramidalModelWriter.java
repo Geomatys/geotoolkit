@@ -17,9 +17,12 @@
 package org.geotoolkit.storage.coverage;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Iterator;
@@ -463,15 +466,24 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                 }
             }else{
                 try {
-                    //todo not exact
-                    final List<GridSampleDimension> dims = pm.getSampleDimensions();
-                    if(nbBand==3){
-                        currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_RGB);
-                    }else if(nbBand==4){
-                        currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_ARGB);
+                    SampleModel sm = pm.getSampleModel();
+                    if(sm!=null){
+                        final WritableRaster raster = WritableRaster.createWritableRaster(
+                                sm.createCompatibleSampleModel(tileWidth, tileHeight), new Point(0, 0));
+                        currentlyTile = new BufferedImage(pm.getColorModel(), raster, pm.getColorModel().isAlphaPremultiplied(), null);
+                        //currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, sm.getNumBands(), sm.getDataType());
+
                     }else{
-                        currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, dims.size(),
-                                CoverageUtilities.getDataType(dims.get(0).getSampleDimensionType()));
+                        //todo not exact
+                        final List<GridSampleDimension> dims = pm.getSampleDimensions();
+                        if(nbBand==3){
+                            currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_RGB);
+                        }else if(nbBand==4){
+                            currentlyTile = new BufferedImage(tileWidth, tileHeight,BufferedImage.TYPE_INT_ARGB);
+                        }else{
+                            currentlyTile = BufferedImages.createImage(tileWidth, tileHeight, dims.size(),
+                                    CoverageUtilities.getDataType(dims.get(0).getSampleDimensionType()));
+                        }
                     }
                 } catch (DataStoreException ex) {
                     throw new RuntimeException(ex);
