@@ -5,11 +5,13 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <xsd:import schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd" namespace="http://www.opengis.net/gml/3.2"/>
     <xsd:element xmlns:gml="http://www.opengis.net/gml/3.2" name="TestSimple" type="gml:TestSimpleType" substitutionGroup="gml:_Feature"/>
+    <xsd:attribute name="attString" type="string"/>
+    <xsd:attribute name="attInteger" type="xsd:integer"/>
     <xsd:complexType name="TestSimpleType">
         <xsd:complexContent>
             <xsd:extension xmlns:gml="http://www.opengis.net/gml/3.2" base="gml:AbstractFeatureType" >
-                <xsd:attribute name="attString" type="string" default="hello"/>
-                <xsd:attribute name="attInteger" type="xsd:integer" default="23"/>
+                <xsd:attribute ref="gml:attString" default="hello"/>
+                <xsd:attribute ref="gml:attInteger" default="23"/>
                 <xsd:sequence>
                     <xsd:element name="ID"                  maxOccurs="1" minOccurs="1" nillable="true" type="xsd:integer"/>
                     <xsd:element name="eleString"           maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>

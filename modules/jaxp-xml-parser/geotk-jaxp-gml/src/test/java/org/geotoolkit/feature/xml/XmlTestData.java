@@ -188,8 +188,8 @@ public class XmlTestData {
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"TestSimple");
-        ftb.add(NamesExt.create(GML_32_NAMESPACE, "@attString"),           String.class,0,1,false,"hello",null);
-        ftb.add(NamesExt.create(GML_32_NAMESPACE, "@attInteger"),          Integer.class,0,1,false,23,null);
+        ftb.add(null, "@attString", String.class, NamesExt.create(GML_32_NAMESPACE, "@attString"), null, 0,1,false,"hello",null);
+        ftb.add(null, "@attInteger", Integer.class, NamesExt.create(GML_32_NAMESPACE, "@attInteger"), null ,0,1,false,23,null);
         ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_32_NAMESPACE, "ID"),  null, 1,1,true, null);
         ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_32_NAMESPACE, "eleString"),  null, 1,1,true, null);
         ftb.add("http://www.w3.org/2001/XMLSchema","integer",              Integer.class, NamesExt.create(GML_32_NAMESPACE, "eleInteger"),  null, 1,1,true, null);
@@ -217,7 +217,7 @@ public class XmlTestData {
 
         ftb.reset();
         ftb.setName(GML_32_NAMESPACE,"SubRecordType");
-        ftb.add(NamesExt.create(GML_32_NAMESPACE, "@nilReason"), String.class,0,1,false,null,null);
+        ftb.add(NamesExt.create("@nilReason"),                             String.class,0,1,false,null,null);
         ftb.add("http://www.w3.org/2001/XMLSchema","string",               String.class, NamesExt.create(GML_32_NAMESPACE, "attString"),  null, 1,1,false, null);
         final ComplexType subRecordType = ftb.buildType();
 
