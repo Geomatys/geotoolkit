@@ -56,7 +56,7 @@ import org.opengis.temporal.TemporalPosition;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TimeInstantType", propOrder = {
+@XmlType(propOrder = {
     "timePosition"
 })
 @XmlRootElement(name = "TimeInstant")
