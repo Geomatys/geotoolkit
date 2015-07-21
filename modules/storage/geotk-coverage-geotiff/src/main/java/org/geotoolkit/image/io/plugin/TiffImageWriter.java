@@ -35,6 +35,7 @@ import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -51,10 +52,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.sis.internal.storage.ChannelImageOutputStream;
 import org.apache.sis.util.ArgumentChecks;
@@ -63,6 +66,7 @@ import org.apache.sis.util.NullArgumentException;
 import static org.geotoolkit.image.internal.ImageUtils.*;
 import org.geotoolkit.image.io.SpatialImageWriteParam;
 import org.geotoolkit.image.io.SpatialImageWriter;
+import org.geotoolkit.image.io.WritableImageByteChannel;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.metadata.geotiff.GeoTiffConstants;
@@ -3372,6 +3376,13 @@ public class TiffImageWriter extends SpatialImageWriter {
             } else if (output instanceof FileOutputStream) {
                 ((FileOutputStream) output).flush();
                 wBC = ((FileOutputStream) output).getChannel();
+            } else if (output instanceof OutputStream) {
+                ((OutputStream) output).flush();
+                final ImageOutputStream os = ImageIO.createImageOutputStream(output);
+                wBC = new WritableImageByteChannel(os);
+            } else if (output instanceof ImageOutputStream) {
+                ((ImageOutputStream) output).flush();
+                wBC = new WritableImageByteChannel((ImageOutputStream) output);
             } else {
                 throw new IOException("Output object is not a valid file or input stream.");
             }
@@ -3488,8 +3499,8 @@ public class TiffImageWriter extends SpatialImageWriter {
                //URI.class,
                //URL.class,
                String.class, // To be interpreted as file path.
-// TODO          OutputStream.class,
-//               ImageOutputStream.class
+               OutputStream.class,
+               ImageOutputStream.class,
                FileOutputStream.class
        };
         /**
