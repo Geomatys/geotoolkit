@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.IntUnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ProgressMonitor;
@@ -71,11 +74,13 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
 
     @XmlTransient
     private static MarshallerPool POOL;
-    private static synchronized MarshallerPool getPoolInstance() throws JAXBException{
-        if(POOL == null){
+    static {
+        try {
             POOL = new MarshallerPool(JAXBContext.newInstance(XMLCoverageReference.class), null);
+        } catch (JAXBException ex) {
+            Logger.getLogger(XMLCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+            throw new RuntimeException("Failed to initialize JAXB XML Coverage reference marshaller pool.");
         }
-        return POOL;
     }
 
     private static final GenericName DEFAULT_NAME = NamesExt.create("default");
@@ -279,13 +284,8 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     public XMLPyramidSet getPyramidSet() {
         return set;
     }
-    
-    /**
-     * Save the coverage reference in the file
-     * @throws DataStoreException
-     */
-    synchronized void save() throws DataStoreException {
-        
+
+    private void checkColorModel(){
         if (minColorSampleValue == null) {
             assert maxColorSampleValue == null;
             if (colorModel != null)
@@ -296,16 +296,45 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             assert JDK8.isFinite(minColorSampleValue) : "To write minColorSampleValue into XML Pyramid File, it should be finite. Found : "+minColorSampleValue;
             assert JDK8.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
         }
-        
-        
-        try {
-            final MarshallerPool pool   = getPoolInstance();
-            final Marshaller marshaller = pool.acquireMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(this, getMainfile());
-            pool.recycle(marshaller);
-        } catch (JAXBException ex) {
-            Logger.getLogger(XMLCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+    }
+
+    /**
+     * Save the coverage reference in the file
+     * @throws DataStoreException
+     */
+    private final AtomicInteger save = new AtomicInteger(0b00);
+    private static final IntUnaryOperator OP = new IntUnaryOperator() {
+        @Override
+        public int applyAsInt(int v) {
+            return v==0b11 ? 0b10 : 0b00;
+        }
+    };
+
+    void save() throws DataStoreException {
+        //unecessary here, values are checked when setting colormodel and updating tile
+        //checkColorModel();
+
+        /*
+        The save atomic integer contains 2 bits.
+        0b01 : is a flag for 'save is needed'
+        0b10 : is a flag for 'someone has taken the charge of saving'
+        This is an optimized opportunist saving approach.
+        One thread might do more then one saving work but this avoid a global
+        contention when multiple save operations occur.
+        */
+        if((save.getAndSet(0b11) & 0b10) !=0 ){
+            //0b10 flag was not set, no thread was currently saving so we must take this role.
+            while(save.updateAndGet(OP)!=0){
+                //keep saving un 0b01 flag is set to zero
+                try {
+                    final Marshaller marshaller = POOL.acquireMarshaller();
+                    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                    marshaller.marshal(this, getMainfile());
+                    POOL.recycle(marshaller);
+                } catch (JAXBException ex) {
+                    Logger.getLogger(XMLCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+                }
+            }
         }
     }
 
@@ -318,11 +347,10 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      * @throws org.apache.sis.storage.DataStoreException if the file describe a pyramid, but it contains an invalid CRS.
      */
     public static XMLCoverageReference read(File file) throws JAXBException, DataStoreException {
-        final MarshallerPool pool = getPoolInstance();
-        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
         final XMLCoverageReference ref;
         ref = (XMLCoverageReference) unmarshaller.unmarshal(file);
-        pool.recycle(unmarshaller);
+        POOL.recycle(unmarshaller);
         ref.initialize(file);
         return ref;
     }
@@ -459,6 +487,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             indexColorMod.getRGBs(colorMap);
         }
         this.colorModel = colorModel;
+        checkColorModel();
         //-- code in comment in attempt to update TiffImageReader to scan all sampleValues to build appropriate colorSpace
 //        final ColorSpace colorSpace = colorModel.getColorSpace();
 //        if (colorSpace instanceof ScaledColorSpace) {

@@ -53,11 +53,19 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     final boolean cacheTileState;
 
     public XMLCoverageStore(File root) throws URISyntaxException, MalformedURLException {
-        this(toParameters(root));
+        this(root,true);
     }
     
     public XMLCoverageStore(URL rootPath) throws URISyntaxException {
-        this(toParameters(rootPath));
+        this(rootPath, true);
+    }
+
+    public XMLCoverageStore(File root, boolean cacheTileStateInMemory) throws URISyntaxException, MalformedURLException {
+        this(toParameters(root,cacheTileStateInMemory));
+    }
+
+    public XMLCoverageStore(URL rootPath, boolean cacheTileStateInMemory) throws URISyntaxException {
+        this(toParameters(rootPath,cacheTileStateInMemory));
     }
         
     public XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException {
@@ -65,20 +73,21 @@ public class XMLCoverageStore extends AbstractCoverageStore {
         final URL rootPath = Parameters.value(XMLCoverageStoreFactory.PATH, params);
         root = new File(rootPath.toURI());
         Boolean tmpCacheState = Parameters.value(XMLCoverageStoreFactory.CACHE_TILE_STATE, params);
-        //cacheTileState = (tmpCacheState == null)? false : tmpCacheState;
-        cacheTileState = true;
+        cacheTileState = (tmpCacheState == null)? true : tmpCacheState;
         explore();
     }
 
-    private static ParameterValueGroup toParameters(File root) throws MalformedURLException {
+    private static ParameterValueGroup toParameters(File root, boolean cacheState) throws MalformedURLException {
         final ParameterValueGroup params = XMLCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         Parameters.getOrCreate(XMLCoverageStoreFactory.PATH, params).setValue(root.toURI().toURL());
+        Parameters.getOrCreate(XMLCoverageStoreFactory.CACHE_TILE_STATE, params).setValue(cacheState);
         return params;
     }
     
-    private static ParameterValueGroup toParameters(URL rootPath) {
+    private static ParameterValueGroup toParameters(URL rootPath, boolean cacheState) {
         final ParameterValueGroup params = XMLCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         Parameters.getOrCreate(XMLCoverageStoreFactory.PATH, params).setValue(rootPath);
+        Parameters.getOrCreate(XMLCoverageStoreFactory.CACHE_TILE_STATE, params).setValue(cacheState);
         return params;
     }
     
