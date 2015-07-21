@@ -215,6 +215,8 @@ public class XmlFeatureTypeTest {
         for (int i = 0; i < size; i++) {
             PropertyDescriptor expDesc = expIt.next();
             PropertyDescriptor resDesc = resIt.next();
+            assertEquals(expDesc.getName(), resDesc.getName());
+            assertEquals(expDesc.getType(), resDesc.getType());
             assertEquals(expDesc, resDesc);
         }
         
