@@ -27,9 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.IntUnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ProgressMonitor;
@@ -303,12 +301,6 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      * @throws DataStoreException
      */
     private final AtomicInteger save = new AtomicInteger(0b00);
-    private static final IntUnaryOperator OP = new IntUnaryOperator() {
-        @Override
-        public int applyAsInt(int v) {
-            return v==0b11 ? 0b10 : 0b00;
-        }
-    };
 
     void save() throws DataStoreException {
         //unecessary here, values are checked when setting colormodel and updating tile
@@ -324,7 +316,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         */
         if((save.getAndSet(0b11) & 0b10) !=0 ){
             //0b10 flag was not set, no thread was currently saving so we must take this role.
-            while(save.updateAndGet(OP)!=0){
+            while(updateAndGet(save)!=0){
                 //keep saving un 0b01 flag is set to zero
                 try {
                     final Marshaller marshaller = POOL.acquireMarshaller();
@@ -337,6 +329,19 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             }
         }
     }
+
+    /**
+     * Modified backport copy from JDK8 AtomicInteger.updateAndGet
+     */
+    private static final int updateAndGet(AtomicInteger ati) {
+        int prev, next;
+        do {
+            prev = ati.get();
+            next = prev==0b11 ? 0b10 : 0b00;
+        } while (!ati.compareAndSet(prev, next));
+        return next;
+    }
+
 
     /**
      * Read the given file and return an XMLCoverageReference.
