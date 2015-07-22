@@ -83,7 +83,7 @@ public class MapItemGlyphColumn extends TreeTableColumn {
         return pane;
     }
 
-    private void openEditor(MapLayer candidate) {
+    protected void openEditor(MapLayer candidate) {
         final Pane panel = createEditor(candidate);
         panel.setPrefSize(900, 700);
 
