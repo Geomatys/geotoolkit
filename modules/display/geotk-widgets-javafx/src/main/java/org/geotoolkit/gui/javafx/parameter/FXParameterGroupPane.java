@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.javafx.parameter;
 
 import java.awt.Color;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
@@ -52,13 +53,15 @@ import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.parameter.ParameterGroup;
-import org.geotoolkit.utility.parameter.ParametersExt;
+import org.geotoolkit.parameter.ParametersExt;
+import org.opengis.metadata.Identifier;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
 /**
@@ -84,22 +87,22 @@ public class FXParameterGroupPane extends BorderPane {
     private static final String PARAMETER_EDITOR_CLASS = "parameter-editor";
     private static final String ROOT_CLASS = "root";
     private static final String INFO_LABEL_CLASS = "infolabel";
-    
+
     private static final Image ICON_PLUS = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_PLUS, 16, new Color(74,123,165)), null);
     private static final Image ICON_INFO = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_INFO, 16, Color.WHITE), null);
     private static final Image ICON_MORE = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_TH_LIST, 16, Color.BLACK), null);
-    
+
     private static final String ADVANCED_VIEW_TOOLTIP = GeotkFX.getString("org.geotoolkit.gui.javafx.parameter.advancedViewTooltip");
     private static final String SIMPLE_VIEW_TOOLTIP = GeotkFX.getString("org.geotoolkit.gui.javafx.parameter.simpleViewTooltip");
-    
+
     /**
-     * Flow pane in which we'll add all {@link ParameterValue} editors. 
+     * Flow pane in which we'll add all {@link ParameterValue} editors.
      */
     @FXML
     private TilePane uiInnerValues;
-    
+
     /**
-     * Flow pane in which we'll add all {@link ParameterGroup} editors. 
+     * Flow pane in which we'll add all {@link ParameterGroup} editors.
      */
     @FXML
     private FlowPane uiInnerGroups;
@@ -115,18 +118,18 @@ public class FXParameterGroupPane extends BorderPane {
     private final HashMap<String, DescriptorPanel> editionGroups = new HashMap<>();
 
     private final SimpleIntegerProperty optionalParameterCount = new SimpleIntegerProperty(0);
-    
+
     /**
      * A popup displayed when information button is clicked. It shows chosen parameter description.
      */
     private final Popup descriptionPopup = new Popup();
     private final Label infoLabel = new Label();
-    
+
     public FXParameterGroupPane() {
         super();
         GeotkFX.loadJRXML(this, this.getClass(), false);
         getStyleClass().add(ROOT_CLASS);
-        
+
         uiAdvancedBtn.setGraphic(new ImageView(ICON_MORE));
         uiAdvancedBtn.visibleProperty().bind(optionalParameterCount.greaterThan(0));
         uiAdvancedBtn.managedProperty().bind(uiAdvancedBtn.visibleProperty());
@@ -140,13 +143,13 @@ public class FXParameterGroupPane extends BorderPane {
                 uiAdvancedBtn.setTooltip(null);
             }
         });
-        
+
         uiAddBtn.setGraphic(new ImageView(ICON_PLUS));
         uiAddBtn.visibleProperty().bind(uiAdvancedBtn.selectedProperty().and(Bindings.isNotEmpty(uiAddBtn.getItems())));
         uiAddBtn.managedProperty().bind(uiAddBtn.visibleProperty());
 
         inputGroup.addListener(this::updateParameterGroup);
-        
+
         descriptionPopup.setAutoHide(true);
         infoLabel.getStylesheets().addAll(this.getStylesheets());
         infoLabel.getStyleClass().add(INFO_LABEL_CLASS);
@@ -174,7 +177,7 @@ public class FXParameterGroupPane extends BorderPane {
                     uiAddBtn.getItems().add(new AddMenuItem(childDesc));
                     optionalParameterCount.set(optionalParameterCount.get()+1);
                     // Default valued parameters are not displayed in simple mode.
-                } else if ((childDesc instanceof ParameterDescriptor) && 
+                } else if ((childDesc instanceof ParameterDescriptor) &&
                         ((ParameterDescriptor)childDesc).getDefaultValue() != null) {
                     optionalParameterCount.set(optionalParameterCount.get()+1);
                 }
@@ -233,7 +236,17 @@ public class FXParameterGroupPane extends BorderPane {
     }
 
     private String getTitle(final GeneralParameterDescriptor parameter) {
-        return parameter.getName().getCode();
+        Collection<GenericName> alias = parameter.getAlias();
+        if (alias != null && !alias.isEmpty()) {
+            return alias.iterator().next().tip().toInternationalString().toString();
+        } else {
+            Identifier name = parameter.getName();
+            if (name.getDescription() == null) {
+                return name.getCode();
+            } else {
+                return name.getDescription().toString();
+            }
+        }
     }
 
     protected DescriptorPanel getOrCreateDescriptorPanel(final GeneralParameterDescriptor descriptor) {
@@ -249,13 +262,13 @@ public class FXParameterGroupPane extends BorderPane {
         }
         return panel;
     }
-    
+
     ///////////////////////////////////////////////////////////////////////////
     //
     // PRIVATE CLASSES
     //
     ///////////////////////////////////////////////////////////////////////////
-    
+
     private class AddMenuItem extends MenuItem {
 
         private final GeneralParameterDescriptor parameter;
@@ -277,7 +290,7 @@ public class FXParameterGroupPane extends BorderPane {
     private class DescriptorPanel extends TitledPane {
 
         private final VBox content = new VBox();
-        
+
         private final Label uiTitle = new Label();
         private final Button uiAdd = new Button(null, new ImageView(ICON_PLUS));
         final Separator headerExpander = new Separator();
@@ -289,7 +302,7 @@ public class FXParameterGroupPane extends BorderPane {
             super();
             ArgumentChecks.ensureNonNull("Parameter descriptor", descriptor);
             this.descriptor = descriptor;
-            uiTitle.setText(descriptor.getName().getCode());
+            uiTitle.setText(getTitle(descriptor));
 
             getStyleClass().add(DESCRIPTOR_CONTAINER_CLASS);
             content.getStyleClass().add(DESCRIPTOR_CONTENT_CLASS);
@@ -325,8 +338,8 @@ public class FXParameterGroupPane extends BorderPane {
 
             setContent(content);
             setGraphic(uiToolbar);
-            
-            /* 
+
+            /*
              * CONFIGURE HEADER POSITION
              */
             uiToolbar.setAlignment(Pos.CENTER_LEFT);
@@ -363,7 +376,7 @@ public class FXParameterGroupPane extends BorderPane {
                     value = inputGroup.get().addGroup(descriptor.getName().getCode());
                     currentOccurs++;
                 } else if (descriptor instanceof ParameterDescriptor) {
-                    value = ((ParameterDescriptor) descriptor).createValue();
+                    value = ParametersExt.getOrCreateValue(inputGroup.get(), descriptor.getName().getCode());
                     currentOccurs++;
                 }
 
