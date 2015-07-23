@@ -27,6 +27,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -118,9 +119,7 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
     public void initialize() {
         super.initialize();
         FXUtilities.hideTableHeader(uiTable);
-        final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
-            resetValue();
-        };
+        final ChangeListener changeListener = (ObservableValue observable, Object oldValue, Object newValue) -> resetValue();
 
         uiOpacity.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1, 1, 0.1));
         uiSize.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 200, 16, 1));
@@ -132,6 +131,7 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
         uiDisplacement.valueProperty().addListener(changeListener);
         
         uiTable.setItems(FXCollections.observableArrayList());
+        uiTable.getItems().addListener((ListChangeListener<GraphicalSymbol>) c -> resetValue());
         
         final TableColumn<GraphicalSymbol, GraphicalSymbol> previewCol = new TableColumn<>();
         previewCol.setEditable(true);
@@ -221,7 +221,7 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
                 final ExternalGraphic m = (ExternalGraphic) item;
                 final OnlineResource res = m.getOnlineResource();
                 if(res != null && res.getLinkage() != null){
-                    setText(String.valueOf(res.getName()));
+                    setText(res.getLinkage().getPath());
                 }
             }
         }

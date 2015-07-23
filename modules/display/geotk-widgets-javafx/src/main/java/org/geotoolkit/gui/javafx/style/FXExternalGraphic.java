@@ -61,7 +61,11 @@ public class FXExternalGraphic extends FXStyleElementController<ExternalGraphic>
     @Override
     protected void updateEditor(ExternalGraphic styleElement) {
         uiMime.setText(styleElement.getFormat());
-        uiUrl.setText(styleElement.getOnlineResource().toString());
+        if (styleElement.getOnlineResource().getLinkage() != null) {
+            uiUrl.setText(styleElement.getOnlineResource().getLinkage().toString());
+        } else {
+            uiUrl.setPromptText(styleElement.getOnlineResource().toString());
+        }
     }
     
 }
