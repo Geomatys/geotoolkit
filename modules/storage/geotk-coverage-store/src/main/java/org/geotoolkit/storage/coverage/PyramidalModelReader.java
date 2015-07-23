@@ -533,11 +533,12 @@ public class PyramidalModelReader extends GridCoverageReader{
                     
                     
                     if (image == null) {
-                        final ColorModel cm;
+                        ColorModel cm = null;
                         if (ref instanceof PyramidalCoverageReference) {
                             final PyramidalCoverageReference pyramRef = (PyramidalCoverageReference) ref;
                             cm = pyramRef.getColorModel();
-                        } else {
+                        }
+                        if(cm==null) {
                             cm = tileImage.getColorModel();
                         }
                         image = new BufferedImage(cm, 
