@@ -246,7 +246,7 @@ public class XMLMosaic implements GridMosaic {
                         }
                     }
                     
-                    final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(emptyTile);
+                    final PixelIterator pix = PixelIteratorFactory.createDefaultWriteableIterator(emptyTile, emptyTile);
                     int d = 0;
                     while (pix.next()) {
                         if (nodataExists[d]) pix.setSampleDouble(nodatas[d++]);
