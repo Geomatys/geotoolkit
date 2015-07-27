@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -73,7 +74,7 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
     @FXML protected Button uiAddMark;
     @FXML protected Button uiAddExternal;
     @FXML protected TableView<GraphicalSymbol> uiTable;
-    
+
     @FXML
     void addMark(ActionEvent event) {
         final GraphicalSymbol mark = getStyleFactory().mark(
@@ -93,7 +94,7 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
             throw new RuntimeException(ex.getMessage(),ex);
         }
     }
-    
+
     @Override
     public Class<Graphic> getEditedClass() {
         return Graphic.class;
@@ -107,14 +108,14 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
     private void resetValue(){
         if(updating) return;
         value.set(getStyleFactory().graphic(
-                new ArrayList<GraphicalSymbol>(uiTable.getItems()), 
-                uiOpacity.valueProperty().get(), 
-                uiSize.valueProperty().get(), 
-                uiRotation.valueProperty().get(), 
-                uiAnchor.valueProperty().get(), 
+                new ArrayList<>(uiTable.getItems()),
+                uiOpacity.valueProperty().get(),
+                uiSize.valueProperty().get(),
+                uiRotation.valueProperty().get(),
+                uiAnchor.valueProperty().get(),
                 uiDisplacement.valueProperty().get()));
     }
-    
+
     @Override
     public void initialize() {
         super.initialize();
@@ -122,25 +123,25 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
         final ChangeListener changeListener = (ObservableValue observable, Object oldValue, Object newValue) -> resetValue();
 
         uiOpacity.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 1, 1, 0.1));
-        uiSize.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 200, 16, 1));
-        
+        uiSize.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, Double.MAX_VALUE, 16, 1));
+
         uiSize.valueProperty().addListener(changeListener);
         uiOpacity.valueProperty().addListener(changeListener);
         uiRotation.valueProperty().addListener(changeListener);
         uiAnchor.valueProperty().addListener(changeListener);
         uiDisplacement.valueProperty().addListener(changeListener);
-        
+
         uiTable.setItems(FXCollections.observableArrayList());
-        uiTable.getItems().addListener((ListChangeListener<GraphicalSymbol>) c -> resetValue());
-        
+        uiTable.getItems().addListener((ListChangeListener<GraphicalSymbol>) c -> Platform.runLater(this::resetValue));
+
         final TableColumn<GraphicalSymbol, GraphicalSymbol> previewCol = new TableColumn<>();
         previewCol.setEditable(true);
         previewCol.setPrefWidth(60);
         previewCol.setMinWidth(40);
         previewCol.setCellValueFactory((CellDataFeatures<GraphicalSymbol, GraphicalSymbol> param) -> new SimpleObjectProperty<>((GraphicalSymbol) param.getValue()));
         previewCol.setCellFactory((TableColumn<GraphicalSymbol, GraphicalSymbol> p) -> new GlyphButton());
-        
-        
+
+
         uiTable.getColumns().add(previewCol);
         uiTable.getColumns().add(new FXEditTableColumn((Object o) -> openGraphicalSymbolEditor((GraphicalSymbol)o)));
         uiTable.getColumns().add(new FXMoveUpTableColumn());
@@ -162,7 +163,7 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
         uiAnchor.setLayer(layer);
         uiDisplacement.setLayer(layer);
     }
-    
+
     @Override
     protected void updateEditor(Graphic graphic) {
         uiSize.valueProperty().setValue(graphic.getSize());
@@ -170,16 +171,15 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
         uiRotation.valueProperty().setValue(graphic.getRotation());
         uiAnchor.valueProperty().setValue(graphic.getAnchorPoint());
         uiDisplacement.valueProperty().setValue(graphic.getDisplacement());
-        uiTable.getItems().clear();
-        uiTable.getItems().addAll(graphic.graphicalSymbols());
+        uiTable.getItems().setAll(graphic.graphicalSymbols());
     }
-        
+
     private void openGraphicalSymbolEditor(final GraphicalSymbol graphicalSymbol){
         final FXStyleElementController graphicalSymbolEditor = FXStyleElementEditor.findEditor(graphicalSymbol);
         graphicalSymbolEditor.valueProperty().setValue(graphicalSymbol);
         graphicalSymbolEditor.setLayer(layer);
         uiTable.getSelectionModel().select(graphicalSymbol);
-                
+
         graphicalSymbolEditor.valueProperty().addListener(new ChangeListener() {
 
             @Override
@@ -203,14 +203,14 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
         dialog.show();
 
     }
-    
-    
+
+
     private class GlyphButton extends TableCell<GraphicalSymbol, GraphicalSymbol> {
 
         @Override
         protected void updateItem(GraphicalSymbol item, boolean empty) {
             super.updateItem(item, empty);
-            
+
             updateGlyph(item);
 
             setText("");
@@ -221,11 +221,11 @@ public class FXGraphic extends FXStyleElementController<Graphic>{
                 final ExternalGraphic m = (ExternalGraphic) item;
                 final OnlineResource res = m.getOnlineResource();
                 if(res != null && res.getLinkage() != null){
-                    setText(res.getLinkage().getPath());
+                    setText(String.valueOf(res.getLinkage().getPath()));
                 }
             }
         }
-        
+
         private void updateGlyph(final GraphicalSymbol graphicalSymbol){
             if(graphicalSymbol==null){
                 setGraphic(null);
