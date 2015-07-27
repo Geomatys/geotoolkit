@@ -5,7 +5,7 @@
      must be specified as a property on the command line. -->
 
 <project name="UpdateVersion" default="update">
-    <target name="update" depends="updateSisVersion">
+    <target name="update">
         <replace dir="${geotk.dir}" failOnNoReplacements="true">
             <include name="**/pom.xml"/>
             <!-- replace Geotoolkit version -->
@@ -14,7 +14,7 @@
         </replace>
     </target>
 
-    <!-- replace SIS version -->
+    <!-- replace SIS version
     <target name="updateSisVersion" depends="updateGeoapiVersion">
         <replace dir="${geotk.dir}" failOnNoReplacements="true">
             <include name="pom.xml"/>
@@ -22,8 +22,9 @@
                            value="&lt;sis.version&gt;${sis.version}&lt;/sis.version&gt;"/>
         </replace>
     </target>
+    -->
 
-    <!-- replace Geoapi version -->
+    <!-- replace Geoapi version
     <target name="updateGeoapiVersion">
         <replace dir="${geotk.dir}" failOnNoReplacements="true">
             <include name="pom.xml"/>
@@ -31,4 +32,5 @@
                            value="&lt;geoapi.version&gt;${geoapi.version}&lt;/geoapi.version&gt;"/>
         </replace>
     </target>
+   -->
 </project>
