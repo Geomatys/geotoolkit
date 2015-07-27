@@ -19,17 +19,18 @@ package org.geotoolkit.gui.javafx.contexttree;
 
 import java.awt.Color;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableRow;
-import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.TextAlignment;
-import javafx.util.converter.DefaultStringConverter;
 import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -56,21 +57,52 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
     public MapItemNameColumn() {
         super(GeotkFX.getString(MapItemNameColumn.class,"layers"));
         setCellValueFactory(param -> FXUtilities.beanProperty(((CellDataFeatures)param).getValue().getValue(), "name", String.class));
-        //setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
         setCellFactory((TreeTableColumn<T, String> param) -> new Cell());
         setEditable(true);
         setPrefWidth(200);
         setMinWidth(120);
     }
 
-    public static class Cell extends TextFieldTreeTableCell{
+    public static class Cell<T> extends TreeTableCell<T,String>{
+
+        private final TextField textField = new TextField();
 
         public Cell(){
-            super(new DefaultStringConverter());
+            textField.setMaxWidth(Double.POSITIVE_INFINITY);
+            textField.setOnAction((ActionEvent evt) -> commitEdit(textField.getText()));
         }
 
         @Override
-        public void updateItem(Object item, boolean empty) {
+        public void startEdit() {
+            super.startEdit();
+            setText(null);
+            setGraphic(null);
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            final BorderPane pane = new BorderPane();
+            pane.setLeft(createIcon());
+            pane.setCenter(textField);
+            textField.textProperty().bindBidirectional(itemProperty());
+            setGraphic(pane);
+            textField.requestFocus();
+        }
+
+        @Override
+        public void commitEdit(String newValue) {
+            textField.textProperty().unbind();
+            super.commitEdit(newValue);
+            updateItem(getItem(), isEmpty());
+        }
+
+        @Override
+        public void cancelEdit() {
+            textField.commitValue();
+            textField.textProperty().unbind();
+            super.cancelEdit();
+            updateItem(getItem(), isEmpty());
+        }
+
+        @Override
+        public void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
             setText(null);
             setGraphic(null);
@@ -80,7 +112,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
             setWrapText(false);
             if(empty) return;
 
-            String str = (item==null)? " " : String.valueOf(item);
+            String str = (item==null)? " " : item;
             if(str.isEmpty()) str = " ";
             setText(str);
             final TreeTableRow row = getTreeTableRow();
@@ -89,17 +121,32 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
             if(ti==null) return;
 
             if(ti instanceof StyleMapItem){
-                final ImageView view = new ImageView();
-                view.imageProperty().bind(((StyleMapItem)ti).imageProperty());
-                final BorderPane pane = new BorderPane(view);
+                final BorderPane pane = new BorderPane(createIcon());
                 pane.setMaxSize(BorderPane.USE_COMPUTED_SIZE,Double.MAX_VALUE);
                 pane.setPrefSize(BorderPane.USE_COMPUTED_SIZE, BorderPane.USE_COMPUTED_SIZE);
                 setGraphic(pane);
             }else if(ti instanceof TreeMapItem){
-                final MapItem mapItem = (MapItem) ((TreeMapItem)ti).getValue();
-                setGraphic(new ImageView(getTypeIcon(mapItem)));
+                setGraphic(createIcon());
             }
         }
+
+        private ImageView createIcon(){
+            final TreeTableRow row = getTreeTableRow();
+            if(row==null) return null;
+            final TreeItem ti = row.getTreeItem();
+            if(ti==null) return null;
+
+            if(ti instanceof StyleMapItem){
+                final ImageView view = new ImageView();
+                view.imageProperty().bind(((StyleMapItem)ti).imageProperty());
+                return view;
+            }else if(ti instanceof TreeMapItem){
+                final MapItem mapItem = (MapItem) ((TreeMapItem)ti).getValue();
+                return new ImageView(getTypeIcon(mapItem));
+            }
+            return null;
+        }
+
     }
 
     public static Image getTypeIcon(MapItem mapItem){
