@@ -18,7 +18,9 @@ package org.geotoolkit.gui.javafx.render2d.edition;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.MultiLineString;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -40,14 +42,14 @@ import org.geotoolkit.map.FeatureMapLayer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CreatePointTool extends AbstractEditionTool{
+public class CreateMultiLineTool extends AbstractEditionTool{
 
     public static final class Spi extends AbstractEditionToolSpi{
 
         public Spi() {
-            super("CreatePoint",
-                GeotkFX.getI18NString(CreatePointTool.class, "title"),
-                GeotkFX.getI18NString(CreatePointTool.class, "abstract"),
+            super("CreateMultiLine",
+                GeotkFX.getI18NString(CreateMultiLineTool.class, "title"),
+                GeotkFX.getI18NString(CreateMultiLineTool.class, "abstract"),
                 GeotkFX.ICON_ADD);
         }
     
@@ -60,7 +62,7 @@ public class CreatePointTool extends AbstractEditionTool{
                 final GeometryDescriptor desc = fml.getCollection().getFeatureType().getGeometryDescriptor();
                 if(desc == null) return false;
 
-                return Point.class.isAssignableFrom(desc.getType().getBinding())
+                return MultiLineString.class.isAssignableFrom(desc.getType().getBinding())
                     || Geometry.class.equals(desc.getType().getBinding());
             }
             return false;
@@ -68,7 +70,7 @@ public class CreatePointTool extends AbstractEditionTool{
 
         @Override
         public EditionTool create(FXMap map, Object layer) {
-            return new CreatePointTool(map, (FeatureMapLayer) layer);
+            return new CreateMultiLineTool(map, (FeatureMapLayer) layer);
         }
     };
 
@@ -89,10 +91,23 @@ public class CreatePointTool extends AbstractEditionTool{
         }
     };
 
-    public CreatePointTool(FXMap map, FeatureMapLayer layer) {
-        super(EditionHelper.getToolSpi("CreatePoint"));
+    private int nbRighClick = 0;
+    private MultiLineString geometry = null;
+    private final List<Geometry> subGeometries =  new ArrayList<>();
+    private final List<Coordinate> coords = new ArrayList<>();
+
+    public CreateMultiLineTool(FXMap map, FeatureMapLayer layer) {
+        super(EditionHelper.getToolSpi("CreateMultiLine"));
         this.layer = layer;
         this.helper = new EditionHelper(map, layer);
+    }
+
+    private void reset(){
+        geometry = null;
+        subGeometries.clear();
+        coords.clear();
+        nbRighClick = 0;
+        decoration.getGeometries().clear();
     }
 
     @Override
@@ -105,14 +120,13 @@ public class CreatePointTool extends AbstractEditionTool{
         return helpPane;
     }
 
-
     @Override
     public void install(final FXMap component) {
         super.install(component);
         component.addEventHandler(MouseEvent.ANY, mouseInputListener);
         component.addEventHandler(ScrollEvent.ANY, mouseInputListener);
-        map.setCursor(Cursor.CROSSHAIR);
-        map.addDecoration(0,decoration);
+        component.setCursor(Cursor.CROSSHAIR);
+        component.addDecoration(0,decoration);
     }
 
     @Override
@@ -120,28 +134,89 @@ public class CreatePointTool extends AbstractEditionTool{
         super.uninstall(component);
         component.removeEventHandler(MouseEvent.ANY, mouseInputListener);
         component.removeEventHandler(ScrollEvent.ANY, mouseInputListener);
-        map.removeDecoration(decoration);
+        component.removeDecoration(decoration);
         return true;
     }
 
     private class MouseListen extends FXPanMouseListen {
 
         public MouseListen() {
-            super(CreatePointTool.this);
+            super(CreateMultiLineTool.this);
         }
 
         @Override
         public void mouseClicked(final MouseEvent e) {
 
+            final double x = getMouseX(e);
+            final double y = getMouseY(e);
             mousebutton = e.getButton();
 
             if(mousebutton == MouseButton.PRIMARY){
+                nbRighClick = 0;
+                coords.add(helper.toCoord(x,y));
+                if(coords.size() == 1){
+                    //this is the first point of the geometry we create
+                    //add another point that will be used when moving the mouse around
+                    coords.add(helper.toCoord(x,y));
+                    Geometry candidate = EditionHelper.createGeometry(coords);
+                    subGeometries.add(candidate);
+                }
+                Geometry candidate = EditionHelper.createGeometry(coords);
+                if (subGeometries.size() > 0) {
+                    subGeometries.remove(subGeometries.size() - 1);
+                }
+                subGeometries.add(candidate);
+                geometry = EditionHelper.createMultiLine(subGeometries);
+                JTS.setCRS(geometry, map.getCanvas().getObjectiveCRS2D());
+                decoration.getGeometries().setAll(geometry);
+
+            }else if(mousebutton == MouseButton.SECONDARY){
+                nbRighClick++;
+                if (nbRighClick == 1) {
+                    if (coords.size() > 1) {
+                        if (subGeometries.size() > 0) {
+                            subGeometries.remove(subGeometries.size() - 1);
+                        }
+                        Geometry geo = EditionHelper.createLine(coords);
+                        subGeometries.add(geo);
+                    } else if (coords.size() > 0) {
+                        if (subGeometries.size() > 0) {
+                            subGeometries.remove(subGeometries.size() - 1);
+                        }
+                    }
+                } else {
+                    if (subGeometries.size() > 0) {
+                        Geometry geo = EditionHelper.createMultiLine(subGeometries);
+                        helper.sourceAddGeometry(geo);
+                        nbRighClick = 0;
+                        reset();
+                    }
+                    decoration.getGeometries().clear();
+                }
+                coords.clear();
+            }
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+
+            if(coords.size() > 1){
                 final double x = getMouseX(e);
                 final double y = getMouseY(e);
-                final Point geometry = helper.toJTS(x,y);
+                coords.remove(coords.size()-1);
+                coords.add(helper.toCoord(x,y));
+                Geometry candidate = EditionHelper.createGeometry(coords);
+                if (subGeometries.size() > 0) {
+                    subGeometries.remove(subGeometries.size() - 1);
+                }
+                subGeometries.add(candidate);
+                geometry = EditionHelper.createMultiLine(subGeometries);
                 JTS.setCRS(geometry, map.getCanvas().getObjectiveCRS2D());
-                helper.sourceAddGeometry(geometry);
+                decoration.getGeometries().setAll(geometry);
+                return;
             }
+
+            super.mouseMoved(e);
         }
 
     }

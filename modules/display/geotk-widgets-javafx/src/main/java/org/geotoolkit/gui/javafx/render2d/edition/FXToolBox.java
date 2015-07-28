@@ -25,7 +25,6 @@ import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
@@ -36,13 +35,13 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
 import org.geotoolkit.gui.javafx.chooser.FXMapLayerComboBox;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.navigation.FXPanHandler;
@@ -50,6 +49,7 @@ import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.opengis.util.InternationalString;
 
 /**
  *
@@ -167,7 +167,7 @@ public class FXToolBox extends BorderPane {
         if(oldValue!=null && oldValue.getUserData() instanceof EditionTool){
             //uninstall previous tool
             final EditionTool tool = (EditionTool) oldValue.getUserData();
-            map.setHandler(new FXPanHandler(false));
+            this.map.setHandler(new FXPanHandler(false));
             this.helpPane.setDisable(true);
             this.paramsPane.setDisable(true);
         }
@@ -181,6 +181,7 @@ public class FXToolBox extends BorderPane {
             this.paramsPane.setDisable(configPane==null);
             this.helpPane.setExpanded(helpPane!=null);
             this.paramsPane.setExpanded(configPane!=null);
+            this.map.setHandler(tool);
         }
     }
 
@@ -229,8 +230,12 @@ public class FXToolBox extends BorderPane {
                 button.setAlignment(Pos.CENTER);
 
                 if(toolIdx<validTools.size()){
-                    final EditionTool tool = validTools.get(toolIdx).create();
+                    final EditionTool tool = validTools.get(toolIdx).create(map,layer);
                     button.setGraphic(new ImageView(tool.getSpi().getIcon()));
+                    final InternationalString title = tool.getSpi().getTitle();
+                    if(title!=null){
+                        button.setTooltip(new Tooltip(title.toString()));
+                    }
                     button.setUserData(tool);
                 }else{
                     button.setGraphic(new ImageView(GeotkFX.ICON_EMPTY));

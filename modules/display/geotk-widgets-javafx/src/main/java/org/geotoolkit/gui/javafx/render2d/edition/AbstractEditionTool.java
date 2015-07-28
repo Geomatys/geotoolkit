@@ -25,6 +25,7 @@ import org.geotoolkit.gui.javafx.render2d.AbstractNavigationHandler;
  */
 public abstract class AbstractEditionTool extends AbstractNavigationHandler implements EditionTool{
 
+    protected static final int CROSS_SIZE = 5;
     private final Spi spi;
 
     public AbstractEditionTool(Spi spi) {

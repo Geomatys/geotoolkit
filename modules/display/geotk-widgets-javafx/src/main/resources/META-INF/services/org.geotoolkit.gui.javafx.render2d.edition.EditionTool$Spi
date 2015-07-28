@@ -1,1 +1,6 @@
 org.geotoolkit.gui.javafx.render2d.edition.CreatePointTool$Spi
+org.geotoolkit.gui.javafx.render2d.edition.CreateLineTool$Spi
+org.geotoolkit.gui.javafx.render2d.edition.CreatePolygonTool$Spi
+org.geotoolkit.gui.javafx.render2d.edition.CreateMultiPointTool$Spi
+org.geotoolkit.gui.javafx.render2d.edition.CreateMultiLineTool$Spi
+org.geotoolkit.gui.javafx.render2d.edition.CreateMultiPolygonTool$Spi

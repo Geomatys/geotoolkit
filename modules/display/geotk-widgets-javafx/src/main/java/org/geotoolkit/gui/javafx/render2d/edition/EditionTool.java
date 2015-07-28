@@ -19,6 +19,7 @@ package org.geotoolkit.gui.javafx.render2d.edition;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import org.geotoolkit.gui.javafx.render2d.FXCanvasHandler;
+import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.opengis.util.InternationalString;
 
 /**
@@ -81,9 +82,11 @@ public interface EditionTool extends FXCanvasHandler {
         /**
          * Create a new instance of this tool.
          *
+         * @param map
+         * @param candidate
          * @return EditionTool
          */
-        EditionTool create();
+        EditionTool create(FXMap map, Object candidate);
     }
 
 }

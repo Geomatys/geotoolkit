@@ -57,6 +57,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.logging.Logging;
 
@@ -236,6 +237,8 @@ public class EditionHelper {
      * @param editedLayer
      */
     public EditionHelper(final FXMap map, final FeatureMapLayer editedLayer) {
+        ArgumentChecks.ensureNonNull("map", map);
+        ArgumentChecks.ensureNonNull("layer", editedLayer);
         this.map = map;
         this.editedLayer = editedLayer;
         this.showAtributeditor = true;

@@ -18,7 +18,10 @@ package org.geotoolkit.gui.javafx.render2d.edition;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -40,14 +43,14 @@ import org.geotoolkit.map.FeatureMapLayer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CreatePointTool extends AbstractEditionTool{
+public class CreateMultiPointTool extends AbstractEditionTool{
 
     public static final class Spi extends AbstractEditionToolSpi{
 
         public Spi() {
-            super("CreatePoint",
-                GeotkFX.getI18NString(CreatePointTool.class, "title"),
-                GeotkFX.getI18NString(CreatePointTool.class, "abstract"),
+            super("CreateMultiPoint",
+                GeotkFX.getI18NString(CreateMultiPointTool.class, "title"),
+                GeotkFX.getI18NString(CreateMultiPointTool.class, "abstract"),
                 GeotkFX.ICON_ADD);
         }
     
@@ -60,7 +63,7 @@ public class CreatePointTool extends AbstractEditionTool{
                 final GeometryDescriptor desc = fml.getCollection().getFeatureType().getGeometryDescriptor();
                 if(desc == null) return false;
 
-                return Point.class.isAssignableFrom(desc.getType().getBinding())
+                return MultiPoint.class.isAssignableFrom(desc.getType().getBinding())
                     || Geometry.class.equals(desc.getType().getBinding());
             }
             return false;
@@ -68,7 +71,7 @@ public class CreatePointTool extends AbstractEditionTool{
 
         @Override
         public EditionTool create(FXMap map, Object layer) {
-            return new CreatePointTool(map, (FeatureMapLayer) layer);
+            return new CreateMultiPointTool(map, (FeatureMapLayer) layer);
         }
     };
 
@@ -89,8 +92,11 @@ public class CreatePointTool extends AbstractEditionTool{
         }
     };
 
-    public CreatePointTool(FXMap map, FeatureMapLayer layer) {
-        super(EditionHelper.getToolSpi("CreatePoint"));
+    private MultiPoint geometry = null;
+    private final List<Point> subGeometries =  new ArrayList<>();
+    
+    public CreateMultiPointTool(FXMap map, FeatureMapLayer layer) {
+        super(EditionHelper.getToolSpi("CreateMultiPoint"));
         this.layer = layer;
         this.helper = new EditionHelper(map, layer);
     }
@@ -105,6 +111,11 @@ public class CreatePointTool extends AbstractEditionTool{
         return helpPane;
     }
 
+    private void reset(){
+        geometry = null;
+        subGeometries.clear();
+        decoration.getGeometries().clear();
+    }
 
     @Override
     public void install(final FXMap component) {
@@ -127,7 +138,7 @@ public class CreatePointTool extends AbstractEditionTool{
     private class MouseListen extends FXPanMouseListen {
 
         public MouseListen() {
-            super(CreatePointTool.this);
+            super(CreateMultiPointTool.this);
         }
 
         @Override
@@ -138,9 +149,20 @@ public class CreatePointTool extends AbstractEditionTool{
             if(mousebutton == MouseButton.PRIMARY){
                 final double x = getMouseX(e);
                 final double y = getMouseY(e);
-                final Point geometry = helper.toJTS(x,y);
+                final Point candidate = helper.toJTS(x,y);
+                subGeometries.add(candidate);
+                geometry = EditionHelper.createMultiPoint(subGeometries);
                 JTS.setCRS(geometry, map.getCanvas().getObjectiveCRS2D());
-                helper.sourceAddGeometry(geometry);
+                decoration.getGeometries().setAll(geometry);
+
+            }else if(mousebutton == MouseButton.SECONDARY){
+                if (subGeometries.size() > 0) {
+                    final MultiPoint geometry = EditionHelper.createMultiPoint(subGeometries);
+                    JTS.setCRS(geometry, map.getCanvas().getObjectiveCRS2D());
+                    helper.sourceAddGeometry(geometry);
+                    reset();
+                }
+                decoration.getGeometries().clear();
             }
         }
 

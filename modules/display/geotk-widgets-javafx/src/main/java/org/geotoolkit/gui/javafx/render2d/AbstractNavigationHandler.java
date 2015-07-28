@@ -108,7 +108,7 @@ public class AbstractNavigationHandler extends AbstractCanvasHandler{
     @Override
     public void install(final FXMap component) {
         super.install(component);
-        map.addDecoration(0,decorationPane);
+        component.addDecoration(0,decorationPane);
     }
 
     /**
@@ -116,7 +116,7 @@ public class AbstractNavigationHandler extends AbstractCanvasHandler{
      */
     @Override
     public boolean uninstall(final FXMap component) {
-        map.removeDecoration(decorationPane);
+        component.removeDecoration(decorationPane);
         super.uninstall(component);
         return true;
     }

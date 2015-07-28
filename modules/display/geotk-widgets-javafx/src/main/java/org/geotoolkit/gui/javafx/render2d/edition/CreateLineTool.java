@@ -18,7 +18,9 @@ package org.geotoolkit.gui.javafx.render2d.edition;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.LineString;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -40,14 +42,14 @@ import org.geotoolkit.map.FeatureMapLayer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CreatePointTool extends AbstractEditionTool{
+public class CreateLineTool extends AbstractEditionTool{
 
     public static final class Spi extends AbstractEditionToolSpi{
 
         public Spi() {
-            super("CreatePoint",
-                GeotkFX.getI18NString(CreatePointTool.class, "title"),
-                GeotkFX.getI18NString(CreatePointTool.class, "abstract"),
+            super("CreateLine",
+                GeotkFX.getI18NString(CreateLineTool.class, "title"),
+                GeotkFX.getI18NString(CreateLineTool.class, "abstract"),
                 GeotkFX.ICON_ADD);
         }
     
@@ -60,7 +62,7 @@ public class CreatePointTool extends AbstractEditionTool{
                 final GeometryDescriptor desc = fml.getCollection().getFeatureType().getGeometryDescriptor();
                 if(desc == null) return false;
 
-                return Point.class.isAssignableFrom(desc.getType().getBinding())
+                return LineString.class.isAssignableFrom(desc.getType().getBinding())
                     || Geometry.class.equals(desc.getType().getBinding());
             }
             return false;
@@ -68,10 +70,9 @@ public class CreatePointTool extends AbstractEditionTool{
 
         @Override
         public EditionTool create(FXMap map, Object layer) {
-            return new CreatePointTool(map, (FeatureMapLayer) layer);
+            return new CreateLineTool(map, (FeatureMapLayer) layer);
         }
     };
-
 
     private final BorderPane configPane = null;
     private final BorderPane helpPane = new BorderPane();
@@ -88,11 +89,20 @@ public class CreatePointTool extends AbstractEditionTool{
             return new Group(h,v);
         }
     };
+    
+    private LineString geometry = null;
+    private final List<Coordinate> coords = new ArrayList<>();
 
-    public CreatePointTool(FXMap map, FeatureMapLayer layer) {
-        super(EditionHelper.getToolSpi("CreatePoint"));
+    public CreateLineTool(FXMap map, FeatureMapLayer layer) {
+        super(EditionHelper.getToolSpi("CreateLine"));
         this.layer = layer;
         this.helper = new EditionHelper(map, layer);
+    }
+
+    private void reset(){
+        geometry = null;
+        coords.clear();
+        decoration.getGeometries().clear();
     }
 
     @Override
@@ -104,7 +114,6 @@ public class CreatePointTool extends AbstractEditionTool{
     public Node getHelpPane() {
         return helpPane;
     }
-
 
     @Override
     public void install(final FXMap component) {
@@ -127,21 +136,48 @@ public class CreatePointTool extends AbstractEditionTool{
     private class MouseListen extends FXPanMouseListen {
 
         public MouseListen() {
-            super(CreatePointTool.this);
+            super(CreateLineTool.this);
         }
 
         @Override
         public void mouseClicked(final MouseEvent e) {
 
+            final double x = getMouseX(e);
+            final double y = getMouseY(e);
             mousebutton = e.getButton();
 
             if(mousebutton == MouseButton.PRIMARY){
-                final double x = getMouseX(e);
-                final double y = getMouseY(e);
-                final Point geometry = helper.toJTS(x,y);
+                coords.add(helper.toCoord(x,y));
+                if(coords.size() == 1){
+                    //this is the first point of the geometry we create
+                    //add another point that will be used when moving the mouse around
+                    coords.add(helper.toCoord(x,y));
+                }
+                geometry = EditionHelper.createLine(coords);
                 JTS.setCRS(geometry, map.getCanvas().getObjectiveCRS2D());
+                decoration.getGeometries().setAll(geometry);
+
+            }else if(mousebutton == MouseButton.SECONDARY){
                 helper.sourceAddGeometry(geometry);
+                reset();
             }
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent me) {
+
+            if(coords.size() > 1){
+                final double x = getMouseX(me);
+                final double y = getMouseY(me);
+                coords.remove(coords.size()-1);
+                coords.add(helper.toCoord(x,y));
+                geometry = EditionHelper.createLine(coords);
+                JTS.setCRS(geometry, map.getCanvas().getObjectiveCRS2D());
+                decoration.getGeometries().setAll(geometry);
+                return;
+            }
+
+            super.mouseMoved(me);
         }
 
     }
