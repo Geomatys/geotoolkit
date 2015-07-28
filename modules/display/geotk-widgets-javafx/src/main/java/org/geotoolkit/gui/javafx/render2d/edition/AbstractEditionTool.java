@@ -16,9 +16,8 @@
  */
 package org.geotoolkit.gui.javafx.render2d.edition;
 
-import javafx.scene.image.Image;
+import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.gui.javafx.render2d.AbstractNavigationHandler;
-import org.opengis.util.InternationalString;
 
 /**
  *
@@ -26,48 +25,20 @@ import org.opengis.util.InternationalString;
  */
 public abstract class AbstractEditionTool extends AbstractNavigationHandler implements EditionTool{
 
-    private final String name;
-    private final InternationalString title;
-    private final InternationalString abstrac;
-    private final Image icon;
+    private final Spi spi;
 
-    public AbstractEditionTool(String name, InternationalString title, InternationalString abstrac, Image icon) {
-        this.name = name;
-        this.title = title;
-        this.abstrac = abstrac;
-        this.icon = icon;
+    public AbstractEditionTool(Spi spi) {
+        ArgumentChecks.ensureNonNull("spi", spi);
+        this.spi = spi;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public String getName() {
-        return name;
+    public Spi getSpi() {
+        return spi;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public InternationalString getTitle() {
-        return title;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public InternationalString getAbstract() {
-        return abstrac;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Image getIcon() {
-        return icon;
-    }
 
 }

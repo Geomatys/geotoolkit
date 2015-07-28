@@ -39,7 +39,9 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1101,7 +1103,23 @@ public class EditionHelper {
     }
 
 
-    //staic helper methods -----------------------------------------------------
+    //static helper methods -----------------------------------------------------
+
+    public static Iterator<EditionTool.Spi> getToolSpis(){
+        final ServiceLoader<EditionTool.Spi> sl = ServiceLoader.load(EditionTool.Spi.class);
+        return sl.iterator();
+    }
+
+    public static EditionTool.Spi getToolSpi(String name){
+        final Iterator<EditionTool.Spi> ite = getToolSpis();
+        while(ite.hasNext()){
+            final EditionTool.Spi spi = ite.next();
+            if(name.equals(spi.getName())){
+                return spi;
+            }
+        }
+        return null;
+    }
 
     public static Geometry createGeometry(final List<Coordinate> coords) {
         int size = coords.size();

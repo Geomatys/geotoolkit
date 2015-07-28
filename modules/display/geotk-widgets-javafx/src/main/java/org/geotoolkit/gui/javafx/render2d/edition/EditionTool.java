@@ -30,33 +30,12 @@ import org.opengis.util.InternationalString;
 public interface EditionTool extends FXCanvasHandler {
 
     /**
-     * @return name of tool, can be used as identifier.
-     * If a text is needed for user interface, use title or abstract.
+     * Get original spi.
+     * 
+     * @return Spi
      */
-    String getName();
+    Spi getSpi();
 
-    /**
-     * @return title of this tool.
-     */
-    InternationalString getTitle();
-
-    /**
-     * @return description of the tool.
-     */
-    InternationalString getAbstract();
-
-    /**
-     * A Small icon for a toolbar.
-     * @return tool icon, can be null.
-     */
-    Image getIcon();
-
-    /**
-     * @param candidate object to test
-     * @return true if the tool can edit the given object. false otherwise
-     */
-    boolean canHandle(Object candidate);
-    
     /**
      * Tool configuration pane.
      * @return tool configuration pane, can be null.
@@ -68,5 +47,43 @@ public interface EditionTool extends FXCanvasHandler {
      * @return tool help pane, can be null.
      */
     Node getHelpPane();
+
+    public static interface Spi{
+
+        /**
+         * @return name of tool, can be used as identifier.
+         * If a text is needed for user interface, use title or abstract.
+         */
+        String getName();
+
+        /**
+         * @return title of this tool.
+         */
+        InternationalString getTitle();
+
+        /**
+         * @return description of the tool.
+         */
+        InternationalString getAbstract();
+
+        /**
+         * A Small icon for a toolbar.
+         * @return tool icon, can be null.
+         */
+        Image getIcon();
+
+        /**
+         * @param candidate object to test
+         * @return true if the tool can edit the given object. false otherwise
+         */
+        boolean canHandle(Object candidate);
+
+        /**
+         * Create a new instance of this tool.
+         *
+         * @return EditionTool
+         */
+        EditionTool create();
+    }
 
 }

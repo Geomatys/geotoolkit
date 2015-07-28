@@ -28,6 +28,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javax.imageio.ImageIO;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.ResourceInternationalString;
@@ -63,7 +64,8 @@ public final class GeotkFX {
     public static final Image ICON_OPEN      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER_OPEN,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_SAVE      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_SAVE_ALIAS,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_UNLINK    = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_CHAIN_BROKEN,16,FontAwesomeIcons.DEFAULT_COLOR),null);
-    
+    public static final Image ICON_EMPTY     = new WritableImage(16, 16);
+
     public static final String BUNDLE_PATH = "org/geotoolkit/gui/javafx/internal/Bundle";
     public static final String CSS_PATH = "/org/geotoolkit/gui/javafx/style/StyleEditor.css";
     public static final ResourceBundle BUNDLE = ResourceBundle.getBundle(BUNDLE_PATH);

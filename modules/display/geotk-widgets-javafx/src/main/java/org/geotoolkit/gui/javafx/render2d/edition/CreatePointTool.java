@@ -17,7 +17,6 @@
 package org.geotoolkit.gui.javafx.render2d.edition;
 
 import javafx.scene.Node;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -28,25 +27,36 @@ import org.geotoolkit.map.FeatureMapLayer;
  */
 public class CreatePointTool extends AbstractEditionTool{
 
-    private static final Image ICON = GeotkFX.ICON_ADD;
+    public static final class Spi extends AbstractEditionToolSpi{
+
+        public Spi() {
+            super("CreatePoint",
+                GeotkFX.getI18NString(CreatePointTool.class, "title"),
+                GeotkFX.getI18NString(CreatePointTool.class, "abstract"),
+                GeotkFX.ICON_ADD);
+        }
+    
+        @Override
+        public boolean canHandle(Object candidate) {
+            if(candidate instanceof FeatureMapLayer){
+                final FeatureMapLayer fml = (FeatureMapLayer) candidate;
+                return fml.getCollection().isWritable();
+            }
+            return false;
+        }
+
+        @Override
+        public EditionTool create() {
+            return new CreatePointTool();
+        }
+    };
+
 
     private final BorderPane configPane = new BorderPane();
     private final BorderPane helpPane = new BorderPane();
 
     public CreatePointTool() {
-        super(GeotkFX.getString(CreatePointTool.class, "name"),
-              GeotkFX.getI18NString(CreatePointTool.class, "title"),
-              GeotkFX.getI18NString(CreatePointTool.class, "abstract"),
-              ICON);
-    }
-
-    @Override
-    public boolean canHandle(Object candidate) {
-        if(candidate instanceof FeatureMapLayer){
-            final FeatureMapLayer fml = (FeatureMapLayer) candidate;
-            return fml.getCollection().isWritable();
-        }
-        return false;
+        super(EditionHelper.getToolSpi("CreatePoint"));
     }
 
     @Override
