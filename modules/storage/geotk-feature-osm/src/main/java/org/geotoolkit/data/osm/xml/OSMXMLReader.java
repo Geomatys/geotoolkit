@@ -266,11 +266,16 @@ public class OSMXMLReader extends StaxStreamReader{
             return null;
         }
 
-        final String lat = reader.getAttributeValue(null, ATT_NODE_LAT);
-        final String lon = reader.getAttributeValue(null, ATT_NODE_LON);
+        String lat = reader.getAttributeValue(null, ATT_NODE_LAT);
+        String lon = reader.getAttributeValue(null, ATT_NODE_LON);
 
         if(lat == null || lon == null){
-            throw new XMLStreamException("Error in xml file, osm node lat/lon not defined correctly");
+            //throw new XMLStreamException("Error in xml file, osm node lat/lon not defined correctly");
+            //TODO : recheck the evolution of the specification
+            //TODO : new attribute visible
+            //TODO : http://wiki.openstreetmap.org/wiki/API_v0.6/XSD
+            lat = "NaN";
+            lon = "NaN";
         }
 
         while (reader.hasNext()) {
