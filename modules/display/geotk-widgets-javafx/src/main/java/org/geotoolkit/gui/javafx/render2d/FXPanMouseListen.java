@@ -17,6 +17,9 @@
 package org.geotoolkit.gui.javafx.render2d;
 
 import java.awt.geom.Point2D;
+import javafx.event.Event;
+import javafx.event.EventType;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -55,6 +58,20 @@ public class FXPanMouseListen extends AbstractMouseHandler {
             this.zoomFactor = zoomFactor;
         } else {
             this.zoomFactor = DEFAULT_ZOOM_FACTOR;
+        }
+    }
+
+    public void handle(Event event) {
+        super.handle(event);
+        if(event instanceof KeyEvent){
+            final KeyEvent ke = (KeyEvent) event;
+            if(KeyEvent.KEY_PRESSED.equals(ke.getEventType())){
+                keyPressed(ke);
+            }else if(KeyEvent.KEY_RELEASED.equals(ke.getEventType())){
+                keyReleased(ke);
+            }else if(KeyEvent.KEY_TYPED.equals(ke.getEventType())){
+                keyTyped(ke);
+            }
         }
     }
 
@@ -143,4 +160,17 @@ public class FXPanMouseListen extends AbstractMouseHandler {
             owner.scale(new Point2D.Double(startX, startY), 1d / zoomFactor);
         }
     }
+
+    public void keyPressed(final KeyEvent e) {
+
+    }
+
+    public void keyTyped(final KeyEvent e) {
+
+    }
+
+    public void keyReleased(final KeyEvent e) {
+
+    }
+
 }

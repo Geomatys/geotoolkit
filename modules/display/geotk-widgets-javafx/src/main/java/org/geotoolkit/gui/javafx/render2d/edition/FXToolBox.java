@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.render2d.edition;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
@@ -30,6 +31,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
@@ -40,12 +42,17 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import org.controlsfx.control.action.ActionUtils;
+import org.geotoolkit.gui.javafx.action.CommitAction;
+import org.geotoolkit.gui.javafx.action.RollbackAction;
 import org.geotoolkit.gui.javafx.chooser.FXMapLayerComboBox;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.navigation.FXPanHandler;
 import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -68,6 +75,8 @@ public class FXToolBox extends BorderPane {
     private final ToggleGroup group = new ToggleGroup();
     private final FXMapLayerComboBox combo = new FXMapLayerComboBox();
     private final FXMap map;
+    private final CommitAction commitAction = new CommitAction();
+    private final RollbackAction rollbackAction = new RollbackAction();
 
     /**
      * Create tool box with all map layers.
@@ -98,6 +107,18 @@ public class FXToolBox extends BorderPane {
     private void init(final MapContext context) {
         getStylesheets().add("/org/geotoolkit/gui/javafx/buttonbar.css");
 
+        //commit and rollback buttons
+        final Button rollback = rollbackAction.createButton(ActionUtils.ActionTextBehavior.HIDE);
+        final Button commit = commitAction.createButton(ActionUtils.ActionTextBehavior.HIDE);
+        rollback.styleProperty().unbind();
+        rollback.setStyle("-fx-base : #FFAAAA;");
+        rollback.getStyleClass().add("buttongroup-left");
+        commit.styleProperty().unbind();
+        commit.setStyle("-fx-base : #AAFFAA;");
+        commit.getStyleClass().add("buttongroup-right");
+        final HBox hbox = new HBox(rollback,commit);
+
+
         grid.setMaxWidth(Double.MAX_VALUE);
         tools.addListener((Change<? extends EditionTool.Spi> c) -> updateGrid());
         toolPerRow.addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> updateGrid());
@@ -107,9 +128,11 @@ public class FXToolBox extends BorderPane {
         top.getRowConstraints().add(new RowConstraints(USE_PREF_SIZE, USE_COMPUTED_SIZE, USE_PREF_SIZE, Priority.NEVER, VPos.CENTER, false));
         top.getRowConstraints().add(new RowConstraints(USE_PREF_SIZE, USE_COMPUTED_SIZE, Double.MAX_VALUE, Priority.ALWAYS, VPos.TOP, true));
         top.add(combo, 0, 0);
-        top.add(grid, 0, 1);
-        top.add(accordion, 0, 2);
+        top.add(hbox, 1, 0);
+        top.add(grid, 0, 1, 2, 1);
+        top.add(accordion, 0, 2, 2, 1);
         top.setVgap(10);
+        top.setHgap(10);
         setCenter(top);
 
         accordion.getPanes().add(helpPane);
@@ -120,9 +143,13 @@ public class FXToolBox extends BorderPane {
         group.selectedToggleProperty().addListener(this::editorChange);
 
         combo.setMapContext(context);
+        combo.setPrefWidth(50);
+        combo.setMinWidth(50);
         combo.setMaxWidth(Double.MAX_VALUE);
         combo.valueProperty().addListener((ObservableValue<? extends MapLayer> observable, MapLayer oldValue, MapLayer newValue) -> updateGrid());
 
+        commitAction.layerProperty().bind(GeotkFX.isInstance(combo.valueProperty(), FeatureMapLayer.class));
+        rollbackAction.layerProperty().bind(GeotkFX.isInstance(combo.valueProperty(), FeatureMapLayer.class));
 
         //listen to grid size change
         final ToggleButton button = new ToggleButton();

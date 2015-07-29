@@ -81,7 +81,7 @@ public class CreateLineTool extends AbstractEditionTool{
     private final MouseListen mouseInputListener = new MouseListen();
     private final FXGeometryLayer decoration= new FXGeometryLayer(){
         @Override
-        protected Node createVerticeNode(Coordinate c){
+        protected Node createVerticeNode(Coordinate c, boolean selected){
             final Line h = new Line(c.x-CROSS_SIZE, c.y, c.x+CROSS_SIZE, c.y);
             final Line v = new Line(c.x, c.y-CROSS_SIZE, c.x, c.y+CROSS_SIZE);
             h.setStroke(Color.RED);
@@ -120,8 +120,8 @@ public class CreateLineTool extends AbstractEditionTool{
         super.install(component);
         component.addEventHandler(MouseEvent.ANY, mouseInputListener);
         component.addEventHandler(ScrollEvent.ANY, mouseInputListener);
-        map.setCursor(Cursor.CROSSHAIR);
-        map.addDecoration(0,decoration);
+        component.setCursor(Cursor.CROSSHAIR);
+        component.addDecoration(0,decoration);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class CreateLineTool extends AbstractEditionTool{
         super.uninstall(component);
         component.removeEventHandler(MouseEvent.ANY, mouseInputListener);
         component.removeEventHandler(ScrollEvent.ANY, mouseInputListener);
-        map.removeDecoration(decoration);
+        component.removeDecoration(decoration);
         return true;
     }
 

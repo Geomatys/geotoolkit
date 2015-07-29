@@ -16,18 +16,14 @@
  */
 package org.geotoolkit.gui.javafx.render2d.edition;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
@@ -78,16 +74,7 @@ public class CreatePointTool extends AbstractEditionTool{
     private final FeatureMapLayer layer;
     private final EditionHelper helper;
     private final MouseListen mouseInputListener = new MouseListen();
-    private final FXGeometryLayer decoration= new FXGeometryLayer(){
-        @Override
-        protected Node createVerticeNode(Coordinate c){
-            final Line h = new Line(c.x-CROSS_SIZE, c.y, c.x+CROSS_SIZE, c.y);
-            final Line v = new Line(c.x, c.y-CROSS_SIZE, c.x, c.y+CROSS_SIZE);
-            h.setStroke(Color.RED);
-            v.setStroke(Color.RED);
-            return new Group(h,v);
-        }
-    };
+    private final FXGeometryLayer decoration= new EditionLayer();
 
     public CreatePointTool(FXMap map, FeatureMapLayer layer) {
         super(EditionHelper.getToolSpi("CreatePoint"));
@@ -111,8 +98,8 @@ public class CreatePointTool extends AbstractEditionTool{
         super.install(component);
         component.addEventHandler(MouseEvent.ANY, mouseInputListener);
         component.addEventHandler(ScrollEvent.ANY, mouseInputListener);
-        map.setCursor(Cursor.CROSSHAIR);
-        map.addDecoration(0,decoration);
+        component.setCursor(Cursor.CROSSHAIR);
+        component.addDecoration(0,decoration);
     }
 
     @Override
@@ -120,7 +107,7 @@ public class CreatePointTool extends AbstractEditionTool{
         super.uninstall(component);
         component.removeEventHandler(MouseEvent.ANY, mouseInputListener);
         component.removeEventHandler(ScrollEvent.ANY, mouseInputListener);
-        map.removeDecoration(decoration);
+        component.removeDecoration(decoration);
         return true;
     }
 

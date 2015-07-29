@@ -16,8 +16,14 @@
  */
 package org.geotoolkit.gui.javafx.render2d.edition;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.gui.javafx.render2d.AbstractNavigationHandler;
+import org.geotoolkit.gui.javafx.render2d.shape.FXGeometryLayer;
 
 /**
  *
@@ -41,5 +47,22 @@ public abstract class AbstractEditionTool extends AbstractNavigationHandler impl
         return spi;
     }
 
+
+    protected static final class EditionLayer extends FXGeometryLayer{
+
+        @Override
+        protected Node createVerticeNode(Coordinate c, boolean selected){
+            final Line h = new Line(c.x-CROSS_SIZE, c.y, c.x+CROSS_SIZE, c.y);
+            final Line v = new Line(c.x, c.y-CROSS_SIZE, c.x, c.y+CROSS_SIZE);
+            h.setStroke(Color.RED);
+            v.setStroke(Color.RED);
+            
+            if(selected){
+                h.setStrokeWidth(3);
+                v.setStrokeWidth(3);
+            }
+            return new Group(h,v);
+        }
+    };
 
 }

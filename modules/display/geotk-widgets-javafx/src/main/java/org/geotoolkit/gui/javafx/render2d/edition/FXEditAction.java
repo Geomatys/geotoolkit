@@ -19,7 +19,6 @@ package org.geotoolkit.gui.javafx.render2d.edition;
 import java.util.Iterator;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -83,7 +82,7 @@ public final class FXEditAction extends FXMapAction {
                 dialog.setOnCloseRequest((WindowEvent evt) -> dialog = null);
                 dialog.setScene(scene);
                 dialog.setResizable(true);
-                dialog.setWidth(300);
+                dialog.setWidth(350);
                 dialog.setHeight(450);
                 dialog.show();
             }

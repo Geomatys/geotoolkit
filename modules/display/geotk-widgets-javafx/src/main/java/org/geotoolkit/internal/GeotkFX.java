@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+import javafx.beans.binding.ObjectBinding;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -64,6 +66,8 @@ public final class GeotkFX {
     public static final Image ICON_OPEN      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FOLDER_OPEN,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_SAVE      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_SAVE_ALIAS,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_UNLINK    = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_CHAIN_BROKEN,16,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_UNDO      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_UNDO,16,FontAwesomeIcons.DEFAULT_COLOR),null);
+    public static final Image ICON_MOVE      = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_ARROWS,16,FontAwesomeIcons.DEFAULT_COLOR),null);
     public static final Image ICON_EMPTY     = new WritableImage(16, 16);
 
     public static final String BUNDLE_PATH = "org/geotoolkit/gui/javafx/internal/Bundle";
@@ -227,5 +231,37 @@ public final class GeotkFX {
     }
         
     private GeotkFX(){}
-    
+
+    /**
+     * Binding which checks if the given object is an instance of given class.
+     * Binding value is null otherwise.
+     *
+     * @param <T>
+     * @param value
+     * @param clazz
+     * @return
+     */
+    public static <T> ObjectBinding<T> isInstance(ObservableValue<?> value, Class<T> clazz){
+        return new IsInstanceBinding<>(value,clazz);
+    }
+
+    private static class IsInstanceBinding<T> extends ObjectBinding<T>{
+
+        private final ObservableValue value;
+        private final Class clazz;
+
+        private IsInstanceBinding(ObservableValue value, Class clazz){
+            this.value = value;
+            this.clazz = clazz;
+            bind(value);
+        }
+
+        @Override
+        protected T computeValue() {
+            final Object candidate = value.getValue();
+            return clazz.isInstance(candidate) ? (T)candidate : null;
+        }
+
+    }
+
 }

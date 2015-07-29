@@ -44,6 +44,7 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
 import org.geotoolkit.gui.javafx.render2d.FXMapDecoration;
+import org.geotoolkit.gui.javafx.render2d.edition.EditionHelper;
 import org.geotoolkit.internal.Loggers;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -68,6 +69,7 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
     };
 
     private Paint fill = new Color(0, 0, 0, 0.4);
+    private EditionHelper.EditionGeometry editGeom;
 
     public FXGeometryLayer() {
         geoms.addListener((ListChangeListener.Change<? extends Geometry> c) -> {
@@ -134,7 +136,7 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
             final Group group = new Group();
             group.setCache(false);
             for(Coordinate c : coords){
-                final Node vertice = createVerticeNode(c);
+                final Node vertice = createVerticeNode(c,false);
                 if(vertice!=null){
                     group.getChildren().add(vertice);
                 }
@@ -150,7 +152,7 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
            
     }
     
-    protected Node createVerticeNode(Coordinate c){
+    protected Node createVerticeNode(Coordinate c, boolean selected){
         return new Circle(c.x, c.y, 5);
     }
 
@@ -181,6 +183,10 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
     @Override
     public Node getComponent() {
         return this;
+    }
+
+    public void setNodeSelection(EditionHelper.EditionGeometry editGeom) {
+        this.editGeom = editGeom;
     }
         
 }
