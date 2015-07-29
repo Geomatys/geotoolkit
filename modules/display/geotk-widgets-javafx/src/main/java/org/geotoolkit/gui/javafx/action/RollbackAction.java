@@ -44,7 +44,7 @@ public final class RollbackAction extends Action implements Consumer<ActionEvent
     private final StorageListener.Weak weakListener;
 
     public RollbackAction() {
-        super(GeotkFX.getString(CommitAction.class,"text"));
+        super(GeotkFX.getString(RollbackAction.class,"text"));
         setGraphic(new ImageView(GeotkFX.ICON_UNDO));
         weakListener = new StorageListener.Weak(this);
 
