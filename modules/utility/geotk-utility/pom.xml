@@ -85,7 +85,6 @@
     <dependency>
       <groupId>org.apache.sis.storage</groupId>
       <artifactId>sis-storage</artifactId>
-      <version>${sis.version}</version>
     </dependency>
     <dependency>
       <groupId>java3d</groupId>

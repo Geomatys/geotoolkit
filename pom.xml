@@ -207,16 +207,84 @@
         <scope>import</scope>
       </dependency>
 
-      <!-- Imaging -->
+      <!-- Apache SIS -->
+      <dependency>
+          <groupId>org.apache.sis.core</groupId>
+          <artifactId>sis-utility</artifactId>
+          <version>${sis.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.apache.sis.core</groupId>
+          <artifactId>sis-utility</artifactId>
+          <version>${sis.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.apache.sis.core</groupId>
+          <artifactId>sis-referencing</artifactId>
+          <version>${sis.version}</version>
+      </dependency>    
+
+      <dependency>
+          <groupId>org.apache.sis.core</groupId>
+          <artifactId>sis-referencing</artifactId>
+          <version>${sis.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.apache.sis.core</groupId>
+          <artifactId>sis-metadata</artifactId>
+          <version>${sis.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.apache.sis.core</groupId>
+          <artifactId>sis-metadata</artifactId>
+          <version>${sis.version}</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.apache.sis.core</groupId>
+          <artifactId>sis-feature</artifactId>
+          <version>${sis.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.apache.sis.storage</groupId>
+          <artifactId>sis-storage</artifactId>
+          <version>${sis.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.apache.sis.storage</groupId>
+          <artifactId>sis-netcdf</artifactId>
+          <version>${sis.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.apache.sis.profiles</groupId>
+          <artifactId>sis-french-profile</artifactId>
+          <version>${sis.version}</version>
+      </dependency>
+
+      <!-- Imaging. JAI 1.1.4 is not official release, but brings a bug fix
+           on "warp grid" operation. -->
       <dependency>
         <groupId>javax.media</groupId>
         <artifactId>jai_core</artifactId>
-        <version>1.1.3</version>
+        <version>1.1.4</version>
       </dependency>
       <dependency>
         <groupId>javax.media</groupId>
         <artifactId>jai_codec</artifactId>
-        <version>1.1.3</version>
+        <version>1.1.4</version>
       </dependency>
       <dependency>
         <groupId>javax.media</groupId>

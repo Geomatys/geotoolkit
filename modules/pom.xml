@@ -75,7 +75,6 @@
       <plugin>
         <groupId>org.apache.sis.core</groupId>
         <artifactId>sis-build-helper</artifactId>
-        <version>${sis.version}</version>
         <executions>
           <execution>
             <goals>
