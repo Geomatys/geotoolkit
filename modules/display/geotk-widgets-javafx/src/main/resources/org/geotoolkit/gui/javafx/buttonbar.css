@@ -30,7 +30,7 @@
 }
 
 .buttongroup-top-left {
-    -fx-body-color: linear (0%,0%) to (0%,100%) stops (0,derive(-fx-color,34%)) (0.5,-fx-color);
+    -fx-body-color: linear-gradient (from 0% 0% to 0% 100%, derive(-fx-color,34%) 0%, -fx-color 50%);
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
     -fx-background-radius: 3 0 0 0;
     -fx-background-insets: -2 0 0 -2, 0, 1 0 0 1, 2 0 0 2;
@@ -47,7 +47,7 @@
 }
 
 .buttongroup-bottom-left {
-    -fx-body-color: linear (0%,0%) to (0%,100%) stops (0.5,-fx-color) (1,derive(-fx-color,-18%));
+    -fx-body-color: linear-gradient (from 0% 0% to 0% 100%, -fx-color 50%, derive(-fx-color,-18%) 100%);
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
     -fx-background-radius: 0 0 0 3;
     -fx-background-insets: 0 0 -2 -2, 0, 0 0 1 1, 0 0 2 2;
@@ -56,7 +56,7 @@
 }
 
 .buttongroup-top-center {
-    -fx-body-color: linear (0%,0%) to (0%,100%) stops (0,derive(-fx-color,34%)) (0.5,-fx-color);
+    -fx-body-color: linear-gradient (from 0% 0% to 0% 100%, derive(-fx-color,34%) 0%, -fx-color 50%);
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
     -fx-background-radius: 0 0 0 0;
     -fx-background-insets: -2 0 0 0, 0, 1 0 0 0, 2 0 0 0;
@@ -73,7 +73,7 @@
 }
 
 .buttongroup-bottom-center {
-    -fx-body-color: linear (0%,0%) to (0%,100%) stops (0.5,-fx-color) (1,derive(-fx-color,-18%));
+    -fx-body-color: linear-gradient (from 0% 0% to 0% 100%, -fx-color 50%, derive(-fx-color,-18%) 100%);
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
     -fx-background-radius: 0 0 0 0;
     -fx-background-insets: 0 0 -2 0, 0, 0 0 1 0, 0 0 2 0;
@@ -82,7 +82,7 @@
 }
 
 .buttongroup-top-right {
-    -fx-body-color: linear (0%,0%) to (0%,100%) stops (0,derive(-fx-color,34%)) (0.5,-fx-color);
+    -fx-body-color: linear-gradient (from 0% 0% to 0% 100%, derive(-fx-color,34%) 0%, -fx-color 50%);
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
     -fx-background-radius: 0 3 0 0;
     -fx-background-insets: -2 -2 0 0, 0, 1 1 0 0, 2 2 0 0;
@@ -99,7 +99,7 @@
 }
 
 .buttongroup-bottom-right {
-    -fx-body-color: linear (0%,0%) to (0%,100%) stops (0.5,-fx-color) (1,derive(-fx-color,-18%));
+    -fx-body-color: linear-gradient (from 0% 0% to 0% 100%, -fx-color 50%, derive(-fx-color,-18%) 100%);
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
     -fx-background-radius: 0 0 3 0;
     -fx-background-insets: 0 -2 -2 0, 0, 0 1 1 0, 0 2 2 0;
