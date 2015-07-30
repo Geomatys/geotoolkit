@@ -60,8 +60,8 @@ public class DeleteItem extends TreeMenuItem{
                     public void run() {
                         for(WeakReference<TreeItem> itemRef : itemRefs){
                             TreeItem path = itemRef.get();
-                            if(path == null) return;
-                            if(path.getParent() == null) return;
+                            if(path == null) continue;
+                            if(path.getParent() == null) continue;
                             final MapItem parent = (MapItem) path.getParent().getValue();
                             final MapItem candidate = (MapItem) path.getValue();
                             parent.items().remove(candidate);

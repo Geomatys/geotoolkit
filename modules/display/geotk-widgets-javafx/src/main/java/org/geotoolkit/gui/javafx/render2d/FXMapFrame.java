@@ -39,6 +39,7 @@ import org.geotoolkit.gui.javafx.contexttree.MapItemFilterColumn;
 import org.geotoolkit.gui.javafx.contexttree.MapItemSelectableColumn;
 import org.geotoolkit.gui.javafx.contexttree.menu.CommitItem;
 import org.geotoolkit.gui.javafx.contexttree.menu.DeleteItem;
+import org.geotoolkit.gui.javafx.contexttree.menu.ExportItem;
 import org.geotoolkit.gui.javafx.contexttree.menu.LayerPropertiesItem;
 import org.geotoolkit.gui.javafx.contexttree.menu.OpacityItem;
 import org.geotoolkit.gui.javafx.contexttree.menu.RollbackItem;
@@ -79,6 +80,7 @@ public class FXMapFrame {
         tree.getMenuItems().add(new SeparatorMenuItem());
         tree.getMenuItems().add(new LayerPropertiesItem(map));
         tree.getMenuItems().add(new ZoomToItem(map));
+        tree.getMenuItems().add(new ExportItem());
         tree.getMenuItems().add(new SeparatorMenuItem());
         tree.getMenuItems().add(new DeleteItem());
         tree.getTreetable().getColumns().add(2,new MapItemFilterColumn());
