@@ -167,7 +167,7 @@ public class FXStoreChooser extends SplitPane {
         
         accordion.getPanes().add(paneFactory);
         accordion.getPanes().add(paneConfig);
-        accordion.setPrefSize(400, 400);        
+        accordion.setPrefSize(500, 500);
         accordion.setExpandedPane(paneFactory);
         
         getItems().add(accordion);

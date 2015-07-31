@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.client.AbstractClientFactory;
@@ -29,7 +30,6 @@ import org.geotoolkit.client.CoverageClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -62,10 +62,12 @@ public class OSMTMSClientFactory extends AbstractClientFactory implements Covera
     /**
      * Mandatory - the serveur max zoom level
      */
-    public static final ParameterDescriptor<Integer> MAX_ZOOM_LEVEL =
-            new DefaultParameterDescriptor<Integer>("maxZoomLevel",
-                    new ResourceInternationalString("org/geotoolkit/osmtms/bundle", "maxZoomLevel"),
-                    Integer.class,18,true);
+    public static final ParameterDescriptor<Integer> MAX_ZOOM_LEVEL = new ParameterBuilder()
+            .addName("maxZoomLevel")
+            .addName(new ResourceInternationalString("org/geotoolkit/osmtms/bundle", "maxZoomLevel"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/osmtms/bundle", "maxZoomLevel_remarks"))
+            .setRequired(true)
+            .create(Integer.class, 18);
 
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("OSMTMSParameters",

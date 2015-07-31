@@ -82,6 +82,7 @@ public class FXMapContextTree extends BorderPane{
                 return row;
             }
         });
+        treetable.getStylesheets().add("org/geotoolkit/gui/javafx/parameter/parameters.css");
 
         //this will cause the column width to fit the view area
         treetable.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);

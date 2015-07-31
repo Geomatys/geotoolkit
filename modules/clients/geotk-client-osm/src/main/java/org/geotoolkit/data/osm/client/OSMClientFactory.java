@@ -16,17 +16,12 @@
  */
 package org.geotoolkit.data.osm.client;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.Client;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
@@ -60,19 +55,12 @@ public class OSMClientFactory extends AbstractClientFactory{
      */
     public static final ParameterDescriptor<String> VERSION;
     static{
-        final String code = "version";
-        final CharSequence remarks = I18N_VERSION;
-        final Map<String,Object> params = new HashMap<String, Object>();
-        params.put(DefaultParameterDescriptor.NAME_KEY, code);
-        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
-        final List<String> validValues =  new ArrayList<String>();
-        for(OSMVersion version : OSMVersion.values()){
-            validValues.add(version.getCode());
+        final OSMVersion[] values = OSMVersion.values();
+        final String[] validValues =  new String[values.length];
+        for(int i=0;i<values.length;i++){
+            validValues[i] = values[i].getCode();
         }
-
-        VERSION = new DefaultParameterDescriptor<String>(params, String.class,
-                validValues.toArray(new String[validValues.size()]),
-                OSMVersion.v060.getCode(), null, null, null, true);
+        VERSION = createVersionDescriptor(validValues, OSMVersion.v060.getCode());
     }
 
     public static final ParameterDescriptorGroup PARAMETERS =

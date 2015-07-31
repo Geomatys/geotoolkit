@@ -17,19 +17,21 @@
 
 package org.geotoolkit.gui.javafx.parameter;
 
+import java.util.Collection;
 import java.util.Optional;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.CheckBox;
+import javafx.geometry.Pos;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 import org.geotoolkit.utility.parameter.ParametersExt;
@@ -39,6 +41,8 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
+import org.opengis.util.InternationalString;
 
 /**
  *
@@ -53,6 +57,7 @@ public class FXParameterEditor extends BorderPane {
         
         //this will cause the column width to fit the view area
         treetable.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
+        treetable.getStylesheets().add("org/geotoolkit/gui/javafx/parameter/parameters.css");
         
         final ScrollPane scroll = new ScrollPane(treetable);
         scroll.setFitToWidth(true);
@@ -122,20 +127,12 @@ public class FXParameterEditor extends BorderPane {
     
     
     
-    public class ParamNameColumn extends TreeTableColumn<ParamEntry,String>{
+    public class ParamNameColumn extends TreeTableColumn<ParamEntry,ParamEntry>{
 
         public ParamNameColumn() {
             super("Property");
-            setCellValueFactory(new Callback<CellDataFeatures<ParamEntry, String>, ObservableValue<String>>() {
-
-                @Override
-                public ObservableValue<String> call(CellDataFeatures<ParamEntry, String> param) {
-                    final GeneralParameterDescriptor desc = param.getValue().getValue().desc;
-                    final String name = desc.getName().getCode();
-                    return new SimpleStringProperty(name);
-                }
-            });
-            setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
+            setCellValueFactory((CellDataFeatures<ParamEntry, ParamEntry> param) -> new SimpleObjectProperty<>(param.getValue().getValue()));
+            setCellFactory((TreeTableColumn<ParamEntry, ParamEntry> param) -> new ParamNameCell());
             setEditable(false);
             setPrefWidth(200);
             setMinWidth(120);
@@ -153,7 +150,7 @@ public class FXParameterEditor extends BorderPane {
                     return param.getValue().getValue().value;
                 }
             });
-            setCellFactory((TreeTableColumn<ParamEntry, GeneralParameterValue> param) -> new ParamCell());
+            setCellFactory((TreeTableColumn<ParamEntry, GeneralParameterValue> param) -> new ParamValueCell());
             setEditable(true);
             setPrefWidth(200);
             setMinWidth(120);
@@ -177,8 +174,48 @@ public class FXParameterEditor extends BorderPane {
             setMaxWidth(30);
         }
     }
-        
-    private class ParamCell extends TreeTableCell<ParamEntry, GeneralParameterValue>{
+
+    private class ParamNameCell extends TreeTableCell<ParamEntry, ParamEntry>{
+
+        @Override
+        protected void updateItem(ParamEntry item, boolean empty) {
+            super.updateItem(item, empty);
+            setText(null);
+            setGraphic(null);
+            setTooltip(null);
+            setAlignment(Pos.CENTER_LEFT);
+
+            if(!empty && item !=null){
+                final GeneralParameterDescriptor desc = item.desc;
+
+                //get name from alias
+                String name = null;
+                final Collection<GenericName> aliases = desc.getAlias();
+                if(!aliases.isEmpty()){
+                    final GenericName alias = aliases.iterator().next();
+                    name = alias.toInternationalString().toString();
+                }
+
+                //use code if not defined
+                if(name == null){
+                    name = desc.getName().getCode();
+                }
+                setText(name);
+
+                final InternationalString remarks = desc.getRemarks();
+                if(remarks!=null){
+                    setTooltip(new Tooltip(remarks.toString()));
+                }
+            }
+        }
+    }
+
+    private class ParamValueCell extends TreeTableCell<ParamEntry, GeneralParameterValue>{
+
+        public ParamValueCell() {
+            setAlignment(Pos.CENTER_LEFT);
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        }
 
         @Override
         protected void updateItem(GeneralParameterValue item, boolean empty) {
@@ -192,6 +229,7 @@ public class FXParameterEditor extends BorderPane {
                 if (opt.isPresent()) {
                     final FXValueEditor valEditor = opt.get();
                     final ParameterValue pval = (ParameterValue) entry.value.getValue();
+                    if(pval.getValue()!=null) valEditor.valueProperty().setValue(pval.getValue());
                     valEditor.valueProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
                         pval.setValue(newValue);
                     });
@@ -204,9 +242,12 @@ public class FXParameterEditor extends BorderPane {
     
     private class ParamEnableCell extends TreeTableCell<ParamEntry, GeneralParameterValue>{
 
-        private final CheckBox cb = new CheckBox();
+        private final RadioButton cb = new RadioButton();
 
         public ParamEnableCell() {
+            setAlignment(Pos.CENTER);
+            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+
             cb.setSelected(false);
             cb.setOnAction(new EventHandler<ActionEvent>() {
 

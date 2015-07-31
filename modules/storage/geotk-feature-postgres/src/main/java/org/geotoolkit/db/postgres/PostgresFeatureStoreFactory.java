@@ -24,8 +24,9 @@ import org.geotoolkit.db.dialect.SQLDialect;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.ParameterBuilder;
+import org.apache.sis.util.iso.ResourceInternationalString;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -60,14 +61,17 @@ public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory
     /**
      * Parameter for loose bbox filter.
      */
-    public static final ParameterDescriptor<Boolean> LOOSEBBOX =
-             new DefaultParameterDescriptor<Boolean>("Loose bbox","Perform only primary filter on bbox",Boolean.class,true,false);
+    public static final ParameterDescriptor<Boolean> LOOSEBBOX = new ParameterBuilder()
+            .addName("Loose bbox")
+            .addName(new ResourceInternationalString("org/geotoolkit/db/postgres/bundle", "lbbox"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/db/postgres/bundle", "lbbox_remarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.TRUE);
 
     /**
      * Parameter for database port.
      */
-    public static final ParameterDescriptor<Integer> PORT =
-             new DefaultParameterDescriptor<Integer>("port","Port",Integer.class,5432,true);
+    public static final ParameterDescriptor<Integer> PORT = createFixedPort(5432);
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =

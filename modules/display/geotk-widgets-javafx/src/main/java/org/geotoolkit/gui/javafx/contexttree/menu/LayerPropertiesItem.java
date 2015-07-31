@@ -26,7 +26,9 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
+import javafx.stage.StageStyle;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.gui.javafx.layer.FXFeatureTable;
 import org.geotoolkit.gui.javafx.layer.FXLayerStructure;
@@ -75,16 +77,21 @@ public class LayerPropertiesItem extends TreeMenuItem{
 
                 final MapLayer candidate = (MapLayer) path.getValue();
                 final FXPropertiesPane panel = new FXPropertiesPane(candidate,panels);
+                panel.setMinSize(1024, 768);
+                panel.setPrefSize(1024, 768);
 
                 final DialogPane pane = new DialogPane();
                 pane.setContent(panel);
+                pane.setMinSize(1024, 768);
+                pane.setPrefSize(1024, 768);
                 pane.getButtonTypes().add(ButtonType.CLOSE);
 
                 final Dialog dialog = new Dialog();
                 dialog.setTitle(GeotkFX.getString(LayerPropertiesItem.this, "properties"));
+                dialog.setDialogPane(pane);
                 dialog.initModality(Modality.NONE);
                 dialog.setResizable(true);
-                dialog.setDialogPane(pane);
+                dialog.initStyle(StageStyle.UTILITY);
                 dialog.resultProperty().addListener(new ChangeListener() {
                     @Override
                     public void changed(ObservableValue observable, Object oldValue, Object newValue) {

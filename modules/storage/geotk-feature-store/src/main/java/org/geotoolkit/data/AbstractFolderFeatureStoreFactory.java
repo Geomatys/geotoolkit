@@ -28,9 +28,10 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.iso.ResourceInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.metadata.Identifier;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -47,24 +48,34 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureStoreFactory{
     protected static final Logger LOGGER = Logging.getLogger(AbstractFolderFeatureStoreFactory.class);
+    private static final String BUNDLE_PATH = "org/geotoolkit/data/bundle";
 
     /**
      * url to the folder.
      */
-    public static final ParameterDescriptor<URL> URLFOLDER =
-            new DefaultParameterDescriptor<URL>("url","url to a folder",
-            URL.class,null,true);
+    public static final ParameterDescriptor<URL> URLFOLDER = new ParameterBuilder()
+            .addName("url")
+            .addName(new ResourceInternationalString(BUNDLE_PATH, "paramURLAlias"))
+            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "paramURLRemarks"))
+            .setRequired(true)
+            .create(URL.class, null);
 
     /**
      * recursively search folder.
      */
-    public static final ParameterDescriptor<Boolean> RECURSIVE =
-            new DefaultParameterDescriptor<Boolean>("recursive","Recursively explore the given folder. default is true.",
-            Boolean.class,true,false);
+    public static final ParameterDescriptor<Boolean> RECURSIVE = new ParameterBuilder()
+            .addName("recursive")
+            .addName(new ResourceInternationalString(BUNDLE_PATH, "recursive"))
+            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "recursive_remarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.TRUE);
 
-    public static final ParameterDescriptor<Boolean> EMPTY_DIRECTORY =
-            new DefaultParameterDescriptor<Boolean>("emptyDirectory","Allow opening an empty directory. default is false.",
-                    Boolean.class,false,false);
+    public static final ParameterDescriptor<Boolean> EMPTY_DIRECTORY = new ParameterBuilder()
+            .addName("emptyDirectory")
+            .addName(new ResourceInternationalString(BUNDLE_PATH, "emptyDirectory"))
+            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "emptyDirectory_remarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.FALSE);
 
     private final ParameterDescriptorGroup paramDesc;
 

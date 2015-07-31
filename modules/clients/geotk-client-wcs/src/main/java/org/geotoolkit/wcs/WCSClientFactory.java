@@ -61,19 +61,12 @@ public class WCSClientFactory extends AbstractClientFactory{
      */
     public static final ParameterDescriptor<String> VERSION;
     static{
-        final String code = "version";
-        final CharSequence remarks = I18N_VERSION;
-        final Map<String,Object> params = new HashMap<String, Object>();
-        params.put(DefaultParameterDescriptor.NAME_KEY, code);
-        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
-        final List<String> validValues =  new ArrayList<String>();
-        for(WCSVersion version : WCSVersion.values()){
-            validValues.add(version.getCode());
+        final WCSVersion[] values = WCSVersion.values();
+        final String[] validValues =  new String[values.length];
+        for(int i=0;i<values.length;i++){
+            validValues[i] = values[i].getCode();
         }
-
-        VERSION = new DefaultParameterDescriptor<String>(params, String.class,
-                validValues.toArray(new String[validValues.size()]),
-                WCSVersion.v111.getCode(), null, null, null, true);
+        VERSION = createVersionDescriptor(validValues, WCSVersion.v111.getCode());
     }
 
     public static final ParameterDescriptorGroup PARAMETERS =

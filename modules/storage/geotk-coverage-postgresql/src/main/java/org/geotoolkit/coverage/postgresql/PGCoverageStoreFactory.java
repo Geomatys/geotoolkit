@@ -32,7 +32,7 @@ import org.geotoolkit.jdbc.DBCPDataSource;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 import org.geotoolkit.storage.DataType;
@@ -66,55 +66,103 @@ public class PGCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
-    /**
-     * Parameter for database port
-     */
-    public static final ParameterDescriptor<Integer> PORT =
-             new DefaultParameterDescriptor<>("port","Port",Integer.class,5432,true);
+    private static final String BUNDLE = "org/geotoolkit/coverage/postgresql/bundle";
 
     /** parameter for database host */
-    public static final ParameterDescriptor<String> HOST =
-             new DefaultParameterDescriptor<>("host","Host",String.class,"localhost",true);
+    public static final ParameterDescriptor<String> HOST = new ParameterBuilder()
+            .addName("host")
+            .addName(new ResourceInternationalString(BUNDLE, "host"))
+            .setRemarks(new ResourceInternationalString(BUNDLE, "host_remarks"))
+            .setRequired(true)
+            .create(String.class, "localhost");
+
+    /** parameter for database port */
+    public static final ParameterDescriptor<Integer> PORT = new ParameterBuilder()
+            .addName("port")
+            .addName(new ResourceInternationalString(BUNDLE, "port"))
+            .setRemarks(new ResourceInternationalString(BUNDLE, "port_remarks"))
+            .setRequired(true)
+            .create(Integer.class, null);
 
     /** parameter for database instance */
-    public static final ParameterDescriptor<String> DATABASE =
-             new DefaultParameterDescriptor<>("database","Database",String.class,null,false);
+    public static final ParameterDescriptor<String> DATABASE = new ParameterBuilder()
+            .addName("database")
+            .addName(new ResourceInternationalString(BUNDLE, "database"))
+            .setRemarks(new ResourceInternationalString(BUNDLE, "database_remarks"))
+            .setRequired(false)
+            .create(String.class, null);
 
     /** parameter for database schema */
-    public static final ParameterDescriptor<String> SCHEMA =
-             new DefaultParameterDescriptor<>("schema","Schema",String.class,null,false);
+    public static final ParameterDescriptor<String> SCHEMA = new ParameterBuilder()
+            .addName("schema")
+            .addName(new ResourceInternationalString(BUNDLE, "schema"))
+            .setRemarks(new ResourceInternationalString(BUNDLE, "schema_remarks"))
+            .setRequired(false)
+            .create(String.class, null);
 
     /** parameter for database user */
-    public static final ParameterDescriptor<String> USER =
-             new DefaultParameterDescriptor<>("user","user name to login as",String.class,null,true);
+    public static final ParameterDescriptor<String> USER = new ParameterBuilder()
+            .addName("user")
+            .addName(new ResourceInternationalString(BUNDLE, "user"))
+            .setRemarks(new ResourceInternationalString(BUNDLE, "user_remarks"))
+            .setRequired(true)
+            .create(String.class, null);
 
     /** parameter for database password */
-    public static final ParameterDescriptor<String> PASSWORD =
-             new DefaultParameterDescriptor<>("password","password used to login",String.class,null,true);
+    public static final ParameterDescriptor<String> PASSWORD = new ParameterBuilder()
+            .addName("password")
+            .addName(new ResourceInternationalString(BUNDLE, "password"))
+            .setRemarks(new ResourceInternationalString(BUNDLE, "password_remarks"))
+            .setRequired(true)
+            .create(String.class, null);
 
     /** parameter for data source */
-    public static final ParameterDescriptor<DataSource> DATASOURCE =
-             new DefaultParameterDescriptor<>("Data Source","Data Source",DataSource.class,null,false);
+    public static final ParameterDescriptor<DataSource> DATASOURCE = new ParameterBuilder()
+            .addName("Data Source")
+            .addName(new ResourceInternationalString(BUNDLE, "datasource"))
+            .setRemarks(new ResourceInternationalString(BUNDLE, "datasource_remarks"))
+            .setRequired(false)
+            .create(DataSource.class, null);
 
     /** Maximum number of connections in the connection pool */
-    public static final ParameterDescriptor<Integer> MAXCONN =
-             new DefaultParameterDescriptor<>("max connections","maximum number of open connections",Integer.class,10,false);
+    public static final ParameterDescriptor<Integer> MAXCONN = new ParameterBuilder()
+            .addName("max connections")
+            .addName(new ResourceInternationalString(BUNDLE, "max connections"))
+            .setRemarks(new ResourceInternationalString(BUNDLE, "max connections_remarks"))
+            .setRequired(false)
+            .create(Integer.class, 10);
 
     /** Minimum number of connections in the connection pool */
-    public static final ParameterDescriptor<Integer> MINCONN =
-             new DefaultParameterDescriptor<>("min connections","minimum number of pooled connection",Integer.class,1,false);
+    public static final ParameterDescriptor<Integer> MINCONN = new ParameterBuilder()
+            .addName("min connections")
+            .addName(new ResourceInternationalString(BUNDLE, "min connections"))
+            .setRemarks(new ResourceInternationalString(BUNDLE, "min connections_remarks"))
+            .setRequired(false)
+            .create(Integer.class, 1);
 
     /** If connections should be validated before using them */
-    public static final ParameterDescriptor<Boolean> VALIDATECONN =
-             new DefaultParameterDescriptor<>("validate connections","check connection is alive before using it",Boolean.class,false,false);
+    public static final ParameterDescriptor<Boolean> VALIDATECONN = new ParameterBuilder()
+            .addName("validate connections")
+            .addName(new ResourceInternationalString(BUNDLE, "validate connections"))
+            .setRemarks(new ResourceInternationalString(BUNDLE, "validate connections_remarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.FALSE);
 
     /** If connections should be validated before using them */
-    public static final ParameterDescriptor<Integer> FETCHSIZE =
-             new DefaultParameterDescriptor<>("fetch size","number of records read with each iteraction with the dbms",Integer.class,1000,false);
+    public static final ParameterDescriptor<Integer> FETCHSIZE = new ParameterBuilder()
+            .addName("fetch size")
+            .addName(new ResourceInternationalString(BUNDLE, "fetch size"))
+            .setRemarks(new ResourceInternationalString(BUNDLE, "fetch size_remarks"))
+            .setRequired(false)
+            .create(Integer.class, 1000);
 
     /** Maximum amount of time the pool will wait when trying to grab a new connection **/
-    public static final ParameterDescriptor<Integer> MAXWAIT =
-             new DefaultParameterDescriptor<>("Connection timeout","number of seconds the connection pool wait for login",Integer.class,20,false);
+    public static final ParameterDescriptor<Integer> MAXWAIT = new ParameterBuilder()
+            .addName("Connection timeout")
+            .addName(new ResourceInternationalString(BUNDLE, "timeout"))
+            .setRemarks(new ResourceInternationalString(BUNDLE, "timeout_remarks"))
+            .setRequired(false)
+            .create(Integer.class, 20);
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =

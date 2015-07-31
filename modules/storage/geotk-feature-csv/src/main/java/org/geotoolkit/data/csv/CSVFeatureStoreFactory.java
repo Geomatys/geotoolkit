@@ -23,6 +23,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
@@ -66,10 +67,12 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     /**
      * Optional - the separator character
      */
-    public static final ParameterDescriptor<Character> SEPARATOR = createDescriptor("separator",
-                    new ResourceInternationalString(BUNDLE_PATH,"paramSeparatorAlias"),
-                    new ResourceInternationalString(BUNDLE_PATH,"paramSeparatorRemarks"),
-                    Character.class,null,';',null,null,null,false);
+    public static final ParameterDescriptor<Character> SEPARATOR = new ParameterBuilder()
+            .addName("separator")
+            .addName(new ResourceInternationalString(BUNDLE_PATH, "paramSeparatorAlias"))
+            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "paramSeparatorRemarks"))
+            .setRequired(false)
+            .create(Character.class, ';');
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("CSVParameters",

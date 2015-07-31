@@ -24,6 +24,7 @@ import java.util.Map;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
@@ -56,25 +57,38 @@ public abstract class AbstractClientFactory extends Factory implements ClientFac
      * Identifier, Mandatory.
      * Subclasses should redeclared this parameter with a different default value.
      */
-    public static final ParameterDescriptor<String> IDENTIFIER =
-            new DefaultParameterDescriptor<String>("identifier",
-                    new ResourceInternationalString("org/geotoolkit/client/bundle", "identifier"),
-                    String.class,null,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
+            .addName("identifier")
+            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "identifier"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "identifier_remarks"))
+            .setRequired(true)
+            .create(String.class, null);
+
+    /**
+     * Version, Mandatory.
+     * Subclasses should redeclared this parameter with a different values.
+     */
+    public static final ParameterDescriptor<String> VERSION = new ParameterBuilder()
+            .addName("version")
+            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "version"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "version_remarks"))
+            .setRequired(true)
+            .create(String.class, null);
 
     /**
      * Create the identifier descriptor, and set only one valid value, the one in parameter.
      *
-     * TODO : Maybe change the string in parameter to string array.
      * @param idValue the value to use for identifier.
-     *
      * @return an identifier descriptor.
      */
     public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
             return new DefaultParameterDescriptor<String>(
             MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,
                                  IDENTIFIER.getName().getCode(),
+                                 DefaultParameterDescriptor.ALIAS_KEY,
+                                 IDENTIFIER.getAlias().iterator().next(),
                                  DefaultParameterDescriptor.REMARKS_KEY,
-                                 AbstractClientFactory.IDENTIFIER.getRemarks()),
+                                 IDENTIFIER.getRemarks()),
             String.class,
             new String[]{idValue},
             idValue,
@@ -85,43 +99,78 @@ public abstract class AbstractClientFactory extends Factory implements ClientFac
     }
 
     /**
+     * Create the version descriptor.
+     *
+     * @param values
+     * @param defaultValue
+     * @return a version descriptor.
+     */
+    public static ParameterDescriptor<String> createVersionDescriptor(String[] values, String defaultValue) {
+            return new DefaultParameterDescriptor<String>(
+            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,
+                                 VERSION.getName().getCode(),
+                                 DefaultParameterDescriptor.ALIAS_KEY,
+                                 VERSION.getAlias().iterator().next(),
+                                 DefaultParameterDescriptor.REMARKS_KEY,
+                                 VERSION.getRemarks()),
+            String.class,
+            values,
+            defaultValue,
+            null,
+            null,
+            null,
+            true);
+    }
+
+    /**
      * Server URL, Mandatory.
      */
-    public static final ParameterDescriptor<URL> URL =
-            new DefaultParameterDescriptor<URL>("url",
-                    new ResourceInternationalString("org/geotoolkit/client/bundle", "url"),
-                    URL.class,null,true);
+    public static final ParameterDescriptor<URL> URL = new ParameterBuilder()
+            .addName("url")
+            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "url"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "url_remarks"))
+            .setRequired(true)
+            .create(URL.class, null);
     /**
      * Security, Optional.
      */
-    public static final ParameterDescriptor<ClientSecurity> SECURITY =
-            new DefaultParameterDescriptor<ClientSecurity>("security",
-                    new ResourceInternationalString("org/geotoolkit/client/bundle", "security"),
-                    ClientSecurity.class,null,false);
+    public static final ParameterDescriptor<ClientSecurity> SECURITY = new ParameterBuilder()
+            .addName("security")
+            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "security"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "security_remarks"))
+            .setRequired(false)
+            .create(ClientSecurity.class, null);
 
     /**
      * Cache images in memory, Optional.
      */
-    public static final ParameterDescriptor<Boolean> IMAGE_CACHE =
-            new DefaultParameterDescriptor<Boolean>("imagecache",
-                    new ResourceInternationalString("org/geotoolkit/client/bundle", "imageCache"),
-                    Boolean.class,false,false);
+    public static final ParameterDescriptor<Boolean> IMAGE_CACHE = new ParameterBuilder()
+            .addName("imagecache")
+            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "imageCache"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "imageCache_remarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.FALSE);
 
     /**
      * Cache images in memory, Optional.
      * Default value is 20.000 millisecond.
      */
-    public static final ParameterDescriptor<Integer> TIMEOUT =
-            new DefaultParameterDescriptor<Integer>("timeout",
-                    new ResourceInternationalString("org/geotoolkit/client/bundle", "timeout"),
-                    Integer.class,20000,false);
+    public static final ParameterDescriptor<Integer> TIMEOUT = new ParameterBuilder()
+            .addName("timeout")
+            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "timeout"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "timeout_remarks"))
+            .setRequired(false)
+            .create(Integer.class, 20000);
+
     /**
      * Use NIO when possible for queries, Optional.
      */
-    public static final ParameterDescriptor<Boolean> NIO_QUERIES =
-            new DefaultParameterDescriptor<Boolean>("nio",
-                    new ResourceInternationalString("org/geotoolkit/client/bundle", "nio"),
-                    Boolean.class,Boolean.FALSE,false);
+    public static final ParameterDescriptor<Boolean> NIO_QUERIES = new ParameterBuilder()
+            .addName("nio")
+            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "nio"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "nio_remarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.FALSE);
 
     /**
      * Default Implementation abuses the naming convention.

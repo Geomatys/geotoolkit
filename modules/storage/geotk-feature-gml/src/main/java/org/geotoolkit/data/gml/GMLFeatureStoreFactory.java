@@ -23,6 +23,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
@@ -63,32 +64,40 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
     /**
      * Open a folder of sparsed features
      */
-    public static final ParameterDescriptor<Boolean> SPARSE = createDescriptor("sparse",
-                    new ResourceInternationalString("org/geotoolkit/gml/bundle","paramSparseAlias"),
-                    new ResourceInternationalString("org/geotoolkit/gml/bundle","paramSparseRemarks"),
-                    Boolean.class,null,Boolean.FALSE,null,null,null,false);
+    public static final ParameterDescriptor<Boolean> SPARSE = new ParameterBuilder()
+            .addName("sparse")
+            .addName(new ResourceInternationalString("org/geotoolkit/gml/bundle", "paramSparseAlias"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/gml/bundle", "paramSparseRemarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.FALSE);
     
     /**
      * Open a store where gml files may not exist, in this case the given xsd is used
      * to list the possible types.
      */
-    public static final ParameterDescriptor<String> XSD = createDescriptor("xsd",
-                    new ResourceInternationalString("org/geotoolkit/gml/bundle","paramXSDAlias"),
-                    new ResourceInternationalString("org/geotoolkit/gml/bundle","paramXSDRemarks"),
-                    String.class,null,null,null,null,null,false);
+    public static final ParameterDescriptor<String> XSD = new ParameterBuilder()
+            .addName("xsd")
+            .addName(new ResourceInternationalString("org/geotoolkit/gml/bundle", "paramXSDAlias"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/gml/bundle", "paramXSDRemarks"))
+            .setRequired(false)
+            .create(String.class, null);
 
     /**
      * Name of the feature type to use in the XSD.
      */
-    public static final ParameterDescriptor<String> XSD_TYPE_NAME = createDescriptor("xsdtypename",
-                    new ResourceInternationalString("org/geotoolkit/gml/bundle","paramXSDTypeNameAlias"),
-                    new ResourceInternationalString("org/geotoolkit/gml/bundle","paramXSDTypeNameRemarks"),
-                    String.class,null,null,null,null,null,false);
+    public static final ParameterDescriptor<String> XSD_TYPE_NAME = new ParameterBuilder()
+            .addName("xsdtypename")
+            .addName(new ResourceInternationalString("org/geotoolkit/gml/bundle", "paramXSDTypeNameAlias"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/gml/bundle", "paramXSDTypeNameRemarks"))
+            .setRequired(false)
+            .create(String.class, null);
     
-    public static final ParameterDescriptor<Boolean> LONGITUDE_FIRST = createDescriptor("longitudeFirst",
-                    new ResourceInternationalString("org/geotoolkit/gml/bundle","longitudeFirstAlias"),
-                    new ResourceInternationalString("org/geotoolkit/gml/bundle","longitudeFirstRemarks"),
-                    Boolean.class,null,true,null,null,null,false);
+    public static final ParameterDescriptor<Boolean> LONGITUDE_FIRST = new ParameterBuilder()
+            .addName("longitudeFirst")
+            .addName(new ResourceInternationalString("org/geotoolkit/gml/bundle", "longitudeFirstAlias"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/gml/bundle", "longitudeFirstRemarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.TRUE);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("GMLParameters",

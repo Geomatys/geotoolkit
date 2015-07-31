@@ -18,20 +18,18 @@
 package org.geotoolkit.data.wfs;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.client.AbstractClientFactory;
+import static org.geotoolkit.client.AbstractClientFactory.createVersionDescriptor;
 import org.geotoolkit.client.FeatureClientFactory;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -67,34 +65,31 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
      */
     public static final ParameterDescriptor<String> VERSION;
     static{
-        final String code = "version";
-        final CharSequence remarks = AbstractClientFactory.I18N_VERSION;
-        final Map<String,Object> params = new HashMap<String, Object>();
-        params.put(DefaultParameterDescriptor.NAME_KEY, code);
-        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
-        final List<String> validValues =  new ArrayList<String>();
-        for(WFSVersion version : WFSVersion.values()){
-            validValues.add(version.getCode());
+        final WFSVersion[] values = WFSVersion.values();
+        final String[] validValues =  new String[values.length];
+        for(int i=0;i<values.length;i++){
+            validValues[i] = values[i].getCode();
         }
-
-        VERSION = new DefaultParameterDescriptor<String>(params, String.class,
-                validValues.toArray(new String[validValues.size()]),
-                WFSVersion.v110.getCode(), null, null, null, true);
+        VERSION = createVersionDescriptor(validValues, WFSVersion.v110.getCode());
     }
     /**
      * Optional -post request
      */
-    public static final ParameterDescriptor<Boolean> POST_REQUEST =
-            new DefaultParameterDescriptor<Boolean>("post",
-                    new ResourceInternationalString("org/geotoolkit/wfs/bundle", "post"),
-                    Boolean.class,false,false);
+    public static final ParameterDescriptor<Boolean> POST_REQUEST = new ParameterBuilder()
+            .addName("post")
+            .addName(new ResourceInternationalString("org/geotoolkit/wfs/bundle", "post"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/wfs/bundle", "post_remarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.FALSE);
     /**
      * Optional use true CRS axis ordering.
      */
-    public static final ParameterDescriptor<Boolean> LONGITUDE_FIRST =
-            new DefaultParameterDescriptor<Boolean>("longitudeFirst",
-                    new ResourceInternationalString("org/geotoolkit/wfs/bundle", "longitudeFirst"),
-                    Boolean.class,false,false);
+    public static final ParameterDescriptor<Boolean> LONGITUDE_FIRST = new ParameterBuilder()
+            .addName("longitudeFirst")
+            .addName(new ResourceInternationalString("org/geotoolkit/wfs/bundle", "longitudeFirst"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/wfs/bundle", "longitudeFirst_remarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.FALSE);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("WFSParameters",

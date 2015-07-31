@@ -236,17 +236,20 @@ public class FXParameterGroupPane extends BorderPane {
     }
 
     private String getTitle(final GeneralParameterDescriptor parameter) {
-        Collection<GenericName> alias = parameter.getAlias();
-        if (alias != null && !alias.isEmpty()) {
-            return alias.iterator().next().tip().toInternationalString().toString();
-        } else {
-            Identifier name = parameter.getName();
-            if (name.getDescription() == null) {
-                return name.getCode();
-            } else {
-                return name.getDescription().toString();
-            }
+        //get name from alias
+        String name = null;
+        final Collection<GenericName> aliases = parameter.getAlias();
+        if(!aliases.isEmpty()){
+            final GenericName alias = aliases.iterator().next();
+            name = alias.toInternationalString().toString();
         }
+
+        //use code if not defined
+        if(name == null){
+            name = parameter.getName().getCode();
+        }
+
+        return name;
     }
 
     protected DescriptorPanel getOrCreateDescriptorPanel(final GeneralParameterDescriptor descriptor) {

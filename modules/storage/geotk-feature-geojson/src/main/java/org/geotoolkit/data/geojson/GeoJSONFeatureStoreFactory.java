@@ -24,7 +24,6 @@ import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FileFeatureStoreFactory;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -33,6 +32,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.util.Collections;
+import org.apache.sis.parameter.ParameterBuilder;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -60,8 +60,12 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
     /**
      * Optional
      */
-    public static final ParameterDescriptor<Integer> COORDINATE_ACCURACY =
-            new DefaultParameterDescriptor("coordinate_accuracy","Number of decimal (default 7).",Integer.class,7,false);
+    public static final ParameterDescriptor<Integer> COORDINATE_ACCURACY = new ParameterBuilder()
+            .addName("coordinate_accuracy")
+            .addName(new ResourceInternationalString("org/geotoolkit/geojson/bundle", "coordinate_accuracy"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/geojson/bundle", "coordinate_accuracy_remarks"))
+            .setRequired(false)
+            .create(Integer.class, 7);
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =

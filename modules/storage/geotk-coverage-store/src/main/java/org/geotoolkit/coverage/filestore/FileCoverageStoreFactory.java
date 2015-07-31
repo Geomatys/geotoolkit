@@ -19,9 +19,7 @@ package org.geotoolkit.coverage.filestore;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import javax.imageio.ImageIO;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
@@ -30,7 +28,7 @@ import org.geotoolkit.storage.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -64,8 +62,12 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
     /**
      * Mandatory - the folder path
      */
-    public static final ParameterDescriptor<URL> PATH =
-            new DefaultParameterDescriptor<>("path", new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageFileDescription-path"), URL.class, null, true);
+    public static final ParameterDescriptor<URL> PATH = new ParameterBuilder()
+            .addName("path")
+            .addName(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "path"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "path_remarks"))
+            .setRequired(true)
+            .create(URL.class, null);
 
     /**
      * Mandatory - the image reader type.
@@ -73,25 +75,24 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
      */
     public static final ParameterDescriptor<String> TYPE;
     static{
-        final String code = "type";
-        final ResourceInternationalString remarks = new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageFileDescription-type");
-        final Map<String,Object> params = new HashMap<>();
-        params.put(DefaultParameterDescriptor.NAME_KEY, code);
-        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
         final LinkedList<String> validValues = new LinkedList<>(getReaderTypeList());
         validValues.add("AUTO");
         Collections.sort(validValues);
 
-        TYPE = new DefaultParameterDescriptor<>(params, String.class,
-                validValues.toArray(new String[validValues.size()]),
-                "AUTO", null, null, null, true);
+        TYPE = new ParameterBuilder()
+            .addName("type")
+            .addName(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "type"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "type_remarks"))
+            .setRequired(true)
+            .createEnumerated(String.class, validValues.toArray(new String[validValues.size()]), "AUTO");
     }
 
-    public static final DefaultParameterDescriptor<String> PATH_SEPARATOR =
-            new DefaultParameterDescriptor<>(
-                    "pathSeparator",
-                    new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageFileDescription-pathSeparator"),
-                    String.class, null, false);
+    public static final ParameterDescriptor<String> PATH_SEPARATOR = new ParameterBuilder()
+            .addName("pathSeparator")
+            .addName(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "pathSeparator"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "pathSeparator_remarks"))
+            .setRequired(false)
+            .create(String.class, null);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("FileCoverageStoreParameters",

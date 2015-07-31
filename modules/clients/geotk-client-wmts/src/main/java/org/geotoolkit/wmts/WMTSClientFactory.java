@@ -17,10 +17,7 @@
 package org.geotoolkit.wmts;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -32,7 +29,6 @@ import org.geotoolkit.client.CoverageClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -68,19 +64,12 @@ public class WMTSClientFactory extends AbstractClientFactory implements Coverage
      */
     public static final ParameterDescriptor<String> VERSION;
     static{
-        final String code = "version";
-        final CharSequence remarks = I18N_VERSION;
-        final Map<String,Object> params = new HashMap<String, Object>();
-        params.put(DefaultParameterDescriptor.NAME_KEY, code);
-        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
-        final List<String> validValues =  new ArrayList<String>();
-        for(WMTSVersion version : WMTSVersion.values()){
-            validValues.add(version.getCode());
+        final WMTSVersion[] values = WMTSVersion.values();
+        final String[] validValues =  new String[values.length];
+        for(int i=0;i<values.length;i++){
+            validValues[i] = values[i].getCode();
         }
-
-        VERSION = new DefaultParameterDescriptor<String>(params, String.class,
-                validValues.toArray(new String[validValues.size()]),
-                WMTSVersion.v100.getCode(), null, null, null, true);
+        VERSION = createVersionDescriptor(validValues, WMTSVersion.v100.getCode());
     }
 
 

@@ -27,11 +27,9 @@ import static org.geotoolkit.data.AbstractFeatureStoreFactory.createFixedIdentif
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import static org.geotoolkit.db.AbstractJDBCFeatureStoreFactory.DATABASE;
 import static org.geotoolkit.db.AbstractJDBCFeatureStoreFactory.HOST;
-import static org.geotoolkit.db.AbstractJDBCFeatureStoreFactory.PORT;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
 import org.geotoolkit.db.dialect.SQLDialect;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -64,8 +62,7 @@ public class OracleFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory{
     /**
      * Parameter for database port.
      */
-    public static final ParameterDescriptor<Integer> PORT =
-             new DefaultParameterDescriptor<Integer>("port","Port",Integer.class,1521,true);
+    public static final ParameterDescriptor<Integer> PORT = createFixedPort(1521);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("OracleParameters",

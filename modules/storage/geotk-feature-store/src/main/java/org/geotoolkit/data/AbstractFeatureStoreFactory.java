@@ -26,11 +26,11 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import javax.measure.unit.Unit;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.util.collection.MapUtilities;
@@ -44,7 +44,6 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.IdentifiedObject;
 
 /**
  * Abstract FeatureStoreFactory.
@@ -70,19 +69,23 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
      * Identifier, Mandatory.
      * Subclasses should redeclared this parameter with a different default value.
      */
-    public static final ParameterDescriptor<String> IDENTIFIER = createDescriptor("identifier",
-                    new ResourceInternationalString(BUNDLE_PATH,"paramIdentifierAlias"),
-                    new ResourceInternationalString(BUNDLE_PATH,"paramIdentifierRemarks"),
-                    String.class,null,null,null,null,null,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
+            .addName("identifier")
+            .addName(new ResourceInternationalString(BUNDLE_PATH, "paramIdentifierAlias"))
+            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "paramIdentifierRemarks"))
+            .setRequired(true)
+            .create(String.class, null);
 
     /**
      * Namespace, Optional.
      * Default namespace used for feature type.
      */
-    public static final ParameterDescriptor<String> NAMESPACE = createDescriptor("namespace",
-                    new ResourceInternationalString(BUNDLE_PATH,"paramNamespaceAlias"),
-                    new ResourceInternationalString(BUNDLE_PATH,"paramNamespaceRemarks"),
-                    String.class,null,null,null,null,null,false);
+    public static final ParameterDescriptor<String> NAMESPACE = new ParameterBuilder()
+            .addName("namespace")
+            .addName(new ResourceInternationalString(BUNDLE_PATH, "paramNamespaceAlias"))
+            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "paramNamespaceRemarks"))
+            .setRequired(false)
+            .create(String.class, null);
 
     /**
      * {@inheritDoc }
@@ -277,6 +280,8 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
             return new DefaultParameterDescriptor<String>(
             MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,
                                  IDENTIFIER.getName().getCode(),
+                                 DefaultParameterDescriptor.ALIAS_KEY,
+                                 IDENTIFIER.getAlias().iterator().next(),
                                  DefaultParameterDescriptor.REMARKS_KEY,
                                  AbstractFeatureStoreFactory.IDENTIFIER.getRemarks()),
             String.class,
@@ -286,21 +291,6 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
             null,
             null,
             true);
-    }
-
-    /**
-     * Convenient method to open a parameter descriptor with an additional alias.
-     */
-    protected static <T> ParameterDescriptor<T> createDescriptor(final String name,
-            final CharSequence alias, final CharSequence remarks, final Class<T> clazz,
-            final T[] possibleValues, final T defaultValue, final Comparable<T> min,
-            final Comparable<T> max, final Unit unit, final boolean requiered){
-        final Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(IdentifiedObject.NAME_KEY, name);
-        properties.put(IdentifiedObject.ALIAS_KEY, alias);
-        properties.put(IdentifiedObject.REMARKS_KEY, remarks);
-        return new DefaultParameterDescriptor(properties, clazz,
-                possibleValues, defaultValue, min, max, unit, requiered);
     }
 
 }

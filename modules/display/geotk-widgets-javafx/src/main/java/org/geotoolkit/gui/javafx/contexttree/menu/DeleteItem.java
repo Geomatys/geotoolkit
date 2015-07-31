@@ -19,15 +19,9 @@ package org.geotoolkit.gui.javafx.contexttree.menu;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import org.geotoolkit.font.FontAwesomeIcons;
-import org.geotoolkit.font.IconBuilder;
-import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.MapItem;
 
@@ -36,10 +30,7 @@ import org.geotoolkit.map.MapItem;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DeleteItem extends TreeMenuItem{
-
-    private static final Image ICON = SwingFXUtils.toFXImage(
-            IconBuilder.createImage(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR), null);
+public class DeleteItem extends ActionMenuItem{
     
     private List<WeakReference<TreeItem>> itemRefs;
 
@@ -47,30 +38,7 @@ public class DeleteItem extends TreeMenuItem{
      * delete item for contexttree
      */
     public DeleteItem(){
-        menuItem = new MenuItem(GeotkFX.getString(this,"delete"));
-        menuItem.setGraphic(new ImageView(ICON));
-
-        menuItem.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
-
-            @Override
-            public void handle(javafx.event.ActionEvent event) {
-                if(itemRefs == null) return;
-                new Thread(){
-                    @Override
-                    public void run() {
-                        for(WeakReference<TreeItem> itemRef : itemRefs){
-                            TreeItem path = itemRef.get();
-                            if(path == null) continue;
-                            if(path.getParent() == null) continue;
-                            final MapItem parent = (MapItem) path.getParent().getValue();
-                            final MapItem candidate = (MapItem) path.getValue();
-                            parent.items().remove(candidate);
-                        }
-                    }
-                }.start();
-                
-            }
-        });
+        super(GeotkFX.getString(DeleteItem.class,"delete"), GeotkFX.ICON_DELETE);
     }
 
     @Override
@@ -89,6 +57,24 @@ public class DeleteItem extends TreeMenuItem{
         if(itemRefs.isEmpty()) return null;
         
         return menuItem;
+    }
+
+    @Override
+    protected void handle(ActionEvent event) {
+        if(itemRefs == null) return;
+        new Thread(){
+            @Override
+            public void run() {
+                for(WeakReference<TreeItem> itemRef : itemRefs){
+                    TreeItem path = itemRef.get();
+                    if(path == null) continue;
+                    if(path.getParent() == null) continue;
+                    final MapItem parent = (MapItem) path.getParent().getValue();
+                    final MapItem candidate = (MapItem) path.getValue();
+                    parent.items().remove(candidate);
+                }
+            }
+        }.start();
     }
 
 }

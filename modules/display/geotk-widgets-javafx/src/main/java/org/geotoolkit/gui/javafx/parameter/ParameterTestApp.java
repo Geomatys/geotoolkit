@@ -2,6 +2,7 @@
 package org.geotoolkit.gui.javafx.parameter;
 
 import java.nio.file.Path;
+import java.util.Locale;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.scene.Parent;
@@ -11,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.measure.unit.SI;
 import org.apache.sis.parameter.ParameterBuilder;
+import org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -22,6 +24,7 @@ public class ParameterTestApp extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Locale.setDefault(Locale.FRENCH);
         final Stage stage = new Stage();
         stage.setScene(new Scene(testParameterGroupPane()));
         stage.setWidth(600);
@@ -62,7 +65,7 @@ public class ParameterTestApp extends Application {
                 builder.addName("last").setRemarks("The last parameter.").setRequired(false).create(String.class, null)
         ).createValue();
         
-        final ScrollPane scrollPane = new ScrollPane(new FXParameterGroupPane(editGroup));
+        final ScrollPane scrollPane = new ScrollPane(new FXParameterGroupPane(PGCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue()));
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         return scrollPane;

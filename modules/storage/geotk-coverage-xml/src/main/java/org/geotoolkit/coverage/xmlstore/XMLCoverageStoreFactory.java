@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@ import org.geotoolkit.storage.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -48,6 +49,7 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
     /** factory identification **/
     public static final String NAME = "coverage-xml-pyramid";
     public static final DefaultServiceIdentification IDENTIFICATION;
+    private static final String BUNDLE_PATH = "org/geotoolkit/coverage/xmlstore/bundle";
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
         final Identifier id = new DefaultIdentifier(NAME);
@@ -61,23 +63,25 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
     /**
      * Mandatory - the folder path
      */
-    public static final ParameterDescriptor<URL> PATH;
+    public static final ParameterDescriptor<URL> PATH = new ParameterBuilder()
+            .addName("path")
+            .addName(new ResourceInternationalString(BUNDLE_PATH, "coverageXMLPath"))
+            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "coverageXMLPathRemarks"))
+            .setRequired(true)
+            .create(URL.class, null);
     /**
      * A parameter to specify if tile states will be checked using descriptor file (default) or not.
      */
-    public static final ParameterDescriptor<Boolean> CACHE_TILE_STATE;
+    public static final ParameterDescriptor<Boolean> CACHE_TILE_STATE = new ParameterBuilder()
+            .addName("cacheTileState")
+            .addName(new ResourceInternationalString(BUNDLE_PATH, "coverageXMLTileState"))
+            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "coverageXMLTileStateRemarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.FALSE);
 
-    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR;
-    static {
-        ParameterBuilder builder = new ParameterBuilder();
-        PATH = builder.addName("path")
-                .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/xmlstore/bundle", "coverageXMLPathRemarks"))
-                .setRequired(true).create(URL.class, null);
-        CACHE_TILE_STATE = builder.addName("cacheTileState")
-                .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/xmlstore/bundle", "coverageXMLTileStateRemarks"))
-                .setRequired(false).create(Boolean.class, false);
-        PARAMETERS_DESCRIPTOR = builder.addName("XMLCoverageStoreParameters").createGroup(IDENTIFIER, PATH, NAMESPACE, CACHE_TILE_STATE);
-    }
+    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
+            new DefaultParameterDescriptorGroup("XMLCoverageStoreParameters",
+                IDENTIFIER, PATH, NAMESPACE, CACHE_TILE_STATE);
 
     @Override
     public Identification getIdentification() {

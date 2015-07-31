@@ -20,6 +20,7 @@ package org.geotoolkit.data;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.parameter.ParameterDescriptor;
@@ -35,10 +36,12 @@ public abstract class AbstractFileFeatureStoreFactory extends AbstractFeatureSto
     /**
      * url to the file.
      */
-    public static final ParameterDescriptor<URL> URLP = createDescriptor("url",
-                    new ResourceInternationalString("org/geotoolkit/data/bundle","paramURLAlias"),
-                    new ResourceInternationalString("org/geotoolkit/data/bundle","paramURLRemarks"),
-                    URL.class,null,null,null,null,null,true);
+    public static final ParameterDescriptor<URL> URLP = new ParameterBuilder()
+            .addName("url")
+            .addName(new ResourceInternationalString("org/geotoolkit/data/bundle", "paramURLAlias"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/data/bundle", "paramURLRemarks"))
+            .setRequired(true)
+            .create(URL.class, null);
 
     /**
      * {@inheritDoc }

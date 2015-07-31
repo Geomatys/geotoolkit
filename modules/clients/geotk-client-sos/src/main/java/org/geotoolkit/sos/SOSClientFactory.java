@@ -16,17 +16,12 @@
  */
 package org.geotoolkit.sos;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.Client;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.sos.xml.SOSVersion;
 import org.apache.sis.storage.DataStoreException;
@@ -61,19 +56,12 @@ public class SOSClientFactory extends AbstractClientFactory{
      */
     public static final ParameterDescriptor<String> VERSION;
     static{
-        final String code = "version";
-        final CharSequence remarks = I18N_VERSION;
-        final Map<String,Object> params = new HashMap<String, Object>();
-        params.put(DefaultParameterDescriptor.NAME_KEY, code);
-        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
-        final List<String> validValues =  new ArrayList<String>();
-        for(SOSVersion version : SOSVersion.values()){
-            validValues.add(version.getCode());
+        final SOSVersion[] values = SOSVersion.values();
+        final String[] validValues =  new String[values.length];
+        for(int i=0;i<values.length;i++){
+            validValues[i] = values[i].getCode();
         }
-
-        VERSION = new DefaultParameterDescriptor<String>(params, String.class,
-                validValues.toArray(new String[validValues.size()]),
-                SOSVersion.v100.getCode(), null, null, null, true);
+        VERSION = createVersionDescriptor(validValues, SOSVersion.v100.getCode());
     }
 
     public static final ParameterDescriptorGroup PARAMETERS =

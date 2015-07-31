@@ -23,7 +23,6 @@ import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.util.iso.ResourceInternationalString;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
@@ -61,8 +60,7 @@ public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
     /**
      * Parameter for database port
      */
-    public static final ParameterDescriptor<Integer> PORT =
-             new DefaultParameterDescriptor<>("port","Port",Integer.class,3306,true);
+    public static final ParameterDescriptor<Integer> PORT = createFixedPort(3306);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("MySQLParameters",

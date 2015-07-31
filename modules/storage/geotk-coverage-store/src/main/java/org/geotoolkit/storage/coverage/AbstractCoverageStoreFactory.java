@@ -17,12 +17,14 @@
 package org.geotoolkit.storage.coverage;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
@@ -42,13 +44,26 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public abstract class AbstractCoverageStoreFactory extends Factory implements CoverageStoreFactory {
 
+    private static final String BUNDLE_PATH = "org/geotoolkit/coverage/bundle";
+
     /**
      * Identifier, Mandatory.
      * Subclasses should redeclared this parameter with a different default value.
      */
-    public static final ParameterDescriptor<String> IDENTIFIER =
-            new DefaultParameterDescriptor<String>("identifier", new ResourceInternationalString("org/geotoolkit/coverage/bundle", "identifier-property"), String.class, null, true);
+    public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
+            .addName("identifier")
+            .addName(new ResourceInternationalString(BUNDLE_PATH, "paramIdentifierAlias"))
+            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "paramIdentifierRemarks"))
+            .setRequired(true)
+            .create(String.class, null);
 
+    /** parameter for namespace of the coveragestore */
+    public static final ParameterDescriptor<String> NAMESPACE = new ParameterBuilder()
+            .addName("namespace")
+            .addName(new ResourceInternationalString(BUNDLE_PATH, "paramNamespaceAlias"))
+            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "paramNamespaceRemarks"))
+            .setRequired(false)
+            .create(String.class, null);
     /**
      * Create the identifier descriptor, and set only one valid value, the one in parameter.
      * 
@@ -59,12 +74,14 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
      */
     public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
             return new DefaultParameterDescriptor<String>(
-            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,             
-                                 IDENTIFIER.getName().getCode(), 
-                                 DefaultParameterDescriptor.REMARKS_KEY, 
-                                 AbstractCoverageStoreFactory.IDENTIFIER.getRemarks()),
-            String.class, 
-            new String[]{idValue}, 
+            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,
+                                 IDENTIFIER.getName().getCode(),
+                                 DefaultParameterDescriptor.ALIAS_KEY,
+                                 IDENTIFIER.getAlias().iterator().next(),
+                                 DefaultParameterDescriptor.REMARKS_KEY,
+                                 IDENTIFIER.getRemarks()),
+            String.class,
+            new String[]{idValue},
             idValue,
             null,
             null,
@@ -72,11 +89,6 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
             true);
     }
             
-    /** parameter for namespace of the coveragestore */
-    public static final ParameterDescriptor<String> NAMESPACE =
-             new DefaultParameterDescriptor<String>("namespace", new ResourceInternationalString("org/geotoolkit/coverage/bundle", "namespace-description") ,String.class,null,false);
-
-
     /** Default Implementation abuses the naming convention.
      * <p>
      * Will return <code>Foo</code> for

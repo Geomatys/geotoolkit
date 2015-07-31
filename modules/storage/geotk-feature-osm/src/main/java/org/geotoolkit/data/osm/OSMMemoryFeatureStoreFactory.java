@@ -20,14 +20,12 @@ package org.geotoolkit.data.osm;
 import java.net.URL;
 
 import java.util.Collections;
-import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.iso.ResourceInternationalString;

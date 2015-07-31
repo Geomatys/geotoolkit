@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2010, Geomatys
+ *    (C) 2009-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,6 @@ import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
@@ -45,8 +44,8 @@ import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.ResourceInternationalString;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -96,26 +95,42 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
     /**
      * Optional - enable/disable the use of memory-mapped io
      */
-    public static final ParameterDescriptor<Boolean> MEMORY_MAPPED =
-            new DefaultParameterDescriptor("memory mapped buffer","enable/disable the use of memory-mapped io",Boolean.class,null,false);
+    public static final ParameterDescriptor<Boolean> MEMORY_MAPPED = new ParameterBuilder()
+            .addName("memory mapped buffer")
+            .addName(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "memory mapped buffer"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "memory mapped buffer_remarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.FALSE);
 
     /**
      * Optional - Enable/disable the automatic creation of spatial index
      */
-    public static final ParameterDescriptor<Boolean> CREATE_SPATIAL_INDEX =
-            new DefaultParameterDescriptor("create spatial index","enable/disable the automatic creation of spatial index",Boolean.class,null,false);
+    public static final ParameterDescriptor<Boolean> CREATE_SPATIAL_INDEX = new ParameterBuilder()
+            .addName("create spatial index")
+            .addName(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "create spatial index"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "create spatial index_remarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.TRUE);
 
     /**
      * Optional - character used to decode strings from the DBF file
      */
-    public static final ParameterDescriptor<Charset> DBFCHARSET =
-            new DefaultParameterDescriptor("charset","character used to decode strings from the DBF file",Charset.class,Charset.forName("ISO-8859-1"),false);
+    public static final ParameterDescriptor<Charset> DBFCHARSET = new ParameterBuilder()
+            .addName("charset")
+            .addName(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "charset"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "charset_remarks"))
+            .setRequired(false)
+            .create(Charset.class, Charset.forName("ISO-8859-1"));
 
     /**
      * Optional - load in memory the quadtree if exist.
      */
-    public static final ParameterDescriptor<Boolean> LOAD_QIX =
-            new DefaultParameterDescriptor("load qix","Load in memory the quadtree if exist.",Boolean.class,Boolean.FALSE,false);
+    public static final ParameterDescriptor<Boolean> LOAD_QIX = new ParameterBuilder()
+            .addName("load qix")
+            .addName(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "load qix"))
+            .setRemarks(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "load qix_remarks"))
+            .setRequired(false)
+            .create(Boolean.class, Boolean.FALSE);
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
