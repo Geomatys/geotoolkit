@@ -22,6 +22,7 @@ import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getFilter
 import org.geotoolkit.gui.javafx.util.FXNumberSpinner;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
 
 /**
  *
@@ -55,7 +56,7 @@ public class FXNumberExpression extends FXExpression {
 
     @Override
     protected boolean canHandle(Expression exp) {
-        if(exp==null) return false;
+        if(!(exp instanceof Literal)) return false;
         try{
             final Number n = (Number) exp.evaluate(exp, (Class)uiNumber.getSpinner().getValueFactory().getValue().getClass());
             if(n!=null){

@@ -24,6 +24,7 @@ import javafx.scene.control.ColorPicker;
 import org.geotoolkit.gui.javafx.util.FXUtilities;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
 
 /**
  *
@@ -55,6 +56,7 @@ public class FXColorExpression extends FXExpression {
     
     @Override
     protected boolean canHandle(Expression exp) {
+        if(!(exp instanceof Literal)) return false;
         final Color color = exp.evaluate(null,Color.class);
         if(color!=null){
             uiPicker.setValue(FXUtilities.toFxColor(color));
