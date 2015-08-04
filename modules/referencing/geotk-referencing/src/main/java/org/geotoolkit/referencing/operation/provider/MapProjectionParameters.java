@@ -122,14 +122,6 @@ final class MapProjectionParameters extends ParameterGroup {
         }
 
         /**
-         * Returns the semi-major parameter, which is needed by this parameter value for
-         * computing the semi-minor parameter.
-         */
-        private AbstractParameterValue<?> semiMajor() {
-            return (AbstractParameterValue<?>) parameter("semi_major");
-        }
-
-        /**
          * Invoked when the parameter value is requested. Unconditionally computes the inverse
          * flattening from the ellipsoid axis lengths. Note that the result will be slightly
          * different than the specified value because of rounding errors.
@@ -154,13 +146,18 @@ final class MapProjectionParameters extends ParameterGroup {
         public void setValue(final double value, final Unit<?> unit) {
             final boolean wasNull = Double.isNaN(super.doubleValue());
             super.setValue(value, unit); // Perform argument check.
+            final ParameterValue<?> semiMajor = parameter("semi_major");
             if (Double.isNaN(value)) {
                 if (!wasNull) {
-                    semiMajor().removeChangeListener(this);
+                    if (semiMajor instanceof AbstractParameterValue<?>) {
+                        ((AbstractParameterValue<?>) semiMajor).removeChangeListener(this);
+                    }
                 }
             } else {
                 if (wasNull) {
-                    semiMajor().addChangeListener(this);
+                    if (semiMajor instanceof AbstractParameterValue<?>) {
+                        ((AbstractParameterValue<?>) semiMajor).addChangeListener(this);
+                    }
                 }
                 update(value);
             }
