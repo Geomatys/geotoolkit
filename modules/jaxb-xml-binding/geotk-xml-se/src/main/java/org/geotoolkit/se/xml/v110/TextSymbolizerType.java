@@ -60,8 +60,9 @@ public class TextSymbolizerType
     extends SymbolizerType
 {
 
+    //NOTE : we support more large types of expressions, not only PropertyName
     @XmlElement(name = "Geometry")
-    protected GeometryType geometry;
+    protected ParameterValueType geometry;
     @XmlElement(name = "Label")
     protected ParameterValueType label;
     @XmlElement(name = "Font")
@@ -81,7 +82,7 @@ public class TextSymbolizerType
      *     {@link GeometryType }
      *     
      */
-    public GeometryType getGeometry() {
+    public ParameterValueType getGeometry() {
         return geometry;
     }
 
@@ -93,7 +94,7 @@ public class TextSymbolizerType
      *     {@link GeometryType }
      *     
      */
-    public void setGeometry(final GeometryType value) {
+    public void setGeometry(final ParameterValueType value) {
         this.geometry = value;
     }
 

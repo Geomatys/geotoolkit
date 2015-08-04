@@ -124,6 +124,7 @@ import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.util.FactoryException;
 import org.opengis.style.AnchorPoint;
@@ -399,6 +400,18 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         return result;
     }
 
+    /**
+     * If expression is an empty property name, null is returned.
+     * @param exp
+     * @return
+     */
+    private static Expression notEmpty(Expression exp){
+        if(exp instanceof PropertyName && ((PropertyName)exp).getPropertyName().trim().isEmpty()){
+            return null;
+        }
+        return exp;
+    }
+
 
     //Style, FTS and Rule-------------------------------------------------------
 
@@ -644,7 +657,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 
         final Graphic graphic = (pst.getGraphic() == null) ? styleFactory.graphic() : visit(pst.getGraphic());
         final Unit uom = visitUOM(pst.getUom());
-        final String geom = visitGeom( pst.getGeometry());
+        final Expression geom = notEmpty(visitExpression(pst.getGeometry()));
         final String name = pst.getName();
         final Description desc = visitDescription(pst.getDescription());
 
@@ -660,7 +673,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         final Stroke stroke = visit(lst.getStroke());
         final Expression offset = (lst.getPerpendicularOffset() == null) ? filterFactory.literal(0) : visitExpression(lst.getPerpendicularOffset());
         final Unit uom = visitUOM(lst.getUom());
-        final String geom = visitGeom( lst.getGeometry());
+        final Expression geom = notEmpty(visitExpression( lst.getGeometry()));
         final String name = lst.getName();
         final Description desc = visitDescription(lst.getDescription());
 
@@ -678,7 +691,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         final Displacement disp = (pst.getDisplacement() == null)? styleFactory.displacement(0, 0) : visit(pst.getDisplacement());
         final Expression offset = (pst.getPerpendicularOffset() == null) ? filterFactory.literal(0) : visitExpression(pst.getPerpendicularOffset());
         final Unit uom = visitUOM(pst.getUom());
-        final String geom = visitGeom( pst.getGeometry());
+        final Expression geom = notEmpty(visitExpression( pst.getGeometry()));
         final String name = pst.getName();
         final Description desc = visitDescription(pst.getDescription());
 
@@ -699,7 +712,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         final ShadedRelief relief = visit(rst.getShadedRelief());
         final Symbolizer outline = visit(rst.getImageOutline());
         final Unit uom = visitUOM(rst.getUom());
-        final String geom = visitGeom( rst.getGeometry());
+        final Expression geom = notEmpty(visitExpression( rst.getGeometry()));
         final String name = rst.getName();
         final Description desc = visitDescription(rst.getDescription());
 
@@ -718,7 +731,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         final Halo halo = (tst.getHalo() == null)? styleFactory.halo(Color.WHITE, 0) : visit(tst.getHalo());
         final Fill fill = (tst.getFill() == null)? styleFactory.fill() : visit(tst.getFill());
         final Unit uom = visitUOM(tst.getUom());
-        final String geom = visitGeom( tst.getGeometry());
+        final Expression geom = notEmpty(visitExpression( tst.getGeometry()));
         final String name = tst.getName();
         final Description desc = visitDescription(tst.getDescription());
 

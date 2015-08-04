@@ -373,7 +373,8 @@ public class GTtoSE110Transformer implements StyleVisitor {
      * Transform a GT Expression in a jaxb parameter value type.
      */
     public ParameterValueType visitExpression(final Expression exp) {
-
+        if(exp==null) return null;
+        
         final JAXBElement<?> ele = extract(exp);
         if (ele == null) {
             return null;
@@ -1069,7 +1070,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
         pst.setName(point.getName());
         pst.setDescription(visit(point.getDescription(), null));
         pst.setUom(visitUOM(point.getUnitOfMeasure()));
-        pst.setGeometry(visitGeometryType(point.getGeometryPropertyName()));
+        pst.setGeometry(visitExpression(point.getGeometry()));
 
         if (point.getGraphic() != null) {
             pst.setGraphic(visit(point.getGraphic(), null));
@@ -1086,7 +1087,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
         lst.setName(line.getName());
         lst.setDescription(visit(line.getDescription(), null));
         lst.setUom(visitUOM(line.getUnitOfMeasure()));
-        lst.setGeometry(visitGeometryType(line.getGeometryPropertyName()));
+        lst.setGeometry(visitExpression(line.getGeometry()));
 
         if (line.getStroke() != null) {
             lst.setStroke(visit(line.getStroke(), null));
@@ -1104,7 +1105,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
         pst.setName(polygon.getName());
         pst.setDescription(visit(polygon.getDescription(), null));
         pst.setUom(visitUOM(polygon.getUnitOfMeasure()));
-        pst.setGeometry(visitGeometryType(polygon.getGeometryPropertyName()));
+        pst.setGeometry(visitExpression(polygon.getGeometry()));
 
         if (polygon.getDisplacement() != null) {
             pst.setDisplacement(visit(polygon.getDisplacement(), null));
@@ -1132,7 +1133,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
         tst.setName(text.getName());
         tst.setDescription(visit(text.getDescription(), null));
         tst.setUom(visitUOM(text.getUnitOfMeasure()));
-        tst.setGeometry(visitGeometryType(text.getGeometryPropertyName()));
+        tst.setGeometry(visitExpression(text.getGeometry()));
 
         if (text.getHalo() != null) {
             tst.setHalo(visit(text.getHalo(), null));
@@ -1164,7 +1165,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
         tst.setName(raster.getName());
         tst.setDescription(visit(raster.getDescription(), null));
         tst.setUom(visitUOM(raster.getUnitOfMeasure()));
-        tst.setGeometry(visitGeometryType(raster.getGeometryPropertyName()));
+        tst.setGeometry(visitExpression(raster.getGeometry()));
 
         if (raster.getChannelSelection() != null) {
             tst.setChannelSelection(visit(raster.getChannelSelection(), null));

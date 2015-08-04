@@ -64,8 +64,9 @@ public class RasterSymbolizerType
     extends SymbolizerType
 {
 
+    //NOTE : we support more large types of expressions, not only PropertyName
     @XmlElement(name = "Geometry")
-    protected GeometryType geometry;
+    protected ParameterValueType geometry;
     @XmlElement(name = "Opacity")
     protected ParameterValueType opacity;
     @XmlElement(name = "ChannelSelection")
@@ -89,7 +90,7 @@ public class RasterSymbolizerType
      *     {@link GeometryType }
      *     
      */
-    public GeometryType getGeometry() {
+    public ParameterValueType getGeometry() {
         return geometry;
     }
 
@@ -101,7 +102,7 @@ public class RasterSymbolizerType
      *     {@link GeometryType }
      *     
      */
-    public void setGeometry(final GeometryType value) {
+    public void setGeometry(final ParameterValueType value) {
         this.geometry = value;
     }
 

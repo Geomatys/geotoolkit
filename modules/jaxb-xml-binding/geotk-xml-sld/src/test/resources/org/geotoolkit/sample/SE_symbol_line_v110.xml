@@ -6,7 +6,7 @@
     xmlns:gml="http://www.opengis.net/gml"
     uom="http://www.opengeospatial.org/se/units/metre">
         
-    <se:Geometry><ogc:PropertyName></ogc:PropertyName></se:Geometry>
+    <se:Geometry><ogc:PropertyName>the_geom</ogc:PropertyName></se:Geometry>
     
     <se:Stroke>
         <se:SvgParameter name="stroke"><ogc:Literal>#FF0000</ogc:Literal></se:SvgParameter>

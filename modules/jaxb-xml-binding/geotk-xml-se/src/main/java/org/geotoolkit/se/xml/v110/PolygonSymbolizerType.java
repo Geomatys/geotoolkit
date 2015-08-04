@@ -58,8 +58,9 @@ public class PolygonSymbolizerType
     extends SymbolizerType
 {
 
+    //NOTE : we support more large types of expressions, not only PropertyName
     @XmlElement(name = "Geometry")
-    protected GeometryType geometry;
+    protected ParameterValueType geometry;
     @XmlElement(name = "Fill")
     protected FillType fill;
     @XmlElement(name = "Stroke")
@@ -77,7 +78,7 @@ public class PolygonSymbolizerType
      *     {@link GeometryType }
      *     
      */
-    public GeometryType getGeometry() {
+    public ParameterValueType getGeometry() {
         return geometry;
     }
 
@@ -89,7 +90,7 @@ public class PolygonSymbolizerType
      *     {@link GeometryType }
      *     
      */
-    public void setGeometry(final GeometryType value) {
+    public void setGeometry(final ParameterValueType value) {
         this.geometry = value;
     }
 

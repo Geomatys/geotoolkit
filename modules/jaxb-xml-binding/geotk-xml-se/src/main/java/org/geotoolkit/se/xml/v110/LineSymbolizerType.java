@@ -54,8 +54,9 @@ public class LineSymbolizerType
     extends SymbolizerType
 {
 
+    //NOTE : we support more large types of expressions, not only PropertyName
     @XmlElement(name = "Geometry")
-    protected GeometryType geometry;
+    protected ParameterValueType geometry;
     @XmlElement(name = "Stroke")
     protected StrokeType stroke;
     @XmlElement(name = "PerpendicularOffset")
@@ -69,7 +70,7 @@ public class LineSymbolizerType
      *     {@link GeometryType }
      *     
      */
-    public GeometryType getGeometry() {
+    public ParameterValueType getGeometry() {
         return geometry;
     }
 
@@ -81,7 +82,7 @@ public class LineSymbolizerType
      *     {@link GeometryType }
      *     
      */
-    public void setGeometry(final GeometryType value) {
+    public void setGeometry(final ParameterValueType value) {
         this.geometry = value;
     }
 
