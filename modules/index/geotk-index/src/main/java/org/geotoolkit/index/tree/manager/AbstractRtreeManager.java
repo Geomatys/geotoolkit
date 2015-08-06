@@ -56,19 +56,23 @@ public class AbstractRtreeManager {
 
     public static void close(final File directory, final Tree rTree, final Object owner) throws StoreIndexException, IOException {
         final List<Object> owners = TREE_OWNERS.get(directory);
-        owners.remove(owner);
+        if (owners != null) {
+            owners.remove(owner);
 
-        if (owners.isEmpty()) {
-            if (rTree != null) {
-                if (!rTree.isClosed()) {
-                    rTree.close();
-                    if (rTree.getTreeElementMapper() != null) {
-                        rTree.getTreeElementMapper().close();
+            if (owners.isEmpty()) {
+                if (rTree != null) {
+                    if (!rTree.isClosed()) {
+                        rTree.close();
+                        if (rTree.getTreeElementMapper() != null) {
+                            rTree.getTreeElementMapper().close();
+                        }
                     }
                 }
+            } else {
+                LOGGER.config("R-tree is used by another object. Not closing");
             }
         } else {
-            LOGGER.config("R-tree is used by another object. Not closing");
+            throw new StoreIndexException("Trying to close a R-Tree not managed by the RTreeManager system");
         }
     }
 
