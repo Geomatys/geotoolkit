@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.awt.image.renderable.ParameterBlock;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -64,7 +65,6 @@ import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.interpolation.Rescaler;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
@@ -91,7 +91,6 @@ import org.geotoolkit.image.BufferedImages;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
-import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -115,9 +114,18 @@ import org.opengis.style.ShadedRelief;
 import org.opengis.util.FactoryException;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.palette.PaletteFactory;
+import org.geotoolkit.internal.jdk8.JDK8;
 import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.processing.coverage.statistics.StatisticOp;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
+import org.geotoolkit.processing.image.dynamicrange.DynamicRangeStretchProcess;
+import org.geotoolkit.style.MutableStyleFactory;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+import static org.geotoolkit.style.StyleConstants.DEFAULT_FALLBACK;
+import org.geotoolkit.style.function.DefaultInterpolate;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.metadata.content.CoverageDescription;
@@ -131,22 +139,17 @@ import org.opengis.metadata.content.CoverageDescription;
  */
 public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedRasterSymbolizer>{
 
-    /**
-     * A tolerance value for black color. Used in {@linkplain #removeBlackBorder(java.awt.image.WritableRenderedImage)}
-     * to define an applet of black colors to replace with alpha data.
-     */
-    private static final int COLOR_TOLERANCE = 13;
+    
 
     /**
-     * Palette of black colors samples computed with {@link #COLOR_TOLERANCE}.
-     * Used in {@linkplain #removeBlackBorder(java.awt.image.WritableRenderedImage)}.
+     * Style factory object use to generate in some case to interpret raster with no associated style.
+     * 
+     * @see #applyColorMapStyle(CoverageReference, GridCoverage2D, RasterSymbolizer) 
      */
-    private static final double[][] BLACK_COLORS;
-    static {
-        List<double[]> blackColorsList = new ArrayList<>();
-        fillColorToleranceTable(0, 2, blackColorsList, new double[]{0, 0, 0, 255}, COLOR_TOLERANCE);
-        BLACK_COLORS = blackColorsList.toArray(new double[0][]);
-    }
+    public static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
+            new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
+    
+    
 
     public DefaultRasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){
         super(service,symbol,context);
@@ -284,6 +287,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @throws FactoryException if problem during apply shaded relief style.
      * @throws TransformException if problem during apply shaded relief style.
      * @throws PortrayalException if problem during apply contrast enhancement style.
+     * @throws java.io.IOException if problem during style application
      * @see #applyColorMapStyle(CoverageReference, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer)
      * @see #applyShadedRelief(java.awt.image.RenderedImage, org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.coverage.grid.GridCoverage2D, org.opengis.style.RasterSymbolizer) 
      * @see #applyContrastEnhancement(java.awt.image.RenderedImage, org.opengis.style.RasterSymbolizer)  
@@ -291,7 +295,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     public static RenderedImage applyStyle(CoverageReference ref, GridCoverage2D coverage, 
             GridCoverage2D elevationCoverage,
             final RasterSymbolizer styleElement) 
-            throws ProcessException, FactoryException, TransformException, PortrayalException 
+            throws ProcessException, FactoryException, TransformException, PortrayalException, IOException 
              {
      
         RenderedImage image = applyColorMapStyle(ref, coverage, styleElement);
@@ -413,7 +417,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
      * @throws ProcessException if problem during statistic problem.
      */
     private static RenderedImage applyColorMapStyle(final CoverageReference ref, 
-            GridCoverage2D coverage,final RasterSymbolizer styleElement) throws ProcessException {
+            GridCoverage2D coverage,final RasterSymbolizer styleElement) throws ProcessException, IOException {
         ArgumentChecks.ensureNonNull("CoverageReference", ref);
         ArgumentChecks.ensureNonNull("coverage", coverage);
         ArgumentChecks.ensureNonNull("styleElement", styleElement);
@@ -425,33 +429,135 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //cheat on the colormap if we have only one band and no colormap
         recolorCase:
         if ((recolor == null || recolor.getFunction() == null)) {
-            RenderedImage ri = coverage.getRenderedImage();
-            if ((ri.getColorModel() instanceof IndexColorModel) 
-             || !hasView(coverage, ViewType.GEOPHYSICS)) {
-                //image has it's own color model
+            
+            coverage    = (hasView(coverage, ViewType.GEOPHYSICS)) ? coverage.view(ViewType.GEOPHYSICS) 
+                                                                   : coverage;
+            
+            final RenderedImage ri      = coverage.getRenderedImage();
+            final SampleModel sampleMod = ri.getSampleModel();
+            final int riDatatype        = sampleMod.getDataType();
+            
+            /**
+             * Break computing statistic if indexcolormodel is already adapted for java 2d interpretation
+             * (which mean index color model with positive colormap array index -> DataBuffer.TYPE_BYTE || DataBuffer.TYPE_USHORT)
+             * or if image has already 3 or 4 bands Byte typed.
+             */
+            if (((ri.getColorModel() instanceof IndexColorModel) 
+              && (riDatatype == DataBuffer.TYPE_USHORT || riDatatype == DataBuffer.TYPE_BYTE)) //-- color palette and appropriate unsigned sample type
+              || ((sampleMod.getNumBands() == 3 || sampleMod.getNumBands() == 4) 
+              && riDatatype == DataBuffer.TYPE_BYTE)) { //-- RGB ARGB
                 break recolorCase;
             }
             
-            LOGGER.log(Level.FINE, "applyColorMapStyle : fallBack way is choosen. GrayScale interpretation of the first coverage image band.");
+            final int nbBands = sampleMod.getNumBands();
             
-            ri = coverage.view(ViewType.GEOPHYSICS).getRenderedImage();
-
-            CoverageDescription meta = ref.getMetadata();
-            ImageStatistics analyse = meta!=null ? ImageStatistics.transform(meta) : null;
+            ImageStatistics analyse = ImageStatistics.transform(ref.getMetadata());
             
             if (analyse == null) analyse = Statistics.analyse(ri, true);
             
-            final ImageStatistics.Band band0 = analyse.getBand(0);
-            final List<InterpolationPoint> values = new ArrayList<>();
-            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(Float.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0,0,0,0))));
-            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(band0.getMin(), GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
-            values.add( GO2Utilities.STYLE_FACTORY.interpolationPoint(band0.getMax(), GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
-            final Expression lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-            final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
-            final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
-                    lookup, values, Method.COLOR, Mode.LINEAR, fallback);
+            if (nbBands < 3) {
+                
+                LOGGER.log(Level.FINE, "applyColorMapStyle : fallBack way is choosen."
+                    + "GrayScale interpretation of the first coverage image band.");
+                
+                final ImageStatistics.Band band0 = analyse.getBand(0);
+                final double bmin        = band0.getMin();
+                final double bmax        = band0.getMax();
+                final Double mean = band0.getMean();
+                final Double std  = band0.getStd();
+                double palMin = bmin;
+                double palMax = bmax;
+                if (mean != null && std != null) {
+                    palMin = StrictMath.max(bmin, mean - 2 * std);
+                    palMax = StrictMath.min(bmax, mean + 2 * std);
+                }
+                assert JDK8.isFinite(palMin) : "Raster Style fallback : minimum value should be finite. min = "+palMin;
+                assert JDK8.isFinite(palMax) : "Raster Style fallback : maximum value should be finite. max = "+palMax;
+                assert palMin >= bmin;
+                assert palMax <= bmax;
+                
+                final List<InterpolationPoint> values = new ArrayList<>();
+                final double[] nodatas = band0.getNoData();
+                if (nodatas != null) 
+                    for (double nodata : nodatas) {
+                        values.add(SF.interpolationPoint(nodata, SF.literal(new Color(0, 0, 0, 0))));
+                    }
+                
+                values.add(SF.interpolationPoint(Float.NaN, SF.literal(new Color(0, 0, 0, 0))));
+                
+                //-- Color palette
+//                Color[] colorsPal = PaletteFactory.getDefault().getColors("rainbow-t");
+                Color[] colorsPal = PaletteFactory.getDefault().getColors("grayscale");
+                assert colorsPal.length >= 2;
+                if (colorsPal.length < 4) {
+                    final double percent_5 = (colorsPal.length == 3) ? 0.1 : 0.05;
+                    final Color[] colorsPalTemp = colorsPal;
+                    colorsPal = Arrays.copyOf(colorsPal, colorsPal.length + 2);
+                    System.arraycopy(colorsPalTemp, 2, colorsPal, 2, colorsPalTemp.length - 2);
+                    colorsPal[colorsPal.length - 1] = colorsPalTemp[colorsPalTemp.length - 1];
+                    colorsPal[1] = DefaultInterpolate.interpolate(colorsPalTemp[0], colorsPalTemp[1], percent_5);
+                    colorsPal[colorsPal.length - 2] = DefaultInterpolate.interpolate(colorsPalTemp[colorsPalTemp.length - 2], colorsPalTemp[colorsPalTemp.length - 1], 1 - percent_5);
+                    
+                }
+                
+                //-- if difference between band minimum statistic and palette minimum,
+                //-- define values between them as transparency
+                values.add(SF.interpolationPoint(bmin, SF.literal(colorsPal[0])));
+                    
+                assert colorsPal.length >= 4;
+                
+                final double step = (palMax - palMin) / (colorsPal.length - 3);//-- min and max transparency 
+                double currentVal = palMin;
+                for (int c = 1; c < colorsPal.length - 2; c++) {
+                    values.add(SF.interpolationPoint(currentVal, SF.literal(colorsPal[c])));
+                    currentVal += step;
+                }
+                assert StrictMath.abs(currentVal - step - palMax) < 1E-9;
+                values.add(SF.interpolationPoint(bmax, SF.literal(colorsPal[colorsPal.length - 1])));
+                
+                final Function function = SF.interpolateFunction(DEFAULT_CATEGORIZE_LOOKUP, values, Method.COLOR, Mode.LINEAR, DEFAULT_FALLBACK);
 
-            recolor = GO2Utilities.STYLE_FACTORY.colorMap(function);
+                recolor = GO2Utilities.STYLE_FACTORY.colorMap(function);
+                
+            } else {
+                
+                LOGGER.log(Level.FINE, "RGBStyle : fallBack way is choosen."
+                    + "RGB interpretation of the three first coverage image bands.");
+                
+                final ColorModel riColorModel = ri.getColorModel();
+                final int rgbNumBand = (riColorModel.hasAlpha()) ? 4 : 3;
+                
+                assert rgbNumBand <= nbBands;
+                
+                final int[] bands       = new int[]{-1, -1, -1, -1};
+                final double[][] ranges = new double[][]{{-1, -1}, 
+                                                         {-1, -1},
+                                                         {-1, -1}, 
+                                                         {-1, -1}};
+                 
+                for (int b = 0; b < rgbNumBand; b++) {
+                    final ImageStatistics.Band bandb = analyse.getBand(b);
+                    double min = bandb.getMin();
+                    double max = bandb.getMax();
+                    final Double mean = bandb.getMean();
+                    final Double std = bandb.getStd();
+                    if (mean != null && std != null) {
+                        min = StrictMath.max(min, mean - 2 * std);
+                        max = StrictMath.min(max, mean + 2 * std);
+                    }
+                    assert JDK8.isFinite(min) : "Raster Style fallback : minimum value should be finite. min = "+min;
+                    assert JDK8.isFinite(max) : "Raster Style fallback : maximum value should be finite. max = "+max;
+                    bands[b] = b;
+                    ranges[b][0] = min;
+                    ranges[b][1] = max;
+                }
+                
+                final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);
+                final BufferedImage img = p.executeNow();
+                resultImage = GO2Utilities.forceAlpha(img);
+                if (resultImage instanceof WritableRenderedImage) GO2Utilities.removeBlackBorder((WritableRenderedImage)resultImage); 
+                return resultImage;
+            }
         }
         
         //-- apply recolor function "sample to geophysic", sample interpretation.
@@ -470,13 +576,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             // coverage = coverage.view(ViewType.RENDERED);
             if (coverage.getViewTypes().contains(ViewType.PHOTOGRAPHIC)) {
                 resultImage = coverage.view(ViewType.PHOTOGRAPHIC).getRenderedImage();
-                resultImage = forceAlpha(resultImage);
-                if (resultImage instanceof WritableRenderedImage) {
-                    removeBlackBorder((WritableRenderedImage)resultImage); 
-                }
             } else {
-                resultImage = coverage.view(ViewType.RENDERED).getRenderedImage();
+                resultImage = coverage.view(ViewType.PACKED).getRenderedImage();//-- same as rendered view into implementation
             }
+            resultImage = GO2Utilities.forceAlpha(resultImage);
+            if (resultImage instanceof WritableRenderedImage) GO2Utilities.removeBlackBorder((WritableRenderedImage)resultImage); 
         }
         assert resultImage != null : "applyColorMapStyle : image can't be null.";
         return resultImage;
@@ -864,7 +968,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             RenderedImage img = photoCvg.getRenderedImage();
             final int datatype = img.getSampleModel().getDataType();
             if (datatype != DataBuffer.TYPE_BYTE && datatype != DataBuffer.TYPE_USHORT) return source;
-            RenderedImage imga = forceAlpha(img);
+            RenderedImage imga = GO2Utilities.forceAlpha(img);
 
             if (imga != img) {
                 final GridCoverageBuilder gcb = new GridCoverageBuilder();
@@ -874,55 +978,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 return gcb.getGridCoverage2D();
             } else {
                 return source;
-            }
-        }
-    }
-
-     /**
-     * Add an alpha band to the image and remove any black border if asked.
-     *
-     * TODO, this could be done more efficiently by adding an ImageLayout hints
-     * when doing the coverage reprojection. but hints can not be passed currently.
-     */
-    private static RenderedImage forceAlpha(RenderedImage img) {
-        if (!img.getColorModel().hasAlpha()) {
-            //Add alpha channel
-            final BufferedImage buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
-            img = buffer;
-        }
-        return img;
-    }
-
-    /**
-     * Remove black border of an ARGB image to replace them with transparent pixels.
-     * @param toFilter Image to remove black border from.
-     */
-    private static void removeBlackBorder(final WritableRenderedImage toFilter) {
-        // remove black border only on image larger than 1x1 pixels
-        if (toFilter.getHeight() > 1 && toFilter.getWidth() > 1) {
-            FloodFill.fill(toFilter, BLACK_COLORS, new double[]{0d, 0d, 0d, 0d},
-                    new java.awt.Point(0, 0),
-                    new java.awt.Point(toFilter.getWidth() - 1, 0),
-                    new java.awt.Point(toFilter.getWidth() - 1, toFilter.getHeight() - 1),
-                    new java.awt.Point(0, toFilter.getHeight() - 1)
-            );
-        } else {
-            LOGGER.log(Level.FINER, "Ignoring black border removal, because image is too small (image < 1x1)");
-        }
-    }
-
-    private static void fillColorToleranceTable(int index, int maxIndex, List<double[]> container, double[] baseColor, int tolerance) {
-        for (int j = 0 ; j < tolerance; j++) {
-            final double[] color = new double[baseColor.length];
-            System.arraycopy(baseColor, 0, color, 0, baseColor.length);
-            color[index] += j;
-            if (index >= maxIndex) {
-                container.add(color);
-            } else {
-                for (int i = index +1 ; i <= maxIndex ; i++) {
-                    fillColorToleranceTable(i, maxIndex, container, color, tolerance);
-                }
             }
         }
     }
@@ -946,7 +1001,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             return sourceCoverage;
         } else {
             RenderedImage image = sourceCoverage.getRenderedImage();
-
+            
             final ProcessDescriptor bandSelectDesc = BandSelectDescriptor.INSTANCE;
             final ParameterValueGroup param = bandSelectDesc.getInputDescriptor().createValue();
             ParametersExt.getOrCreateValue(param, BandSelectDescriptor.IN_IMAGE.getName().getCode()).setValue(image);
