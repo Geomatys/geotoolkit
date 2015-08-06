@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.gui.javafx.render2d.edition;
 
-import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
@@ -72,6 +72,7 @@ public class FXToolBox extends BorderPane {
     private final Accordion accordion = new Accordion();
     private final TitledPane helpPane = new TitledPane(GeotkFX.getString(FXToolBox.class, "help"), null);
     private final TitledPane paramsPane = new TitledPane(GeotkFX.getString(FXToolBox.class, "params"), null);
+    private final HBox commitRollBackBar = new HBox();
     private final ToggleGroup group = new ToggleGroup();
     private final FXMapLayerComboBox combo = new FXMapLayerComboBox();
     private final FXMap map;
@@ -102,6 +103,14 @@ public class FXToolBox extends BorderPane {
         //hide compbo box, we have only one layer.
         combo.setVisible(false);
         combo.setManaged(false);
+        commitRollBackBar.managedProperty().bind(commitRollBackBar.visibleProperty());
+    }
+
+    /**
+     * Control visibility of commit/rollback buttons.
+     */
+    public BooleanProperty commitRollbackVisibleProperty(){
+        return commitRollBackBar.visibleProperty();
     }
 
     private void init(final MapContext context) {
@@ -116,7 +125,7 @@ public class FXToolBox extends BorderPane {
         commit.styleProperty().unbind();
         commit.setStyle("-fx-base : #AAFFAA;");
         commit.getStyleClass().add("buttongroup-right");
-        final HBox hbox = new HBox(rollback,commit);
+        commitRollBackBar.getChildren().addAll(rollback,commit);
 
 
         grid.setMaxWidth(Double.MAX_VALUE);
@@ -128,7 +137,7 @@ public class FXToolBox extends BorderPane {
         top.getRowConstraints().add(new RowConstraints(USE_PREF_SIZE, USE_COMPUTED_SIZE, USE_PREF_SIZE, Priority.NEVER, VPos.CENTER, false));
         top.getRowConstraints().add(new RowConstraints(USE_PREF_SIZE, USE_COMPUTED_SIZE, Double.MAX_VALUE, Priority.ALWAYS, VPos.TOP, true));
         top.add(combo, 0, 0);
-        top.add(hbox, 1, 0);
+        top.add(commitRollBackBar, 1, 0);
         top.add(grid, 0, 1, 2, 1);
         top.add(accordion, 0, 2, 2, 1);
         top.setVgap(10);
