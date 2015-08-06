@@ -21,10 +21,12 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.beans.value.WeakChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -34,9 +36,7 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TitledPane;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -49,8 +49,8 @@ import org.controlsfx.control.action.ActionUtils;
 import org.geotoolkit.gui.javafx.action.CommitAction;
 import org.geotoolkit.gui.javafx.action.RollbackAction;
 import org.geotoolkit.gui.javafx.chooser.FXMapLayerComboBox;
+import org.geotoolkit.gui.javafx.render2d.FXCanvasHandler;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
-import org.geotoolkit.gui.javafx.render2d.navigation.FXPanHandler;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -73,11 +73,35 @@ public class FXToolBox extends BorderPane {
     private final TitledPane helpPane = new TitledPane(GeotkFX.getString(FXToolBox.class, "help"), null);
     private final TitledPane paramsPane = new TitledPane(GeotkFX.getString(FXToolBox.class, "params"), null);
     private final HBox commitRollBackBar = new HBox();
-    private final ToggleGroup group = new ToggleGroup();
     private final FXMapLayerComboBox combo = new FXMapLayerComboBox();
     private final FXMap map;
     private final CommitAction commitAction = new CommitAction();
     private final RollbackAction rollbackAction = new RollbackAction();
+
+    private final ChangeListener<FXCanvasHandler> lst = new ChangeListener<FXCanvasHandler>() {
+        @Override
+        public void changed(ObservableValue<? extends FXCanvasHandler> observable, FXCanvasHandler oldValue, FXCanvasHandler newValue) {
+            //listen to map handler change, unselect buttons
+            for(Node n : grid.getChildren()){
+                final ToggleButton tb = (ToggleButton) n;
+                final EditionTool editionTool = (EditionTool) tb.getUserData();
+                tb.setSelected( newValue == editionTool);
+            }
+
+            if(newValue instanceof EditionTool){
+                final EditionTool et = (EditionTool) newValue;
+                helpPane.setContent(et.getHelpPane());
+                paramsPane.setContent(et.getConfigurationPane());
+                helpPane.setExpanded(helpPane.getContent()!=null);
+                paramsPane.setExpanded(paramsPane.getContent()!=null);
+            }else{
+                helpPane.setContent(null);
+                paramsPane.setContent(null);
+                helpPane.setExpanded(false);
+                paramsPane.setExpanded(false);
+            }
+        }
+    };
 
     /**
      * Create tool box with all map layers.
@@ -104,6 +128,7 @@ public class FXToolBox extends BorderPane {
         combo.setVisible(false);
         combo.setManaged(false);
         commitRollBackBar.managedProperty().bind(commitRollBackBar.visibleProperty());
+        map.getHandlerProperty().addListener(new WeakChangeListener(lst));
     }
 
     /**
@@ -146,10 +171,8 @@ public class FXToolBox extends BorderPane {
 
         accordion.getPanes().add(helpPane);
         accordion.getPanes().add(paramsPane);
-        helpPane.setDisable(true);
-        paramsPane.setDisable(true);
-
-        group.selectedToggleProperty().addListener(this::editorChange);
+        helpPane.disableProperty().bind(helpPane.contentProperty().isNull());
+        paramsPane.disableProperty().bind(paramsPane.contentProperty().isNull());
 
         combo.setMapContext(context);
         combo.setPrefWidth(50);
@@ -163,7 +186,6 @@ public class FXToolBox extends BorderPane {
         //listen to grid size change
         final ToggleButton button = new ToggleButton();
         button.getStyleClass().add("buttongroup-right");
-        button.setToggleGroup(group);
         button.setGraphic(new ImageView(GeotkFX.ICON_ADD));
         button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         button.setAlignment(Pos.CENTER);
@@ -199,24 +221,10 @@ public class FXToolBox extends BorderPane {
         return toolPerRow;
     }
 
-    private void editorChange(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue){
-        if(oldValue!=null && oldValue.getUserData() instanceof EditionTool){
-            //uninstall previous tool
-            final EditionTool tool = (EditionTool) oldValue.getUserData();
-            this.map.setHandler(new FXPanHandler(false));
-            this.helpPane.setDisable(true);
-            this.paramsPane.setDisable(true);
-        }
-        if(newValue!=null && newValue.getUserData() instanceof EditionTool){
-            final EditionTool tool = (EditionTool) newValue.getUserData();
-            final Node configPane = tool.getConfigurationPane();
-            final Node helpPane = tool.getHelpPane();
-            this.helpPane.setContent(helpPane);
-            this.paramsPane.setContent(configPane);
-            this.helpPane.setDisable(helpPane==null);
-            this.paramsPane.setDisable(configPane==null);
-            this.helpPane.setExpanded(helpPane!=null);
-            this.paramsPane.setExpanded(configPane!=null);
+    private void handle(ActionEvent event){
+        final ToggleButton button = (ToggleButton) event.getSource();
+        if(button.isSelected()){
+            final EditionTool tool = (EditionTool) button.getUserData();
             this.map.setHandler(tool);
         }
     }
@@ -224,7 +232,6 @@ public class FXToolBox extends BorderPane {
     private void updateGrid(){
         grid.getChildren().clear();
         grid.getColumnConstraints().clear();
-        group.getToggles().clear();
         
         final ColumnConstraints colFirst = new ColumnConstraints(1, 1, Double.MAX_VALUE,Priority.ALWAYS,HPos.CENTER,true);
         final ColumnConstraints colLast = new ColumnConstraints(1, 1, Double.MAX_VALUE,Priority.ALWAYS,HPos.CENTER,true);
@@ -259,7 +266,6 @@ public class FXToolBox extends BorderPane {
 
                 final ToggleButton button = new ToggleButton();
                 button.getStyleClass().add(styleName);
-                button.setToggleGroup(group);
                 button.setMaxHeight(Double.MAX_VALUE);
                 button.setMaxWidth(Double.MAX_VALUE);
                 button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
@@ -273,6 +279,8 @@ public class FXToolBox extends BorderPane {
                         button.setTooltip(new Tooltip(title.toString()));
                     }
                     button.setUserData(tool);
+                    button.setOnAction(this::handle);
+
                 }else{
                     button.setGraphic(new ImageView(GeotkFX.ICON_EMPTY));
                     button.setDisable(true);
