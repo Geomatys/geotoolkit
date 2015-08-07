@@ -32,8 +32,6 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import javax.imageio.ImageTypeSpecifier;
 import org.apache.sis.util.ArgumentChecks;
-import static org.geotoolkit.image.internal.SampleType.Byte;
-import static org.geotoolkit.image.internal.SampleType.Short;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
@@ -738,11 +736,28 @@ public class ImageUtils extends Static{
      * as palette (photometricInterpretation == 3) and colorMap is {@code null}.
      * @throws IllegalArgumentException if minSampleValue or maxSampleValue is(are) equals to {@link Double#NaN}.
      * @see ScaledColorSpace
+     *
+     * @deprecated This method is specific to GeoTIFF format.
      */
+    @Deprecated
+    public static ColorModel createColorModel(final int sampleBitsSize, final int numBand,
+                                              final short photometricInterpretation, final short sampleFormat,
+                                              final Double minSampleValue, final Double maxSampleValue,
+                                              final long[] colorMap)
+            throws UnsupportedOperationException {
+        return createColorModel(sampleBitsSize, numBand,photometricInterpretation, sampleFormat,
+        minSampleValue, maxSampleValue,colorMap,null);
+    }
+
+    /**
+     *
+     * @deprecated This method is specific to GeoTIFF format.
+     */
+    @Deprecated
     public static ColorModel createColorModel(final int sampleBitsSize, final int numBand, 
                                               final short photometricInterpretation, final short sampleFormat,
                                               final Double minSampleValue, final Double maxSampleValue, 
-                                              final long[] colorMap) 
+                                              final long[] geotiffColorMap, int[] java2DColorMap)
                                               throws UnsupportedOperationException { 
         if (minSampleValue != null) {
             if (Double.isNaN(minSampleValue))
@@ -804,9 +819,11 @@ public class ImageUtils extends Static{
                 break;
             }
             case 3 : {//-- palette
-                if (colorMap == null) throw new IllegalArgumentException("Impossible to build palette color model with null color map array.");
-                final int[] indexes = buildColorMapArray(colorMap);
-                final ColorModel cm = new IndexColorModel(sampleBitsSize, indexes.length, indexes, 0, true, -1, dataBufferType);
+                if (java2DColorMap == null) {
+                    if (geotiffColorMap == null) throw new IllegalArgumentException("Impossible to build palette color model with null color map array.");
+                    java2DColorMap = buildColorMapArray(geotiffColorMap);
+                }
+                final ColorModel cm = new IndexColorModel(sampleBitsSize, java2DColorMap.length, java2DColorMap, 0, true, -1, dataBufferType);
                 /*
                  * Create a SampleModel with size of 1x1 volontary just to know image properties.
                  * Image with correctively size will be create later with getDestination() in #read(int index, param) method.

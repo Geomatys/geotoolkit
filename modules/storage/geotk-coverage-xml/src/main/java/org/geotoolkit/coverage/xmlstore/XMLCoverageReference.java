@@ -183,12 +183,12 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     private Double maxColorSampleValue = null;
     
     /**
-     * {@link SampleModel} of all internaly pyramid stored tiles. 
+     * {@link SampleModel} of all internally pyramid stored tiles.
      */
     private SampleModel sampleModel;
     
     /**
-     * {@link ColorModel} of all internaly pyramid stored tiles. 
+     * {@link ColorModel} of all internally pyramid stored tiles.
      */
     private ColorModel colorModel;
 
@@ -443,36 +443,18 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
                     assert JDK8.isFinite(minColorSampleValue) : "To write minColorSampleValue into XML Pyramid File, it should be finite. Found : "+minColorSampleValue;
                     assert JDK8.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
                 }
-                
-                colorModel = ImageUtils.createColorModel(bitPerSample, nbBands, 
+                colorModel = ImageUtils.createColorModel(bitPerSample, nbBands,
                         (short) photometricInterpretation, (short) sampleFormat, 
-                        minColorSampleValue, maxColorSampleValue, convertColorMap(colorMap));
+                        minColorSampleValue, maxColorSampleValue, null, colorMap);
             }
-            //-- else do nothing case where unmarshall old pyramid. older comportement.
         }
         return colorModel;
-    }
-    
-    /**
-     * Convert an integer array into a long array.
-     * 
-     * @param colorMap
-     * @return 
-     */
-    private long[] convertColorMap (final int[] colorMap) {
-        if (colorMap != null) {
-            final int l = colorMap.length;
-            final long[] col = new long[l];
-            for (int p = 0; p < l; p++) col[p] = colorMap[p];
-            return col;
-        }
-        return null;
     }
 
     /**
      * Set the associate internal pyramid data {@link ColorModel}.<br>
      * 
-     * Note : also set some attributs needed to marshall / unmarshall. 
+     * Note : also set some attributes needed to marshall / unmarshall.
      * 
      * @param colorModel {@code ColorModel} internal data.
      * @throws DataStoreException 
