@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.javafx.contexttree;
 
 import java.awt.Color;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
@@ -171,7 +172,7 @@ public class MapItemNameColumn<T> extends TreeTableColumn<T,String>{
         public void contentChanged(StorageEvent event) {
             //change the edition asteriks
             if(!isEditing()){
-                updateItem(getItem(), false);
+                Platform.runLater(()-> updateItem(getItem(), false));
             }
         }
 
