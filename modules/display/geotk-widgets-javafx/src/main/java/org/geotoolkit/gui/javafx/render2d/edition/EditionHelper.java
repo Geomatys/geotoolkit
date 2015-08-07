@@ -32,6 +32,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
+import com.vividsolutions.jtsexample.operation.distance.ClosestPointExample;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -72,8 +73,12 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.apache.sis.util.ArgumentChecks.*;
+import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
+import org.geotoolkit.internal.GeotkFX;
+import org.geotoolkit.internal.Loggers;
+import org.geotoolkit.processing.vector.nearest.NearestProcess;
 
 /**
  *
@@ -228,6 +233,7 @@ public class EditionHelper {
 
     private final FXMap map;
     private final FeatureMapLayer editedLayer;
+    private Geometry constraint = null;
     private boolean showAtributeditor;
     private int mousePointerSize = 4;
 
@@ -271,6 +277,26 @@ public class EditionHelper {
     }
 
     /**
+     * Set geometry constraint.
+     * This geometry will be used to restrict all coordinate creation.
+     * The closest intersection point will be returned if mouse is outside the constraint
+     * area.
+     *
+     * @param constraint
+     */
+    public void setConstraint(Geometry constraint) {
+        this.constraint = constraint;
+    }
+
+    /**
+     * 
+     * @return constraint geometry
+     */
+    public Geometry getConstraint() {
+        return constraint;
+    }
+
+    /**
      * transform a mouse coordinate in JTS Geometry using the CRS of the map context
      * @param mx : x coordinate of the mouse on the map (in pixel)
      * @param my : y coordinate of the mouse on the map (in pixel)
@@ -290,8 +316,7 @@ public class EditionHelper {
 
     public Point toJTS(final double x, final double y){
         final Coordinate coord = toCoord(x, y);
-        final Point geom = GEOMETRY_FACTORY.createPoint(coord);
-        return geom;
+        return GEOMETRY_FACTORY.createPoint(coord);
     }
 
     public Coordinate toCoord(final double x, final double y){
@@ -305,9 +330,34 @@ public class EditionHelper {
         }
         final double[] crds = new double[]{x,y};
         dispToObj.transform(crds, 0, crds, 0, 1);
-        return new Coordinate(crds[0], crds[1]);
+
+        final Coordinate coord = new Coordinate(crds[0], crds[1]);
+
+        if(constraint!=null){
+            final CoordinateReferenceSystem crs2d = map.getCanvas().getObjectiveCRS2D();
+            try {
+                final Geometry geom = JTS.transform(constraint, crs2d);
+
+                final DistanceOp distOp = new DistanceOp(geom, GO2Utilities.JTS_FACTORY.createPoint(coord));
+                final Coordinate[] nearest = distOp.nearestPoints();
+                return nearest[0];
+
+            } catch (Exception ex) {
+                Loggers.JAVAFX.log(Level.WARNING, ex.getMessage());
+            }
+        }
+
+        return coord;
     }
 
+    /**
+     * Get feature at given mouse coordinate.
+     *
+     * @param mx mouse x coordinate in display crs
+     * @param my mouse y coordinate in display crs
+     * @param style consider the style for selection.
+     * @return Feature or null
+     */
     public Feature grabFeature(final double mx, final double my, final boolean style) {
 
         if(editedLayer == null) return null;

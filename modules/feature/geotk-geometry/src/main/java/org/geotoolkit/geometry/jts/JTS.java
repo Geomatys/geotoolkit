@@ -223,6 +223,27 @@ public final class JTS {
     }
 
     /**
+     * Transforms the geometry to given crs.
+     * Id the geometry has no crs, it is assumed to be already in the given crs.
+     *
+     * @param geom The geom to transform
+     * @param crs target crs.
+     * @return the transformed geometry. It will be a new geometry.
+     * @throws MismatchedDimensionException if the geometry doesn't have the
+     * expected dimension for the specified transform.
+     * @throws TransformException if a point can't be transformed.
+     * @throws org.opengis.util.FactoryException
+     */
+    public static Geometry transform(final Geometry geom, final CoordinateReferenceSystem crs)
+            throws MismatchedDimensionException, TransformException, FactoryException {
+        ArgumentChecks.ensureNonNull("crs", crs);
+        final CoordinateReferenceSystem geomCrs = findCoordinateReferenceSystem(geom);
+        if(geomCrs==null) return geom;
+        final MathTransform trs = org.geotoolkit.referencing.CRS.findMathTransform(geomCrs, crs);
+        return transform(geom, trs);
+    }
+
+    /**
      * Transforms the geometry using the default transformer.
      *
      * @param geom The geom to transform
