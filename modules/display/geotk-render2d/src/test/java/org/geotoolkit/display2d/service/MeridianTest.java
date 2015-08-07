@@ -538,7 +538,7 @@ public class MeridianTest {
     private void checkImage(BufferedImage image, Rectangle ... fillAreas){
         
         final int white = Color.WHITE.getRGB();
-        final int black = Color.BLACK.getRGB();
+        final int black = Color.RED.getRGB();
 
         final int width = image.getWidth();
         final int height = image.getHeight();
@@ -574,7 +574,7 @@ public class MeridianTest {
         feature.getProperty("geom").setValue(geometry);
         final FeatureCollection col = FeatureStoreUtilities.collection(feature);
         
-        final PolygonSymbolizer symbol = SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0), SF.fill(Color.BLACK), null);
+        final PolygonSymbolizer symbol = SF.polygonSymbolizer(SF.stroke(Color.BLACK, 0), SF.fill(Color.RED), null);
         final MutableStyle style = SF.style(symbol);
         final MapLayer layer = MapBuilder.createFeatureLayer(col, style);
         
@@ -596,7 +596,7 @@ public class MeridianTest {
         final FeatureCollection col = FeatureStoreUtilities.collection(feature);
         
         final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-        symbols.add(SF.mark(StyleConstants.MARK_SQUARE, SF.fill(Color.BLACK), SF.stroke(Color.BLACK, 0)));
+        symbols.add(SF.mark(StyleConstants.MARK_SQUARE, SF.fill(Color.RED), SF.stroke(Color.BLACK, 0)));
         final Graphic graphic = SF.graphic(symbols, StyleConstants.LITERAL_ONE_FLOAT, FF.literal(2), StyleConstants.LITERAL_ZERO_FLOAT, null, null);
         final PointSymbolizer ps = SF.pointSymbolizer(graphic, null);
         
@@ -612,7 +612,7 @@ public class MeridianTest {
      
         final BufferedImage image = new BufferedImage((int)env.getSpan(0), (int)env.getSpan(1), BufferedImage.TYPE_INT_RGB);
         final Graphics2D g2d = image.createGraphics();
-        g2d.setColor(Color.BLACK);
+        g2d.setColor(Color.RED);
         g2d.fillRect(0, 0, image.getWidth(), image.getHeight());        
         
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
