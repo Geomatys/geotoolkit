@@ -21,6 +21,7 @@ import org.geotoolkit.feature.Feature;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.io.Serializable;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -42,6 +43,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.ObjectConverters;
+import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.feature.Property;
@@ -122,7 +124,12 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                 candidate = null;
             }
         }else{
-            candidate = ObjectConverters.convert(value, Geometry.class);
+            try{
+                candidate = ObjectConverters.convert(value, Geometry.class);
+            }catch(UnconvertibleObjectException ex){
+                LOGGER.log(Level.INFO, "Could not convert expression : "+exp+" to geometry for object : "+object+"\n"+ex.getMessage(), ex);
+                candidate = null;
+            }
         }
         
         return candidate;
