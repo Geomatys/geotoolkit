@@ -435,6 +435,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             
             final RenderedImage ri      = coverage.getRenderedImage();
             final SampleModel sampleMod = ri.getSampleModel();
+            final ColorModel riColorModel = ri.getColorModel();
             final int riDatatype        = sampleMod.getDataType();
             
             /**
@@ -442,12 +443,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
              * (which mean index color model with positive colormap array index -> DataBuffer.TYPE_BYTE || DataBuffer.TYPE_USHORT)
              * or if image has already 3 or 4 bands Byte typed.
              */
-            if (((ri.getColorModel() instanceof IndexColorModel) 
-              && (riDatatype == DataBuffer.TYPE_USHORT || riDatatype == DataBuffer.TYPE_BYTE)) //-- color palette and appropriate unsigned sample type
-              || ((sampleMod.getNumBands() == 3 || sampleMod.getNumBands() == 4) 
-              && riDatatype == DataBuffer.TYPE_BYTE)) { //-- RGB ARGB
+            if (!defaultStyleIsNeeded(sampleMod, riColorModel)) 
                 break recolorCase;
-            }
+            
             
             final int nbBands = sampleMod.getNumBands();
             
@@ -508,7 +506,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 
                 final double step = (palMax - palMin) / (colorsPal.length - 3);//-- min and max transparency 
                 double currentVal = palMin;
-                for (int c = 1; c < colorsPal.length - 2; c++) {
+                for (int c = 1; c <= colorsPal.length - 2; c++) {
                     values.add(SF.interpolationPoint(currentVal, SF.literal(colorsPal[c])));
                     currentVal += step;
                 }
@@ -524,7 +522,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 LOGGER.log(Level.FINE, "RGBStyle : fallBack way is choosen."
                     + "RGB interpretation of the three first coverage image bands.");
                 
-                final ColorModel riColorModel = ri.getColorModel();
                 final int rgbNumBand = (riColorModel.hasAlpha()) ? 4 : 3;
                 
                 assert rgbNumBand <= nbBands;
@@ -578,18 +575,59 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             } else {
                 resultImage = coverage.view(ViewType.PACKED).getRenderedImage();//-- same as rendered view into implementation
             }
+            
+            //-- if RGB force ARGB to delete black border
+            final int[] componentSize = resultImage.getColorModel().getComponentSize();
+            if (componentSize.length == 3 && componentSize[0] == 8) {
+                resultImage = GO2Utilities.forceAlpha(resultImage);
+                if (resultImage instanceof WritableRenderedImage) GO2Utilities.removeBlackBorder((WritableRenderedImage)resultImage); 
+            }
         }
         
-        //-- if RGB force ARGB to delete black border
-        final int[] componentSize = resultImage.getColorModel().getComponentSize();
-        if (componentSize.length == 3 && componentSize[0] == 8) {
-            resultImage = GO2Utilities.forceAlpha(resultImage);
-            if (resultImage instanceof WritableRenderedImage) GO2Utilities.removeBlackBorder((WritableRenderedImage)resultImage); 
-        }
         assert resultImage != null : "applyColorMapStyle : image can't be null.";
         return resultImage;
     }
 
+    /**
+     * Returns {@code true} if a default style is needed to interpret current data 
+     * else {@code false} if java 2d will be able to interprete data.
+     * 
+     * @param sampleModel 
+     * @param colorModel
+     * @return {@code true} if a style creation is needed to show image datas else {@code false}.
+     */
+    private static boolean defaultStyleIsNeeded(final SampleModel sampleModel, final ColorModel colorModel) {
+        ArgumentChecks.ensureNonNull("sampleModel", sampleModel);
+        ArgumentChecks.ensureNonNull("colorModel",  colorModel);
+        
+        final int[] pixelSampleSize = colorModel.getComponentSize();
+        
+        assert pixelSampleSize != null;
+        final int sampleSize = pixelSampleSize[0];
+        
+        if (pixelSampleSize.length > 1) {
+            for (int s = 1; s < pixelSampleSize.length; s++) {
+                if (pixelSampleSize[s] != sampleSize) return false; //-- special case different samplesize.
+            }
+        }
+        
+        if (pixelSampleSize.length == 2) return true; //-- special case where we select first band.
+        
+        final int dataBufferType = sampleModel.getDataType();
+        
+        //-- one band
+        if (pixelSampleSize.length == 1) {
+            if (!(colorModel instanceof IndexColorModel)) return true;
+            //-- ! IndexColorModel + Byte or UShort case
+            return (!(sampleSize == 8 || (sampleSize == 16 && dataBufferType == DataBuffer.TYPE_USHORT)));
+        }
+        
+        assert pixelSampleSize.length > 2;
+        
+        //-- is RGB or ARGB Byte
+        return sampleSize != 8;
+    } 
+    
     /**
      * Returns {@code true} if {@link GridCoverage2D} own a view given in parameter, else {@code false}.<br><br>
      * 
