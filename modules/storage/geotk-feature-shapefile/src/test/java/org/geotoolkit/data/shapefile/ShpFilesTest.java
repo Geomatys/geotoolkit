@@ -65,8 +65,8 @@ public class ShpFilesTest {
         URL dbfURL = files.getURL(DBF);
         URL shxURL = files.getURL(SHX);
         assertEquals(base+shp, shpURL.toExternalForm());
-        assertEquals(base+dbf, dbfURL.toExternalForm());
-        assertEquals(base+shx, shxURL.toExternalForm());
+        assertEquals(base + dbf, dbfURL.toExternalForm());
+        assertEquals(base + shx, shxURL.toExternalForm());
     }
     
     @Test
@@ -218,4 +218,18 @@ public class ShpFilesTest {
         }
     }
 
+    @Test
+    public void testTypeName() {
+        ShpFiles shpFile = new ShpFiles(new File("nowhere/test.shp"));
+        assertEquals("test", shpFile.getTypeName());
+
+        shpFile = new ShpFiles(new File("nowhere/test_file_name.shp"));
+        assertEquals("test_file_name", shpFile.getTypeName());
+
+        shpFile = new ShpFiles(new File("nowhere/test.file.name.shp"));
+        assertEquals("test.file.name", shpFile.getTypeName());
+
+        shpFile = new ShpFiles(new File("nowhere/test.file.name.shp.shp"));
+        assertEquals("test.file.name.shp", shpFile.getTypeName());
+    }
 }
