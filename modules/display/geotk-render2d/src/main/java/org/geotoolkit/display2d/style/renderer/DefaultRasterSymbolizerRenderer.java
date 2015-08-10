@@ -553,10 +553,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 }
                 
                 final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);
-                final BufferedImage img = p.executeNow();
-                resultImage = GO2Utilities.forceAlpha(img);
-                if (resultImage instanceof WritableRenderedImage) GO2Utilities.removeBlackBorder((WritableRenderedImage)resultImage); 
-                return resultImage;
+                final BufferedImage img            = p.executeNow();
+                if (img instanceof WritableRenderedImage) GO2Utilities.removeBlackBorder((WritableRenderedImage)img); 
+                return img;
             }
         }
         
@@ -579,6 +578,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             } else {
                 resultImage = coverage.view(ViewType.PACKED).getRenderedImage();//-- same as rendered view into implementation
             }
+        }
+        
+        //-- if RGB force ARGB to delete black border
+        final int[] componentSize = resultImage.getColorModel().getComponentSize();
+        if (componentSize.length == 3 && componentSize[0] == 8) {
             resultImage = GO2Utilities.forceAlpha(resultImage);
             if (resultImage instanceof WritableRenderedImage) GO2Utilities.removeBlackBorder((WritableRenderedImage)resultImage); 
         }

@@ -129,7 +129,6 @@ public class DynamicRangeSymbolizerRenderer extends AbstractCoverageSymbolizerRe
             
             final DynamicRangeStretchProcess p = new DynamicRangeStretchProcess(ri, bands, ranges);
             RenderedImage img = p.executeNow();
-            img = GO2Utilities.forceAlpha(img);
             if (img instanceof WritableRenderedImage) GO2Utilities.removeBlackBorder((WritableRenderedImage)img);
             final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
             
