@@ -207,11 +207,6 @@ public class WPSIOTest {
         /*
          * GridCoverage2D
          */
-        if (true) {
-            // TODO: disabled for now. All tests below this point fail on the 'assertEquals' with the following message:
-            //       expected:<interface org.opengis.coverage.Coverage> but was:<interface java.awt.image.RenderedImage>
-            return;
-        }
         classFound = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX, WPSMimeType.IMG_GEOTIFF.val(), null, null, null);
         assertEquals(Coverage.class, classFound);
 
