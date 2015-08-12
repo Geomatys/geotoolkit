@@ -2018,15 +2018,12 @@ public class TiffImageWriter extends SpatialImageWriter {
                     imagemaxTx = Math.min(imagemaxTx, imageMaxTileGridXOffset);
 
                     int cuImgTileMinY = imageMinY + (imageminTy - imageTileGridYOffset) * imageTileHeight;
-                    int cuImgTileMaxY = cuImgTileMinY + imageTileHeight;
+                    int cuImgTileMaxY = StrictMath.min(cuImgTileMinY + imageTileHeight, imageMinY + image.getHeight());
                     for (int imgTy = imageminTy; imgTy < imagemaxTy; imgTy++) {
 
                         final int deby  = Math.max(cuImgTileMinY, interMinY);
                         final int tendy = Math.min(cuImgTileMaxY, interMaxY);
                         final int endy  = Math.min(srcRegionMaxY, tendy);
-
-                        // offset in pixels number in source image currently tile
-                        final int stepOffsetBeforeY = (deby - cuImgTileMinY) * imageTileWidth;
 
                         for (int y = deby; y < endy; y += subsampleY) {
 
@@ -2040,9 +2037,6 @@ public class TiffImageWriter extends SpatialImageWriter {
                                 write(dstOffYArray, dataType, 0, dstOffWriteLength, bitPerSample, compression);
                             }
 
-                            // -- offset in y direction
-                            final int stepY = (y - deby) * imageTileWidth;
-
                             // -- current image tile coordinates in X direction
                             int cuImgTileMinX = imageMinX + (imageminTx - imageTileGridXOffset) * imageTileWidth;
                             int cuImgTileMaxX = cuImgTileMinX + imageTileWidth;
@@ -2053,6 +2047,17 @@ public class TiffImageWriter extends SpatialImageWriter {
                                 // -- get the following image raster
                                 final Raster imageTile        = image.getTile(imgTx, imgTy);
                                 final DataBuffer rasterBuffer = imageTile.getDataBuffer();
+                                
+                                
+                                // offset in pixels number in source image currently tile
+                                final int stepOffsetBeforeY = (deby - cuImgTileMinY) * imageTile.getWidth();
+                        
+                                // -- offset in y direction
+                                final int stepY = (y - deby) * imageTile.getWidth();
+                                
+                                //-- to crop last image raster on higher border index
+                                //-- which not necessary same size of other tile. (It is in contradiction of renderedImage but not false)
+                                cuImgTileMaxX = StrictMath.min(cuImgTileMaxX, cuImgTileMinX + imageTile.getWidth());
 
                                 final Object sourceArray;
                                 switch (dataType) {
@@ -2812,13 +2817,12 @@ public class TiffImageWriter extends SpatialImageWriter {
             }
 
            for (int ty = minTY; ty < maxTY; ty++) {
+               
                //-- define intersection on Y axis between srcRegion and current tile from source image --//
                final int currentImgTileMinY = imageMinY + ty * imgTileHeight;
-               final int currentImgTileMaxY = currentImgTileMinY + imgTileHeight;
                final int minRowY            = Math.max(srcRegion.y, currentImgTileMinY);
-               final int maxRowY            = Math.min(srcRegionMaxY, currentImgTileMaxY);
-
-               final int rowArrayOffset = (minRowY - currentImgTileMinY) * imgTileWidth * pixelLength;
+               final int maxRowY            = StrictMath.min(Math.min(srcRegionMaxY, imageMinY + img.getHeight()), 
+                                                             currentImgTileMinY + imgTileHeight);
 
                for (int ry = minRowY; ry < maxRowY; ry += subsampleY) {
                    //-- count use to verify expected wrote byte number. --//
@@ -2830,14 +2834,14 @@ public class TiffImageWriter extends SpatialImageWriter {
                        assertByteCount += dstOffX * pixelLength * sampleSize;
                    }
 
-                   //-- shift on each line. --//
-                   final int arrayStepY = (ry - minRowY) * imgTileWidth * pixelLength;
-
                    for (int tx = minTX; tx < maxTX; tx++) {
                        // -- get the following image raster
                         final Raster imageTile        = img.getTile(tx, ty);
                         final DataBuffer rasterBuffer = imageTile.getDataBuffer();
-
+                        
+                        //-- width of the current tile 
+                        final int currentTileWidth = imageTile.getWidth();
+                        
                         final Object sourceArray;
                         switch (dataType) {
                             case DataBuffer.TYPE_BYTE   : sourceArray = ((DataBufferByte)   rasterBuffer).getData(bank); break;
@@ -2851,11 +2855,16 @@ public class TiffImageWriter extends SpatialImageWriter {
 
                        //-- definir intersection sur x --//
                        final int currentImgTileMinX = imageMinX + tx * imgTileWidth;
-                       final int currentImgTileMaxX = currentImgTileMinX + imgTileWidth;
+                       final int currentImgTileMaxX = currentImgTileMinX + StrictMath.min(imgTileWidth, currentTileWidth);
 
                        final int cuMinX = Math.max(srcRegion.x, currentImgTileMinX);
                        final int cuMaxX = Math.min(srcRegionMaxX, currentImgTileMaxX);
-
+                       
+                       //-- offset de la tuile courante en ligne
+                       final int rowArrayOffset = (minRowY - currentImgTileMinY) * StrictMath.min(imgTileWidth, currentTileWidth) * pixelLength;
+                       
+                       //-- shift on each line. --//
+                       final int arrayStepY   = (ry - minRowY) * StrictMath.min(imgTileWidth, currentTileWidth) * pixelLength;
                        final int arrayXOffset = (cuMinX - currentImgTileMinX) * pixelLength;
 
                        final int writeLenght;
