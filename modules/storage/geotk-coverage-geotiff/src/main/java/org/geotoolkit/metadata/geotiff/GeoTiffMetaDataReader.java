@@ -198,9 +198,17 @@ public final class GeoTiffMetaDataReader {
         if (value != null) {
             int type = (Integer)value;
             
-            if(type < 1 || type > 2) throw new IOException("Unexpected raster type : "+ type);
+            //-- faire un log
+            if (type < 1 || type > 2) {
+                final String strLog = "Undefine raster Type from geotiff metadatas : \n"
+                        + "From GeoKeyDirectoryTag (34735) the internaly key GTRasterTypeGeoKey (1025) should be : \n"
+                        + "- 1 for RasterPixelIsArea, or \n"
+                        + "- 2 for RasterPixelIsPoint.\n"
+                        + "Bad founded raster Type value is : "+type;
+                LOGGER.log(Level.SEVERE, strLog);
+            }
             
-            orientation = (type == RasterPixelIsArea) ? PixelOrientation.UPPER_LEFT : PixelOrientation.CENTER;
+            orientation = (type == RasterPixelIsPoint) ? PixelOrientation.CENTER : PixelOrientation.UPPER_LEFT;
         } else {
             orientation = PixelOrientation.UPPER_LEFT;
         }
