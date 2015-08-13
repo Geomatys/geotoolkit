@@ -18,6 +18,7 @@ package org.geotoolkit.gui.javafx.render2d.shape;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import java.beans.PropertyChangeEvent;
@@ -143,7 +144,41 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
             }
             shapes.add(group);
         }
-        
+
+
+        //paint the selected node
+        selectedNode :
+        if(editGeom != null && editGeom.numSubGeom >= 0
+                            && editGeom.numSubGeom < editGeom.geometry.getNumGeometries()
+                            && editGeom.selectedNode[0] >= 0){
+
+            Geometry candidate = editGeom.geometry;
+            try{
+                final CoordinateReferenceSystem geomcrs = CRS.getHorizontalComponent(JTS.findCoordinateReferenceSystem(candidate));
+                if(dispCrs==null || geomcrs==null || org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(geomcrs, dispCrs)){
+                    //do nothing
+                }else{
+                    candidate = JTS.transform(editGeom.geometry, org.geotoolkit.referencing.CRS.findMathTransform(geomcrs, dispCrs, true));
+                }
+            }catch(Exception ex){
+                Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
+            }
+
+            final Geometry geo = candidate.getGeometryN(editGeom.numSubGeom);
+
+            if(editGeom.numHole < 0){
+                final Coordinate coord = geo.getCoordinates()[editGeom.selectedNode[0]];
+                shapes.add(createVerticeNode(coord, true));
+            }else{
+                final Polygon poly = (Polygon) geo;
+                final LineString ls = poly.getInteriorRingN(editGeom.numHole);
+                final Coordinate coord = ls.getCoordinates()[editGeom.selectedNode[0]];
+                shapes.add(createVerticeNode(coord, true));
+
+            }
+        }
+
+
         //JAVAFX BUG : 
         //getChildren().setAll(shapes);
         Platform.runLater(() -> {
@@ -153,7 +188,11 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
     }
     
     protected Node createVerticeNode(Coordinate c, boolean selected){
-        return new Circle(c.x, c.y, 5);
+        final Circle circle = new Circle(c.x, c.y, 5);
+        circle.setFill(selected ? Color.BLUE : Color.WHITE);
+        circle.setStroke(Color.BLACK);
+        circle.setStrokeWidth(1);
+        return circle;
     }
 
     @Override
