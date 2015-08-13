@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.metadata.iso.content.DefaultAttributeGroup;
 import org.apache.sis.metadata.iso.content.DefaultCoverageDescription;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.metadata.ImageStatistics;
@@ -105,6 +106,7 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
             param.setEnvelope(env);
             param.setResolution(res);
             final GridCoverage coverage = reader.read(getImageIndex(), param);
+            if(!(coverage instanceof GridCoverage2D)) return null;
 
             final ProcessDescriptor processDesc = ProcessFinder.getProcessDescriptor("coverage", "statistic");
             final ParameterValueGroup processParam = processDesc.getInputDescriptor().createValue();

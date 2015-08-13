@@ -120,6 +120,7 @@ import org.geotoolkit.processing.coverage.statistics.StatisticOp;
 import org.geotoolkit.processing.coverage.statistics.Statistics;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
+import org.opengis.metadata.content.CoverageDescription;
 
 /**
  * Symbolizer renderer adapted for Raster.
@@ -434,8 +435,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             LOGGER.log(Level.FINE, "applyColorMapStyle : fallBack way is choosen. GrayScale interpretation of the first coverage image band.");
             
             ri = coverage.view(ViewType.GEOPHYSICS).getRenderedImage();
-            
-            ImageStatistics analyse = ImageStatistics.transform(ref.getMetadata());
+
+            CoverageDescription meta = ref.getMetadata();
+            ImageStatistics analyse = meta!=null ? ImageStatistics.transform(meta) : null;
             
             if (analyse == null) analyse = Statistics.analyse(ri, true);
             
