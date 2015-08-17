@@ -113,6 +113,7 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
         final List<Coordinate> coords = new ArrayList<>();
         //defensive copy
         for(Geometry geom : geoms.toArray(new Geometry[0])){
+            if(geom==null) continue;
             try{
                 final CoordinateReferenceSystem geomcrs = CRS.getHorizontalComponent(JTS.findCoordinateReferenceSystem(geom));
                 if(dispCrs==null || geomcrs==null || org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(geomcrs, dispCrs)){
