@@ -314,7 +314,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         One thread might do more then one saving work but this avoid a global
         contention when multiple save operations occur.
         */
-        if((save.getAndSet(0b11) & 0b10) !=0 ){
+        if((save.getAndSet(0b11) & 0b10) == 0){
             //0b10 flag was not set, no thread was currently saving so we must take this role.
             while(updateAndGet(save)!=0){
                 //keep saving un 0b01 flag is set to zero
