@@ -32,7 +32,6 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
-import com.vividsolutions.jtsexample.operation.distance.ClosestPointExample;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -46,6 +45,8 @@ import java.util.ServiceLoader;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -76,9 +77,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.FILTER_FACTORY;
 import org.geotoolkit.gui.javafx.render2d.FXMap;
-import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
-import org.geotoolkit.processing.vector.nearest.NearestProcess;
 
 /**
  *
@@ -94,13 +93,13 @@ public class EditionHelper {
 
     public static class EditionGeometry{
 
-        public Geometry geometry = null;
+        public final ObjectProperty<Geometry> geometry = new SimpleObjectProperty<>();
         public int numSubGeom = -1;
         public int numHole = -1;
         public final int[] selectedNode = new int[]{-1,-1};
 
         public void reset() {
-            geometry = null;
+            geometry.set(null);
             numSubGeom = -1;
             numHole = -1;
             selectedNode[0] = -1;
@@ -108,11 +107,17 @@ public class EditionHelper {
         }
 
         public void moveSelectedNode(final Coordinate newCoordinate){
+            moveSelectedNode(newCoordinate, false);
+        }
+
+        public void moveSelectedNode(final Coordinate newCoordinate, boolean newGeometry){
             if(geometry == null) return;
             if(numSubGeom < 0) return;
             if(selectedNode[0] < 0) return;
 
-            final Geometry geo = geometry.getGeometryN(numSubGeom);
+            Geometry base = geometry.get();
+            if(newGeometry) base = (Geometry) base.clone();
+            final Geometry geo = base.getGeometryN(numSubGeom);
             if(numHole < 0){
                 final Coordinate[] coords = geo.getCoordinates();
                 coords[selectedNode[0]].setCoordinate(newCoordinate);
@@ -128,7 +133,11 @@ public class EditionHelper {
             }
 
             geo.geometryChanged();
-            geometry.geometryChanged();
+            if(newGeometry){
+                geometry.set(base);
+            }else{
+                geometry.get().geometryChanged();
+            }
         }
 
         public void deleteSelectedNode() {
@@ -137,10 +146,10 @@ public class EditionHelper {
             if(selectedNode[0] < 0) return;
 
             //save datas
-            final int srid = geometry.getSRID();
-            final Object userData = geometry.getUserData();
+            final int srid = geometry.get().getSRID();
+            final Object userData = geometry.get().getUserData();
             
-            final Geometry geo = geometry.getGeometryN(numSubGeom);
+            final Geometry geo = geometry.get().getGeometryN(numSubGeom);
 
             if(numHole < 0){
                 final List<Coordinate> newCoords = new ArrayList<Coordinate>();
@@ -154,12 +163,12 @@ public class EditionHelper {
                     newCoords.remove(selectedNode[0]);
                 }
 
-                if(geometry instanceof Point){
+                if(geometry.get() instanceof Point){
                     //can not delete node from a Point
 
-                }else if(geometry instanceof MultiPoint){
+                }else if(geometry.get() instanceof MultiPoint){
                     //we have deleted the given subgeometry
-                    final MultiPoint mp = (MultiPoint) geometry;
+                    final MultiPoint mp = (MultiPoint) geometry.get();
                     final List<Geometry> parts = new ArrayList<Geometry>();
                     for(int i=0,n=mp.getNumGeometries();i<n;i++){
                         parts.add(mp.getGeometryN(i));
@@ -167,14 +176,14 @@ public class EditionHelper {
                     if(parts.size()>1){
                         //remove only if we have more then one point
                         parts.remove(numSubGeom);
-                        geometry = createMultiPoint(parts);
+                        geometry.set( createMultiPoint(parts) );
                     }
 
-                }else if(geometry instanceof LineString){
-                    geometry = createLine(newCoords);
+                }else if(geometry.get() instanceof LineString){
+                    geometry.set(createLine(newCoords));
 
-                }else if(geometry instanceof MultiLineString){
-                    final MultiLineString ml = (MultiLineString) geometry;
+                }else if(geometry.get() instanceof MultiLineString){
+                    final MultiLineString ml = (MultiLineString) geometry.get();
                     final List<Geometry> strs = new ArrayList<Geometry>();
                     for(int i=0,n=ml.getNumGeometries();i<n;i++){
                         if(i==numSubGeom){
@@ -184,18 +193,18 @@ public class EditionHelper {
                             strs.add(ml.getGeometryN(i));
                         }
                     }
-                    geometry = createMultiLine(strs);
+                    geometry.set( createMultiLine(strs) );
 
-                }else if(geometry instanceof Polygon){
-                    final Polygon poly = (Polygon) geometry;
+                }else if(geometry.get() instanceof Polygon){
+                    final Polygon poly = (Polygon) geometry.get();
                     final List<LinearRing> holes = new ArrayList<LinearRing>();
                     for(int i=0,n=poly.getNumInteriorRing();i<n;i++){
                         holes.add((LinearRing) poly.getInteriorRingN(i));
                     }
-                    geometry = createPolygon(newCoords, holes.toArray(new LinearRing[holes.size()]));
+                    geometry.set( createPolygon(newCoords, holes.toArray(new LinearRing[holes.size()])) );
 
-                }else if(geometry instanceof MultiPolygon){
-                    final MultiPolygon mp = (MultiPolygon) geometry;
+                }else if(geometry.get() instanceof MultiPolygon){
+                    final MultiPolygon mp = (MultiPolygon) geometry.get();
                     final List<Geometry> polys = new ArrayList<Geometry>();
                     for(int i=0,n=mp.getNumGeometries();i<n;i++){
                         Polygon poly = (Polygon) mp.getGeometryN(i);
@@ -208,7 +217,7 @@ public class EditionHelper {
                         }
                         polys.add(poly);
                     }
-                    geometry = createMultiPolygon(polys);
+                    geometry.set( createMultiPolygon(polys) );
                 }else{
                     throw new IllegalArgumentException("Unexpected geometry type :" + geometry.getClass());
                 }
@@ -218,8 +227,8 @@ public class EditionHelper {
                 throw new UnsupportedOperationException("not yet implemented");
             }
 
-            geometry.setSRID(srid);
-            geometry.setUserData(userData);
+            geometry.get().setSRID(srid);
+            geometry.get().setUserData(userData);
             
         }
 
@@ -462,8 +471,8 @@ public class EditionHelper {
         edited.selectedNode[0] = -1;
         edited.selectedNode[1] = -1;
 
-        for (int i=0,n=edited.geometry.getNumGeometries(); i<n; i++) {
-            final Geometry subgeo = edited.geometry.getGeometryN(i);
+        for (int i=0,n=edited.geometry.get().getNumGeometries(); i<n; i++) {
+            final Geometry subgeo = edited.geometry.get().getGeometryN(i);
 
             if (subgeo.intersects(mouseGeo)) {
                 //this geometry intersect the mouse

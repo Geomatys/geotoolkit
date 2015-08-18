@@ -107,16 +107,16 @@ public class MoveNodeTool extends AbstractEditionTool{
     }
 
     private void refreshDecoration(){
-        decoration.getGeometries().setAll(this.selection.geometry);
+        decoration.getGeometries().setAll(this.selection.geometry.get());
         decoration.setNodeSelection(this.selection);
     }
 
     public void setCurrentFeature(final Feature feature){
         this.feature = feature;
         if(feature != null){
-            this.selection.geometry = helper.toObjectiveCRS(feature);
+            this.selection.geometry.set( helper.toObjectiveCRS(feature) );
         }else{
-            this.selection.geometry = null;
+            this.selection.geometry.set( null );
         }
         refreshDecoration();
     }
@@ -153,30 +153,30 @@ public class MoveNodeTool extends AbstractEditionTool{
             final MouseButton button = e.getButton();
 
             if(button == MouseButton.PRIMARY){
-                if(selection.geometry == null){
+                if(selection.geometry.get() == null){
                     setCurrentFeature(helper.grabFeature(e.getX(), e.getY(), false));
                 }else if(e.getClickCount() >= 2){
                     //double click = add a node
                     final Geometry result;
-                    if(selection.geometry instanceof LineString){
-                        result = helper.insertNode((LineString)selection.geometry, e.getX(), e.getY());
-                    }else if(selection.geometry instanceof Polygon){
-                        result = helper.insertNode((Polygon)selection.geometry, e.getX(), e.getY());
-                    }else if(selection.geometry instanceof GeometryCollection){
-                        result = helper.insertNode((GeometryCollection)selection.geometry, e.getX(), e.getY());
+                    if(selection.geometry.get() instanceof LineString){
+                        result = helper.insertNode((LineString)selection.geometry.get(), e.getX(), e.getY());
+                    }else if(selection.geometry.get() instanceof Polygon){
+                        result = helper.insertNode((Polygon)selection.geometry.get(), e.getX(), e.getY());
+                    }else if(selection.geometry.get() instanceof GeometryCollection){
+                        result = helper.insertNode((GeometryCollection)selection.geometry.get(), e.getX(), e.getY());
                     }else{
-                        result = selection.geometry;
+                        result = selection.geometry.get();
                     }
-                    modified = modified || result != selection.geometry;
-                    selection.geometry = result;
-                    decoration.getGeometries().setAll(selection.geometry);
+                    modified = modified || result != selection.geometry.get();
+                    selection.geometry.set( result );
+                    decoration.getGeometries().setAll(selection.geometry.get());
                 }else if(e.getClickCount() == 1){
                     //single click with a geometry = select a node
                     helper.grabGeometryNode(e.getX(), e.getY(), selection);
                     decoration.setNodeSelection(selection);
                 }
             }else if(button == MouseButton.SECONDARY){
-                helper.sourceModifyFeature(feature, selection.geometry, true);
+                helper.sourceModifyFeature(feature, selection.geometry.get(), true);
                 reset();
             }
 
@@ -187,7 +187,7 @@ public class MoveNodeTool extends AbstractEditionTool{
             pressed = e.getButton();
 
             if(pressed == MouseButton.PRIMARY){
-                if(selection.geometry == null){
+                if(selection.geometry.get() == null){
                     setCurrentFeature(helper.grabFeature(e.getX(), e.getY(), false));
                 }else if(e.getClickCount() == 1){
                     //single click with a geometry = select a node

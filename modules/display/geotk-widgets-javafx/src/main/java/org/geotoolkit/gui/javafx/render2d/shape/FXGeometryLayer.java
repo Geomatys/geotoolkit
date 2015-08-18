@@ -150,16 +150,16 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
         //paint the selected node
         selectedNode :
         if(editGeom != null && editGeom.numSubGeom >= 0
-                            && editGeom.numSubGeom < editGeom.geometry.getNumGeometries()
+                            && editGeom.numSubGeom < editGeom.geometry.get().getNumGeometries()
                             && editGeom.selectedNode[0] >= 0){
 
-            Geometry candidate = editGeom.geometry;
+            Geometry candidate = editGeom.geometry.get();
             try{
                 final CoordinateReferenceSystem geomcrs = CRS.getHorizontalComponent(JTS.findCoordinateReferenceSystem(candidate));
                 if(dispCrs==null || geomcrs==null || org.geotoolkit.referencing.CRS.equalsIgnoreMetadata(geomcrs, dispCrs)){
                     //do nothing
                 }else{
-                    candidate = JTS.transform(editGeom.geometry, org.geotoolkit.referencing.CRS.findMathTransform(geomcrs, dispCrs, true));
+                    candidate = JTS.transform(editGeom.geometry.get(), org.geotoolkit.referencing.CRS.findMathTransform(geomcrs, dispCrs, true));
                 }
             }catch(Exception ex){
                 Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
