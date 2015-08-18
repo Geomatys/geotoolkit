@@ -31,6 +31,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import javax.vecmath.Vector2d;
 
 import org.apache.sis.util.ArgumentChecks;
@@ -38,6 +39,7 @@ import org.apache.sis.util.Static;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.jts.JTSLineIterator;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
+import org.geotoolkit.gml.xml.MultiGeometry;
 import org.geotoolkit.math.XMath;
 
 /**
@@ -227,6 +229,52 @@ public class LinearReferencing extends Static{
         return projection;
     }
     
+    /**
+     * Project the geometry on the segments.
+     * The result can be a Point/MultiPoint/LineString/MultiLinestring over the segments.
+     * 
+     * @param segments
+     * @param geometry
+     * @return LineString
+     */
+    public static Geometry project(SegmentInfo[] segments, Geometry geometry){
+        ArgumentChecks.ensureNonNull("geometry", geometry);
+
+        Geometry geom;
+        if(geometry instanceof MultiGeometry){
+            final int nbGeom = geometry.getNumGeometries();
+            final List<Geometry> geometries = new ArrayList<>();
+            for(int i=0;i<nbGeom;i++){
+                final Geometry geometryN = geometry.getGeometryN(i);
+                geometries.add(project(segments, geometryN));
+            }
+            geom = GO2Utilities.JTS_FACTORY.buildGeometry(geometries);
+        }else if(geometry instanceof Point){
+            final ProjectedPoint pf = projectReference(segments, (Point) geometry);
+            geom = GO2Utilities.JTS_FACTORY.createPoint(pf.projected);
+
+        }else if(geometry instanceof LineString || geometry instanceof Polygon){
+            final Coordinate[] coordinates = geometry.getCoordinates();
+            final Point pt = GO2Utilities.JTS_FACTORY.createPoint(coordinates[0]);
+            final TreeMap<Double,Coordinate> map = new TreeMap<>();
+
+            for(Coordinate crd : coordinates){
+                pt.getCoordinate().setCoordinate(crd);
+                final ProjectedPoint pf = projectReference(segments, pt);
+                map.put(pf.distanceAlongLinear, pf.projected);
+            }
+
+            geom = GO2Utilities.JTS_FACTORY.createLineString(map.values().toArray(new Coordinate[0]));
+
+        }else{
+            throw new IllegalArgumentException("Unsupported geometry type : "+geometry);
+        }
+
+        geom.setSRID(geometry.getSRID());
+        geom.setUserData(geometry.getUserData());
+        return geom;
+    }
+
     /**
      * Split the geometry in a serie of line strings.
      * 
