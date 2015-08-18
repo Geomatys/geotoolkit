@@ -45,7 +45,7 @@ import org.opengis.referencing.IdentifiedObject;
  */
 public abstract class AbstractObservationStoreFactory extends Factory implements ObservationStoreFactory {
  
-    private static final String BUNDLE_PATH = "org/geotoolkit/data/bundle";
+    private static final String BUNDLE_PATH = "org/geotoolkit/observation/bundle";
 
     /**
      * Identifier, Mandatory.

@@ -56,8 +56,8 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
      * url to the file.
      */
     public static final ParameterDescriptor<File> FILE_PATH = createDescriptor("url",
-                    new ResourceInternationalString("org/geotoolkit/data/bundle","paramURLAlias"),
-                    new ResourceInternationalString("org/geotoolkit/data/bundle","paramURLRemarks"),
+                    new ResourceInternationalString("org/geotoolkit/observation/bundle","paramURLAlias"),
+                    new ResourceInternationalString("org/geotoolkit/observation/bundle","paramURLRemarks"),
                     File.class,null,null,null,null,null,true);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
