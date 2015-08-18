@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.googlemaps;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
 
@@ -28,7 +29,17 @@ import static org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet.*;
  * @author Johann Sorel (Geomatys)
  */
 public class GoogleUtilitiesTest {
-    
+
+    @BeforeClass
+    public static void init() {
+        try {
+            // force postgresql driver loading
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     private final double DELTA = 0.0000001;
     
     /**

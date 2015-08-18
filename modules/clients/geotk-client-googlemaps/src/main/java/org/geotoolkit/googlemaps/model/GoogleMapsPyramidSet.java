@@ -61,8 +61,6 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
     static {
         try {
             GOOGLE_MERCATOR = CRS.decode("EPSG:3857");
-        } catch (NoSuchAuthorityCodeException ex) {
-            throw new RuntimeException(ex);
         } catch (FactoryException ex) {
             throw new RuntimeException(ex);
         }

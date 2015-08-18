@@ -22,6 +22,7 @@ import java.net.URL;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -35,6 +36,16 @@ import static org.junit.Assert.*;
  * @author Johann Sorel (Geomatys)
  */
 public class GetMapTest {
+
+    @BeforeClass
+    public static void init() {
+        try {
+            // force postgresql driver loading
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     public GetMapTest() {}
 
