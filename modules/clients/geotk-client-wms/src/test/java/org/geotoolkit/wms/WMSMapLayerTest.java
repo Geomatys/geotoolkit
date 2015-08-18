@@ -442,7 +442,7 @@ public class WMSMapLayerTest {
         final String sUrl = url.toString();
 
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-179.9999885408455%2C-85.05112779126263%2C179.9999885408455%2C85.05112779126262"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-179.9999885408455%2C-85.05112779126262%2C179.9999885408455%2C85.05112779126263"));
         assertTrue("was:" + sUrl, sUrl.contains("SRS=EPSG%3A4326"));
         assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
         assertTrue("was:" + sUrl, sUrl.contains("WIDTH=512"));
@@ -488,7 +488,7 @@ public class WMSMapLayerTest {
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-179.9999885408455%2C-85.05112779126263%2C179.9999885408455%2C85.05112779126262"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-179.9999885408455%2C-85.05112779126262%2C179.9999885408455%2C85.05112779126263"));
         assertTrue("was:" + sUrl, sUrl.contains("CRS=CRS%3A84"));
         assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
         assertTrue("was:" + sUrl, sUrl.contains("WIDTH=512"));
@@ -536,7 +536,7 @@ public class WMSMapLayerTest {
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-179.9999885408455%2C-85.05112779126263%2C179.9999885408455%2C85.05112779126262"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-179.9999885408455%2C-85.05112779126262%2C179.9999885408455%2C85.05112779126263"));
         assertTrue("was:" + sUrl, sUrl.contains("SRS=EPSG%3A4326"));
         assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
         assertTrue("was:" + sUrl, sUrl.contains("WIDTH=512"));
@@ -582,7 +582,7 @@ public class WMSMapLayerTest {
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-85.05112779126263%2C-179.9999885408455%2C85.05112779126262%2C179.9999885408455"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-85.05112779126262%2C-179.9999885408455%2C85.05112779126263%2C179.9999885408455"));
         assertTrue("was:" + sUrl, sUrl.contains("CRS=EPSG%3A4326"));
         assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
         assertTrue("was:" + sUrl, sUrl.contains("WIDTH=512"));
