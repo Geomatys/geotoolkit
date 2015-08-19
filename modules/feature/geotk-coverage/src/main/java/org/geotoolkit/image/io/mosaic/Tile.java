@@ -56,6 +56,7 @@ import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 
 import static java.lang.Math.min;
 import static java.lang.Math.max;
+import org.apache.sis.util.ArgumentChecks;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 
@@ -203,13 +204,10 @@ public class Tile implements Comparable<Tile>, Serializable {
 
     /**
      * The size of the image to be read, or 0 if not yet computed. Values are stored
-     * as <strong>unsigned</strong> shorts:  they must be casted to {@code int} with
-     * {@code s & MASK}. We assume that the {@code [0 … 65535]} range is sufficient
-     * on the basis that tiles need to be reasonably small for being useful. Furthermore
-     * tiles are usually square and an image of size 32767&times;32767 reaches the limit
-     * of Java Image I/O library anyway, since image area must hold in an {@code int}.
+     * as <strong>unsigned</strong> integers to aggregate some different SPOT Image tiles, 
+     * where tile width and tile height may exceed short max value.
      */
-    private short width, height;
+    private int width, height;
 
     /**
      * The "grid to real world" transform, used by {@link RegionCalculator} in order to compute
@@ -1059,7 +1057,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      */
     final boolean isLargerThan(final Tile other) {
         return xSubsampling == other.xSubsampling && ySubsampling == other.ySubsampling &&
-                (width & MASK) * (height & MASK) > (other.width & MASK) * (other.height & MASK);
+               width * height > other.width * other.height;
     }
 
     /**
@@ -1089,7 +1087,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      */
     final boolean isSizeEquals(final int dx, final int dy) {
         assert (getClass() == Tile.class) && (width != 0) && (height != 0) : this;
-        return (width & MASK) == dx && (height & MASK) == dy;
+        return width == dx && height == dy;
     }
 
     /**
@@ -1114,7 +1112,7 @@ public class Tile implements Comparable<Tile>, Serializable {
             setSize(reader.getWidth(imageIndex), reader.getHeight(imageIndex));
             dispose(reader);
         }
-        return new Dimension(width & MASK, height & MASK);
+        return new Dimension(width, height);
     }
 
     /**
@@ -1140,7 +1138,7 @@ public class Tile implements Comparable<Tile>, Serializable {
             final Dimension size = getSize();
             setSize(size.width, size.height); // Useless unless the user overloaded getSize().
         }
-        return new Rectangle(x, y, width & MASK, height & MASK);
+        return new Rectangle(x, y, width, height);
     }
 
     /**
@@ -1190,23 +1188,10 @@ public class Tile implements Comparable<Tile>, Serializable {
      * @throws IllegalArgumentException if the given size can't be stored as unsigned short.
      */
     void setSize(final int dx, final int dy) throws IllegalArgumentException {
-        width  = (short) dx;
-        height = (short) dy;
-        final String name;
-        final int value;
-        if ((width & MASK) != dx) {
-            name = "width";
-            value = dx;
-        } else if ((height & MASK) != dy) {
-            name = "height";
-            value = dy;
-        } else {
-            return;
-        }
-        width  = 0;
-        height = 0;
-        throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.ValueOutOfBounds_4, name, value, 0, MASK));
+        ArgumentChecks.ensurePositive("width", dx);
+        ArgumentChecks.ensurePositive("height", dy);
+        width  = dx;
+        height = dy;
     }
 
     /**
@@ -1513,8 +1498,8 @@ public class Tile implements Comparable<Tile>, Serializable {
              * not a subclass like LargeTile, otherwise those values may be wrong.
              */
             if ((width != 0 || height != 0) && getClass() == Tile.class) {
-                buffer.append(", size=(").append(width & MASK)
-                      .append(',').append(height & MASK).append(')');
+                buffer.append(", size=(").append(width)
+                      .append(',').append(height).append(')');
             }
         }
         return buffer.append(']').toString();
@@ -1601,8 +1586,8 @@ public class Tile implements Comparable<Tile>, Serializable {
              */
             int x            = tile.x;
             int y            = tile.y;
-            int width        = tile.width        & MASK;
-            int height       = tile.height       & MASK;
+            int width        = tile.width;
+            int height       = tile.height;
             int xSubsampling = tile.xSubsampling & MASK;
             int ySubsampling = tile.ySubsampling & MASK;
             if (tile.getClass() != Tile.class) {

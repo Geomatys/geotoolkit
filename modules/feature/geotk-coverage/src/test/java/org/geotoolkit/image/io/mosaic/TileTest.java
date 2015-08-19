@@ -51,14 +51,6 @@ public final strictfp class TileTest {
         bounds = new Rectangle(0, 0, 60000, 60000);
         tile = new Tile(null, "Tile.png", 0, bounds);
         assertEquals(bounds, tile.getRegion());
-
-        bounds = new Rectangle(0, 0, 70000, 70000);
-        try {
-            tile = new Tile(null, "Tile.png", 0, bounds);
-            fail(tile + " should be out of unsigned short range.");
-        } catch (IllegalArgumentException e) {
-            // This is the expected exception.
-        }
     }
 
     /**
