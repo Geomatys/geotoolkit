@@ -48,6 +48,9 @@ import org.junit.Test;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
+
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
 /**
@@ -354,7 +357,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
                 new Coordinate[]{
                     new Coordinate(-10.0, -10.0),
                     new Coordinate(0.0, -30.0),
-                    new Coordinate(-20.0, -20.0),
+                    new Coordinate(-30.0, 10.0),
                     new Coordinate(-20.0, 30.0),
                     new Coordinate(10.0, 10.0),
                     new Coordinate(20.0, -20.0),

@@ -51,13 +51,13 @@ import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.io.wkt.Convention;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.openoffice.MethodInfo;
 import org.geotoolkit.openoffice.Formulas;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.metadata.iso.extent.Extents;
+import org.apache.sis.referencing.operation.AbstractCoordinateOperation;
 
 
 /**
@@ -492,7 +492,7 @@ public final class Referencing extends Formulas implements XReferencing {
             reportException("getAccuracy", exception, THROW_EXCEPTION);
             return Double.NaN;
         }
-        return AbstractCoordinateOperation.getAccuracy(operation);
+        return AbstractCoordinateOperation.castOrCopy(operation).getLinearAccuracy();
     }
 
     /**

@@ -114,7 +114,9 @@ abstract class UnitaryProjection extends NormalizedProjection {
         final ParameterDescriptorGroup parameters = projection.getParameters();
         final EnumMap<ParameterRole, ParameterDescriptor<Double>> roles = new EnumMap<>(ParameterRole.class);
         for (final ParameterRole role : ParameterRole.values()) {
-            if (role != ParameterRole.LATITUDE_OF_CONFORMAL_SPHERE_RADIUS) {
+            if (role != ParameterRole.LATITUDE_OF_CONFORMAL_SPHERE_RADIUS &&
+                role != ParameterRole.FALSE_WESTING && role != ParameterRole.FALSE_SOUTHING)
+            {
                 final String name = role.name().toLowerCase();
                 final GeneralParameterDescriptor p = parameters.descriptor(name);
                 roles.put(role, Parameters.cast((ParameterDescriptor<?>) p, Double.class));

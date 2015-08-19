@@ -85,6 +85,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
+import org.apache.sis.internal.metadata.ReferencingServices;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.cs.CoordinateSystems;
 import org.apache.sis.referencing.operation.DefaultConversion;
@@ -417,7 +418,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      */
     protected final Connection connection;
 
-    private transient CoordinateOperationFactory opFactory;     // TODO
+    private transient org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory opFactory;     // TODO
 
     /**
      * Creates a factory using the given connection. The connection is
@@ -2586,6 +2587,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             accuracyElement.freeze();
             element = accuracyElement;
             accuracies.put(key, element);
+            // TODO: Share this code with WKT GeodeticObjectParser.parseCoordinateOperation(...) too.
         }
         return element;
     }
@@ -2843,8 +2845,11 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         }
                         final MathTransform mt = factories.getMathTransformFactory().createBaseToDerived(
                                 sourceCRS, parameters, targetCRS.getCoordinateSystem());
-                        // TODO: use GeoAPI factory method once available (http://jira.codehaus.org/browse/GEO-216).
-                        operation = AbstractCoordinateOperation.create(properties, sourceCRS, targetCRS, mt, method, expected);
+                        properties.put(ReferencingServices.OPERATION_TYPE_KEY, expected);
+                        if (opFactory == null) {    // TODO
+                            opFactory = new org.apache.sis.referencing.operation.DefaultCoordinateOperationFactory();
+                        }
+                        operation = opFactory.createSingleOperation(properties, sourceCRS, targetCRS, null, method, mt);
                     }
                     returnValue = ensureSingleton(operation, returnValue, code);
                     if (result.isClosed()) {

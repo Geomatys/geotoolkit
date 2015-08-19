@@ -144,7 +144,7 @@ public class EarthGravitationalModel extends VerticalTransform {
             throws IllegalArgumentException, FactoryException
     {
         EarthGravitationalModel model;
-        final Integer key = hashCode(CRS.equalsIgnoreMetadata(CommonCRS.WGS84.datum(), datum), nmax);
+        final Integer key = hashCode(CRS.equalsApproximatively(CommonCRS.WGS84.datum(), datum), nmax);
         synchronized (POOL) {
             model = POOL.get(key);
             if (model == null) {
@@ -201,7 +201,7 @@ public class EarthGravitationalModel extends VerticalTransform {
         ensureNonNull("datum", datum);
         ensureBetween("nmax", 2, 9999, nmax); // Arbitrary upper limit.
         this.nmax = nmax;
-        isWGS84 = CRS.equalsIgnoreMetadata(CommonCRS.WGS84.datum(), datum);
+        isWGS84 = CRS.equalsApproximatively(CommonCRS.WGS84.datum(), datum);
         if (isWGS84) {
             /*
              * WGS84 model values.

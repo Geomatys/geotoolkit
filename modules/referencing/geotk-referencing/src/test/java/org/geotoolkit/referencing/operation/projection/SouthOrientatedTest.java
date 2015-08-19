@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.3
  */
-@DependsOn({TransverseMercatorTest.class, KrovakTest.class})
+@DependsOn(KrovakTest.class)
 public final strictfp class SouthOrientatedTest {
     /**
      * Small number for matrix element comparisons.

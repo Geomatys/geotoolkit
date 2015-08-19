@@ -465,22 +465,6 @@ public final strictfp class MathTransformFactoryTest extends ReferencingTestBase
         ParameterValueGroup params;
 
         //
-        // http://www.remotesensing.org/geotiff/proj_list/polar_stereographic.html
-        //
-        params = mtFactory.getDefaultParameters("Stereographic_North_Pole");
-        params.parameter("semi_major")         .setValue(6378137.0);
-        params.parameter("semi_minor")         .setValue(6356752.31424518);
-        params.parameter("standard_parallel_1").setValue( 71.0);
-        params.parameter("central_meridian")   .setValue(-96.0);
-        params.parameter("scale_factor")       .setValue(1.0);
-        params.parameter("false_easting")      .setValue(0);
-        params.parameter("false_northing")     .setValue(0);
-        transform = mtFactory.createParameterizedTransform(params);
-        printTransform(transform);
-        doTransform(new DirectPosition2D(-121.33955, 39.1012523), // 121°20'22.38"W 39°6'4.508"N
-                    new DirectPosition2D(-2529570, -5341800), transform);
-
-        //
         // http://jira.codehaus.org/browse/GEOS-1037
         //
         params = mtFactory.getDefaultParameters("Polar_Stereographic");

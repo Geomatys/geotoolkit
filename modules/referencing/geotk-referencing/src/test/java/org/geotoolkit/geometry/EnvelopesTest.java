@@ -36,7 +36,6 @@ import org.apache.sis.test.DependsOn;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.display.shape.XRectangle2D;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.CRS_Test;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;

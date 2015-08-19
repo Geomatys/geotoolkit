@@ -30,7 +30,7 @@ import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.operation.provider.Orthographic;
 import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
 import org.geotoolkit.referencing.operation.provider.ObliqueMercator;
-import org.geotoolkit.referencing.operation.provider.PolarStereographic;
+import org.apache.sis.internal.referencing.provider.PolarStereographicA;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
 import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
 import org.apache.sis.internal.referencing.provider.Mercator1SP;
@@ -93,7 +93,7 @@ public final class GeoTiffCRSWriter {
                 throw new IllegalStateException("Impossible to extract 2D part of coordinate referenceSystem", ex);
             }
         }
-        
+
         final int crsType;
         if (crs instanceof ProjectedCRS) {
             crsType = ModelTypeProjected;
@@ -107,7 +107,7 @@ public final class GeoTiffCRSWriter {
         } else {
             throw new IOException("GeoTiff only handle ProjectedCRS, GeocentricCRS or GeographicCRS. Can not support CRS : " + crs);
         }
-    
+
         // add GTModelTypeGeoKey in GeoKeyDirectoryEntry
         stack.addShort(GTModelTypeGeoKey, crsType);
     }
@@ -387,7 +387,7 @@ public final class GeoTiffCRSWriter {
             stack.addAscii(PCSCitationGeoKey, name);
 
             // params
-            stack.addDouble(ProjNatOriginLongGeoKey,    value(parameters,Mercator1SP.CENTRAL_MERIDIAN));
+            stack.addDouble(ProjNatOriginLongGeoKey,    value(parameters,Mercator1SP.LONGITUDE_OF_ORIGIN));
             //stack.addDouble(ProjNatOriginLatGeoKey,     value(parameters,Mercator1SP.LATITUDE_OF_ORIGIN));
             stack.addDouble(ProjScaleAtNatOriginGeoKey, value(parameters,Mercator1SP.SCALE_FACTOR));
             stack.addDouble(ProjFalseEastingGeoKey,     value(parameters,Mercator1SP.FALSE_EASTING));
@@ -404,7 +404,7 @@ public final class GeoTiffCRSWriter {
             stack.addAscii(PCSCitationGeoKey, name);
 
             // params
-            stack.addDouble(ProjNatOriginLongGeoKey,    value(parameters,LambertConformal1SP.CENTRAL_MERIDIAN));
+            stack.addDouble(ProjNatOriginLongGeoKey,    value(parameters,LambertConformal1SP.LONGITUDE_OF_ORIGIN));
             stack.addDouble(ProjNatOriginLatGeoKey,     value(parameters,LambertConformal1SP.LATITUDE_OF_ORIGIN));
             stack.addDouble(ProjScaleAtNatOriginGeoKey, value(parameters,LambertConformal1SP.SCALE_FACTOR));
             stack.addDouble(ProjFalseEastingGeoKey,     value(parameters,LambertConformal1SP.FALSE_EASTING));
@@ -451,17 +451,17 @@ public final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // polar_stereographic
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.isHeuristicMatchForName(PolarStereographic.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(new PolarStereographicA().getParameters(), desc)) {   // TODO: need an other way to check for match.
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_PolarStereographic);
             stack.addAscii(PCSCitationGeoKey, name);
 
             // params
-            stack.addDouble(ProjNatOriginLongGeoKey,        value(parameters,PolarStereographic.CENTRAL_MERIDIAN));
-            stack.addDouble(ProjStraightVertPoleLongGeoKey, value(parameters,PolarStereographic.LATITUDE_OF_ORIGIN));
-            stack.addDouble(ProjScaleAtNatOriginGeoKey,     value(parameters,PolarStereographic.SCALE_FACTOR));
-            stack.addDouble(ProjFalseEastingGeoKey,         value(parameters,PolarStereographic.FALSE_EASTING));
-            stack.addDouble(ProjFalseNorthingGeoKey,        value(parameters,PolarStereographic.FALSE_NORTHING));
+            stack.addDouble(ProjNatOriginLongGeoKey,        value(parameters,PolarStereographicA.LONGITUDE_OF_ORIGIN));
+            stack.addDouble(ProjStraightVertPoleLongGeoKey, value(parameters,PolarStereographicA.LATITUDE_OF_ORIGIN));
+            stack.addDouble(ProjScaleAtNatOriginGeoKey,     value(parameters,PolarStereographicA.SCALE_FACTOR));
+            stack.addDouble(ProjFalseEastingGeoKey,         value(parameters,PolarStereographicA.FALSE_EASTING));
+            stack.addDouble(ProjFalseNorthingGeoKey,        value(parameters,PolarStereographicA.FALSE_NORTHING));
             return;
         }
 

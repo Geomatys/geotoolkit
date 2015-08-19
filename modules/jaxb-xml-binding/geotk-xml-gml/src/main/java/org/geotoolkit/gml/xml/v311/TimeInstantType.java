@@ -60,7 +60,7 @@ import org.opengis.util.InternationalString;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TimeInstantType", propOrder = {
+@XmlType(propOrder = {
     "timePosition"
 })
 public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements GmlInstant, Instant, Serializable, Literal {
@@ -183,7 +183,7 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
         }
         return null;
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */

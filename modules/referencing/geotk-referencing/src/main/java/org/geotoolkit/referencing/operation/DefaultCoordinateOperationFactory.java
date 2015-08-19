@@ -61,6 +61,7 @@ import org.apache.sis.internal.metadata.AxisDirections;
 import org.geotoolkit.internal.referencing.OperationContext;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
+import org.apache.sis.internal.referencing.Formulas;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.DefaultPassThroughOperation;
 import org.apache.sis.referencing.operation.matrix.MatrixSIS;
@@ -142,7 +143,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
             }
             candidate = userHints.get(Hints.LENIENT_DATUM_SHIFT);
             if (candidate instanceof Boolean) {
-                lenientDatumShift = ((Boolean) candidate).booleanValue();
+                lenientDatumShift = (Boolean) candidate;
             }
         }
         //
@@ -409,6 +410,33 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
     /////////////////////////////////////////////////////////////////////////////////
 
     /**
+     * Returns {@code true} if the Greenwich longitude of the {@code actual} prime meridian is equals to the
+     * Greenwich longitude of the {@code expected} prime meridian. The comparison is performed in unit of the
+     * expected prime meridian.
+     *
+     * <p>A {@code null} argument is interpreted as "unknown prime meridian". Consequently this method
+     * unconditionally returns {@code false} if one or both arguments is {@code null}.</p>
+     *
+     * @param expected The expected prime meridian, or {@code null}.
+     * @param actual The actual prime meridian, or {@code null}.
+     * @return {@code true} if both prime meridian have the same Greenwich longitude,
+     *         in unit of the expected prime meridian.
+     *
+     * @todo replace by a method computing the rotation angle in radians.
+     */
+    private static boolean isGreenwichLongitudeEquals(final PrimeMeridian expected, final PrimeMeridian actual) {
+        if (expected == null || actual == null) {
+            return false; // See method javadoc.
+        }
+        if (expected == actual) {
+            return true;
+        }
+        final double diff = ReferencingUtilities.getGreenwichLongitude(expected, NonSI.DEGREE_ANGLE)
+                          - ReferencingUtilities.getGreenwichLongitude(actual, NonSI.DEGREE_ANGLE);
+        return Math.abs(diff) <= Formulas.ANGULAR_TOLERANCE;
+    }
+
+    /**
      * Makes sure that the specified geocentric CRS uses standard axis, prime meridian and
      * the specified datum. If {@code crs} already meets all those conditions, then it is
      * returned unchanged. Otherwise, a new normalized geocentric CRS is created and returned.
@@ -424,7 +452,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         final CartesianCS   STANDARD  = PredefinedCS.GEOCENTRIC;
         final GeodeticDatum candidate = crs.getDatum();
         if (equalsIgnorePrimeMeridian(candidate, datum)) {
-            if (ReferencingUtilities.isGreenwichLongitudeEquals(datum.getPrimeMeridian(), candidate.getPrimeMeridian())) {
+            if (isGreenwichLongitudeEquals(datum.getPrimeMeridian(), candidate.getPrimeMeridian())) {
                 if (hasStandardAxis(crs.getCoordinateSystem(), STANDARD)) {
                     return crs;
                 }
@@ -1003,9 +1031,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         final GeodeticDatum targetDatum = targetCRS.getDatum();
         final CoordinateSystem sourceCS = sourceCRS.getCoordinateSystem();
         final CoordinateSystem targetCS = targetCRS.getCoordinateSystem();
-        if (!ReferencingUtilities.isGreenwichLongitudeEquals(
-                sourceDatum.getPrimeMeridian(), targetDatum.getPrimeMeridian()))
-        {
+        if (!isGreenwichLongitudeEquals(sourceDatum.getPrimeMeridian(), targetDatum.getPrimeMeridian())) {
             throw new OperationNotFoundException("Rotation of prime meridian not yet implemented");
         }
         if (equalsIgnorePrimeMeridian(sourceDatum, targetDatum)) {
@@ -1428,9 +1454,9 @@ search: for (int j=0; j<targets.size(); j++) {
                 if (subOperation instanceof SingleOperation) {
                     op = (SingleOperation) subOperation;
                 } else {
-                    op = (SingleOperation) AbstractCoordinateOperation.create(properties,
-                            subOperation.getSourceCRS(), subOperation.getTargetCRS(), subTransform,
-                            new DefaultOperationMethod(subTransform), subOperation.getClass());
+                    op = createSingleOperation(properties,
+                            subOperation.getSourceCRS(), subOperation.getTargetCRS(), null,
+                            new DefaultOperationMethod(subTransform), subTransform);
                 }
                 subOperation = new DefaultPassThroughOperation(properties, stepSourceCRS, stepTargetCRS, op, lower, orderedSourceDim - upper);
             }
