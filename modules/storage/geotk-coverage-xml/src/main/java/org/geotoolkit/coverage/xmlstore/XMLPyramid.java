@@ -127,7 +127,8 @@ public class XMLPyramid implements Pyramid {
             try {
                 crsobj = (CoordinateReferenceSystem) Base64.decodeToObject(serializedCrs);
             } catch (Exception ex) {
-                Logging.getLogger(this.getClass()).log(Level.WARNING, ex.getMessage(), ex);
+                final String msg = "Unable to read base64 serialized CRS, fallback to WKT : "+ex.getMessage();
+                Logging.getLogger(this.getClass()).log(Level.WARNING, msg);
             }
         }
         
