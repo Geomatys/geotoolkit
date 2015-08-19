@@ -40,6 +40,7 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.awt.image.WritableRenderedImage;
 import java.awt.image.renderable.RenderedImageFactory;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,6 +51,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.converter.LinearConverter;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
@@ -101,6 +103,7 @@ import org.geotoolkit.style.visitor.PrepareStyleVisitor;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.collection.Cache;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -174,8 +177,25 @@ public final class GO2Utilities {
     public static final Point2D GLYPH_POINT;
     public static final Shape GLYPH_TEXT;
 
-
+    protected static final Logger LOGGER = Logging.getLogger(GO2Utilities.class);
+    /**
+     * A tolerance value for black color. Used in {@linkplain #removeBlackBorder(java.awt.image.WritableRenderedImage)}
+     * to define an applet of black colors to replace with alpha data.
+     */
+    private static final int COLOR_TOLERANCE = 13;
+    
+    /**
+     * Palette of black colors samples computed with {@link #COLOR_TOLERANCE}.
+     * Used in {@linkplain #removeBlackBorder(java.awt.image.WritableRenderedImage)}.
+     */
+    private static final double[][] BLACK_COLORS;
+    
     static{
+        
+        List<double[]> blackColorsList = new ArrayList<>();
+        fillColorToleranceTable(0, 2, blackColorsList, new double[]{0, 0, 0, 255}, COLOR_TOLERANCE);
+        BLACK_COLORS = blackColorsList.toArray(new double[0][]);
+        
         final ServiceLoader<SymbolizerRendererService> loader = ServiceLoader.load(SymbolizerRendererService.class);
         for(SymbolizerRendererService renderer : loader){
             RENDERERS.put(renderer.getCachedSymbolizerClass(), renderer);
@@ -1453,6 +1473,58 @@ public final class GO2Utilities {
         if(Double.isNaN(env.getMaximum(0))){ env.setRange(0, env.getMinimum(0), Double.POSITIVE_INFINITY);  }
         if(Double.isNaN(env.getMinimum(1))){ env.setRange(1, Double.NEGATIVE_INFINITY, env.getMaximum(1));  }
         if(Double.isNaN(env.getMaximum(1))){ env.setRange(1, env.getMinimum(1), Double.POSITIVE_INFINITY);  }
+    }
+    
+    //-- Some utility methods for any Renderer.
+    
+    /**
+     * Remove black border of an ARGB image to replace them with transparent pixels.
+     * 
+     * @param toFilter Image to remove black border from.
+     */
+    public static void removeBlackBorder(final WritableRenderedImage toFilter) {
+        // remove black border only on image larger than 1x1 pixels
+        if (toFilter.getHeight() > 1 && toFilter.getWidth() > 1) {
+            FloodFill.fill(toFilter, BLACK_COLORS, new double[]{0d, 0d, 0d, 0d},
+                    new java.awt.Point(0, 0),
+                    new java.awt.Point(toFilter.getWidth() - 1, 0),
+                    new java.awt.Point(toFilter.getWidth() - 1, toFilter.getHeight() - 1),
+                    new java.awt.Point(0, toFilter.getHeight() - 1)
+            );
+        } else {
+            LOGGER.log(Level.FINER, "Ignoring black border removal, because image is too small (image < 1x1)");
+        }
+    }
+    
+    /**
+     * Add an alpha band to the image and remove any black border if asked.
+     *
+     * TODO, this could be done more efficiently by adding an ImageLayout hints
+     * when doing the coverage reprojection. but hints can not be passed currently.
+     */
+    public static RenderedImage forceAlpha(RenderedImage img) {
+        if (!img.getColorModel().hasAlpha()) {
+            //Add alpha channel
+            final BufferedImage buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
+            img = buffer;
+        }
+        return img;
+    }
+    
+    private static void fillColorToleranceTable(int index, int maxIndex, List<double[]> container, double[] baseColor, int tolerance) {
+        for (int j = 0 ; j < tolerance; j++) {
+            final double[] color = new double[baseColor.length];
+            System.arraycopy(baseColor, 0, color, 0, baseColor.length);
+            color[index] += j;
+            if (index >= maxIndex) {
+                container.add(color);
+            } else {
+                for (int i = index +1 ; i <= maxIndex ; i++) {
+                    fillColorToleranceTable(i, maxIndex, container, color, tolerance);
+                }
+            }
+        }
     }
 
 }

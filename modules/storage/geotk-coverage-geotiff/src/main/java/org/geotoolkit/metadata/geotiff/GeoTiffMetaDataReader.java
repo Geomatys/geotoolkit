@@ -33,7 +33,6 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.builder.LocalizationGrid;
 import org.apache.sis.util.Classes;
 import org.apache.sis.util.logging.Logging;
 
@@ -46,7 +45,10 @@ import org.opengis.util.FactoryException;
 import org.w3c.dom.Node;
 
 import static com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet.*;
-import java.util.Map;
+import org.apache.sis.referencing.operation.matrix.Matrix3;
+import org.apache.sis.referencing.operation.matrix.MatrixSIS;
+import org.apache.sis.referencing.operation.matrix.NoninvertibleMatrixException;
+import org.geotoolkit.internal.jdk8.JDK8;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils.*;
 import static org.geotoolkit.util.DomUtilities.*;
@@ -196,9 +198,17 @@ public final class GeoTiffMetaDataReader {
         if (value != null) {
             int type = (Integer)value;
             
-            if(type < 1 || type > 2) throw new IOException("Unexpected raster type : "+ type);
+            //-- faire un log
+            if (type < 1 || type > 2) {
+                final String strLog = "Undefine raster Type from geotiff metadatas : \n"
+                        + "From GeoKeyDirectoryTag (34735) the internaly key GTRasterTypeGeoKey (1025) should be : \n"
+                        + "- 1 for RasterPixelIsArea, or \n"
+                        + "- 2 for RasterPixelIsPoint.\n"
+                        + "Bad founded raster Type value is : "+type;
+                LOGGER.log(Level.SEVERE, strLog);
+            }
             
-            orientation = (type == RasterPixelIsArea) ? PixelOrientation.UPPER_LEFT : PixelOrientation.CENTER;
+            orientation = (type == RasterPixelIsPoint) ? PixelOrientation.CENTER : PixelOrientation.UPPER_LEFT;
         } else {
             orientation = PixelOrientation.UPPER_LEFT;
         }
@@ -220,52 +230,199 @@ public final class GeoTiffMetaDataReader {
                 final int l = tiePoint.length;
                 assert l % 6 == 0 : "In tiff specification tiePoint array length should be congrue 6.";
                 
-                final LocalizationGrid grid = new LocalizationGrid(2, 2);
-                
                 //-- pixelOrientation Offset
                 final int pIOffset = (orientation.equals(PixelOrientation.CENTER)) ? 1 : 0;
                 
-                //-- build the 2 maximums coordinates
-                final int minX = bounds.x + pIOffset;
-                final int minY = bounds.y + pIOffset;
-                final int maxX = bounds.x + bounds.width  - 1 + pIOffset;
-                final int maxY = bounds.y + bounds.height - 1 + pIOffset;
+                final double[] lowerLeftCorner     = new double[]{Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0, 0, 0, 0}; //-- xmin ymin
+                final double[] lowerRightCorner    = new double[]{Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0, 0, 0, 0}; //-- xmax ymin
+                final double[] upperLeftCorner     = new double[]{Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 0, 0, 0, 0}; //-- xmax ymax
+                final double[] upperRightCorner    = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 0, 0, 0, 0}; //-- xmax ymax
                 
-                int nbPointFound = 0;
-                
+                //-- first loop to find the two minimum grid poins in X axis to define XStep
+                //-- and also find the two minimum grid poins in Y axis to define YStep
+                //-- in other to know if grid is regulary
                 for (int i = 0; i < l; i += 6) {
                     final double currentX = tiePoint[i];
                     final double currentY = tiePoint[i+1];
                     
-                    if (StrictMath.abs(currentX - minX) < 1E-9
-                     && StrictMath.abs(currentY - minY) < 1E-9) {//-- lowerLeftCorner
-                        
-                        grid.setLocalizationPoint(0, 0, tiePoint[i + 3], tiePoint[i + 4]);
-                        if (++nbPointFound == 4) break;//-- 4 corners found.
-                        
-                    } else if (StrictMath.abs(currentX - minX) < 1E-9
-                            && StrictMath.abs(currentY - maxY) < 1E-9) {//-- upperLeftCorner
-                        
-                        grid.setLocalizationPoint(0, 1, tiePoint[i + 3], tiePoint[i + 4]);
-                        if (++nbPointFound == 4) break;//-- 4 corners found.
-                        
-                    } else if (StrictMath.abs(currentX - maxX) < 1E-9
-                            && StrictMath.abs(currentY - minY) < 1E-9) {//-- lowerRightCorner
-                        
-                        grid.setLocalizationPoint(1, 0, tiePoint[i + 3], tiePoint[i + 4]);
-                        if (++nbPointFound == 4) break;//-- 4 corners found.
-                        
-                    } else if (StrictMath.abs(currentX - maxX) < 1E-9
-                            && StrictMath.abs(currentY - maxY) < 1E-9) {//-- upperRightCorner
-                        
-                        grid.setLocalizationPoint(1, 1, tiePoint[i + 3], tiePoint[i + 4]);
-                        if (++nbPointFound == 4) break;//-- 4 corners found.
+                    if (currentX <= lowerLeftCorner[0]
+                     && currentY <= lowerLeftCorner[1]) {
+                        System.arraycopy(tiePoint, i, lowerLeftCorner, 0, 6);
                     } 
+                    if (currentX >= lowerRightCorner[0]
+                     && currentY <= lowerRightCorner[1]) {
+                        System.arraycopy(tiePoint, i, lowerRightCorner, 0, 6);
+                    } 
+                    if (currentX >= upperRightCorner[0]
+                     && currentY >= upperRightCorner[1]) {
+                        System.arraycopy(tiePoint, i, upperRightCorner, 0, 6);
+                    }
+                    if (currentX <= upperLeftCorner[0]
+                     && currentY >= upperLeftCorner[1]) {
+                        System.arraycopy(tiePoint, i, upperLeftCorner, 0, 6);
+                    }
                 }
+                
+                //-- the fourth corner points found
+                assert JDK8.isFinite(lowerLeftCorner[0])  : "lowerLeftCorner  grid point not found";
+                assert JDK8.isFinite(lowerRightCorner[0]) : "lowerRightCorner grid point not found";
+                assert JDK8.isFinite(upperLeftCorner[0])  : "upperLeftCorner  grid point not found";
+                assert JDK8.isFinite(upperRightCorner[0]) : "upperRightCorner grid point not found";
+                
+                
+                ////////////////////////////////////////////////////////////////////////////////
+                //// Commentary code to support NON LINEAR GRIDTOCRS into coverage metadata ////
+                //// TODO : add non linear MathTransform into setUserObject from            ////
+                //// metadatas for Coverage gridtocrs and use it during pyramid build       ////
+                ////////////////////////////////////////////////////////////////////////////////
+                
+                
+//                double[] preLowerCorner = null; 
+//                double[] preUpperCorner = null; 
+//                
+//                //-- round value because expected value at 0 and 1 array index are integer raster coordinates.
+//                int stepX = (int) StrictMath.round(upperRightCorner[0] - lowerLeftCorner[0]);
+//                int stepY = (int) StrictMath.round(upperRightCorner[1] - lowerLeftCorner[1]);
+//                
+//                //-- if more than 5 points
+//                if (l > 30) {
+//                    preLowerCorner = new double[]{Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0, 0, 0, 0}; 
+//                    preUpperCorner = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 0, 0, 0, 0};
+//                    
+//                    //-- I didn't find algorithm to avoid this second loop
+//                    for (int i = 0; i < l; i += 6) {
+//                        final double currentX = tiePoint[i];
+//                        final double currentY = tiePoint[i+1];
+//                        if (currentX >  lowerLeftCorner[0]
+//                         && currentX <= preLowerCorner[0]
+//                         && currentY >  lowerLeftCorner[1]
+//                         && currentY <= preLowerCorner[1]) {
+//                            System.arraycopy(tiePoint, i, preLowerCorner, 0, 6);
+//                        }
+//                        if (currentX <  upperRightCorner[0]
+//                         && currentX >= preUpperCorner[0]
+//                         && currentY <  upperRightCorner[1]
+//                         && currentY >= preUpperCorner[1]) {
+//                            System.arraycopy(tiePoint, i, preUpperCorner, 0, 6);
+//                        }
+//                    }
+//                    assert JDK8.isFinite(preLowerCorner[0]) : "preLowerCorner grid point not found";
+//                    assert JDK8.isFinite(preUpperCorner[0]) : "preUpperCorner grid point not found";
+//                    
+//                    stepX = (int) StrictMath.round(preLowerCorner[0] - lowerLeftCorner[0]);
+//                    stepY = (int) StrictMath.round(preLowerCorner[1] - lowerLeftCorner[1]); 
+//                    
+//                }
+//                    
+//                assert stepX >= 1;// >= 1
+//                assert stepY >= 1;// >= 1
+//                
+//                double[] gridLowerCorner = lowerLeftCorner; 
+//                double[] gridUpperCorner = null;
+//                
+//                //-- often last higher point on X or Y direction is not congrue to regular points step.
+//                //-- try to generate regular grid without last higher border points.
+//                if ((int) StrictMath.round(upperRightCorner[0] - lowerLeftCorner[0]) % stepX == 0
+//                 && (int) StrictMath.round(upperRightCorner[1] - lowerLeftCorner[1]) % stepY == 0) {
+//                    gridUpperCorner = upperRightCorner;
+//                } else {
+//                    gridUpperCorner = preUpperCorner;
+//                }
+//                
+//                assert gridUpperCorner != null : "gridUpperCorner should not be null."; 
+//                
+//                final int gridWidth  = (int) StrictMath.round(gridUpperCorner[0] - gridLowerCorner[0]);
+//                final int gridHeight = (int) StrictMath.round(gridUpperCorner[1] - gridLowerCorner[1]);
+//                
+//                BitSet bit                 = null;
+//                LocalizationGrid grid      = null;
+//                int expectedBitCardinality = -1;
+//                
+//                if (gridWidth  % stepX == 0 
+//                 && gridHeight % stepY == 0) {
+//                    final int nbPointX = gridWidth  / stepX + 1;//-- [p0 -- step --> p1 -- step --> p2]
+//                    final int nbPointY = gridHeight / stepY + 1;
+//                    expectedBitCardinality = nbPointX * nbPointY;
+//                    
+//                    grid = new LocalizationGrid(nbPointX, nbPointY);
+//                    bit  = new BitSet(expectedBitCardinality);
+//                    
+//                    for (int i = 0; i < l; i += 6) {
+//                        final double currentX = tiePoint[i];
+//                        final double currentY = tiePoint[i+1];
+//                        
+//                        //-- case where we ignore higher border points
+//                        //-- avoid higher border points
+//                        if (currentX > gridUpperCorner[0]
+//                         || currentY > gridUpperCorner[1]) {
+//                            continue;
+//                        }
+//                        
+//                        final int px = (int) StrictMath.round(currentX - gridLowerCorner[0]);
+//                        final int py = (int) StrictMath.round(currentY - gridLowerCorner[1]);
+//                        
+//                        assert StrictMath.abs(px - tiePoint[i])   < 1E-9;
+//                        assert StrictMath.abs(py - tiePoint[i+1]) < 1E-9;
+//                        
+//                        //-- current point coordinates are congrue step
+//                        if (px % stepX != 0
+//                         || py % stepY != 0) {
+//                            break;
+//                        }
+//                        bit.set(py * nbPointX + px, true);
+//                        grid.setLocalizationPoint(px / stepX,  //-- src  X
+//                                                  py / stepY,  //-- src  Y
+//                                                  tiePoint[i + 3],  //-- dest X
+//                                                  tiePoint[i + 4]); //-- dest Y
+//                    }
+//                }
+//                
+//                //-- if all points represent regulary grid
+//                if (bit != null && bit.cardinality() == expectedBitCardinality) {
+//                    
+//                    //-- gridToCrs create from grid
+//                    assert grid != null;
+//                    gridToCRS = grid.getAffineTransform();
+//                    gridToCRS.transform(new Point2D.Double(10, 4), null);
+//                    gridToCRS.scale(1.0 / stepX, 1.0 / stepY);
+//                    gridToCRS.translate(lowerLeftCorner[0] - pIOffset, lowerLeftCorner[1] - pIOffset);
+//                    
+//                } else {
+                    
+                    //-- create matrix transformation from first fourth corner points.
+                    //-- note : src points always define as PixelInCell.CELL_CORNER
+                    //-- for PixelInCell.CELL_CENTER a translation is effectuate later.
+                    final Matrix3 srcPoints  = new Matrix3(lowerLeftCorner[0] - pIOffset, lowerRightCorner[0] - pIOffset, upperRightCorner[0] - pIOffset, 
+                                                           lowerLeftCorner[1] - pIOffset, lowerRightCorner[1] - pIOffset, upperRightCorner[1] - pIOffset, 
+                                                                        1,                              1,                              1);
+                    final Matrix3 destPoints = new Matrix3(lowerLeftCorner[3], lowerRightCorner[3], upperRightCorner[3], 
+                                                           lowerLeftCorner[4], lowerRightCorner[4], upperRightCorner[4], 
+                                                                    1,                  1,                  1);
 
-                assert nbPointFound == 4 : "Envelope Corner Point must be equal to 4 : Found Point number : "+nbPointFound;
-                gridToCRS = grid.getAffineTransform();
-                gridToCRS.scale(1f / bounds.width, 1f / bounds.height);
+                    MatrixSIS gtcrs;
+                    try {
+                        gtcrs = destPoints.multiply(srcPoints.inverse());
+                    } catch (NoninvertibleMatrixException ex) {
+                        throw new IOException("Grid To Crs creation impossible to inverse source points.", ex);
+                    }
+
+                    //-- last matrix row verification
+                    //-- avoid double approximation error
+                    double epsilon = 0;
+                    for (int j = 0; j < 3; j++) {
+                        final double elt = gtcrs.getElement(2, j);
+                        epsilon += elt * elt;
+                    }
+                    epsilon  = StrictMath.sqrt(epsilon); //-- compute row vector magnitude
+                    epsilon *= 1E-15; //-- define tolerance from vector magnitude.
+                    
+                   
+                    for (int j = 0; j < 3; j++) {
+                        final double elt = gtcrs.getElement(2, j);
+                        if (elt < epsilon) gtcrs.setElement(2, j, 0);
+                    }
+                    gridToCRS = AffineTransforms2D.castOrCopy(org.apache.sis.referencing.operation.transform.MathTransforms.linear(gtcrs).getMatrix());
+//                }
 
             } else if (pixelScale != null && tiePoint != null) {
                 //TODO the is a third value in the tie point

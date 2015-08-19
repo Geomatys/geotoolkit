@@ -31,13 +31,10 @@ import java.nio.ByteOrder;
 import java.nio.ByteBuffer;
 
 import java.awt.Rectangle;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.SampleModel;
 import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferShort;
@@ -77,7 +74,6 @@ import org.geotoolkit.image.io.InputStreamAdapter;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.color.ScaledColorSpace;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.SupportFiles;
@@ -880,10 +876,10 @@ public class TiffImageReader extends SpatialImageReader {
     private short getAlphaValue() {
         if (!hasAlpha())
             throw new IllegalStateException("getAlphaValue : image do not own Alpha canal.");
-        final short[] extraSamples = ((short[]) headProperties.get(ExtraSamples).get(ATT_VALUE));
+        final long[] extraSamples = ((long[]) headProperties.get(ExtraSamples).get(ATT_VALUE));
         assert extraSamples != null;
-        for (short extraSample : extraSamples) {
-            if (extraSample != 0) return extraSample;
+        for (long extraSample : extraSamples) {
+            if (extraSample != 0) return (short) extraSample;
         }
         throw new IllegalStateException("Alpha value not found. Should never append.");
     }
@@ -900,7 +896,7 @@ public class TiffImageReader extends SpatialImageReader {
     private int getAlphaBandIndex() {
         if (!hasAlpha())
             throw new IllegalStateException("getAlphaBandIndex : image do not own Alpha canal.");
-        final short[] extraSamples = ((short[]) headProperties.get(ExtraSamples).get(ATT_VALUE));
+        final long[] extraSamples = ((long[]) headProperties.get(ExtraSamples).get(ATT_VALUE));
         assert extraSamples != null;
         for (int i = 0, l = extraSamples.length; i < l; i++) {
             if (extraSamples[i] != 0) return i + 3;//-- In tiff specification extrasample are define after RGB component -> +3.
