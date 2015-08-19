@@ -41,7 +41,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
-import java.awt.image.renderable.RenderedImageFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -58,10 +57,6 @@ import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import javax.media.jai.JAI;
-import javax.media.jai.OperationDescriptor;
-import javax.media.jai.OperationRegistry;
-import javax.media.jai.registry.RIFRegistry;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -84,8 +79,6 @@ import org.geotoolkit.display2d.primitive.jts.DecimateJTSGeometryJ2D;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.display2d.style.raster.ShadedReliefCRIF;
-import org.geotoolkit.display2d.style.raster.ShadedReliefDescriptor;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -103,7 +96,6 @@ import org.geotoolkit.style.visitor.PrepareStyleVisitor;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.collection.Cache;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
@@ -200,17 +192,6 @@ public final class GO2Utilities {
         for(SymbolizerRendererService renderer : loader){
             RENDERERS.put(renderer.getCachedSymbolizerClass(), renderer);
         }
-
-        //Register the shadedrelief JAI operations
-        //TODO this should be made automaticly using the META-INF/registryFile.jai
-        final OperationRegistry or = JAI.getDefaultInstance().getOperationRegistry();
-        final OperationDescriptor  fd = new ShadedReliefDescriptor();
-        final RenderedImageFactory rifJava = new ShadedReliefCRIF();
-        try{
-            or.registerDescriptor(fd);
-            RIFRegistry.register(or, fd.getName(), "org.geotoolkit", rifJava);
-        }catch(Exception ex){}
-
 
         final Hints hints = new Hints();
         hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
