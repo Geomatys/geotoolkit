@@ -17,22 +17,58 @@
 package org.geotoolkit.gui.javafx.util;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.util.StringConverter;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class FXNumberCell<S> extends FXTableCell<S, Number> {
+
+    private final DecimalFormat df = new DecimalFormat("#.###");
     protected final FXNumberSpinner field = new FXNumberSpinner();
     
     public FXNumberCell(Class clazz) {
         if(clazz==Integer.class){
             field.getSpinner().setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 1));
         }else{
-            field.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.MIN_VALUE, Double.MAX_VALUE, 0, 1));
+            final SpinnerValueFactory.DoubleSpinnerValueFactory f = new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.MIN_VALUE, Double.MAX_VALUE, 0, 1);
+            f.setConverter(new StringConverter<Double>() {
+
+                @Override public String toString(Double value) {
+                    // If the specified value is null, return a zero-length String
+                    if (value == null) {
+                        return "";
+                    }
+
+                    return df.format(value);
+                }
+
+                @Override public Double fromString(String value) {
+                    try {
+                        // If the specified value is null or zero-length, return null
+                        if (value == null) {
+                            return null;
+                        }
+
+                        value = value.trim();
+
+                        if (value.length() < 1) {
+                            return null;
+                        }
+
+                        // Perform the requested parsing
+                        return df.parse(value).doubleValue();
+                    } catch (ParseException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            });
+            field.getSpinner().setValueFactory(f);
         }
         setGraphic(field);
         setAlignment(Pos.CENTER_RIGHT);
@@ -75,7 +111,7 @@ public class FXNumberCell<S> extends FXTableCell<S, Number> {
         super.updateItem(item, empty);
         setGraphic(null);
         if (item != null) {
-            setText(DecimalFormat.getNumberInstance().format(item));
+            setText(df.format(item));
         } else {
             setText(null);
         }
