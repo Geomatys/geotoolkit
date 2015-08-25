@@ -38,7 +38,7 @@ public class FXCQLPane extends BorderPane {
     }
     
     public static Filter show(Node owner, Filter filter, MapItem target) throws CQLException{
-        final FXCQLEditor editor = new FXCQLEditor();
+        final FXCQLEditor editor = new FXCQLEditor(true);
         editor.setFilter(filter);
 
         final Dialog dialog = new Dialog();
