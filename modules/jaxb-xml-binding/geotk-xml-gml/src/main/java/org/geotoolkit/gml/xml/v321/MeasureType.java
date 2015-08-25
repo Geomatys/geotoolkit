@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlValue;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "MeasureType", propOrder = {
+@XmlType(propOrder = {
     "value"
 })
 @XmlSeeAlso({

@@ -506,7 +506,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
          * single operation and append to the last single operation.
          */
         if (operation instanceof ConcatenatedOperation) {
-            final List<SingleOperation> c = ((ConcatenatedOperation) operation).getOperations();
+            final List<? extends CoordinateOperation> c = ((ConcatenatedOperation) operation).getOperations();
             final CoordinateOperation[] op = c.toArray(new CoordinateOperation[c.size()]);
             if (op.length != 0) {
                 final CoordinateOperation first = op[0];
@@ -734,7 +734,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                  */
                 type = SingleOperation.class;
                 final StringBuilder buffer = new StringBuilder();
-                for (final SingleOperation step : ((ConcatenatedOperation) operation).getOperations()) {
+                for (final CoordinateOperation step : ((ConcatenatedOperation) operation).getOperations()) {
                     final String id = IdentifiedObjects.getIdentifierOrName(step);
                     if (id != null) {
                         if (buffer.length() != 0) {
