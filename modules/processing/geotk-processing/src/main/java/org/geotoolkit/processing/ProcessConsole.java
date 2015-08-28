@@ -390,12 +390,17 @@ public final class ProcessConsole {
     private static <T> Object toValue(final List<String> values, final Class<T> binding) throws UnconvertibleObjectException{
         final int size = values.size();
 
+        Class baseBinding = binding;
+        if(binding.isArray()){
+            baseBinding = binding.getComponentType();
+        }
+
         ObjectConverter<? super String, ? extends T> converter = null;
         try{
-            converter = ObjectConverters.find(String.class, binding);
+            converter = ObjectConverters.find(String.class, baseBinding);
         }catch(UnconvertibleObjectException ex){
             for(ObjectConverter conv : (List<ObjectConverter>)LIST_CONVERTERS){
-                if(conv.getTargetClass().equals(binding)){
+                if(conv.getTargetClass().equals(baseBinding)){
                     converter = conv;
                 }
             }
@@ -405,7 +410,7 @@ public final class ProcessConsole {
             }
         }
 
-        if(size == 0 && binding == Boolean.class){
+        if(size == 0 && baseBinding == Boolean.class){
             //if there is no values after this parameter, it means we set it to true
             return true;
         }else if(size == 0){
@@ -415,7 +420,7 @@ public final class ProcessConsole {
             return converter.apply(values.get(0));
         }else{
             //convert to array of binding class
-            final T[] array = (T[])Array.newInstance(binding,size);
+            final T[] array = (T[])Array.newInstance(baseBinding,size);
             for(int i=0;i<size;i++){
                 array[i] = converter.apply(values.get(i));
             }
