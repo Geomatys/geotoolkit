@@ -67,7 +67,7 @@ public class MapItemSelectableColumn extends TreeTableColumn{
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (FontAwesomeIcons.ICON_LOCK.equals(newValue)) {
                         setTooltip(UNLOCK_TOOLTIP);
-                    } else {
+                    } else if(FontAwesomeIcons.ICON_UNLOCK.equals(newValue)) {
                         setTooltip(LOCK_TOOLTIP);
                     }
                 }
@@ -81,7 +81,9 @@ public class MapItemSelectableColumn extends TreeTableColumn{
             if(!isEditing()){
                 getTreeTableView().edit(getTreeTableRow().getIndex(), getTableColumn());
             }
-            commitEdit(!Boolean.TRUE.equals(getItem()));
+            if(getItem()!=null){
+                commitEdit(!Boolean.TRUE.equals(getItem()));
+            }
         }
 
         @Override
