@@ -514,21 +514,10 @@ public class PyramidalModelReader extends GridCoverageReader{
                         }
                     }
                     
-//                        try {
-//                            ImageIO.write(tileImage, "tiff", new File("/home/rmarechal/Documents/osmTile/imgBefore"+i+".tiff"));
-//                        } catch (IOException ex) {
-//                            Logger.getLogger(PyramidalModelReader.class.getName()).log(Level.SEVERE, null, ex);
-//                        }
                     //-- if photographic transform ARGB
                     if (ViewType.PHOTOGRAPHIC.equals(currentViewType)) {
                         //-- transform argb
                         tileImage = forceAlpha(tileImage);
-                        
-//                        try {
-//                            ImageIO.write(tileImage, "tiff", new File("/home/rmarechal/Documents/osmTile/imgAfter"+(i++)+".tiff"));
-//                        } catch (IOException ex) {
-//                            Logger.getLogger(PyramidalModelReader.class.getName()).log(Level.SEVERE, null, ex);
-//                        }
                     }
                     
                     
@@ -555,10 +544,6 @@ public class PyramidalModelReader extends GridCoverageReader{
                         destPix.setSampleDouble(tilePix.getSampleDouble());
                     }
                     assert !tilePix.next();
-                    
-//                    ((BufferedImage)image).getRaster().setDataElements(offset.x, offset.y, tileImage.getData());
-                    //we consider all images have the same data model
-                    //g2d.drawRenderedImage(tileImage, new AffineTransform(1, 0, 0, 1, offset.x, offset.y));
                 }
             }
 

@@ -403,7 +403,13 @@ public class XMLMosaic implements GridMosaic {
                     return true;
                 }
             } else {
-                return !tileExist.get(getTileIndex(col, row));
+                final int index = getTileIndex(col, row);
+                if (index < 0) {
+                    LOGGER.log(Level.FINE, "You try to request a tile out of mosaic tile boundary at coordinates : X = "+col+", Y = "+row
+                    +"Expected grid boundary : [(0, 0) ; ("+getGridSize().width+","+getGridSize().height+")]");
+                    return true;
+                }
+                return !tileExist.get(index);
             }
         } finally {
             bitsetLock.readLock().unlock();
