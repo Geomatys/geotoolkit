@@ -432,9 +432,9 @@ public class TiffImageReader extends SpatialImageReader {
                         final IIOMetadataNode iioNod = (IIOMetadataNode) currentChild;
                         final String currentIIOTag = iioNod.getAttribute(ATT_NUMBER);
                         currentChild = currentChild.getNextSibling();
-                        if ("34735".equalsIgnoreCase(currentIIOTag)
-                         || "34736".equalsIgnoreCase(currentIIOTag)
-                         || "34737".equalsIgnoreCase(currentIIOTag))
+                        if (String.valueOf(GeoTiffConstants.GeoKeyDirectoryTag).equalsIgnoreCase(currentIIOTag)
+                         || String.valueOf(GeoTiffConstants.GeoDoubleParamsTag).equalsIgnoreCase(currentIIOTag)
+                         || String.valueOf(GeoTiffConstants.GeoAsciiParamsTag).equalsIgnoreCase(currentIIOTag))
                             roots[layerIndex].removeChild(iioNod);
                     }
 
@@ -466,9 +466,9 @@ public class TiffImageReader extends SpatialImageReader {
                         final IIOMetadataNode iioNod = (IIOMetadataNode) currentChild;
                         final String currentIIOTag = iioNod.getAttribute(ATT_NUMBER);
                         currentChild = currentChild.getNextSibling();
-                        if ("34264".equalsIgnoreCase(currentIIOTag)
-                         || "33550".equalsIgnoreCase(currentIIOTag)
-                         || "33922".equalsIgnoreCase(currentIIOTag))
+                        if (String.valueOf(GeoTiffConstants.ModelTransformationTag).equalsIgnoreCase(currentIIOTag)
+                         || String.valueOf(GeoTiffConstants.ModelPixelScaleTag).equalsIgnoreCase(currentIIOTag)
+                         || String.valueOf(GeoTiffConstants.ModelTiepointTag).equalsIgnoreCase(currentIIOTag))
                             roots[layerIndex].removeChild(iioNod);
                     }
 
@@ -542,9 +542,9 @@ public class TiffImageReader extends SpatialImageReader {
     private boolean hasCRS(final Map<Integer, Map> headProperties) {
         int result = 0;
         for (int key : headProperties.keySet()) {
-            if (key == 34735 
-             || key == 34736
-             || key == 34737) result++;
+            if (key == GeoTiffConstants.GeoKeyDirectoryTag
+             || key == GeoTiffConstants.GeoDoubleParamsTag
+             || key == GeoTiffConstants.GeoAsciiParamsTag) result++;
             if (result == 3) return true;
         }
         return false;
@@ -561,9 +561,9 @@ public class TiffImageReader extends SpatialImageReader {
     private boolean hasGridToCrs(final Map<Integer, Map> headProperties) {
         int result = 0;
         for (int key : headProperties.keySet()) {
-            if (key == 34735 
-             || key == 34736
-             || key == 34737) result++;
+            if (key == GeoTiffConstants.ModelTransformationTag
+             || key == GeoTiffConstants.ModelPixelScaleTag
+             || key == GeoTiffConstants.ModelTiepointTag) result++;
             if (result == 3) return true;
         }
         return false;
