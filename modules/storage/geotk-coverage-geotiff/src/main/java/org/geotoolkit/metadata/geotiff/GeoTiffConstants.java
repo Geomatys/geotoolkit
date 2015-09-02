@@ -179,8 +179,62 @@ public final class GeoTiffConstants {
      */
     public static final String TAG_GEOTIFF_LONGS = "TIFFLongs";
 
-
+    /**
+     * GeoTIFF Image CRS Directory tag name.
+     */
     public static final String NAME_GEO_KEY_DIRECTORY = "GeoKeyDirectory";
+
+    
+    //-- CRS tags
+    /**
+     * References the needed "GeoKeys" to build CRS.
+     */
+    public static final int GeoKeyDirectoryTag = 0x87AF; //-- 34735
+    
+    /**
+     * This tag is used to store all of the DOUBLE valued GeoKeys, referenced by the GeoKeyDirectoryTag. 
+     */
+    public static final int GeoDoubleParamsTag = 0x87B0; //-- 34736
+    
+    /**
+     * This tag is used to store all of the ASCII valued GeoKeys, referenced by the GeoKeyDirectoryTag.
+     */
+    public static final int GeoAsciiParamsTag = 0x87B1; //-- 34737
+
+    
+    //-- grid to Crs tags
+    /**
+     *  This tag is optionally provided for defining exact affine transformations between raster and model space.
+     */
+    public static final int ModelTransformationTag = 0x85D8; //-- 34264
+
+    /**
+     * This tag is optionally provided for defining exact affine transformations between raster and model space.<br>
+     * Baseline GeoTIFF files may use this tag or ModelTransformationTag, but shall never use both within the same TIFF image directory.<br>
+     *
+     * This tag may be used to specify the size of raster pixel spacing in the model space units,
+     * when the raster space can be embedded in the model space coordinate system without rotation, and consists of the following 3 values:
+     *
+     * ModelPixelScaleTag = (ScaleX, ScaleY, ScaleZ)
+     *
+     * where ScaleX and ScaleY give the horizontal and vertical spacing of raster pixels.<br>
+     * 
+     * The ScaleZ is primarily used to map the pixel value of a digital elevation model into the correct Z-scale,
+     * and so for most other purposes this value should be zero (since most model spaces are 2-D, with Z=0).
+     */
+    public static final int ModelPixelScaleTag = 0x830E; //-- 33550
+
+    /**
+     * This tag stores raster -> model tiepoint pairs in the order
+     * ModelTiepointTag = (...,I, J, K, X, Y, Z...)
+     *
+     * where (I, J, K) is the point at location (I, J) in raster space with pixel-value K, and (X, Y, Z) is a vector in model space.<br>
+     *
+     * In most cases the model space is only two-dimensional, in which case both K and Z should be set to zero;
+     * this third dimension is provided in anticipation of future support for 3D digital elevation models and vertical
+     * coordinate systems.
+     */
+    public static final int ModelTiepointTag = 0x8482; //-- 33922
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -280,10 +334,10 @@ public final class GeoTiffConstants {
     public static final int GDAL_METADATA_KEY = 42112;  /* http://www.awaresystems.be/imaging/tiff/tifftags/gdal_metadata.html */
     public static final int GDAL_NODATA_KEY   = 42113;  /* http://www.awaresystems.be/imaging/tiff/tifftags/gdal_nodata.html */
 
+    
     ////////////////////////////////////////////////////////////////////////////
     // Codes
     ////////////////////////////////////////////////////////////////////////////
-
 
     public static final short GTUserDefinedGeoKey = 32767;
     public static final String GTUserDefinedGeoKey_String = "32767";
@@ -324,7 +378,7 @@ public final class GeoTiffConstants {
     public static final int RasterPixelIsPoint = 2;
 
     /*
-     *6.3.1.3 Linear Units Codes
+     * 6.3.1.3 Linear Units Codes
      *
      *  There are several different kinds of units that may be used in geographically related raster data: linear units, angular units, units of time (e.g. for radar-return), CCD-voltages, etc. For this reason there will be a single, unique range for each kind of unit, broken down into the following currently defined ranges:
      *  Ranges:
@@ -374,7 +428,6 @@ public final class GeoTiffConstants {
      * [16384, 32766] = Reserved by GeoTIFF
      * 32767          = user-defined
      * [32768, 65535] = Private User Implementations
-     *
      */
     public static final int CT_TransverseMercator =             1;
     public static final int CT_TransvMercator_Modified_Alaska = 2;
@@ -413,6 +466,4 @@ public final class GeoTiffConstants {
     public static final int CT_LambertConfConic =               CT_LambertConfConic_2SP ;
     public static final int CT_LambertConfConic_Helmert =       CT_LambertConfConic_1SP;
     public static final int CT_SouthOrientedGaussConformal =    CT_TransvMercator_SouthOriented;
-
-
 }
