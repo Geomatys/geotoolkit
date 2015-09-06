@@ -39,9 +39,9 @@ import org.geotoolkit.gml.xml.v321.VectorType;
 
 /**
  * <p>Java class for ParameterValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ParameterValueType">
  *   &lt;complexContent>
@@ -65,11 +65,11 @@ import org.geotoolkit.gml.xml.v321.VectorType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ParameterValueType", propOrder = {
+@XmlType(/*name = "ParameterValueType",*/ propOrder = {
     "value",
     "dmsAngleValue",
     "stringValue",
@@ -110,11 +110,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getValue() {
         return value;
@@ -122,11 +122,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setValue(MeasureType value) {
         this.value = value;
@@ -134,11 +134,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the dmsAngleValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DMSAngleType }
-     *     
+     *
      */
     public DMSAngleType getDmsAngleValue() {
         return dmsAngleValue;
@@ -146,11 +146,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the dmsAngleValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DMSAngleType }
-     *     
+     *
      */
     public void setDmsAngleValue(DMSAngleType value) {
         this.dmsAngleValue = value;
@@ -158,11 +158,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the stringValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStringValue() {
         return stringValue;
@@ -170,11 +170,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the stringValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStringValue(String value) {
         this.stringValue = value;
@@ -182,11 +182,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the integerValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public BigInteger getIntegerValue() {
         return integerValue;
@@ -194,11 +194,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the integerValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setIntegerValue(BigInteger value) {
         this.integerValue = value;
@@ -206,11 +206,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the booleanValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public Boolean isBooleanValue() {
         return booleanValue;
@@ -218,11 +218,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the booleanValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setBooleanValue(Boolean value) {
         this.booleanValue = value;
@@ -230,11 +230,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the valueList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureListType }
-     *     
+     *
      */
     public MeasureListType getValueList() {
         return valueList;
@@ -242,11 +242,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the valueList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureListType }
-     *     
+     *
      */
     public void setValueList(MeasureListType value) {
         this.valueList = value;
@@ -254,25 +254,25 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the integerValueList property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the integerValueList property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIntegerValueList().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link BigInteger }
-     * 
-     * 
+     *
+     *
      */
     public List<BigInteger> getIntegerValueList() {
         if (integerValueList == null) {
@@ -283,11 +283,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the valueFile property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValueFile() {
         return valueFile;
@@ -295,11 +295,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the valueFile property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValueFile(String value) {
         this.valueFile = value;
@@ -307,11 +307,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the geometryValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public GeometryPropertyType getGeometryValue() {
         return geometryValue;
@@ -319,11 +319,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the geometryValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeometryPropertyType }
-     *     
+     *
      */
     public void setGeometryValue(GeometryPropertyType value) {
         this.geometryValue = value;
@@ -331,11 +331,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the vectorValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link VectorType }
-     *     
+     *
      */
     public VectorType getVectorValue() {
         return vectorValue;
@@ -343,11 +343,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the vectorValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link VectorType }
-     *     
+     *
      */
     public void setVectorValue(VectorType value) {
         this.vectorValue = value;
@@ -355,12 +355,12 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the operationParameterProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link OperationParameterPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link OperationParameterPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<OperationParameterPropertyType> getOperationParameterProperty() {
         return operationParameterProperty;
@@ -368,12 +368,12 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the operationParameterProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link OperationParameterPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link OperationParameterPropertyType }{@code >}
-     *     
+     *
      */
     public void setOperationParameterProperty(JAXBElement<OperationParameterPropertyType> value) {
         this.operationParameterProperty = ((JAXBElement<OperationParameterPropertyType> ) value);

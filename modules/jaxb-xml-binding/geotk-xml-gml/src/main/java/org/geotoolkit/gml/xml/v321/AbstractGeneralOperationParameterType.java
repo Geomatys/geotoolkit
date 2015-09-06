@@ -22,14 +22,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Java class for AbstractGeneralOperationParameterType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractGeneralOperationParameterType">
  *   &lt;complexContent>
@@ -41,13 +40,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AbstractGeneralOperationParameterType", propOrder = {
-    "minimumOccurs"
-})
 @XmlSeeAlso({
     OperationParameterType.class,
     OperationParameterGroupType.class
@@ -61,11 +57,11 @@ public abstract class AbstractGeneralOperationParameterType
 
     /**
      * Gets the value of the minimumOccurs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMinimumOccurs() {
         return minimumOccurs;
@@ -73,11 +69,11 @@ public abstract class AbstractGeneralOperationParameterType
 
     /**
      * Sets the value of the minimumOccurs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMinimumOccurs(Integer value) {
         this.minimumOccurs = value;

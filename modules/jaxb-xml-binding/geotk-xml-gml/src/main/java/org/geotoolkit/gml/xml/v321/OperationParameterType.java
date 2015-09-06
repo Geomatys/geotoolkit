@@ -20,14 +20,13 @@ package org.geotoolkit.gml.xml.v321;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Java class for OperationParameterType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OperationParameterType">
  *   &lt;complexContent>
@@ -38,11 +37,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "OperationParameterType")
+//@XmlType(name = "OperationParameterType")
 public class OperationParameterType
     extends AbstractGeneralOperationParameterType
 {

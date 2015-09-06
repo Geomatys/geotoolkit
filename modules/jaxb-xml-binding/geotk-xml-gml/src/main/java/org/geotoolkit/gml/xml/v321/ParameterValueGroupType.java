@@ -29,9 +29,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ParameterValueGroupType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ParameterValueGroupType">
  *   &lt;complexContent>
@@ -44,11 +44,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ParameterValueGroupType", propOrder = {
+@XmlType(/*name = "ParameterValueGroupType",*/ propOrder = {
     "parameterValueProperty",
     "group"
 })
@@ -63,27 +63,27 @@ public class ParameterValueGroupType
 
     /**
      * Gets the value of the parameterValueProperty property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the parameterValueProperty property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getParameterValueProperty().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractGeneralParameterValuePropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractGeneralParameterValuePropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractGeneralParameterValuePropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<AbstractGeneralParameterValuePropertyType>> getParameterValueProperty() {
         if (parameterValueProperty == null) {
@@ -94,12 +94,12 @@ public class ParameterValueGroupType
 
     /**
      * Gets the value of the group property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link OperationParameterGroupPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link OperationParameterGroupPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<OperationParameterGroupPropertyType> getGroup() {
         return group;
@@ -107,12 +107,12 @@ public class ParameterValueGroupType
 
     /**
      * Sets the value of the group property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link OperationParameterGroupPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link OperationParameterGroupPropertyType }{@code >}
-     *     
+     *
      */
     public void setGroup(JAXBElement<OperationParameterGroupPropertyType> value) {
         this.group = ((JAXBElement<OperationParameterGroupPropertyType> ) value);
