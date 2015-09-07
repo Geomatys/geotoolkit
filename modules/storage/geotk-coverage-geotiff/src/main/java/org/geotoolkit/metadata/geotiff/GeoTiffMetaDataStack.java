@@ -185,7 +185,7 @@ public final class GeoTiffMetaDataStack {
         tiePoints.add(tp);
     }
 
-    void setModelTransformation(final AffineTransform gridToCRS) {
+    public void setModelTransformation(final AffineTransform gridToCRS) {
         // See pag 28 of the spec for an explanation
         final double[] modelTransformation = new double[16];
         modelTransformation[0]  = gridToCRS.getScaleX();
@@ -239,32 +239,34 @@ public final class GeoTiffMetaDataStack {
      */
     public void flush(){
 
-        //write GeoKeyDirectory
-        //first line (4 int) contain the version and number of keys
-        //Header={KeyDirectoryVersion, KeyRevision, MinorRevision, NumberOfKeys}
-        final int[] values = new int[4 + 4*entries.size()];
-        values[0] = GEOTIFF_VERSION;
-        values[1] = REVISION_MAJOR;
-        values[2] = REVISION_MINOR;
-        values[3] = entries.size();
-        for (int i = 0, l = 4, n = entries.size(); i < n; i++, l += 4) {
-            final KeyDirectoryEntry entry = entries.get(i);
-            values[l]   = entry.valueKey;
-            values[l+1] = entry.valuelocation;
-            values[l+2] = entry.valueNb;
-            values[l+3] = entry.valueOffset;
+        if (!entries.isEmpty()) {
+            //write GeoKeyDirectory
+            //first line (4 int) contain the version and number of keys
+            //Header={KeyDirectoryVersion, KeyRevision, MinorRevision, NumberOfKeys}
+            final int[] values = new int[4 + 4*entries.size()];
+            values[0] = GEOTIFF_VERSION;
+            values[1] = REVISION_MAJOR;
+            values[2] = REVISION_MINOR;
+            values[3] = entries.size();
+            for (int i = 0, l = 4, n = entries.size(); i < n; i++, l += 4) {
+                final KeyDirectoryEntry entry = entries.get(i);
+                values[l]   = entry.valueKey;
+                values[l+1] = entry.valuelocation;
+                values[l+2] = entry.valueNb;
+                values[l+3] = entry.valueOffset;
+            }
+
+            final Node nGeoKeyDir = createTiffField(getGeoKeyDirectoryTag());
+            nGeoKeyDir.appendChild(createTiffShorts(values));
+            ifd.appendChild(nGeoKeyDir);
         }
-
-        final Node nGeoKeyDir = createTiffField(getGeoKeyDirectoryTag());
-        nGeoKeyDir.appendChild(createTiffShorts(values));
-        ifd.appendChild(nGeoKeyDir);
-
+        
         //write tagsets
         ifd.setAttribute(ATT_TAGSETS,
                 BaselineTIFFTagSet.class.getName() + ","
                 + GeoTIFFTagSet.class.getName());
 
-        if(nPixelScale != null) ifd.appendChild(nPixelScale);
+        if (nPixelScale != null) ifd.appendChild(nPixelScale);
         
         if (!tiePoints.isEmpty()) {
             ifd.appendChild(createModelTiePointsElement(tiePoints));

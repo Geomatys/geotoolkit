@@ -31,6 +31,7 @@ import java.nio.ByteOrder;
 import java.nio.ByteBuffer;
 
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.SampleModel;
@@ -91,7 +92,9 @@ import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataStack;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.processing.image.replace.ReplaceProcess;
+import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.w3c.dom.Node;
 
 
 /**
@@ -404,39 +407,80 @@ public class TiffImageReader extends SpatialImageReader {
         
         fillRootMetadataNode(layerIndex);
         
-        //-- define if geotiff information are present
-        
-        //-- check if tiff header contain CRS informations
-        final boolean hasCRS = hasCRS(headProperties);
-               
-        //-- if no setted CRS try to found a prj file if exist.
-        //-- moreover check instance of input to find prj.
-        if (!hasCRS && ((input instanceof File) 
-                     || (input instanceof CharSequence)
-                     || (input instanceof URL)
-                     || (input instanceof URI)
-                     || (input instanceof Path))) {
-            CoordinateReferenceSystem crs = null;
-            final Object in = getVerifiedInput("prj");
-            if (in != null) crs = PrjFiles.read(IOUtilities.open(in), true);
-            
-            //-- if a CRS is found by prj file we add it into native tiff metadata.
-            if (crs != null) {
-                
-                //-- add crs into metadata node
-                //container for informations which will be written
-                final GeoTiffMetaDataStack stack = new GeoTiffMetaDataStack(roots[layerIndex]);
+        if ((input instanceof File)
+            || (input instanceof CharSequence)
+            || (input instanceof URL)
+            || (input instanceof URI)
+            || (input instanceof Path)) {
 
-                //-- fill geotiff crs information
-                final GeoTiffCRSWriter crsWriter = new GeoTiffCRSWriter();
-                try {
-                    crsWriter.fillCRSMetaDatas(stack, crs);
-                } catch (FactoryException ex) {
-                    throw new IIOException("impossible to insert CRS ("+crs.toString()+") into native tiff metadatas.", ex);
+            //-- stack use to store any CRS or TFW informationif exist.
+            GeoTiffMetaDataStack stack = null;
+
+            //-- if prjFile founded give priority to prj
+            CoordinateReferenceSystem prjCRS = null;
+            final Object inCrs = getVerifiedInput("prj");
+            if (inCrs != null) {
+                prjCRS = PrjFiles.read(IOUtilities.open(inCrs), true);
+
+                //-- if a CRS is found by prj file we add it into native tiff metadata.
+                if (prjCRS != null) {
+
+                    //-- some times exist some CRS tags but not enought to build correct CRS
+                    //-- remove Tag 34735, 34736 and 34737 from metadatas
+                    Node currentChild = roots[layerIndex].getFirstChild();
+                    while (currentChild != null) {
+                        final IIOMetadataNode iioNod = (IIOMetadataNode) currentChild;
+                        final String currentIIOTag = iioNod.getAttribute(ATT_NUMBER);
+                        currentChild = currentChild.getNextSibling();
+                        if (String.valueOf(GeoTiffConstants.GeoKeyDirectoryTag).equalsIgnoreCase(currentIIOTag)
+                         || String.valueOf(GeoTiffConstants.GeoDoubleParamsTag).equalsIgnoreCase(currentIIOTag)
+                         || String.valueOf(GeoTiffConstants.GeoAsciiParamsTag).equalsIgnoreCase(currentIIOTag))
+                            roots[layerIndex].removeChild(iioNod);
+                    }
+
+                    //-- add crs into metadata node
+                    //container for informations which will be written
+                    stack = new GeoTiffMetaDataStack(roots[layerIndex]);
+
+                    //-- fill geotiff crs information
+                    final GeoTiffCRSWriter crsWriter = new GeoTiffCRSWriter();
+                    try {
+                        crsWriter.fillCRSMetaDatas(stack, prjCRS);
+                    } catch (FactoryException ex) {
+                        throw new IIOException("impossible to insert CRS ("+prjCRS.toString()+") into native tiff metadatas.", ex);
+                    }
                 }
-                //-- fill root metadata node by stack stored values
-                stack.flush();
             }
+
+            //-- if tfwFile founded give priority to tfw
+            final Object gtCrs = getVerifiedInput("tfw");
+            if (gtCrs != null) {
+
+                final AffineTransform gridToCRS = SupportFiles.parseTFW(IOUtilities.open(gtCrs), gtCrs);
+                if (gridToCRS != null) {
+
+                    //-- remove gridToCrs tags
+                    //-- remove Tag 34264, 33550 and 33922 from metadatas
+                    Node currentChild = roots[layerIndex].getFirstChild();
+                    while (currentChild != null) {
+                        final IIOMetadataNode iioNod = (IIOMetadataNode) currentChild;
+                        final String currentIIOTag = iioNod.getAttribute(ATT_NUMBER);
+                        currentChild = currentChild.getNextSibling();
+                        if (String.valueOf(GeoTiffConstants.ModelTransformationTag).equalsIgnoreCase(currentIIOTag)
+                         || String.valueOf(GeoTiffConstants.ModelPixelScaleTag).equalsIgnoreCase(currentIIOTag)
+                         || String.valueOf(GeoTiffConstants.ModelTiepointTag).equalsIgnoreCase(currentIIOTag))
+                            roots[layerIndex].removeChild(iioNod);
+                    }
+
+                    //-- add gridToCrs into metadata node
+                    //-- container for informations which will be written
+                    if (stack == null) stack = new GeoTiffMetaDataStack(roots[layerIndex]);
+                    stack.setModelTransformation(gridToCRS);
+                }
+            }
+
+            //-- fill root metadata node by stack stored values
+            if (stack != null) stack.flush();
         }
         
         final IIOTiffMetadata metadata = new IIOTiffMetadata(roots[layerIndex]);
@@ -465,6 +509,25 @@ public class TiffImageReader extends SpatialImageReader {
             spatialMetadata = ext.fillSpatialMetaData(this, spatialMetadata);
         }
 
+
+        //-- verify CRS pertinency
+        {
+            //search for the coordinate reference system
+            final CoordinateReferenceSystem crs = spatialMetadata.getInstanceForType(CoordinateReferenceSystem.class);
+
+            if (crs == null)
+                LOGGER.log(Level.FINE, "Current data : "+input.toString()+" doesn't contain any Coordinate Reference System.");
+        }
+
+        //-- verify GridToCrs pertinency
+        {
+            //search for the coordinate reference system
+            final RectifiedGrid rectifiedGrid = spatialMetadata.getInstanceForType(RectifiedGrid.class);
+
+            if (rectifiedGrid == null)
+                LOGGER.log(Level.FINE, "Current data : "+input.toString()+" doesn't contain any Tie Points or GridToCrs transformation function.");
+        }
+
         return spatialMetadata;
     }
 
@@ -479,9 +542,28 @@ public class TiffImageReader extends SpatialImageReader {
     private boolean hasCRS(final Map<Integer, Map> headProperties) {
         int result = 0;
         for (int key : headProperties.keySet()) {
-            if (key == 34735 
-             || key == 34736
-             || key == 34737) result++;
+            if (key == GeoTiffConstants.GeoKeyDirectoryTag
+             || key == GeoTiffConstants.GeoDoubleParamsTag
+             || key == GeoTiffConstants.GeoAsciiParamsTag) result++;
+            if (result == 3) return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Returns {@code true} if image contain geographic tiff tags needed to build 
+     * related {@link CoordinateReferenceSystem}, else return {@code false}.
+     * 
+     * @param headProperties map which contain all red tiff tags.
+     * @return {@code true} if image contain geographic tiff tags needed to build 
+     * related {@link CoordinateReferenceSystem}, else return {@code false}.
+     */
+    private boolean hasGridToCrs(final Map<Integer, Map> headProperties) {
+        int result = 0;
+        for (int key : headProperties.keySet()) {
+            if (key == GeoTiffConstants.ModelTransformationTag
+             || key == GeoTiffConstants.ModelPixelScaleTag
+             || key == GeoTiffConstants.ModelTiepointTag) result++;
             if (result == 3) return true;
         }
         return false;

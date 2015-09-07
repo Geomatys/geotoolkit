@@ -137,37 +137,37 @@ public abstract class GeoTiffExtension {
 
             //calculate new transform values
             final List<double[]> offsetVectors = new ArrayList(rectifiedGrid.getOffsetVectors());
-            for (int i = 0; i < offsetVectors.size(); i++) {
-                double[] vector = offsetVectors.get(i);
-                vector = Arrays.copyOf(vector, vector.length+1);
-                offsetVectors.set(i, vector);
-            }
-            final double[] tempVector = new double[crs.getCoordinateSystem().getDimension()];
-            tempVector[tempVector.length-1] = 1;
-            offsetVectors.add(tempVector);
+                for (int i = 0; i < offsetVectors.size(); i++) {
+                    double[] vector = offsetVectors.get(i);
+                    vector = Arrays.copyOf(vector, vector.length+1);
+                    offsetVectors.set(i, vector);
+                }
+                final double[] tempVector = new double[crs.getCoordinateSystem().getDimension()];
+                tempVector[tempVector.length-1] = 1;
+                offsetVectors.add(tempVector);
 
-            //new origin
-            final DirectPosition oldOrigin = rectifiedGrid.getOrigin();
-            final GeneralDirectPosition newOrigin = new GeneralDirectPosition(crs);
-            for (int i = 0, n = oldOrigin.getDimension(); i < n; i++) {
-                newOrigin.setOrdinate(i, oldOrigin.getOrdinate(i));
-            }
-            newOrigin.setOrdinate(oldOrigin.getDimension(), value);
+                //new origin
+                final DirectPosition oldOrigin = rectifiedGrid.getOrigin();
+                    final GeneralDirectPosition newOrigin = new GeneralDirectPosition(crs);
+                    for (int i = 0, n = oldOrigin.getDimension(); i < n; i++) {
+                        newOrigin.setOrdinate(i, oldOrigin.getOrdinate(i));
+                    }
+                    newOrigin.setOrdinate(oldOrigin.getDimension(), value);
 
-            //new limits
-            final int[][] limits = acc.getLimits();
-            limits[0] = Arrays.copyOf(limits[0], limits[0].length+1);
-            limits[1] = Arrays.copyOf(limits[1], limits[1].length+1);
-//            limits[1][limits[1].length-1] = 1;
+                    //new limits
+                    final int[][] limits = acc.getLimits();
+                    limits[0] = Arrays.copyOf(limits[0], limits[0].length+1);
+                    limits[1] = Arrays.copyOf(limits[1], limits[1].length+1);
+        //            limits[1][limits[1].length-1] = 1;
 
-            //set new values
-            acc.setOrigin(newOrigin.getCoordinate());
-            acc.setLimits(limits[0], limits[1]);
-            acc.clearOffsetVectors();
-            for (double[] ov : offsetVectors) {
-                acc.addOffsetVector(ov);
-            }
-
+                    //set new values
+                    acc.setOrigin(newOrigin.getCoordinate());
+                    acc.setLimits(limits[0], limits[1]);
+                    acc.clearOffsetVectors();
+                    for (double[] ov : offsetVectors) {
+                        acc.addOffsetVector(ov);
+                    }
+            
         } else {
             //axis already exist, update the value
 

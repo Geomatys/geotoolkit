@@ -449,9 +449,15 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             
             final int nbBands = sampleMod.getNumBands();
             
-            ImageStatistics analyse = ImageStatistics.transform(ref.getMetadata());
+            final CoverageDescription covRefMetadata = ref.getMetadata();
             
-            if (analyse == null) analyse = Statistics.analyse(ri, true);
+            ImageStatistics analyse = null;
+            
+            if (covRefMetadata != null)
+                analyse = ImageStatistics.transform(covRefMetadata);
+            
+            if (analyse == null) 
+                analyse = Statistics.analyse(ri, true);
             
             if (nbBands < 3) {
                 

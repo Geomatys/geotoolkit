@@ -70,7 +70,7 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
         for(int i=0; i<shapes.length; i++){
             final Geometry shape = shapes[i];
             final Point pt = GO2Utilities.getBestPoint(shape);
-            if(pt==null) continue;
+            if(pt==null || pt.isEmpty()) continue;
             final Coordinate point = pt.getCoordinate();
 
             final FontMetrics metric = context.getFontMetrics(label.getTextFont());

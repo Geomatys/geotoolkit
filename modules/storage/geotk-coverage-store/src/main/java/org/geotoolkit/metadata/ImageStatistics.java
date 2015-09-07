@@ -20,6 +20,8 @@ import org.geotoolkit.image.internal.SampleType;
 
 import java.io.Serializable;
 import java.util.*;
+import org.apache.sis.util.ArgumentChecks;
+import org.opengis.coverage.Coverage;
 import org.opengis.metadata.content.AttributeGroup;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
@@ -241,14 +243,32 @@ public class ImageStatistics implements Serializable{
 
     }
 
-    public static ImageStatistics transform(CoverageDescription covdesc){
+    /**
+     * Create {@link ImageStatistics} from {@link CoverageDescription}.<br/>
+     * Moreover travel all existing {@link SampleDimension} from {@link CoverageDescription} 
+     * to define appropriate statistics.
+     * 
+     * @param covdesc Description of the studied {@link Coverage}.
+     * @return {@link ImageStatistics} or {@code null} if it is impossible to define 
+     * statistic for each bands, or {@link CoverageDescription#getAttributeGroups() } is {@code null} or empty,
+     * or also if internaly {@link AttributeGroup#getAttributes()} is {@code null} or empty.
+     */
+    public static ImageStatistics transform(final CoverageDescription covdesc) {
+        ArgumentChecks.ensureNonNull("CoverageDescription", covdesc);
+        
+        final Collection<? extends AttributeGroup> attributeGroups = covdesc.getAttributeGroups();
+        if (attributeGroups == null || attributeGroups.isEmpty()) 
+            return null;
 
         final List<Band> bands = new ArrayList<>();
+        
         //search for band statistics
-        search:
-        for(AttributeGroup attg : covdesc.getAttributeGroups()){
-            for(RangeDimension rd : attg.getAttributes()){
-                if(!(rd instanceof SampleDimension)) continue;
+        for (AttributeGroup attg : attributeGroups) {
+            final Collection<? extends RangeDimension> attributes = attg.getAttributes();
+            if (attributes == null || attributes.isEmpty())
+                return null;
+            for (RangeDimension rd : attributes) {
+                if (!(rd instanceof SampleDimension)) continue;
                 final int i = Integer.parseInt(rd.getSequenceIdentifier().tip().toString());
                 final SampleDimension sd = (SampleDimension) rd;
                 final Band band = new Band(i);
@@ -257,7 +277,7 @@ public class ImageStatistics implements Serializable{
                 band.setStd(sd.getStandardDeviation());
                 band.setMean(sd.getMeanValue());
                 
-                if(sd instanceof DefaultSampleDimensionExt){
+                if (sd instanceof DefaultSampleDimensionExt) {
                     final DefaultSampleDimensionExt ext = (DefaultSampleDimensionExt) sd;
                     band.setHistogram(ext.getHistogram());
                 }
@@ -266,11 +286,10 @@ public class ImageStatistics implements Serializable{
             }
         }
 
-        if(bands.isEmpty()) return null;
+        if (bands.isEmpty()) return null;
 
         final ImageStatistics stats = new ImageStatistics(bands.size());
         stats.setBands(bands.toArray(new Band[0]));
         return stats;
     }
-
 }

@@ -84,10 +84,18 @@ public class FXCQLEditor extends BorderPane {
     @FXML private TreeView<Object> uiFunctions;
     
     private final CodeArea codeArea = new CodeArea();
-    
-    public FXCQLEditor(){
+    private final boolean filterMode;
+
+    /**
+     *
+     * @param forFilter set to true if this editor is for filter expressions
+     */
+    public FXCQLEditor(boolean forFilter){
         GeotkFX.loadJRXML(this,FXCQLEditor.class);
+        this.filterMode = forFilter;
         setCenter(codeArea);
+        codeArea.setWrapText(true);
+        codeArea.getStylesheets().add(FXCQLEditor.class.getResource("cql.css").toExternalForm());
         
         codeArea.textProperty().addListener((obs, oldText, newText) -> {
             updateHightLight();
@@ -181,7 +189,6 @@ public class FXCQLEditor extends BorderPane {
         final ParseTree tree = CQL.compile(txt);
         syntaxHighLight(tree);
         
-        codeArea.getStylesheets().add(FXCQLEditor.class.getResource("cql.css").toExternalForm());
     }
     
     private void syntaxHighLight(ParseTree tree){
@@ -312,7 +319,7 @@ public class FXCQLEditor extends BorderPane {
     }
     
     public static Expression showDialog(Node parent, MapLayer layer, Expression candidate) throws CQLException {
-        final FXCQLEditor editor = new FXCQLEditor();
+        final FXCQLEditor editor = new FXCQLEditor(false);
         editor.setExpression(candidate);
         editor.setTarget(layer);
         FXOptionDialog.showOkCancel(parent, editor, "CQL Editor", true);
@@ -320,7 +327,7 @@ public class FXCQLEditor extends BorderPane {
     }
     
     public static Filter showFilterDialog(Node parent, MapLayer layer, Filter candidate) throws CQLException {
-        final FXCQLEditor editor = new FXCQLEditor();
+        final FXCQLEditor editor = new FXCQLEditor(true);
         editor.setFilter(candidate);
         editor.setTarget(layer);
         FXOptionDialog.showOkCancel(parent, editor, "CQL Editor", true);
