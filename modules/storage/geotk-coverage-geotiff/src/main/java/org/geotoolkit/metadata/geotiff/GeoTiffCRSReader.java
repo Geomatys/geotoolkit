@@ -79,7 +79,7 @@ import org.geotoolkit.referencing.operation.provider.ObliqueStereographic;
 import org.geotoolkit.referencing.operation.provider.Orthographic;
 import org.apache.sis.internal.referencing.provider.PolarStereographicA;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
-import org.geotoolkit.referencing.operation.provider.TransverseMercator;
+import org.apache.sis.internal.referencing.provider.TransverseMercator;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.parameter.GeneralParameterDescriptor;
 
@@ -738,8 +738,8 @@ final class GeoTiffCRSReader {
              */
             if (name.equalsIgnoreCase("transverse_mercator")
                     || code == CT_TransverseMercator) {
-                parameters = mtFactory.getDefaultParameters(code(TransverseMercator.PARAMETERS));
-                parameters.parameter(code(TransverseMercator.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata));
+                parameters = mtFactory.getDefaultParameters(code(new TransverseMercator().getParameters()));    // TODO: avoid creation of temporary object.
+                parameters.parameter(code(TransverseMercator.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(TransverseMercator.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(TransverseMercator.SCALE_FACTOR)).setValue(metadata.getAsDouble(ProjScaleAtNatOriginGeoKey));
                 parameters.parameter(code(TransverseMercator.FALSE_EASTING)).setValue(getFalseEasting(metadata));

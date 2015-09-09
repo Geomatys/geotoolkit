@@ -64,9 +64,7 @@ public final strictfp class ParametersTest {
         Polyconic                         .PARAMETERS,
         PositionVector7Param              .PARAMETERS,
         RGF93                             .PARAMETERS,
-        Stereographic                     .PARAMETERS,
-        TransverseMercator                .PARAMETERS,
-        TransverseMercator.SouthOrientated.PARAMETERS
+        Stereographic                     .PARAMETERS
     };
 
     /**

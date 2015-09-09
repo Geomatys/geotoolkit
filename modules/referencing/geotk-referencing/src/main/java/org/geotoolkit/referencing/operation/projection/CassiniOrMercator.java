@@ -98,7 +98,7 @@ abstract class CassiniOrMercator extends UnitaryProjection {
         en3 = (t *= excentricitySquared) * (C66 - excentricitySquared  * C68);
         en4 =  t *  excentricitySquared  *  C88;
 
-        final double latitudeOfOrigin = toRadians(getAndStore(parameters, org.geotoolkit.referencing.operation.provider.TransverseMercator.LATITUDE_OF_ORIGIN));
+        final double latitudeOfOrigin = toRadians(getAndStore(parameters, org.apache.sis.internal.referencing.provider.TransverseMercator.LATITUDE_OF_ORIGIN));
         final double ml0;
         if (excentricitySquared != 0) {
             ml0 = mlfn(latitudeOfOrigin, sin(latitudeOfOrigin), cos(latitudeOfOrigin));

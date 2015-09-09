@@ -14,8 +14,6 @@ org.geotoolkit.referencing.operation.provider.ObliqueMercator
 org.geotoolkit.referencing.operation.provider.ObliqueMercator$TwoPoint
 org.geotoolkit.referencing.operation.provider.HotineObliqueMercator
 org.geotoolkit.referencing.operation.provider.HotineObliqueMercator$TwoPoint
-org.geotoolkit.referencing.operation.provider.TransverseMercator
-org.geotoolkit.referencing.operation.provider.TransverseMercator$SouthOrientated
 org.geotoolkit.referencing.operation.provider.CassiniSoldner
 org.geotoolkit.referencing.operation.provider.Stereographic
 org.geotoolkit.referencing.operation.provider.ObliqueStereographic
