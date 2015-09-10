@@ -35,6 +35,7 @@ import org.apache.sis.util.logging.Logging;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
@@ -163,7 +164,29 @@ public class EnvelopeType implements Envelope, Expression {
             final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
             if (crs != null) {
                 try {
-                    srsName = "EPSG:" + IdentifiedObjects.lookupEpsgCode(crs, true);
+                    if (crs instanceof CompoundCRS) {
+                        final StringBuilder sb = new StringBuilder();
+                        final CompoundCRS compCrs = (CompoundCRS) crs;
+                        // see OGC 07-092r3 7.5.2
+                        sb.append("urn:ogc:def:crs,");
+                        for (CoordinateReferenceSystem child : compCrs.getComponents()) {
+                            Integer epsgCode = IdentifiedObjects.lookupEpsgCode(child, true);
+                            if (epsgCode != null) {
+                                sb.append("crs:EPSG::").append(Integer.toString(epsgCode)).append(',');
+                            } else {
+                                sb.append("crs:EPSG::unknow,");
+                            }
+                        }
+                        sb.deleteCharAt(sb.length() - 1);
+                        srsName = sb.toString();
+                    } else {
+                        Integer epsgCode = IdentifiedObjects.lookupEpsgCode(crs, true);
+                        if (epsgCode != null) {
+                            srsName = "urn:ogc:def:crs:EPSG::" + epsgCode;
+                        } else {
+                           srsName = "urn:ogc:def:crs:EPSG::unknow";
+                        }
+                    }
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.SEVERE, "Factory exception xhile creating GML envelope from opengis one", ex);
                 }
@@ -372,16 +395,31 @@ public class EnvelopeType implements Envelope, Expression {
         if (object instanceof EnvelopeType) {
             final EnvelopeType that = (EnvelopeType) object;
 
-            return Objects.equals(this.getAxisLabels(), that.getAxisLabels()) &&
+            return listNullEquals(this.axisLabels,      that.axisLabels)      &&
                    Objects.equals(this.coordinates,     that.coordinates)     &&
                    Objects.equals(this.id,              that.id)              &&
                    Objects.equals(this.lowerCorner,     that.lowerCorner)     &&
-                   Objects.equals(this.getPos(),        that.getPos())        &&
+                   listNullEquals(this.pos,             that.pos)             &&
                    Objects.equals(this.srsDimension,    that.srsDimension)    &&
-                   Objects.equals(this.getUomLabels(),  that.getUomLabels())  &&
+                   listNullEquals(this.uomLabels,       that.uomLabels)       &&
                    Objects.equals(this.srsName,         that.srsName);
         }
         return false;
+    }
+    
+    /**
+     * Utility method to avoir to fill an empty list during equals.
+     * But we want to consider equals a null list and an empty one, for JAXB purpose
+     */
+    private static boolean listNullEquals(List l1, List l2) {
+        if (l1 == null && l2 != null && l2.isEmpty()) {
+            return true;
+        } else if (l2 == null && l1 != null && l1.isEmpty()) {
+            return true;
+        } else {
+            return Objects.equals(l1, l2);
+        }
+        
     }
 
     @Override
@@ -398,7 +436,7 @@ public class EnvelopeType implements Envelope, Expression {
         hash = 79 * hash + (this.uomLabels != null ? this.uomLabels.hashCode() : 0);
         return hash;
     }
-
+    
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -406,7 +444,7 @@ public class EnvelopeType implements Envelope, Expression {
             s.append("id:").append(id).append(" ");
         }
         if (srsDimension != null) {
-            s.append("srsDImension:").append(srsDimension).append(" ");
+            s.append("srsDimension:").append(srsDimension).append(" ");
         }
         if (srsName != null) {
             s.append("srsName:").append(srsName).append(" ");
