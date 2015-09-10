@@ -41,18 +41,18 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Test multidimensionnal {@link Envelope} iterator, {@link  GridCombineIterator}.
- * 
+ *
  * @author Remi Marechal(Geomatys).
  * @version 4.0
  * @since   4.0
  */
 public strictfp class GridCombineIteratorTest {
-    
+
     /**
      * Current tolerance.
      */
-    private static double TOLERANCE = 1E-12;
-    
+    private static final double TOLERANCE = 1E-12;
+
     /**
      * Test iterator in particularity 2 dimensional case.
      */
@@ -62,20 +62,20 @@ public strictfp class GridCombineIteratorTest {
         final int[] gridLow   = new int[]{0,0};
         final int[] gridHigh = new int[]{1,1};
         GeneralGridEnvelope extent = new GeneralGridEnvelope(gridLow, gridHigh, true);
-        GridCombineIterator it = new GridCombineIterator(extent, crsTest, new AffineTransform2D());
+        GridCombineIterator it = new GridCombineIterator(extent, crsTest, new AffineTransform2D(1, 0, 0, 1, 0, 0));
         final List<Envelope> listEnvelope = new ArrayList<Envelope>();
         while (it.hasNext()) {
             listEnvelope.add(it.next());
         }
         assertTrue(listEnvelope.size() == 1);
         Envelope result = listEnvelope.get(0);
-        
+
         checkEnvelope(result, gridLow[0], gridLow[1], gridHigh[0], gridHigh[1]);
-        
-        //-- test with exclusive high border 
+
+        //-- test with exclusive high border
         //-- should return only low point
         extent = new GeneralGridEnvelope(gridLow, gridHigh, false);
-        it = new GridCombineIterator(extent, crsTest, new AffineTransform2D());
+        it = new GridCombineIterator(extent, crsTest, new AffineTransform2D(1, 0, 0, 1, 0, 0));
         listEnvelope.clear();
         while (it.hasNext()) {
             listEnvelope.add(it.next());
@@ -83,14 +83,14 @@ public strictfp class GridCombineIteratorTest {
         assertTrue(listEnvelope.size() == 1);
         result = listEnvelope.get(0);
         assertSame(result.getCoordinateReferenceSystem(), crsTest);
-        
+
         checkEnvelope(result, gridLow[0], gridLow[1], gridLow[0], gridLow[1]);
-        
+
         gridLow[0] = -5;
         gridLow[1] = -7;
         gridHigh[0] = 13;
         gridHigh[1] = 11;
-        
+
         extent = new GeneralGridEnvelope(gridLow, gridHigh, true);
         it = new GridCombineIterator(extent, crsTest, new AffineTransform2D(2,0,0,3,-3,5));
         listEnvelope.clear();
@@ -100,9 +100,9 @@ public strictfp class GridCombineIteratorTest {
         assertTrue(listEnvelope.size() == 1);
         result = listEnvelope.get(0);
         assertSame(result.getCoordinateReferenceSystem(), crsTest);
-        
+
         checkEnvelope(result, -13, -16, 23, 38);
-        
+
         //-- test with exclusive high border
         extent = new GeneralGridEnvelope(gridLow, gridHigh, false);
         it = new GridCombineIterator(extent, crsTest, new AffineTransform2D(2,0,0,3,-3,5));
@@ -113,29 +113,29 @@ public strictfp class GridCombineIteratorTest {
         assertTrue(listEnvelope.size() == 1);
         result = listEnvelope.get(0);
         assertSame(result.getCoordinateReferenceSystem(), crsTest);
-        
+
         checkEnvelope(result, -13, -16, 21, 35);
     }
-    
+
     /**
      * Test iterator in particularity 2 dimensional case.
      */
     @Test
     public void test3D() {
-        
+
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", "compoundcrstest");
-        
+
         final int[] gridLow   = new int[]{0, 0, 0};
         final int[] gridHigh = new int[]{1, 1, 1};
         GeneralGridEnvelope extent = new GeneralGridEnvelope(gridLow, gridHigh, true);
-        
+
         final CoordinateReferenceSystem crs3D = new DefaultCompoundCRS(map, PredefinedCRS.CARTESIAN_2D, CommonCRS.Temporal.JAVA.crs());
-        
+
         final MatrixSIS mat = Matrices.createDiagonal(4, 4);//-- identity
-        
+
         GridCombineIterator it = new GridCombineIterator(extent, crs3D, MathTransforms.linear(mat));
-        
+
         final List<Envelope> listEnvelope = new ArrayList<Envelope>();
         while (it.hasNext()) {
             listEnvelope.add(it.next());
@@ -145,17 +145,17 @@ public strictfp class GridCombineIteratorTest {
         assertTrue(listEnvelope.size() == 2);
         Envelope result = listEnvelope.get(0);
         assertSame(result.getCoordinateReferenceSystem(), crs3D);
-        
+
         //-- slice in temporal value 0 (gridLow[2])
         checkEnvelope(result, gridLow[0], gridLow[1], gridLow[2], gridHigh[0], gridHigh[1], gridLow[2]);
-        
+
         result = listEnvelope.get(1);
         assertSame(result.getCoordinateReferenceSystem(), crs3D);
-        
+
         //-- slice in temporal value 1 (gridHigh[2])
         checkEnvelope(result, gridLow[0], gridLow[1], gridHigh[2], gridHigh[0], gridHigh[1], gridHigh[2]);
-        
-        //-- test with exclusive high border 
+
+        //-- test with exclusive high border
         //-- should return only low point
         extent = new GeneralGridEnvelope(gridLow, gridHigh, false);
         it = new GridCombineIterator(extent, crs3D, MathTransforms.linear(mat));
@@ -165,16 +165,16 @@ public strictfp class GridCombineIteratorTest {
         }
         //-- expected one point
         assertTrue(listEnvelope.size() == 1);
-        
+
         //-- only one point at temporal dim 0
         result = listEnvelope.get(0);
         assertSame(result.getCoordinateReferenceSystem(), crs3D);
         checkEnvelope(result, gridLow[0], gridLow[1], gridLow[2], gridLow[0], gridLow[1], gridLow[2]);
-        
+
         //-- temporal multi slice
         gridLow[2] = -2;
         gridHigh[2] = 1;
-        
+
         extent = new GeneralGridEnvelope(gridLow, gridHigh, true);
         it = new GridCombineIterator(extent, crs3D, MathTransforms.linear(mat));
         listEnvelope.clear();
@@ -190,39 +190,39 @@ public strictfp class GridCombineIteratorTest {
             checkEnvelope(env, gridLow[0], gridLow[1], firstTemp + i, gridHigh[0], gridHigh[1], firstTemp + i);
         }
     }
-    
+
     /**
      * Test with 4 D crs and also, the horizontal part of the {@link CompoundCRS} is between two another crs like follow.
      * MyCompoundCrs = [Temporal][2D part][elevation];
      */
-    @Test 
+    @Test
     public void testmultidim() {
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", "compoundcrstest");
-        
+
         final CompoundCRS ccrs = new DefaultCompoundCRS(map, CommonCRS.Temporal.JAVA.crs(), CommonCRS.WGS84.geographic(), CommonCRS.Vertical.DEPTH.crs());
-        
+
         final int[] gridLow        = new int[]{-2,  0,  0, 1};
         final int[] gridHigh       = new int[]{ 0, 11, 11, 4}; //-- 11 because exclusive high border
         GeneralGridEnvelope extent = new GeneralGridEnvelope(gridLow, gridHigh, false);//-- exclusive high border
-        
+
         MatrixSIS mat = Matrices.createDiagonal(5, 5);//-- identity
         mat.setElements(new double[]{2,  0,  0, 0,   -3, //-- Temporal ordinate
                                      0, 36,  0, 0, -180, //-- 2D crs part (WGS84) long
                                      0,  0, 18, 0,  -90, //-- 2D part lat
                                      0,  0,  0, 3,    5, //-- elevation ordinate
                                      0,  0,  0, 0,    1 });
-        
+
         GridCombineIterator it = new GridCombineIterator(extent, ccrs, MathTransforms.linear(mat));
-        
+
         final List<Envelope> listEnvelope = new ArrayList<Envelope>();
         while (it.hasNext()) {
             listEnvelope.add(it.next());
         }
-        //-- for t = {-2, -1} "*" h = {1, 2, 3} 
+        //-- for t = {-2, -1} "*" h = {1, 2, 3}
         assertTrue("expected 6 results. found : "+listEnvelope.size(), listEnvelope.size() == 6);
         assertSame(listEnvelope.get(0).getCoordinateReferenceSystem(), ccrs);
-        
+
         //-- expected t = -2, h = 1
         checkEnvelope(listEnvelope.get(0), -7, -180, -90, 8,  -7, 180, 90, 8);
         //-- expected t = -2, h = 2
@@ -235,15 +235,15 @@ public strictfp class GridCombineIteratorTest {
         checkEnvelope(listEnvelope.get(4), -5, -180, -90, 11, -5, 180, 90, 11);
         //-- expected t = -2, h = 3
         checkEnvelope(listEnvelope.get(5), -5, -180, -90, 14, -5, 180, 90, 14);
-        
-        
+
+
         //---------------------------------------------------//
         //-- test iteration on only one expected dimension --//
         //---------------------------------------------------//
-        
+
         //-- first on ordinate 0
         it = new GridCombineIterator(extent, null, MathTransforms.linear(mat), 0);
-        
+
         listEnvelope.clear();
         while (it.hasNext()) {
             listEnvelope.add(it.next());
@@ -251,15 +251,15 @@ public strictfp class GridCombineIteratorTest {
         //-- for t = {-2, -1}
         assertTrue("expected 2 results when iteration on 0 ordinate. found : "+listEnvelope.size(), listEnvelope.size() == 2);
         assertTrue("expected null crs", listEnvelope.get(0).getCoordinateReferenceSystem() == null);
-        
+
         //-- expected t = -2, h = {1; 4}
         checkEnvelope(listEnvelope.get(0), -7, -180, -90, 8, -7, 180, 90, 14);
         //-- expected t = -2, h = {1; 4}
         checkEnvelope(listEnvelope.get(1), -5, -180, -90, 8, -5, 180, 90, 14);
-        
+
         //-- first on ordinate 3
         it = new GridCombineIterator(extent, null, MathTransforms.linear(mat), 3);
-        
+
         listEnvelope.clear();
         while (it.hasNext()) {
             listEnvelope.add(it.next());
@@ -267,15 +267,15 @@ public strictfp class GridCombineIteratorTest {
         //-- for h = {1, 2, 3}
         assertTrue("expected 3 results when iteration on 3 ordinate. found : "+listEnvelope.size(), listEnvelope.size() == 3);
         assertTrue("expected null crs", listEnvelope.get(0).getCoordinateReferenceSystem() == null);
-        
+
         //-- expected t = {-2; -1}, h = 1
         checkEnvelope(listEnvelope.get(0), -7, -180, -90, 8,  -5, 180, 90, 8);
         //-- expected t = {-2; -1}, h = 2
         checkEnvelope(listEnvelope.get(1), -7, -180, -90, 11, -5, 180, 90, 11);
         //-- expected t = {-2; -1}, h = 3
         checkEnvelope(listEnvelope.get(2), -7, -180, -90, 14, -5, 180, 90, 14);
-        
-        
+
+
         //-- test extract axis values
         NumberRange<Double>[] scales = GridCombineIterator.extractAxisRanges(extent, MathTransforms.linear(mat), 0);
         assertEquals("extract axis values at dimension 0", scales[0].getMinDouble(), -7, TOLERANCE);
@@ -283,7 +283,7 @@ public strictfp class GridCombineIteratorTest {
         assertEquals("extract axis values at dimension 1", scales[1].getMinDouble(), -5, TOLERANCE);
         assertEquals("extract axis values at dimension 1", scales[1].getMaxDouble(), -5, TOLERANCE);
 //        assertArrayEquals("extract axis values at dimension 0", scales, new double[]{-7, -5}, TOLERANCE);
-        
+
         scales = GridCombineIterator.extractAxisRanges(extent, MathTransforms.linear(mat), 3);
         assertEquals("extract axis values at dimension 0", scales[0].getMinDouble(), 8, TOLERANCE);
         assertEquals("extract axis values at dimension 0", scales[0].getMaxDouble(), 8, TOLERANCE);
@@ -292,7 +292,7 @@ public strictfp class GridCombineIteratorTest {
         assertEquals("extract axis values at dimension 2", scales[2].getMinDouble(), 14, TOLERANCE);
         assertEquals("extract axis values at dimension 2", scales[2].getMaxDouble(), 14, TOLERANCE);
 //        assertArrayEquals("extract axis values at dimension 3", scales, new double[]{8, 11, 14}, TOLERANCE);
-        
+
         //-- test fail
         try {
             it = new GridCombineIterator(extent, ccrs, MathTransforms.linear(mat), 1);
@@ -301,17 +301,17 @@ public strictfp class GridCombineIteratorTest {
             //-- expected comportement
         }
     }
-    
+
     /**
      * Check expected {@link Envelope} corners values.
-     * 
+     *
      * @param envelope current tested envelope.
      * @param expectedCorners dim0min, dim1min ... dimNmin, dim0max, dim1max ... dimNmax
      */
     private void checkEnvelope(final Envelope envelope, final double ...expectedCorners) {
         assert expectedCorners.length % 2 == 0 : "GridCombineIterator : expectedCorners.length must be modulo 2.";
         assert envelope.getDimension() == expectedCorners.length / 2 : "GridCombineIterator : expectedCorners.length / 2 must be equal to envelope dimension.";
-        
+
         final int dim = envelope.getDimension();
         for (int d = 0; d < dim; d++) {
             assertEquals("at envelope.getMinimum("+d+")", expectedCorners[d],       envelope.getMinimum(d), TOLERANCE);
