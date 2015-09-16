@@ -23,12 +23,14 @@ import java.awt.Rectangle;
 import java.awt.image.*;
 import java.util.Arrays;
 import java.util.Vector;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.sis.util.ArgumentChecks;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 
 /**
  *
+ * @author Alexis Manin (Geomatys).s
  * @author Remi Marechal (Geomatys).
  */
 public class WritableLargeRenderedImage implements WritableRenderedImage {
@@ -46,11 +48,6 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
     private static final int MIN_TILE_SIZE = 64;
     
     /**
-     * Upper left corner of currently stored {@link Raster}. 
-     */
-    private static final Point ptOffset = new Point();
-    
-    /**
      * Upper left corner of all image tiles.
      */
     private Point[] tileIndices = null;
@@ -59,6 +56,12 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
      * Defaine if tile is allready writen. 
      */
     private final boolean[][] isWrite;
+
+    /**
+     * An array which stores a lock for each tile. The index of the tile (x, y) is retrieved as following :
+     *      y * {@linkplain #nbrTileX} + x.
+     */
+    private final ReentrantReadWriteLock[] tileLocks;
     
     /**
      * Image attributs.
@@ -132,6 +135,12 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         if (tileGridYOffset < minY) minTileGridY--;
         isWrite = new boolean[nbrTileY][nbrTileX];
         for (boolean[] bool : isWrite) Arrays.fill(bool, false);
+        
+        //-- tile lock initialize
+        tileLocks = new ReentrantReadWriteLock[nbrTileX * nbrTileY];
+        for (int i = 0; i < tileLocks.length; i++) {
+            tileLocks[i] = new ReentrantReadWriteLock();
+        }
     }
 
     /**
@@ -155,8 +164,7 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
      */
     @Override
     public WritableRaster getWritableTile(int tileX, int tileY) {
-        if (!isWrite[tileY - minTileGridY][tileX - minTileGridX]) fillWritableImage();
-        return (WritableRaster) tilecache.getTile(this, tileX, tileY);
+        return (WritableRaster) getTile(tileX, tileY);
     }
 
     /**
@@ -171,8 +179,7 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
      */
     @Override
     public boolean isTileWritable(int tileX, int tileY) {
-        if (!isWrite[tileY - minTileGridY][tileX - minTileGridX]) fillWritableImage();
-        return (tilecache.getTile(this, tileX, tileY) instanceof WritableRaster);
+        return (getTile(tileX, tileY) instanceof WritableRaster);
     }
 
     /**
@@ -234,9 +241,17 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         final int ty = minTileGridY + (rminY-minY) / tileHeight;
         final int isRow = ty - minTileGridY;
         final int isCol = tx - minTileGridX;
-        if (isWrite[isRow][isCol]) tilecache.remove(this, tx, ty);
-        tilecache.add(this, tx, ty, r);
-        isWrite[isRow][isCol] = true;
+
+        final ReentrantReadWriteLock lock = tileLocks[ty * nbrTileX + tx];
+        lock.writeLock().lock(); //-- ask reading token
+
+        try {
+            if (isWrite[isRow][isCol]) tilecache.remove(this, tx, ty);
+            tilecache.add(this, tx, ty, r);
+            isWrite[isRow][isCol] = true;
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     /**
@@ -380,7 +395,18 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
      */
     @Override
     public Raster getTile(int tileX, int tileY) {
-        if (!isWrite[tileY - minTileGridY][tileX - minTileGridX]) fillWritableImage();
+        
+        final ReentrantReadWriteLock lock = tileLocks[tileY * nbrTileX + tileX];
+        lock.readLock().lock(); //-- ask reading token
+        final boolean iswrite;
+        try {
+            iswrite = isWrite[tileY - minTileGridY][tileX - minTileGridX];
+        } finally {
+            lock.readLock().unlock();
+        }
+
+        if (!iswrite) fillWritableImage(tileX, tileY);//-- inside this method : writing lock
+        
         return tilecache.getTile(this, tileX, tileY);
     }
 
@@ -392,8 +418,7 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         // in contradiction with this class aim.
         // in attempt to replace JAI dependencies.
         if (width <= 5000 && height <= 5000) {
-            ptOffset.setLocation(minX, minY);
-            final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(width, height), ptOffset);
+            final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(width, height), new Point(minX, minY));
             final Rectangle rect = new Rectangle();
             int my = minY;
             for (int ty = minTileGridY, tmy = minTileGridY + nbrTileY; ty < tmy; ty++) {
@@ -429,8 +454,7 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
         final int rw = Math.min(rect.x+rect.width, minX+width)-rx;
         final int rh = Math.min(rect.y+rect.height, minY+height)-ry;
         if (rw <= 5000 && rh <= 5000) {
-            ptOffset.setLocation(rx, ry);
-            final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(rw, rh), ptOffset);
+            final WritableRaster wr = Raster.createWritableRaster(cm.createCompatibleSampleModel(rw, rh), new Point(rx, ry));
             final Rectangle area = new Rectangle();
 
             int ty = minTileGridY  + (ry - minY) / tileHeight;
@@ -477,28 +501,55 @@ public class WritableLargeRenderedImage implements WritableRenderedImage {
     }
     
     /**
-     * Fill image by writable raster.
+     * Create an original {@link Raster} adapted for image properties.
+     *
+     * @param tileX image tile index in X direction.
+     * @param tileY image tile index in Y direction.
      */
-    private void fillWritableImage() {
-        //remplissage de raster vide
-        final int mx = minX + width;
-        final int my = minY + height;
-        int ry = minY;
-        for (int ty = minTileGridY, tmy = minTileGridY+nbrTileY; ty < tmy; ty++){
-            int rx = minX;
-            int row = ty - minTileGridY;
-            for (int tx = minTileGridX, tmx = minTileGridX+nbrTileX; tx < tmx; tx++) {
-                int col = tx - minTileGridX;
-                if (!isWrite[row][col]) {
-                    final int rw = Math.min(rx + tileWidth, mx)  - rx;
-                    final int rh = Math.min(ry + tileHeight, my) - ry;
-                    ptOffset.setLocation(rx, ry);
-                    this.tilecache.add(this, tx, ty, Raster.createWritableRaster(cm.createCompatibleSampleModel(rw, rh), ptOffset));
-                    isWrite[row][col] = true;
-                }
-                rx += tileWidth;
+    private void fillWritableImage(final int tileX, final int tileY) {
+        final ReentrantReadWriteLock lock = tileLocks[tileY * nbrTileX + tileX];
+        lock.writeLock().lock(); //-- ask reading token
+
+        try {
+            if (!isWrite[tileY - minTileGridY][tileX - minTileGridX]) {
+
+                //-- upper left raster corner.
+                final int ptOffx = minX + (tileX - minTileGridX) * tileWidth;
+                final int ptOffy = minY + (tileY - minTileGridY) * tileHeight;
+
+                //-- raster width and height at least.
+                final int rw = StrictMath.min(ptOffx + tileWidth,  minX + width)  - ptOffx;
+                final int rh = StrictMath.min(ptOffy + tileHeight, minY + height) - ptOffy;
+
+                this.tilecache.add(this, tileX, tileY, Raster.createWritableRaster(cm.createCompatibleSampleModel(rw, rh), new Point(ptOffx, ptOffy)));
+                isWrite[tileY - minTileGridY][tileX - minTileGridX] = true;
             }
-            ry += tileHeight;
+        } finally {
+            lock.writeLock().unlock();
         }
+
+
+
+
+////        //remplissage de raster vide
+////        final int mx = minX + width;
+////        final int my = minY + height;
+////        int ry = minY;
+////        for (int ty = minTileGridY, tmy = minTileGridY+nbrTileY; ty < tmy; ty++){
+////            int rx = minX;
+////            int row = ty - minTileGridY;
+////            for (int tx = minTileGridX, tmx = minTileGridX+nbrTileX; tx < tmx; tx++) {
+////                int col = tx - minTileGridX;
+////                if (!isWrite[row][col]) {
+////                    final int rw = Math.min(rx + tileWidth, mx)  - rx;
+////                    final int rh = Math.min(ry + tileHeight, my) - ry;
+////                    ptOffset.setLocation(rx, ry);
+////                    this.tilecache.add(this, tx, ty, Raster.createWritableRaster(cm.createCompatibleSampleModel(rw, rh), ptOffset));
+////                    isWrite[row][col] = true;
+////                }
+////                rx += tileWidth;
+////            }
+////            ry += tileHeight;
+////        }
     }
 }

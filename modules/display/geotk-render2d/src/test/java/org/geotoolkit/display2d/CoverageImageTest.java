@@ -51,6 +51,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.referencing.CommonCRS;
+import org.geotoolkit.image.io.large.ImageCacheConfiguration;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -189,6 +190,8 @@ public class CoverageImageTest {
 
         ImageIO.scanForPlugins();
         Setup.initialize(null);
+
+        ImageCacheConfiguration.setCacheSwapEnable(false);
 
         final File input = new File("src/test/resources/org/geotoolkit/display2d/clouds.jpg");
         final GridCoverageReader reader = CoverageIO.createSimpleReader(input);

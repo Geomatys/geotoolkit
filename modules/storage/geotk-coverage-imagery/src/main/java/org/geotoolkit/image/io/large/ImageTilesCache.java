@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.image.io.large;
 
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.util.ImageIOUtilities;
 
 import javax.imageio.ImageIO;
@@ -32,12 +31,12 @@ import java.lang.ref.ReferenceQueue;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
+import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.WeakValueHashMap;
 
 /**
@@ -50,8 +49,6 @@ import org.apache.sis.util.collection.WeakValueHashMap;
  * @author Johann Sorel (Geomatys).
  */
 final class ImageTilesCache extends PhantomReference<RenderedImage> {
-
-    private static final Logger LOGGER = Logging.getLogger(ImageTilesCache.class);
 
     private static final String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
     private static final String FORMAT = "geotiff";
@@ -95,24 +92,24 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
      *
      * We subclass the map to keep track of the used memory.
      */
-    private volatile long usedCapacity = 0;
+    private final AtomicLong usedCapacity = new AtomicLong(0);
     private final LinkedHashMap<Point, TileRasterCache> tiles = new LinkedHashMap<Point, TileRasterCache>(16, 0.75f, true){
         @Override
         public TileRasterCache put(Point key, TileRasterCache value) {
             final TileRasterCache last = super.put(key, value);
-            if(last!=null) usedCapacity -= last.getWeight();
-            if(value!=null) usedCapacity += value.getWeight();
+            if(last!=null) usedCapacity.addAndGet(-last.getWeight());
+            if(value!=null) usedCapacity.addAndGet(-value.getWeight());
             return last;
         }
         @Override
         public void clear() {
             super.clear();
-            usedCapacity = 0;
+            usedCapacity.set(0);
         }
         @Override
         public TileRasterCache remove(Object key) {
             final TileRasterCache last = super.remove(key);
-            if(last!=null) usedCapacity -= last.getWeight();
+            if(last!=null) usedCapacity.addAndGet(-last.getWeight());
             return last;
         }
     };
@@ -128,7 +125,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
         ReadWriteLock lock;
         synchronized(locks){
             lock = locks.get(key);
-            if(lock==null) {
+            if (lock == null) {
                 lock = new ReentrantReadWriteLock();
                 locks.put(key, lock);
             }
@@ -153,6 +150,11 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
         //cache properties.
         this.cache = cache;
         this.isWritableRenderedImage = ri instanceof WritableRenderedImage;
+
+        if (ri instanceof WritableLargeRenderedImage ) {
+            if (!cache.isEnableSwap())
+                throw new IllegalArgumentException("With WritableRenderedImage LargeCache must swap.");
+        }
         //image owner properties.
         this.cm            = ri.getColorModel();
         this.numTilesX     = ri.getNumXTiles();
@@ -166,6 +168,8 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
 
         //quad tree directory architecture.
         if (cache.isEnableSwap()) {
+            ArgumentChecks.ensureNonNull("READER_SPI", READER_SPI);
+            ArgumentChecks.ensureNonNull("WRITER_SPI", WRITER_SPI);
             final String dirPath = TEMPORARY_PATH + "/img_" + UUID.randomUUID().toString();
             this.qTD = new QuadTreeDirectory(dirPath, numTilesX, numTilesY, FORMAT, true);
         } else {
@@ -190,7 +194,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
      * @return memory used.
      */
     public long getUsedCapacity() {
-        return usedCapacity;
+        return usedCapacity.get();
     }
 
     /**
@@ -208,7 +212,8 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
 
     private void add(Point tileCorner, WritableRaster raster) throws IOException {
         final long rasterWeight = getRasterWeight(raster);
-        if (rasterWeight > cache.getCacheSizePerImage()) throw new IOException("Raster too large : " + rasterWeight + " bytes, but maximum cache capacity is "+ cache.getCacheSizePerImage() +" bytes");
+        if (rasterWeight > cache.getCacheSizePerImage()) throw new IOException("Raster too large : " + rasterWeight
+                + " bytes, but maximum cache capacity is "+ cache.getCacheSizePerImage() +" bytes");
 
         final ReadWriteLock tileLock = getLock(tileCorner);
         tileLock.writeLock().lock();
@@ -239,7 +244,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
                 tiles.remove(tileCorner);
             }
 
-            if (qTD!=null) {
+            if (qTD != null) {
                 //quad tree
                 final File removeFile = new File(qTD.getPath(tileCorner.x, tileCorner.y));
                 //delete on hard disk if exist.
@@ -278,23 +283,35 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
             tileLock.readLock().unlock();
         }
 
-        if (qTD==null) {
+        if (qTD == null) {
             // raster not found in memory
             throw new IllegalArgumentException("Tile (" + tileX + ", " + tileY + ") not found in memory.");
         } else {
-            // If not, we must take it from input quad-tree.
-            final File tileFile = new File(qTD.getPath(tileCorner.x, tileCorner.y));
 
+            //-- lock in writing
             tileLock.writeLock().lock();
-            try{
+            try {
+
+                //-- asked again getRaster() in case another thread already enter
+                //-- into this scope and has loaded tile from file system.
+                final TileRasterCache lRaster;
+                synchronized (tiles) {
+                    lRaster= tiles.get(tileCorner);
+                }
+                if (lRaster != null) {
+                    return lRaster.getRaster();
+                }
+
+                // If not, we must take it from input quad-tree.
+                final File tileFile = new File(qTD.getPath(tileCorner.x, tileCorner.y));
                 if (tileFile.exists()) {
                     // TODO : Use a "pool" of readers, instead of creating one each time ?
                     final ImageReader imgReader = READER_SPI.createReaderInstance();
                     final BufferedImage buff;
-                    try{
+                    try {
                         imgReader.setInput(tileFile);
                         buff = imgReader.read(0);
-                    }finally{
+                    } finally {
                         ImageIOUtilities.releaseReader(imgReader);
                     }
                     //add in cache list.
@@ -302,11 +319,10 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
                     add(tileCorner, checkedRaster);
                     return checkedRaster;
                 }
-            }finally{
-                tileLock.writeLock().unlock();
+            } finally {
+               tileLock.writeLock().unlock();
             }
         }
-
         throw new IOException("Tile (" + tileX + ", " + tileY + ") unknown. Cannot get raster.");
     }
 
@@ -317,7 +333,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
         //rendered image won't be used after this
         synchronized(tiles){
             tiles.clear();
-            if (qTD!=null) {
+            if (qTD != null) {
                 qTD.cleanDirectory();
             }
         }
@@ -359,10 +375,10 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
                     cm, RasterFactory.createWritableRaster(lRaster.getRaster().getSampleModel(), lRaster.getRaster().getDataBuffer(), WPOINT), true, null);
             // TODO : Optimize using a "writer pool" instead of creating one each time ?
             final ImageWriter imgWriter = WRITER_SPI.createWriterInstance();
-            try{
+            try {
                 imgWriter.setOutput(tileFile);
                 imgWriter.write(toWrite);
-            }finally{
+            } finally {
                 ImageIOUtilities.releaseWriter(imgWriter);
             }
         }
@@ -390,59 +406,34 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
      * <p>Check that cache weight do not exceed memory capacity.<br/>
      * If memory capacity is exceeded, write as many {@link java.awt.image.Raster} objects needed to not exceed memory capacity anymore.</p>
      */
-    private void checkMap() {
+    private void checkMap() throws IOException {
         final long maxCacheSize = cache.getCacheSizePerImage();
 
         // While the cache size is exceeded, we flush tiles, beginning with the oldest one.
-        final Object[] keys;
-        synchronized(tiles){
-            keys = tiles.keySet().toArray();
+        final Point[] keys;
+        synchronized(tiles) {
+            keys = tiles.keySet().toArray(new Point[tiles.size()]);
         }
 
-        long expectedCapacity = usedCapacity;
-        for(int i=0; expectedCapacity>maxCacheSize && i<keys.length; i++) {
-            final TileRasterCache tr;
-            synchronized(tiles){
-                tr = tiles.remove(keys[i]);
-            }
+        long expectedCapacity = usedCapacity.get();
+        for (int i = 0; expectedCapacity > maxCacheSize && i < keys.length; i++) {
 
-            if(tr!=null){
-                expectedCapacity -= tr.getWeight();
-                if(qTD!=null){
-                    LargeCache.WRITER__EXECUTOR.submit(new FlushWorker(WPOINT, tr));
+            ReadWriteLock rwl = getLock((Point) keys[i]);
+            rwl.writeLock().lock();
+            try {
+                final TileRasterCache tr;
+                synchronized (tiles) {
+                    tr = tiles.remove(keys[i]);
                 }
+                if (tr != null) {
+                    writeRaster(tr);
+                }
+
+                expectedCapacity = usedCapacity.get();
+
+            } finally {
+                rwl.writeLock().unlock();
             }
         }
     }
-
-    /**
-     * A thread which will be in charge of memory cleaning. To do so, it will flush old tiles in a temporary quad-tree on file-system.
-     */
-    private final class FlushWorker implements Runnable {
-
-        private final Point key;
-        private final TileRasterCache tileRaster;
-
-        public FlushWorker(Point key,TileRasterCache tileRaster) {
-            this.key = key;
-            this.tileRaster = tileRaster;
-        }
-
-        @Override
-        public void run() {
-            final ReadWriteLock tileLock = getLock(key);
-            tileLock.writeLock().lock();
-            try{
-                try {
-                    writeRaster(tileRaster);
-                } catch (IOException e) {
-                    // If flush operation fails, it's not a severe error, cache will miss the tile, so source image will need to reload it.
-                    LOGGER.log(Level.WARNING, "Tile cannot be flushed, it will be lost !", e);
-                }
-            }finally{
-                tileLock.writeLock().unlock();
-            }
-        }
-    }
-
 }
