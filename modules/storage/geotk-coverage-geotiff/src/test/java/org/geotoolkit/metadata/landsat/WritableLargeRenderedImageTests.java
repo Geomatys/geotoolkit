@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -31,6 +32,7 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.image.internal.PhotometricInterpretation;
 import org.geotoolkit.image.internal.SampleType;
+import org.geotoolkit.image.io.large.ImageCacheConfiguration;
 import org.geotoolkit.image.io.large.LargeCache;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
@@ -59,7 +61,7 @@ public final strictfp class WritableLargeRenderedImageTests {
      *
      * @see #WritableLargeRenderedImageTests() 
      */
-    private final static int IMG_SIZE = 2000; //-- increase this attribut to improve LargeCache comportement
+    private final static int IMG_SIZE = 5000; //-- increase this attribut to improve LargeCache comportement
 
     /**
      * Init providers.
@@ -68,6 +70,7 @@ public final strictfp class WritableLargeRenderedImageTests {
     public static void init() {
         ImageIO.scanForPlugins();
         Setup.initialize(null);
+        ImageCacheConfiguration.setCacheMemorySize("3m");
         LargeCache.getInstance().setMemoryCapacity((long) 3E6);
     }
     
@@ -86,7 +89,7 @@ public final strictfp class WritableLargeRenderedImageTests {
 
         final ExecutorService poule = Executors.newFixedThreadPool(3);
 
-        for (int nb = 0, nbTimes = 5; nb < nbTimes; nb++) { //-- to improve comportement increase nbTimes attribut.
+        for (int nb = 0, nbTimes = 1; nb < nbTimes; nb++) { //-- to improve comportement increase nbTimes attribut.
 
             final long t = System.currentTimeMillis();
 
@@ -120,8 +123,11 @@ public final strictfp class WritableLargeRenderedImageTests {
                 Assert.assertEquals("unexpected byte value : at x = "+createDefaultIterator.getX()
                         +", y = "+createDefaultIterator.getY(), (value & 0xFF), (createDefaultIterator.getSample() & 0xFF));
             }
-            LOGGER.log(Level.FINE, "iteration nb : "+nb+", time : "+(System.currentTimeMillis() - t));
+            LOGGER.log(Level.INFO, "iteration nb : "+nb+", time : "+(System.currentTimeMillis() - t));
         }
+        
+        poule.shutdown();
+        poule.awaitTermination(10, TimeUnit.SECONDS);
     }
 
     /**

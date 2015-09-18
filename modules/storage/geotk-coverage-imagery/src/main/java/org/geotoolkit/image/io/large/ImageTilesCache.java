@@ -34,10 +34,13 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.WeakValueHashMap;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Stock all {@link java.awt.image.Raster} contained from define {@link java.awt.image.RenderedImage}. It's a map whose key
@@ -49,6 +52,13 @@ import org.apache.sis.util.collection.WeakValueHashMap;
  * @author Johann Sorel (Geomatys).
  */
 final class ImageTilesCache extends PhantomReference<RenderedImage> {
+
+    /**
+     * {@link Logger} to show problem during Tile deletion.
+     *
+     * @see #checkMap()
+     */
+    private static final Logger LOGGER = Logging.getLogger(ImageTilesCache.class.getCanonicalName());
 
     private static final String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
     private static final String FORMAT = "geotiff";
@@ -98,7 +108,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
         public TileRasterCache put(Point key, TileRasterCache value) {
             final TileRasterCache last = super.put(key, value);
             if(last!=null) usedCapacity.addAndGet(-last.getWeight());
-            if(value!=null) usedCapacity.addAndGet(-value.getWeight());
+            if(value!=null) usedCapacity.addAndGet(value.getWeight());
             return last;
         }
         @Override
@@ -415,25 +425,39 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
             keys = tiles.keySet().toArray(new Point[tiles.size()]);
         }
 
-        long expectedCapacity = usedCapacity.get();
-        for (int i = 0; expectedCapacity > maxCacheSize && i < keys.length; i++) {
+        long currentCapacity = usedCapacity.get();
 
-            ReadWriteLock rwl = getLock((Point) keys[i]);
+        int idTile = 0;
+        while (currentCapacity > maxCacheSize) {
+
+            ReadWriteLock rwl = getLock((Point) keys[idTile]);
             rwl.writeLock().lock();
+            
             try {
                 final TileRasterCache tr;
                 synchronized (tiles) {
-                    tr = tiles.remove(keys[i]);
+                    tr = tiles.remove(keys[idTile]);
                 }
+
                 if (tr != null) {
                     writeRaster(tr);
                 }
-
-                expectedCapacity = usedCapacity.get();
+                else {
+                    LOGGER.log(Level.FINE, "Impossible to delete Tile at key id : "
+                                                        +((Point) keys[idTile])+"from image tile cache.");
+                }
+                currentCapacity = usedCapacity.get();
 
             } finally {
                 rwl.writeLock().unlock();
             }
+            if (++idTile == keys.length) break;
         }
+
+        if (usedCapacity.get() > maxCacheSize) 
+             throw new IllegalStateException("Impossible to put Tiles into swap cache. "
+                     + "The LargeCache capacity has not beeing discrease."
+                     + "Maximum allowed cache capacity = "+maxCacheSize
+                     + "Current used cache capacity = "+usedCapacity.get());
     }
 }
