@@ -217,7 +217,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
                 try {
                     final Geometry geom;
                     if (isoGeom instanceof AbstractGeometry) {
-                        geom = GeometrytoJTS.toJTS((AbstractGeometry)isoGeom);
+                        geom = GeometrytoJTS.toJTS((AbstractGeometry)isoGeom,false);
                     } else {
                         geom = null;
                     }
