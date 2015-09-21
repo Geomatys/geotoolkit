@@ -23,8 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.logging.Logger;
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
+import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.plugin.TiffImageReader;
@@ -117,6 +119,13 @@ public abstract class GeoTiffExtension {
 
         //search for the coordinate reference system
         CoordinateReferenceSystem crs = rb.getCoordinateReferenceSystem(CoordinateReferenceSystem.class);
+        if(crs==null){
+            //no crs defined, we can't add any slice axis value
+            final Logger logger = Logging.getLogger(GeoTiffExtension.class);
+            logger.info("Tiff has no base CRS, slice dimension crs will not be added.");
+            return;
+        }
+
         final List<CoordinateReferenceSystem> crss = ReferencingUtilities.decompose(crs);
         int axisIndex = -1;
         int inc = 0;
