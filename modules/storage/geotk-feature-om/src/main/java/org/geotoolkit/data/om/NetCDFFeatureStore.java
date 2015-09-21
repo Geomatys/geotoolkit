@@ -50,6 +50,7 @@ import org.geotoolkit.util.FileUtilities;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.DefaultFeatureType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
@@ -68,7 +69,7 @@ import org.opengis.util.FactoryException;
 public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFileStore {
 
     private final File source;
-    
+
     public NetCDFFeatureStore(final ParameterValueGroup params, final File source) {
         super(params, FileUtilities.getFileName(source));
         this.source = source;
@@ -78,7 +79,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
     public FeatureStoreFactory getFactory() {
         return FeatureStoreFinder.getFactoryById(NetCDFFeatureStoreFactory.NAME);
     }
-    
+
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final FeatureType sft = getFeatureType(query.getTypeName());
@@ -96,7 +97,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
     public void refreshMetaModel() {
         return;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -104,11 +105,11 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
     public File[] getDataFiles() throws DataStoreException {
         return new File[]{source};
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // No supported stuffs /////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * {@inheritDoc }
      */
@@ -140,7 +141,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
     public List<FeatureId> addFeatures(GenericName groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -148,7 +149,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
     public void updateFeatures(final GenericName groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -156,7 +157,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
     public void removeFeatures(GenericName groupName, Filter filter) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -164,7 +165,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
     public FeatureWriter getFeatureWriter(GenericName typeName, Filter filter, Hints hints) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // Feature Reader //////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -185,7 +186,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
                     features.add(feat);
                 }
             }
-            
+
         }
 
         @Override
@@ -198,7 +199,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
             final Feature result = features.get(cpt);
             cpt++;
             return result;
-            
+
         }
 
         @Override
@@ -222,9 +223,9 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
                     }
 
                     if (firstCRS && isoGeom != null) {
-                        CoordinateReferenceSystem crs = isoGeom.getCoordinateReferenceSystem();
-                        if (type instanceof DefaultSimpleFeatureType) {
-                            ((DefaultSimpleFeatureType) type).setCoordinateReferenceSystem(crs);
+                        CoordinateReferenceSystem crs = ((AbstractGeometry)isoGeom).getCoordinateReferenceSystem(false);
+                        if (type instanceof DefaultFeatureType) {
+                            ((DefaultFeatureType) type).setCoordinateReferenceSystem(crs);
                         }
                         if (type.getGeometryDescriptor() instanceof DefaultGeometryDescriptor) {
                             ((DefaultGeometryDescriptor) type.getGeometryDescriptor()).setCoordinateReferenceSystem(crs);
@@ -246,7 +247,7 @@ public class NetCDFFeatureStore extends AbstractOMFeatureStore implements DataFi
                     if (empty) {
                         props.add(FF.createAttribute(null, (AttributeDescriptor) type.getDescriptor(ATT_SAMPLED), null));
                     }
-                    
+
                     return FF.createFeature(props, type, feature.getId());
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.WARNING, "error while transforming GML geometry to JTS", ex);
