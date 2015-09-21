@@ -167,8 +167,9 @@ public class OMUtils {
     }
 
     public static SamplingFeature buildSamplingPoint(final String identifier, final double latitude, final double longitude) {
-        final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", null, 2, Arrays.asList(latitude, longitude));
+        final DirectPosition position = SOSXmlFactory.buildDirectPosition("2.0.0", "EPSG:4326", 2, Arrays.asList(latitude, longitude));
         final Point geom              = SOSXmlFactory.buildPoint("2.0.0", "SamplingPoint", position);
+        geom.setSrsName("EPSG:4326");
         final SamplingFeature sp      = SOSXmlFactory.buildSamplingPoint("2.0.0", identifier, null, null, null, geom);
         return sp;
     }
