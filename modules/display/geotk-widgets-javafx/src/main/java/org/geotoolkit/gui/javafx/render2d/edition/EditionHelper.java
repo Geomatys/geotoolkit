@@ -140,10 +140,24 @@ public class EditionHelper {
             }
         }
 
+        /**
+         * Indicate if a node is currently selected.
+         *
+         * @return true if a node is selected on the current geometry
+         */
+        public boolean hasNodeSelected(){
+            return !(geometry.get() == null
+                    || (numSubGeom >= geometry.get().getNumGeometries())
+                    || numSubGeom < 0
+                    || selectedNode[0] < 0);
+        }
+
+        /**
+         * Remove the selected node from the geometry.
+         * 
+         */
         public void deleteSelectedNode() {
-            if(geometry == null) return;
-            if(numSubGeom < 0) return;
-            if(selectedNode[0] < 0) return;
+            if(!hasNodeSelected()) return;
 
             //save datas
             final int srid = geometry.get().getSRID();

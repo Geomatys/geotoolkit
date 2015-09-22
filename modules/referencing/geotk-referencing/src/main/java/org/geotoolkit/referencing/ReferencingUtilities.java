@@ -780,27 +780,14 @@ public final class ReferencingUtilities {
     }
 
     /**
-     * Recursively explor given crs, and return a list of distinct unary CRS.
+     * Recursively explore given crs, and return a list of distinct single CRS.
+     *
      * @param crs
      * @return List<CoordinateReferenceSystem>
-     * @deprecated moved to {@link org.geotoolkit.internal.referencing.CRSUtilities#decompose(org.opengis.referencing.crs.CoordinateReferenceSystem)}
+     * @deprecated moved to {@link org.apache.sis.referencing.CRS#getSingleComponents(org.opengis.referencing.crs.CoordinateReferenceSystem)}
      */
     public static List<CoordinateReferenceSystem> decompose(CoordinateReferenceSystem crs){
-        final List<CoordinateReferenceSystem> lst = new ArrayList<CoordinateReferenceSystem>();
-        decompose(crs, lst);
-        return lst;
-    }
-
-    private static void decompose(final CoordinateReferenceSystem crs,
-            final List<CoordinateReferenceSystem> lst){
-        if(crs instanceof CompoundCRS){
-            final List<CoordinateReferenceSystem> parts = ((CompoundCRS)crs).getComponents();
-            for(CoordinateReferenceSystem part : parts){
-                decompose(part, lst);
-            }
-        }else{
-            lst.add(crs);
-        }
+        return (List)org.apache.sis.referencing.CRS.getSingleComponents(crs);
     }
 
     /**
