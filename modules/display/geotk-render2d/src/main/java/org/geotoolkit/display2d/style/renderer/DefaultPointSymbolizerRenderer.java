@@ -18,10 +18,12 @@ package org.geotoolkit.display2d.style.renderer;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import javax.measure.unit.NonSI;
@@ -36,6 +38,7 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.apache.sis.referencing.operation.matrix.AffineTransforms2D;
+import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -105,13 +108,14 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         }
 
         //create the image--------------------------------------------------
-        final BufferedImage img = symbol.getImage(candidate,coeff,hints);
+        final BufferedImage img = symbol.getImage(candidate,coeff,false,hints);
 
         if(img == null){
             //may be correct, image can be too small for rendering
             return;
         }
 
+        final float imgRot = symbol.getRotation(candidate);
         final float[] disps = new float[2];
         final float[] anchor = new float[2];
         symbol.getDisplacement(candidate,disps);
@@ -131,19 +135,20 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
             return;
         }
 
-        final double rot = AffineTransforms2D.getRotation(renderingContext.getObjectiveToDisplay());
+        double rot = AffineTransforms2D.getRotation(renderingContext.getObjectiveToDisplay());
+        rot -= imgRot;
 
+        final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
+        final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
         for(Geometry geom : geoms){
-            if(rot==0){
+            if(rot==0.0 && imgRot==0f){
                 if(geom instanceof Point || geom instanceof MultiPoint){
                     //TODO use generalisation on multipoints
 
                     final Coordinate[] coords = geom.getCoordinates();
                     for(int i=0, n = coords.length; i<n ; i++){
                         final Coordinate coord = coords[i];
-                        final int x = (int) (-img.getWidth()*anchor[0] + coord.x + disps[0]);
-                        final int y = (int) (-img.getHeight()*anchor[1] + coord.y - disps[1]);
-                        g2d.drawImage(img, x, y, null);
+                        g2d.drawImage(img, (int)coord.x+postx, (int)coord.y+posty, null);
                     }
 
                 }else{
@@ -159,11 +164,13 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                         pcoord = geom.getCoordinate();
                     }
 
-                    final int x = (int) (-img.getWidth()*anchor[0] + pcoord.x + disps[0]);
-                    final int y = (int) (-img.getHeight()*anchor[1] + pcoord.y - disps[1]);
-                    g2d.drawImage(img, x, y, null);
+                    g2d.drawImage(img, (int)pcoord.x+postx, (int)pcoord.y+posty, null);
                 }
             }else{
+                final AffineTransform postConcat = new AffineTransform(1, 0, 0, 1, postx, posty);
+                final AffineTransform finalRot = new AffineTransform();
+                finalRot.rotate(imgRot);
+
                 if(geom instanceof Point || geom instanceof MultiPoint){
                     //TODO use generalisation on multipoints
 
@@ -171,12 +178,10 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                     for(int i=0, n = coords.length; i<n ; i++){
                         final Coordinate coord = coords[i];
 
-                        final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
-                        final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
                         final AffineTransform ptrs = new AffineTransform();
                         ptrs.rotate(-rot);
                         ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, coord.x, coord.y));
-                        ptrs.concatenate(new AffineTransform(1, 0, 0, 1, postx, posty));
+                        ptrs.concatenate(postConcat);
 
                         g2d.drawImage(img, ptrs, null);
                     }
@@ -193,12 +198,10 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                         pcoord = geom.getCoordinate();
                     }
 
-                    final int postx = (int) (-img.getWidth()*anchor[0] + disps[0]);
-                    final int posty = (int) (-img.getHeight()*anchor[1] - disps[1]);
                     final AffineTransform ptrs = new AffineTransform();
                     ptrs.rotate(-rot);
                     ptrs.preConcatenate(new AffineTransform(1, 0, 0, 1, pcoord.x, pcoord.y));
-                    ptrs.concatenate(new AffineTransform(1, 0, 0, 1, postx, posty));
+                    ptrs.concatenate(postConcat);
 
                     g2d.drawImage(img, ptrs, null);
                 }
@@ -333,6 +336,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
         final Shape mask = search.getDisplayShape();
+        Geometry maskArea = null;
 
         final Object candidate = projectedFeature.getCandidate();
 
@@ -358,7 +362,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         }
 
         //create the image------------------------------------------------------
-        final BufferedImage img = symbol.getImage(candidate,coeff,null);
+        final BufferedImage img = symbol.getImage(candidate,coeff,false,null);
+        final float imgRot = symbol.getRotation(candidate);
         final float[] disps = new float[2];
         symbol.getDisplacement(candidate,disps);
         disps[0] *= coeff ;
@@ -386,19 +391,37 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                     final int x = (int) (-img.getWidth()*anchor[0] + coord.x + disps[0]);
                     final int y = (int) (-img.getHeight()*anchor[1] + coord.y - disps[1]);
 
-                    switch(filter){
-                        case INTERSECTS :
+                    //TODO should make a better test for the alpha pixel values in image
+                    if(imgRot==0){
+                        if(VisitFilter.INTERSECTS.equals(filter)){
                             if(mask.intersects(x,y,img.getWidth(),img.getHeight())){
-                                //TODO should make a better test for the alpha pixel values in image
                                 return true;
                             }
-                            break;
-                        case WITHIN :
+                        }else if(VisitFilter.WITHIN.equals(filter)){
                             if(mask.contains(x,y,img.getWidth(),img.getHeight())){
-                                //TODO should make a better test for the alpha pixel values in image
                                 return true;
                             }
-                            break;
+                        }
+                    }else{
+                        if(maskArea==null) maskArea = JTS.shapeToGeometry(mask,GO2Utilities.JTS_FACTORY);
+                        if(maskArea instanceof LinearRing) maskArea = GO2Utilities.JTS_FACTORY.createPolygon((LinearRing)maskArea);
+                        final Rectangle2D rect = new Rectangle2D.Double(x, y, img.getWidth(), img.getHeight());
+                        final AffineTransform trs = new AffineTransform();
+                        trs.translate(-rect.getWidth()/2.0, -rect.getHeight()/2.0);
+                        trs.rotate(imgRot);
+                        trs.translate(+rect.getWidth()/2.0, +rect.getHeight()/2.0);
+                        Geometry rotatedImg = JTS.shapeToGeometry(rect, GO2Utilities.JTS_FACTORY);
+                        if(rotatedImg instanceof LinearRing) rotatedImg = GO2Utilities.JTS_FACTORY.createPolygon((LinearRing)rotatedImg);
+                        if(VisitFilter.INTERSECTS.equals(filter)){
+                            if(maskArea.intersects(rotatedImg)){
+                                return true;
+                            }
+                        }else if(VisitFilter.WITHIN.equals(filter)){
+                            if(maskArea.contains(rotatedImg)){
+                                return true;
+                            }
+                        }
+
                     }
 
                 }

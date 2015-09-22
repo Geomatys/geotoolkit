@@ -31,8 +31,9 @@ import org.opengis.style.PointSymbolizer;
 public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
 
     private final CachedGraphic cachedGraphic;
-    private UnSynchronizedCache<Float,BufferedImage> cache = null;
-        
+    private UnSynchronizedCache<Float,BufferedImage> cacheWithRotation = null;
+    private UnSynchronizedCache<Float,BufferedImage> cacheWithoutRotation = null;
+
     public CachedPointSymbolizer(final PointSymbolizer point,
             final SymbolizerRendererService<PointSymbolizer,? extends CachedSymbolizer<PointSymbolizer>> renderer){
         super(point,renderer);
@@ -57,7 +58,8 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
         //will call an evaluate indirectly
         if(cachedGraphic.isStatic()){
             //we can make a cache
-            cache = new UnSynchronizedCache<Float, BufferedImage>(5);
+            cacheWithoutRotation = new UnSynchronizedCache<Float, BufferedImage>(5);
+            cacheWithRotation = new UnSynchronizedCache<Float, BufferedImage>(5);
         }
 
         cachedGraphic.getRequieredAttributsName(requieredAttributs);
@@ -74,37 +76,63 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
     public boolean isVisible(final Object candidate) {
         return cachedGraphic.isVisible(candidate);
     }
-    
+
     /**
-     * 
-     * @return BufferedImage for a feature 
+     *
+     * @return BufferedImage for a feature
      */
     public BufferedImage getImage(final Object candidate, final float coeff, final RenderingHints hints) {
+        return getImage(candidate, coeff, true, hints);
+    }
+
+    /**
+     *
+     * @return BufferedImage for a feature
+     */
+    public BufferedImage getImage(final Object candidate, final float coeff, boolean withRotation, final RenderingHints hints) {
         evaluate();
 
-        if(cache != null){
-            //means the graphic is static, so we can cache fixed size images
-            BufferedImage buffer = cache.get(coeff);
-            if(buffer == null){
-                buffer = cachedGraphic.getImage(candidate, coeff, hints);
-                cache.put(coeff, buffer);
+        if(cacheWithoutRotation != null){
+            if(withRotation){
+                //means the graphic is static, so we can cache fixed size images
+                BufferedImage buffer = cacheWithRotation.get(coeff);
+                if(buffer == null){
+                    buffer = cachedGraphic.getImage(candidate, null, coeff, withRotation, hints);
+                    cacheWithRotation.put(coeff, buffer);
+                }
+                return buffer;
+            }else{
+                //means the graphic is static, so we can cache fixed size images
+                BufferedImage buffer = cacheWithoutRotation.get(coeff);
+                if(buffer == null){
+                    buffer = cachedGraphic.getImage(candidate, null, coeff, withRotation, hints);
+                    cacheWithoutRotation.put(coeff, buffer);
+                }
+                return buffer;
             }
-
-            return buffer;
         }
 
         //no cache recalculate image
-        return cachedGraphic.getImage(candidate, coeff, hints);
+        return cachedGraphic.getImage(candidate, null, coeff, withRotation, hints);
     }
-    
+
     /**
-     * 
-     * @return BufferedImage for a feature 
+     *
+     * @return BufferedImage for a feature
      */
     public BufferedImage getImage(final Object candidate, final Float forcedSize, final float coeff, final RenderingHints hints) {
+        return getImage(candidate, forcedSize, coeff, true, hints);
+    }
+
+    /**
+     *
+     * @return BufferedImage for a feature
+     */
+    public BufferedImage getImage(final Object candidate, final Float forcedSize,
+            final float coeff, boolean withRotation, final RenderingHints hints) {
         evaluate();
         //no cache recalculate image
-        return cachedGraphic.getImage(candidate, forcedSize, coeff, hints);
+        return cachedGraphic.getImage(candidate, forcedSize, coeff, withRotation,hints);
     }
 
     /**
@@ -113,12 +141,16 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
     public float[] getDisplacement(final Object candidate, final float[] buffer){
         return cachedGraphic.getDisplacement(candidate, buffer);
     }
-    
+
     /**
      * return an Array of 2 floats.
      */
     public float[] getAnchor(final Object candidate, final float[] buffer){
         return cachedGraphic.getAnchor(candidate,buffer);
     }
-    
+
+    public float getRotation(final Object candidate){
+        return cachedGraphic.getRotation(candidate);
+    }
+
 }
