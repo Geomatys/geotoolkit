@@ -25,7 +25,7 @@
   <groupId>org.geotoolkit</groupId>
   <artifactId>geotoolkit</artifactId>
   <packaging>pom</packaging>
-  <version>4.0-SNAPSHOT</version>
+  <version>4.0-M4</version>
   <name>Geotoolkit.org</name>
   <url>http://www.geotoolkit.org/</url>
 
@@ -173,8 +173,8 @@
            Global properties.
        =========================================================== -->
   <properties>
-    <geoapi.version>4.0-SNAPSHOT</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>0.6-jdk7-SNAPSHOT</sis.version>
+    <geoapi.version>4.0-M03</geoapi.version> <!-- Must be same than the version used by SIS. -->
+    <sis.version>0.6-jdk7</sis.version>
     <derby.version>10.10.1.1</derby.version> <!-- If updated, need to search occurrences in APT files. -->
     <netcdf.version>4.3.21</netcdf.version>
     <lucene.version>4.10.4</lucene.version>
@@ -226,7 +226,7 @@
           <groupId>org.apache.sis.core</groupId>
           <artifactId>sis-referencing</artifactId>
           <version>${sis.version}</version>
-      </dependency>    
+      </dependency>
 
       <dependency>
           <groupId>org.apache.sis.core</groupId>
@@ -591,7 +591,7 @@
         <artifactId>groovy-all</artifactId>
         <version>2.2.2</version>
       </dependency>
-      
+
       <!-- YAML -->
       <dependency>
         <groupId>org.yaml</groupId>
