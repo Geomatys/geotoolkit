@@ -149,9 +149,7 @@ public class FXGeometryLayer extends Pane implements FXMapDecoration{
 
         //paint the selected node
         selectedNode :
-        if(editGeom != null && editGeom.numSubGeom >= 0
-                            && editGeom.numSubGeom < editGeom.geometry.get().getNumGeometries()
-                            && editGeom.selectedNode[0] >= 0){
+        if(editGeom != null && editGeom.hasNodeSelected()){
 
             Geometry candidate = editGeom.geometry.get();
             try{
