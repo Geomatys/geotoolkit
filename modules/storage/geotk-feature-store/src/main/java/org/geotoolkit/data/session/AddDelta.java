@@ -93,12 +93,12 @@ public class AddDelta extends AbstractDelta{
                 try {
                     ((Closeable) ite).close();
                 } catch (IOException ex) {
-                    Logging.getLogger(AddDelta.class).log(Level.WARNING, "Error while closing iterator : ", ex);
+                    Logging.getLogger("org.geotoolkit.data.session").log(Level.WARNING, "Error while closing iterator : ", ex);
                 }
             }
         }
-        
-        
+
+
     }
 
     /**

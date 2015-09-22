@@ -54,60 +54,60 @@ import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.GDAL_NODATA_KEY;
 /**
  * Tiff format may contain multiple additional tags.
  * Some of them can have valuable metadata or style informations.
- * 
+ *
  * Various lists of possible tags :
  * http://search.cpan.org/dist/Image-MetaData-JPEG/lib/Image/MetaData/JPEG/TagLists.pod
  * http://www.awaresystems.be/imaging/tiff/tifftags/private.html
  * http://www.awaresystems.be/imaging/tiff/tifftags/privateifd.html
- * 
+ *
  * @author Johann Sorel  (Geomatys)
  * @author Marechal Remi (Geomatys).
  */
 public strictfp class ThirdPartyMetaDataReader {
 
     /**
-     * Logger to diffuse no blocking error message. 
+     * Logger to diffuse no blocking error message.
      */
-    private static final Logger LOGGER = Logging.getLogger(ThirdPartyMetaDataReader.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.metadata.geotiff");
 
     /**
      * Root {@link Node} from analysed {@link SpatialMetadata}.
-     * 
-     * @see ThirdPartyMetaDataReader#ThirdPartyMetaDataReader(javax.imageio.metadata.IIOMetadata) 
+     *
+     * @see ThirdPartyMetaDataReader#ThirdPartyMetaDataReader(javax.imageio.metadata.IIOMetadata)
      */
     private final Node root;
-    
+
     /**
-     * 
+     *
      * @param imageMetadata
-     * @throws IOException 
+     * @throws IOException
      */
     public ThirdPartyMetaDataReader(final IIOMetadata imageMetadata) throws IOException {
         root = imageMetadata.getAsTree(imageMetadata.getNativeMetadataFormatName());
         if (root == null) throw new IOException("No image metadatas");
     }
-    
+
     /**
      * Fill the given Spatial Metadatas with additional informations.
      */
     public void fillSpatialMetaData(SpatialMetadata metadata) throws IOException {
         final TreeSet<Double> noDatas = new TreeSet<Double>();
-        
+
         int samplePerPixels          = -1;
         int bitsPerSamples           = -1;
         int sampleFormat             = -1;
-        
+
         long[] minSampleValues       = null;
         long[] maxSampleValues       = null;
         double[] gDalMinSampleValue  = null;
         double[] gDalMaxSampleValue  = null;
-        
+
         double[] modelTransformation = null;
         double[] modelPixelScale     = null;
         Double sampleToGeoScale      = null;
         Double sampleToGeoOffset     = null;
         boolean scaleFound           = false;
-        
+
         //-- get sample per pixel and scale / offset
         final NodeList children = root.getChildNodes();
         for(int i = 0, n = children.getLength(); i < n; i++) {
@@ -123,7 +123,7 @@ public strictfp class ThirdPartyMetaDataReader {
                     scaleFound = true;
                     final Node mdTransNode = child.getChildNodes().item(0);
                     modelTransformation = GeoTiffMetaDataUtils.readTiffDoubles(mdTransNode);
-                    
+
                    /*
                     * get pixelScaleZ at coordinate 10 and pixelOffsetZ at coordinate 11.
                     * always array of length 16 like follow.
@@ -145,7 +145,7 @@ public strictfp class ThirdPartyMetaDataReader {
         }
 
         assert samplePerPixels != -1 : "SamplePerPixels is not define.";
-        
+
         String datetime = null;
         String datetimeDigitized = null;
         String datetimeOriginal = null;
@@ -153,7 +153,7 @@ public strictfp class ThirdPartyMetaDataReader {
         for(int i = 0, n = children.getLength(); i < n; i++){
             final IIOMetadataNode child = (IIOMetadataNode) children.item(i);
             final int number = Integer.valueOf(child.getAttribute("number"));
-            
+
             switch (number) {
                 //-- apparemment meme categories pour tout les gridSampleDimensions ...??? (à definir pas rencontrer pour le moment).
                 //GDAL tags
@@ -165,7 +165,7 @@ public strictfp class ThirdPartyMetaDataReader {
                     Double max = null;
                     try {
                         final DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                        final Document doc = db.parse(new ByteArrayInputStream(stats.getBytes())); 
+                        final Document doc = db.parse(new ByteArrayInputStream(stats.getBytes()));
                         final NodeList lst = doc.getElementsByTagName("Item");
                         for (int k = 0, kn = lst.getLength(); k < kn; k++) {
                             final Element node = (Element) lst.item(k);
@@ -176,7 +176,7 @@ public strictfp class ThirdPartyMetaDataReader {
                                 max = Double.valueOf(node.getTextContent());
                             }
                         }
-                        
+
                        /*
                         * Pour le moment fill les valeurs. Peut etre GDAL defini un min et max par bands.
                         * Pas encore rencontré.
@@ -194,7 +194,7 @@ public strictfp class ThirdPartyMetaDataReader {
                     break;
                 }
                 case GDAL_NODATA_KEY: {// no data value as ascii text
-                   /* 
+                   /*
                     * GDal documentation assume only one value for All image bands.
                     * http://www.gdal.org/frmt_gtiff.html
                     */
@@ -227,7 +227,7 @@ public strictfp class ThirdPartyMetaDataReader {
                     bitsPerSamples = (int) GeoTiffMetaDataUtils.readTiffLongs(bpsNode)[0];
                     break;
                 }
-                case GeoTiffConstants.SampleFormat : { //-- sample format 
+                case GeoTiffConstants.SampleFormat : { //-- sample format
                     final Node sfNode = child.getChildNodes().item(0);
                     sampleFormat = (int) GeoTiffMetaDataUtils.readTiffLongs(sfNode)[0];
                     break;
@@ -260,7 +260,7 @@ public strictfp class ThirdPartyMetaDataReader {
             }
         }
 
-        
+
         //add another dimension when a date information is available.
         String date = null;
         if (datetime != null) date = datetime;
@@ -282,17 +282,17 @@ public strictfp class ThirdPartyMetaDataReader {
         }
 
         final DimensionAccessor accessor = new DimensionAccessor(metadata);
-        
+
         assert bitsPerSamples  != -1;
         assert samplePerPixels != -1;
-        
+
         double[] minSV = new double[samplePerPixels];
         double[] maxSV = new double[samplePerPixels];
-        
+
         Class typeClass = null;
-        
-        if (minSampleValues != null && maxSampleValues != null) {  
-            assert minSampleValues.length == samplePerPixels;            
+
+        if (minSampleValues != null && maxSampleValues != null) {
+            assert minSampleValues.length == samplePerPixels;
             assert maxSampleValues.length == samplePerPixels;
             for (int i = 0; i < samplePerPixels; i++) {
                 minSV[i] = minSampleValues[i];
@@ -303,8 +303,8 @@ public strictfp class ThirdPartyMetaDataReader {
             maxSV = gDalMaxSampleValue;
         } else {
            /*
-            * If min and max sample values are not stipulate in metadata, we assume 
-            * that min and max interval is with exclusives terminal because in lot of case 
+            * If min and max sample values are not stipulate in metadata, we assume
+            * that min and max interval is with exclusives terminal because in lot of case
             * the "No category Data" has often a value at interval terminals.
             */
             double min;
@@ -351,8 +351,8 @@ public strictfp class ThirdPartyMetaDataReader {
             }
             Arrays.fill(minSV, min);
             Arrays.fill(maxSV, max);
-        } 
-        
+        }
+
         //-- in case where min and max sample values are define in tiff metadata.
         if (typeClass == null) {
             switch (bitsPerSamples) {
@@ -373,14 +373,14 @@ public strictfp class ThirdPartyMetaDataReader {
                 }
             }
         }
-        
+
         for (int b = 0; b < samplePerPixels; b++) {
             if (accessor.childCount() >= samplePerPixels) {
-                accessor.selectChild(b); 
+                accessor.selectChild(b);
             } else {
                 accessor.selectChild(accessor.appendChild());
             }
-            
+
             final List<Category> categories = buildCategories(minSV[b], maxSV[b], sampleToGeoScale, sampleToGeoOffset, typeClass, noDatas);
             final GridSampleDimension dim = new GridSampleDimension(""+b, categories.toArray(new Category[categories.size()]), null);
             accessor.setDimension(dim, Locale.ENGLISH);

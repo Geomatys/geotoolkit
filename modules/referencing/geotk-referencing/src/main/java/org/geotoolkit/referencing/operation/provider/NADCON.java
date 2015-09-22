@@ -171,7 +171,7 @@ public class NADCON extends MathTransformProvider {
             return Installation.NADCON.exists(NadconTransform.class, "conus.las") &&
                    Installation.NADCON.exists(NadconTransform.class, "conus.los");
         } catch (IOException e) {
-            Logging.recoverableException(NADCON.class, "isAvailable", e);
+            Logging.recoverableException(null, NADCON.class, "isAvailable", e);
             return false;
         }
     }

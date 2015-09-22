@@ -1275,7 +1275,7 @@ public class Hints extends RenderingHints {
                 try {
                     Integer.parseInt(value.toString());
                 } catch (NumberFormatException e) {
-                    Logging.getLogger(IntegerKey.class).finer(e.toString());
+                    Logging.getLogger("org.geotoolkit.factory").finer(e.toString());
                 }
             }
             return false;

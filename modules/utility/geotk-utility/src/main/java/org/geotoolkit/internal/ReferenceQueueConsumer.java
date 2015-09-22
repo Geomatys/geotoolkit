@@ -123,9 +123,9 @@ public class ReferenceQueueConsumer<T> extends DaemonThread {
             try {
                 process(ref);
             } catch (Throwable exception) {
-                Logging.unexpectedException(getClass(), "run", exception);
+                Logging.unexpectedException(null, getClass(), "run", exception);
             }
         }
-        Logging.getLogger(getClass()).log(level, "{0} daemon stopped.", Classes.getShortClassName(this));
+        Logging.getLogger("org.geotoolkit.internal").log(level, "{0} daemon stopped.", Classes.getShortClassName(this));
     }
 }

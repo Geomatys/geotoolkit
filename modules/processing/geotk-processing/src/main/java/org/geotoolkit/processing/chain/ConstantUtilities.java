@@ -37,7 +37,7 @@ import org.opengis.metadata.Metadata;
  */
 public final class ConstantUtilities {
 
-    private static final Logger LOGGER = Logging.getLogger(ConstantUtilities.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.processing.chain");
 
     private ConstantUtilities() {}
 

@@ -36,8 +36,8 @@ import org.geotoolkit.math.XMath;
  */
 public abstract class AbstractRenderedImage implements RenderedImage {
 
-    protected static final Logger LOGGER = Logging.getLogger(AbstractRenderedImage.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
+
     @Override
     public Vector<RenderedImage> getSources() {
         return null;
@@ -130,11 +130,11 @@ public abstract class AbstractRenderedImage implements RenderedImage {
     public WritableRaster copyData(WritableRaster raster) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     /**
      * Get the tile column and row position for a pixel.
      * Return value can be out of the gridSize
-     * 
+     *
      * @param x
      * @param y
      * @return
@@ -144,5 +144,5 @@ public abstract class AbstractRenderedImage implements RenderedImage {
         final int posY = (int)(Math.floor(y/this.getTileHeight()));
         return new Point(posX, posY);
     }
-    
+
 }

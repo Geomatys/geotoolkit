@@ -35,7 +35,7 @@ import org.opengis.util.GenericName;
  */
 public abstract class RecyclingCoverageReference extends AbstractCoverageReference{
 
-    private static final Logger LOGGER = Logging.getLogger(RecyclingCoverageReference.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
 
     /**
      * Maximum number of readers to keep.

@@ -69,7 +69,7 @@ public final class Host {
                     try {
                         port = Integer.valueOf(server.substring(lower+1));
                     } catch (NumberFormatException e) {
-                        Logging.recoverableException(Host.class, "<init>", e);
+                        Logging.recoverableException(null, Host.class, "<init>", e);
                         // Ignore, since this class is used mostly for providing
                         // default values in widgets.
                     }

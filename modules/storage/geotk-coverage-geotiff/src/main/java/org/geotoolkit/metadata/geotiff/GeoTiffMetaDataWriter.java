@@ -65,8 +65,8 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class GeoTiffMetaDataWriter {
 
-    private static final Logger LOGGER = Logging.getLogger(GeoTiffMetaDataWriter.class);
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.metadata.geotiff");
+
     public GeoTiffMetaDataWriter(){}
 
     /**
@@ -75,7 +75,7 @@ public class GeoTiffMetaDataWriter {
     public void fillMetadata(Node tiffTree, final SpatialMetadata spatialMD) throws ImageMetadataException, IOException, FactoryException, TransformException{
         ArgumentChecks.ensureNonNull("tiffTree", tiffTree);
         ArgumentChecks.ensureNonNull("spatialMD", spatialMD);
-        
+
         //container for informations which will be written
         final GeoTiffMetaDataStack stack = new GeoTiffMetaDataStack(tiffTree);
 
@@ -122,14 +122,14 @@ public class GeoTiffMetaDataWriter {
                 gridToCrs = (AffineTransform)PixelTranslation.translate(trs, orientation, PixelOrientation.UPPER_LEFT,0,1);
             }
         }
-        
+
         //-- find a date from crs
         final int tempOrdinate = getTemporalOrdinate(coverageCRS);
         if (tempOrdinate >= 0) {
             //-- add temporal tag
             final GridDomainAccessor gda = new GridDomainAccessor(spatialMD);
             final double[] origin        = gda.getAttributeAsDoubles("origin", false);
-            final double date            = origin[tempOrdinate]; 
+            final double date            = origin[tempOrdinate];
             final Date dat               = DefaultTemporalCRS.castOrCopy(CommonCRS.Temporal.JAVA.crs()).toDate(date);
             stack.setDate(dat);
         }
@@ -142,10 +142,10 @@ public class GeoTiffMetaDataWriter {
         //write in the metadata tree
         stack.flush();
     }
-    
+
     /**
      * Return the temporal ordinate from {@link CoordinateReferenceSystem} or -1 if temporal crs was not found.
-     * 
+     *
      * @return temporal ordinate if exist else return -1.
      */
     private int getTemporalOrdinate(final CoordinateReferenceSystem crs) {
@@ -157,21 +157,21 @@ public class GeoTiffMetaDataWriter {
         }
         return -1;
     }
-    
+
     /**
-     * Fill metadata tree with {@link GridSampleDimension} properties like noData 
+     * Fill metadata tree with {@link GridSampleDimension} properties like noData
      * or minimum and maximum sample values.<br><br>
-     * 
+     *
      * Note : more informations at about tiff specification :<br>
      * http://www.awaresystems.be/imaging/tiff/tifftags/minsamplevalue.html<br>
      * http://www.awaresystems.be/imaging/tiff/tifftags/maxsamplevalue.html<br>
      * http://www.awaresystems.be/imaging/tiff/tifftags/gdal_nodata.html<br>
-     * 
-     * @param stack 
+     *
+     * @param stack
      * @param spatialMD metadata tree which will be filled.
-     * @see GeoTiffMetaDataStack#setMinSampleValue(int...) 
-     * @see GeoTiffMetaDataStack#setMaxSampleValue(int...) 
-     * @see GeoTiffMetaDataStack#setNoData(java.lang.String) 
+     * @see GeoTiffMetaDataStack#setMinSampleValue(int...)
+     * @see GeoTiffMetaDataStack#setMaxSampleValue(int...)
+     * @see GeoTiffMetaDataStack#setNoData(java.lang.String)
      */
     private void fillSampleDimensionProperties(final GeoTiffMetaDataStack stack, final SpatialMetadata spatialMD) {
         ArgumentChecks.ensureNonNull("stack", stack);
@@ -183,26 +183,26 @@ public class GeoTiffMetaDataWriter {
             LOGGER.log(Level.FINE, "GeotiffMetadataWriter : no gridSampleDimension setted into spatialMetadata.");
             return;
         }
-        
+
         final int sampleDimensionNumber = sampleDimensions.size();
-        
+
         double[] noData   = null;
         final int[] minSV = new int[sampleDimensionNumber];
         final int[] maxSV = new int[sampleDimensionNumber];
         int minSVId       = 0;
         int maxSVId       = 0;
-        
+
         if (sampleDimensions != null && !sampleDimensions.isEmpty()) {
             for (GridSampleDimension dimension : sampleDimensions) {
-                
+
                 //-- min samplevalue
                 final double minSVd = dimension.getMinimumValue();
                 if (checkDoubleToShort(minSVd)) minSV[minSVId++] = (short) minSVd;
-                
+
                 //-- maxSampleValue
                 final double maxSVd = dimension.getMaximumValue();
                 if (checkDoubleToShort(maxSVd)) maxSV[maxSVId++] = (short) maxSVd;
-                
+
                 final double[] dimNoData = dimension.getNoDataValues();
                 if (noData == null) {
                     noData = dimNoData;
@@ -216,36 +216,36 @@ public class GeoTiffMetaDataWriter {
             }
         }
 
-        //-- if all bands are stipulate 
+        //-- if all bands are stipulate
         if (minSVId == sampleDimensionNumber) stack.setMinSampleValue(minSV);
-        
-        
+
+
         //-- if all bands are stipulate
         if (maxSVId == sampleDimensionNumber) stack.setMaxSampleValue(maxSV);
-        
-        
-        if (noData != null && noData.length > 0) 
-            for (double d : noData) 
+
+
+        if (noData != null && noData.length > 0)
+            for (double d : noData)
                 stack.setNoData(String.valueOf(d));
      }
-    
+
     /**
      * Returns {@code true} if {@code double} value may be cast to {@code short} and lost nothing.<br><br>
-     * 
+     *
      * Note : Tiff specification only accept short value to stipulate minimum or maximum sample value for each bands.<br>
      * For more explanations see : http://www.awaresystems.be/imaging/tiff/tifftags/minsamplevalue.html <br>
      * and http://www.awaresystems.be/imaging/tiff/tifftags/maxsamplevalue.html
-     * 
+     *
      * @param value double which will be cast.
      * @return {@code true} if {@code double} value may be cast to {@code short}
-     * @see GeoTiffMetaDataStack#setMinSampleValue(int...) 
-     * @see GeoTiffMetaDataStack#setMaxSampleValue(int...) 
+     * @see GeoTiffMetaDataStack#setMinSampleValue(int...)
+     * @see GeoTiffMetaDataStack#setMaxSampleValue(int...)
      */
     private boolean checkDoubleToShort(final double value) {
         final short st = (short) value;
         return ((double) st) == value;
     }
-    
+
     private void fillTransform(final GeoTiffMetaDataStack stack,
             final AffineTransform gridToCRS, final GridEnvelope range) {
 

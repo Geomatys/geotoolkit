@@ -325,7 +325,7 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
              * know if this point is valid. Otherwise, an exception is thrown.
              */
             if (MASK_NON_CONVERGENCE) {
-                Logging.getLogger(LocalizationGridTransform2D.class)
+                Logging.getLogger("org.geotoolkit.referencing.operation.builder")
                        .fine(Errors.format(Errors.Keys.NoConvergence));
                 if (bestX >= 0 && bestX < width && bestY >= 0 && bestY < height) {
                     target.x = bestX;

@@ -99,7 +99,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      *
      * @since 3.15
      */
-    static final Logger LOGGER = Logging.getLogger(GridCoverageStore.class);
+    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.io");
 
     /**
      * Minimal image width and height, in pixels. If the user requests a smaller image,

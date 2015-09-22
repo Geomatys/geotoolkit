@@ -274,7 +274,7 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
         } catch (IIOException e) {
             // Should not happen. But if it does happen anyway,
             // returns null as allowed by this method contract.
-            Logging.unexpectedException(NetcdfGridToCRS.class, "subTransform", e);
+            Logging.unexpectedException(null, NetcdfGridToCRS.class, "subTransform", e);
             return null;
         }
         target = ArraysExt.resize(target, n);

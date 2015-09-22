@@ -511,7 +511,7 @@ public abstract class Table implements Localized {
                 return logger;
             }
         }
-        return Logging.getLogger(getClass());
+        return Logging.getLogger("org.geotoolkit.sql");
     }
 
     /**

@@ -807,7 +807,7 @@ public class CoverageStack extends AbstractCoverage {
                                 FoundMismatchedCRS_4, size, elements.length, f[0], f[size-1]);
                         record.setSourceClassName(CoverageStack.class.getName());
                         record.setSourceMethodName("<init>"); // This is the public method invoked.
-                        final Logger logger = Logging.getLogger(CoverageStack.class);
+                        final Logger logger = Logging.getLogger("org.geotoolkit.coverage");
                         record.setLoggerName(logger.getName());
                         logger.log(record);
                         // Fall through
@@ -1669,7 +1669,7 @@ public class CoverageStack extends AbstractCoverage {
      * @param record The log record. The message contains information about the images to load.
      */
     protected void logLoading(final LogRecord record) {
-        final Logger logger = Logging.getLogger(CoverageStack.class);
+        final Logger logger = Logging.getLogger("org.geotoolkit.coverage");
         record.setLoggerName(logger.getName());
         logger.log(record);
     }

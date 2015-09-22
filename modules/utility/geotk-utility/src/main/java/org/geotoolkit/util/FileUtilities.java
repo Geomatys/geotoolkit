@@ -21,12 +21,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -56,7 +52,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  */
 public final class FileUtilities extends Static {
 
-    private static final Logger LOGGER = Logging.getLogger(FileUtilities.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.util");
     private static final int BUFFER = 2048;
 
     private FileUtilities(){}

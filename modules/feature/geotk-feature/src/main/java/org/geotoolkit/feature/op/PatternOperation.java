@@ -20,26 +20,29 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.sis.feature.DefaultAttributeType;
-import org.apache.sis.feature.DefaultOperation;
+import org.apache.sis.feature.AbstractOperation;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.util.iso.Names;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
 import org.opengis.feature.Feature;
+import org.opengis.feature.IdentifiedType;
+import org.opengis.feature.Property;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 
 /**
  * Pattern concatenation operation.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
-public class PatternOperation extends DefaultOperation{
+public class PatternOperation extends AbstractOperation {
 
     private static final DefaultParameterDescriptorGroup PARAMS =
             new DefaultParameterDescriptorGroup(Collections.singletonMap("name", "noargs"), 0, 1);
     private static final AttributeType RESULTTYPE = new DefaultAttributeType(Collections.singletonMap("name", "value"), String.class, 1, 1, null);
-    
+
     private final GenericName[] refs;
     private final Pattern pattern;
 
@@ -48,7 +51,7 @@ public class PatternOperation extends DefaultOperation{
     }
 
     public PatternOperation(GenericName identification, String regex, GenericName ... referneceProperties) {
-        super(Collections.singletonMap("name", identification), PARAMS, RESULTTYPE);
+        super(Collections.singletonMap("name", identification));
         this.pattern = Pattern.compile(regex);
         this.refs = referneceProperties;
     }
@@ -59,6 +62,16 @@ public class PatternOperation extends DefaultOperation{
             names[i] = Names.createLocalName(null, ":", referenceProperties[i]);
         }
         return names;
+    }
+
+    @Override
+    public ParameterDescriptorGroup getParameters() {
+        return PARAMS;
+    }
+
+    @Override
+    public IdentifiedType getResult() {
+        return RESULTTYPE;
     }
 
     public GenericName[] getReferenceProperties() {
@@ -91,4 +104,8 @@ public class PatternOperation extends DefaultOperation{
         return res;
     }
 
+    @Override
+    public Property apply(Feature feature, ParameterValueGroup parameters) {
+        throw new UnsupportedOperationException();
+    }
 }

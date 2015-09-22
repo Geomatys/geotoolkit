@@ -92,7 +92,7 @@ final class MetadataResult extends StatementEntry {
                     Level.WARNING, Errors.Keys.DuplicatedValuesForKey_1, identifier);
             record.setSourceClassName(type.getCanonicalName());
             record.setSourceMethodName("<init>");
-            Logging.getLogger(MetadataResult.class).log(record);
+            Logging.getLogger("org.geotoolkit.sql").log(record);
         }
         identifier = null;
     }

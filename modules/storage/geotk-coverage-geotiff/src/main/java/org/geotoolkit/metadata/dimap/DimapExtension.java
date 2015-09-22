@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  */
 public class DimapExtension extends GeoTiffExtension {
 
-    private static final Logger LOGGER = Logging.getLogger(DimapExtension.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.metadata.dimap");
 
     @Override
     public boolean isPresent(Object input) {

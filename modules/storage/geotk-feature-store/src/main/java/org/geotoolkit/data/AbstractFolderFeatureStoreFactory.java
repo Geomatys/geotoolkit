@@ -47,7 +47,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module pending
  */
 public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureStoreFactory{
-    protected static final Logger LOGGER = Logging.getLogger(AbstractFolderFeatureStoreFactory.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data");
     private static final String BUNDLE_PATH = "org/geotoolkit/data/bundle";
 
     /**

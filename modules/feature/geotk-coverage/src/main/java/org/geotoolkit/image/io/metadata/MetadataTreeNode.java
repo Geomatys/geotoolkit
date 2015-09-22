@@ -525,7 +525,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
                 try {
                     value = ObjectConverters.convert(value, target);
                 } catch (UnconvertibleObjectException e) {
-                    Logging.recoverableException(MetadataTreeNode.class, "getValue", e);
+                    Logging.recoverableException(null, MetadataTreeNode.class, "getValue", e);
                 }
             }
         }
@@ -697,7 +697,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
                  * the previous value. If we want a more sophesticated behavior with a warning that
                  * the user provided an invalid value, then we need a custom TableCellEditor.
                  */
-                Logging.recoverableException(MetadataTreeNode.class, "setValueAt", e);
+                Logging.recoverableException(null, MetadataTreeNode.class, "setValueAt", e);
             }
         }
     }

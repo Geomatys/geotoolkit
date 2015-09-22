@@ -32,6 +32,7 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
+import org.apache.sis.io.wkt.Warnings;
 
 
 /**
@@ -183,9 +184,9 @@ public final class PrjFiles extends Static {
         format.setConvention(Convention.WKT1);
         format.setIndentation(WKTFormat.SINGLE_LINE);
         final String wkt = format.format(crs);
-        final String warning = format.getWarning();
+        final Warnings warning = format.getWarnings();
         if (warning != null) {
-            throw new ContentFormatException(warning);
+            throw new ContentFormatException(warning.toString());
         }
         return wkt;
     }

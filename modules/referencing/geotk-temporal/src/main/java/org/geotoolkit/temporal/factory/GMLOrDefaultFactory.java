@@ -62,7 +62,7 @@ public final class GMLOrDefaultFactory implements TemporalFactory {
         try {
             delegate = (TemporalFactory) Class.forName("org.geotoolkit.gml.GMLTemporalFactory").newInstance();
         } catch (Exception e) {
-            Logging.recoverableException(GMLOrDefaultFactory.class, "<init>", e);
+            Logging.recoverableException(null, GMLOrDefaultFactory.class, "<init>", e);
             delegate = new DefaultTemporalFactory();
         }
         this.delegate = delegate;

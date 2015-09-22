@@ -89,7 +89,7 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
     /**
      * The logger for coverage processing operations.
      */
-    public static final Logger LOGGER = Logging.getLogger(AbstractCoverageProcessor.class);
+    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.processing");
 
     /**
      * The logging level for reporting coverage operations.

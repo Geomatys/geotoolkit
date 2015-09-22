@@ -23,7 +23,6 @@ import org.apache.sis.util.logging.Logging;
 import org.jaxen.ContextSupport;
 import org.jaxen.JaxenException;
 import org.jaxen.Navigator;
-import org.jaxen.UnresolvableException;
 import org.jaxen.expr.DefaultNameStep;
 import org.jaxen.expr.DefaultXPathFactory;
 import org.jaxen.expr.PredicateSet;
@@ -43,7 +42,7 @@ import org.jaxen.saxpath.Axis;
  */
 final class FeatureXPathFactory extends DefaultXPathFactory{
 
-    private static final Logger LOGGER = Logging.getLogger(FeatureXPathFactory.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter.binding");
 
     static final FeatureXPathFactory INSTANCE = new FeatureXPathFactory();
 

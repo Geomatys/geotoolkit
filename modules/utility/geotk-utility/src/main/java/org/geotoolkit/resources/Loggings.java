@@ -444,6 +444,6 @@ public final class Loggings extends IndexedResourceBundle {
      * Invoked when an unexpected exception occurred in the {@link #format} method.
      */
     private static void unexpectedException(final RuntimeException exception) {
-        Logging.unexpectedException(IndexedResourceBundle.class, "format", exception);
+        Logging.unexpectedException(null, IndexedResourceBundle.class, "format", exception);
     }
 }

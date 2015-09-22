@@ -51,7 +51,7 @@ import org.apache.sis.util.collection.WeakValueHashMap;
  */
 final class ImageTilesCache extends PhantomReference<RenderedImage> {
 
-    private static final Logger LOGGER = Logging.getLogger(ImageTilesCache.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
 
     private static final String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
     private static final String FORMAT = "geotiff";
@@ -85,7 +85,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
      * Tile by Tile locks.
      */
     private final WeakValueHashMap<Point,ReadWriteLock> locks = new WeakValueHashMap<>(Point.class);
-    
+
     /**
      * Contains tiles of pointed image.
      * TODO : Replace LargeRaster type with simple raster ? (Raster weight will be embed in {@link org.geotoolkit.image.io.large.CachedTile}

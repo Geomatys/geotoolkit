@@ -79,7 +79,7 @@ import org.opengis.util.FactoryException;
  */
 public class Isoline2 extends AbstractProcess {
 
-    private static final Logger LOGGER = Logging.getLogger(Isoline2.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.processing.coverage.isoline2");
     private static final GeometryFactory GF = new GeometryFactory();
     private static final boolean DEBUG = false;
 

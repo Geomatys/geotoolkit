@@ -80,7 +80,7 @@ public class FactoryRegistry extends ServiceRegistry {
     /**
      * The logger for all events related to factory registry.
      */
-    protected static final Logger LOGGER = Logging.getLogger(FactoryRegistry.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.factory");
 
     /**
      * The logger level for debug messages.

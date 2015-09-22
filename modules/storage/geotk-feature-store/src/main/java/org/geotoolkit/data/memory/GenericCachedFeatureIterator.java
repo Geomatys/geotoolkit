@@ -36,24 +36,24 @@ import org.geotoolkit.feature.type.FeatureType;
 /**
  * Wrap a feature iterator and precache the given number of values.
  * A separate thread is created to load the buffer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class GenericCachedFeatureIterator implements FeatureIterator {
-        
+
     //TODO : wait for martin, there should already be a thread pool for global tasks somewhere.
     public static final Executor POOL = Executors.newCachedThreadPool();
-    
+
     private final Object QUEUELOCK = new Object();
     private final Object FINISHLOCK = new Object();
-    
+
     // used by the main thread to notify collector thread to stop retrieving features.
     private volatile boolean closed = false;
     // used by the collector thread to notify main thread that sub iterator can be closed.
     private volatile boolean canCloseSub = false;
-    
+
     private final ArrayBlockingQueue queue = new ArrayBlockingQueue(2);
-    
+
     protected FeatureIterator iterator;
     protected final int cacheSize;
     private Feature[] buffer = null;
@@ -70,7 +70,7 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
     private GenericCachedFeatureIterator(final FeatureIterator iterator, final int cacheSize) {
         this.iterator = iterator;
         this.cacheSize = cacheSize;
-        
+
         POOL.execute(new Collector());
     }
 
@@ -85,7 +85,7 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
             subException = null;
             throw d;
         }
-        
+
         findNext();
         final Feature c = next;
         next = null;
@@ -105,7 +105,7 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
         synchronized(QUEUELOCK){
             QUEUELOCK.notify();
         }
-        
+
         //sub iterator might already be closed
         if(iterator != null){
             synchronized(FINISHLOCK){
@@ -114,7 +114,7 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
             }
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -132,7 +132,7 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
 
     private void findNext() throws FeatureStoreRuntimeException {
         if(next != null || closed) return;
-        
+
         if(buffer == null){
             //collector thread might have finish reading before iteration
             //is over. we can release the sub iterator sooner to release resources.
@@ -140,35 +140,35 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
                 iterator.close();
                 iterator = null;
             }
-            
+
             try {
                 buffer = (Feature[]) queue.take();
             } catch (InterruptedException ex) {
-                Logging.getLogger(GenericCachedFeatureIterator.class).log(Level.WARNING, ex.getMessage(), ex);
+                Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, ex.getMessage(), ex);
             }
             bufferIndex = 0;
-            
+
             //notify collector thread some space is available
             synchronized(QUEUELOCK){
                 QUEUELOCK.notify();
             }
         }
-        
+
         next = buffer[bufferIndex];
         bufferIndex++;
-        
+
         if(bufferIndex >= cacheSize){
             //we have finish reading this buffer.
             //next iteration will get a new one.
             buffer = null;
         }
-        
+
         if(next == null){
             //no more records
             closed = true;
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -189,7 +189,7 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
 
     /**
      * Wrap a FeatureReader with a cache size.
-     * 
+     *
      * @param <T> extends FeatureType
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
@@ -197,12 +197,12 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
     private static final class GenericCachedFeatureReader extends GenericCachedFeatureIterator implements FeatureReader{
 
         private final FeatureType ft;
-        
+
         private GenericCachedFeatureReader(final FeatureReader reader, final int cacheSize){
             super(reader,cacheSize);
             ft = reader.getFeatureType();
         }
-        
+
         @Override
         public FeatureType getFeatureType() {
             return ft;
@@ -261,14 +261,14 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
     public static FeatureCollection wrap(final FeatureCollection original, final int cacheSize){
         return new GenericCachedFeatureIterator.GenericCachedFeatureCollection(original, cacheSize);
     }
-    
-    
+
+
     private final class Collector implements Runnable{
 
         @Override
         public void run() {
             boolean finish = false;
-            
+
             synchronized(FINISHLOCK){
                 mainLoop:
                 while(!closed && !finish){
@@ -285,7 +285,7 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
                         }
                     }catch(FeatureStoreRuntimeException ex){
                         subException = ex;
-                        Logging.getLogger(GenericCachedFeatureIterator.class).log(Level.WARNING, subException.getMessage(),ex);
+                        Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, subException.getMessage(),ex);
                         break;
                     }
 
@@ -300,7 +300,7 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
                                     QUEUELOCK.wait();
                                 }
                             } catch (InterruptedException ex) {
-                                Logging.getLogger(GenericCachedFeatureIterator.class).log(Level.WARNING, ex.getMessage(), ex);
+                                Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, ex.getMessage(), ex);
                             }
                         }
 
@@ -309,7 +309,7 @@ public class GenericCachedFeatureIterator implements FeatureIterator {
             }
             canCloseSub = true;
         }
-    
+
     }
-    
+
 }

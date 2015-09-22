@@ -172,7 +172,7 @@ public class ProjectedShape implements Shape, Serializable {
         try {
             return shape.contains(inverse().transform(p, point));
         } catch (TransformException exception) {
-            Logging.recoverableException(ProjectedShape.class, "contains", exception);
+            Logging.recoverableException(null, ProjectedShape.class, "contains", exception);
             return false;
         }
     }
@@ -216,7 +216,7 @@ public class ProjectedShape implements Shape, Serializable {
         try {
             return shape.contains(Envelopes.transform(inverse(), r, rectangle));
         } catch (TransformException exception) {
-            Logging.recoverableException(ProjectedShape.class, "contains", exception);
+            Logging.recoverableException(null, ProjectedShape.class, "contains", exception);
             return false; // Consistent with the Shape interface contract.
         }
     }
@@ -258,7 +258,7 @@ public class ProjectedShape implements Shape, Serializable {
         try {
             return shape.intersects(Envelopes.transform(inverse(), r, rectangle));
         } catch (TransformException exception) {
-            Logging.recoverableException(ProjectedShape.class, "intersects", exception);
+            Logging.recoverableException(null, ProjectedShape.class, "intersects", exception);
             return true; // Consistent with the Shape interface contract.
         }
     }
@@ -286,7 +286,7 @@ public class ProjectedShape implements Shape, Serializable {
         try {
             return Envelopes.transform(projection, shape.getBounds2D(), null);
         } catch (TransformException exception) {
-            Logging.recoverableException(ProjectedShape.class, "getBounds2D", exception);
+            Logging.recoverableException(null, ProjectedShape.class, "getBounds2D", exception);
             return XRectangle2D.INFINITY;
         }
     }

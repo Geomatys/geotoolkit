@@ -114,7 +114,7 @@ public class UrlInputSpi extends ImageInputStreamSpi {
                 if (--retry < 0) {
                     throw exception;
                 }
-                Logging.recoverableException(UrlInputSpi.class, "createInputStreamInstance", exception);
+                Logging.recoverableException(null, UrlInputSpi.class, "createInputStreamInstance", exception);
             }
             /*
              * Failed to get the connection. After we logged a warning, wait a little bit, run
@@ -134,7 +134,7 @@ public class UrlInputSpi extends ImageInputStreamSpi {
             stopper.cancel();
             // Thread.interrupted() must be first in order to clear the flag.
             if (Thread.interrupted() || stopper.interrupted) {
-                Logging.getLogger(UrlInputSpi.class).warning("System.runFinalization() was blocked.");
+                Logging.getLogger("org.geotoolkit.image.io.stream").warning("System.runFinalization() was blocked.");
             }
         }
         return new FileCacheImageInputStream(stream, cacheDir);

@@ -23,7 +23,6 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.image.io.XImageIO;
 import org.apache.sis.util.logging.Logging;
 
 
@@ -114,7 +113,7 @@ public final class CheckedImageInputStream extends ImageInputStreamProxy {
             for (final StackTraceElement element : creator) {
                 buffer.append("  ").append(element).append('\n');
             }
-            Logging.getLogger(XImageIO.class).warning(buffer.toString());
+            Logging.getLogger("org.geotoolkit.image.io").warning(buffer.toString());
         }
     }
 }

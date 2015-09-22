@@ -46,7 +46,7 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
     /**
      * The logger to use for reporting information.
      */
-    protected static final Logger LOGGER = Logging.getLogger(Stressor.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.test.stress");
 
     /**
      * The length (in characters) of the thread field.

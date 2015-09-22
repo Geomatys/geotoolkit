@@ -573,7 +573,7 @@ public class PaletteFactory {
              * will be incomplete. We log the message as if it came from getAvailableNames(),
              * because it is the public method that invoked this one.
              */
-            Logging.unexpectedException(PaletteFactory.class, "getAvailableNames", e);
+            Logging.unexpectedException(null, PaletteFactory.class, "getAvailableNames", e);
         }
         /*
          * After the "list.txt" files, check if the resources can be read as a directory.
@@ -665,14 +665,14 @@ public class PaletteFactory {
                      * error however, since this method is allowed to returns null if the resource
                      * is not available.
                      */
-                    Logging.unexpectedException(PaletteFactory.class, caller, e);
+                    Logging.unexpectedException(null, PaletteFactory.class, caller, e);
                     return null;
                 } else {
                     return null;
                 }
             }
         } catch (SecurityException e) {
-            Logging.recoverableException(PaletteFactory.class, caller, e);
+            Logging.recoverableException(null, PaletteFactory.class, caller, e);
             return null;
         }
         return getReader(stream);

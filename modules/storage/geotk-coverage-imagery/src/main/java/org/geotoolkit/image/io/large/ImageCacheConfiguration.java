@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public final class ImageCacheConfiguration extends Static {
 
-    private static final Logger LOGGER = Logging.getLogger(ImageCacheConfiguration.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
 
     /**
      * List of supported memory units.
@@ -62,7 +62,7 @@ public final class ImageCacheConfiguration extends Static {
      */
     private static final long DEFAULT_MEMORY_SIZE = 67108864l;
 
-    
+
     /**
      * Check in {@linkplain System#getProperties() system properties} for cache memory size configuration
      * or use {@link #DEFAULT_MEMORY_SIZE} value is not found or doesn't respect <size>[g|G|m|M|k|K] format.

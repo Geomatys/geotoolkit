@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -28,18 +28,18 @@ import org.geotoolkit.feature.FeatureFlatTest;
  *
  * @author jamesm
  * @module pending
- */                                
+ */
 public class DefaultCoreSuite extends TestCase {
     private static final Logger LOGGER = org.apache.sis.util.logging.Logging.getLogger("org.geotoolkit.core");
     public DefaultCoreSuite(final java.lang.String testName) {
         super(testName);
-    }        
-    
+    }
+
     public static Test suite() {
-        //_log = org.apache.sis.util.logging.Logging.getLogger(DefaultCoreSuite.class);
-       
-        
-        TestSuite suite = new TestSuite("All core tests");                
+        //_log = org.apache.sis.util.logging.Logging.getLogger("org.geotoolkit.core");
+
+
+        TestSuite suite = new TestSuite("All core tests");
         suite.addTestSuite(FeatureFlatTest.class);
         return suite;
     }

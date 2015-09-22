@@ -51,7 +51,7 @@ import org.apache.sis.util.Disposable;
  */
 public class LargeRenderedImage implements RenderedImage, Disposable {
 
-    private static final Logger LOGGER = Logging.getLogger(LargeRenderedImage.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
 
     /**
      * Mechanic to store tile on hard drive.
@@ -257,7 +257,7 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
 //            try {
 //                vector.add(new LargeRenderedImage(imageReader, id, tilecache, new Dimension(tileWidth, tileHeight)));
 //            } catch (IOException ex) {
-//                Logger.getLogger(LargeRenderedImage.class.getName()).log(Level.SEVERE, null, ex);
+//                Logger.getLogger("org.geotoolkit.image.io.large").log(Level.SEVERE, null, ex);
 //            }
 //        }
 //        return vector;

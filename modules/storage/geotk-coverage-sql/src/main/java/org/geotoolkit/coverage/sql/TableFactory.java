@@ -46,7 +46,7 @@ final class TableFactory extends SpatialDatabase {
      *
      * @since 3.16
      */
-    private static final Logger LOGGER = Logging.getLogger(TableFactory.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.sql");
 
     /**
      * Pool of layer tables.

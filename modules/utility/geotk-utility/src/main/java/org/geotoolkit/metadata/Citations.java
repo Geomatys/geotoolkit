@@ -99,7 +99,8 @@ public final class Citations extends Static {
      * @param identifier The identifier, or {@code null} if none.
      */
     private static DefaultCitation create(final ResponsibleParty party, final String name, final String identifier) {
-        final DefaultCitation citation = new DefaultCitation(party);
+        final DefaultCitation citation = new DefaultCitation();
+        CitationConstant.setParty(citation, party);
         setIdentifier(citation, identifier);
         return citation;
     }
@@ -236,7 +237,6 @@ public final class Citations extends Static {
     /**
      * The <A HREF="http://www.oracle.com">Oracle</A> organisation.
      *
-     * @see org.geotoolkit.io.wkt.Convention#ORACLE
      * @category Organisation
      */
     public static final Citation ORACLE;

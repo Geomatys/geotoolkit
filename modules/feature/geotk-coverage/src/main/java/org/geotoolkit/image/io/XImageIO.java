@@ -148,12 +148,12 @@ public final class XImageIO extends Static {
      * for choosing an image reader or writer.
      */
     private static final int NAME=0, SUFFIX=1, MIME=2;
-    
+
     /**
      * Hack to avoid default java tiff reader.
      * Provider reader ordonnancement is aleatory.
      */
-    private static final String JAI_TIFF_READER_HACK = "com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi"; 
+    private static final String JAI_TIFF_READER_HACK = "com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi";
 
     /**
      * Do not allow instantiation of this class.
@@ -324,10 +324,10 @@ public final class XImageIO extends Static {
         boolean hasFound = false;
         while (it.hasNext()) {
             final ImageReaderSpi spi = it.next();
-            
+
             //-- to avoid unexpected jai tiff reader
             if (JAI_TIFF_READER_HACK.equalsIgnoreCase(spi.getClass().getName())) continue;
-            
+
             if (Boolean.TRUE.equals(ignoreMetadata)) {
                 /*
                  * If the caller is not interested in metadata, avoid the WorldFileImageReader.Spi
@@ -373,10 +373,10 @@ public final class XImageIO extends Static {
                 it = usingImageInputStream.iterator();
                 while (it.hasNext()) {
                     final ImageReaderSpi spi = it.next();
-                    
+
                     //-- to avoid unexpected jai tiff reader
                     if (JAI_TIFF_READER_HACK.equalsIgnoreCase(spi.getClass().getName())) continue;
-                    
+
                     if (spi.canDecodeInput(stream)) {
                         return createReaderInstance(spi, stream, seekForwardOnly, ignoreMetadata);
                     }
@@ -854,7 +854,7 @@ public final class XImageIO extends Static {
                         return spi;
                     }
                 } catch (ClassNotFoundException e) {
-                    Logging.recoverableException(XImageIO.class, methodName, e);
+                    Logging.recoverableException(null, XImageIO.class, methodName, e);
                 }
             }
         }

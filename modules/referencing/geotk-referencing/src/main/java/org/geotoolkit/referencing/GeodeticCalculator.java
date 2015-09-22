@@ -780,7 +780,7 @@ public class GeodeticCalculator {
         if (!directionValid) {
             computeDirection();
             if (antipodal) {
-                Logging.getLogger(GeodeticCalculator.class).warning(
+                Logging.getLogger("org.geotoolkit.referencing").warning(
                         "Azimuth is inaccurate for antipodal points.");
             }
         }

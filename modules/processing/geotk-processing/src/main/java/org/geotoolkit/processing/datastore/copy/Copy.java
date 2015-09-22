@@ -59,7 +59,7 @@ import static org.geotoolkit.processing.datastore.copy.CopyDescriptor.*;
  */
 public class Copy extends AbstractProcess {
 
-    private static Logger LOGGER = Logging.getLogger(Copy.class);
+    private static Logger LOGGER = Logging.getLogger("org.geotoolkit.processing.datastore.copy");
 
     /**
      * Default constructor
@@ -84,7 +84,7 @@ public class Copy extends AbstractProcess {
         final Query queryParam      = value(QUERY, inputParameters);
 
         final boolean doCommit = targetSS == null;
-        
+
         final Session sourceSS = sourceDS.createSession(false);
         if (targetSS == null) {
             if (targetDS != null) {
@@ -92,7 +92,7 @@ public class Copy extends AbstractProcess {
             } else {
                 throw new ProcessException("Input target_session or target_datastore missing.", this, null);
             }
-        } 
+        }
 
         boolean reBuildQuery = false;
 
@@ -151,12 +151,12 @@ public class Copy extends AbstractProcess {
         }
 
         try {
-            
+
             Date lastVersionDate = null;
             if (doCommit) {
                 LOGGER.log(Level.INFO, "Commit all changes");
                 targetSS.commit();
-                
+
                 //find last version
                 for (GenericName n : names) {
                     if(targetSS.getFeatureStore().getQueryCapabilities().handleVersioning()) {
@@ -194,10 +194,10 @@ public class Copy extends AbstractProcess {
             query = builder.buildQuery();
         }
         final FeatureCollection collection = sourceSS.getFeatureCollection(query);
-        
+
         //get the real FeatureType of collection (in case of reprojection, CRS is different).
         type = collection.getFeatureType();
-        
+
         if(targetSS.getFeatureStore().getNames().contains(name)) {
             //ERASE
             if(erase) {

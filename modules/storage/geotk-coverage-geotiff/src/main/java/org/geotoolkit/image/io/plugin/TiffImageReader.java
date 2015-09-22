@@ -283,9 +283,9 @@ public class TiffImageReader extends SpatialImageReader {
 
     /**
      * Map array which contain all tiff {@link IIOMetadata} from all images.
-     */     
+     */
     private SpatialMetadata[] metaDatas;
-    
+
     /**
      * Map which contain all tiff properties of the current selected image.
      */
@@ -323,21 +323,21 @@ public class TiffImageReader extends SpatialImageReader {
      * To avoid scanning then more then once.
      */
     private List<GeoTiffExtension> extensions = null;
-    
+
     /**
      * Define minimum and maximum sample value of the just read layer.
-     * 
-     * @see #getRawImageType(int) 
-     * @see #selectLayer(int) 
+     *
+     * @see #getRawImageType(int)
+     * @see #selectLayer(int)
      */
     private Short minSampleValue, maxSampleValue;
-    
+
     /**
      * Attribut used to stipulate into internal {@link #headProperties} that represent noData tag.
-     * Each keys from {@link #headProperties} must be single, and in tiff specification 
-     * it exist only one tag value {@linkplain GeoTiffConstants#GDAL_NODATA_KEY 42113}, 
+     * Each keys from {@link #headProperties} must be single, and in tiff specification
+     * it exist only one tag value {@linkplain GeoTiffConstants#GDAL_NODATA_KEY 42113},
      * to avoid this singularity we define an other temporary value which is out of tag space number.
-     * Moreover Tiff specification don't necessarily allow multiple nodata tag but do no ban it. 
+     * Moreover Tiff specification don't necessarily allow multiple nodata tag but do no ban it.
      */
     private int noDataTemporaryKey = 1000000;
 
@@ -404,9 +404,9 @@ public class TiffImageReader extends SpatialImageReader {
             selectLayer(layerIndex);
         }
         headProperties = metaHeads[layerIndex];
-        
+
         fillRootMetadataNode(layerIndex);
-        
+
         if ((input instanceof File)
             || (input instanceof CharSequence)
             || (input instanceof URL)
@@ -482,7 +482,7 @@ public class TiffImageReader extends SpatialImageReader {
             //-- fill root metadata node by stack stored values
             if (stack != null) stack.flush();
         }
-        
+
         final IIOTiffMetadata metadata = new IIOTiffMetadata(roots[layerIndex]);
         final GeoTiffMetaDataReader metareader = new GeoTiffMetaDataReader(metadata);
         SpatialMetadata spatialMetadata;
@@ -532,11 +532,11 @@ public class TiffImageReader extends SpatialImageReader {
     }
 
     /**
-     * Returns {@code true} if image contain geographic tiff tags needed to build 
+     * Returns {@code true} if image contain geographic tiff tags needed to build
      * related {@link CoordinateReferenceSystem}, else return {@code false}.
-     * 
+     *
      * @param headProperties map which contain all red tiff tags.
-     * @return {@code true} if image contain geographic tiff tags needed to build 
+     * @return {@code true} if image contain geographic tiff tags needed to build
      * related {@link CoordinateReferenceSystem}, else return {@code false}.
      */
     private boolean hasCRS(final Map<Integer, Map> headProperties) {
@@ -549,13 +549,13 @@ public class TiffImageReader extends SpatialImageReader {
         }
         return false;
     }
-    
+
     /**
-     * Returns {@code true} if image contain geographic tiff tags needed to build 
+     * Returns {@code true} if image contain geographic tiff tags needed to build
      * related {@link CoordinateReferenceSystem}, else return {@code false}.
-     * 
+     *
      * @param headProperties map which contain all red tiff tags.
-     * @return {@code true} if image contain geographic tiff tags needed to build 
+     * @return {@code true} if image contain geographic tiff tags needed to build
      * related {@link CoordinateReferenceSystem}, else return {@code false}.
      */
     private boolean hasGridToCrs(final Map<Integer, Map> headProperties) {
@@ -568,7 +568,7 @@ public class TiffImageReader extends SpatialImageReader {
         }
         return false;
     }
-    
+
     /**
      * Invokes {@link #createInput(String)} and verifies if the returned file exists.
      * If it does not exist, then returns {@code null}.
@@ -582,7 +582,7 @@ public class TiffImageReader extends SpatialImageReader {
          * for allowing us to check if the file exists.
          */
         Object newCRSInput = IOUtilities.tryToFile(input);
-        
+
         Object in = createInput(newCRSInput, part);
         if (in instanceof File) {
             if (!((File) in).isFile()) {
@@ -591,7 +591,7 @@ public class TiffImageReader extends SpatialImageReader {
         }
         return in;
     }
-    
+
     /**
      * Creates the input to be given to the reader identified by the given argument. If the
      * {@code readerID} argument is {@code "main"} (ignoring case), then this method delegates
@@ -631,10 +631,10 @@ public class TiffImageReader extends SpatialImageReader {
      */
     private Object createInput(Object currentInput, final String readerID) throws IOException {
         if ("main".equalsIgnoreCase(readerID)) return null;
-        
+
         return SupportFiles.changeExtension(currentInput, readerID);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -652,7 +652,7 @@ public class TiffImageReader extends SpatialImageReader {
         }
         return metaDatas[layerIndex];
     }
-    
+
     /**
      * Returns the number of images available from the current input file. This method
      * will scan the file the first time it is invoked with a {@code true} argument value.
@@ -841,7 +841,7 @@ public class TiffImageReader extends SpatialImageReader {
                 index = (long[]) colorMod.get(ATT_VALUE);
                 assert index != null;
             }
-            
+
             //-- bits per sample study --//
             int[] bits = null;
             int sampleBitSize = 0;
@@ -878,9 +878,9 @@ public class TiffImageReader extends SpatialImageReader {
                         "bitsPerSamples", "sampleFormats"));
                 }
             }
-            
+
             short samplFormat = -1;
-            
+
             //-- sample format study --//
             if (sampleFormat == null) {
                 samplFormat = 1; //-- assume UINT
@@ -894,20 +894,20 @@ public class TiffImageReader extends SpatialImageReader {
                     }
                 }
             }
-            
+
             //-- code in attempt to upgrade TiffImageReader
 //            final boolean hasAlpha = hasAlpha();
 //            final boolean isAlphaPreMulti = hasAlpha && getAlphaValue() == 1;
 //            final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, isAlphaPreMulti,
 //                    hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE, sourceDataBufferType);
-            
+
             assert sampleBitSize > 0;
             assert samplesPerPixel > 0;
             assert samplFormat > 0;
             final Double minSV  = (minSampleValue == null) ? null : (double) minSampleValue;
             final Double maxSV  = (maxSampleValue == null) ? null : (double) maxSampleValue;
             final ColorModel cm = ImageUtils.createColorModel(sampleBitSize, samplesPerPixel, photoInter, samplFormat, minSV, maxSV, index);
-           
+
             /*
             * Create a SampleModel with size of 1x1 volontary just to know image properties.
             * Image with correctively size will be create later with getDestination() in #read(int index, param) method.
@@ -917,16 +917,16 @@ public class TiffImageReader extends SpatialImageReader {
         }
         return rawImageType;
     }
-    
+
     /**
      * Returns {@code true} if read image own an alpha band else return {@code false}.<br><br>
-     * 
-     * Alpha band exist if geotiff tag {@link GeoTiffConstants#ExtraSamples} exist 
+     *
+     * Alpha band exist if geotiff tag {@link GeoTiffConstants#ExtraSamples} exist
      * and stipule that one band is considered as alpha canal.
-     * 
+     *
      * @return {@code true} if read image own an alpha band else return {@code false}.
-     * @see #getAlphaBandIndex() 
-     * @see #getAlphaValue() 
+     * @see #getAlphaBandIndex()
+     * @see #getAlphaValue()
      */
     private boolean hasAlpha() {
         final Map<String, Object> extraSObj = headProperties.get(ExtraSamples);
@@ -942,16 +942,16 @@ public class TiffImageReader extends SpatialImageReader {
         }
         return alpha;
     }
-    
+
     /**
      * Returns the tiff tag value of the expected Alpha band.<br><br>
-     * 
+     *
      * Return 1 for pre-multiplied alpha raster.<br>
      * Return 2 for none pre-multiplied alpha raster.
-     * 
+     *
      * @return tiff tag value of the expected Alpha band.
-     * @see #hasAlpha() 
-     * @see #getAlphaBandIndex() 
+     * @see #hasAlpha()
+     * @see #getAlphaBandIndex()
      * @see GeoTiffConstants#ExtraSamples
      * @throws IllegalStateException if image do not have any Alpha canal.
      */
@@ -968,9 +968,9 @@ public class TiffImageReader extends SpatialImageReader {
 
     /**
      * Returns band index of Alpha canal.<br><br>
-     * 
+     *
      * Return extraSample Alpha band index added by 3, with 3 related with RGB components.
-     * 
+     *
      * @return band index of Alpha canal.
      * @see GeoTiffConstants#ExtraSamples
      * @throws IllegalStateException if image do not have any Alpha canal.
@@ -985,7 +985,7 @@ public class TiffImageReader extends SpatialImageReader {
         }
         throw new IllegalStateException("Alpha value not found. Should never append.");
     }
-    
+
     /**
      * Returns a collection of {@link ImageTypeSpecifier} containing possible image types to which
      * the given image may be decoded. The default implementation returns a singleton containing
@@ -1012,7 +1012,7 @@ public class TiffImageReader extends SpatialImageReader {
     public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
         checkLayers();
         final BufferedImage image = readLayer(getLayerIndex(imageIndex), param);
-        
+
         //if the image contains floats or double, datas are already in geophysic type
         //we must replace noData values by NaN.
         final int dataType = image.getSampleModel().getDataType();
@@ -1168,11 +1168,11 @@ public class TiffImageReader extends SpatialImageReader {
                     rawImageType    = null;
                     minSampleValue  = null;
                     maxSampleValue  = null;
-                    
+
                     headProperties  = metaHeads[layerIndex];
                     if (headProperties == null) {
                         headProperties = new HashMap<Integer, Map>();
-                        noDataTemporaryKey = 1000000; //-- init noDataTempKey for multiple noData 
+                        noDataTemporaryKey = 1000000; //-- init noDataTempKey for multiple noData
                         final Collection<long[]> deferred = new ArrayList<>(4);
                         long position = positionIFD[layerIndex];
                         imageStream.seek(position);
@@ -1202,10 +1202,10 @@ public class TiffImageReader extends SpatialImageReader {
                     imageHeight     = (int) ((ihObj   == null) ? -1 : ((long[]) ihObj.get(ATT_VALUE))[0]);
                     samplesPerPixel = (int) ((isppObj == null) ? -1 : ((long[]) isppObj.get(ATT_VALUE))[0]);
                     bitsPerSample   = ((long[]) ibpsObj.get(ATT_VALUE));
-                    
+
                     if (minspObj != null) minSampleValue = (short) (((long[]) minspObj.get(ATT_VALUE))[0]);
                     if (maxspObj != null) maxSampleValue = (short) (((long[]) maxspObj.get(ATT_VALUE))[0]);
-                   
+
                     final Map<String, Object> twObj   =  headProperties.get(TileWidth);
                     final Map<String, Object> thObj   =  headProperties.get(TileLength);
                     final Map<String, Object> toObj   =  headProperties.get(TileOffsets);
@@ -1224,14 +1224,14 @@ public class TiffImageReader extends SpatialImageReader {
                         ensureDefined(rowsPerStrip,    "rowsPerStrip");
                         ensureDefined(stripOffsets,    "stripOffsets");
                         ensureDefined(stripByteCounts, "stripByteCounts");
-                        
-                        //-- check validity of mandatory parameters and try to 
+
+                        //-- check validity of mandatory parameters and try to
                         //-- build missing parameters from other present parameters
                         //-- check samplePerPixel
                         if (samplesPerPixel == -1) { //--samplePerPixel not define
                             ArgumentChecks.ensureStrictlyPositive("imageWidth from tiff imageReader is missing", imageWidth);
                             ArgumentChecks.ensureNonNull("bitsPerSample from tiff image reader is missing",      bitsPerSample);
-                            //-- check it's possible to find a correct value 
+                            //-- check it's possible to find a correct value
                             //-- planar configuration --//
                             final Map<String, Object> planarConfig = headProperties.get(PlanarConfiguration);
                             /*
@@ -1239,7 +1239,7 @@ public class TiffImageReader extends SpatialImageReader {
                              */
                             final short pC = (planarConfig != null) ? ((short[]) planarConfig.get(ATT_VALUE)) [0] : 1;
                             final int denom = rowsPerStrip * imageWidth * ((int) bitsPerSample[0] / Byte.SIZE);
-                            //-- it is impossible to find missing samplePerPixel 
+                            //-- it is impossible to find missing samplePerPixel
                             //-- value if planarConfiguration is not planar and if exist any compression
                             if (pC != 1 || compression != 1
                              || stripByteCounts[0] % denom != 0) {
@@ -1262,25 +1262,25 @@ public class TiffImageReader extends SpatialImageReader {
                         ensureDefined(tileWidth,   "tileWidth");
                         ensureDefined(tileHeight,  "tileHeight");
                         ensureDefined(tileOffsets, "tileOffsets");
-                        
-                        //-- check validity of mandatory parameters and try to 
+
+                        //-- check validity of mandatory parameters and try to
                         //-- build missing parameters from other present parameters
                         //-- check samplePerPixel
                         if (samplesPerPixel == -1) { //--samplePerPixel not define
                             ArgumentChecks.ensureNonNull("bitsPerSample from tiff image reader is missing",      bitsPerSample);
-                            //-- check it's possible to find a correct value 
+                            //-- check it's possible to find a correct value
                             //-- planar configuration --//
-                            
+
                             final Map<String, Object> tbcObj   =  headProperties.get(TileByteCounts);
                             final int tileByteCounts = (int) ((tbcObj == null) ? -1 : ((long[]) isppObj.get(ATT_VALUE))[0]);
-                            
+
                             final Map<String, Object> planarConfig = headProperties.get(PlanarConfiguration);
                             /*
                              * If samples per pixel = 1, planar configuration has no impact.
                              */
                             final short pC = (planarConfig != null) ? ((short[]) planarConfig.get(ATT_VALUE)) [0] : 1;
                             final int denom = tileHeight * tileWidth * ((int) bitsPerSample[0] / Byte.SIZE);
-                            //-- it is impossible to find missing samplePerPixel 
+                            //-- it is impossible to find missing samplePerPixel
                             //-- value if planarConfiguration is not planar and if exist any compression
                             if (pC != 1 || compression != 1 || tileByteCounts == -1
                              || tileByteCounts % denom != 0) {
@@ -2000,12 +2000,12 @@ public class TiffImageReader extends SpatialImageReader {
         if (image.getRaster().getDataBuffer().getDataType() != sourceDataBufferType)
             throw new IllegalArgumentException("The destination image datatype doesn't match with read source image datatype. "
                     + "Expected Datatype : "+sourceDataBufferType+" found : "+image.getRaster().getDataBuffer().getDataType());
-        
+
 //        /**
 //         * permettre la lecture d'une image ou les bandes sont selectionnées
 //         * dans une premier temps voir pour readFromStrip()
 //         * etendre a tout les modes de lectures
-//         * 
+//         *
 //         * Dans le cas d'images ou le nombre de band sources differe du nombre de band dest
 //         * ajouter les param dans image read param
 //         * Dans un premier temps prendre les bands source de 0 a n
@@ -2031,7 +2031,7 @@ public class TiffImageReader extends SpatialImageReader {
 //                param.setDestinationBands(destBands);
 //            }
 //        }
-        
+
         /*
          * compute region : ajust les 2 rectangles src region et dest region en fonction des coeff subsampling present dans Imagereadparam.
          */
@@ -2104,7 +2104,7 @@ public class TiffImageReader extends SpatialImageReader {
      * @exception IllegalArgumentException if the resulting image would
      * have a width or height less than 1.
      * @exception IllegalArgumentException if the product of
-     * <code>width</code> and <code>height</code> of the generated destination image 
+     * <code>width</code> and <code>height</code> of the generated destination image
      * is greater than <code>Integer.MAX_VALUE</code>.
      */
     protected static BufferedImage getDestination(ImageReadParam param,
@@ -2165,7 +2165,7 @@ public class TiffImageReader extends SpatialImageReader {
 
         int destWidth = destRegion.x + destRegion.width;
         int destHeight = destRegion.y + destRegion.height;
-        
+
         if ((long)destWidth * destHeight > Integer.MAX_VALUE) {
             throw new IllegalArgumentException
                 ("width*height > Integer.MAX_VALUE!");
@@ -2173,7 +2173,7 @@ public class TiffImageReader extends SpatialImageReader {
         // Create a new image based on the type specifier
         return imageType.createBufferedImage(destWidth, destHeight);
     }
-    
+
 
     /**
      * Processes to the image reading, and stores the pixels in the given raster.<br/>
@@ -2256,7 +2256,7 @@ public class TiffImageReader extends SpatialImageReader {
             int readLength, srcStepX, srcStepY, planarDenum, planarBankStep;
 
             if (pC == 1) {
-//                if (sourceXSubsampling == 1 
+//                if (sourceXSubsampling == 1
 //                 && checkBandsSettings(sourceBands, destinationBands, samplesPerPixel, numBands)) {
                 if (sourceXSubsampling == 1) {
                     /*
@@ -2324,8 +2324,8 @@ public class TiffImageReader extends SpatialImageReader {
                         currentMaxRowPerStrip = currentStripOffset + rowsPerStrip;
                         assert stripOffsets.length % planarDenum == 0;
                         //-- row begining exprimate in byte.
-                        srcBuffPos = stripOffsets[currentStripOffset + s * stripOffsets.length / planarDenum] 
-                                   + (y - currentStripOffset * rowsPerStrip) * sourceScanlineStride * sampleSize / planarDenum 
+                        srcBuffPos = stripOffsets[currentStripOffset + s * stripOffsets.length / planarDenum]
+                                   + (y - currentStripOffset * rowsPerStrip) * sourceScanlineStride * sampleSize / planarDenum
                                    + srcRegion.x * samplesPerPixel * sampleSize / planarDenum ;//+ s * sampleSize;
                         nextSrcBuffPos = srcBuffPos + sourceYSubsampling * sourceScanlineStride * sampleSize / planarDenum;
                     }
@@ -2379,22 +2379,22 @@ public class TiffImageReader extends SpatialImageReader {
             }
         }
     }
-    
+
     /**
      * Effectuate some other verification to allow or not allow reading optimizations.<br>
      * Returns {@code true} if reading operation may be optimizate, else return {@code false}.<br><br>
-     * 
+     *
      * Criterions are : <br>
      * - same band number for source and destination.<br>
      * - destination and source array organize in ascending order.
-     * 
+     *
      * @param sourceBands selected source bands.
      * @param destBands selected destination bands.
      * @param srcNumBand source image numbands.
      * @param destNumBand destination image numbands.
      * @return {@code true} if reading operation may be optimizate, else return {@code false}.
      */
-    private boolean checkBandsSettings(int[] sourceBands, int[] destBands, 
+    private boolean checkBandsSettings(int[] sourceBands, int[] destBands,
                                        int srcNumBand, int destNumBand) {
         if (sourceBands == null) {
             if (destBands == null) {
@@ -2411,19 +2411,19 @@ public class TiffImageReader extends SpatialImageReader {
                 && checkArrayInAscendingOrder(sourceBands);
         }
         assert sourceBands != null && destBands != null;
-        return sourceBands.length == destBands.length 
+        return sourceBands.length == destBands.length
             && destNumBand        == srcNumBand
             && sourceBands.length == srcNumBand
             && checkArrayInAscendingOrder(sourceBands)
             && checkArrayInAscendingOrder(destBands);
     }
-    
+
     /**
-     * Returns {@code true} if internal integer from array is organize in ascending order, 
+     * Returns {@code true} if internal integer from array is organize in ascending order,
      * else return {@code false}.
-     * 
+     *
      * @param array the checked array.
-     * @return {@code true} if internal integer from array is organize in ascending order, 
+     * @return {@code true} if internal integer from array is organize in ascending order,
      * else return {@code false}.
      */
     private boolean checkArrayInAscendingOrder(int[] array) {
@@ -2432,7 +2432,7 @@ public class TiffImageReader extends SpatialImageReader {
         }
         return true;
     }
-    
+
     /**
      * Process to the image reading, and stores the pixels in the given raster.<br/>
      * Process fill raster from informations stored in stripOffset made.<br/>
@@ -2560,7 +2560,7 @@ public class TiffImageReader extends SpatialImageReader {
                 * Test added when travel the last strip is not necessary.
                 */
                 if (ypos >= srcMaxy) continue nextSample;
-                
+
                 //-- buffer start position from stripOffsets --//
                 long currentBuffPos        = stripOffsets[cSO];
                 inputLZW.seek(currentBuffPos);
@@ -2589,7 +2589,7 @@ public class TiffImageReader extends SpatialImageReader {
 
                 //-- in case where sourceYsubsampling greater than row per strip --//
                 if (posRef >= rowsPerStrip * sourceScanlineStride) continue nextStrip;
-                
+
                 int nextPosRef         = posRef + nextRowStep;
                 int maxRowRefPos       = posRef + dstRegion.width * pixelLength * sourceXSubsampling;
 
@@ -3002,7 +3002,7 @@ public class TiffImageReader extends SpatialImageReader {
         }
         }
     }
-    
+
     /**
      * Verifies if all the strips are sequenced as a result in the file.
      *
@@ -3761,7 +3761,7 @@ public class TiffImageReader extends SpatialImageReader {
                                 other = this;
                             }
                         } catch (SecurityException e) {
-                            Logging.recoverableException(TiffImageReader.Spi.class, "onRegistration", e);
+                            Logging.recoverableException(null, TiffImageReader.Spi.class, "onRegistration", e);
                         }
                         registry.setOrdering(ImageReaderSpi.class, other, last);
                     }

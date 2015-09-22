@@ -248,7 +248,7 @@ public final class Threads extends AtomicInteger implements ThreadFactory, Rejec
         try {
             Class.forName("org.geotoolkit.factory.ShutdownHook", true, Threads.class.getClassLoader());
         } catch (Exception e) {
-            Logging.unexpectedException(Threads.class, "<init>", e);
+            Logging.unexpectedException(null, Threads.class, "<init>", e);
         }
     }
 

@@ -337,6 +337,6 @@ public class Resample extends Operation2D {
      * @param exception The error.
      */
     private static void recoverableException(final String method, final Exception exception) {
-        Logging.recoverableException(Resample.class, method, exception);
+        Logging.recoverableException(null, Resample.class, method, exception);
     }
 }

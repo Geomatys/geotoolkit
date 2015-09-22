@@ -949,7 +949,7 @@ public class CoverageTableModel extends AbstractTableModel {
                     }
                 } catch (IOException e) {
                     entry.setFlag(CoverageProxy.CORRUPTED, true);
-                    Logging.recoverableException(GridCoverageReference.class, "getFile", e);
+                    Logging.recoverableException(null, GridCoverageReference.class, "getFile", e);
                 }
             }
         }

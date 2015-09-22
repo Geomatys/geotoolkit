@@ -152,7 +152,7 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
         try {
             writer.dispose();
         } catch (CoverageStoreException ex) {
-            Logging.getLogger(getClass()).log(Level.WARNING, ex.getMessage(), ex);
+            Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
         }
     }
 
@@ -240,7 +240,7 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
             reader.dispose();
 
         } catch (CoverageStoreException ex) {
-            Logging.getLogger(getClass()).log(Level.WARNING, ex.getMessage(), ex);
+            Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
         }
     }
 

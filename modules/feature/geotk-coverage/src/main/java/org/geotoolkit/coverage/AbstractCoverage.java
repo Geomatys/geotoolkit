@@ -990,7 +990,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
             } catch (NoninvertibleTransformException exception) {
                 // Can't add the property. Too bad, the image has been created
                 // anyway. Maybe the user know what he is doing...
-                Logging.unexpectedException(Renderable.class, "createRendering", exception);
+                Logging.unexpectedException(null, Renderable.class, "createRendering", exception);
             }
             return image;
         }

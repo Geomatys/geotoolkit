@@ -126,7 +126,7 @@ final class GeoTiffCRSReader {
     /**
      * Logger to diffuse no blocking error message.
      */
-    private static final Logger LOGGER = Logging.getLogger(GeoTiffCRSReader.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.metadata.geotiff");
 
     /** Default hints for axis order management */
     private static final Hints DEFAULT_HINTS = new Hints(

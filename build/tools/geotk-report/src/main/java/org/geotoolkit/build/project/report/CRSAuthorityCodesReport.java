@@ -163,7 +163,7 @@ public final class CRSAuthorityCodesReport extends AuthorityCodesReport {
                 row.annotation = YX_ORDER;
             }
         } catch (FactoryException e) {
-            Logging.unexpectedException(CRSAuthorityCodesReport.class, "createRow", e);
+            Logging.unexpectedException(null, CRSAuthorityCodesReport.class, "createRow", e);
         }
         row.remark = getRemark(crs);
         if (object instanceof AbstractIdentifiedObject) {
@@ -208,7 +208,7 @@ public final class CRSAuthorityCodesReport extends AuthorityCodesReport {
         try {
             row.name = factory.getDescriptionText(code).toString(getLocale());
         } catch (FactoryException e) {
-            Logging.unexpectedException(CRSAuthorityCodesReport.class, "createRow", e);
+            Logging.unexpectedException(null, CRSAuthorityCodesReport.class, "createRow", e);
         }
         String message;
         if (code.startsWith("AUTO2:")) {

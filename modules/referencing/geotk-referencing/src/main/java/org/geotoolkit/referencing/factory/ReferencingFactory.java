@@ -62,7 +62,7 @@ public class ReferencingFactory extends org.geotoolkit.factory.Factory implement
     /**
      * The logger for event related to Geotk factories.
      */
-    public static final Logger LOGGER = Logging.getLogger(ReferencingFactory.class);
+    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.referencing.factory");
 
     /**
      * A citation which contains only the title "All" in localized language. Used

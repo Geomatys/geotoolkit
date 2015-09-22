@@ -26,7 +26,6 @@ import java.lang.ref.ReferenceQueue;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -147,13 +146,13 @@ public final class LargeCache implements TileCache {
                     tileManagers.put(source, lL);
                     largemaps.add(lL);
                 }
-                
+
                 updateLList();
             }
         }
         return lL;
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -181,7 +180,7 @@ public final class LargeCache implements TileCache {
         synchronized(tileManagers){
             lL = tileManagers.get(ri);
         }
-        
+
         if (lL == null){
             throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
         }
@@ -235,7 +234,7 @@ public final class LargeCache implements TileCache {
     public void addTiles(RenderedImage ri, Point[] points, Raster[] rasters, Object o) {
         if (points.length != rasters.length)
             throw new IllegalArgumentException("point and raster tables must have same length.");
-        
+
         final ImageTilesCache lL;
         try {
             lL = getOrCreateLargeMap(ri);
@@ -263,7 +262,7 @@ public final class LargeCache implements TileCache {
         synchronized(tileManagers){
             lL = tileManagers.get(ri);
         }
-        
+
         if (lL == null)
             throw new IllegalArgumentException("renderedImage don't exist in this "+LargeCache.class.getName());
         final int l = points.length;
@@ -314,12 +313,12 @@ public final class LargeCache implements TileCache {
         return memoryCapacity;
     }
 
-    
+
     /*
      * UNSUPPORTED OPERATIONS
      */
-    
-    
+
+
     /**
      * {@inheritDoc }.
      */
@@ -331,7 +330,7 @@ public final class LargeCache implements TileCache {
 //        try {
 //            return tileManagers.get(ri).getTiles();
 //        } catch (IOException ex) {
-//            Logger.getLogger(LargeCache.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger("org.geotoolkit.image.io.large").log(Level.SEVERE, null, ex);
 //        }
 //        return null;
     }

@@ -58,10 +58,10 @@ import org.opengis.coverage.Coverage;
  * @param <F> Expression or subclass
  * @module pending
  */
-public abstract class AbstractBinarySpatialOperator<E extends Expression,F extends Expression> 
+public abstract class AbstractBinarySpatialOperator<E extends Expression,F extends Expression>
                                                 implements BinarySpatialOperator,Serializable {
 
-    protected static final Logger LOGGER = Logging.getLogger(AbstractBinarySpatialOperator.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter.binaryspatial");
     protected static final CoordinateReferenceSystem MERCATOR;
 
     static{
@@ -131,10 +131,10 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                 candidate = null;
             }
         }
-        
+
         return candidate;
     }
-    
+
     /**
      * Reproject geometries to the same CRS if needed and if possible.
      */

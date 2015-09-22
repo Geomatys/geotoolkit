@@ -51,7 +51,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public final class ImageIOUtilities extends Static {
 
-    private static final Logger LOGGER = Logging.getLogger(ImageIOUtilities.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.util");
 
     private ImageIOUtilities(){}
 

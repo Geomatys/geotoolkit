@@ -73,7 +73,7 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
                         }
                     });
         } catch (Exception e) {
-            Logging.unexpectedException(TemporaryFile.class, "<init>", e);
+            Logging.unexpectedException(null, TemporaryFile.class, "<init>", e);
         }
     }
 

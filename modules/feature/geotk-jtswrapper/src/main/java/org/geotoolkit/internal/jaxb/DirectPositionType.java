@@ -152,7 +152,7 @@ public class DirectPositionType implements DirectPosition {
              CoordinateReferenceSystem crs = position.getDirectPosition().getCoordinateReferenceSystem();
             srsName = CoordinateReferenceSystemAdapter.getSrsName(crs);
             this.srsDimension = position.getDirectPosition().getDimension();
-             
+
              */
         }
     }
@@ -248,9 +248,9 @@ public class DirectPositionType implements DirectPosition {
                     crs =  CRS.decode(srsName);
                 }
             } catch (NoSuchAuthorityCodeException ex) {
-                Logging.getLogger(DirectPositionType.class).log(Level.WARNING, ex.getMessage());
+                Logging.getLogger("org.geotoolkit.referencing").log(Level.WARNING, ex.getMessage());
             } catch (FactoryException ex) {
-                Logging.getLogger(DirectPositionType.class).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.referencing").log(Level.WARNING, null, ex);
             }
             cachedCRS.put(srsName, crs);
         }

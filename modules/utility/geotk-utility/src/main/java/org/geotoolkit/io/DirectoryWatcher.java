@@ -46,7 +46,7 @@ import static java.nio.file.StandardWatchEventKinds.*;
  */
 public class DirectoryWatcher implements Closeable {
 
-    private static final Logger LOGGER = Logging.getLogger(DirectoryWatcher.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.io");
 
     private final WatchService service;
     private final Thread watchThread;

@@ -31,7 +31,6 @@ import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.expression.Expression;
 
 import static org.apache.sis.util.ArgumentChecks.*;
-import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 
 /**
@@ -43,7 +42,7 @@ import org.geotoolkit.temporal.object.TemporalUtilities;
  */
 public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
 
-    private static final Logger LOGGER = Logging.getLogger(DefaultPropertyIsLike.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
 
     /** The attribute value, which must be an attribute expression. */
     private final Expression attribute;
@@ -209,7 +208,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
                         LOGGER.finer("escaped ");
                         tmp.append(escapedWildcardSingle);
                     } else {
-                        // From the OpenGIS filter encoding spec, 
+                        // From the OpenGIS filter encoding spec,
                         // "the single singleChar character matches exactly one character"
                         tmp.append(".{1}");
                     }
@@ -284,7 +283,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
         } else if (value instanceof Date) {
             value = TemporalUtilities.toISO8601((Date) value);
         }
-        
+
         final Matcher matcher = getMatcher();
         matcher.reset(String.valueOf(value));
 

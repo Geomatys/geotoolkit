@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2010, Geomatys
  *
@@ -27,7 +27,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
@@ -53,20 +52,20 @@ import static org.geotoolkit.temporal.object.TemporalConstants.*;
 
 /**
  * This is a tool class to convert DateTime from ISO8601 to Date object.
- * 
+ *
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
 public final class TemporalUtilities {
 
     private static final Logger LOGGER = Logging
-            .getLogger(TemporalUtilities.class);
+            .getLogger("org.geotoolkit.temporal.object");
     private static final String DEFAULT_TIMEZONE = TimeZone.getDefault()
             .getID();
 
     /**
      * The units for months.
-     * 
+     *
      * @todo <a href="http://kenai.com/jira/browse/JSR_275-41">JSR-275 bug</a>
      */
     public static final Unit<javax.measure.quantity.Duration> MONTH_UNIT = NonSI.DAY
@@ -74,7 +73,7 @@ public final class TemporalUtilities {
 
     /**
      * The units for years.
-     * 
+     *
      * @todo <a href="http://kenai.com/jira/browse/JSR_275-41">JSR-275 bug</a>
      */
     public static final Unit<javax.measure.quantity.Duration> YEAR_UNIT = NonSI.DAY
@@ -125,7 +124,7 @@ public final class TemporalUtilities {
     static {
         sdf6.setTimeZone(TimeZone.getDefault());
     }
-    
+
     private static final Map<String, TimeZone> TIME_ZONES = new UnSynchronizedCache<String, TimeZone>(
             50) {
         @Override
@@ -161,23 +160,23 @@ public final class TemporalUtilities {
     /**
      * Returns a Date object from an ISO-8601 representation string. (String
      * defined with pattern yyyy-MM-dd'T'HH:mm:ss.SSSZ or yyyy-MM-dd).
-     * 
+     *
      * @param dateString
-     * 
+     *
      * @return Date result of parsing the given string
      * @throws ParseException
      */
     public static Date getDateFromString(final String dateString) throws ParseException {
-       return getDateFromString(dateString, false); 
+       return getDateFromString(dateString, false);
     }
-            
+
     /**
      * Returns a Date object from an ISO-8601 representation string. (String
      * defined with pattern yyyy-MM-dd'T'HH:mm:ss.SSSZ or yyyy-MM-dd).
-     * 
+     *
      * @param dateString
      * @param noGMTO
-     *            : will use date parser with default timezone for input with no time 
+     *            : will use date parser with default timezone for input with no time
      *            (dd-MM-yyyy) instead of GMT+0.
      * @return Date result of parsing the given string
      * @throws ParseException
@@ -270,7 +269,7 @@ public final class TemporalUtilities {
 
     /**
      * Return a Date (long time) from a String description
-     * 
+     *
      * @param periodDuration
      * @return duration in millisenconds represented by this string duration.
      */
@@ -393,17 +392,17 @@ public final class TemporalUtilities {
                         "The period descritpion is malformed");
             }
         }
-        
+
         return time;
     }
 
     /**
      * Returns a DefaultPeriodDuration instance parsed from a string that
      * respect ISO8601 format ie: PnYnMnDTnHnMnS where n is an integer
-     * 
+     *
      * @TODO maybe should check by Pattern of string before and should throw an
      *       exception when it is bad format
-     * 
+     *
      * @param periodDuration
      * @return duration in millisenconds represented by this string duration.
      */
@@ -528,7 +527,7 @@ public final class TemporalUtilities {
 
     /**
      * Convert a CalendarDate object to java.util.Date.
-     * 
+     *
      * @param calDate
      */
     public static Date calendarDateToDate(final CalendarDate calDate) {
@@ -549,7 +548,7 @@ public final class TemporalUtilities {
 
     /**
      * Convert a DateAndTime object to Date.
-     * 
+     *
      * @param dateAndTime
      * @return converted DateAndTime in Date
      */
@@ -580,7 +579,7 @@ public final class TemporalUtilities {
 
     /**
      * Convert a TemporalCoordinate object to Date.
-     * 
+     *
      * @param temporalCoord
      * @return Date
      */
@@ -701,7 +700,7 @@ public final class TemporalUtilities {
     /**
      * Try to parse a date from different well knowed writing types.
      * CAUTION : time zone will be local TimeZone unless the date string specify it.
-     * 
+     *
      * @param date
      *            String to parse
      * @return resulting parsed Date.
@@ -715,17 +714,17 @@ public final class TemporalUtilities {
     public static Date parseDate(final String date) throws ParseException,
             NullPointerException {
         return parseDate(date, false);
-        
+
     }
-    
+
     /**
      * Try to parse a date from different well knowed writing types.
      * CAUTION : time zone will be local TimeZone unless the date string specify it.
-     * 
+     *
      * @param date
      *            String to parse
      * @param noGMTO
-     *            : will use date parser with default timezone for input with no time 
+     *            : will use date parser with default timezone for input with no time
      *            (dd-MM-yyyy) instead of GMT+0.
      * @return resulting parsed Date.
      * @throws ParseException
@@ -911,7 +910,7 @@ public final class TemporalUtilities {
     /**
      * @see TemporalUtilities#parseDate(java.lang.String)
      * CAUTION : time zone will be local TimeZone unless the date string specify it.
-     * 
+     *
      * @param date
      *            : string to parse.
      * @param neverNull
@@ -923,18 +922,18 @@ public final class TemporalUtilities {
     public static Date parseDateSafe(final String date, final boolean neverNull) {
         return parseDateSafe(date, neverNull, false);
     }
-    
+
     /**
      * @see TemporalUtilities#parseDate(java.lang.String)
      * CAUTION : time zone will be local TimeZone unless the date string specify it.
-     * 
+     *
      * @param date
      *            : string to parse.
      * @param neverNull
      *            : will return today's date if parsing fail, otherwise return
      *            null if parsing fails.
      * @param noGMTO
-     *            : will use date parser with default timezone for input with no time 
+     *            : will use date parser with default timezone for input with no time
      *            (dd-MM-yyyy) instead of GMT+0.
      * @return result of the parsed string or today's date or null if neverNull
      *         is false.
@@ -963,7 +962,7 @@ public final class TemporalUtilities {
     /**
      * Return a time description on the form "Ny Nm Nd Nh Nmin Ns Nms" from a
      * millisecond time.
-     * 
+     *
      * @param time
      *            A time value in millisecond
      * @return A string on the form "Xmin Ys Zms".
@@ -1014,7 +1013,7 @@ public final class TemporalUtilities {
 
     /**
      * Format date using pattern yyyy-MM-dd'T'HH:mm:ss
-     * 
+     *
      * @param date
      *            : date to format
      * @return ISO 8601 string or empty string if date is null
@@ -1032,7 +1031,7 @@ public final class TemporalUtilities {
 
     /**
      * Format date with TimeZone using pattern yyyy-MM-dd'T'HH:mm:ss
-     * 
+     *
      * @param date
      *            : date to format
      * @param timezone
@@ -1056,10 +1055,10 @@ public final class TemporalUtilities {
                 "ISO 8601 format can not proceed because date is null.");
         return "";
     }
-    
+
     /**
      * Format date with TimeZone using pattern yyyy-MM-dd'T'HH:mm:ssZ
-     * 
+     *
      * @param date
      *            : date to format
      * @param timezone
@@ -1083,6 +1082,6 @@ public final class TemporalUtilities {
                 "ISO 8601 format can not proceed because date is null.");
         return "";
     }
-    
-    
+
+
 }

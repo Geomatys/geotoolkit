@@ -51,6 +51,7 @@ import org.apache.sis.referencing.datum.BursaWolfParameters;
 
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
+import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.parameter.ParameterFormat;
 import static org.geotoolkit.referencing.IdentifiedObjects.NAME_COMPARATOR;
 import static org.geotoolkit.console.CommandLine.*;
@@ -185,7 +186,7 @@ final class ReferencingAction {
                 return;
             }
             out.println(formatter.format(object));
-            final String warning = formatter.getWarning();
+            final Warnings warning = formatter.getWarnings();
             if (warning != null) {
                 out.println();
                 out.print(resources.getString(Vocabulary.Keys.Warning));

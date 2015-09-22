@@ -300,7 +300,7 @@ public abstract class Factory {
             try {
                 c = Class.forName(type);
             } catch (ClassNotFoundException e) {
-                Logging.recoverableException(Organizer.class, before ? "before" : "after", e);
+                Logging.recoverableException(null, Organizer.class, before ? "before" : "after", e);
                 return;
             }
             setOrdering(c, subclasses, before);

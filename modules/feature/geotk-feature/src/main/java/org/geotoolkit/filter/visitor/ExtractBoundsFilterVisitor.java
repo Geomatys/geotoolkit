@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
@@ -51,7 +51,7 @@ import org.apache.sis.util.logging.Logging;
  * Double.POSITIVE_INFINITY for each axis.
  * </ul>
  * Since geometry literals do not contains CRS information we can only produce a ReferencedEnvelope
- * without CRS information. You can call this function with an existing ReferencedEnvelope 
+ * without CRS information. You can call this function with an existing ReferencedEnvelope
  * or with your data CRS to correct for this limitation.
  * ReferencedEnvelope example:<pre><code>
  * ReferencedEnvelope bbox = (ReferencedEnvelope)
@@ -61,14 +61,14 @@ import org.apache.sis.util.logging.Logging;
  * several filters.
  * <p>
  * This is a replacement for FilterConsumer.
- * 
+ *
  * @author Jody Garnett
  * @module pending
  */
 public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
     static public NullFilterVisitor BOUNDS_VISITOR = new ExtractBoundsFilterVisitor();
-    
-    private static final Logger LOGGER = Logging.getLogger(ExtractBoundsFilterVisitor.class);
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter.visitor");
 
     /**
      * This FilterVisitor is stateless - use ExtractBoundsFilterVisitor.BOUNDS_VISITOR.
@@ -76,12 +76,12 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
      * You may also subclass in order to reuse this functionality in your own
      * FilterVisitor implementation.
      */
-    protected ExtractBoundsFilterVisitor(){        
+    protected ExtractBoundsFilterVisitor(){
     }
-    
+
     /**
      * Produce an ReferencedEnvelope from the provided data parameter.
-     * 
+     *
      * @param data
      * @return ReferencedEnvelope
      */
@@ -98,7 +98,7 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
         else if (data instanceof CoordinateReferenceSystem){
             return new JTSEnvelope2D( (CoordinateReferenceSystem) data );
         }
-        throw new ClassCastException("Could not cast data to ReferencedEnvelope");        
+        throw new ClassCastException("Could not cast data to ReferencedEnvelope");
     }
 
     @Override
@@ -110,7 +110,7 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
     public Object visit( final IncludeFilter filter, final Object data ) {
         if( data == null ) return null;
         JTSEnvelope2D bbox = bbox( data );
-        
+
         // also consider making use of CRS extent?
         Envelope world = new Envelope(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
                 Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -122,7 +122,7 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
     public Object visit( final BBOX filter, final Object data ) {
         if( data == null ) return null;
         JTSEnvelope2D bbox = bbox( data );
-                
+
         // consider doing reprojection here into data CRS?
         Envelope bounds = new Envelope(filter.getMinX(), filter.getMaxX(), filter.getMinY(), filter
                 .getMaxY());
@@ -133,20 +133,20 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
      * Please note we are only visiting literals involved in spatial operations.
      * @param expression , hopefully a Geometry or Envelope
      * @param data Incoming BoundingBox (or Envelope or CRS)
-     * 
+     *
      * @return ReferencedEnvelope updated to reflect literal
      */
     @Override
-    public Object visit( final Literal expression, final Object data ) {        
+    public Object visit( final Literal expression, final Object data ) {
         if( data == null ) return null;
         JTSEnvelope2D bbox = bbox( data );
 
         Object value = expression.getValue();
         if (value instanceof Geometry) {
-                        
+
             Geometry geometry = (Geometry) value;
             Envelope bounds = geometry.getEnvelopeInternal();
-            
+
             bbox.expandToInclude(bounds);
         } else {
             LOGGER.finer("LiteralExpression ignored!");
@@ -224,8 +224,8 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
     public Object visit( final Within filter, Object data ) {
         data = filter.getExpression1().accept(this, data);
         data = filter.getExpression2().accept(this, data);
-        
+
         return data;
     }
-    
+
 }

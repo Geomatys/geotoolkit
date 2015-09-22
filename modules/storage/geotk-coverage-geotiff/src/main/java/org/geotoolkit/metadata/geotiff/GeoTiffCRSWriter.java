@@ -644,7 +644,7 @@ public final class GeoTiffCRSWriter {
                     }
                 } catch (IllegalArgumentException e) {
                     // TODO: Workaround for a problem in "Ordnance Survey National Transformation" not yet fixed.
-                    Logging.recoverableException(GeoTiffCRSWriter.class, "getEPSGCode", e);
+                    Logging.recoverableException(null, GeoTiffCRSWriter.class, "getEPSGCode", e);
                 }
             }
         }

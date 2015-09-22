@@ -142,7 +142,7 @@ public final strictfp class ThreadedAuthorityFactoryTest {
         Thread.sleep(waitTime);
         int n = 3;
         while (threaded.isActive()) {
-            Logging.getLogger(ThreadedAuthorityFactoryTest.class).warning(
+            Logging.getLogger("org.geotoolkit.referencing.factory").warning(
                     "Execution of ThreadedAuthorityFactory.disposeExpired() has been delayed.");
             Thread.sleep(TIMEOUT);
             System.gc();
