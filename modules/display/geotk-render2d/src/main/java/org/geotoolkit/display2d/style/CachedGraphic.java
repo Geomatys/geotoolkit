@@ -290,12 +290,20 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
     public BufferedImage getImage(final Object candidate, final float coeff, final RenderingHints hints) {
         return getImage(candidate, null, coeff, hints);
     }
-    
+
     /**
      *
      * @return BufferedImage for a feature
      */
     public BufferedImage getImage(final Object candidate, final Float forcedSize, final float coeff, final RenderingHints hints) {
+        return getImage(candidate, forcedSize, coeff, true, hints);
+    }
+
+    /**
+     *
+     * @return BufferedImage for a feature
+     */
+    public BufferedImage getImage(final Object candidate, final Float forcedSize, final float coeff, boolean withRotation, final RenderingHints hints) {
         evaluate();
 
 
@@ -354,13 +362,13 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         }
 
         //no operation to append to image, return the buffer directly ----------------------------
-        if( candidateRotation == 0 && candidateOpacity == 1 ) return subBuffer;
+        if( (candidateRotation == 0 || !withRotation) && candidateOpacity == 1 ) return subBuffer;
 
 
         // we must change opacity or rotation ----------------------------------------------------
         final int maxSizeX;
         final int maxSizeY;
-        if(candidateRotation == 0){
+        if(candidateRotation == 0 && withRotation){
             maxSizeX = subBuffer.getWidth();
             maxSizeY = subBuffer.getHeight();
         }else{
@@ -376,7 +384,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         if(maxSizeX<=0 || maxSizeY<=0){
             return null;
         }
-        
+
         final BufferedImage buffer = new BufferedImage( maxSizeX , maxSizeY, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g2 = (Graphics2D) buffer.getGraphics();
         if(hints != null){
@@ -409,6 +417,16 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         return cachedAnchor.getValues(candidate, buffer);
     }
 
+    public float getRotation(final Object candidate){
+        float candidateRotation = cachedRotation;
+        if(Float.isNaN(candidateRotation)){
+            final Expression expRotation = styleElement.getRotation();
+            final Number rot = GO2Utilities.evaluate(expRotation, candidate, Number.class, 0f);
+            candidateRotation = (float) Math.toRadians(rot.doubleValue());
+        }
+        return candidateRotation;
+    }
+
     /**
      * @return margin of this style for the given feature
      */
@@ -422,15 +440,15 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 //        if(img != null){
 //            return (img.getHeight()*coeff > img.getWidth()*coeff) ? img.getHeight()*coeff : img.getWidth()*coeff;
 //        }
-        
+
         //get the displacement margin
         final float maxDisplacement = cachedDisplacement.getMargin(candidate,coeff);
         if(Float.isNaN(maxDisplacement)) return Float.NaN;
         //get anchor margin
         final float anchorRatio = cachedAnchor.getMarginRatio(candidate,coeff);
         if(Float.isNaN(anchorRatio)) return Float.NaN;
-        
-        
+
+
         float candidateOpacity = cachedOpacity;
         float candidateRotation = cachedRotation;
         float candidateSize = cachedSize;
@@ -572,7 +590,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
                     if(!visible) return false;
                 }
             }
-            
+
             return true;
         }
     }
