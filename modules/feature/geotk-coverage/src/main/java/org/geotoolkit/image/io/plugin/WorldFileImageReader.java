@@ -454,14 +454,13 @@ public class WorldFileImageReader extends ImageReaderAdapter {
                 final Spi provider;
                 try {
                     switch (index) {
-                        case 0: provider = new TIFF   (); break;
-                        case 1: provider = new JPEG   (); break;
-                        case 2: provider = new PNG    (); break;
-                        case 3: provider = new GIF    (); break;
-                        case 4: provider = new BMP    (); break;
-                        case 5: provider = new TXT    (); break;
-                        case 6: provider = new ASC    (); break;
-                        case 7: provider = new Records(); break;
+                        case 0: provider = new JPEG   (); break;
+                        case 1: provider = new PNG    (); break;
+                        case 2: provider = new GIF    (); break;
+                        case 3: provider = new BMP    (); break;
+                        case 4: provider = new TXT    (); break;
+                        case 5: provider = new ASC    (); break;
+                        case 6: provider = new Records(); break;
                         default: return;
                     }
                 } catch (RuntimeException e) {
@@ -495,14 +494,13 @@ public class WorldFileImageReader extends ImageReaderAdapter {
             for (int index=0; ;index++) {
                 final Class<? extends Spi> type;
                 switch (index) {
-                    case 0: type = TIFF   .class; break;
-                    case 1: type = JPEG   .class; break;
-                    case 2: type = PNG    .class; break;
-                    case 3: type = GIF    .class; break;
-                    case 4: type = BMP    .class; break;
-                    case 5: type = TXT    .class; break;
-                    case 6: type = ASC    .class; break;
-                    case 7: type = Records.class; break;
+                    case 0: type = JPEG   .class; break;
+                    case 1: type = PNG    .class; break;
+                    case 2: type = GIF    .class; break;
+                    case 3: type = BMP    .class; break;
+                    case 4: type = TXT    .class; break;
+                    case 5: type = ASC    .class; break;
+                    case 6: type = Records.class; break;
                     default: return;
                 }
                 final Spi provider = registry.getServiceProviderByClass(type);
@@ -517,8 +515,6 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * Providers for common formats. Each provider needs to be a different class because
      * {@link ServiceRegistry} allows the registration of only one instance of each class.
      */
-    private static final class TIFF extends Spi {TIFF() {super("geotiff",    "org.geotoolkit.image.io.plugin.WorldFileImageWriter$TIFF");}}
-    //private static final class TIFF extends Spi {TIFF() {super("TIFF",       "org.geotoolkit.image.io.plugin.WorldFileImageWriter$TIFF");}}
     private static final class JPEG extends Spi {JPEG() {super("JPEG",       "org.geotoolkit.image.io.plugin.WorldFileImageWriter$JPEG");}}
     private static final class PNG  extends Spi { PNG() {super("PNG",        "org.geotoolkit.image.io.plugin.WorldFileImageWriter$PNG");}}
     private static final class GIF  extends Spi { GIF() {super("GIF",        "org.geotoolkit.image.io.plugin.WorldFileImageWriter$GIF");}}
