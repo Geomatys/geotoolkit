@@ -53,7 +53,7 @@ final class DecoratorDataNode extends DefaultDataNode {
     }
 
     private void rebuildNodes(){
-        getChildren().clear();
+        if(!getChildren().isEmpty()) getChildren().clear();
         final Collection<TreeTable.Node> children = base.getChildren();
         for(TreeTable.Node n : children){
             if(n instanceof PyramidalCoverageReference){

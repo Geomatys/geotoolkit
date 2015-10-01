@@ -281,6 +281,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
 
                 readParam = new GridCoverageReadParam();
                 readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
+                readParam.setResolution(high[0]-low[0], high[1]-low[1]);
                 readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
 
                 coverage = reader.read(cref.getImageIndex(), readParam);

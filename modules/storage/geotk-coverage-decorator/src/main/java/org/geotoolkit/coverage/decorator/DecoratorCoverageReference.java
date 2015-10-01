@@ -17,11 +17,11 @@
 package org.geotoolkit.coverage.decorator;
 
 import java.awt.Image;
-import java.io.File;
 import java.util.List;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -29,9 +29,24 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.storage.coverage.AbstractCoverageReference;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.CoverageStore;
+import org.geotoolkit.storage.coverage.CoverageStoreManagementEvent;
+import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
+ * Decorates a coverage reference adding possibility to override properties.
+ * <br>
+ * <br>
+ * List of properties which can be override : <br>
+ * <ul>
+ * <li>CRS</li>
+ * <li>GridToCRS</li>
+ * <li>PixelInCell</li>
+ * <li>Sample dimensions</li>
+ * </ul>
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -43,9 +58,10 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
     protected GeneralGridGeometry refGridGeom;
     protected List<GridSampleDimension> refDims;
 
-
     //overrided informations
-    protected GeneralGridGeometry overrideGridGeom;
+    protected CoordinateReferenceSystem overrideCRS;
+    protected PixelInCell overridePixelInCell;
+    protected MathTransform overrideGridToCrs;
     protected List<GridSampleDimension> overrideDims;
 
     public DecoratorCoverageReference(CoverageReference ref, CoverageStore store) {
@@ -53,11 +69,7 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
         this.ref = ref;
     }
 
-    public CoverageReference getDecorated(){
-        return ref;
-    }
-
-    private void loadRefData(int index) throws CoverageStoreException{
+    private void loadRefData(int index) throws CoverageStoreException {
         if(refGridGeom==null){
             final GridCoverageReader reader = ref.acquireReader();
             refGridGeom = reader.getGridGeometry(index);
@@ -66,15 +78,151 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
         }
     }
 
+    /**
+     * Get decorated coverage reference.
+     *
+     * @return CoverageReference, never null.
+     */
+    public CoverageReference getDecorated(){
+        return ref;
+    }
+
+    /**
+     * Check if at least one of the grid geometry properties has been overriden.
+     * 
+     * @return true of grid geometry is override
+     */
+    public boolean isGridGeometryOverriden(){
+        return overrideCRS!=null
+            || overrideGridToCrs!=null
+            || overridePixelInCell!=null;
+    }
+
+    /**
+     *
+     * @param index
+     * @return
+     * @throws CoverageStoreException
+     */
+    public GeneralGridGeometry getOriginalGridGeometry(int index) throws CoverageStoreException{
+        loadRefData(index);
+        return refGridGeom;
+    }
+
+    /**
+     * Get overriden CRS.
+     * 
+     * @return CoordinateReferenceSystem, can be null
+     */
+    public CoordinateReferenceSystem getOverrideCRS() {
+        return overrideCRS;
+    }
+
+    /**
+     * Set crs override.
+     *
+     * @param overrideCRS , can be null
+     */
+    public void setOverrideCRS(CoordinateReferenceSystem overrideCRS) {
+        if(this.overrideCRS==overrideCRS) return;
+        this.overrideCRS = overrideCRS;
+        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, name, null, null));
+    }
+
+    /**
+     * Get overriden PixelInCell.
+     *
+     * @return PixelInCell, can be null
+     */
+    public PixelInCell getOverridePixelInCell() {
+        return overridePixelInCell;
+    }
+
+    /**
+     * Set PixelInCell override.
+     *
+     * @param overridePixelInCell , can be null
+     */
+    public void setOverridePixelInCell(PixelInCell overridePixelInCell) {
+        this.overridePixelInCell = overridePixelInCell;
+    }
+
+    /**
+     * Get overriden grid to crs transform.
+     *
+     * @return MathTransform, can be null
+     */
+    public MathTransform getOverrideGridToCrs() {
+        return overrideGridToCrs;
+    }
+
+    /**
+     * Set grid to crs transform override.
+     *
+     * @param overrideGridToCrs , can be null
+     */
+    public void setOverrideGridToCrs(MathTransform overrideGridToCrs) {
+        if(this.overrideGridToCrs==overrideGridToCrs) return;
+        this.overrideGridToCrs = overrideGridToCrs;
+        sendStructureEvent(new CoverageStoreManagementEvent(this, CoverageStoreManagementEvent.Type.COVERAGE_UPDATE, name, null, null));
+    }
+
+    /**
+     * Get overriden sample dimensions.
+     *
+     * @return List, can be null
+     */
+    public List<GridSampleDimension> getOverrideDims() {
+        return overrideDims;
+    }
+
+    /**
+     * Set sample dimensions override.
+     *
+     * @param overrideDims , can be null
+     */
+    public void setOverrideDims(List<GridSampleDimension> overrideDims) {
+        this.overrideDims = overrideDims;
+    }
+
+    /**
+     * Get overriden grid geometry.
+     *
+     * @param index image index in reader
+     * @return overridden grid geometry or original one is there are no overrides.
+     * @throws CoverageStoreException
+     */
     public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException{
         loadRefData(index);
-        if(overrideGridGeom!=null){
-            return overrideGridGeom;
+        if(isGridGeometryOverriden()){
+            if(refGridGeom instanceof GridGeometry2D){
+                final GridEnvelope extent = refGridGeom.getExtent();
+                return new GridGeometry2D(
+                        extent,
+                        overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CORNER,
+                        overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(),
+                        overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem(),
+                        null);
+            }else{
+                final GridEnvelope extent = refGridGeom.getExtent();
+                return new GeneralGridGeometry(
+                        extent,
+                        overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CORNER,
+                        overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(),
+                        overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem());
+            }
         }else{
             return refGridGeom;
         }
     }
 
+    /**
+     * Get overriden sample dimensions
+     *
+     * @param index image index in reader
+     * @return overridden sample dimensions or original ones is there are no overrides.
+     * @throws CoverageStoreException
+     */
     public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException{
         loadRefData(index);
         if(overrideDims!=null){
@@ -84,41 +232,65 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int getImageIndex() {
         return ref.getImageIndex();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public CoverageDescription getMetadata() {
         return ref.getMetadata();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean isWritable() throws DataStoreException {
         return ref.isWritable();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public GridCoverageReader acquireReader() throws CoverageStoreException {
         return new DecoratorCoverageReader(this);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public GridCoverageWriter acquireWriter() throws CoverageStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void recycle(CoverageReader reader) {
         ((DecoratorCoverageReader)reader).dispose();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void recycle(GridCoverageWriter writer) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Image getLegend() throws DataStoreException {
         return ref.getLegend();
