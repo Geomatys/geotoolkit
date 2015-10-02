@@ -322,16 +322,22 @@ public class FXCQLEditor extends BorderPane {
         final FXCQLEditor editor = new FXCQLEditor(false);
         editor.setExpression(candidate);
         editor.setTarget(layer);
-        FXOptionDialog.showOkCancel(parent, editor, "CQL Editor", true);
-        return editor.getExpression();
+        if(FXOptionDialog.showOkCancel(parent, editor, "CQL Editor", true)){
+            return editor.getExpression();
+        }else{
+            return null;
+        }
     }
     
     public static Filter showFilterDialog(Node parent, MapLayer layer, Filter candidate) throws CQLException {
         final FXCQLEditor editor = new FXCQLEditor(true);
         editor.setFilter(candidate);
         editor.setTarget(layer);
-        FXOptionDialog.showOkCancel(parent, editor, "CQL Editor", true);
-        return editor.getFilter();
+        if(FXOptionDialog.showOkCancel(parent, editor, "CQL Editor", true)){
+            return editor.getFilter();
+        }else{
+            return null;
+        }
     }
 
 

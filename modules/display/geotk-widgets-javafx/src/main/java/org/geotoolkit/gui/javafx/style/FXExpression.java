@@ -80,7 +80,7 @@ public abstract class FXExpression extends FXStyleElementController<Expression> 
             public void handle(javafx.event.ActionEvent event) {
                 try{
                     final Expression ne = FXCQLEditor.showDialog(FXExpression.this, layer, value.get());
-                    if(!Objects.equals(ne, value.get())){
+                    if(ne!=null && !Objects.equals(ne, value.get())){
                         value.set(ne);
                     }
                 }catch(CQLException ex){
