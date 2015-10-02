@@ -21,6 +21,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.SpinnerValueFactory;
 import javax.measure.unit.Unit;
 import static org.geotoolkit.gui.javafx.style.FXStyleElementController.getStyleFactory;
 import org.geotoolkit.map.MapLayer;
@@ -34,6 +35,8 @@ import org.opengis.style.PolygonSymbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXPolygonSymbolizer extends FXStyleElementController<PolygonSymbolizer> {
+
+    private static final double LIMIT = 1000000000;
 
     @FXML private FXSymbolizerInfo uiInfo;
     @FXML protected FXFill uiFill;    
@@ -56,6 +59,9 @@ public class FXPolygonSymbolizer extends FXStyleElementController<PolygonSymboli
     @Override
     public void initialize() {
         super.initialize();
+        
+        uiOffset.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-LIMIT, +LIMIT, 0, 1));
+
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             final String name = uiInfo.getName();

@@ -20,6 +20,7 @@ package org.geotoolkit.gui.javafx.style;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.SpinnerValueFactory;
 import javax.measure.unit.Unit;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
@@ -32,6 +33,8 @@ import org.opengis.style.LineSymbolizer;
  * @author Johann Sorel (Geomatys)
  */
 public class FXLineSymbolizer extends FXStyleElementController<LineSymbolizer> {
+
+    private static final double LIMIT = 1000000000;
 
     @FXML
     private FXSymbolizerInfo uiInfo;
@@ -53,6 +56,9 @@ public class FXLineSymbolizer extends FXStyleElementController<LineSymbolizer> {
     @Override
     public void initialize() {
         super.initialize();
+
+        uiOffset.getEditor().getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-LIMIT, +LIMIT, 0, 1));
+
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             final String name = uiInfo.getName();
