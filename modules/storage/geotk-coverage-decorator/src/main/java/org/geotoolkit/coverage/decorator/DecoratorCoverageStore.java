@@ -35,6 +35,17 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 
 /**
+ * Decorates a coverage storeadding possibility to override properties of each coverage reference.
+ * <br>
+ * <br>
+ * List of properties which can be override : <br>
+ * <ul>
+ *  <li>CRS</li>
+ *  <li>GridToCRS</li>
+ *  <li>PixelInCell</li>
+ *  <li>Sample dimensions</li>
+ * </ul>
+ *
  *
  * @author Johann Sorel (Geomatys)
  */

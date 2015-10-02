@@ -42,10 +42,10 @@ import org.opengis.referencing.operation.MathTransform;
  * <br>
  * List of properties which can be override : <br>
  * <ul>
- * <li>CRS</li>
- * <li>GridToCRS</li>
- * <li>PixelInCell</li>
- * <li>Sample dimensions</li>
+ *  <li>CRS</li>
+ *  <li>GridToCRS</li>
+ *  <li>PixelInCell</li>
+ *  <li>Sample dimensions</li>
  * </ul>
  *
  * @author Johann Sorel (Geomatys)
@@ -140,6 +140,7 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
 
     /**
      * Set PixelInCell override.
+     * Default is PixelInCell.CELL_CENTER.
      *
      * @param overridePixelInCell , can be null
      */
@@ -158,6 +159,7 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
 
     /**
      * Set grid to crs transform override.
+     * This transform is relative to PixelInCell.CELL_CENTER if PixelInCell property has not been override.
      *
      * @param overrideGridToCrs , can be null
      */
@@ -199,7 +201,7 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
                 final GridEnvelope extent = refGridGeom.getExtent();
                 return new GridGeometry2D(
                         extent,
-                        overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CORNER,
+                        overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,
                         overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(),
                         overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem(),
                         null);
@@ -207,7 +209,7 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
                 final GridEnvelope extent = refGridGeom.getExtent();
                 return new GeneralGridGeometry(
                         extent,
-                        overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CORNER,
+                        overridePixelInCell!=null ? overridePixelInCell : PixelInCell.CELL_CENTER,
                         overrideGridToCrs!=null ? overrideGridToCrs : refGridGeom.getGridToCRS(),
                         overrideCRS!=null ? overrideCRS : refGridGeom.getCoordinateReferenceSystem());
             }

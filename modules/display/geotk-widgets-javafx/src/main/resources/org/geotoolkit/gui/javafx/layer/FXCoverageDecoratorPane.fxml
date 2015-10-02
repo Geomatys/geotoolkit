@@ -8,11 +8,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root id="AnchorPane" type="GridPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root id="AnchorPane" hgap="5.0" type="GridPane" vgap="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <rowConstraints>
-      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
       <RowConstraints minHeight="10.0" />
-      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="NEVER" />
       <RowConstraints vgrow="NEVER" />
       <RowConstraints minHeight="-Infinity" vgrow="NEVER" />
    </rowConstraints>
@@ -21,22 +21,6 @@
       <ColumnConstraints minWidth="10.0" />
    </columnConstraints>
    <children>
-      <Label text="%org.geotoolkit.gui.javafx.layer.FXCoverageDecoratorPane.crs" GridPane.columnIndex="1">
-         <GridPane.margin>
-            <Insets />
-         </GridPane.margin>
-         <font>
-            <Font name="System Bold" size="13.0" />
-         </font>
-      </Label>
-      <Label text="%org.geotoolkit.gui.javafx.layer.FXCoverageDecoratorPane.gridtocrs" GridPane.columnIndex="1" GridPane.rowIndex="2">
-         <GridPane.margin>
-            <Insets />
-         </GridPane.margin>
-         <font>
-            <Font name="System Bold" size="13.0" />
-         </font>
-      </Label>
       <GridPane fx:id="uiTrsPane" hgap="10.0" vgap="10.0" GridPane.columnSpan="2" GridPane.rowIndex="3">
         <columnConstraints>
           <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
@@ -70,16 +54,24 @@
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </GridPane.margin>
       </HBox>
-      <CheckBox fx:id="uiGridToCrs" mnemonicParsing="false" GridPane.rowIndex="2">
+      <CheckBox fx:id="uiGridToCrs" mnemonicParsing="false" text="%org.geotoolkit.gui.javafx.layer.FXCoverageDecoratorPane.gridtocrs" GridPane.rowIndex="2">
          <GridPane.margin>
-            <Insets left="10.0" />
+            <Insets />
          </GridPane.margin>
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
       </CheckBox>
-      <CheckBox fx:id="uiCrs" mnemonicParsing="false">
+      <CheckBox fx:id="uiCrs" mnemonicParsing="false" text="%org.geotoolkit.gui.javafx.layer.FXCoverageDecoratorPane.crs">
          <GridPane.margin>
-            <Insets left="10.0" />
+            <Insets />
          </GridPane.margin>
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
       </CheckBox>
+      <Button mnemonicParsing="false" onAction="#resetCrs" text="%org.geotoolkit.gui.javafx.layer.FXCoverageDecoratorPane.reset" GridPane.columnIndex="1" />
+      <Button mnemonicParsing="false" onAction="#resetGridToCrs" text="%org.geotoolkit.gui.javafx.layer.FXCoverageDecoratorPane.reset" GridPane.columnIndex="1" GridPane.rowIndex="2" />
    </children>
    <padding>
       <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />

@@ -86,14 +86,14 @@ public class DecoratorCoverageReader extends GridCoverageReader{
             final GeneralGridGeometry originalGridGeometry = ref.getOriginalGridGeometry(index);
 
             //convert parameters to fit overrides
-            double[] queryRes = param.getResolution();
-            CoordinateReferenceSystem queryCrs = param.getCoordinateReferenceSystem();
-            Envelope queryEnv = param.getEnvelope();
+            double[] queryRes = param==null ? null : param.getResolution();
+            CoordinateReferenceSystem queryCrs = param==null ? null : param.getCoordinateReferenceSystem();
+            Envelope queryEnv = param==null ? null : param.getEnvelope();
 
             //find requested envelope
-            if(queryEnv==null && param.getCoordinateReferenceSystem()!=null){
+            if(queryEnv==null && queryCrs!=null){
                 try {
-                    queryEnv = CRS.transform(overrideGridGeometry.getEnvelope(),param.getCoordinateReferenceSystem());
+                    queryEnv = CRS.transform(overrideGridGeometry.getEnvelope(),queryCrs);
                 } catch (TransformException ex) {
                     throw new CoverageStoreException(ex.getMessage(), ex);
                 }
