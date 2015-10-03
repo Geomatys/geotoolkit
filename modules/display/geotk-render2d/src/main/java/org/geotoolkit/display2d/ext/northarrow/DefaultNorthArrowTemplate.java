@@ -24,10 +24,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.renderer.style.DynamicSymbolFactoryFinder;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Default north arrow template, immutable.
@@ -61,7 +61,7 @@ public class DefaultNorthArrowTemplate implements NorthArrowTemplate{
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(DefaultNorthArrowTemplate.class.getName()).log(Level.WARNING, "image might be an svg", ex);
+            Logging.getLogger("org.geotoolkit.display2d.ext.northarrow").log(Level.WARNING, "image might be an svg", ex);
         }
 
     }

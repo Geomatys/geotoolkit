@@ -79,7 +79,7 @@ import org.xml.sax.InputSource;
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
             } catch (MalformedURLException ex) {
-                Logging.getLogger(WMSBindingUtilities.class).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.wms.xml").log(Level.WARNING, null, ex);
                 return null;
             }
 

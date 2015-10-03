@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Used for {@link org.geotoolkit.data.mapinfo.mif.MIFUtils.GeometryType}, to allow us pass a method for building geometry as
@@ -44,7 +45,7 @@ import org.apache.sis.util.ArgumentChecks;
  */
 public abstract class MIFGeometryBuilder {
 
-    protected final static Logger LOGGER = Logger.getLogger(MIFGeometryBuilder.class.getName());
+    protected final static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo.mif.geometry");
     protected final static GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel());
 
 

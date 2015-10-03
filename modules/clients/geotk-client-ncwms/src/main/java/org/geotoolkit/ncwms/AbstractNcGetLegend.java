@@ -30,18 +30,18 @@ import org.geotoolkit.wms.AbstractGetLegend;
  * @module pending
  */
 public abstract class AbstractNcGetLegend extends AbstractGetLegend implements NcGetLegendRequest {
-    
+
     /**
      * Default logger for all GetLegendGraphic requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractNcGetLegend.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ncwms");
+
     protected Integer opacity = null;
-    
+
     protected Integer numColorBands = null;
-    
+
     protected Boolean logScale = null;
-    
+
     protected String palette = null;
 
     /**
@@ -49,8 +49,8 @@ public abstract class AbstractNcGetLegend extends AbstractGetLegend implements N
      */
     protected AbstractNcGetLegend(final String serverURL, final String version, final ClientSecurity security) {
         super(serverURL, version, security);
-    }    
-    
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -98,7 +98,7 @@ public abstract class AbstractNcGetLegend extends AbstractGetLegend implements N
     public void setLogScale(final Boolean logScale) {
         this.logScale = logScale;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -114,23 +114,23 @@ public abstract class AbstractNcGetLegend extends AbstractGetLegend implements N
     public void setPalette(final String palette) {
         this.palette = palette;
     };
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     protected void prepareParameters() {
         super.prepareParameters();
-        
+
         if (opacity != null)
             requestParameters.put("OPACITY", String.valueOf(opacity));
-        
+
         if (numColorBands != null)
             requestParameters.put("NUMCOLORBANDS", String.valueOf(numColorBands));
-        
+
         if (logScale != null)
-            requestParameters.put("LOGSCALE", String.valueOf(logScale));        
-        
+            requestParameters.put("LOGSCALE", String.valueOf(logScale));
+
         if (palette != null)
             requestParameters.put("PALETTE", palette);
 

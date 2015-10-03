@@ -19,8 +19,6 @@ package org.geotoolkit.gui.swing.chooser;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -54,7 +52,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class JFeatureStoreChooser extends javax.swing.JPanel {
 
-    private static final Logger LOGGER = Logging.getLogger(JFeatureStoreChooser.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.chooser");
 
     private static final Comparator<FeatureStoreFactory> SORTER = new Comparator<FeatureStoreFactory>() {
         @Override
@@ -265,7 +263,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             chooser.guiEditor.setAvailableEditors(editors);
         }
         chooser.setLayerSelectionVisible(layerVisible);
-        
+
         final int res = JOptionDialog.show(parent, chooser, JOptionPane.OK_CANCEL_OPTION);
 
         if (JOptionPane.OK_OPTION == res) {

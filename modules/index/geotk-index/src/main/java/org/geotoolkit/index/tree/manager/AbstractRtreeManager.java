@@ -40,7 +40,7 @@ public class AbstractRtreeManager {
     protected static final Map<File, Tree<NamedEnvelope>> CACHED_TREES = new HashMap<>();
     protected static final Map<File, List<Object>> TREE_OWNERS = new HashMap<>();
 
-    protected static final Logger LOGGER = Logging.getLogger(FileRtreeManager.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree.manager");
 
     public static final CoordinateReferenceSystem DEFAULT_CRS;
 

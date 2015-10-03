@@ -32,7 +32,6 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
@@ -181,7 +180,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
                     try {
                         this.srsName = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, true);
                     } catch (FactoryException ex) {
-                        Logging.getLogger(DirectPositionType.class).log(Level.WARNING, null, ex);
+                        Logging.getLogger("org.geotoolkit.gml.xml.v311").log(Level.WARNING, null, ex);
                     }
                 }
                 this.srsDimension = position.getDimension();
@@ -301,10 +300,8 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
         if (srsName != null) {
             try {
                 return CRS.decode(srsName);
-            } catch (NoSuchAuthorityCodeException ex) {
-                Logging.getLogger(DirectPositionType.class).log(Level.WARNING, null, ex);
             } catch (FactoryException ex) {
-                Logging.getLogger(DirectPositionType.class).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.gml.xml.v311").log(Level.WARNING, null, ex);
             }
         }
         return null;

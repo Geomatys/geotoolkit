@@ -44,7 +44,7 @@ import javax.xml.bind.JAXBContext;
  */
 public class JAXBSLDUtilities {
 
-    private static final Logger LOGGER = Logging.getLogger(JAXBSLDUtilities.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.sld.xml");
 
     private final FilterFactory2 filterFactory;
     private final MutableStyleFactory styleFactory;
@@ -87,10 +87,10 @@ public class JAXBSLDUtilities {
             org.geotoolkit.sld.xml.v100.SymbolizerType st = ite.next();
             classes.add(st.getClass());
         }
-        
+
         return classes;
     }
-    
+
     public static List<Class> getSLD110PoolClasses(){
         final List<Class> classes = new ArrayList<>();
         classes.add(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
@@ -110,7 +110,7 @@ public class JAXBSLDUtilities {
                 throw new RuntimeException("Could not load Extension symbolizer object factory : "+factoryClassName,ex);
             }
         }
-        
+
         return classes;
     }
 

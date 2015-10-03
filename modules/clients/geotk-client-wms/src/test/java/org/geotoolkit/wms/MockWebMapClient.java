@@ -38,7 +38,7 @@ import org.apache.sis.xml.MarshallerPool;
  */
 public class MockWebMapClient extends WebMapClient{
 
-    private final static Logger LOGGER = Logging.getLogger(MockWebMapClient.class);
+    private final static Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
     private final AbstractWMSCapabilities capa111;
     private final AbstractWMSCapabilities capa130;
 

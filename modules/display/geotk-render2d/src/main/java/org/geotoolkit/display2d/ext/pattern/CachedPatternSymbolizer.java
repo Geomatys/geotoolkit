@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
@@ -45,6 +44,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -119,7 +119,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
             polygons = (Geometry[]) process.call().parameter(
                 CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).getValue();
         } catch (ProcessException ex) {
-            Logger.getLogger(CachedPatternSymbolizer.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.display2d.ext.pattern").log(Level.WARNING, null, ex);
             return features;
         }
 

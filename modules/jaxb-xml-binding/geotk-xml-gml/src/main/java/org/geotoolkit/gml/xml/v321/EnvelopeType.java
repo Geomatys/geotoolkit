@@ -79,7 +79,7 @@ import org.opengis.util.FactoryException;
 @XmlRootElement(name = "Envelope")
 public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
 
-    private static final Logger LOGGER = Logging.getLogger(EnvelopeType.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml.xml.v321");
 
     private DirectPositionType lowerCorner;
     private DirectPositionType upperCorner;
@@ -161,7 +161,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
             }
         }
     }
-    
+
     public EnvelopeType(final org.opengis.geometry.Envelope env) {
         this.pos = new ArrayList<>();
         if (env != null) {

@@ -74,7 +74,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
      */
     public static final String PROPERTY_NIO = "nio_query";
 
-    protected static final Logger LOGGER = Logging.getLogger(CachedPyramidSet.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.client.map");
 
     //NIO netty bootstrap.
     private static ClientBootstrap BOOTSTRAP;
@@ -129,7 +129,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
         }
-        
+
         if (cacheImages) {
             return new DefaultTileReference(spi, getTileImage(mosaic, col, row, hints), 0, new Point(col, row));
         } else {
@@ -250,7 +250,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
                     str = str.substring(str.indexOf('/'));
                     downloadList.add(new ImagePack(str, mosaic, p, hints));
                 } catch (MalformedURLException ex) {
-                    Logger.getLogger(CachedPyramidSet.class.getName()).log(Level.SEVERE, null, ex);
+                    Logging.getLogger("org.geotoolkit.client.map").log(Level.SEVERE, null, ex);
                 }
             }
         }

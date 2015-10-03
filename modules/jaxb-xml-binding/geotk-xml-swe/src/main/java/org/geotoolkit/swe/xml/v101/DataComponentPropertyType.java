@@ -18,7 +18,6 @@ package org.geotoolkit.swe.xml.v101;
 
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -41,6 +40,7 @@ import org.geotoolkit.swe.xml.DataRecord;
 import org.geotoolkit.swe.xml.Position;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.Vector;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -89,18 +89,18 @@ public class DataComponentPropertyType implements DataComponentProperty {
     private CountRange countRange;
     @XmlElement(name = "TimeRange")
     private TimeRange timeRange;
-    
+
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
     private JAXBElement<? extends AbstractDataRecordType> abstractDataRecord;
-    
+
     @XmlTransient
     private JAXBElement<? extends AbstractDataRecordType> hiddenAbstractDataRecord;
-    
+
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlSchemaType(name = "token")
     private String name;
-    
+
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     private String remoteSchema;
@@ -124,7 +124,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
 
     @XmlTransient
     private static final ObjectFactory sweFactory = new ObjectFactory();
-    
+
     public static final DataComponentPropertyType LATITUDE_FIELD  = new DataComponentPropertyType("Latitude", null, new QuantityType("urn:ogc:phenomenon:latitude:wgs84", "degree"));
 
     public static final DataComponentPropertyType LONGITUDE_FIELD = new DataComponentPropertyType("Longitude", null,new QuantityType("urn:ogc:phenomenon:longitude:wgs84", "degree"));
@@ -132,18 +132,18 @@ public class DataComponentPropertyType implements DataComponentProperty {
     public static final DataComponentPropertyType FEATURE_FIELD   = new DataComponentPropertyType("FeatureID", null, new Text("urn:ogc:data:feature", null));
 
     public static final DataComponentPropertyType PRESSION_FIELD  = new DataComponentPropertyType("Pression",  null, new QuantityType("urn:ogc:phenomenon:PRES", "decibar"));
-    
+
     public static final DataComponentPropertyType DEPTH_FIELD     = new DataComponentPropertyType("Depth",  null, new QuantityType("urn:ogc:phenomenon:depth", "metres"));
-    
+
     public static final DataComponentPropertyType DEPTH_FIELD2    = new DataComponentPropertyType("Depth",  null, new QuantityType("urn:ogc:phenomenon:depth", "m"));
 
     public static final DataComponentPropertyType TIME_FIELD      = new DataComponentPropertyType("Time",      null, new TimeType("urn:ogc:data:time:iso8601"));
-    
+
     /**
      * An empty constructor used by JAXB
      */
     DataComponentPropertyType(){
-        
+
     }
 
     public DataComponentPropertyType(final String name, final String role, final TimeRange timeRange) {
@@ -181,13 +181,13 @@ public class DataComponentPropertyType implements DataComponentProperty {
         this.role      = role;
         this.quantityRange = quantityRange;
     }
-    
+
     public DataComponentPropertyType(final String name, final String role, final Category category) {
         this.name      = name;
         this.role      = role;
         this.category  = category;
     }
-    
+
     public DataComponentPropertyType(final String name, final String role, final Text text) {
         this.name      = name;
         this.role      = role;
@@ -265,7 +265,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     }
 
     /**
-     * 
+     *
      */
     public DataComponentPropertyType(final AbstractDataRecordType component, final String name) {
         this.name = name;
@@ -344,7 +344,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
         } else if (obj instanceof VectorType) {
             abstractDataRecord = factory.createVector((VectorType) obj);
         } else if (obj != null ){
-            Logger.getLogger("org.geotoolkit.swe.xml.v101").log(Level.WARNING, "Unimplemented case:{0}", obj.getClass().getName());
+            Logging.getLogger("org.geotoolkit.swe.xml.v101").log(Level.WARNING, "Unimplemented case:{0}", obj.getClass().getName());
         }
 
     }
@@ -376,9 +376,9 @@ public class DataComponentPropertyType implements DataComponentProperty {
             return null;
         }
     }
-    
+
     /**
-     * 
+     *
      */
     @Override
     public String getName(){
@@ -447,7 +447,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     public String getActuate() {
         return actuate;
     }
-    
+
      /**
      * Verify if this entry is identical to specified object.
      */

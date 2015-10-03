@@ -21,7 +21,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
@@ -29,6 +28,7 @@ import org.geotoolkit.data.FeatureWriter;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.FeatureType;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Basic support for a FeatureIterator that delegate to a standard java iterator.
@@ -70,7 +70,7 @@ public class GenericWrapFeatureIterator implements FeatureIterator {
             try {
                 ((Closeable) iterator).close();
             } catch (IOException ex) {
-                Logger.getLogger(GenericWrapFeatureIterator.class.getName()).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, null, ex);
             }
         }
     }
@@ -103,7 +103,7 @@ public class GenericWrapFeatureIterator implements FeatureIterator {
 
     /**
      * Wrap an Iterator as a FeatureReader.
-     * 
+     *
      * @param <T> extends FeatureType
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
@@ -121,7 +121,7 @@ public class GenericWrapFeatureIterator implements FeatureIterator {
         public FeatureType getFeatureType() {
             return type;
         }
-        
+
     }
 
     /**

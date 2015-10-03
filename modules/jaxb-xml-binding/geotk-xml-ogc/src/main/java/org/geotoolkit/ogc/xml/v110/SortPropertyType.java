@@ -30,9 +30,9 @@ import org.opengis.filter.sort.SortOrder;
 
 /**
  * <p>Java class for SortPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SortPropertyType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.opengis.filter.sort.SortOrder;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,20 +56,20 @@ import org.opengis.filter.sort.SortOrder;
 })
 public class SortPropertyType implements SortBy {
 
-    private static final Logger LOGGER = Logging.getLogger(SortByType.class);
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ogc.xml.v110");
+
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
     @XmlElement(name = "SortOrder")
     private SortOrderType sortOrder;
-    
+
     /**
      * Empty constructor used by JAXB
      */
     public SortPropertyType(){
-        
+
     }
-    
+
     /**
      * build a new SOrt property object.
      */
@@ -83,7 +83,7 @@ public class SortPropertyType implements SortBy {
             LOGGER.log(Level.WARNING, "unexpected SortOrder:{0}.\nexpecting for ASCENDING or DESCENDING", sortOrder);
         }
     }
-    
+
     /**
      * build a new SOrt property object.
      */
@@ -91,7 +91,7 @@ public class SortPropertyType implements SortBy {
         this.propertyName = new PropertyNameType(propertyName);
         this.sortOrder    = sortOrder;
     }
-    
+
     public SortPropertyType(final SortPropertyType that){
         if (that != null) {
             if (that.propertyName != null) {
@@ -122,7 +122,7 @@ public class SortPropertyType implements SortBy {
             return SortOrder.ASCENDING;
         }
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */

@@ -49,7 +49,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -77,7 +76,7 @@ import static org.geotoolkit.util.DomUtilities.getNodeByLocalName;
 
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataWriter;
 import org.geotoolkit.util.DomUtilities;
-import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -342,16 +341,16 @@ public class TiffImageWriter extends SpatialImageWriter {
      * Map organize in ascending order by {@code Integer} tag value, and contain all tiff tag in attempt to be writen.
      */
     private TreeMap<Integer, Map> headProperties;
-    
+
     /**
      * Attribut used to stipulate into internal {@link #headProperties} that represent noData tag.
-     * Each keys from {@link #headProperties} must be single, and in tiff specification 
-     * it exist only one tag value {@linkplain GeoTiffConstants#GDAL_NODATA_KEY 42113}, 
+     * Each keys from {@link #headProperties} must be single, and in tiff specification
+     * it exist only one tag value {@linkplain GeoTiffConstants#GDAL_NODATA_KEY 42113},
      * to avoid this singularity we define an other temporary value which is out of tag space number.
-     * Moreover Tiff specification don't necessarily allow multiple nodata tag but do no ban it. 
+     * Moreover Tiff specification don't necessarily allow multiple nodata tag but do no ban it.
      */
     private int noDataTemporaryKey = 1000000;
-    
+
     /**
      * table of length 2 where ifdPosition[0] contain chanel position of current
      * image data beginning and ifdPosition[1] contain chanel position where to write the nextIFD offset.
@@ -910,9 +909,9 @@ public class TiffImageWriter extends SpatialImageWriter {
 
         if (!(iioImgMetadata instanceof SpatialMetadata)) return;
 
-        final String tiffFormatName = (getOriginatingProvider() != null) 
-                                     ? getOriginatingProvider().getNativeImageMetadataFormatName() 
-                                     : null; 
+        final String tiffFormatName = (getOriginatingProvider() != null)
+                                     ? getOriginatingProvider().getNativeImageMetadataFormatName()
+                                     : null;
 
         final String[] formatNames = iioImgMetadata.getMetadataFormatNames();
         if (!ArraysExt.contains(formatNames, tiffFormatName) &&
@@ -1068,7 +1067,7 @@ public class TiffImageWriter extends SpatialImageWriter {
          * Initialize attribut for particularity case multiple noData.
          */
         noDataTemporaryKey = 1000000;
-        
+
         final NodeList iioNodeList = tmpIfd.getChildNodes();
         final int iioLength        = iioNodeList.getLength();
         for (int i = 0; i < iioLength; i++) {
@@ -1176,8 +1175,8 @@ public class TiffImageWriter extends SpatialImageWriter {
             }
         }
         if (count > 0) { // -- to avoid unknown tag writing --//
-            addProperty((tagnumber == GeoTiffConstants.GDAL_NODATA_KEY) 
-                        ? noDataTemporaryKey++ 
+            addProperty((tagnumber == GeoTiffConstants.GDAL_NODATA_KEY)
+                        ? noDataTemporaryKey++
                         : tagnumber, type, count, value, properties);
         }
     }
@@ -2047,14 +2046,14 @@ public class TiffImageWriter extends SpatialImageWriter {
                                 // -- get the following image raster
                                 final Raster imageTile        = image.getTile(imgTx, imgTy);
                                 final DataBuffer rasterBuffer = imageTile.getDataBuffer();
-                                
-                                
+
+
                                 // offset in pixels number in source image currently tile
                                 final int stepOffsetBeforeY = (deby - cuImgTileMinY) * imageTile.getWidth();
-                        
+
                                 // -- offset in y direction
                                 final int stepY = (y - deby) * imageTile.getWidth();
-                                
+
                                 //-- to crop last image raster on higher border index
                                 //-- which not necessary same size of other tile. (It is in contradiction of renderedImage but not false)
                                 cuImgTileMaxX = StrictMath.min(cuImgTileMaxX, cuImgTileMinX + imageTile.getWidth());
@@ -2507,13 +2506,13 @@ public class TiffImageWriter extends SpatialImageWriter {
                     writeTag((short)wTag, type, count, offOrVal);
                 } else {
                     //-- put tag and no wTag to avoid TreeMap singularity for particularity multiple noData
-                    defferedMap.put(tag, tagAttribute);//-- 
+                    defferedMap.put(tag, tagAttribute);//--
                     writeDefferedTag((short)wTag, type, count, deferredTagPos);
                     deferredTagPos += getAttributeLength(tagAttribute);
                 }
             }
         }
-        
+
         //-- write next IFD file position --//
         //-- if 0 means no next IFD. --//
         ifdPosition[1] = channel.getStreamPosition();
@@ -2521,7 +2520,7 @@ public class TiffImageWriter extends SpatialImageWriter {
         if (isBigTIFF) channel.writeLong(0);
         else           channel.writeInt(0);
 
-        assert (channel.getStreamPosition()) == endTagPos 
+        assert (channel.getStreamPosition()) == endTagPos
             : "channel and buffer position = "+((channel.getStreamPosition()))+" end tag position = "+endTagPos;
 
         for (final int tag : defferedMap.keySet()) {
@@ -2817,11 +2816,11 @@ public class TiffImageWriter extends SpatialImageWriter {
             }
 
            for (int ty = minTY; ty < maxTY; ty++) {
-               
+
                //-- define intersection on Y axis between srcRegion and current tile from source image --//
                final int currentImgTileMinY = imageMinY + ty * imgTileHeight;
                final int minRowY            = Math.max(srcRegion.y, currentImgTileMinY);
-               final int maxRowY            = StrictMath.min(Math.min(srcRegionMaxY, imageMinY + img.getHeight()), 
+               final int maxRowY            = StrictMath.min(Math.min(srcRegionMaxY, imageMinY + img.getHeight()),
                                                              currentImgTileMinY + imgTileHeight);
 
                for (int ry = minRowY; ry < maxRowY; ry += subsampleY) {
@@ -2838,10 +2837,10 @@ public class TiffImageWriter extends SpatialImageWriter {
                        // -- get the following image raster
                         final Raster imageTile        = img.getTile(tx, ty);
                         final DataBuffer rasterBuffer = imageTile.getDataBuffer();
-                        
-                        //-- width of the current tile 
+
+                        //-- width of the current tile
                         final int currentTileWidth = imageTile.getWidth();
-                        
+
                         final Object sourceArray;
                         switch (dataType) {
                             case DataBuffer.TYPE_BYTE   : sourceArray = ((DataBufferByte)   rasterBuffer).getData(bank); break;
@@ -2859,10 +2858,10 @@ public class TiffImageWriter extends SpatialImageWriter {
 
                        final int cuMinX = Math.max(srcRegion.x, currentImgTileMinX);
                        final int cuMaxX = Math.min(srcRegionMaxX, currentImgTileMaxX);
-                       
+
                        //-- offset de la tuile courante en ligne
                        final int rowArrayOffset = (minRowY - currentImgTileMinY) * StrictMath.min(imgTileWidth, currentTileWidth) * pixelLength;
-                       
+
                        //-- shift on each line. --//
                        final int arrayStepY   = (ry - minRowY) * StrictMath.min(imgTileWidth, currentTileWidth) * pixelLength;
                        final int arrayXOffset = (cuMinX - currentImgTileMinX) * pixelLength;
@@ -3462,7 +3461,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                 if (output instanceof File) channel.close();
             }
         } catch (IOException ex) {
-            Logger.getLogger(TiffImageWriter.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.image.io.plugin").log(Level.SEVERE, null, ex);
         }
         channel = null;
     }
@@ -3486,7 +3485,7 @@ public class TiffImageWriter extends SpatialImageWriter {
                 if (this.output instanceof File) channel.close();
             }
         } catch (IOException ex) {
-            Logger.getLogger(TiffImageWriter.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.image.io.plugin").log(Level.SEVERE, null, ex);
         }
         channel = null;
         super.setOutput(out);

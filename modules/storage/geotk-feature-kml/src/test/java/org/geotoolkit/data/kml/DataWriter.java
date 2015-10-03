@@ -19,16 +19,15 @@ package org.geotoolkit.data.kml;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.Extensions.Names;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.xml.KmlExtensionWriter;
-import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.xml.StaxStreamWriter;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -66,10 +65,8 @@ public class DataWriter extends StaxStreamWriter implements KmlExtensionWriter{
             writer.writeEndDocument();
             writer.flush();
 
-        } catch (KmlException ex) {
-            Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (XMLStreamException ex) {
-            Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (KmlException | XMLStreamException ex) {
+            Logging.getLogger("org.geotoolkit.data.kml.xml").log(Level.SEVERE, null, ex);
         }
     }
 

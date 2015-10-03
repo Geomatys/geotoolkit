@@ -288,7 +288,7 @@ public class ParameterEditor extends JComponent {
                          * level is slightly higher than in 'RegisteredOperationBrowser'
                          * since we have tried the global operation description as well.
                          */
-                        Logging.recoverableException(ParameterEditor.class, "setDescription", exception);
+                        Logging.recoverableException(null, ParameterEditor.class, "setDescription", exception);
                     }
                 }
             }

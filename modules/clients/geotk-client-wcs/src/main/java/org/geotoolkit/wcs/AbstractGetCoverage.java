@@ -44,7 +44,7 @@ public abstract class AbstractGetCoverage extends AbstractRequest implements Get
     /**
      * Default logger for all GetCoverage requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractGetCoverage.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wcs");
 
     protected final String version;
 

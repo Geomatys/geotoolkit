@@ -38,7 +38,7 @@ import org.geotoolkit.util.FileUtilities;
  */
 public class SetupNMEA implements SetupService {
 
-    private static final Logger LOGGER = Logging.getLogger(SetupNMEA.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.nmea");
     private static final String LIB8PATH = "/lib";
     private static final String[] RXTX_LIB_NAMES = new String[] {
       "rxtxSerial",

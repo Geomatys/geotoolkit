@@ -69,4 +69,9 @@ public final class DeprecatedCode extends ImmutableIdentifier implements Depreca
     public boolean isDeprecated() {
         return true;
     }
+
+    @Override
+    public InternationalString getRemarks() {
+        return super.getDescription();
+    }
 }

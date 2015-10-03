@@ -37,9 +37,9 @@ class XMLSerializePyramid extends XMLOldPyramid {
 
     /**
      * Only use java serialization.
-     * 
+     *
      * @param crs
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     @Override
     void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) throws DataStoreException {
@@ -51,10 +51,10 @@ class XMLSerializePyramid extends XMLOldPyramid {
             try {
                 this.serializedCrs = Base64.encodeObject((Serializable)crs);
         } catch (IOException ex) {
-            Logging.getLogger(this.getClass()).log(Level.WARNING, ex.getMessage(), ex);
+            Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, ex.getMessage(), ex);
             }
         }
-        
+
         if (this.crs == null && serializedCrs == null) {
             throw new DataStoreException("Input CRS cannot be serialized :\n"+crs);
         }

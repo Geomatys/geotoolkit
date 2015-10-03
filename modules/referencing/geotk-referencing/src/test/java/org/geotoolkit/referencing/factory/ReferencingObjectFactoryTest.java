@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Collection;
 import java.util.Collections;
 import java.awt.geom.AffineTransform;
+import org.opengis.metadata.Identifier;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
@@ -36,10 +37,10 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.cs.PredefinedCS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
-import org.apache.sis.metadata.iso.ImmutableIdentifier;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.referencing.operation.DefaultConversion;
+import org.apache.sis.util.Deprecable;
 import org.junit.*;
 
 import static org.geotoolkit.referencing.Assert.*;
@@ -220,7 +221,8 @@ public final strictfp class ReferencingObjectFactoryTest extends ReferencingTest
             }
             assertTrue(classification, mt instanceof AbstractMathTransform);
             final AbstractMathTransform amt = (AbstractMathTransform) mt;
-            if (!((ImmutableIdentifier) method.getName()).isDeprecated()) {
+            final Identifier name = method.getName();
+            if (!(name instanceof Deprecable) || !((Deprecable) name).isDeprecated()) {
                 assertEquals(classification, amt.getParameterDescriptors().getName().getCode());
             }
             param = amt.getParameterValues();

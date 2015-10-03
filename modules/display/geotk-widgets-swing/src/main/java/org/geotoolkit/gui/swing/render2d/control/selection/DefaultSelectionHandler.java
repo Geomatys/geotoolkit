@@ -84,7 +84,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class DefaultSelectionHandler implements CanvasHandler {
 
-    private static final Logger LOGGER = Logging.getLogger(DefaultSelectionHandler.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.control.selection");
 
     protected static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
                                                 new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));

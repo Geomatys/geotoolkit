@@ -61,7 +61,7 @@ public abstract class StyleElementEditor<T> extends JPanel {
      */
     private static final ServiceLoader<StyleElementEditor> LOADER = ServiceLoader.load(StyleElementEditor.class);
 
-    protected static final Logger LOGGER = Logging.getLogger(StyleElementEditor.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.style");
 
     private static MutableStyleFactory STYLE_FACTORY = null;
     private static FilterFactory2 FILTER_FACTORY = null;
@@ -124,8 +124,8 @@ public abstract class StyleElementEditor<T> extends JPanel {
     /**
      * Style editor elements are often group on a single panel.
      * Since each editor has it's own layout we need a way to align all the
-     * first column components. This method is expected to return the largest 
-     * width of those components. 
+     * first column components. This method is expected to return the largest
+     * width of those components.
      * If there are none, value -1 should be return.
      * @return largest first column width
      */
@@ -140,7 +140,7 @@ public abstract class StyleElementEditor<T> extends JPanel {
         }
         return width;
     }
-    
+
     /**
      * Set label column widgets width.
      * @param width
@@ -162,17 +162,17 @@ public abstract class StyleElementEditor<T> extends JPanel {
         revalidate();
         repaint();
     }
-    
+
     /**
      * List the first column components or sub style element editors.
      * @return never null, but can be empty
      */
     protected abstract Object[] getFirstColumnComponents();
-    
+
     protected Expression getSymbolizerGeometryExpression(Symbolizer symbolizer){
         return symbolizer.getGeometry();
     }
-    
+
     public static void alignLabelColumnWidth(StyleElementEditor ... editors){
         int width = -1;
         for(StyleElementEditor obj : editors){
@@ -184,7 +184,7 @@ public abstract class StyleElementEditor<T> extends JPanel {
             }
         }
     }
-    
+
     public void apply(){
     }
 

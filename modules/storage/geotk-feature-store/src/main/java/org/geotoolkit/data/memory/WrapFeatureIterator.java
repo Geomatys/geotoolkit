@@ -21,11 +21,11 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.feature.Feature;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Encapsulate FeatureIterator
@@ -72,7 +72,7 @@ public abstract class WrapFeatureIterator implements FeatureIterator {
             try {
                 ((Closeable) originalFI).close();
             } catch (IOException ex) {
-                Logger.getLogger(WrapFeatureIterator.class.getName()).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, null, ex);
             }
         }
     }

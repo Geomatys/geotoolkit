@@ -42,7 +42,7 @@ import org.opengis.geometry.Envelope;
  */
 public abstract class TreeTest {
 
-    protected Logger LOGGER = Logging.getLogger(TreeTest.class);
+    protected Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree");
 
     /**
      * A temporary directory which will contains all files needed for Tree testing. Directory is deleted after each test
@@ -104,7 +104,7 @@ public abstract class TreeTest {
         }
         return true;
     }
-    
+
     protected boolean compareID (final int[] tabA, final int[] tabB) {
         if (tabA.length != tabB.length) return false;
         if (tabA.length == 0 && tabB.length == 0) return true;
@@ -120,7 +120,7 @@ public abstract class TreeTest {
         }
         return true;
     }
-    
+
     /**
      * Compare 2 lists elements.
      *
@@ -152,10 +152,10 @@ public abstract class TreeTest {
         }
         return true;
     }
-    
+
     /**
      * Return boundary of all element union from list parameter.
-     * 
+     *
      * @param list
      * @return boundary of all elements union from list parameter.
      */
@@ -168,10 +168,10 @@ public abstract class TreeTest {
         }
         return ge;
     }
-    
+
     /**
      * Return boundary of all element union from list parameter.
-     * 
+     *
      * @param list
      * @return boundary of all elements union from list parameter.
      */
@@ -184,7 +184,7 @@ public abstract class TreeTest {
         }
         return ge;
     }
-    
+
     /**
      * Create a default adapted test entry({@code GeneralEnvelope}).
      *

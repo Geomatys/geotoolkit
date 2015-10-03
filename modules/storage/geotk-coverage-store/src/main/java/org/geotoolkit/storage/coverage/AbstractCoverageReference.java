@@ -20,7 +20,6 @@ import java.awt.Point;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.TableColumn;
 import org.apache.sis.util.logging.Logging;
@@ -118,7 +117,7 @@ public abstract class AbstractCoverageReference extends DefaultDataNode implemen
             desc = new CoverageDescriptionAdapter(stats);
 
         } catch (CoverageStoreException | NoSuchIdentifierException | ProcessException ex) {
-            Logger.getLogger(AbstractCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+            Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
         }
 
         if (desc == null) {

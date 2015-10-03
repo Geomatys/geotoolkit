@@ -80,7 +80,7 @@ import static org.apache.sis.util.ArgumentChecks.*;
  */
 public class EditionHelper {
 
-    private static final Logger LOGGER = Logging.getLogger(EditionHelper.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.control.edition");
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
     private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
                                                 new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));

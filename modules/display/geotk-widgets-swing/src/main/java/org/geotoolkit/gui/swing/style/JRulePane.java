@@ -22,7 +22,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -42,6 +41,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableRule;
 import org.opengis.filter.Filter;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -252,7 +252,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
             rule.setFilter(nf);
             guiCQL.setFilter(rule.getFilter());
         } catch (CQLException ex) {
-            Logger.getLogger(JRulePane.class.getName()).log(Level.INFO, ex.getMessage(), ex);
+            Logging.getLogger("org.geotoolkit.gui.swing.style").log(Level.INFO, ex.getMessage(), ex);
         }
 
     }//GEN-LAST:event_guiFilterEditActionPerformed
@@ -335,7 +335,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
     public void apply() {
         create();
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabelAbstract,guiLabelElse,guiLabelMaxScale,guiLabelMinScale,guiLabelName,guiLabelTitle};

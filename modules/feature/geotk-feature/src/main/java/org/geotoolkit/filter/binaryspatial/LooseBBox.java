@@ -20,20 +20,18 @@ package org.geotoolkit.filter.binaryspatial;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
 
-import org.geotoolkit.feature.Feature;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.BoundingBox;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Perform the same work as the BBox expect it evaluate intersection only against
@@ -54,7 +52,7 @@ public class LooseBBox extends DefaultBBox{
     @Override
     public boolean evaluate(final Object object) {
         Geometry candidate = toGeometry(object, left);
-        
+
         if(candidate == null){
             return false;
         }
@@ -70,17 +68,8 @@ public class LooseBBox extends DefaultBBox{
                 if(!trs.isIdentity()){
                     candidate = JTS.transform(candidate, trs);
                 }
-            } catch (MismatchedDimensionException ex) {
-                Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
-                return false;
-            } catch (TransformException ex) {
-                Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
-                return false;
-            } catch (FactoryException ex) {
-                Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
-                return false;
-            } catch (IllegalArgumentException ex) {
-                Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
+            } catch (TransformException | FactoryException | IllegalArgumentException ex) {
+                Logging.getLogger("org.geotoolkit.filter.binaryspatial").log(Level.FINE, null, ex);
                 return false;
             }
         }

@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  */
 public class JTimeStamp extends javax.swing.JComponent {
 
-    private static final Logger LOGGER = Logging.getLogger(JTimeStamp.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.util");
     private boolean displaySeconds = false;
     private TimeZone timeZone;
 

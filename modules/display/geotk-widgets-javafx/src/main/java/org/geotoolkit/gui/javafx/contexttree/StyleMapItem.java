@@ -16,14 +16,12 @@
  */
 package org.geotoolkit.gui.javafx.contexttree;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -42,6 +40,7 @@ import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -103,7 +102,7 @@ public class StyleMapItem extends TreeItem implements LayerListener {
                 final WritableImage legend = SwingFXUtils.toFXImage(DefaultLegendService.portray(legendTemplate, source, null), null);
                 Platform.runLater(() -> imageProperty.set(legend));
             } catch (Exception e){
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Cannot build legend for mapItem "+source.getName(), e);
+                Logging.getLogger("org.geotoolkit.gui.javafx.contexttree").log(Level.WARNING, "Cannot build legend for mapItem "+source.getName(), e);
             }
             return null;
         });

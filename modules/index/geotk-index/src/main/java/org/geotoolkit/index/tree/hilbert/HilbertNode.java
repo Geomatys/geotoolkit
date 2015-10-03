@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
@@ -30,15 +29,16 @@ import static org.geotoolkit.internal.tree.TreeUtilities.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.internal.tree.TreeAccess;
 import org.geotoolkit.path.iterator.HilbertIterator;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Appropriate Node which match with {@link HilbertRTree} properties.<br/><br/>
- * 
+ *
  * In the case where HilbertNode is not a leaf, it adopte same comportement like a "standard" {@link Node}.<br/>
  * Whereas in case where HilbertNode is a leaf, this Node own an additionnal Node level above datas storage which named cells.<br/>
  * Each of them cells, sub-divide leaf in area of equal size and they are scheduled successively following <a href = "http://en.wikipedia.org/wiki/Hilbert_curve">Hilbert curve</a>.<br/>
  * Shedule this cells from this curve permit to determine more faster in which cell store or find data that considerably accelerate search action.
- * 
+ *
  * @author Remi Marechal (Geomatys).
  */
 final class HilbertNode extends Node {
@@ -47,37 +47,37 @@ final class HilbertNode extends Node {
      * Space dimension needed to compute appropriate leaf cells number.
      */
     private int dimension;
-    
+
     /**
      * Data list use durring increase or decrease Hilbert order.
      */
     private final List<Node> data = new ArrayList<Node>();
-    
+
     /**
      * data number within a leaf.<br/>
      * If Node is not a leaf data number always equal to zero.
      */
     private int dataCount;
-    
+
     /**
      * Current leaf Hilbert value.<br/>
-     * 
+     *
      * If Node is not a leaf hilbert order number always equal to zero.
      */
     private int currentHilbertOrder;
     private static final double LN2 = 0.6931471805599453;
-    
+
     /**
      * Create a Node adapted for Hilbert Tree implementation.
-     * 
+     *
      * @param tAF Object which store Node attributs.
      * @param nodeId invariable single integer Node identifier.
      * @param boundary double table which represent boundary Node coordinates.
      * @param properties define type of Node. see ({@link Node#properties}).
      * @param parentId identifier of parent Node Tree architecture.
      * @param siblingId identifier of sibling Node.
-     * @param childId if Node is a data it is the identifier of the data which is 
-     * store in this tree (see {@link Node#childId}) else it is the first child of this Node. 
+     * @param childId if Node is a data it is the identifier of the data which is
+     * store in this tree (see {@link Node#childId}) else it is the first child of this Node.
      * @see TreeAccess
      */
     HilbertNode(TreeAccess tAF, int nodeId, double[] boundary, byte properties, int parentId, int siblingId, int childId) {
@@ -90,9 +90,9 @@ final class HilbertNode extends Node {
     /**
      * Return true if all leaf Cells are full else false.<br/>
      * A cell is full when it contains maximum elements number permit by tree.
-     * 
+     *
      * @return true if all leaf Cells are full else false.
-     * @throws IOException 
+     * @throws IOException
      */
     private boolean isInternalyFull() throws IOException {
         int sibl = getChildId();
@@ -110,7 +110,7 @@ final class HilbertNode extends Node {
      * Return current hilbert value of HilbertNode.<br/>
      * If Node is not a leaf it is always 0.<br/>
      * Else if node is a leaf value begin at 0 to n where n is the higher value permit by tree.
-     * 
+     *
      * @return current hilbert value of HilbertNode.
      */
     public int getCurrentHilbertOrder() {
@@ -119,8 +119,8 @@ final class HilbertNode extends Node {
 
     /**
      * Affect an appropriate hilbert order to this HilbertNode.
-     * 
-     * @param currentHilbertOrder 
+     *
+     * @param currentHilbertOrder
      */
     public void setCurrentHilbertOrder(int currentHilbertOrder) {
         this.currentHilbertOrder = currentHilbertOrder;
@@ -130,7 +130,7 @@ final class HilbertNode extends Node {
      * Return number of datas within this HilbertNode.<br/>
      * If Node is not a leaf it is always 0.<br/>
      * Else data number is equal to sum of all child number from leaf cells.
-     * 
+     *
      * @return number of datas within this HilbertNode.
      */
     public int getDataCount() {
@@ -139,8 +139,8 @@ final class HilbertNode extends Node {
 
     /**
      * Affect an appropriate data number to this HilbertNode.
-     * 
-     * @param dataCount 
+     *
+     * @param dataCount
      */
     public void setDataCount(int dataCount) {
         this.dataCount = dataCount;
@@ -157,18 +157,18 @@ final class HilbertNode extends Node {
             addChild(fnod);
         }
     }
-    
+
     /**
      * {@inheritDoc }.
      */
     @Override
     public void addChild(Node node) throws IOException {
         if (isLeaf() && node.isData()) {
-            
-            if ((boundary == null || ArraysExt.hasNaN(boundary)) && getChildCount() == 0) { 
+
+            if ((boundary == null || ArraysExt.hasNaN(boundary)) && getChildCount() == 0) {
                 super.addChild(tAF.createNode(null, (byte) IS_CELL, this.getNodeId(), 0, 0));
             }
-            
+
             assert node.isData() : "future added child should be data.";
             final double[] nodeBound = node.getBoundary().clone();
             if (boundary == null) {
@@ -178,7 +178,7 @@ final class HilbertNode extends Node {
             }
             final Node[] children = super.getChildren();
             final int index = getAppropriateCellIndex(children, nodeBound);
-            
+
             if (index == -1) {
                 final double[] boundIncrease = boundary.clone();
                 // increase hilbert order
@@ -203,7 +203,7 @@ final class HilbertNode extends Node {
                     super.addChild(tAF.createNode(null, IS_CELL, this.getNodeId(), 0, 0));
                 }
                 data.add(node);
-                for (Node dat : data) { 
+                for (Node dat : data) {
                     setBoundary(boundIncrease);
                     addChild(dat);
                 }
@@ -219,7 +219,7 @@ final class HilbertNode extends Node {
                 tAF.writeNode(this);
             }
         } else {
-            super.addChild(node); 
+            super.addChild(node);
         }
     }
 
@@ -260,7 +260,7 @@ final class HilbertNode extends Node {
                             if (removed) dataCount--;
                         }
                         if (!children[i].isEmpty()) {
-                            // boundary 
+                            // boundary
                             if (boundAdd == null) {
                                 boundAdd = children[i].getBoundary().clone();
                             } else {
@@ -302,7 +302,7 @@ final class HilbertNode extends Node {
                     for (int i = 0; i < nbCell; i++) {
                         super.addChild(tAF.createNode(null, IS_CELL, this.getNodeId(), 0, 0));
                     }
-                    for (Node dat : data) { 
+                    for (Node dat : data) {
                         setBoundary(boundAdd);
                         addChild(dat);
                     }
@@ -312,11 +312,11 @@ final class HilbertNode extends Node {
         }
         return super.removeData(identifier, coordinates);
     }
-    
-    
+
+
     /**
      * Return true if this HilbertNode is a Tree cell else false.
-     * 
+     *
      * @return true if this HilbertNode is a Tree cell else false.
      */
     public boolean isCell() {
@@ -328,10 +328,10 @@ final class HilbertNode extends Node {
      */
     @Override
     public void clear() {
-        super.clear(); 
+        super.clear();
         dataCount = 0;
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -404,7 +404,7 @@ final class HilbertNode extends Node {
      * Return true if this HilbertNode is empty.<br/>
      * If hilbertNode is a tree leaf, it define empty when its all leaf cells are empty.<br/>
      * Else it define empty like normaly comportement when it has no children.
-     * 
+     *
      * @return true if this HilbertNode is empty.
      */
     @Override
@@ -412,15 +412,15 @@ final class HilbertNode extends Node {
         if (isLeaf()) return dataCount == 0;
         return super.isEmpty();
     }
-   
+
     /**
      * Return true if HilbertNode is full.<br/>
-     * If hilbertNode is a tree leaf, it define full when its all leaf cells are full 
+     * If hilbertNode is a tree leaf, it define full when its all leaf cells are full
      * and its hilbertOrder reach the maximum hilbert order permit by Hilbert Tree implementation.<br/>
      * Else it define full like normaly comportement when it has children number equal to maximum elements per Node permit by tree.
-     * 
+     *
      * @return true if HilbertNode is full.
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     public boolean isFull() throws IOException {
@@ -430,10 +430,10 @@ final class HilbertNode extends Node {
             return super.isFull();
         }
     }
-    
+
     /**
      * Return the appropriate table index of Hilbert cell within {@link #children} table.
-     * 
+     *
      * @param coordinate boundary of element which will be insert.
      * @return Return the appropriate table index of Hilbert cell else return -1 if all cell are full.
      */
@@ -444,7 +444,7 @@ final class HilbertNode extends Node {
         final int index = getHVOfEntry(coordinate);
         return findCell(children, index);
     }
-    
+
     /**
      * To answer Hilbert criterion and to avoid call split method, in some case
      * we constrain tree leaf to choose another cell to insert Entry.<br/>
@@ -460,7 +460,7 @@ final class HilbertNode extends Node {
     private int findCell(final Node[] children, final int index) throws IOException {
         if (!isLeaf()) throw new IllegalArgumentException("impossible to find another leaf in Node which isn't LEAF tree");
         final int siz   = getChildCount();
-        assert (index < siz) : "wrong index in findAnotherCell"; 
+        assert (index < siz) : "wrong index in findAnotherCell";
         boolean oneTime = false;
         int indexTemp1  = index;
         for (int i = index; i < siz; i++) {
@@ -468,14 +468,14 @@ final class HilbertNode extends Node {
                 return i;
             }
             if (i == siz - 1) {
-                if (oneTime) return - 1;//all cells are full 
+                if (oneTime) return - 1;//all cells are full
                 oneTime = true;
                 i = -1;
             }
         }
         return indexTemp1;
     }
-    
+
     /**
      * Find Hilbert order of an entry from candidate.
      *
@@ -509,7 +509,7 @@ final class HilbertNode extends Node {
         }
         throw new IllegalArgumentException("should never throw");
     }
-    
+
     /**
      * Find {@code DirectPosition} Hilbert coordinate from this Node.
      *
@@ -524,7 +524,7 @@ final class HilbertNode extends Node {
         if (!contains(envelope, point)) {
             throw new IllegalArgumentException("Point is out of this node boundary");
         }
-        
+
         final double div  = 2 << hilbertOrder - 1;
         List<Integer> lInt = new ArrayList<Integer>();
 
@@ -541,8 +541,8 @@ final class HilbertNode extends Node {
         for (Integer val : lInt) result[i++] = val;
         return result;
     }
-    
-    
+
+
     /**
      * {@inheritDoc}.
      */
@@ -553,7 +553,7 @@ final class HilbertNode extends Node {
             if (!isData()) {
                 toString = Arrays.asList(super.getChildren());
                 String strparent =  (getParentId() == 0) ? "null" : (""+getParentId());
-                final String strHilbertLeaf = (isLeaf()) 
+                final String strHilbertLeaf = (isLeaf())
                         ? " hilbert Order : "+getCurrentHilbertOrder() +" children number : "+getChildCount()+" data number : "+getDataCount()
                         : " children number : "+getChildCount();
                 return Trees.toString(Classes.getShortClassName(this)+" parent : "+strparent+" : ID : "+getNodeId()
@@ -562,7 +562,7 @@ final class HilbertNode extends Node {
                 return Classes.getShortClassName(this)+"Data : parent : "+getParentId()+" ID : "+getNodeId()+" sibling : "+getSiblingId()+" value : "+(-getChildId())+" bound : "+Arrays.toString(getBoundary());
             }
         } catch (IOException ex) {
-            Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.index.tree.hilbert").log(Level.SEVERE, null, ex);
         }
         return null;
     }

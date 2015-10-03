@@ -343,7 +343,7 @@ final class SpinnerAngleModel extends AbstractSpinnerModel implements Serializab
                 final String minString = formatter.valueToString(formatter.getMinimum());
                 field.setColumns(Math.max(maxString.length(), minString.length()));
             } catch (ParseException exception) {
-                Logging.recoverableException(Editor.class, "<init>", exception);
+                Logging.recoverableException(null, Editor.class, "<init>", exception);
                 // Left the column width to its default value.
             }
         }

@@ -178,7 +178,7 @@ public abstract class AbstractRequest implements Request {
                         }
                     }
                 } catch (UnsupportedEncodingException ex) {
-                    Logging.getLogger(AbstractRequest.class).warning("Unsupported charset encoding:" + ex.getMessage());
+                    Logging.getLogger("org.geotoolkit.client").warning("Unsupported charset encoding:" + ex.getMessage());
                 }
                 firstKeyRead = true;
             }

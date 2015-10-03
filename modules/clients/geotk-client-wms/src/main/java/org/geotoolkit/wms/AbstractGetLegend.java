@@ -38,7 +38,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
     /**
      * Default logger for all GetLegendGraphic requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractGetLegend.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
     /**
      * The version to use for this webservice request.
@@ -65,8 +65,8 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
     protected AbstractGetLegend(final String serverURL, final String version, final ClientSecurity security){
         super(serverURL,security,null);
         this.version = version;
-    }    
-    
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -240,62 +240,62 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      */
     @Override
     public URL getURL() throws MalformedURLException {
-        
+
         if (layer == null)
             throw new IllegalArgumentException("Layer is not defined");
-        
-        
+
+
         if (format == null)
             throw new IllegalArgumentException("Format is not defined");
-        
-        
+
+
         if (version == null)
             throw new IllegalArgumentException("WMS version is not defined");
-        
-        
+
+
         // Mandatory parameters
         requestParameters.put("SERVICE",    "WMS");
         requestParameters.put("VERSION",    version);
         requestParameters.put("REQUEST",    "GetLegendGraphic");
         requestParameters.put("LAYER",      layer);
-        
-        
-        // Add optional parameters 
+
+
+        // Add optional parameters
         if (format != null)
             requestParameters.put("FORMAT",     format);
-        
+
         if (exception != null)
-            requestParameters.put("EXCEPTIONS", exception);        
+            requestParameters.put("EXCEPTIONS", exception);
 
         if (dimension != null) {
             requestParameters.put("WIDTH",      String.valueOf(dimension.width));
             requestParameters.put("HEIGHT",     String.valueOf(dimension.height));
         }
-        
-        
-        // Add one style parameter       
-        String styleParam = null; 
+
+
+        // Add one style parameter
+        String styleParam = null;
         String styleValue = null;
-        
+
         if (sldBody != null) {
             styleParam = "SLD_BODY";
             styleValue = sldBody;
-            
+
         } else if (sld != null) {
             styleParam = "SLD";
-            styleValue = sld;        
-        
+            styleValue = sld;
+
         } else if (style != null ) {
             styleParam = "STYLE";
-            styleValue = style;                 
+            styleValue = style;
         }
-        
+
         if (styleParam != null && styleValue != null)
             requestParameters.put(styleParam, styleValue);
-        
+
         if (sldVersion != null)
-            requestParameters.put("SLD_VERSION", sldVersion);        
-        
+            requestParameters.put("SLD_VERSION", sldVersion);
+
         if (rule != null) {
             requestParameters.put("RULE", rule);
         }
@@ -307,7 +307,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
         if (dims != null && !dims.isEmpty()) {
             requestParameters.putAll(dims);
         }
-        
+
         return super.getURL();
     }
 

@@ -50,7 +50,7 @@ import org.geotoolkit.image.palette.PaletteFactory;
 public class DefaultJenks extends AbstractExpression implements Jenks {
 
     private static final PaletteFactory PALETTE_FACTORY = PaletteFactory.getDefault();
-    private static final Logger LOGGER = Logging.getLogger(DefaultJenks.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.style.function");
 
     private Literal classNumber;
     private Literal paletteName;

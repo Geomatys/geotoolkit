@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStoreFinder;
@@ -47,6 +46,7 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -61,10 +61,8 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
     static {
         try {
             EPSG_4326 = CRS.decode("EPSG:4326");
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(JOSMExtractTypePane.class.getName()).log(Level.WARNING, null, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(JOSMExtractTypePane.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.data.osm.gui").log(Level.WARNING, null, ex);
         }
     }
 
@@ -90,7 +88,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         processBuilding(store, session);
         processNatural(store, session);
         processRailWay(store, session);
-        
+
     }
 
     private void processRailWay(final FeatureStore store, final Session session) throws DataStoreException{

@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -47,7 +46,6 @@ import org.jdesktop.swingx.table.DatePickerCellEditor;
 import org.netbeans.swing.outline.*;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
-import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -55,6 +53,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Property editor, can edit Feature/Complex attribut or single properties.
@@ -102,10 +101,8 @@ public class JFeatureOutLine extends Outline{
                         updateModel(treeModel, property);
                     }
                 });
-            } catch (InterruptedException ex) {
-                Logger.getLogger(JFeatureOutLine.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InvocationTargetException ex) {
-                Logger.getLogger(JFeatureOutLine.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InterruptedException | InvocationTargetException ex) {
+                Logging.getLogger("org.geotoolkit.gui.swing.propertyedit").log(Level.SEVERE, null, ex);
             }
         }
 

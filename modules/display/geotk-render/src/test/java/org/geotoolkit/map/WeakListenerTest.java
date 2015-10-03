@@ -20,11 +20,11 @@ import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 
+import org.apache.sis.util.logging.Logging;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -84,7 +84,7 @@ public class WeakListenerTest {
             public void itemChange(CollectionChangeEvent<MapItem> event) {
                 countItemChange.incrementAndGet();
             }
-            
+
         };
 
         ContextListener.Weak weak = new ContextListener.Weak(listener);
@@ -148,7 +148,7 @@ public class WeakListenerTest {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException ex) {
-                Logger.getLogger(WeakListenerTest.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.map").log(Level.SEVERE, null, ex);
             }
         }
     }

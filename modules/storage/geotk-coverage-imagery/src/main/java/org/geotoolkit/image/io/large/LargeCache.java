@@ -46,7 +46,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public final class LargeCache implements TileCache {
 
-    private static final Logger LOGGER = Logging.getLogger(LargeCache.class.getName());
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
 
     private static final BlockingQueue<Runnable> FLUSH_QUEUE = new LinkedBlockingQueue<>(64);
     static final ThreadPoolExecutor WRITER__EXECUTOR = new ThreadPoolExecutor(1, 4, 5, TimeUnit.MINUTES, FLUSH_QUEUE, new ThreadPoolExecutor.CallerRunsPolicy());
@@ -330,7 +330,7 @@ public final class LargeCache implements TileCache {
 //        try {
 //            return tileManagers.get(ri).getTiles();
 //        } catch (IOException ex) {
-//            Logger.getLogger("org.geotoolkit.image.io.large").log(Level.SEVERE, null, ex);
+//            Logging.getLogger("org.geotoolkit.image.io.large").log(Level.SEVERE, null, ex);
 //        }
 //        return null;
     }

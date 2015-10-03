@@ -25,7 +25,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
@@ -37,6 +36,7 @@ import static org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor.get
 import static org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor.setPreviousPath;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.feature.type.PropertyType;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Throw PropertyChange event when TextField text change.
@@ -75,7 +75,7 @@ public class URLEditor extends PropertyValueEditor implements ActionListener, Do
             try {
                 component.setText( ((URL) value).toURI().toString() );
             } catch (URISyntaxException ex) {
-                Logger.getLogger(URLEditor.class.getName()).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.featureeditor").log(Level.WARNING, null, ex);
             }
         }else{
             component.setText("");
@@ -88,7 +88,7 @@ public class URLEditor extends PropertyValueEditor implements ActionListener, Do
             try {
                 return new URL(str);
             } catch (MalformedURLException ex) {
-                Logger.getLogger(URLEditor.class.getName()).log(Level.FINER, null, ex);
+                Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.featureeditor").log(Level.FINER, null, ex);
                 return null;
             }
     }

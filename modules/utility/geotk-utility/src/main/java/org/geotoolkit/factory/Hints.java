@@ -988,7 +988,7 @@ public class Hints extends RenderingHints {
                 try {
                     valueClass = Class.forName(className);
                 } catch (ClassNotFoundException exception) {
-                    Logging.unexpectedException(Key.class, "getValueClass", exception);
+                    Logging.unexpectedException(null, Key.class, "getValueClass", exception);
                     valueClass = Object.class;
                 }
             }

@@ -33,6 +33,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.resources.Vocabulary;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.io.wkt.Warnings;
 
 /**
  * Display a WKT of the layer coordinate reference system.
@@ -116,7 +117,8 @@ public class JLayerCRSPane extends AbstractPropertyPane {
         String text, warning;
         try {
             text = formatter.format(item);
-            warning = formatter.getWarning();
+            Warnings w = formatter.getWarnings();
+            warning = (w != null) ? w.toString() : null;
         } catch (RuntimeException e) {
             text = String.valueOf((item!=null)?item.getName():"");
             warning = e.getLocalizedMessage();

@@ -27,7 +27,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -327,7 +326,7 @@ public class XmlFeatureTest {
                     result.getFeatureType().getName(), FF.sort("attDouble", SortOrder.ASCENDING)));
             ((AbstractFeatureCollection)result).setId(id);
         } catch (DataStoreException ex) {
-            Logger.getLogger(XmlFeatureTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.feature.xml").log(Level.SEVERE, null, ex);
         }
 
         FeatureIterator resultIte = result.iterator();
@@ -342,20 +341,20 @@ public class XmlFeatureTest {
         resultIte.close();
         expectedIte.close();
     }
-    
+
     @Ignore
     @Test
     public void testReadSimpleCollectionEmbeddedFT() throws JAXBException, IOException, XMLStreamException{
-        
+
         // verify that distant service is working properly
-        
+
         URL url = new URL("http://www.ifremer.fr/services/wfs1?SERVICE=WFS&VERSION=1.1.0&REQUEST=DescribeFeatureType&TYPENAME=quadrige&OUTPUTFORMAT=text/xml;%20subtype=gml/3.1.1");
         final String response = getStringResponse(url.openConnection());
         if (response.contains("<!-- ERROR: Failed opening layer (null) -->")) {
-            Logging.getLogger(this.getClass()).warning("Skipping embedded test. external service not responding correctly");
+            Logging.getLogger("org.geotoolkit.feature.xml").warning("Skipping embedded test. external service not responding correctly");
             return;
         }
-        
+
         JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
         reader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
 
@@ -389,7 +388,7 @@ public class XmlFeatureTest {
         final XmlFeatureWriter writer = new JAXPStreamFeatureWriter();
         writer.write(collectionSimple, temp);
         writer.dispose();
-        
+
         String s = temp.toString();
         s = s.replaceAll("timeStamp=\"[^\"]*\" ", "timeStamp=\"\" ");
         DomCompare.compare(FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml")), s);
@@ -458,7 +457,7 @@ public class XmlFeatureTest {
         result =  (Feature) obj;
         assertEquals(featureComplex, result);
     }
-    
+
     protected static String getStringResponse(URLConnection conec) throws UnsupportedEncodingException, IOException {
         final StringWriter sw     = new StringWriter();
         final BufferedReader in   = new BufferedReader(new InputStreamReader(conec.getInputStream(), "UTF-8"));

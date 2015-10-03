@@ -26,7 +26,6 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.xal.xml.XalWriter;
@@ -118,6 +117,7 @@ import org.geotoolkit.xml.StaxStreamWriter;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 
+import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -337,7 +337,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param replace
      * @throws XMLStreamException
      * @deprecated
@@ -450,7 +450,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param abstractLatLonBox
      * @throws XMLStreamException
      */
@@ -465,7 +465,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param subStyle
      * @throws XMLStreamException
      * @throws KmlException
@@ -730,7 +730,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param dataContainer
      * @throws XMLStreamException
      * @throws KmlException
@@ -768,7 +768,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param metadata
      * @throws XMLStreamException
      * @throws KmlException
@@ -784,7 +784,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param schemaData
      * @throws XMLStreamException
      * @throws KmlException
@@ -802,7 +802,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param simpleData
      * @throws XMLStreamException
      */
@@ -860,7 +860,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param lod
      * @throws XMLStreamException
      */
@@ -888,7 +888,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param latLonAltBox
      * @throws XMLStreamException
      */
@@ -935,7 +935,7 @@ public class KmlWriter extends StaxStreamWriter {
         try {
             XAL_WRITER.writeAddressDetails(details);
         } catch (XalException ex) {
-            Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, null, ex);
         }
         this.writer = XAL_WRITER.getWriter();
     }
@@ -957,7 +957,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param timeSpan
      * @throws XMLStreamException
      * @throws KmlException
@@ -980,7 +980,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param timeStamp
      * @throws XMLStreamException
      * @throws KmlException
@@ -1015,7 +1015,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param lookAt
      * @throws XMLStreamException
      */
@@ -1086,7 +1086,7 @@ public class KmlWriter extends StaxStreamWriter {
     /**
      * <p>This method writes the common fields for
      * AbstractView instances.</p>
-     * 
+     *
      * @param abstractView The AbstractView to write.
      * @throws XMLStreamException
      */
@@ -1169,7 +1169,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param pair
      * @throws XMLStreamException
      */
@@ -1195,7 +1195,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param style
      * @throws XMLStreamException
      * @throws KmlException
@@ -1348,7 +1348,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param listStyle
      * @throws XMLStreamException
      * @throws KmlException
@@ -1378,7 +1378,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param itemIcon
      * @throws XMLStreamException
      * @throws KmlException
@@ -1401,7 +1401,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param itemIconStates
      * @throws XMLStreamException
      */
@@ -1466,7 +1466,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param link
      * @throws XMLStreamException
      * @throws KmlException
@@ -1480,7 +1480,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param url
      * @throws XMLStreamException
      * @throws KmlException
@@ -1584,7 +1584,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param placemark
      * @throws XMLStreamException
      */
@@ -1640,7 +1640,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param photoOverlay
      * @throws XMLStreamException
      * @throws KmlException
@@ -1693,7 +1693,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param imagePyramid
      * @throws XMLStreamException
      */
@@ -1805,7 +1805,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param groundOverlay
      * @throws XMLStreamException
      * @throws KmlException
@@ -2013,7 +2013,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param simpleField
      * @throws XMLStreamException
      */
@@ -2168,7 +2168,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param scale
      * @throws XMLStreamException
      * @throws KmlException
@@ -2278,7 +2278,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param boundary
      * @throws XMLStreamException
      * @throws KmlException
@@ -2398,7 +2398,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param coordinates
      * @throws XMLStreamException
      */
@@ -2541,7 +2541,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param flyToView
      * @throws XMLStreamException
      */
@@ -2764,7 +2764,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param cookie
      * @throws XMLStreamException
      */
@@ -2819,7 +2819,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param linkSnippet
      * @throws XMLStreamException
      */
@@ -2833,7 +2833,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param color
      * @throws XMLStreamException
      */
@@ -2859,7 +2859,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param color
      * @throws XMLStreamException
      */
@@ -2872,7 +2872,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param colorMode
      * @throws XMLStreamException
      */
@@ -2906,7 +2906,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param displayMode
      * @throws XMLStreamException
      */
@@ -2932,7 +2932,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param refreshMode
      * @throws XMLStreamException
      */
@@ -2945,7 +2945,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param viewRefreshMode
      * @throws XMLStreamException
      */
@@ -2958,7 +2958,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param listItem
      * @throws XMLStreamException
      */
@@ -2984,7 +2984,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param gridOrigin
      * @throws XMLStreamException
      */
@@ -3219,7 +3219,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param near
      * @throws XMLStreamException
      */
@@ -3245,7 +3245,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param maxSessionLength
      * @throws XMLStreamException
      */
@@ -3607,7 +3607,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param version
      * @return
      */

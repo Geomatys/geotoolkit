@@ -45,16 +45,16 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public class FXStyleXMLPane extends FXLayerStylePane {
-    
+
     @FXML
     private ChoiceBox<Specification.StyledLayerDescriptor> uiVersion;
 
     private MapLayer layer = null;
-    
+
     public FXStyleXMLPane() {
         GeotkFX.loadJRXML(this,FXStyleXMLPane.class);
     }
-    
+
     @FXML
     void importXMl(ActionEvent event) {
         final Specification.StyledLayerDescriptor version = uiVersion.getValue();
@@ -88,10 +88,8 @@ public class FXStyleXMLPane extends FXLayerStylePane {
                         }
                     }
                     break parse;
-                } catch (JAXBException ex) {
-                    Logging.getLogger(FXStyleXMLPane.class).log(Level.FINEST,ex.getMessage(),ex);
-                } catch (FactoryException ex) {
-                    Logging.getLogger(FXStyleXMLPane.class).log(Level.FINEST,ex.getMessage(),ex);
+                } catch (JAXBException | FactoryException ex) {
+                    Logging.getLogger("org.geotoolkit.gui.javafx.layer.style").log(Level.FINEST,ex.getMessage(),ex);
                 }
 
                 try {
@@ -103,10 +101,8 @@ public class FXStyleXMLPane extends FXLayerStylePane {
                     layer.setStyle(style);
 
                     break parse;
-                } catch (JAXBException ex) {
-                    Logging.getLogger(FXStyleXMLPane.class).log(Level.FINEST,ex.getMessage(),ex);
-                } catch (FactoryException ex) {
-                    Logging.getLogger(FXStyleXMLPane.class).log(Level.FINEST,ex.getMessage(),ex);
+                } catch (JAXBException | FactoryException ex) {
+                    Logging.getLogger("org.geotoolkit.gui.javafx.layer.style").log(Level.FINEST,ex.getMessage(),ex);
                 }
 
             }
@@ -126,12 +122,12 @@ public class FXStyleXMLPane extends FXLayerStylePane {
                 try {
                     tool.writeStyle(result, style, version);
                 } catch (JAXBException ex) {
-                    Logging.getLogger(FXStyleXMLPane.class).log(Level.WARNING,ex.getMessage(),ex);
+                    Logging.getLogger("org.geotoolkit.gui.javafx.layer.style").log(Level.WARNING,ex.getMessage(),ex);
                 }
             }
         }
     }
-    
+
     @Override
     public String getTitle() {
         return GeotkFX.getString(this,"title");
@@ -141,7 +137,7 @@ public class FXStyleXMLPane extends FXLayerStylePane {
     public String getCategory() {
         return GeotkFX.getString(this,"category");
     }
-    
+
     /**
      * Called by FXMLLoader after creating controller.
      */
@@ -151,18 +147,18 @@ public class FXStyleXMLPane extends FXLayerStylePane {
             uiVersion.getSelectionModel().select(uiVersion.getItems().size()-1);
         }
     }
-    
+
     @Override
     public boolean init(MapLayer candidate, Object StyleElement) {
-        if(!(candidate instanceof MapLayer)) return false;     
+        if(!(candidate instanceof MapLayer)) return false;
         layer = (MapLayer) candidate;
         return true;
     }
-    
+
     @Override
     public MutableStyle getMutableStyle() {
         if(layer!=null) return layer.getStyle();
         return null;
     }
-        
+
 }

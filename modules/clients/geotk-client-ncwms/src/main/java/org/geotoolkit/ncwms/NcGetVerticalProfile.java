@@ -29,20 +29,20 @@ import org.apache.sis.util.logging.Logging;
  * @module pending
  */
 public class NcGetVerticalProfile extends AbstractRequest implements NcGetVerticalProfileRequest {
-    
+
     /**
      * Default logger for all GetVerticalProfile requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(NcGetVerticalProfile.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ncwms");
+
     private String layer = null;
-    
+
     private String crs = null;
-    
+
     private String point = null;
-    
+
     private String format = null;
-    
+
     private String time = null;
 
     /**
@@ -50,7 +50,7 @@ public class NcGetVerticalProfile extends AbstractRequest implements NcGetVertic
      */
     protected NcGetVerticalProfile(final String serverURL) {
         super(serverURL);
-    }    
+    }
 
     /**
      * {@inheritDoc}
@@ -115,7 +115,7 @@ public class NcGetVerticalProfile extends AbstractRequest implements NcGetVertic
     public void setFormat(final String format) {
         this.format = format;
     }
-        
+
     /**
      * {@inheritDoc}
      */
@@ -131,8 +131,8 @@ public class NcGetVerticalProfile extends AbstractRequest implements NcGetVertic
     public void setTime(final String time) {
         this.time = time;
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
@@ -142,23 +142,23 @@ public class NcGetVerticalProfile extends AbstractRequest implements NcGetVertic
 
         // Tests if the mandatory parameters are available
         if (layer == null)
-            throw new IllegalArgumentException("Must provide a LAYER parameter");    
-        
+            throw new IllegalArgumentException("Must provide a LAYER parameter");
+
         if (crs == null)
             throw new IllegalArgumentException("Must provide an CRS parameter");
-        
+
         if (point == null)
             throw new IllegalArgumentException("Must provide an POINT parameter");
-        
+
         if (format == null)
             throw new IllegalArgumentException("Must provide an FORMAT parameter");
-        
+
         requestParameters.put("REQUEST", "GetVerticalProfile");
         requestParameters.put("LAYER", layer);
         requestParameters.put("CRS", crs);
         requestParameters.put("POINT", point);
-        requestParameters.put("FORMAT", format);        
-        
+        requestParameters.put("FORMAT", format);
+
         if (time != null)
             requestParameters.put("TIME", time);
     }

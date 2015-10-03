@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  */
 public class WPSClientDemo {
 
-    private static final Logger LOGGER = Logger.getLogger(WPSClientDemo.class.getName());
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.pending.demo.clients.wps");
 
     private final static String SERVICE_URL = "http://demo.geomatys.com/cstl-trunk/WS/wps/default";
 

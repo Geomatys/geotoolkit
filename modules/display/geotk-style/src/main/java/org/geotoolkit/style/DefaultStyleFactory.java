@@ -106,7 +106,7 @@ import org.geotoolkit.style.function.Jenks;
  */
 public class DefaultStyleFactory extends Factory implements MutableStyleFactory {
 
-    private static final Logger LOGGER = Logging.getLogger(DefaultStyleFactory.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.style");
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
@@ -267,10 +267,10 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
             final String geom, final Description desc,
             final Unit<?> unit, final Graphic graphic) {
         return pointSymbolizer(name,
-                geom==null ? null : new DefaultPropertyName(geom), 
+                geom==null ? null : new DefaultPropertyName(geom),
                 desc, unit, graphic);
     }
-    
+
     @Override
     public PointSymbolizer pointSymbolizer(final String name, final Expression geom,
             final Description desc, final Unit<?> unit, final Graphic graphic) {
@@ -292,7 +292,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     public LineSymbolizer lineSymbolizer(final String name, final String geom,
             final Description desc, final Unit<?> uom,
             final Stroke stroke, final Expression offset) {
-        return lineSymbolizer(name, 
+        return lineSymbolizer(name,
              geom==null ? null : new DefaultPropertyName(geom),
              desc, uom, stroke, offset);
     }
@@ -303,7 +303,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
             final Stroke stroke, final Expression offset) {
         return new DefaultLineSymbolizer(stroke, offset, uom, geom, name, desc);
     }
-    
+
     @Override
     public PolygonSymbolizer polygonSymbolizer(){
         return DEFAULT_POLYGON_SYMBOLIZER;
@@ -324,7 +324,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
                 geom==null ? null : new DefaultPropertyName(geom),
                 desc, uom, stroke, fill, disp, offset);
     }
-    
+
     @Override
     public PolygonSymbolizer polygonSymbolizer(final String name,
             final Expression geom, final Description desc,
@@ -386,12 +386,12 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
             final ChannelSelection selection, final OverlapBehavior overlap,
             final ColorMap colorMap, final ContrastEnhancement enchance,
             final ShadedRelief relief, final Symbolizer outline) {
-        return rasterSymbolizer(name, 
+        return rasterSymbolizer(name,
                 geom==null ? null : new DefaultPropertyName(geom),
                 desc,uom, opacity, selection, overlap, colorMap, enchance, relief, outline);
-        
+
     }
-    
+
     @Override
     public RasterSymbolizer rasterSymbolizer(final String name,
             final Expression geom, final Description desc,
@@ -409,11 +409,11 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
             final String geom, final Description description,
             final Unit<?> unit, final String extensionName,
             final Map<String, Expression> parameters) {
-        return extensionSymbolizer(name, 
-                geom==null ? null : new DefaultPropertyName(geom), 
+        return extensionSymbolizer(name,
+                geom==null ? null : new DefaultPropertyName(geom),
                 description, unit, extensionName, parameters);
     }
-    
+
     @Override
     public ExtensionSymbolizer extensionSymbolizer(final String name,
             final Expression geometry, final Description description,

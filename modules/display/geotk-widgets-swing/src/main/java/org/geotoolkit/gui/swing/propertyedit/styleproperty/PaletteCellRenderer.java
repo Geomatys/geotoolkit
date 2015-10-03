@@ -33,12 +33,12 @@ import org.geotoolkit.style.interval.Palette;
 import org.apache.sis.util.logging.Logging;
 
 /**
- * Renderer of Palette in combobox in Style editor. 
+ * Renderer of Palette in combobox in Style editor.
  * @author Quentin Boileau (Geomatys).
  */
 public class PaletteCellRenderer extends DefaultListCellRenderer {
 
-    private static final Logger LOGGER = Logging.getLogger(PaletteCellRenderer.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.styleproperty");
     private final PaletteFactory PF = PaletteFactory.getDefault();
     private Object paletteValue = null;
 
@@ -60,7 +60,7 @@ public class PaletteCellRenderer extends DefaultListCellRenderer {
             Dimension d = this.getSize();
             Rectangle rect = new Rectangle(d);
             rect.grow(-2, -2);
-            
+
             if (paletteValue instanceof String) {
                 try {
                     final String paletteName = String.valueOf(paletteValue);

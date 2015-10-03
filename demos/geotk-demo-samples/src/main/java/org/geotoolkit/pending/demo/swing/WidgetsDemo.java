@@ -83,7 +83,7 @@ public class WidgetsDemo extends javax.swing.JFrame {
         try {
             guiMap.getCanvas().setVisibleArea(context.getBounds());
         } catch (NoninvertibleTransformException | TransformException | IOException ex) {
-            Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.pending.demo.swing").log(Level.SEVERE, null, ex);
         }
 
 
@@ -216,14 +216,8 @@ public class WidgetsDemo extends javax.swing.JFrame {
     public static void main(String args[]) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            Logger.getLogger("org.geotoolkit.pending.demo.swing").log(Level.SEVERE, null, ex);
         }
 
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -231,7 +225,7 @@ public class WidgetsDemo extends javax.swing.JFrame {
                 try {
                     new WidgetsDemo().setVisible(true);
                 } catch (DataStoreException ex) {
-                    Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger("org.geotoolkit.pending.demo.swing").log(Level.SEVERE, null, ex);
                 }
             }
         });

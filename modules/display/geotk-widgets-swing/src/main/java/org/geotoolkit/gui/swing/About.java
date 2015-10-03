@@ -194,7 +194,7 @@ public class About extends JComponent implements Dialog {
              * The implementation date can't be parsed. This is not a show-stopper;
              * the "About" dialog box will just not includes the implementation date.
              */
-            Logging.unexpectedException(About.class, "<init>", exception);
+            Logging.unexpectedException(null, About.class, "<init>", exception);
         }
         if (application == null) {
             application = "<html><h2>Geotoolkit.org</h2></html>";
@@ -414,7 +414,7 @@ public class About extends JComponent implements Dialog {
             }
             return manifest.getMainAttributes();
         } catch (IOException e) {
-            Logging.unexpectedException(About.class, "getAttributes", e);
+            Logging.unexpectedException(null, About.class, "getAttributes", e);
         }
         // Use empty manifest attributes.
         return new Attributes();

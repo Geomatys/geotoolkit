@@ -24,7 +24,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -140,20 +139,20 @@ public class XMLUtilitiesTest extends TestCase{
         } catch (URISyntaxException ex) { ex.printStackTrace(); }
 
         try{
-            TEST_FILE_SLD_V100 = File.createTempFile("test_sld_v100(xmlutils)",".xml");     
-            TEST_FILE_SLD_V110 = File.createTempFile("test_sld_v110(xmlutils)",".xml");     
-            TEST_FILE_STYLE_V100 = File.createTempFile("test_style_v100(xmlutils)",".xml");     
-            TEST_FILE_STYLE_V110 = File.createTempFile("test_style_v110(xmlutils)",".xml");     
-            TEST_FILE_FTS_V100 = File.createTempFile("test_fts_v100(xmlutils)",".xml");     
-            TEST_FILE_FTS_V110 = File.createTempFile("test_fts_v110(xmlutils)",".xml");     
-            TEST_FILE_RULE_V100 = File.createTempFile("test_rule_v100(xmlutils)",".xml");     
-            TEST_FILE_RULE_V110 = File.createTempFile("test_rule_v110(xmlutils)",".xml");     
-            TEST_FILE_FILTER_V100 = File.createTempFile("test_filter_v100(xmlutils)",".xml");     
-            TEST_FILE_FILTER_V110 = File.createTempFile("test_filter_v110(xmlutils)",".xml");       
+            TEST_FILE_SLD_V100 = File.createTempFile("test_sld_v100(xmlutils)",".xml");
+            TEST_FILE_SLD_V110 = File.createTempFile("test_sld_v110(xmlutils)",".xml");
+            TEST_FILE_STYLE_V100 = File.createTempFile("test_style_v100(xmlutils)",".xml");
+            TEST_FILE_STYLE_V110 = File.createTempFile("test_style_v110(xmlutils)",".xml");
+            TEST_FILE_FTS_V100 = File.createTempFile("test_fts_v100(xmlutils)",".xml");
+            TEST_FILE_FTS_V110 = File.createTempFile("test_fts_v110(xmlutils)",".xml");
+            TEST_FILE_RULE_V100 = File.createTempFile("test_rule_v100(xmlutils)",".xml");
+            TEST_FILE_RULE_V110 = File.createTempFile("test_rule_v110(xmlutils)",".xml");
+            TEST_FILE_FILTER_V100 = File.createTempFile("test_filter_v100(xmlutils)",".xml");
+            TEST_FILE_FILTER_V110 = File.createTempFile("test_filter_v110(xmlutils)",".xml");
         }catch(IOException ex){
             ex.printStackTrace();
         }
-        
+
         //switch to false to avoid temp files to be deleted
         if(true){
             TEST_FILE_SLD_V100.deleteOnExit();
@@ -167,7 +166,7 @@ public class XMLUtilitiesTest extends TestCase{
             TEST_FILE_FILTER_V100.deleteOnExit();
             TEST_FILE_FILTER_V110.deleteOnExit();
         }
-        
+
     }
 
     @Test
@@ -265,7 +264,7 @@ public class XMLUtilitiesTest extends TestCase{
         OnlineResource online = null;
         try { online = STYLE_FACTORY.onlineResource(new URI("http://geomayts.fr/anSLDFile.xml"));
         } catch (URISyntaxException ex) {
-            Logging.getLogger(XMLUtilitiesTest.class).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.style").log(Level.WARNING, null, ex);
         }
         SLDLibrary lib = SLD_FACTORY.createSLDLibrary(online);
         geoSLD.libraries().add(lib);
@@ -474,8 +473,8 @@ public class XMLUtilitiesTest extends TestCase{
        Expression field = ff.property("aFiled");
        Expression lower = ff.literal(50d);
        Expression upper = ff.literal(100d);
-        
+
        return ff.between(field, lower, upper);
     }
-    
+
 }

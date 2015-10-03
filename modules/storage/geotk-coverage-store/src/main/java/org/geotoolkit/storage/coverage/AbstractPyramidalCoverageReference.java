@@ -34,7 +34,6 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.swing.ProgressMonitor;
 import javax.xml.bind.annotation.XmlTransient;
@@ -55,18 +54,19 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Abstract pyramidal coverage reference.
  * All methods return null values if authorized and writing operations raise exceptions.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 @XmlTransient
 public abstract class AbstractPyramidalCoverageReference extends AbstractCoverageReference implements PyramidalCoverageReference {
 
     protected final int imageIndex;
-    
+
     public AbstractPyramidalCoverageReference(CoverageStore store, GenericName name,int imageIndex) {
         super(store, name);
         this.imageIndex = imageIndex;
@@ -76,7 +76,7 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
     public int getImageIndex() {
         return imageIndex;
     }
-    
+
     @Override
     public boolean isWritable() throws CoverageStoreException {
         return false;
@@ -154,7 +154,7 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
     }
 
     @Override
-    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize, 
+    public GridMosaic createMosaic(String pyramidId, Dimension gridSize, Dimension tilePixelSize,
             DirectPosition upperleft, double pixelscale) throws DataStoreException {
         throw new DataStoreException("Pyramid writing not supported.");
     }
@@ -222,7 +222,7 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
                         try {
                             writeTile(pyramidId, mosaicId, tx, ty, img);
                         } catch (DataStoreException ex) {
-                            Logger.getLogger(AbstractPyramidalCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+                            Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
                         }
                     }
                 });
@@ -231,18 +231,18 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
     }
 
     @Override
-    public void writeTile(String pyramidId, String mosaicId, int tileX, int tileY, 
+    public void writeTile(String pyramidId, String mosaicId, int tileX, int tileY,
             RenderedImage image) throws DataStoreException {
         throw new DataStoreException("Pyramid writing not supported.");
     }
 
     @Override
-    public void deleteTile(String pyramidId, String mosaicId, 
+    public void deleteTile(String pyramidId, String mosaicId,
             int tileX, int tileY) throws DataStoreException {
         throw new DataStoreException("Pyramid writing not supported.");
     }
-    
-    
+
+
     /**
      * Get a tile as coverage.
      * @param pyramidId
@@ -251,15 +251,15 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
      * @param tileY
      * @return GridCoverage2D
      */
-    public static GridCoverage2D getTileAsCoverage(PyramidalCoverageReference covRef, 
+    public static GridCoverage2D getTileAsCoverage(PyramidalCoverageReference covRef,
             String pyramidId, String mosaicId, int tileX, int tileY) throws DataStoreException {
-        
+
         TileReference tile = null;
         final Pyramid pyramid = covRef.getPyramidSet().getPyramid(pyramidId);
         if(pyramid==null){
             throw new DataStoreException("Invalid pyramid reference : "+pyramidId);
         }
-        
+
         GridMosaic mosaic = null;
         for(GridMosaic gm : pyramid.getMosaics()){
             if(gm.getId().equals(mosaicId)){
@@ -267,14 +267,14 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
                 tile = gm.getTile(tileX, tileY, null);
             }
         }
-        
+
         if(tile==null){
             throw new DataStoreException("Invalid tile reference : "+pyramidId+" "+mosaicId+" "+tileX+" "+tileY);
         }
-        
+
         return getTileAsCoverage(covRef, pyramidId, mosaicId, tile);
     }
-    
+
     /**
      * Get a tile as coverage.
      * @param covRef
@@ -284,21 +284,21 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
      * @return GridCoverage2D
      * @throws org.apache.sis.storage.DataStoreException
      */
-    public static GridCoverage2D getTileAsCoverage(PyramidalCoverageReference covRef, 
+    public static GridCoverage2D getTileAsCoverage(PyramidalCoverageReference covRef,
             String pyramidId, String mosaicId, TileReference tile) throws DataStoreException {
-        
+
         final Pyramid pyramid = covRef.getPyramidSet().getPyramid(pyramidId);
         if(pyramid==null){
             throw new DataStoreException("Invalid pyramid reference : "+pyramidId);
         }
-        
+
         GridMosaic mosaic = null;
         for(GridMosaic gm : pyramid.getMosaics()){
             if(gm.getId().equals(mosaicId)){
                 mosaic = gm;
             }
         }
-                
+
         Object input = tile.getInput();
         RenderedImage image;
         if(input instanceof RenderedImage){
@@ -322,20 +322,20 @@ public abstract class AbstractPyramidalCoverageReference extends AbstractCoverag
 
         final CoordinateReferenceSystem tileCRS = pyramid.getCoordinateReferenceSystem();
         final MathTransform gridToCrs = AbstractGridMosaic.getTileGridToCRS(mosaic,tile.getPosition());
-        
+
         final GeneralGridEnvelope ge = new GeneralGridEnvelope(
                 new Rectangle(image.getWidth(), image.getHeight()),tileCRS.getCoordinateSystem().getDimension());
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelInCell.CELL_CORNER, gridToCrs, tileCRS, null);
         gcb.setGridGeometry(gridgeo);
         gcb.setRenderedImage(image);
-        
+
         final List<GridSampleDimension> dimensions = covRef.getSampleDimensions();
         if(dimensions!=null){
             gcb.setSampleDimensions(dimensions.toArray(new GridSampleDimension[0]));
         }
-        
+
         return (GridCoverage2D) gcb.build();
     }
 
-    
+
 }

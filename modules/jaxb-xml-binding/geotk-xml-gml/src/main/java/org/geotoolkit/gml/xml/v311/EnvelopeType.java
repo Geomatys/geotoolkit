@@ -84,7 +84,7 @@ import org.opengis.util.FactoryException;
 @XmlRootElement(name="Envelope")
 public class EnvelopeType implements Envelope, Expression {
 
-    private static final Logger LOGGER = Logging.getLogger(EnvelopeType.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml.xml.v311");
 
     /**
      * this attribute do not exist. Must be removed
@@ -93,7 +93,7 @@ public class EnvelopeType implements Envelope, Expression {
     @XmlAttribute(namespace="http://www.opengis.net/gml")
     @Deprecated
     private String id;
-    
+
     private DirectPositionType lowerCorner;
     private DirectPositionType upperCorner;
     @XmlAttribute
@@ -118,22 +118,22 @@ public class EnvelopeType implements Envelope, Expression {
 
     /**
      * build a new envelope.
-     * 
+     *
      * @param id This parameter is deprecated. it will no ne used.
-     * @param lowerCorner 
+     * @param lowerCorner
      * @param upperCorner
      * @param srsName CRS identifier name.
-     * 
+     *
      * @deprecated use the constrcutor without id.
      */
     @Deprecated
     public EnvelopeType(final String id, final DirectPositionType lowerCorner, final DirectPositionType upperCorner, final String srsName) {
         this(lowerCorner, upperCorner, srsName);
     }
-    
+
     /**
      * build a new GML envelope.
-     * 
+     *
      * @param lowerCorner
      * @param upperCorner
      * @param srsName CRS identifier name.
@@ -406,7 +406,7 @@ public class EnvelopeType implements Envelope, Expression {
         }
         return false;
     }
-    
+
     /**
      * Utility method to avoir to fill an empty list during equals.
      * But we want to consider equals a null list and an empty one, for JAXB purpose
@@ -419,7 +419,7 @@ public class EnvelopeType implements Envelope, Expression {
         } else {
             return Objects.equals(l1, l2);
         }
-        
+
     }
 
     @Override
@@ -436,7 +436,7 @@ public class EnvelopeType implements Envelope, Expression {
         hash = 79 * hash + (this.uomLabels != null ? this.uomLabels.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

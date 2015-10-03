@@ -27,12 +27,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
@@ -147,7 +145,6 @@ import org.geotoolkit.se.xml.vext.ColorItemType;
 import org.geotoolkit.se.xml.vext.JenksType;
 import org.geotoolkit.se.xml.vext.RangeType;
 import org.geotoolkit.se.xml.vext.RecolorType;
-import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.ColorItem;
 import org.geotoolkit.style.function.Interpolate;
@@ -157,9 +154,6 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
-import org.apache.sis.util.ObjectConverters;
-
-import org.opengis.util.GenericName;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
@@ -374,7 +368,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
      */
     public ParameterValueType visitExpression(final Expression exp) {
         if(exp==null) return null;
-        
+
         final JAXBElement<?> ele = extract(exp);
         if (ele == null) {
             return null;
@@ -678,7 +672,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
                 try {
                     crs = CRS.decode(srid);
                 } catch (Exception ex) {
-                    Logger.getLogger(GTtoSE110Transformer.class.getName()).log(Level.WARNING, null, ex);
+                    Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                     crs = null;
                 }
                 final AbstractGeometryType gt = GMLUtilities.getGMLFromISO(JTSUtils.toISO(jts, crs));
@@ -744,7 +738,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
                 try {
                     ee.setSrsName(IdentifiedObjects.lookupIdentifier(genv.getCoordinateReferenceSystem(), true));
                 } catch (FactoryException ex) {
-                    Logger.getLogger(GTtoSE110Transformer.class.getName()).log(Level.WARNING, null, ex);
+                    Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                 }
 
                 ee.setLowerCorner(new DirectPositionType(genv.getLowerCorner()));
@@ -1411,7 +1405,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
                     ict.getContent().add(chars);
                     mt.setInlineContent(ict);
                 } catch (IOException ex) {
-                    Logging.getLogger(GTtoSE110Transformer.class.getName()).log(Level.WARNING, null, ex);
+                    Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                 }
             }
 
@@ -1462,7 +1456,7 @@ public class GTtoSE110Transformer implements StyleVisitor {
                 ict.getContent().add(chars);
                 egt.setInlineContent(ict);
             } catch (IOException ex) {
-                Logging.getLogger(GTtoSE110Transformer.class.getName()).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
             }
         }
 

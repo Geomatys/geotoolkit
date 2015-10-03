@@ -19,6 +19,7 @@ package org.geotoolkit.internal.referencing;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.Identifier;
+import org.opengis.util.InternationalString;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.Deprecable;
 
@@ -64,5 +65,10 @@ public final class DeprecatedName extends NamedIdentifier implements Deprecable 
     @Override
     public boolean isDeprecated() {
         return true;
+    }
+
+    @Override
+    public InternationalString getRemarks() {
+        return super.getDescription();
     }
 }

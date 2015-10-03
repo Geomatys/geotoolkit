@@ -18,7 +18,6 @@ package org.geotoolkit.csw.xml.v202;
 
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -32,15 +31,16 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.csw.xml.CSWMarshallerPool;
 import org.geotoolkit.csw.xml.CswNodeComparator;
 import org.geotoolkit.csw.xml.RecordProperty;
+import org.apache.sis.util.logging.Logging;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
  * <p>Java class for RecordPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RecordPropertyType">
  *   &lt;complexContent>
@@ -53,8 +53,8 @@ import org.w3c.dom.Node;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -95,7 +95,7 @@ public class RecordPropertyType implements RecordProperty{
             e.setTextContent(s);
             return e;
         } catch (ParserConfigurationException ex) {
-            Logger.getLogger(RecordPropertyType.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.csw.xml.v202").log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -113,7 +113,7 @@ public class RecordPropertyType implements RecordProperty{
             CSWMarshallerPool.getInstance().recycle(m);
             return e;
         } catch (ParserConfigurationException | JAXBException ex) {
-            Logger.getLogger(RecordPropertyType.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.csw.xml.v202").log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -130,7 +130,7 @@ public class RecordPropertyType implements RecordProperty{
             e.appendChild(clone);
             return e;
         } catch (ParserConfigurationException ex) {
-            Logger.getLogger(RecordPropertyType.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.csw.xml.v202").log(Level.SEVERE, null, ex);
         }
         return null;
     }

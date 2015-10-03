@@ -54,11 +54,11 @@ import ucar.nc2.Variable;
  * @author Guilhem Legal (Geomatys)
  */
 public class NetCDFExtractor {
-    
-    private static final Logger LOGGER = Logging.getLogger(NetCDFExtractor.class);
-    
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.sos.netcdf");
+
     private static final DateFormat FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-    
+
     public static ExtractionResult getObservationFromNetCDF(final File netCDFFile, final String procedureID) throws NetCDFParsingException {
         final NCFieldAnalyze analyze = analyzeResult(netCDFFile, null);
         switch (analyze.featureType) {
@@ -73,7 +73,7 @@ public class NetCDFExtractor {
             default : return null;
         }
     }
-    
+
     public static ExtractionResult getObservationFromNetCDF(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedProcedureIDs) throws NetCDFParsingException {
         switch (analyze.featureType) {
             case TIMESERIES :
@@ -87,7 +87,7 @@ public class NetCDFExtractor {
             default : return null;
         }
     }
-    
+
     public static ExtractionResult getObservationFromNetCDF(final File netCDFFile, final String procedureID, final String selectedBand) throws NetCDFParsingException {
         final NCFieldAnalyze analyze = analyzeResult(netCDFFile, selectedBand);
         if (analyze.phenfields.isEmpty()) {
@@ -106,7 +106,7 @@ public class NetCDFExtractor {
             default : return new ExtractionResult();
         }
     }
-    
+
     public static List<ProcedureTree> getProcedures(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedProcedureIDs) throws NetCDFParsingException {
         switch (analyze.featureType) {
             case TIMESERIES :
@@ -120,11 +120,11 @@ public class NetCDFExtractor {
             default : return null;
         }
     }
-    
+
     public static NCFieldAnalyze analyzeResult(final File netCDFFile, final String selectedBand) {
         final NCFieldAnalyze analyze = new NCFieldAnalyze();
         try {
-            
+
             final NetcdfFile file = NetcdfFile.open(netCDFFile.getPath());
             analyze.file = file;
 
@@ -160,7 +160,7 @@ public class NetCDFExtractor {
                     final Field currentField = new Field(name, dimension, dimensionLabel);
                     all.add(currentField);
                     analyze.vars.put(name, variable);
-                    
+
                     // try to get units
                     final Attribute att = variable.findAttribute("units");
                     if (att != null) {
@@ -170,7 +170,7 @@ public class NetCDFExtractor {
                     if (attFill != null) {
                         currentField.fillValue = attFill.getNumericValue();
                     }
-                    
+
                     if (name.equalsIgnoreCase("Time")) {
                         currentField.type = Type.DATE;
                         if (analyze.featureType == TIMESERIES || analyze.featureType == TRAJECTORY || analyze.featureType == GRID) {
@@ -184,13 +184,13 @@ public class NetCDFExtractor {
                         currentField.type = Type.DOUBLE;
                         analyze.skippedFields.add(currentField);
                         analyze.latField = currentField;
-                    
+
                     } else if (name.equalsIgnoreCase("Longitude") || name.equalsIgnoreCase("long") || name.equalsIgnoreCase("lon")) {
                         currentField.type = Type.DOUBLE;
                         analyze.skippedFields.add(currentField);
                         analyze.lonField = currentField;
 
-                    
+
                     } else if (name.equalsIgnoreCase("pression") || name.equalsIgnoreCase("pres") || name.equalsIgnoreCase("depth") || name.equalsIgnoreCase("zLevel") || name.equalsIgnoreCase("z")) {
                         currentField.type = Type.DOUBLE;
                         if (analyze.featureType == PROFILE) {
@@ -204,7 +204,7 @@ public class NetCDFExtractor {
                     } else if (name.equalsIgnoreCase("timeserie") || name.equalsIgnoreCase("trajectory") || name.equalsIgnoreCase("profile")) {
                         currentField.type = Type.STRING;
                         analyze.separatorField = currentField;
-                        
+
                     } else  {
                         currentField.type = getTypeFromDataType(variable.getDataType());
                         if ((currentField.type == Type.DOUBLE || currentField.type == Type.INT) && dimension != 0 && (selectedBand == null || name.equals(selectedBand))) {
@@ -215,7 +215,7 @@ public class NetCDFExtractor {
                     }
                 }
             }
-            
+
             // another round to try to find a main field
             if (analyze.mainField == null) {
                 for (Field field : all) {
@@ -227,7 +227,7 @@ public class NetCDFExtractor {
                     }
                 }
             }
-            
+
             // post analyze
             if (analyze.mainField != null) {
                 for (Field f : all) {
@@ -245,7 +245,7 @@ public class NetCDFExtractor {
                         }
                     }
                 }
-                
+
                 //look for invisible separator
                 if (analyze.featureType != TRAJECTORY && analyze.separatorField == null) {
                     for (Field phenField : analyze.phenfields) {
@@ -257,8 +257,8 @@ public class NetCDFExtractor {
                             }
                         }
                     }
-                } 
-                
+                }
+
                 if (analyze.featureType == TRAJECTORY && analyze.separatorField == null) {
                     for (Field phenField : analyze.phenfields) {
                         if (phenField.dimension > 1) {
@@ -280,7 +280,7 @@ public class NetCDFExtractor {
                         }
                     }
                 }
-                
+
                 if (analyze.dimensionSeparator != null) {
                     for (Field f : all) {
                         // dimension order
@@ -297,7 +297,7 @@ public class NetCDFExtractor {
         }
         return analyze;
     }
-    
+
     public static boolean isObservationFile(final String nfilePath) {
         try {
             final NetcdfFile file = NetcdfFile.open(nfilePath);
@@ -315,7 +315,7 @@ public class NetCDFExtractor {
         }
         return false;
     }
-    
+
     private static ExtractionResult parseDataBlockTS(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         if (analyze.mainField == null) {
@@ -328,24 +328,24 @@ public class NetCDFExtractor {
 
             final List<String> separators = parseSeparatorValues(analyze);
             final boolean single          = separators.isEmpty();
-            
+
             Array latArray  = null;
             Array lonArray  = null;
             if (analyze.hasSpatial()) {
                 latArray        = analyze.getArrayFromField(analyze.latField);
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
-            
+
             final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
             final String timeUnits  = analyze.mainField.unit;
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
-            
-            
+
+
             final Map<String, Array> phenArrays = analyze.getPhenomenonArrayMap();
             results.fields.addAll(phenArrays.keySet());
-            
+
             final AbstractDataRecord datarecord = OMUtils.getDataRecordTimeSeries("2.0.0", analyze.phenfields);
             final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
             results.phenomenons.add(phenomenon);
@@ -382,7 +382,7 @@ public class NetCDFExtractor {
                         }
                         gb.addDate(millis);
                         sb.appendDate(millis);
-                        
+
                         for (Field field : analyze.phenfields) {
                             final Array phenArray = phenArrays.get(field.label);
                             final Double value    = getDoubleValue(phenArray, i, field.fillValue);
@@ -401,21 +401,21 @@ public class NetCDFExtractor {
                     results.spatialBound.merge(gb);
                     compo.spatialBound.merge(gb);
                 }
-                
+
             } else {
                 final ProcedureTree system = new ProcedureTree(procedureID, "System");
                 results.procedures.add(system);
                 for (int j = 0; j < separators.size(); j++) {
-                    
+
                     final String identifier       = separators.get(j);
                     final MeasureStringBuilder sb = new MeasureStringBuilder();
                     final int count               = getGoodTimeDimension(timeVar, analyze.dimensionSeparator).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
                     final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component");
-                    
+
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
-                    
+
                         //read geometry (assume point)
                         SamplingFeature sp = null;
                         if (analyze.hasSpatial()) {
@@ -472,7 +472,7 @@ public class NetCDFExtractor {
         LOGGER.info("datablock parsed");
         return results;
     }
-    
+
     private static List<ProcedureTree> getProcedureTS(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final List<ProcedureTree> results = new ArrayList<>();
         if (analyze.mainField == null) {
@@ -485,22 +485,22 @@ public class NetCDFExtractor {
 
             final List<String> separators = parseSeparatorValues(analyze);
             final boolean single          = separators.isEmpty();
-            
+
             Array latArray  = null;
             Array lonArray  = null;
             if (analyze.hasSpatial()) {
                 latArray        = analyze.getArrayFromField(analyze.latField);
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
-            
+
             final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
             final String timeUnits  = analyze.mainField.unit;
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
-            
+
             final Set<String> fields = analyze.getPhenomenonArrayMap().keySet();
-            
+
             if (single) {
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
                     final ProcedureTree compo = new ProcedureTree(procedureID, "Component", fields);
@@ -527,20 +527,20 @@ public class NetCDFExtractor {
                     }
                     compo.spatialBound.merge(gb);
                 }
-                
+
             } else {
                 final ProcedureTree system = new ProcedureTree(procedureID, "System", fields);
                 results.add(system);
                 for (int j = 0; j < separators.size(); j++) {
-                    
+
                     final String identifier       = separators.get(j);
                     final int count               = getGoodTimeDimension(timeVar, analyze.dimensionSeparator).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
                     final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component", fields);
-                    
+
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
-                    
+
                         if (analyze.hasSpatial()) {
                             final double latitude         = getDoubleValue(latArray, j, analyze.latField.fillValue);
                             final double longitude        = Longitude.normalize(getDoubleValue(lonArray, j, analyze.lonField.fillValue));
@@ -572,7 +572,7 @@ public class NetCDFExtractor {
         LOGGER.info("datablock parsed");
         return results;
     }
-    
+
     private static ExtractionResult parseDataBlockXY(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         if (analyze.mainField == null) {
@@ -591,14 +591,14 @@ public class NetCDFExtractor {
                 latArray        = analyze.getArrayFromField(analyze.latField);
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
-            
+
             Array timeArray  = null;
             String timeUnits = null;
             if (analyze.hasTime()) {
                 timeUnits        = analyze.timeField.unit;
                 timeArray        = analyze.getArrayFromField(analyze.timeField);
             }
-            
+
             final Variable zVar     = analyze.vars.get(analyze.mainField.label);
             final Array zArray      = analyze.file.readArrays(Arrays.asList(zVar)).get(0);
             final boolean constantZ = analyze.mainField.dimension == 1;
@@ -606,11 +606,11 @@ public class NetCDFExtractor {
 
             final Map<String, Array> phenArrays = analyze.getPhenomenonArrayMap();
             results.fields.addAll(phenArrays.keySet());
-            
+
             final AbstractDataRecord datarecord = OMUtils.getDataRecordProfile("2.0.0", analyze.phenfields);
             final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
             results.phenomenons.add(phenomenon);
-            
+
             if (single) {
                 final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
@@ -667,19 +667,19 @@ public class NetCDFExtractor {
                     results.spatialBound.merge(gb);
                     compo.spatialBound.merge(gb);
                 }
-                
+
             } else {
                 final ProcedureTree system = new ProcedureTree(procedureID, "System");
                 results.procedures.add(system);
-                
+
                 for (int profileIndex = 0; profileIndex < separators.size(); profileIndex++) {
-                    
+
                     final String identifier    = separators.get(profileIndex);
                     final int count            = zVar.getDimension(0).getLength();
                     final GeoSpatialBound gb   = new GeoSpatialBound();
                     final String currentProcID = procedureID + '-' + identifier;
                     final ProcedureTree compo  = new ProcedureTree(currentProcID, "Component");
-                        
+
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         //read geometry (assume point)
                         SamplingFeature sp = null;
@@ -741,7 +741,7 @@ public class NetCDFExtractor {
         LOGGER.info("datablock parsed");
         return results;
     }
-    
+
     private static List<ProcedureTree> getProcedureXY(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final List<ProcedureTree> results = new ArrayList<>();
         if (analyze.mainField == null) {
@@ -760,16 +760,16 @@ public class NetCDFExtractor {
                 latArray        = analyze.getArrayFromField(analyze.latField);
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
-            
+
             Array timeArray  = null;
             String timeUnits = null;
             if (analyze.hasTime()) {
                 timeUnits        = analyze.timeField.unit;
                 timeArray        = analyze.getArrayFromField(analyze.timeField);
             }
-            
+
             final Set<String> fields = analyze.getPhenomenonArrayMap().keySet();
-            
+
             if (single) {
                 final ProcedureTree compo = new ProcedureTree(procedureID, "Component", fields);
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
@@ -793,18 +793,18 @@ public class NetCDFExtractor {
                     }
                     compo.spatialBound.merge(gb);
                 }
-                
+
             } else {
                 final ProcedureTree system = new ProcedureTree(procedureID, "System", fields);
                 results.add(system);
-                
+
                 for (int profileIndex = 0; profileIndex < separators.size(); profileIndex++) {
-                    
+
                     final String identifier    = separators.get(profileIndex);
                     final GeoSpatialBound gb   = new GeoSpatialBound();
                     final String currentProcID = procedureID + '-' + identifier;
                     final ProcedureTree compo  = new ProcedureTree(currentProcID, "Component", fields);
-                        
+
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         if (analyze.hasSpatial()) {
                             final double latitude         = getDoubleValue(latArray, 0, analyze.latField.fillValue);
@@ -833,7 +833,7 @@ public class NetCDFExtractor {
         LOGGER.info("datablock parsed");
         return results;
     }
-    
+
     private static ExtractionResult parseDataBlockTraj(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         if (analyze.mainField == null) {
@@ -846,24 +846,24 @@ public class NetCDFExtractor {
 
             final List<String> separators = parseSeparatorValues(analyze);
             final boolean single          = separators.isEmpty();
-            
+
             Array latArray  = null;
             Array lonArray  = null;
             if (analyze.hasSpatial()) {
                 latArray        = analyze.getArrayFromField(analyze.latField);
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
-            
+
             final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
             final String timeUnits  = analyze.mainField.unit;
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
-            
-            
+
+
             final Map<String, Array> phenArrays = analyze.getPhenomenonArrayMap();
             results.fields.addAll(phenArrays.keySet());
-            
+
             final AbstractDataRecord datarecord = OMUtils.getDataRecordTrajectory("2.0.0", analyze.phenfields);
             final Phenomenon phenomenon         = OMUtils.getPhenomenon("2.0.0", analyze.phenfields);
             results.phenomenons.add(phenomenon);
@@ -928,20 +928,20 @@ public class NetCDFExtractor {
                     results.spatialBound.merge(gb);
                     compo.spatialBound.merge(gb);
                 }
-                
+
             } else {
                 final ProcedureTree system = new ProcedureTree(procedureID, "System");
                 results.procedures.add(system);
-                
+
                 for (int j = 0; j < separators.size(); j++) {
-                    
+
                     final String identifier       = separators.get(j);
                     final MeasureStringBuilder sb = new MeasureStringBuilder();
                     int count                     = timeVar.getDimension(0).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
                     final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component");
-                        
+
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
                         final List<DirectPosition> positions = new ArrayList<>();
                         DirectPosition previousPosition = null;
@@ -1006,7 +1006,7 @@ public class NetCDFExtractor {
         LOGGER.info("datablock parsed");
         return results;
     }
-    
+
     private static List<ProcedureTree> getProcedureTraj(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final List<ProcedureTree> results = new ArrayList<>();
         if (analyze.mainField == null) {
@@ -1019,22 +1019,22 @@ public class NetCDFExtractor {
 
             final List<String> separators = parseSeparatorValues(analyze);
             final boolean single          = separators.isEmpty();
-            
+
             Array latArray  = null;
             Array lonArray  = null;
             if (analyze.hasSpatial()) {
                 latArray        = analyze.getArrayFromField(analyze.latField);
                 lonArray        = analyze.getArrayFromField(analyze.lonField);
             }
-            
+
             final Variable timeVar  = analyze.vars.get(analyze.mainField.label);
             final String timeUnits  = analyze.mainField.unit;
             final Array timeArray   = analyze.file.readArrays(Arrays.asList(timeVar)).get(0);
             final boolean constantT = analyze.mainField.dimension == 1;
             final boolean timeFirst = analyze.mainField.mainVariableFirst;
-            
+
             final Set<String> fields = analyze.getPhenomenonArrayMap().keySet();
-            
+
             if (single) {
                 final ProcedureTree compo = new ProcedureTree(procedureID, "Component", fields);
                 if (acceptedSensorID == null || acceptedSensorID.contains(procedureID)) {
@@ -1061,19 +1061,19 @@ public class NetCDFExtractor {
                     }
                     compo.spatialBound.merge(gb);
                 }
-                
+
             } else {
                 final ProcedureTree system = new ProcedureTree(procedureID, "System", fields);
                 results.add(system);
-                
+
                 for (int j = 0; j < separators.size(); j++) {
-                    
+
                     final String identifier       = separators.get(j);
                     int count                     = timeVar.getDimension(0).getLength();
                     final GeoSpatialBound gb      = new GeoSpatialBound();
                     final String currentProcID    = procedureID + '-' + identifier;
                     final ProcedureTree compo     = new ProcedureTree(currentProcID, "Component", fields);
-                        
+
                     if (acceptedSensorID == null || acceptedSensorID.contains(currentProcID)) {
 
                         for (int i = 0; i < count; i++) {
@@ -1105,7 +1105,7 @@ public class NetCDFExtractor {
         LOGGER.info("datablock parsed");
         return results;
     }
-    
+
     private static ExtractionResult parseDataBlockGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final ExtractionResult results = new ExtractionResult();
         final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
@@ -1198,7 +1198,7 @@ public class NetCDFExtractor {
         LOGGER.info("datablock parsed");
         return results;
     }
-    
+
     private static List<ProcedureTree> getProcedureGrid(final NCFieldAnalyze analyze, final String procedureID, final List<String> acceptedSensorID) throws NetCDFParsingException {
         final List<ProcedureTree> results = new ArrayList<>();
         final ProcedureTree compo = new ProcedureTree(procedureID, "Component");
@@ -1264,7 +1264,7 @@ public class NetCDFExtractor {
         LOGGER.info("datablock parsed");
         return results;
     }
-    
+
     private static List<String> parseSeparatorValues(final NCFieldAnalyze analyze) throws IOException {
         final List<String> separators = new ArrayList<>();
         if (analyze.separatorField != null) {

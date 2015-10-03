@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
@@ -24,7 +23,6 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
 
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
@@ -57,7 +55,7 @@ import java.util.logging.Logger;
  */
 public final class FeatureTypeUtils extends Static {
 
-    private static final Logger LOGGER = Logging.getLogger(FeatureTypeUtils.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.geojson.utils");
     private static final FeatureTypeFactory FT_FACTORY = FeatureTypeFactory.INSTANCE;
     private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
@@ -118,13 +116,13 @@ public final class FeatureTypeUtils extends Static {
         writer.flush();
         writer.close();
     }
-    
+
     public static void writeFeatureTypes(List<FeatureType> fts, OutputStream output) throws IOException, DataStoreException {
         ArgumentChecks.ensureNonNull("FeatureType", fts);
         ArgumentChecks.ensureNonNull("outputStream", output);
-        
+
         if (fts.isEmpty()) return;
-        
+
         if (fts.size() > 1) {
             JsonGenerator writer = GeoJSONParser.FACTORY.createGenerator(output, JsonEncoding.UTF8).useDefaultPrettyPrinter();
             writer.writeStartArray();
@@ -150,8 +148,8 @@ public final class FeatureTypeUtils extends Static {
         writer.flush();
         writer.close();
     }
-        
-        
+
+
     private static void writeFeatureType(FeatureType ft, OutputStream output, JsonGenerator writer) throws IOException, DataStoreException {
         ArgumentChecks.ensureNonNull("FeatureType", ft);
         ArgumentChecks.ensureNonNull("outputStream", output);

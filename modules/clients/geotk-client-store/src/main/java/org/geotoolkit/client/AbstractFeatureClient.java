@@ -43,7 +43,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public abstract class AbstractFeatureClient extends AbstractFeatureStore implements Client{
 
-    private static final Logger LOGGER = Logging.getLogger(AbstractFeatureClient.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.client");
 
     protected final ParameterValueGroup parameters;
     protected final URL serverURL;

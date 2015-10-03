@@ -45,7 +45,7 @@ import java.util.logging.Logger;
  */
 public class WebCoverageClient extends AbstractClient {
 
-    private static final Logger LOGGER = Logging.getLogger(WebCoverageClient.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wcs");
 
     private WCSCapabilitiesType capabilities;
 

@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  * Synchronize map canvas.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class Canvas2DSynchronizer implements PropertyChangeListener{
@@ -46,12 +46,12 @@ public class Canvas2DSynchronizer implements PropertyChangeListener{
             this.isTarget = isTarget;
             this.canvas = canvas;
         }
-        
+
     }
-    
+
     private volatile boolean updating = false;
     private final List<CanvasState> canvas = Collections.synchronizedList(new ArrayList());
-    
+
     public void addCanvas(J2DCanvas canvas, boolean isSource, boolean isTarget){
         this.canvas.add(new CanvasState(canvas, isSource, isTarget));
         if(isSource){
@@ -59,10 +59,10 @@ public class Canvas2DSynchronizer implements PropertyChangeListener{
             new WeakPropertyChangeListener(canvas, this);
         }
     }
-    
+
     /**
      * Listen to map movements and propagate to other maps.
-     * 
+     *
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -83,10 +83,10 @@ public class Canvas2DSynchronizer implements PropertyChangeListener{
                 state.canvas.setObjectiveCRS(crs);
                 state.canvas.setCenterTransform(centerTransform);
             } catch (TransformException ex) {
-                Logging.getLogger(Canvas2DSynchronizer.class).log(Level.INFO, ex.getMessage(),ex);
+                Logging.getLogger("org.geotoolkit.display2d").log(Level.INFO, ex.getMessage(),ex);
             }
         }
         updating = false;
     }
-    
+
 };

@@ -19,33 +19,33 @@ package org.geotoolkit.gui.swing.propertyedit.filterproperty;
 
 import java.awt.Image;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.gui.swing.filter.JCQLEditor;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * CQL property panel
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
 public class JCQLPropertyPanel extends JCQLEditor implements PropertyPane{
 
     private FeatureMapLayer layer;
-        
+
     private void parse(){
         setLayer(layer);
         setFilter(layer.getQuery().getFilter());
     }
-    
+
     @Override
     public boolean canHandle(Object target) {
         return target instanceof FeatureMapLayer;
     }
-    
+
     @Override
     public void setTarget(final Object target) {
         if (target instanceof FeatureMapLayer) {
@@ -55,12 +55,12 @@ public class JCQLPropertyPanel extends JCQLEditor implements PropertyPane{
     }
 
     @Override
-    public void apply() {  
+    public void apply() {
         if(layer !=null){
             try {
                 layer.setQuery(QueryBuilder.filtered(layer.getCollection().getFeatureType().getName(), getFilter()));
             } catch (CQLException ex) {
-                Logger.getLogger(JCQLPropertyPanel.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+                Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.filterproperty").log(Level.WARNING, ex.getMessage(), ex);
             }
         }
     }

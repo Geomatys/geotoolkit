@@ -93,7 +93,7 @@ public final class StyleBank {
      * List of objects in the bank.
      */
     private final Set banks = new HashSet();
-    
+
     private StyleBank(File storageFolder) {
         this.folder = storageFolder;
 
@@ -102,7 +102,7 @@ public final class StyleBank {
 
     }
 
-    
+
     /**
      * Returns a list which contains instances of the class given in parameter
      *
@@ -125,11 +125,11 @@ public final class StyleBank {
 
         return list;
     }
-    
-    public void addFromFile(File source){       
+
+    public void addFromFile(File source){
         loadFile(source);
     }
-    
+
     private void explore(File f) {
         if (f.isDirectory()) {
             for (File c : f.listFiles()) {
@@ -141,7 +141,7 @@ public final class StyleBank {
     }
 
     private void loadDefaultStyle() {
-        //Load default marks                    
+        //Load default marks
         final Literal[] marks = new Literal[]{
             StyleConstants.MARK_CIRCLE,
             StyleConstants.MARK_CROSS,
@@ -178,14 +178,14 @@ public final class StyleBank {
 
             parse(currentMark);
         }
-        
+
         //load default symbolizers
         parse(StyleConstants.DEFAULT_POINT_SYMBOLIZER);
         parse(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
         parse(StyleConstants.DEFAULT_POLYGON_SYMBOLIZER);
         parse(StyleConstants.DEFAULT_TEXT_SYMBOLIZER);
         parse(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
-        
+
     }
 
     /**
@@ -253,10 +253,8 @@ public final class StyleBank {
                     }
                 }
 
-            } catch (JAXBException ex) {
-                Logging.getLogger(StyleBank.class).log(Level.FINEST, ex.getMessage(), ex);
-            } catch (FactoryException ex) {
-                Logging.getLogger(StyleBank.class).log(Level.FINEST, ex.getMessage(), ex);
+            } catch (JAXBException | FactoryException ex) {
+                Logging.getLogger("org.geotoolkit.gui.swing.style").log(Level.FINEST, ex.getMessage(), ex);
             }
         }
 
@@ -271,7 +269,7 @@ public final class StyleBank {
 
         if (style != null) {
 
-            //We add the style 
+            //We add the style
             banks.add(style);
 
             //We parse under-style
@@ -281,7 +279,7 @@ public final class StyleBank {
 
                 if (currentPoint.getGraphic() != null && currentPoint.getGraphic().graphicalSymbols() != null) {
 
-                    //Parses his graphical symbol            
+                    //Parses his graphical symbol
                     Iterator<GraphicalSymbol> iterGraphicSymbol = ((PointSymbolizer) style).getGraphic().graphicalSymbols().iterator();
 
                     while (iterGraphicSymbol.hasNext()) {

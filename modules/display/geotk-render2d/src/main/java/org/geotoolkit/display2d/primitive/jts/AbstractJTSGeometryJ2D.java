@@ -81,7 +81,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
         try {
             return transform.createInverse();
         } catch (NoninvertibleTransformException ex) {
-            Logging.getLogger(JTSGeometryJ2D.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+            Logging.getLogger("org.geotoolkit.display2d.primitive.jts").log(Level.WARNING, ex.getMessage(), ex);
             return null;
         }
     }
@@ -138,7 +138,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
     @Override
     public Rectangle2D getBounds2D() {
         if(geometry == null) return null;
-        
+
         final Envelope env = geometry.getEnvelopeInternal();
         final Point2D p1 = new Point2D.Double(env.getMinX(), env.getMinY());
         transform.transform(p1, p1);

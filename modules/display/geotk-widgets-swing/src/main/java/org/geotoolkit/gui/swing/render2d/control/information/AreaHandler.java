@@ -50,7 +50,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public class AreaHandler implements CanvasHandler {
 
-    private static final Logger LOGGER = Logging.getLogger(AreaHandler.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.control.information");
 
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
@@ -156,8 +156,8 @@ public class AreaHandler implements CanvasHandler {
         public void mouseExited(MouseEvent e) {
             map.setCursor(null);
         }
-        
-        
+
+
 
     }
 

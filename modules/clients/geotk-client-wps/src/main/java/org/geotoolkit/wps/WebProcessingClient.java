@@ -83,7 +83,7 @@ import org.opengis.util.NoSuchIdentifierException;
  */
 public class WebProcessingClient extends AbstractClient implements ProcessingRegistry {
 
-    private static final Logger LOGGER = Logging.getLogger(WebProcessingClient.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps");
     private static final long TIMEOUT_CAPS = 10000L;
 
     /**

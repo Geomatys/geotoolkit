@@ -397,7 +397,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
             } catch (IOException e) {
                 // Should not happen, but if it does anyway keep the current tile,
                 // which is likely to be painted as an invalid tile by MosaicPanel.
-                Logging.recoverableException(MosaicTableModel.class, "add", e);
+                Logging.recoverableException(null, MosaicTableModel.class, "add", e);
                 continue;
             }
             final AffineTransform tr;
@@ -407,7 +407,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
                 // Should not happen, but if it does anyway it means that the tile
                 // has not yet been processed by TileManagerFactory, in which case
                 // we don't need to recreate it.
-                Logging.recoverableException(MosaicTableModel.class, "add", e);
+                Logging.recoverableException(null, MosaicTableModel.class, "add", e);
                 continue;
             }
             tile = new Tile(tile.getImageReaderSpi(), tile.getInput(), tile.getImageIndex(), region, tr);

@@ -20,7 +20,6 @@ package org.geotoolkit.filter.binding;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.sis.util.ObjectConverters;
 
@@ -28,11 +27,12 @@ import org.jaxen.JaxenException;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.ComplexType;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
  * Creates property accessors for XPath expressions.
- * 
+ *
  * @author Johann Sorel, Geomatys
  * @module pending
  */
@@ -41,15 +41,15 @@ public class XPathBinding<C> extends AbstractBinding<C> {
     public static class CAXPath extends XPathBinding<ComplexAttribute>{
         public CAXPath() {
             super(ComplexAttribute.class, 19);
-        }        
+        }
     }
-    
+
     public static class CTXPath extends XPathBinding<ComplexType>{
         public CTXPath() {
             super(ComplexType.class, 9);
-        }        
+        }
     }
-    
+
     public XPathBinding(Class<C> bindedClass, int priority) {
         super(bindedClass, priority);
     }
@@ -58,7 +58,7 @@ public class XPathBinding<C> extends AbstractBinding<C> {
     public boolean support(String xpath) {
         return true;
     }
-    
+
 //    @Override
 //    public boolean canHandle(final Class type, final String xpath, final Class target) {
 //
@@ -66,7 +66,7 @@ public class XPathBinding<C> extends AbstractBinding<C> {
 //            return false;
 //        }
 //
-//        if (!ComplexAttribute.class.isAssignableFrom(type) 
+//        if (!ComplexAttribute.class.isAssignableFrom(type)
 //                && !PropertyType.class.isAssignableFrom(type)
 //                && !PropertyDescriptor.class.isAssignableFrom(type)) {
 //            return false; // we only work with complex types.
@@ -92,7 +92,7 @@ public class XPathBinding<C> extends AbstractBinding<C> {
                     if(ite.hasNext()){
                         v = ite.next();
                     }
-                }                    
+                }
             }
 
             if(v instanceof Property){
@@ -102,7 +102,7 @@ public class XPathBinding<C> extends AbstractBinding<C> {
                     return (T) prop;
                 }else{
                     v = prop.getValue();
-                }                    
+                }
             }
 
             if(target == null){
@@ -112,7 +112,7 @@ public class XPathBinding<C> extends AbstractBinding<C> {
             }
 
         } catch (JaxenException ex) {
-            Logger.getLogger(XPathBinding.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.filter.binding").log(Level.WARNING, null, ex);
         }
         return null;
     }

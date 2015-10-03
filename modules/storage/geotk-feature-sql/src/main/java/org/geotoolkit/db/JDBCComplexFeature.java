@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericAssociationIterator;
@@ -54,45 +53,45 @@ import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.ComplexType;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
-import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.util.GenericName;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * JDBC feature, handle both simple and complexe types.
  * Complex properties are retrieve throut foreign key definitions.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
-        
+
     private final DefaultJDBCFeatureStore store;
     private final Map<GenericName,Object> progressiveMap = new HashMap<GenericName, Object>();
     private final FeatureType type;
-    
+
     public JDBCComplexFeature(final DefaultJDBCFeatureStore store, final ResultSet rs,
             final FeatureType type, final FeatureId id) throws SQLException, DataStoreException{
         super(type, id);
         this.type = type;
         this.store = store;
-        
+
         int k=0;
         for(final PropertyDescriptor desc : type.getDescriptors()){
             final GenericName n = desc.getName();
             final PropertyType ptype = desc.getType();
-            
+
             final Object prop;
             if(ptype instanceof AssociationType){
                 final AssociationDescriptor assDesc = (AssociationDescriptor) desc;
                 final RelationMetaModel template = (RelationMetaModel) desc.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_RELATION);
-                
+
                 if(template != null){
                     //create a dynamic collection
                     final Object key = rs.getObject(template.getCurrentColumn());
-                    
+
                     final QueryBuilder qb = new QueryBuilder();
                     qb.setTypeName(NamesExt.create(store.getDefaultNamespace(), template.getForeignTable()));
                     qb.setFilter(template.toFilter(key));
@@ -106,12 +105,12 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                 k++;
             }else if(ptype instanceof ComplexType){
                 final RelationMetaModel template = (RelationMetaModel) desc.getUserData().get(JDBCFeatureStore.JDBC_PROPERTY_RELATION);
-                
+
                 if(template != null){
                     //create a dynamic collection
                     final Object key = rs.getObject(template.getCurrentColumn());
-                    
-                    //create the filter, excluding relation and id fields                    
+
+                    //create the filter, excluding relation and id fields
                     final QueryBuilder qb = new QueryBuilder();
                     qb.setTypeName(NamesExt.create(store.getDefaultNamespace(), template.getForeignTable()));
                     qb.setFilter(template.toFilter(key));
@@ -128,10 +127,10 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                 ((Property)prop).setValue(value);
                 k++;
             }
-            
+
             progressiveMap.put(n, prop);
         }
-        
+
         //used by getValue and getProperties()
         //this collection falls back on the property map.
         value = new CollectionMap();
@@ -170,7 +169,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
         }else{
             obj = progressiveMap.get(name);
         }
-        
+
         if(obj == null){
             return null;
         }else if(obj instanceof Collection){
@@ -190,7 +189,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                     }
                 }
             }
-            
+
             return null;
         }else if(obj instanceof Property){
             return (Property)obj;
@@ -198,7 +197,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
             throw new IllegalStateException("Map contain a value which is not a property or a Collection, it should not happen.");
         }
     }
-    
+
     @Override
     public Property getProperty(final String name) {
         return getProperty(NamesExt.create(null, name));
@@ -207,12 +206,12 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
     public void updateResultSet(final ResultSet rs) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     private class CollectionMap extends AbstractCollection<Property> {
-    
+
         public CollectionMap() {
         }
-        
+
         @Override
         public CollectionMapIterator iterator() {
             return new CollectionMapIterator();
@@ -230,9 +229,9 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
             }
             return size;
         }
-        
+
     }
-    
+
     private class CollectionMapIterator implements CloseableIterator<Property>{
 
         private final Iterator<Object> mainIte;
@@ -242,7 +241,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
         private CollectionMapIterator() {
             mainIte = progressiveMap.values().iterator();
         }
-        
+
         @Override
         public boolean hasNext() {
             findNext();
@@ -259,12 +258,12 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
             next = null;
             return candidate;
         }
-        
+
         private void findNext(){
             if(next != null) return;
-            
+
             while(next == null){
-                
+
                 //search if we have remaining values in the sub
                 if(sub != null){
                     if(sub.hasNext()){
@@ -276,7 +275,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                         sub = null;
                     }
                 }
-                
+
                 //search the main iterator
                 if(mainIte.hasNext()){
                     final Object obj = mainIte.next();
@@ -293,25 +292,25 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                 }
             }
         }
-       
+
         @Override
         public void close() {
             if(sub != null){
                 close(sub);
             }
         }
-        
+
         @Override
         public void remove() {
             throw new UnsupportedOperationException("Not supported.");
         }
-        
+
         private void close(Iterator ite){
             if(ite instanceof Closeable){
                 try {
                     ((Closeable)ite).close();
                 } catch (IOException ex) {
-                    Logger.getLogger(JDBCComplexFeature.class.getName()).log(Level.SEVERE, null, ex);
+                    Logging.getLogger("org.geotoolkit.db").log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -322,9 +321,9 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
             //ensure the sub iterator is closed
             close();
         }
-        
+
     }
-    
+
     public static Object readSimpleValue(final SQLDialect dialect, final ResultSet rs, int index, PropertyDescriptor desc) throws SQLException{
         if(desc instanceof GeometryDescriptor){
             final GeometryDescriptor gatt = (GeometryDescriptor) desc;
@@ -347,19 +346,19 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                     throw new SQLException(e);
                 }
 
-                if(geom != null && geom.getUserData() == null){ 
+                if(geom != null && geom.getUserData() == null){
                     //set crs is not set
                     JTS.setCRS(geom, gatt.getCoordinateReferenceSystem());
                 }
                 return geom;
             }
-            
-            
+
+
         }else{
             return dialect.decodeAttributeValue((AttributeDescriptor)desc, rs, index);
         }
     }
-    
+
     /**
      * Load properties later
      */
@@ -373,10 +372,10 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
             this.query = query;
             this.desc = desc;
         }
-        
+
         private synchronized void load(){
             if(loaded!=null) return;
-            
+
             loaded = new ArrayList<Property>();
             final FeatureCollection col = store.createSession(false).getFeatureCollection(query);
             final FeatureIterator ite = col.iterator();
@@ -392,7 +391,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
                 ite.close();
             }
         }
-        
+
         @Override
         public int size() {
             load();
@@ -470,7 +469,7 @@ public class JDBCComplexFeature extends AbstractFeature<Collection<Property>> {
             load();
             loaded.clear();
         }
-        
+
     }
-    
+
 }

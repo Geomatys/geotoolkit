@@ -21,13 +21,13 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.Disjoint;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Immutable "disjoint" filter.
@@ -56,11 +56,8 @@ public class DefaultDisjoint extends AbstractBinarySpatialOperator<Expression,Ex
         final Geometry[] values;
         try {
             values = toSameCRS(leftGeom, rightGeom);
-        } catch (FactoryException ex) {
-            Logger.getLogger(DefaultContains.class.getName()).log(Level.WARNING, null, ex);
-            return false;
-        } catch (TransformException ex) {
-            Logger.getLogger(DefaultContains.class.getName()).log(Level.WARNING, null, ex);
+        } catch (FactoryException | TransformException ex) {
+            Logging.getLogger("org.geotoolkit.filter.binaryspatial").log(Level.WARNING, null, ex);
             return false;
         }
         leftGeom = values[0];

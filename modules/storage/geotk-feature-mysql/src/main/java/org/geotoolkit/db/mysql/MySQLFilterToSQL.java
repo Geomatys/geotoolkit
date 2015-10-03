@@ -236,7 +236,7 @@ public class MySQLFilterToSQL implements FilterToSQL {
                     try {
                         encoding = ObjectConverters.convert(o, String.class);
                     } catch (UnconvertibleObjectException e) {
-                        Logging.recoverableException(MySQLFilterToSQL.class, "writeValue", e);
+                        Logging.recoverableException(null, MySQLFilterToSQL.class, "writeValue", e);
                         // TODO - do we really want to ignore?
                     }
                     if (encoding == null) {
@@ -258,7 +258,7 @@ public class MySQLFilterToSQL implements FilterToSQL {
             try {
                 encoded = ObjectConverters.convert(candidate, String.class);
             } catch (UnconvertibleObjectException e) {
-                Logging.recoverableException(MySQLFilterToSQL.class, "writeValue", e);
+                Logging.recoverableException(null, MySQLFilterToSQL.class, "writeValue", e);
                 // TODO - do we really want to ignore?
             }
             if (encoded == null) {

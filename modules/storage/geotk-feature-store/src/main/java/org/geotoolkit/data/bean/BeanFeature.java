@@ -26,12 +26,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureStoreRuntimeException;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.AbstractProperty;
 import org.geotoolkit.feature.Attribute;
-import org.geotoolkit.feature.DefaultGeometryAttribute;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.feature.Property;
@@ -49,9 +47,9 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -60,15 +58,15 @@ import org.opengis.util.FactoryException;
 public class BeanFeature extends AbstractFeature<Collection<Property>>{
 
     public static final String KEY_BEAN = "bean";
-    
+
     private final Object bean;
     private final Mapping mapping;
-    
+
     public BeanFeature(Object bean, Mapping mapping){
         super(mapping.featureType, mapping.buildId(bean));
         this.bean = bean;
         this.mapping = mapping;
-        
+
         value = new ArrayList<>();
         for(PropertyDescriptor desc : mapping.featureType.getDescriptors()){
             final Property property;
@@ -79,7 +77,7 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
             }
             value.add(property);
         }
-        
+
         getUserData().put(KEY_BEAN, bean);
     }
 
@@ -97,26 +95,26 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
                 }
             });
         }
-        
+
         public Mapping(Class clazz, String namespace, CoordinateReferenceSystem crs, String idField, String defaultGeom, Predicate<java.beans.PropertyDescriptor> filter) {
             this.idField = idField;
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.setName(namespace,clazz.getSimpleName());
             try {
                 for (java.beans.PropertyDescriptor pd : Introspector.getBeanInfo(clazz).getPropertyDescriptors()) {
-                    
+
                     final String propName = pd.getName();
                     if(propName.equals(idField)){
                         //ignore the id field, it will be used as featureId
                         idAccessor = pd;
                         continue;
                     }
-                    
+
                     final Method readMethod = pd.getReadMethod();
                     if(readMethod==null) continue;
-                    
+
                     if(!filter.test(pd)) continue;
-                    
+
                     final Class propClazz = readMethod.getReturnType();
                     if(Geometry.class.isAssignableFrom(propClazz)){
                         ftb.add(propName, propClazz, crs);
@@ -132,7 +130,7 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
             if(defaultGeom!=null) ftb.setDefaultGeometry(defaultGeom);
             featureType = ftb.buildFeatureType();
         }
-        
+
         public FeatureId buildId(Object bean){
             try {
                 return new DefaultFeatureId(String.valueOf(idAccessor.getReadMethod().invoke(bean)));
@@ -140,17 +138,17 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
                 throw new FeatureStoreRuntimeException(ex);
             }
         }
-        
+
     }
-    
+
     private class BeanAttributeProperty extends AbstractProperty implements Attribute{
 
         private final AttributeDescriptor desc;
-        
+
         public BeanAttributeProperty(AttributeDescriptor desc){
             this.desc = desc;
         }
-        
+
         @Override
         public Object getValue() {
             try {
@@ -206,13 +204,13 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
         public void setValues(Collection<? extends Object> clctn) throws IllegalArgumentException {
             setValue(clctn.iterator().next());
         }
-        
+
     }
-    
+
     private final class BeanGeometryProperty extends BeanAttributeProperty implements GeometryAttribute{
-        
+
         protected BoundingBox bounds;
-    
+
         public BeanGeometryProperty(GeometryDescriptor desc){
             super(desc);
         }
@@ -256,10 +254,8 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
                    if(val instanceof com.vividsolutions.jts.geom.Geometry){
                        try {
                            crs = JTS.findCoordinateReferenceSystem((com.vividsolutions.jts.geom.Geometry) val);
-                       } catch (NoSuchAuthorityCodeException ex) {
-                           Logger.getLogger(DefaultGeometryAttribute.class.getName()).log(Level.WARNING, null, ex);
                        } catch (FactoryException ex) {
-                           Logger.getLogger(DefaultGeometryAttribute.class.getName()).log(Level.WARNING, null, ex);
+                           Logging.getLogger("org.geotoolkit.feature").log(Level.WARNING, null, ex);
                        }
                    }else if(val instanceof org.opengis.geometry.Geometry){
                        crs = ((org.opengis.geometry.Geometry)val).getCoordinateReferenceSystem();
@@ -277,8 +273,8 @@ public class BeanFeature extends AbstractFeature<Collection<Property>>{
 
            return bounds;
        }
-        
-        
+
+
     }
-    
+
 }

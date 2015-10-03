@@ -415,7 +415,7 @@ skip:   while (it.hasNext()) {
                         }
                     }
                 } catch (IOException e) {
-                    Logging.unexpectedException(ImageFileChooser.class, "getSelectedFiles", e);
+                    Logging.unexpectedException(null, ImageFileChooser.class, "getSelectedFiles", e);
                 }
             }
             selectedFiles = content.toArray(new File[content.size()]);

@@ -19,7 +19,6 @@ package org.geotoolkit.gui.javafx.style.dynamicrange;
 import java.awt.image.RenderedImage;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -38,13 +37,14 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.opengis.geometry.Envelope;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer.DRChannel> {
-    
+
     @FXML
     private ChoiceBox<String> uiBands;
     @FXML
@@ -53,7 +53,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
     private FXDRBound uiLower;
     @FXML
     private FXDRBound uiUpper;
-    
+
     @Override
     public Class<DynamicRangeSymbolizer.DRChannel> getEditedClass() {
         return DynamicRangeSymbolizer.DRChannel.class;
@@ -63,7 +63,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
         uiCsComponent.valueProperty().setValue(csc);
         uiCsComponent.setDisable(true);
     }
-    
+
     @Override
     public DynamicRangeSymbolizer.DRChannel newValue() {
         return new DynamicRangeSymbolizer.DRChannel();
@@ -72,7 +72,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
     @Override
     public void initialize() {
         super.initialize();
-        
+
         uiCsComponent.setItems(FXCollections.observableArrayList(
                 DynamicRangeSymbolizer.DRChannel.BAND_RED,
                 DynamicRangeSymbolizer.DRChannel.BAND_GREEN,
@@ -80,7 +80,7 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                 DynamicRangeSymbolizer.DRChannel.BAND_ALPHA
             ));
         valueProperty().set(new DynamicRangeSymbolizer.DRChannel());
-        
+
         final ChangeListener changeListener = (ChangeListener) (ObservableValue observable, Object oldValue, Object newValue) -> {
             if(updating) return;
             final DynamicRangeSymbolizer.DRChannel element = new DynamicRangeSymbolizer.DRChannel();
@@ -94,9 +94,9 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
         uiCsComponent.valueProperty().addListener(changeListener);
         uiLower.valueProperty().addListener(changeListener);
         uiUpper.valueProperty().addListener(changeListener);
-        
+
     }
-    
+
     @Override
     protected void updateEditor(DynamicRangeSymbolizer.DRChannel styleElement) {
         if(styleElement!=null){
@@ -112,16 +112,16 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
         super.setLayer(layer);
         uiLower.setLayer(layer);
         uiUpper.setLayer(layer);
-        
-        
+
+
         if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             try {
                 final CoverageReference ref = cml.getCoverageReference();
                 final GridCoverageReader reader = ref.acquireReader();
                 List<GridSampleDimension> dims = reader.getSampleDimensions(ref.getImageIndex());
-                
-                
+
+
                 final int nbdim;
                 if(dims==null){
                     //read a very low resolution image to extract bands from it
@@ -134,28 +134,28 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                     final GridCoverageReadParam params = new GridCoverageReadParam();
                     params.setEnvelope(env);
                     params.setResolution(res);
-                    
+
                     final GridCoverage2D cov = (GridCoverage2D) reader.read(ref.getImageIndex(), params);
                     final RenderedImage ri = cov.getRenderedImage();
                     nbdim = ri.getSampleModel().getNumBands();
                 }else{
                     nbdim = dims.size();
                 }
-                
+
                 final ObservableList<String> bvals = FXCollections.observableArrayList();
                 bvals.add("none");
                 for(int i=0;i<nbdim;i++){
                     bvals.add(""+i);
                 }
                 uiBands.setItems(bvals);
-                
+
                 ref.recycle(reader);
             } catch (CoverageStoreException ex) {
-                Logger.getLogger(FXDRChannel.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.gui.javafx.style.dynamicrange").log(Level.SEVERE, null, ex);
             }
-            
+
         }
-        
+
     }
-    
+
 }

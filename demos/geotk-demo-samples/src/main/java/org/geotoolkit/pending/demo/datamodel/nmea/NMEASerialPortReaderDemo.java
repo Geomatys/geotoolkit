@@ -40,7 +40,7 @@ import org.geotoolkit.storage.StorageListener;
  */
 public class NMEASerialPortReaderDemo {
 
-    private static final Logger LOGGER = Logging.getLogger(NMEASerialPortReaderDemo.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.pending.demo.datamodel.nmea");
 
     public static void main(String[] args) throws Exception {
         Setup.initialize(null);

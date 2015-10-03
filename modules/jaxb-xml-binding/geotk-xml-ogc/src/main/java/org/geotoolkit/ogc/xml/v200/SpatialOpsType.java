@@ -29,9 +29,9 @@ import org.opengis.filter.Filter;
 
 /**
  * <p>Java class for SpatialOpsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SpatialOpsType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpatialOpsType")
@@ -52,7 +52,7 @@ import org.opengis.filter.Filter;
 })
 public abstract class SpatialOpsType implements Filter {
 
-    protected static final Logger LOGGER = Logging.getLogger(SpatialOpsType.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ogc.xml.v200");
+
     public abstract SpatialOpsType getClone();
 }

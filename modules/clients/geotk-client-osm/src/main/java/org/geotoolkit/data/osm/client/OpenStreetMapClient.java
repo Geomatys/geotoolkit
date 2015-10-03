@@ -64,7 +64,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class OpenStreetMapClient extends AbstractClient{
 
-    private static final Logger LOGGER = Logging.getLogger(OpenStreetMapClient.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.osm.client");
 
     private Api capabilities = null;
 
@@ -75,13 +75,13 @@ public class OpenStreetMapClient extends AbstractClient{
     public OpenStreetMapClient(final URL url, final OSMVersion version){
         this(url,null,version);
     }
-    
+
     public OpenStreetMapClient(final URL url, final ClientSecurity security, final OSMVersion version){
         super(create(OSMClientFactory.PARAMETERS, url, security));
         ArgumentChecks.ensureNonNull("version", version);
         Parameters.getOrCreate(OSMClientFactory.VERSION, parameters).setValue(version.getCode());
     }
-    
+
     public OpenStreetMapClient(final ParameterValueGroup params){
         super(params);
     }
@@ -94,7 +94,7 @@ public class OpenStreetMapClient extends AbstractClient{
     public OSMVersion getVersion(){
         return OSMVersion.getVersion(Parameters.value(OSMClientFactory.VERSION, parameters));
     }
-    
+
     public Api getCapabilities(){
         if (capabilities != null) {
             return capabilities;

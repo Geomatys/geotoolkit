@@ -35,6 +35,7 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -73,7 +74,7 @@ import org.opengis.util.FactoryException;
 @XmlRootElement(name ="BoundingBox")
 public class BoundingBoxType implements BoundingBox {
 
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.ows.xml.v110");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ows.xml.v110");
 
     @XmlList
     @XmlElement(name = "LowerCorner", type = Double.class)

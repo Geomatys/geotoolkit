@@ -39,14 +39,14 @@ import org.opengis.referencing.operation.MathTransform;
  */
 public class JSimplificationPanel extends javax.swing.JPanel {
 
-    private static final Logger LOGGER = Logging.getLogger(JSimplificationPanel.class);
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.control.edition");
+
     public static final String GEOMETRY_PROPERTY = "geometry";
-        
+
     private JMap2D map;
     private Feature original = null;
     private Geometry current = null;
-    
+
     public JSimplificationPanel(final JMap2D map) {
         this.map = map;
         initComponents();
@@ -59,12 +59,12 @@ public class JSimplificationPanel extends javax.swing.JPanel {
     public void setMap(JMap2D map) {
         this.map = map;
     }
-    
+
     public void setGeometry(final Feature feature){
         this.original = feature;
         this.current = null;
     }
-    
+
     /**
      * @return Geometry is data CRS.
      */
@@ -75,19 +75,19 @@ public class JSimplificationPanel extends javax.swing.JPanel {
             return current;
         }
     }
-    
+
     private boolean generate(){
-        
+
         if(original == null){
             return false;
         }
-        
+
         if(map == null){
             return false;
         }
-        
+
         final boolean mapCrs = guiMapCrs.isSelected();
-        
+
         try{
             final CoordinateReferenceSystem mapCRS = map.getCanvas().getObjectiveCRS2D();
             final GeometryDescriptor desc = original.getDefaultGeometryProperty().getDescriptor();
@@ -95,13 +95,13 @@ public class JSimplificationPanel extends javax.swing.JPanel {
             Geometry geom = (Geometry) original.getDefaultGeometryProperty().getValue();
             geom = (Geometry) geom.clone();
             final Class clazz = desc.getType().getBinding();
-            
+
             if(mapCrs){
                 //reproject geometry in map crs for simplification
                 final MathTransform trs = CRS.findMathTransform(dataCRS,mapCRS,true);
                 geom = JTS.transform(geom, trs);
             }
-            
+
             if(guiDouglas.isSelected()){
                 final DouglasPeuckerSimplifier simplifier = new DouglasPeuckerSimplifier(geom);
                 simplifier.setDistanceTolerance((Double)guiIndice.getValue());
@@ -111,16 +111,16 @@ public class JSimplificationPanel extends javax.swing.JPanel {
                 simplifier.setDistanceTolerance((Double)guiIndice.getValue());
                 current = simplifier.getResultGeometry();
             }
-            
+
             if(mapCrs){
                 //reproject geometry in data crs
                 final MathTransform trs = CRS.findMathTransform(mapCRS,dataCRS,true);
                 current = JTS.transform(current, trs);
             }
-            
+
             //ensure geometry type is preserved
             current = JTSMapping.convertType(current, clazz);
-            
+
             guiError.setText("");
             return true;
         }catch(Exception ex){
@@ -128,9 +128,9 @@ public class JSimplificationPanel extends javax.swing.JPanel {
             guiError.setText(ex.getLocalizedMessage());
             return false;
         }
-        
-    }    
-    
+
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

@@ -22,14 +22,14 @@ import org.apache.sis.util.logging.Logging;
 
 /**
  * Monitor which try to never fail the rendering.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class NeverFailMonitor extends AbstractCanvasMonitor{
 
-    private static final Logger LOGGER = Logging.getLogger(NeverFailMonitor.class);
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display.canvas.control");
+
     /**
      * {@inheritDoc }
      */

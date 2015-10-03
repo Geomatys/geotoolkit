@@ -29,24 +29,24 @@ import org.apache.sis.util.logging.Logging;
  * @module pending
  */
 public class NcGetMetadata extends AbstractRequest implements NcGetMetadataRequest {
-    
+
     /**
      * Default logger for all GetMetadata requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(NcGetMetadata.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ncwms");
+
     private String layerName = null;
-    
+
     private String item = null;
-    
+
     private String day = null;
-    
+
     private String start = null;
-    
+
     private String end = null;
-    
+
     private String time = null;
-    
+
     private String elevation = null;
 
     /**
@@ -54,7 +54,7 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
      */
     protected NcGetMetadata(final String serverURL) {
         super(serverURL);
-    }    
+    }
 
     /**
      * {@inheritDoc}
@@ -71,7 +71,7 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
     public void setLayerName(final String name) {
         layerName = name;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -95,7 +95,7 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
     public String getDay() {
         return day;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -135,7 +135,7 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
     public void setEnd(final String end) {
         this.end = end;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -151,7 +151,7 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
     public void setTime(final String time) {
         this.time = time;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -167,7 +167,7 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
     public void setElevation(final String elevation) {
         this.elevation = elevation;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -175,58 +175,58 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
     protected void prepareParameters() {
         super.prepareParameters();
 
-        // Tests if the mandatory parameters are available          
+        // Tests if the mandatory parameters are available
         if (item == null) {
             throw new IllegalArgumentException("Must provide an item parameter");
-            
+
         } else if (item.equals("layerDetails")) {
-            
-            if (time != null)            
+
+            if (time != null)
                 requestParameters.put("time", time);
-            
+
         } else if (item.equals("animationTimesteps")) {
-            
+
             if (start == null)
-                throw new IllegalArgumentException("Must provide a start parameter");   
-            
+                throw new IllegalArgumentException("Must provide a start parameter");
+
             if (end == null)
-                throw new IllegalArgumentException("Must provide a end parameter"); 
-            
+                throw new IllegalArgumentException("Must provide a end parameter");
+
             requestParameters.put("start", start);
             requestParameters.put("end", end);
-            
+
         } else if (item.equals("timesteps")) {
-            
+
             if (day == null)
-                throw new IllegalArgumentException("Must provide a day parameter");   
-            
+                throw new IllegalArgumentException("Must provide a day parameter");
+
             requestParameters.put("day", day);
-            
+
         } else if (item.equals("minmax")) {
-            
-            if (time != null)            
-                requestParameters.put("time", time);  
-            
-            if (elevation != null)            
-                requestParameters.put("elevation", elevation);   
-            
+
+            if (time != null)
+                requestParameters.put("time", time);
+
+            if (elevation != null)
+                requestParameters.put("elevation", elevation);
+
         } else if (!item.equals("menu") && !item.equals("minmax")) {
-            throw new IllegalArgumentException("Invalid value for item parameter");             
-        }       
-        
+            throw new IllegalArgumentException("Invalid value for item parameter");
+        }
+
         requestParameters.put("request", "GetMetadata");
         requestParameters.put("item", item);
-        
+
         if (!item.equals("menu")) {
-            
+
             if (layerName == null)
-                throw new IllegalArgumentException("Must provide a layerName parameter"); 
-            
+                throw new IllegalArgumentException("Must provide a layerName parameter");
+
             if (item.equals("minmax"))
                 requestParameters.put("layers", layerName);
             else
                 requestParameters.put("layerName", layerName);
-                
+
         }
     }
 }

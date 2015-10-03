@@ -33,23 +33,23 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * A collection which is calculated on the fly by a process.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class ProcessedCollection extends AbstractCollection{
 
-    private static final Logger LOGGER = Logging.getLogger(ProcessedCollection.class);
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.map");
+
     private ProcessDescriptor processDescriptor;
     private ParameterValueGroup inputParam;
     private String resultParam;
     private long lifespan = 0;
-    
+
     private ParameterValueGroup result;
     private long lastCall = 0;
-    
+
     public ProcessedCollection(){
-        
+
     }
 
     /**
@@ -108,16 +108,16 @@ public class ProcessedCollection extends AbstractCollection{
      * A value of zero will cause the process to be executed on each access.
      * It is recommanded to have a value superior to 5.000 milliseconds to avoid
      * to much processing, yet this higly depends on the process itself.
-     * 
+     *
      * @return long lifespan in millisecond
      */
     public long getLifespan() {
         return lifespan;
     }
-    
+
     /**
      * {@see ProcessedCollection.getLifespan}
-     * @param lifespan 
+     * @param lifespan
      */
     public void setLifespan(long lifespan) {
         this.lifespan = lifespan;
@@ -128,12 +128,12 @@ public class ProcessedCollection extends AbstractCollection{
             LOGGER.log(Level.WARNING, "ProcessedCollection not configured.");
             return Collections.emptyList();
         }
-        
+
         //check lifespan
         if(result != null && lifespan>=0 && (System.currentTimeMillis()-lastCall)>lifespan ){
             result = null;
         }
-        
+
         //execute process if requiered
         if(result == null){
             lastCall = System.currentTimeMillis();
@@ -146,7 +146,7 @@ public class ProcessedCollection extends AbstractCollection{
                 LOGGER.log(Level.WARNING, "Processing failed : "+ex.getMessage(), ex);
             }
         }
-        
+
         if(result == null){
             return Collections.EMPTY_LIST;
         }else{
@@ -156,7 +156,7 @@ public class ProcessedCollection extends AbstractCollection{
             }catch(ParameterNotFoundException ex){
                 LOGGER.log(Level.WARNING, "Parameter "+resultParam+" is not in the result parameters.");
             }
-            
+
             if(col == null){
                 col = Collections.EMPTY_LIST;
             }else if(col instanceof Collection){
@@ -166,18 +166,18 @@ public class ProcessedCollection extends AbstractCollection{
                 final List lst = new ArrayList(size);
                 for(int i=0;i<size;i++){
                     lst.add(Array.get(col, i));
-                }                
+                }
                 col = lst;
             }else{
                 //create a singleton collection
                 col = Collections.singletonList(col);
             }
-            
+
             return (Collection)col;
         }
-        
+
     }
-    
+
     @Override
     public Iterator iterator() {
         final Collection col = getResult();

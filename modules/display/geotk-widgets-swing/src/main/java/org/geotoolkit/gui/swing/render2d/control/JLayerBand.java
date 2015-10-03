@@ -86,7 +86,7 @@ import org.opengis.util.InternationalString;
  */
 public class JLayerBand extends JNavigatorBand implements LayerListener {
 
-    private static final Logger LOGGER = Logging.getLogger(JLayerBand.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.control");
     private final MapLayer layer;
     private Color color = RandomStyleBuilder.randomColor();
     private final float width = 2f;
@@ -195,7 +195,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
             final int axisIdx = CRSUtilities.getDimensionOf(dataCRS, axis.getClass());
             if (axisIdx != -1) {
                 final NumberRange[] axisValues = GridCombineIterator.extractAxisRanges(gridGeometry, axisIdx);
-                
+
                 for (NumberRange axisRange : axisValues) {
                     ponctuals.add(axisRange.getMinDouble());
                     min = StrictMath.min(min, axisRange.getMinDouble());//-- getMin because begin of the slice is comform.

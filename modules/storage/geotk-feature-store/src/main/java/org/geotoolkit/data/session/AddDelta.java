@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreUtilities;
@@ -74,7 +73,7 @@ public class AddDelta extends AbstractDelta{
         try {
             ft = session.getFeatureStore().getFeatureType(typeName);
         } catch (DataStoreException ex) {
-            Logger.getLogger(AddDelta.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.data.session").log(Level.WARNING, null, ex);
             ft = null;
         }
 

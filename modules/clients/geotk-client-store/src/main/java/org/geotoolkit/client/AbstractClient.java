@@ -44,7 +44,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public abstract class AbstractClient extends AbstractStorage implements Client{
 
-    private static final Logger LOGGER = Logging.getLogger(AbstractClient.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.client");
 
     protected final ParameterValueGroup parameters;
     protected final URL serverURL;

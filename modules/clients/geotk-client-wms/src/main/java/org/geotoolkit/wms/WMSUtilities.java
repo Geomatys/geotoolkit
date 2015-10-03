@@ -61,7 +61,7 @@ import org.apache.sis.referencing.CommonCRS;
  */
 public final class WMSUtilities {
 
-    private static final Logger LOGGER = Logging.getLogger(WMSUtilities.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
     private static final SimpleDateFormat PERIOD_DATE_FORMAT = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     static {
@@ -289,7 +289,7 @@ public final class WMSUtilities {
                                     }
                                     continue;
                                 } catch (ParseException ex) {
-                                    Logger.getLogger(WMSUtilities.class.getName()).log(Level.FINER, "Value : {0} is not a period", candidate);
+                                    Logging.getLogger("org.geotoolkit.wms").log(Level.FINER, "Value : {0} is not a period", candidate);
                                 }
                             }
 
@@ -299,7 +299,7 @@ public final class WMSUtilities {
                                 dblValues.add((double)date.getTime());
                                 continue;
                             } catch (ParseException ex) {
-                                Logger.getLogger(WMSUtilities.class.getName()).log(Level.FINER, "Value : {0} is not a date", candidate);
+                                Logging.getLogger("org.geotoolkit.wms").log(Level.FINER, "Value : {0} is not a date", candidate);
                             }
                         }
 

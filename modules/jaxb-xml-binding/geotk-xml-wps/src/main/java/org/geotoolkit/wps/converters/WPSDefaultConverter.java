@@ -17,7 +17,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public abstract class WPSDefaultConverter<S, T> extends SimpleConverter<S, T> implements WPSObjectConverter<S, T> {
 
-    protected static final Logger LOGGER = Logging.getLogger(WPSObjectConverter.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps.converters");
 
     /**
      * Default constructor.

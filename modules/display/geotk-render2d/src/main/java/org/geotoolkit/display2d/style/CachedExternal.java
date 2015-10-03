@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import org.geotoolkit.renderer.style.DynamicSymbolFactoryFinder;
@@ -31,10 +30,11 @@ import org.opengis.filter.expression.Function;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ColorReplacement;
 import org.opengis.style.ExternalGraphic;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Cached External graphic
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -54,7 +54,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
     @Override
     protected void evaluate(){
         if(!isNotEvaluated) return;
-        
+
         if(!evaluateExternal()){
             //no valid image we can clear the cache, nothing to paint, nothing
             // visible
@@ -63,14 +63,14 @@ public class CachedExternal extends Cache<ExternalGraphic>{
         }else{
             isStaticVisible = VisibilityState.VISIBLE;
         }
-        
+
         isStatic = !isSVG;
         requieredAttributs = EMPTY_ATTRIBUTS;
         isNotEvaluated = false;
     }
 
     /**
-     * 
+     *
      * @return true if is visible, false if something says there's nothing to paint
      */
     private boolean evaluateExternal(){
@@ -84,8 +84,8 @@ public class CachedExternal extends Cache<ExternalGraphic>{
             inline.paintIcon(null, g2, 0,0);
             g2.dispose();
         }
-        
-        
+
+
         //if no inline image then use the online image
         if(cachedImage == null){
             OnlineResource online = styleElement.getOnlineResource();
@@ -118,7 +118,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
     }
 
     /**
-     * 
+     *
      * @return true if this external image is valid.
      */
     public boolean isValid(){
@@ -128,7 +128,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
 
     /**
      * Create or generate the image at a giver size.
-     * 
+     *
      * @param size : image size
      * @return BufferedImage
      */
@@ -145,7 +145,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
                     final BufferedImage buffer = DynamicSymbolFactoryFinder.getImage(uri, styleElement.getFormat(),size, hints);
                     return recode(buffer, styleElement.getColorReplacements());
                 }catch (Exception ex){
-                    Logger.getLogger(CachedExternal.class.getName()).log(Level.WARNING, null, ex);
+                    Logging.getLogger("org.geotoolkit.display2d.style").log(Level.WARNING, null, ex);
                 }
             }
 
@@ -169,7 +169,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
             if((int)(maxwidth+0.5f)<=0 || (int)(size.floatValue()) <= 0){
                 return null;
             }
-            
+
             final BufferedImage buffer = new BufferedImage( (int)(maxwidth+0.5f), (int)(size.floatValue()), BufferedImage.TYPE_INT_ARGB);
             final Graphics2D g2 = (Graphics2D) buffer.getGraphics();
             if(hints != null) g2.setRenderingHints(hints);

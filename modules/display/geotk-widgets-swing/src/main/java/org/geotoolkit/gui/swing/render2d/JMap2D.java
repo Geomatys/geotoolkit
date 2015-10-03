@@ -59,7 +59,7 @@ public class JMap2D extends JPanel{
      */
     public static final String HANDLER_PROPERTY = "handler";
     private static final MapDecoration[] EMPTY_OVERLAYER_ARRAY = {};
-    private static final Logger LOGGER = Logging.getLogger(JMap2D.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d");
 
     private CanvasHandler handler;
     private final J2DCanvas canvas;

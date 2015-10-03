@@ -68,7 +68,7 @@ import org.openide.awt.DropDownButtonFactory;
  */
 public class JSelectionBar extends AbstractMapControlBar implements ActionListener{
 
-    private static final Logger LOGGER = Logging.getLogger(JSelectionBar.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.control");
 
     private static final ImageIcon ICON_SELECT = IconBuilder.createIcon(FontAwesomeIcons.ICON_LOCATION_ARROW, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_INTERSECT = IconBundle.getIcon("16_select_intersect");
@@ -218,7 +218,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
             if(systemclipboard){
                 GeotkClipboard.setSystemClipboardValue(sb.toString());
             }
-            
+
             //push value in geotk clipboard
             Transferable trs = GeotkClipboard.INSTANCE.getContents(this);
             if(append && trs instanceof FeatureCollectionListTransferable){
@@ -228,7 +228,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
                 trs = new FeatureCollectionListTransferable(selections);
                 GeotkClipboard.INSTANCE.setContents(trs, null);
             }
-            
+
         }
     }
 

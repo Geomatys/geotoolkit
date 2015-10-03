@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  */
 public class MifDemo {
 
-    public static final Logger LOGGER = Logger.getLogger(MifDemo.class.getName());
+    public static final Logger LOGGER = Logger.getLogger("org.geotoolkit.pending.demo.datamodel.mapinfo");
 
     public static final String DESTINATION_MIF = "file:/tmp/test.mif";
     public static final String DESTINATION_MID = "file:/tmp/test.mid";

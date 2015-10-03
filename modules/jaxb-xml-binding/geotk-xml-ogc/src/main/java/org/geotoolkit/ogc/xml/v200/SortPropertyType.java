@@ -32,9 +32,9 @@ import org.opengis.filter.sort.SortOrder;
 
 /**
  * <p>Java class for SortPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SortPropertyType">
  *   &lt;complexContent>
@@ -47,8 +47,8 @@ import org.opengis.filter.sort.SortOrder;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SortPropertyType", propOrder = {
@@ -57,8 +57,8 @@ import org.opengis.filter.sort.SortOrder;
 })
 public class SortPropertyType implements SortBy {
 
-    private static final Logger LOGGER = Logging.getLogger(SortByType.class);
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ogc.xml.v200");
+
     @XmlElement(name = "ValueReference", required = true)
     private String valueReference;
     @XmlElement(name = "SortOrder")
@@ -68,9 +68,9 @@ public class SortPropertyType implements SortBy {
      * Empty constructor used by JAXB
      */
     public SortPropertyType(){
-        
+
     }
-    
+
     /**
      * build a new SOrt property object.
      */
@@ -84,7 +84,7 @@ public class SortPropertyType implements SortBy {
             LOGGER.log(Level.WARNING, "unexpected SortOrder:{0}.\nexpecting for ASCENDING or DESCENDING", sortOrder);
         }
     }
-    
+
     /**
      * build a new SOrt property object.
      */
@@ -92,14 +92,14 @@ public class SortPropertyType implements SortBy {
         this.valueReference = propertyName;
         this.sortOrder    = sortOrder;
     }
-    
+
     /**
      * Gets the value of the valueReference property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValueReference() {
         return valueReference;
@@ -107,11 +107,11 @@ public class SortPropertyType implements SortBy {
 
     /**
      * Sets the value of the valueReference property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValueReference(String value) {
         this.valueReference = value;
@@ -140,11 +140,11 @@ public class SortPropertyType implements SortBy {
 
     /**
      * Sets the value of the sortOrder property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SortOrderType }
-     *     
+     *
      */
     public void setSortOrder(SortOrderType value) {
         this.sortOrder = value;

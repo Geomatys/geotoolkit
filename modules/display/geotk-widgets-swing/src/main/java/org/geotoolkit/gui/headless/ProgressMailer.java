@@ -147,7 +147,7 @@ public class ProgressMailer extends ProgressController {
             message.setText(messageText);
             Transport.send(message);
         } catch (MessagingException exception) {
-            Logging.unexpectedException(ProgressMailer.class, method, exception);
+            Logging.unexpectedException(null, ProgressMailer.class, method, exception);
         }
     }
 

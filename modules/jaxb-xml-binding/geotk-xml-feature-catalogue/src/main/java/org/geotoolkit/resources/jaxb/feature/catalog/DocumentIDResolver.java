@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 import org.geotoolkit.feature.catalog.Referenceable;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -34,7 +35,7 @@ public class DocumentIDResolver extends IDResolver {
   Map<String, Referenceable> referenceables = new HashMap<String, Referenceable>();
 
 
-  private Logger logger = Logger.getLogger("DocumentIdResolver");
+  private Logger logger = Logging.getLogger("DocumentIdResolver");
 
 
   void startDocument() {

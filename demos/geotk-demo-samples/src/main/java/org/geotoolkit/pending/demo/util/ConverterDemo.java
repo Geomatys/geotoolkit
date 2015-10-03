@@ -27,7 +27,7 @@ public class ConverterDemo {
             System.out.println("###############################################################");
 
         } catch (UnconvertibleObjectException ex) {
-            Logger.getLogger(ConverterDemo.class.getName()).log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.pending.demo.util").log(Level.WARNING, null, ex);
         }
     }
 

@@ -24,15 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.kml.model.Extensions.Names;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.xml.KmlExtensionReader;
-import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.xml.StaxStreamReader;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -40,7 +39,7 @@ import org.geotoolkit.xml.StaxStreamReader;
  * @module pending
  */
 public class DataReader extends StaxStreamReader implements KmlExtensionReader{
-    
+
     private static final String URI_DATA = "http://www.sandres.com";
     public Map<String, List<String>> complexTable;
     public Map<String, List<String>> simpleTable;
@@ -83,12 +82,8 @@ public class DataReader extends StaxStreamReader implements KmlExtensionReader{
                         break;
                 }
             }
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(KmlReader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (XMLStreamException ex) {
-            Logger.getLogger(KmlReader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (KmlException ex) {
-            System.out.println("KML EXCEPTION : " + ex.getMessage());
+        } catch (URISyntaxException | XMLStreamException | KmlException ex) {
+            Logging.getLogger("org.geotoolkit.data.kml").log(Level.SEVERE, null, ex);
         }
         return root;
     }
@@ -160,11 +155,11 @@ public class DataReader extends StaxStreamReader implements KmlExtensionReader{
     }
 
     @Override
-    public Entry<Object, Names> readExtensionElement(String containingUri, 
+    public Entry<Object, Names> readExtensionElement(String containingUri,
             String containingTag, String contentsUri, String contentsTag)
             throws XMLStreamException, KmlException, URISyntaxException {
         Object object = null;
-        
+
         if("racine".equals(contentsTag)){
             object = this.readRacine();
         } else if ("element".equals(contentsTag)){

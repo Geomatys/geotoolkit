@@ -21,7 +21,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -31,6 +30,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.apache.sis.storage.DataStoreException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -57,20 +57,20 @@ public class JFeatureCollectionOutline extends JPanel{
     private FeatureCollection collection = null;
     private int index = -1;
     private int size = -1;
-    
+
     public JFeatureCollectionOutline() {
         super(new BorderLayout());
-        
+
         final JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         bottom.add(previous);
         bottom.add(next);
         bottom.add(lbl);
-        
+
         add(BorderLayout.CENTER,new JScrollPane(outline));
         add(BorderLayout.SOUTH,bottom);
     }
-    
+
     public void setTarget(final FeatureCollection collection){
         this.collection = collection;
         index = -1;
@@ -79,11 +79,11 @@ public class JFeatureCollectionOutline extends JPanel{
             next();
         }
     }
-    
+
     public FeatureCollection getTarget(){
         return collection;
     }
-    
+
     private void next(){
         if(index >= size){
             return;
@@ -91,7 +91,7 @@ public class JFeatureCollectionOutline extends JPanel{
         index++;
         updateVisibleFeature();
     }
-    
+
     private void previous(){
         if(index <= 0){
             return;
@@ -99,7 +99,7 @@ public class JFeatureCollectionOutline extends JPanel{
         index--;
         updateVisibleFeature();
     }
-    
+
     private void updateVisibleFeature(){
         lbl.setText(index+1 +" / " + size);
 
@@ -121,8 +121,8 @@ public class JFeatureCollectionOutline extends JPanel{
                 ite.close();
             }
         } catch (DataStoreException ex) {
-            Logger.getLogger(JFeatureCollectionOutline.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.gui.swing.propertyedit").log(Level.SEVERE, null, ex);
         }
     }
-    
+
 }

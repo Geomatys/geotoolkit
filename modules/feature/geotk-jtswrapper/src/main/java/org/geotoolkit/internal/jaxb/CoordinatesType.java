@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -129,7 +129,7 @@ public class CoordinatesType {
                         values.add(Double.parseDouble(second));
                     }
                 } catch (NumberFormatException ex) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "unable to parse coordiante value:{0}", v);
+                    Logging.getLogger("org.geotoolkit.internal.jaxb").log(Level.WARNING, "unable to parse coordiante value:{0}", v);
                 }
             }
         }

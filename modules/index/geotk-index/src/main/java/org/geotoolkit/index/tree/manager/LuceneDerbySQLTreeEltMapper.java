@@ -57,7 +57,7 @@ public class LuceneDerbySQLTreeEltMapper implements TreeElementMapper<NamedEnvel
     private Connection conRO;
     private Connection conT;
 
-    protected static final Logger LOGGER = Logging.getLogger(LuceneDerbySQLTreeEltMapper.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree.manager");
 
 
     public LuceneDerbySQLTreeEltMapper(final CoordinateReferenceSystem crs, final DataSource source) throws IOException {
@@ -250,7 +250,7 @@ public class LuceneDerbySQLTreeEltMapper implements TreeElementMapper<NamedEnvel
         }
         return result;
     }
-    
+
     @Override
     public Map<Integer, NamedEnvelope> getFullMap() throws IOException {
         Map<Integer, NamedEnvelope> result = new HashMap<>();

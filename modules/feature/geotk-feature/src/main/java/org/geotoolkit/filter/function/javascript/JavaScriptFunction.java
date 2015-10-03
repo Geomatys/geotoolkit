@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.script.Bindings;
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -32,6 +31,7 @@ import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.function.AbstractFunction;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Javascript function.
@@ -90,16 +90,16 @@ public class JavaScriptFunction extends AbstractFunction {
         }
         return engine;
     }
-    
+
     private CompiledScript getCompiled() throws ScriptException {
         if(compiled == null){
             compiled = ((Compilable)getEngine()).compile(javascript);
         }
-        
+
         return compiled;
     }
 
-    
+
     private static Expression[] prepare(final Expression jsFunction){
         final String str = jsFunction.evaluate(null, String.class);
 
@@ -147,7 +147,7 @@ public class JavaScriptFunction extends AbstractFunction {
         try {
             return getCompiled().eval(bindings);
         } catch (ScriptException ex) {
-            Logger.getLogger(JavaScriptFunction.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.filter.function.javascript").log(Level.WARNING, null, ex);
         }
 
         return "";

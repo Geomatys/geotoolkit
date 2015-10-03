@@ -20,7 +20,6 @@ package org.geotoolkit.data;
 import java.util.Collection;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Join;
 import org.geotoolkit.data.query.Query;
@@ -28,10 +27,10 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.filter.Filter;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * FeatureCollection that takes it's source from a join query.
@@ -65,7 +64,7 @@ public class DefaultFeatureStoreJoinFeatureCollection extends AbstractFeatureCol
         }else{
             throw new IllegalArgumentException("Query source must have a single session.");
         }
-        
+
     }
 
     @Override
@@ -81,7 +80,7 @@ public class DefaultFeatureStoreJoinFeatureCollection extends AbstractFeatureCol
                 type = reader.getFeatureType();
                 reader.close();
             } catch (DataStoreException ex) {
-                Logger.getLogger(DefaultFeatureStoreJoinFeatureCollection.class.getName()).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.data").log(Level.WARNING, null, ex);
             }
         }
 

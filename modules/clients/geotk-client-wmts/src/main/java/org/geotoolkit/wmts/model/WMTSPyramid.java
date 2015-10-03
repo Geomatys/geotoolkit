@@ -17,13 +17,13 @@
 package org.geotoolkit.wmts.model;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.storage.coverage.DefaultPyramid;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wmts.xml.v100.*;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -35,12 +35,12 @@ public class WMTSPyramid extends DefaultPyramid{
     private final TileMatrixSetLink link;
     private final TileMatrixSet matrixset;
     private CoordinateReferenceSystem crs;
-    
+
     public WMTSPyramid(final WMTSPyramidSet set, final TileMatrixSetLink link){
         super(set, null);
         this.link = link;
         matrixset = set.getCapabilities().getContents().getTileMatrixSetByIdentifier(link.getTileMatrixSet());
-        
+
         final String crsstr = matrixset.getSupportedCRS();
         try {
             // WMTS is made for display like WMS, so longitude is expected to be on the X axis.
@@ -51,10 +51,10 @@ public class WMTSPyramid extends DefaultPyramid{
                 crs = CRS.decode("EPSG:"+crsstr);
             } catch (Exception e) {
                 e.addSuppressed(ex);
-                Logger.getLogger(WMTSPyramid.class.getName()).log(Level.WARNING, null, e);
+                Logging.getLogger("org.geotoolkit.wmts.model").log(Level.WARNING, null, e);
             }
         } catch (FactoryException ex) {
-            Logger.getLogger(WMTSPyramid.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.wmts.model").log(Level.WARNING, null, ex);
         }
 
         final TileMatrixSetLimits limits = link.getTileMatrixSetLimits();
@@ -70,17 +70,17 @@ public class WMTSPyramid extends DefaultPyramid{
                     }
                 }
             }
-            
-            final WMTSMosaic mosaic = new WMTSMosaic(this, matrix, limit);            
+
+            final WMTSMosaic mosaic = new WMTSMosaic(this, matrix, limit);
             getMosaicsInternal().add(mosaic);
         }
-        
+
     }
 
     public TileMatrixSet getMatrixset() {
         return matrixset;
     }
-    
+
     @Override
     public WMTSPyramidSet getPyramidSet() {
         return (WMTSPyramidSet) super.getPyramidSet();
@@ -90,5 +90,5 @@ public class WMTSPyramid extends DefaultPyramid{
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return crs;
     }
-    
+
 }

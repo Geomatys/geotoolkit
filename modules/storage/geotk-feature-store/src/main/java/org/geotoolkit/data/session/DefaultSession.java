@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreUtilities;
@@ -58,6 +57,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -68,7 +68,7 @@ public class DefaultSession extends AbstractSession {
 
     protected static final FilterFactory2 FF = (FilterFactory2)
             FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
-    
+
     private final DefaultSessionDiff diff;
     private final boolean async;
     private final Version version;
@@ -76,14 +76,14 @@ public class DefaultSession extends AbstractSession {
     public DefaultSession(final FeatureStore store, final boolean async){
         this(store,async,null);
     }
-    
+
     public DefaultSession(final FeatureStore store, final boolean async, final Version version){
         super(store);
         this.diff = createDiff();
         this.async = async;
         this.version = version;
     }
-    
+
     protected DefaultSessionDiff createDiff(){
         return new DefaultSessionDiff();
     }
@@ -91,16 +91,16 @@ public class DefaultSession extends AbstractSession {
     protected AddDelta createAddDelta(Session session, GenericName typeName, Collection<? extends Feature> features){
         return new AddDelta(this, typeName, features);
     }
-    
-    protected ModifyDelta createModifyDelta(Session session, GenericName typeName, 
+
+    protected ModifyDelta createModifyDelta(Session session, GenericName typeName,
             Id filter , final Map<? extends AttributeDescriptor,? extends Object> values){
         return new ModifyDelta(this, typeName, filter, values);
     }
-    
+
     protected RemoveDelta createRemoveDelta(Session session, GenericName typeName, Id filter){
         return new RemoveDelta(session, typeName, filter);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -116,7 +116,7 @@ public class DefaultSession extends AbstractSession {
     public Version getVersion() {
         return version;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -200,7 +200,7 @@ public class DefaultSession extends AbstractSession {
 
             final SimplifyingFilterVisitor simplifier = new SimplifyingFilterVisitor();
             filter = (Filter) filter.accept(simplifier, null);
-            
+
             if(filter instanceof Id){
                 modified = FF.id( ((Id)filter).getIdentifiers());
             }else{
@@ -337,7 +337,7 @@ public class DefaultSession extends AbstractSession {
                     + "Writing operations are not allowed, open a session without version to support writing.");
         }
     }
-    
+
     private Query forceCRS(final Query query, boolean replace) throws DataStoreException{
         final FeatureType ft = store.getFeatureType(query.getTypeName());
         final CoordinateReferenceSystem crs = ft.getCoordinateReferenceSystem();
@@ -375,7 +375,7 @@ public class DefaultSession extends AbstractSession {
                             bb = new DefaultBoundingBox(env);
                             return FF.literal(bb);
                         } catch (TransformException ex) {
-                            Logger.getLogger(DefaultSession.class.getName()).log(Level.SEVERE, null, ex);
+                            Logging.getLogger("org.geotoolkit.data.session").log(Level.SEVERE, null, ex);
                         }
                     }
                     return expression;
@@ -395,7 +395,7 @@ public class DefaultSession extends AbstractSession {
                             return FF.literal(geom);
                         }
                     } catch (Exception ex) {
-                        Logger.getLogger(DefaultSession.class.getName()).log(Level.WARNING, ex.getLocalizedMessage(), ex);
+                        Logging.getLogger("org.geotoolkit.data.session").log(Level.WARNING, ex.getLocalizedMessage(), ex);
                         geom = (Geometry) geom.clone();
                         JTS.setCRS(geom, crs);
                         return FF.literal(geom);

@@ -27,7 +27,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.unit.SI;
 
 import net.sf.jasperreports.engine.JRException;
@@ -40,6 +39,7 @@ import org.geotoolkit.display2d.ext.scalebar.J2DScaleBarUtilities;
 import org.geotoolkit.display2d.ext.scalebar.ScaleBarTemplate;
 import org.geotoolkit.report.graphic.map.CanvasRenderer;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Jasper Report renderer used to render scale bar graphic.
@@ -118,7 +118,7 @@ public class ScaleBarRenderer implements JRRenderable{
                 final Point2D centerPoint = new Point2D.Double(center[0], center[1]);
                 J2DScaleBarUtilities.paint(c2d.getObjectiveCRS(), c2d.getDisplayCRS(), centerPoint, g2d, area.x,area.y, template);
             } catch ( PortrayalException | NoninvertibleTransformException | TransformException ex) {
-                Logger.getLogger(ScaleBarRenderer.class.getName()).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.report.graphic.scalebar").log(Level.WARNING, null, ex);
             }
 
         }

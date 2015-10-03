@@ -79,7 +79,7 @@ import org.opengis.util.FactoryException;
  */
 public class WMSPresenter extends AbstractInformationPresenter{
 
-    private static final Logger LOGGER = Logging.getLogger(WMSPresenter.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms.map");
 
     public WMSPresenter() {
         super(100);

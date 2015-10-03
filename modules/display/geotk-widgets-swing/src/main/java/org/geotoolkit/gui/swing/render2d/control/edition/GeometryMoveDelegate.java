@@ -26,15 +26,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Geometry moving tool.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Quentin Boileau (Geomatys)
  * @module pending
@@ -79,7 +79,7 @@ public class GeometryMoveDelegate extends AbstractFeatureEditionDelegate {
         lastX = 0;
         lastY = 0;
     }
-    
+
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
         if(feature != null){
@@ -116,7 +116,7 @@ public class GeometryMoveDelegate extends AbstractFeatureEditionDelegate {
                         draggingAll = true;
                     }
                 } catch (NoninvertibleTransformException ex) {
-                    Logger.getLogger(MultiPolygonCreationDelegate.class.getName()).log(Level.WARNING, null, ex);
+                    Logging.getLogger("org.geotoolkit.gui.swing.render2d.control.edition").log(Level.WARNING, null, ex);
                 }
                 return;
             }

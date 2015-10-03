@@ -42,13 +42,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.vecmath.GVector;
 import javax.vecmath.GMatrix;
 import javax.vecmath.Point3d;
 import org.apache.sis.math.Plane;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * <p align=justify>Classe ayant la charge d'interpoller sur une grille régulière des
@@ -658,7 +658,7 @@ public class ObjectiveAnalysis {
             z[4] = 4;
 
             final ObjectiveAnalysis ob = new ObjectiveAnalysis(new Rectangle(0, 0, 20, 20), new Dimension(s, s));
-            Logger.getLogger(ObjectiveAnalysis.class.getName()).log(Level.INFO, "dx=" + ob.dx + "   dy=" + ob.dy);
+            Logging.getLogger("org.geotoolkit.processing.coverage.kriging").log(Level.INFO, "dx=" + ob.dx + "   dy=" + ob.dy);
             final double[] computed = ob.interpole(x, y, z);
             final double[] cx = ob.getXs();
             final double[] cy = ob.getYs();

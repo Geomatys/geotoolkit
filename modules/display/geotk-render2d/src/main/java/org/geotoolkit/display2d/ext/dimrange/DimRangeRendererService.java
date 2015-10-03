@@ -26,7 +26,6 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -42,6 +41,7 @@ import org.geotoolkit.map.MapLayer;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.storage.coverage.CoverageReference;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -116,10 +116,8 @@ public class DimRangeRendererService extends AbstractSymbolizerRendererService<D
                     GridSampleDimension ret = colorMap.recolor(sampleDim, ARGB);
                 }
 
-            } catch (CoverageStoreException ex) {
-                Logger.getLogger(DimRangeRendererService.class.getName()).log(Level.WARNING, null, ex);
-            } catch (CancellationException ex) {
-                Logger.getLogger(DimRangeRendererService.class.getName()).log(Level.WARNING, null, ex);
+            } catch (CoverageStoreException | CancellationException ex) {
+                Logging.getLogger("org.geotoolkit.display2d.ext.dimrange").log(Level.WARNING, null, ex);
             }
         }
 

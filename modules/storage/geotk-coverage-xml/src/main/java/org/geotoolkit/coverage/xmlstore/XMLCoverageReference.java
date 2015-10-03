@@ -29,7 +29,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ProgressMonitor;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -57,6 +56,7 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.internal.jdk8.JDK8;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * XML implementation of {@link PyramidalCoverageReference}.
@@ -76,7 +76,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         try {
             POOL = new MarshallerPool(JAXBContext.newInstance(XMLCoverageReference.class), null);
         } catch (JAXBException ex) {
-            Logger.getLogger(XMLCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+            Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, ex.getMessage(), ex);
             throw new RuntimeException("Failed to initialize JAXB XML Coverage reference marshaller pool.");
         }
     }
@@ -101,9 +101,9 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
 
     @XmlElement(name="PreferredFormat")
     private String preferredFormat;
-    
+
     //-- needed element to define sampleModel of current pyramided tiles
-    
+
     /**
      * Define band number of all internaly pyramid stored tiles.
      */
@@ -114,79 +114,79 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      * Define internal datatype of all internaly pyramid stored tiles.
      */
     @XmlElement(name="SampleType")
-    private int sampleType = -1; 
-    
+    private int sampleType = -1;
+
     /**
      * Define bits per sample number of all internaly pyramid stored tiles.
      */
     @XmlElement(name="BitPerSample")
     private int bitPerSample = -1;
-    
+
     /**
      * Define sample number by pixels of all internaly pyramid stored tiles.
      */
     @XmlElement(name="SamplePerPixel")
     private int samplePerPixel = -1;
-    
+
     /**
      * Define planar configuration of all internaly pyramid stored tiles.
-     * 
+     *
      * @see ImageUtils#PLANAR_BANDED
      * @see ImageUtils#PLANAR_INTERLEAVED
      */
     @XmlElement(name="PlanarConfiguration")
     private int planarConfiguration = -1;
-    
+
     /**
      * Define sample format of all internaly pyramid stored tiles.
-     * 
+     *
      * @see ImageUtils#SAMPLEFORMAT_IEEEFP
      * @see ImageUtils#SAMPLEFORMAT_INT
      * @see ImageUtils#SAMPLEFORMAT_UINT
      */
     @XmlElement(name="SampleFormat")
     private int sampleFormat = -1;
-    
+
     /**
      * Define photometric interpretation of all internaly pyramid stored tiles.
-     * 
+     *
      * @see ImageUtils#PHOTOMETRIC_MINISBLACK
      * @see ImageUtils#PHOTOMETRIC_PALETTE
      * @see ImageUtils#PHOTOMETRIC_RGB
      */
     @XmlElement(name="PhotometricInterpretation")
     private int photometricInterpretation = -1;
-    
+
     /**
      * Define color map of all internaly pyramid stored tiles.
      * Only use if photometric interpretation is use as {@linkplain ImageUtils#PHOTOMETRIC_PALETTE palette}.
-     * 
+     *
      * @see ImageUtils#PHOTOMETRIC_PALETTE
      */
     @XmlElement(name="ColorMap")
     private int[] colorMap = null;
-    
+
     /**
-     * Minimum sample value only use in case where {@link ColorSpace} from {@link #colorModel} 
+     * Minimum sample value only use in case where {@link ColorSpace} from {@link #colorModel}
      * is instance of {@link ScaledColorSpace} and type of samples are Float or double type.
      * @see ScaledColorSpace
      */
     @XmlElement(name="MinColorSpaceSampleValue")
     private Double minColorSampleValue = null;
-    
+
     /**
-     * Maximum sample value only use in case where {@link ColorSpace} from {@link #colorModel} 
+     * Maximum sample value only use in case where {@link ColorSpace} from {@link #colorModel}
      * is instance of {@link ScaledColorSpace} and type of samples are Float or double type.
      * @see ScaledColorSpace
      */
     @XmlElement(name="MaxColorSpaceSampleValue")
     private Double maxColorSampleValue = null;
-    
+
     /**
      * {@link SampleModel} of all internally pyramid stored tiles.
      */
     private SampleModel sampleModel;
-    
+
     /**
      * {@link ColorModel} of all internally pyramid stored tiles.
      */
@@ -259,7 +259,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     public void setVersion(String version) {
         this.version = version;
     }
-    
+
     public String getId() {
         return id;
     }
@@ -277,7 +277,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     public File getFolder(){
         return new File(mainfile.getParentFile(), getId());
     }
-    
+
     @Override
     public XMLPyramidSet getPyramidSet() {
         return set;
@@ -324,7 +324,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
                     marshaller.marshal(this, getMainfile());
                     POOL.recycle(marshaller);
                 } catch (JAXBException ex) {
-                    Logger.getLogger(XMLCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+                    Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, ex.getMessage(), ex);
                 }
             }
         }
@@ -359,11 +359,11 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         ref.initialize(file);
         return ref;
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // Meta informations methods ///////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     public void setPreferredFormat(String preferredFormat) {
         this.preferredFormat = preferredFormat;
     }
@@ -371,14 +371,14 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     public String getPreferredFormat() {
         return preferredFormat;
     }
-    
+
     /**
      * {@inheritDoc }.
      */
     @Override
     public synchronized List<GridSampleDimension> getSampleDimensions() throws DataStoreException {
         if (cacheDimensions == null) {
-            if (sampleDimensions == null) return null; 
+            if (sampleDimensions == null) return null;
             assert !sampleDimensions.isEmpty() : "XmlCoverageReference.getSampleDimension : sampleDimension should not be empty.";
             cacheDimensions = new CopyOnWriteArrayList<>();
             for (XMLSampleDimension xsd : sampleDimensions) {
@@ -411,8 +411,8 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
 
     /**
      * Returns {@link ColorModel} associated with internal pyramid data.
-     * 
-     * Note : if internal {@link ColorModel} is {@code null}, the expected sample 
+     *
+     * Note : if internal {@link ColorModel} is {@code null}, the expected sample
      * model is re-built from internal unmarshalling informations which are :<br>
      * - {@linkplain #bitPerSample bit Per Sample}<br>
      * - {@linkplain #nbBands band number}<br>
@@ -420,14 +420,14 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      * - {@linkplain #planarConfiguration planar configuration}<br>
      * - {@linkplain #photometricInterpretation photometric interpretation}<br>
      * - {@linkplain #sampleFormat sample format}<br><br>
-     * 
+     *
      * Moreover should return {@code null} when old pyramid was unmarshall, where
      * internal color model informations was missing.
-     * 
+     *
      * @return {@link ColorModel} associated with internal pyramid data.
-     * @throws IllegalArgumentException if photometric interpretation is define 
+     * @throws IllegalArgumentException if photometric interpretation is define
      * as palette (photometricInterpretation == 3) and colorMap is {@code null}.
-     * @see ImageUtils#createColorModel(int, int, short, short, long[]) 
+     * @see ImageUtils#createColorModel(int, int, short, short, long[])
      */
     @Override
     public ColorModel getColorModel() {
@@ -444,7 +444,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
                     assert JDK8.isFinite(maxColorSampleValue) : "To write maxColorSampleValue into XML Pyramid File, it should be finite. Found : "+maxColorSampleValue;
                 }
                 colorModel = ImageUtils.createColorModel(bitPerSample, nbBands,
-                        (short) photometricInterpretation, (short) sampleFormat, 
+                        (short) photometricInterpretation, (short) sampleFormat,
                         minColorSampleValue, maxColorSampleValue, null, colorMap);
             }
         }
@@ -453,11 +453,11 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
 
     /**
      * Set the associate internal pyramid data {@link ColorModel}.<br>
-     * 
+     *
      * Note : also set some attributes needed to marshall / unmarshall.
-     * 
+     *
      * @param colorModel {@code ColorModel} internal data.
-     * @throws DataStoreException 
+     * @throws DataStoreException
      * @see #photometricInterpretation
      */
     @Override
@@ -478,11 +478,11 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         //-- code in comment in attempt to update TiffImageReader to scan all sampleValues to build appropriate colorSpace
 //        final ColorSpace colorSpace = colorModel.getColorSpace();
 //        if (colorSpace instanceof ScaledColorSpace) {
-//            minColorSampleValue = (minColorSampleValue == null) 
-//                                  ? colorSpace.getMinValue(0) 
+//            minColorSampleValue = (minColorSampleValue == null)
+//                                  ? colorSpace.getMinValue(0)
 //                                  : StrictMath.min(minColorSampleValue, colorSpace.getMinValue(0));
-//            maxColorSampleValue = (maxColorSampleValue == null) 
-//                                  ? colorSpace.getMaxValue(0) 
+//            maxColorSampleValue = (maxColorSampleValue == null)
+//                                  ? colorSpace.getMaxValue(0)
 //                                  : StrictMath.max(maxColorSampleValue, colorSpace.getMaxValue(0));
 //
 //        }
@@ -491,8 +491,8 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
 
     /**
      * Returns {@link SampleModel} associated with internal pyramid data.
-     * 
-     * Note : if internal {@link SampleModel} is {@code null}, the expected sample 
+     *
+     * Note : if internal {@link SampleModel} is {@code null}, the expected sample
      * model is re-built from internal unmarshalling informations which are :<br>
      * - {@linkplain #bitPerSample bit Per Sample}<br>
      * - {@linkplain #nbBands band number}<br>
@@ -500,12 +500,12 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      * - {@linkplain #planarConfiguration planar configuration}<br>
      * - {@linkplain #photometricInterpretation photometric interpretation}<br>
      * - {@linkplain #sampleFormat sample format}<br><br>
-     * 
+     *
      * Moreover should return {@code null} when old pyramid was unmarshall, where
      * internal sample model informations was missing.
-     * 
+     *
      * @return {@link SampleModel} associated with internal pyramid data.
-     * @see ImageUtils#buildImageTypeSpecifier(int, int, short, short, short, long[]) 
+     * @see ImageUtils#buildImageTypeSpecifier(int, int, short, short, short, long[])
      */
     @Override
     public SampleModel getSampleModel() {
@@ -522,24 +522,24 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     }
 
     /**
-     * Returns {@code true} if all needed attributs to re-build appropriate 
+     * Returns {@code true} if all needed attributs to re-build appropriate
      * {@link SampleModel} and {@link ColorModel} else return {@code false}.
-     * 
-     * @return 
+     *
+     * @return
      */
     private boolean checkAttributs() {
-        return (bitPerSample != -1) 
-            && (nbBands != -1) 
-//            && (samplePerPixel != -1) 
-            && (sampleFormat != -1) 
-            && (planarConfiguration != -1) 
+        return (bitPerSample != -1)
+            && (nbBands != -1)
+//            && (samplePerPixel != -1)
+            && (sampleFormat != -1)
+            && (planarConfiguration != -1)
             && (photometricInterpretation != -1);
     }
-    
+
     /**
      * Set the associate internal pyramid data {@link SampleModel}.<br>
      * note : also set some attributs needed to marshall/unmarshall pyramid.
-     * 
+     *
      * @param sampleModel expected {@link SampleModel} needed to marshall.
      * @throws org.apache.sis.storage.DataStoreException if problem during XML save.
      * @see #nbBands
@@ -559,55 +559,55 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         this.sampleModel         = sampleModel;
         save();
     }
-    
+
     /**
-     * Verify conformity between a {@link SampleModel} and {@link ColorModel} given by a tile which WILL BE stored 
+     * Verify conformity between a {@link SampleModel} and {@link ColorModel} given by a tile which WILL BE stored
      * into this pyramid and the already pyramid setted sampleModel.
-     * 
-     * If they haven't got any {@link SampleModel} and {@link ColorModel} precedently setted, 
-     * this method set them automaticaly, from image parameter. 
-     * 
+     *
+     * If they haven't got any {@link SampleModel} and {@link ColorModel} precedently setted,
+     * this method set them automaticaly, from image parameter.
+     *
      * @param image {@link RenderedImage} which contain samplemodel color model informations.
      */
     private void checkOrSetSampleColor(final RenderedImage image) throws DataStoreException {
         final SampleModel imgSm = image.getSampleModel();
         final SampleModel sm = getSampleModel();
         if (sm != null) {
-//            if (imgSm.getDataType() != sampleType) 
+//            if (imgSm.getDataType() != sampleType)
 //                throw new IllegalArgumentException(String.format("Mismatch sample type. Expected : %d .Found : %d", sampleType, imgSm.getDataType()));
-            
-            if (imgSm.getNumBands() != nbBands) 
+
+            if (imgSm.getNumBands() != nbBands)
                 throw new IllegalArgumentException(String.format("Mismatch bands number. Expected : %d .Found : %d", nbBands, imgSm.getNumBands()));
-            
-            if (ImageUtils.getSampleFormat(imgSm) != sampleFormat) 
+
+            if (ImageUtils.getSampleFormat(imgSm) != sampleFormat)
                 throw new IllegalArgumentException(String.format("Mismatch sample format. Expected : %d .Found : %d", sampleFormat, ImageUtils.getSampleFormat(imgSm)));
-        
-            if (imgSm.getSampleSize()[0] != bitPerSample) 
+
+            if (imgSm.getSampleSize()[0] != bitPerSample)
                 throw new IllegalArgumentException(String.format("Mismatch sample size (bits per samples). Expected : %d .Found : %d", bitPerSample, imgSm.getSampleSize()[0]));
-            
-//            if (imgSm.getSampleSize().length != samplePerPixel) 
+
+//            if (imgSm.getSampleSize().length != samplePerPixel)
 //                throw new IllegalArgumentException(String.format("Mismatch sample per pixel. Expected : %d .Found : %d", samplePerPixel, imgSm.getSampleSize().length));
-            
-            if (ImageUtils.getPlanarConfiguration(imgSm) != planarConfiguration) 
+
+            if (ImageUtils.getPlanarConfiguration(imgSm) != planarConfiguration)
                 throw new IllegalArgumentException(String.format("Mismatch planar configuration. Expected : %d .Found : %d", planarConfiguration, ImageUtils.getPlanarConfiguration(imgSm)));
         } else {
             setSampleModel(imgSm);
         }
-        
+
         final ColorModel cm    = getColorModel();
         final ColorModel imgCm = image.getColorModel();
-        
+
         //-- each tile may have different min and max value in its internal colorspace but it must be same type class.
         final ColorSpace imgCmCS = imgCm.getColorSpace();
         if (imgCmCS instanceof ScaledColorSpace) {
-            
+
             if (cm != null && (!(cm.getColorSpace() instanceof ScaledColorSpace)))
                 throw new IllegalArgumentException(String.format("Mismatch color space."));
-            
+
             if (minColorSampleValue == null) minColorSampleValue = Double.POSITIVE_INFINITY;
             if (maxColorSampleValue == null) maxColorSampleValue = Double.NEGATIVE_INFINITY;
 
-            //-- when largeRenderedImage will own its right ScaledColorSpace 
+            //-- when largeRenderedImage will own its right ScaledColorSpace
             //-- moreover to have right ScaledColorSpace tiff reader must travel all of sample values.
             //-- discomment following coding row
 //                {
@@ -629,15 +629,15 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             //-- to refresh min and max of current stored color model
             this.colorModel = null; //-- see : getColorModel()
         }
-        
+
         if (this.colorModel != null) {
-            if (ImageUtils.getPhotometricInterpretation(this.colorModel) != photometricInterpretation) 
+            if (ImageUtils.getPhotometricInterpretation(this.colorModel) != photometricInterpretation)
                 throw new IllegalArgumentException(String.format("Mismatch photometric interpretation. Expected : %d .Found : %d", photometricInterpretation, ImageUtils.getPhotometricInterpretation(cm)));
         } else {
             setColorModel(imgCm);
         }
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -653,11 +653,11 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     public void setPackMode(ViewType packMode) {
         this.packMode = packMode.name();
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // Creation,Edition methods ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -723,7 +723,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         //-- check conformity between internal data and currentImage.
         //-- if no sm and cm automatical set from image (use for the first insertion)
         checkOrSetSampleColor(image);
-        
+
         mosaic.createTile(col,row,image);
         if (!mosaic.cacheTileState && mosaic.tileExist != null) {
             save();
@@ -739,11 +739,11 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         final XMLPyramidSet set = getPyramidSet();
         final XMLPyramid pyramid = (XMLPyramid) set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
-        
+
         //-- check conformity between internal data and currentImage.
         //-- if no sm and cm automatical set from image (use for the first insertion)
         checkOrSetSampleColor(image);
-        
+
         mosaic.writeTiles(image, area, onlyMissing, monitor);
         if (!mosaic.cacheTileState && mosaic.tileExist != null) {
             save();

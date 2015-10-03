@@ -23,6 +23,7 @@ import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.apache.sis.metadata.iso.ImmutableIdentifier;
+import org.apache.sis.util.Deprecable;
 
 
 /**
@@ -34,7 +35,7 @@ import org.apache.sis.metadata.iso.ImmutableIdentifier;
  * @since 3.03
  * @module
  */
-final class IdentifierCode extends ImmutableIdentifier {
+final class IdentifierCode extends ImmutableIdentifier implements Deprecable {
     /**
      * For cross-version compatibility.
      */
@@ -94,5 +95,10 @@ final class IdentifierCode extends ImmutableIdentifier {
     @Override
     public boolean isDeprecated() {
         return supersededBy != 0;
+    }
+
+    @Override
+    public InternationalString getRemarks() {
+        return super.getDescription();
     }
 }

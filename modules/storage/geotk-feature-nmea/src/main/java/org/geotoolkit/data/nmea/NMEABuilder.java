@@ -75,7 +75,7 @@ import org.geotoolkit.feature.FeatureUtilities;
  */
 public class NMEABuilder implements SentenceListener {
 
-    private static final Logger LOGGER = Logging.getLogger(NMEABuilder.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.nmea");
     private static final GeometryFactory GFACTORY = new GeometryFactory();
 
     private final SentenceReader sReader;

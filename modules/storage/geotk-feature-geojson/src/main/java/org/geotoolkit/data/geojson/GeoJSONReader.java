@@ -53,7 +53,7 @@ import java.util.logging.Logger;
  */
 public class GeoJSONReader implements FeatureReader {
 
-    private final static Logger LOGGER = Logging.getLogger(GeoJSONReader.class);
+    private final static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.geojson");
     private final Map<Map.Entry<Class, Class>, ObjectConverter> convertersCache = new HashMap<Map.Entry<Class, Class>, ObjectConverter>();
 
     private GeoJSONParser parser = new GeoJSONParser(true);

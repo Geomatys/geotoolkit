@@ -61,7 +61,6 @@ import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.internal.io.Host;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.internal.sql.PostgisInstaller;
-import org.geotoolkit.coverage.sql.CoverageDatabase;
 import org.geotoolkit.internal.sql.CoverageDatabaseInstaller;
 import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.internal.swing.DocumentChangeListener;
@@ -201,7 +200,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                     if (host.host != null) server.setText(host.host);
                     if (host.port != null) port.setValue(host.port);
                 } catch (IOException e) {
-                    Logging.recoverableException(Logging.getLogger(CoverageDatabase.class),
+                    Logging.recoverableException(Logging.getLogger("org.geotoolkit.coverage.sql"),
                             CoverageDatabaseWizard.class, "createPanel", e);
                 }
                 addSetting(settings, CONNECTION, panel);

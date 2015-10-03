@@ -39,6 +39,7 @@ import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Class Description
@@ -48,7 +49,7 @@ import org.geotoolkit.storage.FactoryMetadata;
  */
 public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory implements FileFeatureStoreFactory {
 
-    public final static Logger LOGGER = Logger.getLogger(MIFFeatureStoreFactory.class.getName());
+    public final static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo.mif");
 
     /** factory identification **/
     public static final String NAME = "MIF-MID";
@@ -130,7 +131,7 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
 
         return new MIFFeatureStore(filePath, namespace);
     }
-    
+
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);

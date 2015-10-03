@@ -24,8 +24,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -50,12 +50,12 @@ public class DoubleNavigatorModel implements NavigatorModel{
     public CoordinateReferenceSystem getCRS() {
         return axis;
     }
-    
+
     @Override
     public void setCRS(final CoordinateReferenceSystem axis) {
         this.axis = axis;
     }
-    
+
     @Override
     public double getGraphicValueAt(final double d) {
         final Point2D pt = dimToGraphic.transform(new Point2D.Double(d, 0), null);
@@ -69,7 +69,7 @@ public class DoubleNavigatorModel implements NavigatorModel{
             pt = dimToGraphic.inverseTransform(new Point2D.Double(candidate, 0), null);
         } catch (NoninvertibleTransformException ex) {
             //shoult not happen
-            Logger.getLogger(DoubleNavigatorModel.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.gui.swing.navigator").log(Level.WARNING, null, ex);
         }
         return pt.getX();
     }

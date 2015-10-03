@@ -21,7 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
-import java.util.logging.Logger;
+import org.apache.sis.util.logging.Logging;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -495,7 +495,7 @@ public class ISODateParserTest {
         System.out.println("Fast date parser perform in = " + fdpPart +" ms");
 
         if (fdpPart >= sdfPart) {
-            Logger.getLogger("org.geotoolkit.temporal.object").warning("ISODateParser is slower than expected.");
+            Logging.getLogger("org.geotoolkit.temporal.object").warning("ISODateParser is slower than expected.");
         }
 
     }

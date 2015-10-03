@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -412,7 +411,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
                 return FeatureTypeUtilities.transform(
                         getOriginalFeatureCollection().getFeatureType(), targetCrs);
             } catch (MismatchedFeatureException ex) {
-                Logger.getLogger(GenericReprojectFeatureIterator.class.getName()).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, null, ex);
             }
             return super.getFeatureType();
         }

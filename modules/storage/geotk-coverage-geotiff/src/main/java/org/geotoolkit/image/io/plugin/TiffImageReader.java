@@ -54,7 +54,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
@@ -1105,7 +1104,7 @@ public class TiffImageReader extends SpatialImageReader {
                 if (currentInput instanceof File) channel.close();
             }
         } catch (IOException ex) {
-            Logger.getLogger(TiffImageReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.image.io.plugin").log(Level.SEVERE, null, ex);
         }
         channel      = null;
         imageStream  = null;

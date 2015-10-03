@@ -24,8 +24,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -201,15 +199,8 @@ public class BufferTest extends AbstractProcessTest {
         return featureList;
     }
 
-    private static FeatureCollection buildFeatureCollectionResult() {
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(BufferTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(BufferTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+    private static FeatureCollection buildFeatureCollectionResult() throws FactoryException {
+        type = createSimpleType();
         final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
 
         geometryFactory = new GeometryFactory();

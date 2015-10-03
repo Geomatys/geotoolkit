@@ -23,14 +23,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.gml.xml.Coordinates;
-import org.geotoolkit.util.Utilities;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -76,9 +75,9 @@ public class CoordinatesType implements Coordinates {
     private String ts;
 
     public CoordinatesType() {
-        
+
     }
-    
+
     public CoordinatesType(final Coordinates that) {
         if (that != null) {
             this.cs      = that.getCs();
@@ -142,7 +141,7 @@ public class CoordinatesType implements Coordinates {
                         values.add(Double.parseDouble(second));
                     }
                 } catch (NumberFormatException ex) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "unable to parse coordiante value:{0}", v);
+                    Logging.getLogger("org.geotoolkit.gml.xml.v321").log(Level.WARNING, "unable to parse coordiante value:{0}", v);
                 }
             }
         }

@@ -27,7 +27,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.swing.*;
@@ -78,6 +77,8 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
 import org.opengis.style.LineSymbolizer;
+import org.apache.sis.io.wkt.Warnings;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * CRSChooser component
@@ -229,7 +230,7 @@ public class JCRSChooser extends javax.swing.JDialog {
                 try {
                     crs = ReferencingUtilities.setLongitudeFirst(crs);
                 } catch (FactoryException ex) {
-                    Logger.getLogger(JCRSChooser.class.getName()).log(Level.SEVERE, null, ex);
+                    Logging.getLogger("org.geotoolkit.gui.swing.crschooser").log(Level.SEVERE, null, ex);
                 }
             }
             return crs;
@@ -255,7 +256,8 @@ public class JCRSChooser extends javax.swing.JDialog {
         String text, warning;
         try {
             text = formatter.format(item);
-            warning = formatter.getWarning();
+            Warnings w = formatter.getWarnings();
+            warning = (w != null) ? w.toString() : null;
         } catch (RuntimeException e) {
             text = String.valueOf((item!=null)?item.getName():"");
             warning = e.getLocalizedMessage();

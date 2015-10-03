@@ -16,19 +16,19 @@ import org.geotoolkit.wmc.WMCUtilities;
  * @author Alexis Manin (Geomatys)
  */
 public class DemoWMC {
-    
+
     public static void main(String[] args) {
         try {
-            MapContext contextWMS = WMCUtilities.getMapContext(WMCUtilities.class.getResourceAsStream("testWMC_wms.xml"));            
+            MapContext contextWMS = WMCUtilities.getMapContext(WMCUtilities.class.getResourceAsStream("testWMC_wms.xml"));
             MapContext contextWFS = WMCUtilities.getMapContext(WMCUtilities.class.getResourceAsStream("testWMC_wfs.xml"));
             //MapContext contextWFS1 = WMCUtilities.getMapContext(WMCUtilities.class.getResourceAsStream("testWMC_wfs_1.xml"));
             JMap2DFrame.show(contextWMS);
             //JMap2DFrame.show(contextWFS1);
             JMap2DFrame.show(contextWFS);
-            
+
         } catch (JAXBException ex) {
-            Logger.getLogger(DemoWMC.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.pending.demo.bindings").log(Level.SEVERE, null, ex);
         }
-        
+
     }
 }

@@ -195,11 +195,11 @@ public abstract class ShapefileFeatureReader implements FeatureReader {
     @Override
     protected void finalize() throws Throwable {
         if (!closed) {
-            Logging.getLogger(ShapefileFeatureReader.class).warning(
+            Logging.getLogger("org.geotoolkit.data.shapefile").warning(
                     "UNCLOSED ITERATOR : There is code leaving simple feature reader open, "
                     + "this may cause memory leaks or data integrity problems !");
             if (creationStack != null) {
-                Logging.getLogger(ShapefileFeatureReader.class).log(Level.WARNING,
+                Logging.getLogger("org.geotoolkit.data.shapefile").log(Level.WARNING,
                         "The unclosed reader originated on this stack trace", creationStack);
             }
             close();

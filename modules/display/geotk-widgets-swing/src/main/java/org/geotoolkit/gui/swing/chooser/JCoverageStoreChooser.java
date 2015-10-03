@@ -52,7 +52,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class JCoverageStoreChooser extends javax.swing.JPanel {
 
-    private static final Logger LOGGER = Logging.getLogger(JCoverageStoreChooser.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.chooser");
 
     private static final Comparator<CoverageStoreFactory> SORTER = new Comparator<CoverageStoreFactory>() {
         @Override

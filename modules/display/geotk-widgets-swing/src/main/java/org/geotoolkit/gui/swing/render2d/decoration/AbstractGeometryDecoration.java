@@ -52,7 +52,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public abstract class AbstractGeometryDecoration extends JPanel implements MapDecoration{
 
-    private static final Logger LOGGER = Logging.getLogger(AbstractGeometryDecoration.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.decoration");
 
     protected final List<Geometry> geometries = new ArrayList<>();
     private RenderingContext2D context = null;

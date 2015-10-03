@@ -51,7 +51,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public final class AccessManager {
 
-    private static final Logger LOGGER =  Logging.getLogger(AccessManager.class);
+    private static final Logger LOGGER =  Logging.getLogger("org.geotoolkit.data.shapefile.lock");
 
     private static class AccessEntry{
 
@@ -261,7 +261,7 @@ public final class AccessManager {
         if(postReplaceRunnable!=null){
             postReplaceRunnable.run();
         }
-        
+
     }
 
     private boolean allRWClosed(){

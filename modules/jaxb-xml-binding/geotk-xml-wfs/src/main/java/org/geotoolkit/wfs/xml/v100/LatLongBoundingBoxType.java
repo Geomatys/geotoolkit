@@ -21,12 +21,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.BoundingBox;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -229,7 +229,7 @@ public class LatLongBoundingBoxType implements BoundingBox {
                 return Arrays.asList(Double.parseDouble(minx),
                                      Double.parseDouble(miny));
             } catch (NumberFormatException ex) {
-                Logger.getLogger(LatLongBoundingBoxType.class.getName()).log(Level.WARNING, "error while parsing LatLong bbox", ex);
+                Logging.getLogger("org.geotoolkit.wfs.xml.v100").log(Level.WARNING, "error while parsing LatLong bbox", ex);
             }
         }
         return new ArrayList<Double>();
@@ -242,7 +242,7 @@ public class LatLongBoundingBoxType implements BoundingBox {
                 return Arrays.asList(Double.parseDouble(maxx),
                                      Double.parseDouble(maxy));
             } catch (NumberFormatException ex) {
-                Logger.getLogger(LatLongBoundingBoxType.class.getName()).log(Level.WARNING, "error while parsing LatLong bbox", ex);
+                Logging.getLogger("org.geotoolkit.wfs.xml.v100").log(Level.WARNING, "error while parsing LatLong bbox", ex);
             }
         }
         return new ArrayList<Double>();

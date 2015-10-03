@@ -33,18 +33,18 @@ import org.apache.sis.util.logging.Logging;
 
 
 /**
- * 
+ *
  * This element provides information about the status of the search request.
- * 
+ *
  * status    - status of the search
- * timestamp - the date and time when the result set was modified 
+ * timestamp - the date and time when the result set was modified
  *             (ISO 8601 format: YYYY-MM-DDThh:mm:ss[+|-]hh:mm).
- *          
- * 
+ *
+ *
  * <p>Java class for RequestStatusType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestStatusType">
  *   &lt;complexContent>
@@ -54,15 +54,15 @@ import org.apache.sis.util.logging.Logging;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestStatusType")
 public class RequestStatusType implements RequestStatus {
 
-    private static final Logger LOGGER = Logging.getLogger(RequestStatusType.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw.xml.v202");
 
     private static final DatatypeFactory factory;
     static {
@@ -74,27 +74,27 @@ public class RequestStatusType implements RequestStatus {
         }
         factory = candidate;
     }
-        
-    
+
+
     @XmlAttribute
     @XmlSchemaType(name = "dateTime")
     private XMLGregorianCalendar timestamp;
-    
+
 
     /**
      * An empty constructor used by JAXB
      */
     RequestStatusType() {
-        
+
     }
-    
+
     /**
      * Build a new request statuc with the specified XML gregorian calendar.
      */
     public RequestStatusType(final XMLGregorianCalendar timestamp) {
         this.timestamp = timestamp;
     }
-    
+
     /**
      * Build a new request statuc with the specified .
      */
@@ -106,7 +106,7 @@ public class RequestStatusType implements RequestStatus {
             this.timestamp = factory.newXMLGregorianCalendar(cal);
         }
     }
-    
+
     /**
      * Gets the value of the timestamp property.
      */
@@ -121,7 +121,7 @@ public class RequestStatusType implements RequestStatus {
     public void setTimestamp(final XMLGregorianCalendar value) {
         this.timestamp = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[requestStatusType]");

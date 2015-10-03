@@ -19,7 +19,6 @@ package org.geotoolkit.gui.javafx.render2d.data;
 
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javax.xml.bind.JAXBException;
 import org.apache.sis.storage.DataStoreException;
@@ -31,22 +30,23 @@ import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapContext;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class FXOpenContextAction extends FXMapAction {
-    
+
     public FXOpenContextAction(FXMap map) {
         super(map,GeotkFX.getString(FXOpenContextAction.class,"label"),
                 GeotkFX.getString(FXOpenContextAction.class,"label"),GeotkFX.ICON_OPEN);
     }
-    
+
     @Override
     public void accept(ActionEvent event) {
         if(map==null) return;
-        
+
         try {
             final MapContext context = FXContextChooser.showOpenChooser(map);
             if(context!=null){
@@ -56,9 +56,9 @@ public class FXOpenContextAction extends FXMapAction {
         } catch (JAXBException | FactoryException | DataStoreException ex) {
             Loggers.DATA.log(Level.WARNING, ex.getMessage(), ex);
         } catch (NoninvertibleTransformException | TransformException ex) {
-            Logger.getLogger(FXOpenContextAction.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.gui.javafx.render2d.data").log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
 }

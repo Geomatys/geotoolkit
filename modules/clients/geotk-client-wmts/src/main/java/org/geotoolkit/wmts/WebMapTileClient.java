@@ -54,7 +54,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class WebMapTileClient extends AbstractCoverageClient {
 
-    private static final Logger LOGGER = Logging.getLogger(WebMapTileClient.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wmts");
 
     private Capabilities capabilities;
     private DataNode rootNode = null;

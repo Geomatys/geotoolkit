@@ -30,7 +30,7 @@ public class DefaultGetTile extends AbstractRequest implements GetTileRequest {
     /**
      * Default logger for all GetMap requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(DefaultGetTile.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.osmtms");
 
     /**
      * The version to use for this webservice request.

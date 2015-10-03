@@ -541,7 +541,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
                         delayed.failed(e.getCause());
                     } catch (InterruptedException e) {
                         // Should never happen, since the task is completed.
-                        Logging.unexpectedException(MosaicPerformanceGraph.class, "plotEfficiency", e);
+                        Logging.unexpectedException(null, MosaicPerformanceGraph.class, "plotEfficiency", e);
                     }
                     final JProgressBar progress = getProgressBar();
                     if (progress != null) {

@@ -31,7 +31,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,6 +46,7 @@ import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 
+import org.apache.sis.util.logging.Logging;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -230,7 +230,7 @@ public final class DomUtilities extends Static {
         if(text == null) return null;
         return ObjectConverters.convert(text, clazz);
     }
-    
+
     /**
      * Search a child node with the given tag name and return it's text value
      * converted to the given clazz.
@@ -269,7 +269,7 @@ public final class DomUtilities extends Static {
         if(text == null) return null;
         return ObjectConverters.convert(text, clazz);
     }
-    
+
     /**
      * Search a child node with the given tag name and return it's text attribute
      * converted to the given clazz.
@@ -298,11 +298,11 @@ public final class DomUtilities extends Static {
         try {
             return textValue(parent, tagName, clazz);
         } catch (UnconvertibleObjectException ex) {
-            Logger.getLogger(DomUtilities.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.util").log(Level.WARNING, null, ex);
             return null;
         }
     }
-    
+
     /**
      * Same as {@link DomUtilities#textValue(org.w3c.dom.Element, java.lang.String, java.lang.Class) }
      * but dont throw any exception.
@@ -311,7 +311,7 @@ public final class DomUtilities extends Static {
         try {
             return textValue(parent, tagName, clazz, recusive);
         } catch (UnconvertibleObjectException ex) {
-            Logger.getLogger(DomUtilities.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.util").log(Level.WARNING, null, ex);
             return null;
         }
     }
@@ -324,11 +324,11 @@ public final class DomUtilities extends Static {
         try {
             return textAttributeValue(parent, tagName,attributeName,  clazz);
         } catch (UnconvertibleObjectException ex) {
-            Logger.getLogger(DomUtilities.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.util").log(Level.WARNING, null, ex);
             return null;
         }
     }
-    
+
     /**
      * Same as {@link DomUtilities#textAttributeValue(org.w3c.dom.Element, java.lang.String, java.lang.String, java.lang.Class, java.lang.boolean) }
      * but dont throw any exception.
@@ -337,7 +337,7 @@ public final class DomUtilities extends Static {
         try {
             return textAttributeValue(parent, tagName,attributeName,  clazz, recursive);
         } catch (UnconvertibleObjectException ex) {
-            Logger.getLogger(DomUtilities.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.util").log(Level.WARNING, null, ex);
             return null;
         }
     }

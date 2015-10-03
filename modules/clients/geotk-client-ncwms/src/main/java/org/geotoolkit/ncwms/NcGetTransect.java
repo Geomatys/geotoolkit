@@ -29,22 +29,22 @@ import org.apache.sis.util.logging.Logging;
  * @module pending
  */
 public class NcGetTransect extends AbstractRequest implements NcGetTransectRequest {
-    
+
     /**
      * Default logger for all GetTransect requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(NcGetTransect.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ncwms");
+
     private String layer = null;
-    
+
     private String crs = null;
-    
+
     private String lineString = null;
-    
+
     private String format = null;
-    
+
     private String time = null;
-    
+
     private String elevation = null;
 
     /**
@@ -52,7 +52,7 @@ public class NcGetTransect extends AbstractRequest implements NcGetTransectReque
      */
     protected NcGetTransect(final String serverURL) {
         super(serverURL);
-    }    
+    }
 
     /**
      * {@inheritDoc}
@@ -117,7 +117,7 @@ public class NcGetTransect extends AbstractRequest implements NcGetTransectReque
     public void setFormat(final String format) {
         this.format = format;
     }
-        
+
     /**
      * {@inheritDoc}
      */
@@ -133,7 +133,7 @@ public class NcGetTransect extends AbstractRequest implements NcGetTransectReque
     public void setTime(final String time) {
         this.time = time;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -149,8 +149,8 @@ public class NcGetTransect extends AbstractRequest implements NcGetTransectReque
     public void setElevation(final String elevation) {
         this.elevation = elevation;
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
@@ -160,28 +160,28 @@ public class NcGetTransect extends AbstractRequest implements NcGetTransectReque
 
         // Tests if the mandatory parameters are available
         if (layer == null)
-            throw new IllegalArgumentException("Must provide a LAYER parameter");    
-        
+            throw new IllegalArgumentException("Must provide a LAYER parameter");
+
         if (crs == null)
             throw new IllegalArgumentException("Must provide an CRS parameter");
-        
+
         if (lineString == null)
             throw new IllegalArgumentException("Must provide an LINESTRING parameter");
-        
+
         if (format == null)
             throw new IllegalArgumentException("Must provide an FORMAT parameter");
-        
+
         requestParameters.put("REQUEST", "GetTransect");
         requestParameters.put("LAYER", layer);
         requestParameters.put("CRS", crs);
         requestParameters.put("LINESTRING", lineString);
         requestParameters.put("FORMAT", format);
-        
+
         if (time != null)
             requestParameters.put("TIME", time);
-        
+
         if (elevation != null)
             requestParameters.put("ELEVATION", elevation);
-        
+
     }
 }

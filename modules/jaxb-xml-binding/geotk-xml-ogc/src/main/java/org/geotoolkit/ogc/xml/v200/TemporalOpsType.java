@@ -29,9 +29,9 @@ import org.opengis.filter.Filter;
 
 /**
  * <p>Java class for TemporalOpsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TemporalOpsType">
  *   &lt;complexContent>
@@ -40,8 +40,8 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemporalOpsType")
@@ -50,7 +50,7 @@ import org.opengis.filter.Filter;
 })
 public abstract class TemporalOpsType implements Filter {
 
-    protected static final Logger LOGGER = Logging.getLogger(TemporalOpsType.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ogc.xml.v200");
+
     public abstract TemporalOpsType getClone();
 }

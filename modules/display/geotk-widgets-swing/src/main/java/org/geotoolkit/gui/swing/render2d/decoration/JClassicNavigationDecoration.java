@@ -61,7 +61,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
         NEO
     }
 
-    private static final Logger LOGGER = Logging.getLogger(JClassicNavigationDecoration.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.decoration");
 
     private JMap2D map = null;
 

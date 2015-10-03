@@ -40,8 +40,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.apache.sis.util.logging.Logging;
 import static javax.xml.stream.XMLStreamReader.END_ELEMENT;
 import static javax.xml.stream.XMLStreamReader.START_ELEMENT;
 import static org.geotoolkit.data.gpx.xml.GPXConstants.ATT_BOUNDS_MAXLAT;
@@ -102,7 +102,7 @@ import static org.geotoolkit.data.gpx.xml.GPXConstants.TAG_WPT_VDOP;
 public class GPXReader extends StaxStreamReader{
 
     private final GeometryFactory gf = new GeometryFactory();
-    private MetaData metadata;    
+    private MetaData metadata;
     private Feature current;
     private int wayPointInc = 0;
     private int routeInc = 0;
@@ -134,7 +134,7 @@ public class GPXReader extends StaxStreamReader{
                                 str = reader.getAttributeValue(i);
                             }
                         }
-                        
+
                         try{
                             this.version = GPXVersion.toVersion(str);
                         }catch(NumberFormatException ex){
@@ -207,7 +207,7 @@ public class GPXReader extends StaxStreamReader{
             }else{
                 type = reader.next();
             }
-            
+
             if(type == START_ELEMENT) {
                 final String localName = reader.getLocalName();
                 if(TAG_WPT.equalsIgnoreCase(localName)){
@@ -385,13 +385,11 @@ public class GPXReader extends StaxStreamReader{
 
     private Date parseTime() throws XMLStreamException {
         final String str = reader.getElementText();
-        
+
         try {
             return TemporalUtilities.parseDate(str);
-        } catch (ParseException ex) {
-            Logger.getLogger(GPXReader.class.getName()).log(Level.WARNING, null, ex);
-        } catch (NullPointerException ex) {
-            Logger.getLogger(GPXReader.class.getName()).log(Level.WARNING, null, ex);
+        } catch (ParseException | NullPointerException ex) {
+            Logging.getLogger("org.geotoolkit.data.gpx.xml").log(Level.WARNING, null, ex);
         }
         return null;
     }

@@ -22,14 +22,14 @@ import org.apache.sis.util.logging.Logging;
 
 /**
  * Monitor which fail on first rendering error.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class FailOnErrorMonitor extends AbstractCanvasMonitor{
 
-    private static final Logger LOGGER = Logging.getLogger(FailOnErrorMonitor.class);
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display.canvas.control");
+
     /**
      * {@inheritDoc }
      */

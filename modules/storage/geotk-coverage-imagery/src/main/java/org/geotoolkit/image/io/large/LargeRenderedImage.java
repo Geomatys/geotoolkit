@@ -257,7 +257,7 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
 //            try {
 //                vector.add(new LargeRenderedImage(imageReader, id, tilecache, new Dimension(tileWidth, tileHeight)));
 //            } catch (IOException ex) {
-//                Logger.getLogger("org.geotoolkit.image.io.large").log(Level.SEVERE, null, ex);
+//                Logging.getLogger("org.geotoolkit.image.io.large").log(Level.SEVERE, null, ex);
 //            }
 //        }
 //        return vector;

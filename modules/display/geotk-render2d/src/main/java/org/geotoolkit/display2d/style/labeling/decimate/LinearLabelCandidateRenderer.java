@@ -21,13 +21,13 @@ import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.j2d.TextStroke;
 import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
 import org.geotoolkit.display2d.style.labeling.candidate.LinearCandidate;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -54,7 +54,7 @@ public class LinearLabelCandidateRenderer implements LabelCandidateRenderer<Line
             }
             return candidates;
         } catch (TransformException ex) {
-            Logger.getLogger(LinearLabelCandidateRenderer.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.display2d.style.labeling.decimate").log(Level.WARNING, null, ex);
         }
 
         return null;

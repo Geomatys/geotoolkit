@@ -19,7 +19,6 @@ package org.geotoolkit.filter.binaryspatial;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.converter.UnitConverter;
 import javax.measure.unit.Unit;
 import org.geotoolkit.util.StringUtilities;
@@ -29,6 +28,7 @@ import org.opengis.filter.spatial.Beyond;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Immutable "beyond" filter.
@@ -92,11 +92,8 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
                 return !leftMatch.isWithinDistance(rightMatch, converter.convert(distance));
             }
 
-        } catch (FactoryException ex) {
-            Logger.getLogger(DefaultBeyond.class.getName()).log(Level.WARNING, null, ex);
-            return false;
-        } catch (TransformException ex) {
-            Logger.getLogger(DefaultBeyond.class.getName()).log(Level.WARNING, null, ex);
+        } catch (FactoryException | TransformException ex) {
+            Logging.getLogger("org.geotoolkit.filter.binaryspatial").log(Level.WARNING, null, ex);
             return false;
         }
 

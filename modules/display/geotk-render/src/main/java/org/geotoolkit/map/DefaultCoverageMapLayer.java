@@ -17,7 +17,6 @@
 package org.geotoolkit.map;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -30,6 +29,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.apache.sis.util.NullArgumentException;
 import org.opengis.geometry.Envelope;
+import org.apache.sis.util.logging.Logging;
 import static org.apache.sis.util.ArgumentChecks.*;
 
 /**
@@ -105,7 +105,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
             try {
                 return ((PyramidalCoverageReference)ref).getPyramidSet().getEnvelope();
             } catch (DataStoreException ex) {
-                Logger.getLogger(DefaultCoverageMapLayer.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.map").log(Level.SEVERE, null, ex);
             }
         }
 

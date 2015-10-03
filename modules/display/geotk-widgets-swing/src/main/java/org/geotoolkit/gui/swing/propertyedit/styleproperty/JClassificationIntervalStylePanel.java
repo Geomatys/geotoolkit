@@ -105,7 +105,7 @@ import org.opengis.util.GenericName;
  */
 public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
 
-    private static final Logger LOGGER = Logging.getLogger(JClassificationIntervalStylePanel.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.styleproperty");
     private static final NumberFormat FORMAT = NumberFormat.getNumberInstance();
     private static final ImageIcon DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
 

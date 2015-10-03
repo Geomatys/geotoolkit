@@ -269,16 +269,16 @@ public class WmsXmlBindingTest {
 
         DefaultExtent extent = new DefaultExtent();
         DefaultTemporalExtent tempExt = new DefaultTemporalExtent();
-        
+
         NamedIdentifier periodName = new NamedIdentifier(Citations.CRS, "period");
         final Map<String, Object> periodProp = new HashMap<>();
         periodProp.put(IdentifiedObject.NAME_KEY, periodName);
-        
+
         NamedIdentifier name = new NamedIdentifier(Citations.CRS, "period instant");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, name);
-        
-        DefaultPeriod period = new DefaultPeriod(periodProp, new DefaultInstant(properties, new Date(120000000)), 
+
+        DefaultPeriod period = new DefaultPeriod(periodProp, new DefaultInstant(properties, new Date(120000000)),
                                                              new DefaultInstant(properties, new Date(120000001)));
 //        period.setBegining(new DefaultInstant(properties, new DefaultPosition(new Date(120000000))));
 //        period.setEnding(new DefaultInstant(properties, new DefaultPosition(new Date(120000001))));
@@ -288,7 +288,7 @@ public class WmsXmlBindingTest {
         extent.setTemporalElements(Arrays.asList(tempExt));
         ext.setTemporalRefererence(extent);
 
-        DefaultConformanceResult cresult =  new DefaultConformanceResult(Citations.EPSG, new DefaultInternationalString("see the referenced specification"), true);
+        DefaultConformanceResult cresult = new DefaultConformanceResult(Citations.EPSG, new DefaultInternationalString("see the referenced specification"), true);
         ext.setConformity(cresult);
 
         ResponsibleParty party = DefaultResponsibleParty.castOrCopy(Citations.EPSG.getCitedResponsibleParties().iterator().next());
@@ -578,17 +578,17 @@ public class WmsXmlBindingTest {
 
         DefaultExtent extent = new DefaultExtent();
         DefaultTemporalExtent tempExt = new DefaultTemporalExtent();
-        
-        
+
+
         NamedIdentifier periodName = new NamedIdentifier(Citations.CRS, "period");
         final Map<String, Object> periodProp = new HashMap<>();
         periodProp.put(IdentifiedObject.NAME_KEY, periodName);
         NamedIdentifier instantName = new NamedIdentifier(Citations.CRS, "period instant");
         final Map<String, Object> properties = new HashMap<>();
         properties.put(IdentifiedObject.NAME_KEY, instantName);
-        
+
         DefaultPeriod period = new DefaultPeriod(periodProp, new DefaultInstant(properties, new Date(120000000)), new DefaultInstant(properties, new Date(120001000)));
-        
+
         tempExt.setExtent(period);
         extent.setTemporalElements(Arrays.asList(tempExt));
         ext.setTemporalRefererence(extent);
@@ -599,7 +599,9 @@ public class WmsXmlBindingTest {
         or.setFunction(OnLineFunction.INFORMATION);
         DefaultContact ct = new DefaultContact(or);
         rp.setContactInfo(ct);
-        DefaultCitation citation = new DefaultCitation(rp);
+        DefaultCitation citation = new DefaultCitation();
+        citation.setCitedResponsibleParties(Arrays.asList(rp));
+        citation.setTitle(rp.getOrganisationName());
         citation.setAlternateTitles(Arrays.asList(new SimpleInternationalString("EPSG")));
         citation.setIdentifiers(Arrays.asList(new DefaultIdentifier("EPSG")));
         citation.setPresentationForms(Arrays.asList(PresentationForm.TABLE_DIGITAL));

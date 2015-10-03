@@ -18,7 +18,6 @@
 package org.geotoolkit.gui.javafx.style;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -30,20 +29,18 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.gui.javafx.filter.FXCQLEditor;
-import org.geotoolkit.gui.javafx.filter.FXCQLPane;
-import org.geotoolkit.gui.javafx.util.FXUtilities;
-import org.geotoolkit.style.DefaultMutableRule;
 import org.geotoolkit.style.MutableRule;
 import org.opengis.filter.Filter;
 import org.opengis.style.Description;
 import org.opengis.util.InternationalString;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public class FXRule extends FXStyleElementController<MutableRule> {
-    
+
     @FXML protected TextField uiName;
     @FXML protected TextField uiTitle;
     @FXML protected TextField uiAbstract;
@@ -64,10 +61,10 @@ public class FXRule extends FXStyleElementController<MutableRule> {
                 uiCQL.setText(CQL.write(filter));
             }
         } catch (CQLException ex) {
-            Logger.getLogger(FXRule.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+            Logging.getLogger("org.geotoolkit.gui.javafx.style").log(Level.WARNING, ex.getMessage(), ex);
         }
     }
-    
+
     @Override
     public Class<MutableRule> getEditedClass() {
         return MutableRule.class;
@@ -81,7 +78,7 @@ public class FXRule extends FXStyleElementController<MutableRule> {
     @Override
     public void initialize() {
         super.initialize();
-        
+
         uiName.setOnKeyReleased((KeyEvent event) -> {
             value.get().setName(uiName.getText());
         });
@@ -106,7 +103,7 @@ public class FXRule extends FXStyleElementController<MutableRule> {
             try{
                 val = Double.parseDouble(text);
             }catch(NumberFormatException ex){   }
-            
+
             value.get().setMaxScaleDenominator(val);
         });
         uiMinScale.setOnKeyReleased((KeyEvent event) -> {
@@ -118,18 +115,18 @@ public class FXRule extends FXStyleElementController<MutableRule> {
             try{
                 val = Double.parseDouble(text);
             }catch(NumberFormatException ex){   }
-            
+
             value.get().setMinScaleDenominator(val);
         });
         uiIsElse.setOnAction((ActionEvent event) -> {
             value.get().setElseFilter(uiIsElse.isSelected());
         });
-        
+
     }
 
     @Override
     protected void updateEditor(MutableRule styleElement) {
-                
+
         final Description desc = value.get().getDescription();
         uiTitle.setText(desc!=null && desc.getTitle()!=null ? desc.getTitle().toString() : "");
         uiAbstract.setText(desc!=null && desc.getAbstract()!=null ? desc.getAbstract().toString() : "");
@@ -141,5 +138,5 @@ public class FXRule extends FXStyleElementController<MutableRule> {
         uiCQL.setText(CQL.write(styleElement.getFilter()));
 
     }
-    
+
 }

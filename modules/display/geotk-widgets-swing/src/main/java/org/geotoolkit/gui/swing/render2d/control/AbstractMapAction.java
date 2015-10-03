@@ -34,7 +34,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public abstract class AbstractMapAction extends AbstractAction{
 
-    private static final Logger LOGGER = Logging.getLogger(AbstractMapAction.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.control");
 
     protected JMap2D map = null;
 

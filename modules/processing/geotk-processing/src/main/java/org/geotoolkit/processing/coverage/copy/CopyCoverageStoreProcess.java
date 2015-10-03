@@ -66,9 +66,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 
+import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.parameter.Parameters.value;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.ERASE;
 import static org.geotoolkit.processing.coverage.copy.CopyCoverageStoreDescriptor.INSTANCE;
@@ -229,7 +229,7 @@ public class CopyCoverageStoreProcess extends AbstractProcess {
                         try {
                             obj = queue.take();
                         } catch (InterruptedException ex) {
-                            Logger.getLogger(CopyCoverageStoreProcess.class.getName()).log(Level.SEVERE, null, ex);
+                            Logging.getLogger("org.geotoolkit.processing.coverage.copy").log(Level.SEVERE, null, ex);
                             continue;
                         }
                         if(obj == GridMosaic.END_OF_QUEUE){

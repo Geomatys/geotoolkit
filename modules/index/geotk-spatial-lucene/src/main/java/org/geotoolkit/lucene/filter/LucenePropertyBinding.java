@@ -25,20 +25,20 @@ import com.vividsolutions.jts.io.WKBReader;
 
 import java.io.IOException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.util.BytesRef;
 
 import org.geotoolkit.filter.binding.AbstractBinding;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
  * Simple accessor for lucene documents.
  *
  * This class is not thread safe.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -79,15 +79,13 @@ public class LucenePropertyBinding extends AbstractBinding<Document> {
             //skip the 5 crs byte;
             final ByteArrayInStream stream = new ByteArrayInStream(compact.bytes);
             stream.read(new byte[5]);
-            
+
             try {
                 final Geometry geom = THREAD_LOCAL.get().read(stream);
                 geom.setSRID(srid);
                 return (T) geom;
-            } catch (IOException ex) {
-                Logger.getLogger(LucenePropertyBinding.class.getName()).log(Level.WARNING, null, ex);
-            } catch (ParseException ex) {
-                Logger.getLogger(LucenePropertyBinding.class.getName()).log(Level.WARNING, null, ex);
+            } catch (IOException | ParseException ex) {
+                Logging.getLogger("org.geotoolkit.lucene.filter").log(Level.WARNING, null, ex);
             }
         }
 

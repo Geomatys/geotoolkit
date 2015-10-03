@@ -17,8 +17,8 @@
 package org.geotoolkit.gui.swing.etl;
 
 import java.awt.Point;
-import java.util.logging.Logger;
 import org.geotoolkit.processing.chain.model.FlowLink;
+import org.apache.sis.util.logging.Logging;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Scene;
@@ -51,7 +51,7 @@ public class ProviderFlowConnect implements ConnectProvider{
             if (!((WName)target).isTarget()) {
                 return ConnectorState.REJECT;
             }
-            
+
             final FlowLink link = toLink(source, target);
 
             if (scene.getChain().isValidFlowLink(link)) {
@@ -84,7 +84,7 @@ public class ProviderFlowConnect implements ConnectProvider{
 
         final WName sourceN = (WName) source;
         final Widget parentSource = sourceN.getOriginWidget();
-        
+
         if (parentSource instanceof WChainParametersBasic){
             link.setSourceId( ((WChainParametersBasic)parentSource).getId());
         } else if (parentSource instanceof WElementProcess) {
@@ -98,14 +98,14 @@ public class ProviderFlowConnect implements ConnectProvider{
             } else {
                 link.setSourceId(condition.getId());
             }
-                        
+
         } else {
-            Logger.getLogger(ProviderFlowConnect.class.getName()).warning("unexpected source type:" + parentSource.getClass());
+            Logging.getLogger("org.geotoolkit.gui.swing.etl").warning("unexpected source type:" + parentSource.getClass());
         }
 
         final WName targetN = (WName) target;
         final Widget parentTarget = targetN.getOriginWidget();
-        
+
         if(parentTarget instanceof WChainParametersBasic){
             link.setTargetId( ((WChainParametersBasic)parentTarget).getId() );
         } else if (parentTarget instanceof WElementProcess) {
@@ -120,7 +120,7 @@ public class ProviderFlowConnect implements ConnectProvider{
                 link.setTargetId(condition.getId());
             }
         } else {
-            Logger.getLogger(ProviderFlowConnect.class.getName()).warning("unexpected target type:" + parentTarget.getClass());
+            Logging.getLogger("org.geotoolkit.gui.swing.etl").warning("unexpected target type:" + parentTarget.getClass());
         }
 
         return link;

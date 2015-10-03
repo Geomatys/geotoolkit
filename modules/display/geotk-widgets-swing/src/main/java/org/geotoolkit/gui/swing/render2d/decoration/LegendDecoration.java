@@ -39,13 +39,13 @@ import org.geotoolkit.display.container.GraphicContainer;
 
 /**
  * Legend decoration placed on the right of the map pane.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class LegendDecoration extends AbstractMapDecoration implements GraphicProbe.ProbeMonitor {
-            
-    private static final Logger LOGGER = Logging.getLogger(LegendDecoration.class);
-    
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.decoration");
+
     private final JPanel panel = new JPanel(new BorderLayout());
     private final JLabel lbl = new JLabel();
     private final LegendTemplate template;
@@ -55,7 +55,7 @@ public class LegendDecoration extends AbstractMapDecoration implements GraphicPr
         panel.setOpaque(false);
 
         lbl.setOpaque(false);
-        lbl.setBorder(null);        
+        lbl.setBorder(null);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class LegendDecoration extends AbstractMapDecoration implements GraphicPr
             LOGGER.log(Level.INFO, ex.getMessage(),ex);
         }
     }
-    
+
     @Override
     public void contextPaint(final RenderingContext2D context) {
 

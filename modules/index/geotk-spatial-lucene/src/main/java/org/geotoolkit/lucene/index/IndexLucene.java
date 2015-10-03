@@ -50,7 +50,7 @@ public abstract class IndexLucene {
     /**
      * for debug purpose.
      */
-    protected static final Logger LOGGER = Logging.getLogger(IndexLucene.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.lucene.index");
 
     /**
      * A lucene analyser.
@@ -167,7 +167,7 @@ public abstract class IndexLucene {
             LOGGER.log(Level.WARNING, null, ex);
         }
     }
-    
+
     public Map<Integer, NamedEnvelope> getMapperContent() throws IOException {
         if (rTree != null) {
             TreeElementMapper mapper = rTree.getTreeElementMapper();
@@ -175,7 +175,7 @@ public abstract class IndexLucene {
         }
         return new HashMap<>();
     }
-    
+
     public String getTreeRepresentation() {
         if (rTree != null) {
             return rTree.toString();

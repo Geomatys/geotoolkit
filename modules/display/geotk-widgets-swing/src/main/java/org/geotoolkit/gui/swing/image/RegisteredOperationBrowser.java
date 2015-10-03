@@ -227,7 +227,7 @@ public class RegisteredOperationBrowser extends JComponent {
                  * deal; just left some label blank. Log the exception with a low level, since
                  * this warning is not really important.
                  */
-                Logging.getLogger(RegisteredOperationBrowser.class).log(Level.FINER,
+                Logging.getLogger("org.geotoolkit.gui.swing.image").log(Level.FINER,
                         exception.getLocalizedMessage(), exception);
             }
         }
