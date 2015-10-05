@@ -375,7 +375,7 @@ final class NetcdfMetadata extends SpatialMetadata {
                 } catch (Exception e) {
                     // We haven been unable to create a CRS. Do not write CRS metadata and continue reading.
                     // TODO: we should do something better than logging here...
-                    Logging.unexpectedException(LOGGER, e);
+                    Logging.unexpectedException(LOGGER, null, null, e);
                 }
                 // End of hack.
             }
