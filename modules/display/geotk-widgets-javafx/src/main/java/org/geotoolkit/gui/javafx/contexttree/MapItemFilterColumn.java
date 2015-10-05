@@ -71,9 +71,11 @@ public class MapItemFilterColumn extends TreeTableColumn{
                     Filter filter = layer.getQuery().getFilter();
                     filter = FXCQLEditor.showFilterDialog(this, layer, filter);
 
-                    final QueryBuilder qb = new QueryBuilder(layer.getQuery());
-                    qb.setFilter(filter);
-                    layer.setQuery(qb.buildQuery());
+                    if(filter!=null){
+                        final QueryBuilder qb = new QueryBuilder(layer.getQuery());
+                        qb.setFilter(filter);
+                        layer.setQuery(qb.buildQuery());
+                    }
                 }catch(CQLException ex){
                     Loggers.JAVAFX.log(Level.WARNING, ex.getMessage(), ex);
                 }

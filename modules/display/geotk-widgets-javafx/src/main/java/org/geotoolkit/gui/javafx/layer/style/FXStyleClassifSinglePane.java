@@ -183,8 +183,11 @@ public class FXStyleClassifSinglePane extends FXLayerStylePane {
     @FXML
     private void editCombineFilter(ActionEvent event) {
         try {
-            combineFilter = FXCQLEditor.showFilterDialog(this, layer, combineFilter);
-            uiCombineFilter.setTooltip(new Tooltip(CQL.write(combineFilter)));
+            final Filter f = FXCQLEditor.showFilterDialog(this, layer, combineFilter);
+            if(f!=null){
+                combineFilter = f;
+                uiCombineFilter.setTooltip(new Tooltip(CQL.write(combineFilter)));
+            }
         } catch (CQLException ex) {
             Loggers.JAVAFX.log(Level.INFO, ex.getMessage(),ex);
         }
