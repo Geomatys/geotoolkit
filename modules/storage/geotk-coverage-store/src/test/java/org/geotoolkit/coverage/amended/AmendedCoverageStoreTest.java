@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.decorator;
+package org.geotoolkit.coverage.amended;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -49,7 +49,7 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DecoratorCoverageStoreTest {
+public class AmendedCoverageStoreTest {
 
     private static final ImageCRS IMAGECRS;
     static {
@@ -102,9 +102,9 @@ public class DecoratorCoverageStoreTest {
         final CoverageStore store = createStore();
 
         //decorate this coverage
-        final CoverageStore decorated = new DecoratorCoverageStore(store);
+        final CoverageStore decorated = new AmendedCoverageStore(store);
         assertEquals(1,decorated.getNames().size());
-        final DecoratorCoverageReference decoratedRef = (DecoratorCoverageReference) decorated.getCoverageReference(name);
+        final AmendedCoverageReference decoratedRef = (AmendedCoverageReference) decorated.getCoverageReference(name);
         assertNotNull(decoratedRef);
         assertEquals(IMAGECRS, decoratedRef.getGridGeometry(0).getCoordinateReferenceSystem());
         assertEquals(new AffineTransform(), decoratedRef.getGridGeometry(0).getGridToCRS());
@@ -132,9 +132,9 @@ public class DecoratorCoverageStoreTest {
         final CoverageStore store = createStore();
 
         //decorate this coverage
-        final CoverageStore decorated = new DecoratorCoverageStore(store);
+        final CoverageStore decorated = new AmendedCoverageStore(store);
         assertEquals(1,decorated.getNames().size());
-        final DecoratorCoverageReference decoratedRef = (DecoratorCoverageReference) decorated.getCoverageReference(name);
+        final AmendedCoverageReference decoratedRef = (AmendedCoverageReference) decorated.getCoverageReference(name);
         assertNotNull(decoratedRef);
         assertEquals(IMAGECRS, decoratedRef.getGridGeometry(0).getCoordinateReferenceSystem());
         assertEquals(new AffineTransform(), decoratedRef.getGridGeometry(0).getGridToCRS());
@@ -172,8 +172,8 @@ public class DecoratorCoverageStoreTest {
         ref.acquireWriter().write(coverage, null);
 
         //decorate this coverage
-        final CoverageStore decorated = new DecoratorCoverageStore(store);
-        final DecoratorCoverageReference decoratedRef = (DecoratorCoverageReference) decorated.getCoverageReference(name);
+        final CoverageStore decorated = new AmendedCoverageStore(store);
+        final AmendedCoverageReference decoratedRef = (AmendedCoverageReference) decorated.getCoverageReference(name);
 
         //override grid to crs
         final CoordinateReferenceSystem overrideCrs = CRS.decode("EPSG:4326",true);

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.decorator;
+package org.geotoolkit.coverage.amended;
 
 import java.util.List;
 import java.util.concurrent.CancellationException;
@@ -39,15 +39,17 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 
 /**
+ * Decorate a coverage reader changing behavior to match overriden properties
+ * in the coverage reference.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DecoratorCoverageReader extends GridCoverageReader{
+public class AmendedCoverageReader extends GridCoverageReader{
 
-    private final DecoratorCoverageReference ref;
+    private final AmendedCoverageReference ref;
     private final GridCoverageReader reader;
 
-    public DecoratorCoverageReader(DecoratorCoverageReference ref) throws CoverageStoreException {
+    public AmendedCoverageReader(AmendedCoverageReference ref) throws CoverageStoreException {
         this.ref = ref;
         this.reader = ref.getDecorated().acquireReader();
     }
@@ -56,25 +58,57 @@ public class DecoratorCoverageReader extends GridCoverageReader{
         return reader;
     }
 
+    /**
+     * Delegates to wrapped coverage reader.
+     *
+     * @return wrapped real coverage names
+     * @throws CoverageStoreException
+     * @throws CancellationException
+     */
     @Override
     public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
         return reader.getCoverageNames();
     }
 
+    /**
+     * Returns the corrected grid geometry based on overriden properties in the coverage reference.
+     *
+     * @param index : image index
+     * @return GeneralGridGeometry, never null
+     * @throws CoverageStoreException
+     * @throws CancellationException
+     */
     @Override
     public GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException, CancellationException {
         return ref.getGridGeometry(index);
     }
 
+    /**
+     * Returns the corrected sample dimensions based on overriden properties in the coverage reference.
+     *
+     * @param index : image index
+     * @return sample dimensions, can be null or empty
+     * @throws CoverageStoreException
+     * @throws CancellationException
+     */
     @Override
     public List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException, CancellationException {
         return ref.getSampleDimensions(index);
     }
 
+    /**
+     * Decorates and fixes the reading parameters passed and returned by the wrapped coverage reader
+     * to match overriden properties in the coverage reference.
+     *
+     *
+     * @param index : image index
+     * @param param : read parameters.
+     * @return GridCoverage
+     * @throws CoverageStoreException
+     * @throws CancellationException
+     */
     @Override
     public GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
-
-
 
         GridCoverage coverage;
         if(ref.isGridGeometryOverriden()){
@@ -189,11 +223,17 @@ public class DecoratorCoverageReader extends GridCoverageReader{
         return coverage;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void reset() throws CoverageStoreException {
         reader.reset();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void dispose() {
         ref.getDecorated().recycle(reader);

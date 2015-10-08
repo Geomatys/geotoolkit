@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.decorator;
+package org.geotoolkit.coverage.amended;
 
 import java.util.Collection;
 import org.apache.sis.util.collection.TreeTable;
@@ -26,42 +26,50 @@ import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 
 /**
- *
+ * Wrap a DataNode and it's children.
+ * 
  * @author Johann Sorel (Geomatys)
  */
-final class DecoratorDataNode extends DefaultDataNode {
+final class AmendedDataNode extends DefaultDataNode {
     private final DataNode base;
-    private final DecoratorCoverageStore store;
+    private final AmendedCoverageStore store;
 
-    private StorageListener subListener = new StorageListener(){
+    /**
+     * Listen to the real node events and propage them.
+     */
+    private final StorageListener subListener = new StorageListener(){
         @Override
         public void structureChanged(StorageEvent event) {
             rebuildNodes();
-            sendStructureEvent(event.copy(DecoratorDataNode.this));
+            sendStructureEvent(event.copy(AmendedDataNode.this));
         }
         @Override
         public void contentChanged(StorageEvent event) {
-            sendStructureEvent(event.copy(DecoratorDataNode.this));
+            sendStructureEvent(event.copy(AmendedDataNode.this));
         }
     };
 
-    DecoratorDataNode(DataNode node, final DecoratorCoverageStore store) {
+    AmendedDataNode(DataNode node, final AmendedCoverageStore store) {
         this.store = store;
         this.base = node;
         node.addStorageListener(new StorageListener.Weak(store, subListener));
         rebuildNodes();
     }
 
+    /**
+     * Wrap node children.
+     */
     private void rebuildNodes(){
         if(!getChildren().isEmpty()) getChildren().clear();
         final Collection<TreeTable.Node> children = base.getChildren();
         for(TreeTable.Node n : children){
             if(n instanceof PyramidalCoverageReference){
-                getChildren().add(new DecoratorPyramidalCoverageReference((CoverageReference)n, store));
+                //TODO : create an amended reference which declares itself as a pyramid.
+                getChildren().add(new AmendedCoverageReference((CoverageReference)n, store));
             }else if(n instanceof CoverageReference){
-                getChildren().add(new DecoratorCoverageReference((CoverageReference)n, store));
+                getChildren().add(new AmendedCoverageReference((CoverageReference)n, store));
             }else if(n instanceof DataNode){
-                getChildren().add(new DecoratorDataNode((DataNode)n, store));
+                getChildren().add(new AmendedDataNode((DataNode)n, store));
             }
         }
     }

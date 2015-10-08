@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.decorator;
+package org.geotoolkit.coverage.amended;
 
 import java.awt.Image;
 import java.util.List;
@@ -50,7 +50,7 @@ import org.opengis.referencing.operation.MathTransform;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DecoratorCoverageReference extends AbstractCoverageReference{
+public class AmendedCoverageReference extends AbstractCoverageReference{
 
     protected final CoverageReference ref;
 
@@ -64,7 +64,7 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
     protected MathTransform overrideGridToCrs;
     protected List<GridSampleDimension> overrideDims;
 
-    public DecoratorCoverageReference(CoverageReference ref, CoverageStore store) {
+    public AmendedCoverageReference(CoverageReference ref, CoverageStore store) {
         super(store, ref.getName());
         this.ref = ref;
     }
@@ -255,7 +255,7 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
      */
     @Override
     public boolean isWritable() throws DataStoreException {
-        return ref.isWritable();
+        return false;
     }
 
     /**
@@ -263,7 +263,7 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
      */
     @Override
     public GridCoverageReader acquireReader() throws CoverageStoreException {
-        return new DecoratorCoverageReader(this);
+        return new AmendedCoverageReader(this);
     }
 
     /**
@@ -271,7 +271,7 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
      */
     @Override
     public GridCoverageWriter acquireWriter() throws CoverageStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new CoverageStoreException("Not supported.");
     }
 
     /**
@@ -279,7 +279,7 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
      */
     @Override
     public void recycle(CoverageReader reader) {
-        ((DecoratorCoverageReader)reader).dispose();
+        ((AmendedCoverageReader)reader).dispose();
     }
 
     /**
@@ -287,7 +287,7 @@ public class DecoratorCoverageReference extends AbstractCoverageReference{
      */
     @Override
     public void recycle(GridCoverageWriter writer) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported.");
     }
 
     /**

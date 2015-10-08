@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.decorator;
+package org.geotoolkit.coverage.amended;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataNode;
@@ -35,7 +35,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.GenericName;
 
 /**
- * Decorates a coverage storeadding possibility to override properties of each coverage reference.
+ * Decorates a coverage store adding possibility to override properties of each coverage reference.
  * <br>
  * <br>
  * List of properties which can be override : <br>
@@ -49,16 +49,16 @@ import org.opengis.util.GenericName;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DecoratorCoverageStore extends AbstractCoverageStore{
+public class AmendedCoverageStore extends AbstractCoverageStore{
 
     protected final CoverageStore store;
-    protected DecoratorDataNode root;
+    protected AmendedDataNode root;
     
     /**
      *
      * @param store wrapped store
      */
-    public DecoratorCoverageStore(CoverageStore store) {
+    public AmendedCoverageStore(CoverageStore store) {
         super(store.getConfiguration());
         this.store = store;
 
@@ -75,69 +75,102 @@ public class DecoratorCoverageStore extends AbstractCoverageStore{
 
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public ParameterValueGroup getConfiguration() {
         return store.getConfiguration();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public CoverageStoreFactory getFactory() {
         return store.getFactory();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public synchronized DataNode getRootNode() throws DataStoreException {
         if(root==null){
-            root = new DecoratorDataNode(store.getRootNode(), this);
+            root = new AmendedDataNode(store.getRootNode(), this);
         }
         return root;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean handleVersioning() {
         return store.handleVersioning();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public VersionControl getVersioning(GenericName typeName) throws VersioningException {
         return store.getVersioning(typeName);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public CoverageReference getCoverageReference(GenericName name, Version version) throws DataStoreException {
         final CoverageReference cr = (version==null) ? store.getCoverageReference(name) :store.getCoverageReference(name, version);
         if(cr instanceof PyramidalCoverageReference){
-            return new DecoratorPyramidalCoverageReference(cr, store);
+            return new AmendedCoverageReference(cr, store);
         }else{
-            return new DecoratorCoverageReference(cr, store);
+            return new AmendedCoverageReference(cr, store);
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public CoverageReference create(GenericName name) throws DataStoreException {
         final CoverageReference cr = store.create(name);
         if(cr instanceof PyramidalCoverageReference){
-            return new DecoratorPyramidalCoverageReference(cr, store);
+            return new AmendedCoverageReference(cr, store);
         }else{
-            return new DecoratorCoverageReference(cr, store);
+            return new AmendedCoverageReference(cr, store);
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public CoverageType getType() {
         return store.getType();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void delete(GenericName name) throws DataStoreException {
         store.delete(name);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Metadata getMetadata() throws DataStoreException {
         return store.getMetadata();
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void close() throws DataStoreException {
         store.close();

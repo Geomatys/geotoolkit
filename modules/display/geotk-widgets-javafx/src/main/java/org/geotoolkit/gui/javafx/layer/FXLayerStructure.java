@@ -30,7 +30,7 @@ import org.apache.sis.io.wkt.Colors;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.decorator.DecoratorCoverageReference;
+import org.geotoolkit.coverage.amended.AmendedCoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.FeatureType;
@@ -273,9 +273,9 @@ public class FXLayerStructure extends FXPropertyPane {
             }
 
             //override projection
-            if(ref instanceof DecoratorCoverageReference){
+            if(ref instanceof AmendedCoverageReference){
                 final Tab taboverride = new Tab("Overrides");
-                taboverride.setContent(new FXCoverageDecoratorPane((DecoratorCoverageReference) ref));
+                taboverride.setContent(new FXCoverageDecoratorPane((AmendedCoverageReference) ref));
                 tabs.getTabs().add(taboverride);
             }
 

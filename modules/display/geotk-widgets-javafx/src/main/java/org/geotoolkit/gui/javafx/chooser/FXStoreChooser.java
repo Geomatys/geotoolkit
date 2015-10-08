@@ -52,7 +52,7 @@ import javafx.scene.text.FontWeight;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.client.ClientFinder;
-import org.geotoolkit.coverage.decorator.DecoratorCoverageStore;
+import org.geotoolkit.coverage.amended.AmendedCoverageStore;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
@@ -210,7 +210,7 @@ public class FXStoreChooser extends SplitPane {
 
                     if(decorateProperty.get() && store instanceof CoverageStore){
                         //decorate store
-                        store = new DecoratorCoverageStore((CoverageStore) store);
+                        store = new AmendedCoverageStore((CoverageStore) store);
                     }
                     layerChooser.setSource(store);
                 } catch (DataStoreException ex) {
