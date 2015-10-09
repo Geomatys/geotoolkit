@@ -24,10 +24,10 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.CoverageClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
+import org.geotoolkit.internal.ClassLoaderInternationalString;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
@@ -78,12 +78,12 @@ public class WMSCClientFactory extends AbstractClientFactory implements Coverage
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/wmsc/bundle", "serverDescription");
+        return new ClassLoaderInternationalString(WMSCClientFactory.class,"org/geotoolkit/wmsc/bundle", "serverDescription");
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/wmsc/bundle", "serverTitle");
+        return new ClassLoaderInternationalString(WMSCClientFactory.class,"org/geotoolkit/wmsc/bundle", "serverTitle");
     }
 
     @Override
