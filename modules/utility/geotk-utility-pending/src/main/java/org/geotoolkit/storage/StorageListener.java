@@ -82,7 +82,7 @@ public interface StorageListener<S extends StorageEvent,C extends StorageEvent> 
          * Register this listener on the given source.
          */
         public synchronized void registerSource(final Object source){
-            if(source != null){
+            if(source != null && !sources.contains(source)){
                 //register in the new source
                 this.sources.add(source);
                 try {

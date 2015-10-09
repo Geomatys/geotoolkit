@@ -59,7 +59,7 @@ public interface LayerListener extends ItemListener {
          * Register this listener on the given source.
          */
         public synchronized void registerSource(final MapLayer source){
-            if(source != null){
+            if(source != null && !sources.contains(source)){
                 //register in the new source
                 source.addLayerListener(this);
                 this.sources.add(source);

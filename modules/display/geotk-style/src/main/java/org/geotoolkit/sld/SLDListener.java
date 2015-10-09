@@ -73,7 +73,7 @@ public interface SLDListener extends EventListener{
          * Register this listener on the given source.
          */
         public synchronized void registerSource(final MutableStyledLayerDescriptor source){
-            if(source != null){
+            if(source != null && !sources.contains(source)){
                 //register in the new source
                 source.addListener(this);
                 this.sources.add(source);
