@@ -117,6 +117,10 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
     @Override
     public void structureChanged(FeatureStoreManagementEvent event) {
+        if(item.isVisible() && getCanvas().isAutoRepaint()){
+            //TODO should call a repaint only on this graphic
+            getCanvas().repaint();
+        }
     }
 
     @Override
