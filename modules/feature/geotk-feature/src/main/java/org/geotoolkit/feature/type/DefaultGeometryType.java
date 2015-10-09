@@ -18,6 +18,7 @@ package org.geotoolkit.feature.type;
 
 import org.opengis.util.GenericName;
 import java.util.List;
+import java.util.Objects;
 
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -54,4 +55,29 @@ public class DefaultGeometryType extends DefaultAttributeType<AttributeType> imp
     public void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
         this.crs = crs;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 71 * hash + Objects.hashCode(this.crs);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof GeometryType)) {
+            return false;
+        }
+        final GeometryType other = (GeometryType) obj;
+        if (!Objects.equals(this.crs, other.getCoordinateReferenceSystem())) {
+            return false;
+        }
+        return true;
+    }
+
+
+
 }
