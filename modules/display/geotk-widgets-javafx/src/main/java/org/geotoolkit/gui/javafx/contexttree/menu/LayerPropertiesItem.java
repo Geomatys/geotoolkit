@@ -26,11 +26,11 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
-import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import org.geotoolkit.gui.javafx.contexttree.TreeMenuItem;
 import org.geotoolkit.gui.javafx.layer.FXFeatureTable;
+import org.geotoolkit.gui.javafx.layer.FXFeatureTypePane;
 import org.geotoolkit.gui.javafx.layer.FXLayerStructure;
 import org.geotoolkit.gui.javafx.layer.FXPropertiesPane;
 import org.geotoolkit.gui.javafx.layer.FXPropertyPane;
@@ -55,6 +55,7 @@ public class LayerPropertiesItem extends TreeMenuItem{
     public LayerPropertiesItem(FXMap map){
         this(map,
             new FXLayerStructure(),
+            new FXFeatureTypePane(),
             new FXFeatureTable(),
             new FXStyleAggregatedPane());
     }
