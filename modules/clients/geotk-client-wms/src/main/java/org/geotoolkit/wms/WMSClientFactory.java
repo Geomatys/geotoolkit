@@ -21,12 +21,10 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.CoverageClientFactory;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -39,11 +37,9 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import org.geotoolkit.internal.ClassLoaderInternationalString;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 
 /**
@@ -66,6 +62,7 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageC
     }
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    private static final String BUNDLE_PATH = "org/geotoolkit/wms/bundle";
 
     /**
      * Version, Mandatory.
@@ -96,12 +93,12 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageC
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/wms/bundle", "coverageDescription");
+        return new ClassLoaderInternationalString(WMSClientFactory.class,BUNDLE_PATH, "coverageDescription");
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/wms/bundle", "coverageTitle");
+        return new ClassLoaderInternationalString(WMSClientFactory.class,BUNDLE_PATH, "coverageTitle");
     }
 
     @Override

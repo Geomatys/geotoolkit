@@ -56,8 +56,9 @@ public class SecurityTest {
             ex.printStackTrace();
             //url is fake, this error will happen but it's not what we are testing
         }
-        
-        assertEquals(1, INC.get());
+
+        //test.com has 1 inderection level
+        assertEquals(2, INC.get());
         
         
     }

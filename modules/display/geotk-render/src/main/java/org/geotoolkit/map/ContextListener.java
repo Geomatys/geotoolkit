@@ -59,7 +59,7 @@ public interface ContextListener extends ItemListener {
          * Register this listener on the given source.
          */
         public synchronized void registerSource(final MapContext source){
-            if(source != null){
+            if(source != null && !sources.contains(source)){
                 //register in the new source
                 source.addContextListener(this);
                 this.sources.add(source);

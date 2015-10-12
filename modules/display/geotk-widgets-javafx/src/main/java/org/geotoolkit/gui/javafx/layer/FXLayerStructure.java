@@ -86,11 +86,11 @@ public class FXLayerStructure extends FXPropertyPane {
     }
     
     public boolean canHandle(Object target) {
-        return target instanceof CoverageMapLayer || target instanceof FeatureMapLayer;
+        return target instanceof CoverageMapLayer;
     }
 
     public boolean init(Object target) {
-        if(!(target instanceof CoverageMapLayer || target instanceof FeatureMapLayer)){
+        if(!(target instanceof CoverageMapLayer)){
             return false;
         }
         
