@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2010, Geomatys
+ *    (C) 2009-2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -205,7 +206,7 @@ public abstract class AbstractRequest implements Request {
         //security
         cnx = security.secure(cnx);
 
-        return openRichException(cnx);
+        return followLink(cnx);
     }
 
     /**
@@ -234,6 +235,50 @@ public abstract class AbstractRequest implements Request {
         hash = 41 * hash + (this.serverURL != null ? this.serverURL.hashCode() : 0);
         hash = 41 * hash + (this.subPath != null ? this.subPath.hashCode() : 0);
         return hash;
+    }
+
+    /**
+     * Java do not follow urls if there is a change in protocol.
+     * See : http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4620571
+     * 
+     * @param cnx
+     * @return 
+     */
+    protected InputStream followLink(URLConnection cnx) throws IOException{
+
+        while(cnx instanceof HttpURLConnection) {
+            HttpURLConnection httpCnx = (HttpURLConnection) cnx;
+
+            final InputStream is = openRichException(httpCnx);
+            final int status = httpCnx.getResponseCode();
+            final boolean redirect = status == HttpURLConnection.HTTP_MOVED_TEMP
+                                  || status == HttpURLConnection.HTTP_MOVED_PERM
+                                  || status == HttpURLConnection.HTTP_SEE_OTHER;
+
+            if (redirect) {
+                // get redirection url
+                final String newUrl = httpCnx.getHeaderField("Location");
+                // get new cookies
+                final String cookies = httpCnx.getHeaderField("Set-Cookie");
+                is.close();
+                
+                // open redirection
+                httpCnx = (HttpURLConnection) new URL(newUrl).openConnection();
+                cnx = httpCnx;
+                httpCnx.setRequestProperty("Cookie", cookies);
+
+                //Set all fields from the headerMap to the properties of this URLConnection.
+                for(final Entry<String,String> entry : headerMap.entrySet()){
+                    httpCnx.setRequestProperty(entry.getKey(),entry.getValue());
+                }
+                //security
+                httpCnx = (HttpURLConnection)security.secure(httpCnx);
+            }else{
+                return is;
+            }
+        }
+
+        return openRichException(cnx);
     }
 
     protected InputStream openRichException(final URLConnection cnx) throws IOException {
