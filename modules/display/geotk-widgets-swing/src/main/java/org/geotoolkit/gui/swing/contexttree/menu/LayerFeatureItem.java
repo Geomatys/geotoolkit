@@ -51,7 +51,7 @@ public class LayerFeatureItem extends AbstractTreePopupItem{
      * Creates a new instance of DefaultContextPropertyPop
      */
     public LayerFeatureItem() {
-        super( MessageBundle.getString("contexttreetable_feature_table")  );
+        super( MessageBundle.format("contexttreetable_feature_table")  );
         init();
     }
 

@@ -84,7 +84,7 @@ public class JColorPane extends javax.swing.JPanel {
             }
         });
 
-        jLabel1.setText(MessageBundle.getString("opacity")); // NOI18N
+        jLabel1.setText(MessageBundle.format("opacity")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

@@ -33,9 +33,9 @@ public class LegendDecorationAction extends AbstractMapAction {
     private final LegendDecoration deco;
 
     public LegendDecorationAction(final JMap2D map, final LegendTemplate template) {
-        super(MessageBundle.getString("legend"), null,map);
+        super(MessageBundle.format("legend"), null,map);
         deco = new LegendDecoration(template);
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("legend"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("legend"));
         setMap(map);
     }
 

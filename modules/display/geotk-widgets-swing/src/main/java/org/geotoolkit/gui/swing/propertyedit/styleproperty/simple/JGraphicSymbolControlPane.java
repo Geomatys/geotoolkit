@@ -40,7 +40,7 @@ import org.opengis.style.GraphicalSymbol;
  */
 public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbol> {
 
-    private final Action symbolChange = new AbstractAction(MessageBundle.getString("change")) {
+    private final Action symbolChange = new AbstractAction(MessageBundle.format("change")) {
         @Override
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(null,paneGraphicalSymbolChooser,"",JOptionPane.PLAIN_MESSAGE);

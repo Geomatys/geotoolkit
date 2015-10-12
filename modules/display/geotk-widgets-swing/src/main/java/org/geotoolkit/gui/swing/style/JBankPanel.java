@@ -192,7 +192,7 @@ public class JBankPanel extends StyleElementEditor {
             JLabel label = (JLabel) super.getListCellRendererComponent(jlist, o, i, bln, bln1);
 
             if (o.equals(Symbolizer.class)) {
-                label.setText(MessageBundle.getString("all"));
+                label.setText(MessageBundle.format("all"));
             } else {
                 label.setText(((Class) o).getSimpleName());
             }

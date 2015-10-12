@@ -61,9 +61,9 @@ import org.opengis.style.Symbolizer;
  */
 public class JPropertyPane extends JPanel{
 
-    private final JButton apply = new JButton(MessageBundle.getString("property_apply"));
-    private final JButton revert = new JButton(MessageBundle.getString("property_revert"));
-    private final JButton close = new JButton(MessageBundle.getString("property_close"));
+    private final JButton apply = new JButton(MessageBundle.format("property_apply"));
+    private final JButton revert = new JButton(MessageBundle.format("property_revert"));
+    private final JButton close = new JButton(MessageBundle.format("property_close"));
 
     private final JTabbedPane tabs = new JTabbedPane();
     private final ArrayList<PropertyPane> panels = new ArrayList<>();
@@ -157,7 +157,7 @@ public class JPropertyPane extends JPanel{
         final Window window = SwingUtilities.windowForComponent(parent);
         final JDialog dia = new JDialog(window);
         dia.setModal(modal);
-        dia.setTitle(MessageBundle.getString("property_properties"));
+        dia.setTitle(MessageBundle.format("property_properties"));
         //dia.setAlwaysOnTop(true);
 
         final JPropertyPane pane = new JPropertyPane(true,true,true,dia);
@@ -207,11 +207,11 @@ public class JPropertyPane extends JPanel{
                 public Component getListCellRendererComponent(JList jlist, Object o, int i, boolean bln, boolean bln1) {
                     final JLabel lbl = (JLabel) super.getListCellRendererComponent(jlist, o, i, bln, bln1);
                     if(o == PointSymbolizer.class){
-                        lbl.setText(MessageBundle.getString("symbol_point"));
+                        lbl.setText(MessageBundle.format("symbol_point"));
                     }else if(o == LineSymbolizer.class){
-                        lbl.setText(MessageBundle.getString("symbol_line"));
+                        lbl.setText(MessageBundle.format("symbol_line"));
                     }else if(o == PolygonSymbolizer.class){
-                        lbl.setText(MessageBundle.getString("symbol_polygon"));
+                        lbl.setText(MessageBundle.format("symbol_polygon"));
                     }
                     return lbl;
                 }
@@ -237,7 +237,7 @@ public class JPropertyPane extends JPanel{
         final Window window = SwingUtilities.windowForComponent(parent);
         final JDialog dia = new JDialog(window);
         dia.setModal(true);
-        dia.setTitle(MessageBundle.getString("property_properties"));
+        dia.setTitle(MessageBundle.format("property_properties"));
         //dia.setAlwaysOnTop(true);
         dia.setSize(900,700);
         dia.setLocationRelativeTo(null);

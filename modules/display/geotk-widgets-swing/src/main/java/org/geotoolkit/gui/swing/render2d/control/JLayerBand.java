@@ -480,7 +480,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener {
                 rect.width += width * 2;
 
                 if (rect.contains(pt)) {
-                    ActionMenu.this.add(new AbstractAction(MessageBundle.getString("movetoposition")) {
+                    ActionMenu.this.add(new AbstractAction(MessageBundle.format("movetoposition")) {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             JNavigator navi = JLayerBand.this.getNavigator();

@@ -181,6 +181,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <website.encoding>UTF-8</website.encoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+    <sis.build.helper>0.7-jdk7-SNAPSHOT</sis.build.helper>
   </properties>
 
 

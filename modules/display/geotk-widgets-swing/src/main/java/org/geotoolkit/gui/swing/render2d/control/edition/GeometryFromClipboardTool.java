@@ -37,7 +37,7 @@ public class GeometryFromClipboardTool extends AbstractEditionTool {
     private static final ImageIcon ICON_PASTE = IconBuilder.createIcon(FontAwesomeIcons.ICON_CLIPBOARD, 16, FontAwesomeIcons.DEFAULT_COLOR);
     
     public GeometryFromClipboardTool() {
-        super(120,"geometryFromClipboard", MessageBundle.getI18NString("clipboard"),
+        super(120,"geometryFromClipboard", MessageBundle.formatInternational(MessageBundle.Keys.clipboard),
              new SimpleInternationalString("Tool to paste geometries from clipboard."), 
              ICON_PASTE,FeatureMapLayer.class);
     }

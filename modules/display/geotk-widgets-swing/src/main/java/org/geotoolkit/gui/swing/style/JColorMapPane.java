@@ -220,7 +220,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
     public JColorMapPane() {
         super(ColorMap.class);
-        title = MessageBundle.getString("property_style_colormap");
+        title = MessageBundle.format("property_style_colormap");
         icon = IconBundle.getIcon("16_classification_single");
         preview = null;
         tooltip = "";
@@ -691,14 +691,14 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         guiTable = new JXTable();
         guiJenksMessage = new JLabel();
 
-        guiAddOne.setText(MessageBundle.getString("add_value")); // NOI18N
+        guiAddOne.setText(MessageBundle.format("add_value")); // NOI18N
         guiAddOne.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiAddOneActionPerformed(evt);
             }
         });
 
-        guiRemoveAll.setText(MessageBundle.getString("remove_all_values")); // NOI18N
+        guiRemoveAll.setText(MessageBundle.format("remove_all_values")); // NOI18N
         guiRemoveAll.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiRemoveAllActionPerformed(evt);
@@ -708,34 +708,34 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         jPanel1.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 5));
 
         guiNaN.setSelected(true);
-        guiNaN.setText(MessageBundle.getString("style.rastercolormappane.nan")); // NOI18N
+        guiNaN.setText(MessageBundle.format("style_rastercolormappane_nan")); // NOI18N
         guiNaN.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiNaNActionPerformed(evt);
             }
         });
 
-        guiLblPalette.setText(MessageBundle.getString("style.rastercolormappane.palette")); // NOI18N
+        guiLblPalette.setText(MessageBundle.format("style_rastercolormappane_palette")); // NOI18N
 
-        guiGenerate.setText(MessageBundle.getString("generate")); // NOI18N
+        guiGenerate.setText(MessageBundle.format("generate")); // NOI18N
         guiGenerate.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiGenerateActionPerformed(evt);
             }
         });
 
-        guiInvert.setText(MessageBundle.getString("style.rastercolormappane.invert")); // NOI18N
+        guiInvert.setText(MessageBundle.format("style_rastercolormappane_invert")); // NOI18N
 
         guiLblBand.setHorizontalAlignment(SwingConstants.RIGHT);
-        guiLblBand.setText(MessageBundle.getString("style.rastercolormappane.band")); // NOI18N
+        guiLblBand.setText(MessageBundle.format("style_rastercolormappane_band")); // NOI18N
 
         guiBand.setModel(new SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
 
-        guiLblStep.setText(MessageBundle.getString("style.rastersymbolizer.divisions")); // NOI18N
+        guiLblStep.setText(MessageBundle.format("style_rastersymbolizer_divisions")); // NOI18N
 
         guiNbStep.setModel(new SpinnerNumberModel(Integer.valueOf(3), Integer.valueOf(0), null, Integer.valueOf(1)));
 
-        jLabel1.setText(MessageBundle.getString("method")); // NOI18N
+        jLabel1.setText(MessageBundle.format("method")); // NOI18N
 
         guiMethod.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent evt) {
@@ -743,17 +743,17 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
             }
         });
 
-        minLabel.setText(MessageBundle.getString("minimum")); // NOI18N
+        minLabel.setText(MessageBundle.format("minimum")); // NOI18N
 
         guiMinSpinner.setModel(new SpinnerNumberModel(Double.valueOf(0.0d), null, null, Double.valueOf(0.0d)));
 
-        maxLabel.setText(MessageBundle.getString("maximum")); // NOI18N
+        maxLabel.setText(MessageBundle.format("maximum")); // NOI18N
 
         guiMaxSpinner.setModel(new SpinnerNumberModel(Double.valueOf(0.0d), null, null, Double.valueOf(1.0d)));
 
-        guiNoDataLabel.setText(MessageBundle.getString("noData")); // NOI18N
+        guiNoDataLabel.setText(MessageBundle.format("noData")); // NOI18N
 
-        guiFitToData.setText(MessageBundle.getString("style.rastercolormappane.fittodata")); // NOI18N
+        guiFitToData.setText(MessageBundle.format("style_rastercolormappane_fittodata")); // NOI18N
         guiFitToData.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiFitToDataActionPerformed(evt);
@@ -854,7 +854,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
         guiJenksMessage.setFont(guiJenksMessage.getFont().deriveFont((guiJenksMessage.getFont().getStyle() | Font.ITALIC) | Font.BOLD, guiJenksMessage.getFont().getSize()+1));
         guiJenksMessage.setHorizontalAlignment(SwingConstants.CENTER);
-        guiJenksMessage.setText(MessageBundle.getString("jenks.notable")); // NOI18N
+        guiJenksMessage.setText(MessageBundle.format("jenks_notable")); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -1392,8 +1392,8 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         @Override
         public String getColumnName(final int columnIndex) {
             switch(columnIndex){
-                case 0: return MessageBundle.getString("style.rastersymbolizer.value");
-                case 1: return MessageBundle.getString("style.rastersymbolizer.color");
+                case 0: return MessageBundle.format("style_rastersymbolizer_value");
+                case 1: return MessageBundle.format("style_rastersymbolizer_color");
             }
             return "";
         }
@@ -1534,9 +1534,9 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
         @Override
         public String getColumnName(final int columnIndex) {
             switch(columnIndex){
-                case 0: return MessageBundle.getString("style.rastersymbolizer.lower");
-                case 1: return MessageBundle.getString("style.rastersymbolizer.color");
-                case 2: return MessageBundle.getString("style.rastersymbolizer.upper");
+                case 0: return MessageBundle.format("style_rastersymbolizer_lower");
+                case 1: return MessageBundle.format("style_rastersymbolizer_color");
+                case 2: return MessageBundle.format("style_rastersymbolizer_upper");
             }
             return "";
         }

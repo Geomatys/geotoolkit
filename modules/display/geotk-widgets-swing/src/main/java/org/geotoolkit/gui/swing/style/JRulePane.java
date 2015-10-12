@@ -91,24 +91,24 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         jPanel1.setBorder(BorderFactory.createEtchedBorder());
         jPanel1.setOpaque(false);
 
-        guiFilterEdit.setText(MessageBundle.getString("edit")); // NOI18N
+        guiFilterEdit.setText(MessageBundle.format("edit")); // NOI18N
         guiFilterEdit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiFilterEditActionPerformed(evt);
             }
         });
 
-        guiLabelMinScale.setText(MessageBundle.getString("minscale")); // NOI18N
+        guiLabelMinScale.setText(MessageBundle.format("minscale")); // NOI18N
 
         jsp_minscale.setModel(new SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(1000.0d)));
 
-        guiLabelMaxScale.setText(MessageBundle.getString("maxscale")); // NOI18N
+        guiLabelMaxScale.setText(MessageBundle.format("maxscale")); // NOI18N
 
         jsp_maxscale.setModel(new SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(1000.0d)));
 
         jck_else.setText(" ");
 
-        guiLabelElse.setText(MessageBundle.getString("else_filter")); // NOI18N
+        guiLabelElse.setText(MessageBundle.format("else_filter")); // NOI18N
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -172,11 +172,11 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         jPanel2.setOpaque(false);
 
         guiLabelTitle.setFont(guiLabelTitle.getFont().deriveFont(guiLabelTitle.getFont().getStyle() | Font.BOLD));
-        guiLabelTitle.setText(MessageBundle.getString("title")); // NOI18N
+        guiLabelTitle.setText(MessageBundle.format("title")); // NOI18N
 
-        guiLabelAbstract.setText(MessageBundle.getString("abstract")); // NOI18N
+        guiLabelAbstract.setText(MessageBundle.format("abstrac")); // NOI18N
 
-        guiLabelName.setText(MessageBundle.getString("name")); // NOI18N
+        guiLabelName.setText(MessageBundle.format("name")); // NOI18N
 
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);

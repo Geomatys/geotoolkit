@@ -51,8 +51,8 @@ public class SessionCommitAction extends AbstractAction implements FeatureStoreL
 
     public SessionCommitAction(final FeatureMapLayer layer) {
         putValue(SMALL_ICON, ICON_SAVE);
-        putValue(NAME, MessageBundle.getString("sessionCommit"));
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("sessionCommit"));
+        putValue(NAME, MessageBundle.format("sessionCommit"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("sessionCommit"));
         setLayer(layer);
     }
 

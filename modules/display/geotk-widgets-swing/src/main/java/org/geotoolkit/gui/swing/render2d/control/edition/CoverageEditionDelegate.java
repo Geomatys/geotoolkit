@@ -450,7 +450,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             //NORTH
 
             //select area
-            final JButton guiSelect = new JButton(MessageBundle.getString("select_area"));
+            final JButton guiSelect = new JButton(MessageBundle.format("select_area"));
             guiSelect.setIcon(ICON_SELECT);
             guiSelect.addActionListener(new ActionListener() {
                 @Override
@@ -468,7 +468,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
                 final JPanel warningPanel = new JPanel(new BorderLayout(0, 0));
                 final JLabel warningMessage = new JLabel();
                 StringBuilder sb = new StringBuilder("<html><p width=\"120px\">");
-                sb.append(MessageBundle.getString("edition.coverage.warrningdimension"));
+                sb.append(MessageBundle.format("edition_coverage_warrningdimension"));
                 sb.append("</p></html>");
                 warningMessage.setText(sb.toString());
                 warningPanel.add(BorderLayout.NORTH, warningMessage);
@@ -481,7 +481,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             final JPanel guiApplyPane = new JPanel(new GridLayout(0,1,2,2));
 
             //save edition
-            final JButton guiSave = new JButton(MessageBundle.getString("save"));
+            final JButton guiSave = new JButton(MessageBundle.format("save"));
             guiSave.setIcon(ICON_COMMIT);
             guiSave.addActionListener(new ActionListener() {
                 @Override
@@ -496,7 +496,7 @@ public class CoverageEditionDelegate extends AbstractEditionDelegate {
             guiApplyPane.add(guiSave);
 
             //cancel edition
-            final JButton guiCancel = new JButton(MessageBundle.getString("cancel"));
+            final JButton guiCancel = new JButton(MessageBundle.format("cancel"));
             guiCancel.setIcon(ICON_ROLLBACK);
             guiCancel.addActionListener(new ActionListener() {
                 @Override

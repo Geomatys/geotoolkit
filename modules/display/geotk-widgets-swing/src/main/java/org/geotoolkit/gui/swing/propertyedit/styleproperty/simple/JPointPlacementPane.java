@@ -71,7 +71,7 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
         setBackground(new Color(204, 204, 204));
         setOpaque(false);
 
-        jLabel1.setText(MessageBundle.getString("rotation")); // NOI18N
+        jLabel1.setText(MessageBundle.format("rotation")); // NOI18N
 
         guiRotation.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -79,7 +79,7 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
             }
         });
 
-        jLabel5.setText(MessageBundle.getString("displacementX")); // NOI18N
+        jLabel5.setText(MessageBundle.format("displacementX")); // NOI18N
 
         guiDisplacementY.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -87,7 +87,7 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
             }
         });
 
-        jLabel6.setText(MessageBundle.getString("displacementY")); // NOI18N
+        jLabel6.setText(MessageBundle.format("displacementY")); // NOI18N
 
         guiDisplacementX.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {

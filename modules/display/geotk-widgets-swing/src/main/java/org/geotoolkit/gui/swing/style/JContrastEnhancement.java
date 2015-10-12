@@ -128,7 +128,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
 
         setOpaque(false);
 
-        guiLabelContrast.setText(MessageBundle.getString("gamma")); // NOI18N
+        guiLabelContrast.setText(MessageBundle.format("gamma")); // NOI18N
 
         guiGamma.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -137,7 +137,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
         });
 
         methodGroup.add(guiNone);
-        guiNone.setText(MessageBundle.getString("method_none")); // NOI18N
+        guiNone.setText(MessageBundle.format("method_none")); // NOI18N
         guiNone.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiNoneActionPerformed(evt);
@@ -145,7 +145,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
         });
 
         methodGroup.add(guiHistogram);
-        guiHistogram.setText(MessageBundle.getString("method_histogram")); // NOI18N
+        guiHistogram.setText(MessageBundle.format("method_histogram")); // NOI18N
         guiHistogram.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiNoneActionPerformed(evt);
@@ -153,7 +153,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
         });
 
         methodGroup.add(guiNormalize);
-        guiNormalize.setText(MessageBundle.getString("method_normalize")); // NOI18N
+        guiNormalize.setText(MessageBundle.format("method_normalize")); // NOI18N
         guiNormalize.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiNoneActionPerformed(evt);

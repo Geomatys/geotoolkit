@@ -200,18 +200,18 @@ public class JMap2DFrame extends javax.swing.JFrame {
         lstproperty.add(new JLayerDataStructurePanel());
 
         LayerFilterPropertyPanel filters = new LayerFilterPropertyPanel();
-        filters.addPropertyPanel(MessageBundle.getString("filter"),new JCQLPropertyPanel());
+        filters.addPropertyPanel(MessageBundle.format("filter"),new JCQLPropertyPanel());
         lstproperty.add(filters);
 
         LayerStylePropertyPanel styles = new LayerStylePropertyPanel();
-        styles.addPropertyPanel(MessageBundle.getString("analyze"),new JSimpleStylePanel());
-        styles.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationSingleStylePanel());
-        styles.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationIntervalStylePanel());
-        styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JColorMapPane());
-        styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JCellSymbolizerPane());
-        styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JIsolineSymbolizerPane());
-        styles.addPropertyPanel(MessageBundle.getString("sld"),new JAdvancedStylePanel());
-        styles.addPropertyPanel(MessageBundle.getString("sld"),new JSLDImportExportPanel());
+        styles.addPropertyPanel(MessageBundle.format("analyze"),new JSimpleStylePanel());
+        styles.addPropertyPanel(MessageBundle.format("analyze_vector"),new JClassificationSingleStylePanel());
+        styles.addPropertyPanel(MessageBundle.format("analyze_vector"),new JClassificationIntervalStylePanel());
+        styles.addPropertyPanel(MessageBundle.format("analyze_raster"),new JColorMapPane());
+        styles.addPropertyPanel(MessageBundle.format("analyze_raster"),new JCellSymbolizerPane());
+        styles.addPropertyPanel(MessageBundle.format("analyze_raster"),new JIsolineSymbolizerPane());
+        styles.addPropertyPanel(MessageBundle.format("sld"),new JAdvancedStylePanel());
+        styles.addPropertyPanel(MessageBundle.format("sld"),new JSLDImportExportPanel());
         lstproperty.add(styles);
 
         property.setPropertyPanels(lstproperty);

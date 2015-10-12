@@ -213,7 +213,7 @@ import static java.awt.event.KeyEvent.*;
         menu.addSeparator();
 
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_move_elevation_center")) {
+                new AbstractAction(MessageBundle.format("map_move_elevation_center")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         moveTo(popupEdit);
@@ -226,7 +226,7 @@ import static java.awt.event.KeyEvent.*;
             }
         });
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_move_elevation_maximum")) {
+                new AbstractAction(MessageBundle.format("map_move_elevation_maximum")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
@@ -257,7 +257,7 @@ import static java.awt.event.KeyEvent.*;
             }
         });
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_move_elevation_minimum")) {
+                new AbstractAction(MessageBundle.format("map_move_elevation_minimum")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
@@ -292,7 +292,7 @@ import static java.awt.event.KeyEvent.*;
         menu.addSeparator();
 
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_remove_elevation")) {
+                new AbstractAction(MessageBundle.format("map_remove_elevation")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
@@ -319,7 +319,7 @@ import static java.awt.event.KeyEvent.*;
         });
 
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_remove_elevation_maximum")) {
+                new AbstractAction(MessageBundle.format("map_remove_elevation_maximum")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
@@ -348,7 +348,7 @@ import static java.awt.event.KeyEvent.*;
             }
         });
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_remove_elevation_minimum")) {
+                new AbstractAction(MessageBundle.format("map_remove_elevation_minimum")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){

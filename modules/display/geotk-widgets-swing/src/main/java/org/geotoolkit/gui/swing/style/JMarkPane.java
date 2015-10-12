@@ -119,7 +119,7 @@ public class JMarkPane extends StyleElementEditor<Mark> {
 
         setOpaque(false);
 
-        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("stroke"))); // NOI18N
+        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("stroke"))); // NOI18N
 
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -138,7 +138,7 @@ public class JMarkPane extends StyleElementEditor<Mark> {
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel4.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fill"))); // NOI18N
+        jPanel4.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("fill"))); // NOI18N
 
         GroupLayout jPanel4Layout = new GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -157,10 +157,10 @@ public class JMarkPane extends StyleElementEditor<Mark> {
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
+        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("general"))); // NOI18N
 
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | Font.BOLD));
-        jLabel1.setText(MessageBundle.getString("wellknownname")); // NOI18N
+        jLabel1.setText(MessageBundle.format("wellknownname")); // NOI18N
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

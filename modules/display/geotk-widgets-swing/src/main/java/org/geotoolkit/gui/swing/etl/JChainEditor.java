@@ -256,13 +256,13 @@ public class JChainEditor extends JPanel{
 
 
 
-        final JLabel guiLblData = new JLabel(MessageBundle.getString("datas"));
+        final JLabel guiLblData = new JLabel(MessageBundle.format("datas"));
         guiLblData.setHorizontalTextPosition(SwingConstants.CENTER);
         guiLblData.setHorizontalAlignment(SwingConstants.CENTER);
-        final JLabel guiLblProcess = new JLabel(MessageBundle.getString("processes"));
+        final JLabel guiLblProcess = new JLabel(MessageBundle.format("processes"));
         guiLblProcess.setHorizontalTextPosition(SwingConstants.CENTER);
         guiLblProcess.setHorizontalAlignment(SwingConstants.CENTER);
-        final JLabel guiLblOther = new JLabel(MessageBundle.getString("other"));
+        final JLabel guiLblOther = new JLabel(MessageBundle.format("other"));
         guiLblOther.setHorizontalTextPosition(SwingConstants.CENTER);
         guiLblOther.setHorizontalAlignment(SwingConstants.CENTER);
         final JPanel rtpane = new JPanel(new BorderLayout());
@@ -367,7 +367,7 @@ public class JChainEditor extends JPanel{
 
         final ActionListener toggleListener = new ToggleViewActionListener();
         final JToggleButton guiToggleBasicView  = new JToggleButton();
-        guiToggleBasicView.setText(MessageBundle.getString("guiToogleBasicView"));
+        guiToggleBasicView.setText(MessageBundle.format("guiToogleBasicView"));
         guiToggleBasicView.setName("tglBasic");
         if (usedView == BASIC_VIEW) {
             guiToggleBasicView.getModel().setSelected(true);
@@ -376,7 +376,7 @@ public class JChainEditor extends JPanel{
         guiToggleGroup.add(guiToggleBasicView);
 
         final JToggleButton guiToggleNoConstantView  = new JToggleButton();
-        guiToggleNoConstantView.setText(MessageBundle.getString("guiToogleInterView"));
+        guiToggleNoConstantView.setText(MessageBundle.format("guiToogleInterView"));
         guiToggleNoConstantView.setName("tglCst");
         if (usedView == INTERMEDIATE_VIEW) {
             guiToggleNoConstantView.getModel().setSelected(true);
@@ -385,7 +385,7 @@ public class JChainEditor extends JPanel{
         guiToggleGroup.add(guiToggleNoConstantView);
 
         final JToggleButton guiToggleFullView  = new JToggleButton();
-        guiToggleFullView.setText(MessageBundle.getString("guiToogleAdvancedView"));
+        guiToggleFullView.setText(MessageBundle.format("guiToogleAdvancedView"));
         guiToggleFullView.setName("tglFull");
         if (usedView == ADVANCED_VIEW) {
             guiToggleFullView.getModel().setSelected(true);

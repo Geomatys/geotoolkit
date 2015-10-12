@@ -71,7 +71,7 @@ public class LayerFilterPropertyPanel extends MultiPropertyPanel {
 
     @Override
     public String getTitle() {
-        return MessageBundle.getString("property_filter");
+        return MessageBundle.format("property_filter");
     }
 
     @Override

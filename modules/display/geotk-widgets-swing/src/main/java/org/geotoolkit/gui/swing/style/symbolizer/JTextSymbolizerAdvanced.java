@@ -156,7 +156,7 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
 
         setOpaque(false);
 
-        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
+        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("general"))); // NOI18N
         jPanel1.setOpaque(false);
 
         guiGeom.addPropertyChangeListener(new PropertyChangeListener() {
@@ -177,7 +177,7 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
             }
         });
 
-        guiLabelLabel.setText(MessageBundle.getString("label")); // NOI18N
+        guiLabelLabel.setText(MessageBundle.format("label")); // NOI18N
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -211,7 +211,7 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
 
         jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLabel, guiLabelLabel});
 
-        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fonts"))); // NOI18N
+        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("fonts"))); // NOI18N
         jPanel2.setOpaque(false);
 
         guiFont.addPropertyChangeListener(new PropertyChangeListener() {
@@ -237,7 +237,7 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fill"))); // NOI18N
+        jPanel3.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("fill"))); // NOI18N
         jPanel3.setOpaque(false);
 
         guiFill.addPropertyChangeListener(new PropertyChangeListener() {
@@ -263,7 +263,7 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel4.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("halo"))); // NOI18N
+        jPanel4.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("halo"))); // NOI18N
         jPanel4.setOpaque(false);
 
         guiHalo.addPropertyChangeListener(new PropertyChangeListener() {
@@ -289,7 +289,7 @@ public class JTextSymbolizerAdvanced extends StyleElementEditor<TextSymbolizer> 
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel5.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("placement"))); // NOI18N
+        jPanel5.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("placement"))); // NOI18N
         jPanel5.setOpaque(false);
 
         guiPlacement.addPropertyChangeListener(new PropertyChangeListener() {

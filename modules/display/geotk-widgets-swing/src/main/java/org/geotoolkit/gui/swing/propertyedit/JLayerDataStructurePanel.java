@@ -63,7 +63,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
     private MapLayer layer;
 
     public JLayerDataStructurePanel() {
-        super(MessageBundle.getString("dataStructure"), null, null, null);
+        super(MessageBundle.format("dataStructure"), null, null, null);
         setLayout(new BorderLayout());
         textPane.setEditable(false);
         textPane.setContentType("text/html");

@@ -23,12 +23,10 @@ import org.geotoolkit.client.Client;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -73,12 +71,12 @@ public class IGNRMClientFactory extends AbstractClientFactory{
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/ign_rm/bundle", "serverTitle");
+        return Bundle.formatInternational(Bundle.Keys.serverTitle);
     }
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/ign_rm/bundle", "serverDescription");
+        return Bundle.formatInternational(Bundle.Keys.serverDescription);
     }
 
     @Override

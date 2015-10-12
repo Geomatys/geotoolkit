@@ -24,7 +24,6 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.CoverageClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
@@ -64,8 +63,8 @@ public class OSMTMSClientFactory extends AbstractClientFactory implements Covera
      */
     public static final ParameterDescriptor<Integer> MAX_ZOOM_LEVEL = new ParameterBuilder()
             .addName("maxZoomLevel")
-            .addName(new ResourceInternationalString("org/geotoolkit/osmtms/bundle", "maxZoomLevel"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/osmtms/bundle", "maxZoomLevel_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.maxZoomLevel))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.maxZoomLevelRemarks))
             .setRequired(true)
             .create(Integer.class, 18);
 
@@ -85,12 +84,12 @@ public class OSMTMSClientFactory extends AbstractClientFactory implements Covera
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/osmtms/bundle", "coverageTitle");
+        return Bundle.formatInternational(Bundle.Keys.coverageTitle);
     }
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/osmtms/bundle", "coverageDescription");
+        return Bundle.formatInternational(Bundle.Keys.coverageDescription);
     }
 
     @Override

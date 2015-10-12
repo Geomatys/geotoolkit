@@ -101,7 +101,7 @@
                       <Font name="Lucida Grande" size="13" style="1"/>
                     </Property>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="symbolLayer" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="symbolLayer" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -111,7 +111,7 @@
                       <Font name="Lucida Grande" size="13" style="1"/>
                     </Property>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="symbolPreview" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="symbolPreview" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -133,7 +133,7 @@
                 <Component class="javax.swing.JButton" name="jAddButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="addSymbol" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="addSymbol" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -189,7 +189,7 @@
                       <Font name="Lucida Grande" size="13" style="1"/>
                     </Property>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="editSymbol" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="editSymbol" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>

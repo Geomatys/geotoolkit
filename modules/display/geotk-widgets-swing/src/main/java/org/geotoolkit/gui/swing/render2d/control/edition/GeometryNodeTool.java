@@ -35,7 +35,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 public class GeometryNodeTool extends AbstractEditionTool {
 
     public GeometryNodeTool() {
-        super(300,"geometryNodes", MessageBundle.getI18NString("editNode"),
+        super(300,"geometryNodes", MessageBundle.formatInternational(MessageBundle.Keys.editNode),
              new SimpleInternationalString("Tool for editing geometry nodes."), 
              IconBundle.getIcon("16_multi_point"), FeatureMapLayer.class);
     }

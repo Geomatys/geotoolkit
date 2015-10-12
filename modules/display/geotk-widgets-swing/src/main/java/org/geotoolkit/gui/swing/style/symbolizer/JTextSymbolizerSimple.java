@@ -150,9 +150,9 @@ public class JTextSymbolizerSimple extends StyleElementEditor<TextSymbolizer> {
         guiHalo = new JHaloPane();
         guiLabelPlacement = new JLabelPlacementPane();
 
-        jLabel5.setText(MessageBundle.getString("color")); // NOI18N
+        jLabel5.setText(MessageBundle.format("color")); // NOI18N
 
-        jLabel10.setText(MessageBundle.getString("label")); // NOI18N
+        jLabel10.setText(MessageBundle.format("label")); // NOI18N
 
         guiLabel.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -232,7 +232,7 @@ public class JTextSymbolizerSimple extends StyleElementEditor<TextSymbolizer> {
                 JTextSymbolizerSimple.this.propertyChange(evt);
             }
         });
-        jTabbedPane1.addTab(MessageBundle.getString("position"), guiLabelPlacement); // NOI18N
+        jTabbedPane1.addTab(MessageBundle.format("position"), guiLabelPlacement); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -245,7 +245,7 @@ public class JTextSymbolizerSimple extends StyleElementEditor<TextSymbolizer> {
             .addComponent(jTabbedPane1)
         );
 
-        jTabbedPane1.getAccessibleContext().setAccessibleName(MessageBundle.getString("libPoliceStyle")); // NOI18N
+        jTabbedPane1.getAccessibleContext().setAccessibleName(MessageBundle.format("libPoliceStyle")); // NOI18N
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange

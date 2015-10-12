@@ -64,10 +64,10 @@ public class LayerGeneralTableRowModel implements RowModel {
     @Override
     public String getColumnName(int i) {
         switch(i){
-            case 0 : return MessageBundle.getString("colCrs");
-            case 1 : return MessageBundle.getString("colLower");
-            case 2 : return MessageBundle.getString("colUpper");
-            case 3 : return MessageBundle.getString("colDelete");
+            case 0 : return MessageBundle.format("colCrs");
+            case 1 : return MessageBundle.format("colLower");
+            case 2 : return MessageBundle.format("colUpper");
+            case 3 : return MessageBundle.format("colDelete");
             default: return "";
         }
     }

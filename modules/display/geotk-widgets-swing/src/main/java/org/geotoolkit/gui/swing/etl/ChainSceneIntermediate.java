@@ -61,8 +61,8 @@ public class ChainSceneIntermediate extends ChainSceneBasic {
             this.chain.addListener(this);
         }
 
-        final WChainParametersFull inParameters = new WChainParametersFull(this, MessageBundle.getString("inputs"),Integer.MIN_VALUE, editable);
-        final WChainParametersFull outParameters = new WChainParametersFull(this, MessageBundle.getString("outputs"), Integer.MAX_VALUE, editable);
+        final WChainParametersFull inParameters = new WChainParametersFull(this, MessageBundle.format("inputs"),Integer.MIN_VALUE, editable);
+        final WChainParametersFull outParameters = new WChainParametersFull(this, MessageBundle.format("outputs"), Integer.MAX_VALUE, editable);
         getMapping().put(IN, inParameters);
         getMapping().put(OUT, outParameters);
         getMapping().put(ElementProcess.BEGIN, inParameters.getExecutionWidget());

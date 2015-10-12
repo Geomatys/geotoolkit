@@ -108,9 +108,9 @@ public class JParameterPanel extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
         guiPanelDefaultValue = new javax.swing.JPanel();
 
-        jLabel1.setText(MessageBundle.getString("code")); // NOI18N
+        jLabel1.setText(MessageBundle.format("code")); // NOI18N
 
-        jLabel2.setText(MessageBundle.getString("type")); // NOI18N
+        jLabel2.setText(MessageBundle.format("type")); // NOI18N
 
         guiType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -118,7 +118,7 @@ public class JParameterPanel extends javax.swing.JPanel {
             }
         });
 
-        jLabel3.setText(MessageBundle.getString("description")); // NOI18N
+        jLabel3.setText(MessageBundle.format("description")); // NOI18N
 
         guiDescription.setColumns(20);
         guiDescription.setRows(5);
@@ -126,9 +126,9 @@ public class JParameterPanel extends javax.swing.JPanel {
 
         guiMandatory.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
 
-        jLabel5.setText(MessageBundle.getString("mandatory")); // NOI18N
+        jLabel5.setText(MessageBundle.format("mandatory")); // NOI18N
 
-        guiCancel.setText(MessageBundle.getString("cancel")); // NOI18N
+        guiCancel.setText(MessageBundle.format("cancel")); // NOI18N
         guiCancel.setMargin(new java.awt.Insets(0, 20, 0, 20));
         guiCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -136,7 +136,7 @@ public class JParameterPanel extends javax.swing.JPanel {
             }
         });
 
-        guiSave.setText(MessageBundle.getString("save")); // NOI18N
+        guiSave.setText(MessageBundle.format("save")); // NOI18N
         guiSave.setMargin(new java.awt.Insets(0, 20, 0, 20));
         guiSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -144,7 +144,7 @@ public class JParameterPanel extends javax.swing.JPanel {
             }
         });
 
-        jLabel4.setText(MessageBundle.getString("defaultValue")); // NOI18N
+        jLabel4.setText(MessageBundle.format("defaultValue")); // NOI18N
 
         guiPanelDefaultValue.setPreferredSize(new java.awt.Dimension(280, 29));
         guiPanelDefaultValue.setLayout(new java.awt.BorderLayout());

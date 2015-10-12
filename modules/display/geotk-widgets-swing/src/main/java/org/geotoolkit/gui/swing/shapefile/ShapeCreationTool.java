@@ -164,53 +164,53 @@ public class ShapeCreationTool extends JPanel {
         final JButton guiCrsChoose = new JButton();
         final JLabel jLabel2 = new JLabel();
 
-        jLabel1.setText(MessageBundle.getString("shp_file")); // NOI18N
-        jXTitledSeparator1.setTitle(MessageBundle.getString("shp_shapefile_creation")); // NOI18N
+        jLabel1.setText(MessageBundle.format("shp_file")); // NOI18N
+        jXTitledSeparator1.setTitle(MessageBundle.format("shp_shapefile_creation")); // NOI18N
 
         guiFileName.setEditable(false);
 
-        guiFileName.setText(MessageBundle.getString("shp_default")); // NOI18N
-        guiCreate.setText(MessageBundle.getString("shp_create")); // NOI18N
+        guiFileName.setText(MessageBundle.format("shp_default")); // NOI18N
+        guiCreate.setText(MessageBundle.format("shp_create")); // NOI18N
         guiCreate.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 createAction(evt);
             }
         });
 
-        guiFileChoose.setText(MessageBundle.getString("shp_...")); // NOI18N
+        guiFileChoose.setText(MessageBundle.format("shp_ppp")); // NOI18N
         guiFileChoose.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 fileAction(evt);
             }
         });
 
-        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("shp_attributs"))); // NOI18N
+        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("shp_attributs"))); // NOI18N
 
         guiTable.setModel(model);
         jScrollPane1.setViewportView(guiTable);
 
-        guiAdd.setText(MessageBundle.getString("shp_add")); // NOI18N
+        guiAdd.setText(MessageBundle.format("shp_add")); // NOI18N
         guiAdd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 addAction(evt);
             }
         });
 
-        guiUp.setText(MessageBundle.getString("shp_up")); // NOI18N
+        guiUp.setText(MessageBundle.format("shp_up")); // NOI18N
         guiUp.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 upAction(evt);
             }
         });
 
-        guiDown.setText(MessageBundle.getString("shp_down")); // NOI18N
+        guiDown.setText(MessageBundle.format("shp_down")); // NOI18N
         guiDown.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 downAction(evt);
             }
         });
 
-        guiDelete.setText(MessageBundle.getString("shp_delete")); // NOI18N
+        guiDelete.setText(MessageBundle.format("shp_delete")); // NOI18N
         guiDelete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 deleteAction(evt);
@@ -248,11 +248,11 @@ public class ShapeCreationTool extends JPanel {
             .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
         );
 
-        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("shp_geometry"))); // NOI18N
+        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("shp_geometry"))); // NOI18N
 
         guiGeom.add(guiPoint);
         guiPoint.setSelected(true);
-        guiPoint.setText(MessageBundle.getString("shp_point")); // NOI18N
+        guiPoint.setText(MessageBundle.format("shp_point")); // NOI18N
         guiPoint.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 geomPointAction(evt);
@@ -260,7 +260,7 @@ public class ShapeCreationTool extends JPanel {
         });
 
         guiGeom.add(guiMultiPoint);
-        guiMultiPoint.setText(MessageBundle.getString("shp_multipoint")); // NOI18N
+        guiMultiPoint.setText(MessageBundle.format("shp_multipoint")); // NOI18N
         guiMultiPoint.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 geomMultiPointAction(evt);
@@ -268,7 +268,7 @@ public class ShapeCreationTool extends JPanel {
         });
 
         guiGeom.add(guiMultiLine);
-        guiMultiLine.setText(MessageBundle.getString("shp_multiline")); // NOI18N
+        guiMultiLine.setText(MessageBundle.format("shp_multiline")); // NOI18N
         guiMultiLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 geomMultilineAction(evt);
@@ -276,7 +276,7 @@ public class ShapeCreationTool extends JPanel {
         });
 
         guiGeom.add(guiMultiPolygon);
-        guiMultiPolygon.setText(MessageBundle.getString("shp_multipolygon")); // NOI18N
+        guiMultiPolygon.setText(MessageBundle.format("shp_multipolygon")); // NOI18N
         guiMultiPolygon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 geomMultiPolygonAction(evt);
@@ -309,14 +309,14 @@ public class ShapeCreationTool extends JPanel {
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        guiCrsChoose.setText(MessageBundle.getString("shp_list")); // NOI18N
+        guiCrsChoose.setText(MessageBundle.format("shp_list")); // NOI18N
         guiCrsChoose.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 crsAction(evt);
             }
         });
 
-        jLabel2.setText(MessageBundle.getString("shp_crs")); // NOI18N
+        jLabel2.setText(MessageBundle.format("shp_crs")); // NOI18N
 
         guiCrs.setEditable(false);
         guiCrs.setText("EPSG:4326");

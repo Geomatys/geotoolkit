@@ -131,7 +131,7 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
 
         setOpaque(false);
 
-        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
+        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("general"))); // NOI18N
         jPanel1.setOpaque(false);
 
         guiGeom.addPropertyChangeListener(new PropertyChangeListener() {
@@ -170,7 +170,7 @@ public class JPointSymbolizerAdvanced extends StyleElementEditor<PointSymbolizer
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("graphic"))); // NOI18N
+        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("graphic"))); // NOI18N
         jPanel2.setOpaque(false);
 
         guiGraphic.addPropertyChangeListener(new PropertyChangeListener() {

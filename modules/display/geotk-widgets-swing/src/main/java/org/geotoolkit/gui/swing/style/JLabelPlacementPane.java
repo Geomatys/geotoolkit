@@ -136,7 +136,7 @@ public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
         setLayout(new BorderLayout(0, 10));
 
         grpType.add(jrbLine);
-        jrbLine.setText(MessageBundle.getString("lineplacement")); // NOI18N
+        jrbLine.setText(MessageBundle.format("lineplacement")); // NOI18N
         jrbLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 jrbLineActionPerformed(evt);
@@ -144,7 +144,7 @@ public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
         });
 
         grpType.add(jrbPoint);
-        jrbPoint.setText(MessageBundle.getString("pointplacement")); // NOI18N
+        jrbPoint.setText(MessageBundle.format("pointplacement")); // NOI18N
         jrbPoint.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 jrbPointActionPerformed(evt);

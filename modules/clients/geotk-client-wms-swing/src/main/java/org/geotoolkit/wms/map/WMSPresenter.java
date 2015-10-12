@@ -116,7 +116,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
         final JPanel guiCenterPanel = new JPanel(new BorderLayout());
         guiCenterPanel.setPreferredSize(new Dimension(350, 300));
 
-        final JLabel guiMimeLabel = new JLabel(MessageBundle.getString("mimeType") +"  ");
+        final JLabel guiMimeLabel = new JLabel(MessageBundle.format("mimeType") +"  ");
         final JComboBox guiMimeTypes = new JComboBox();
         guiMimeTypes.setModel(new ListComboBoxModel(mimeTypes));
         guiTopPanel.add(BorderLayout.WEST, guiMimeLabel);

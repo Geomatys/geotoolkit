@@ -32,7 +32,7 @@ public class ZoomToLayerItem extends AbstractTreePopupItem{
      * Creates a new instance of ZoomToLayerItem
      */
     public ZoomToLayerItem() {
-        super(MessageBundle.getString("map_zoom_to_layer"));
+        super(MessageBundle.format("map_zoom_to_layer"));
 
         addActionListener(new ActionListener() {
             @Override

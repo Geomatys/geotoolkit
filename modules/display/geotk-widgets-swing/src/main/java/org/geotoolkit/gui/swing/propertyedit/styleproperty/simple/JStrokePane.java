@@ -152,13 +152,13 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
         guiWidth = new JNumberExpressionPane();
         guiFill = new JFillControlPane();
 
-        jLabel1.setText(MessageBundle.getString("style")); // NOI18N
+        jLabel1.setText(MessageBundle.format("style")); // NOI18N
 
-        jLabel3.setText(MessageBundle.getString("linejoin")); // NOI18N
+        jLabel3.setText(MessageBundle.format("linejoin")); // NOI18N
 
-        jLabel4.setText(MessageBundle.getString("linecap")); // NOI18N
+        jLabel4.setText(MessageBundle.format("linecap")); // NOI18N
 
-        jLabel5.setText(MessageBundle.getString("width")); // NOI18N
+        jLabel5.setText(MessageBundle.format("width")); // NOI18N
 
         guiLineType.setModel(new DefaultComboBoxModel(new String[] { "ligne simple 1pt", "ligne simple 2pt", "ligne double 1pt", "ligne double 4pt" }));
         guiLineType.addItemListener(new ItemListener() {
@@ -179,7 +179,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
             }
         });
 
-        jLabel6.setText(MessageBundle.getString("fill")); // NOI18N
+        jLabel6.setText(MessageBundle.format("fill")); // NOI18N
 
         guiWidth.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {

@@ -105,7 +105,7 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
 
         setOpaque(false);
 
-        guiLabelFactor.setText(MessageBundle.getString("factor")); // NOI18N
+        guiLabelFactor.setText(MessageBundle.format("factor")); // NOI18N
 
         guiBrightness.setText(" ");
         guiBrightness.addActionListener(new ActionListener() {
@@ -120,7 +120,7 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
             }
         });
 
-        guiLabelBrightness.setText(MessageBundle.getString("brightnessonly")); // NOI18N
+        guiLabelBrightness.setText(MessageBundle.format("brightnessonly")); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);

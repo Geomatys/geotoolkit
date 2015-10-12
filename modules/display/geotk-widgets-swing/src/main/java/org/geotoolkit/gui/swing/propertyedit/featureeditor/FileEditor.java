@@ -84,7 +84,7 @@ public class FileEditor extends PropertyValueEditor implements ActionListener, D
             chooser.setCurrentDirectory(new File(prevPath));
         }
 
-        final int response = chooser.showDialog(chooseButton, MessageBundle.getString("ok"));
+        final int response = chooser.showDialog(chooseButton, MessageBundle.format("ok"));
         if(response == JFileChooser.APPROVE_OPTION){
             final File f = chooser.getSelectedFile();
             if(f!=null){

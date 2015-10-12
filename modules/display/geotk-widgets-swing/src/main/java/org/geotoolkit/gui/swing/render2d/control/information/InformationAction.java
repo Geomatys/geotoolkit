@@ -38,7 +38,7 @@ public class InformationAction extends AbstractMapAction {
 
     public InformationAction(){
         putValue(SMALL_ICON, ICON);
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_information"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("map_information"));
     }
 
     public InformationPresenter getPresenter() {

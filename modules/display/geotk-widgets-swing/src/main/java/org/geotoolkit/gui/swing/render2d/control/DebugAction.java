@@ -57,7 +57,7 @@ public class DebugAction extends AbstractMapAction {
 
     public DebugAction(final JMap2D map) {
         super("config", ICON,map);
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_debug"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("map_debug"));
         setMap(map);
     }
 

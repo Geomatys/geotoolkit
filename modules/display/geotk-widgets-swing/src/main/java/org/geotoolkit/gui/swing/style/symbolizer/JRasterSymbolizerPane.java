@@ -76,8 +76,8 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
     private final JLineSymbolizerPane guiLinePane = new JLineSymbolizerPane();
     private final JPolygonSymbolizerPane guiPolygonPane = new JPolygonSymbolizerPane();
     
-    private final String cmRGB = MessageBundle.getString("style.rastersymbolizer.cm_rgb");
-    private final String cmColorMap = MessageBundle.getString("style.rastersymbolizer.cm_colormap");
+    private final String cmRGB = MessageBundle.format("style_rastersymbolizer_cm_rgb");
+    private final String cmColorMap = MessageBundle.format("style_rastersymbolizer_cm_colormap");
     
     public JRasterSymbolizerPane() {
         super(RasterSymbolizer.class);
@@ -256,7 +256,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         guiContrast = new JContrastEnhancement();
         guiRelief = new JShadedReliefPane();
 
-        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("style.rastersymbolizer.general"))); // NOI18N
+        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("style_rastersymbolizer_general"))); // NOI18N
         jPanel1.setOpaque(false);
 
         guiOverLap.addPropertyChangeListener(new PropertyChangeListener() {
@@ -266,10 +266,10 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         });
 
         guiOverlapsLbl.setHorizontalAlignment(SwingConstants.RIGHT);
-        guiOverlapsLbl.setText(MessageBundle.getString("style.rastersymbolizer.overlap")); // NOI18N
+        guiOverlapsLbl.setText(MessageBundle.format("style_rastersymbolizer_overlap")); // NOI18N
 
         jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel1.setText(MessageBundle.getString("style.rastersymbolizer.opacity")); // NOI18N
+        jLabel1.setText(MessageBundle.format("style_rastersymbolizer_opacity")); // NOI18N
 
         guiOpacity.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -317,7 +317,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 
         jTabbedPane1.setTabPlacement(JTabbedPane.LEFT);
 
-        jLabel4.setText(MessageBundle.getString("style.rastersymbolizer.colormodel")); // NOI18N
+        jLabel4.setText(MessageBundle.format("style_rastersymbolizer_colormodel")); // NOI18N
 
         guiColorimetryPane.setLayout(new BorderLayout());
 
@@ -348,13 +348,13 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab(MessageBundle.getString("colors"), jPanel3); // NOI18N
+        jTabbedPane1.addTab(MessageBundle.format("colors"), jPanel3); // NOI18N
 
         jPanel2.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         jPanel2.setOpaque(false);
 
         grpOutline.add(guinone);
-        guinone.setText(MessageBundle.getString("style.rastersymbolizer.none")); // NOI18N
+        guinone.setText(MessageBundle.format("style_rastersymbolizer_none")); // NOI18N
         guinone.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guinoneActionPerformed(evt);
@@ -362,7 +362,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         });
 
         grpOutline.add(guiLine);
-        guiLine.setText(MessageBundle.getString("style.rastersymbolizer.line")); // NOI18N
+        guiLine.setText(MessageBundle.format("style_rastersymbolizer_line")); // NOI18N
         guiLine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guinoneActionPerformed(evt);
@@ -370,7 +370,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         });
 
         grpOutline.add(guiPolygon);
-        guiPolygon.setText(MessageBundle.getString("style.rastersymbolizer.polygon")); // NOI18N
+        guiPolygon.setText(MessageBundle.format("style_rastersymbolizer_polygon")); // NOI18N
         guiPolygon.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guinoneActionPerformed(evt);
@@ -408,7 +408,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                 .addComponent(guiOutlinePane, GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab(MessageBundle.getString("style.rastersymbolizer.outline"), jPanel2); // NOI18N
+        jTabbedPane1.addTab(MessageBundle.format("style_rastersymbolizer_outline"), jPanel2); // NOI18N
 
         guiContrast.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         guiContrast.addPropertyChangeListener(new PropertyChangeListener() {
@@ -416,7 +416,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                 JRasterSymbolizerPane.this.propertyChange(evt);
             }
         });
-        jTabbedPane1.addTab(MessageBundle.getString("contrast"), guiContrast); // NOI18N
+        jTabbedPane1.addTab(MessageBundle.format("contrast"), guiContrast); // NOI18N
 
         guiRelief.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         guiRelief.addPropertyChangeListener(new PropertyChangeListener() {
@@ -424,7 +424,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                 JRasterSymbolizerPane.this.propertyChange(evt);
             }
         });
-        jTabbedPane1.addTab(MessageBundle.getString("relief"), guiRelief); // NOI18N
+        jTabbedPane1.addTab(MessageBundle.format("relief"), guiRelief); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);

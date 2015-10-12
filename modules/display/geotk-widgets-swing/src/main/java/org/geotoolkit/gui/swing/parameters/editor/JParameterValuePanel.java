@@ -201,14 +201,14 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
         
         if (mandatory) {
             if (paramValue.getValue() == null) {
-                validationError = MessageBundle.getString("parameters.errorNullEmptyParameterValue", paramDesc.getName().getCode());
+                validationError = MessageBundle.format("parameters_errorNullEmptyParameterValue"+ paramDesc.getName().getCode());
                 guiParameterNameLbl.setForeground(Color.red);
                 return false;
             } else {
                 //rise an error if empty String for mandatory parameters
                 if (desc.getValueClass().isAssignableFrom(String.class)) {
                     if (((String)paramValue.getValue()).isEmpty()) {
-                        validationError = MessageBundle.getString("parameters.errorNullEmptyParameterValue", paramDesc.getName().getCode());
+                        validationError = MessageBundle.format("parameters_errorNullEmptyParameterValue"+ paramDesc.getName().getCode());
                         guiParameterNameLbl.setForeground(Color.red);
                         return false;
                     }
@@ -292,11 +292,11 @@ public final class JParameterValuePanel extends GeneralParameterValuePanel imple
         this.activated = activated;
         if (activated) {
             guitoggleParamBtn.setIcon(ACTIVATE_ICON);
-            guitoggleParamBtn.setToolTipText(MessageBundle.getString("parameters.unactivateParam"));
+            guitoggleParamBtn.setToolTipText(MessageBundle.format("parameters_unactivateParam"));
             guiEditor.setEnabled(true);
         } else {
             guitoggleParamBtn.setIcon(UNACTIVATE_ICON);
-            guitoggleParamBtn.setToolTipText(MessageBundle.getString("parameters.activateParam"));
+            guitoggleParamBtn.setToolTipText(MessageBundle.format("parameters_activateParam"));
             guiEditor.setEnabled(false);
         }
     }

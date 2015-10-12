@@ -29,7 +29,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 public class RefreshTableAction extends JFeaturePanelAction{
 
     public RefreshTableAction(){
-        setText(MessageBundle.getString("refresh_table"));
+        setText(MessageBundle.format("refresh_table"));
         addActionListener(new ActionListener() {
 
             @Override

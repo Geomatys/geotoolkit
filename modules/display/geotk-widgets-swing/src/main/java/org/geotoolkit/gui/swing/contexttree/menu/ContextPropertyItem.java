@@ -47,7 +47,7 @@ public class ContextPropertyItem extends AbstractTreePopupItem{
      * Creates a new instance of DefaultContextPropertyPop
      */
     public ContextPropertyItem() {
-        super( MessageBundle.getString("contexttreetable_properties")  );
+        super( MessageBundle.format("contexttreetable_properties")  );
         init();
     }
 

@@ -81,23 +81,23 @@ public class JOptionDialog extends JDialog implements ActionListener {
         final Action[] actions;
         if(JOptionPane.OK_OPTION == optionType){
             actions = new Action[]{
-                new NoEventAction(MessageBundle.getString("ok"), JOptionPane.OK_OPTION)
+                new NoEventAction(MessageBundle.format("ok"), JOptionPane.OK_OPTION)
             };
         }else if(JOptionPane.OK_CANCEL_OPTION == optionType){
             actions = new Action[]{
-                new NoEventAction(MessageBundle.getString("ok"), JOptionPane.OK_OPTION),
-                new NoEventAction(MessageBundle.getString("cancel"), JOptionPane.CANCEL_OPTION)
+                new NoEventAction(MessageBundle.format("ok"), JOptionPane.OK_OPTION),
+                new NoEventAction(MessageBundle.format("cancel"), JOptionPane.CANCEL_OPTION)
             };
         }else if(JOptionPane.YES_NO_OPTION == optionType){
             actions = new Action[]{
-                new NoEventAction(MessageBundle.getString("yes"), JOptionPane.YES_OPTION),
-                new NoEventAction(MessageBundle.getString("no"), JOptionPane.NO_OPTION)
+                new NoEventAction(MessageBundle.format("yes"), JOptionPane.YES_OPTION),
+                new NoEventAction(MessageBundle.format("no"), JOptionPane.NO_OPTION)
             };
         }else if(JOptionPane.YES_NO_CANCEL_OPTION == optionType){
             actions = new Action[]{
-                new NoEventAction(MessageBundle.getString("yes"), JOptionPane.YES_OPTION),
-                new NoEventAction(MessageBundle.getString("no"), JOptionPane.NO_OPTION),
-                new NoEventAction(MessageBundle.getString("cancel"), JOptionPane.CANCEL_OPTION)
+                new NoEventAction(MessageBundle.format("yes"), JOptionPane.YES_OPTION),
+                new NoEventAction(MessageBundle.format("no"), JOptionPane.NO_OPTION),
+                new NoEventAction(MessageBundle.format("cancel"), JOptionPane.CANCEL_OPTION)
             };
         }else{
             throw new RuntimeException("Unexpected option type : " + optionType);

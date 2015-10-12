@@ -214,7 +214,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
             }
         });
 
-        butFill.setText(MessageBundle.getString("fill")); // NOI18N
+        butFill.setText(MessageBundle.format("fill")); // NOI18N
         butFill.setPreferredSize(new Dimension(68, 22));
         butFill.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -222,7 +222,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
             }
         });
 
-        butStroke.setText(MessageBundle.getString("stroke")); // NOI18N
+        butStroke.setText(MessageBundle.format("stroke")); // NOI18N
         butStroke.setEnabled(false);
         butStroke.setPreferredSize(new Dimension(68, 22));
         butStroke.addActionListener(new ActionListener() {
@@ -231,15 +231,15 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
             }
         });
 
-        guiLabelCap.setText(MessageBundle.getString("linecap")); // NOI18N
+        guiLabelCap.setText(MessageBundle.format("linecap")); // NOI18N
 
-        guiLabelJoin.setText(MessageBundle.getString("linejoin")); // NOI18N
+        guiLabelJoin.setText(MessageBundle.format("linejoin")); // NOI18N
 
-        guiLabelAlpha.setText(MessageBundle.getString("opacity")); // NOI18N
+        guiLabelAlpha.setText(MessageBundle.format("opacity")); // NOI18N
 
-        guiLabelWidth.setText(MessageBundle.getString("width")); // NOI18N
+        guiLabelWidth.setText(MessageBundle.format("width")); // NOI18N
 
-        guiLabelDashes.setText(MessageBundle.getString("dashes")); // NOI18N
+        guiLabelDashes.setText(MessageBundle.format("dashes")); // NOI18N
 
         GuiStrokeColor.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -273,10 +273,10 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
 
         typeGroup.add(guiGraphicColor);
         guiGraphicColor.setSelected(true);
-        guiGraphicColor.setText(MessageBundle.getString("graphic_color")); // NOI18N
+        guiGraphicColor.setText(MessageBundle.format("graphic_color")); // NOI18N
 
         typeGroup.add(guiGraphicFill);
-        guiGraphicFill.setText(MessageBundle.getString("graphic_fill")); // NOI18N
+        guiGraphicFill.setText(MessageBundle.format("graphic_fill")); // NOI18N
         guiGraphicFill.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiGraphicFillActionPerformed(evt);
@@ -284,7 +284,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
         });
 
         typeGroup.add(guiGraphicStroke);
-        guiGraphicStroke.setText(MessageBundle.getString("graphic_stroke")); // NOI18N
+        guiGraphicStroke.setText(MessageBundle.format("graphic_stroke")); // NOI18N
         guiGraphicStroke.setEnabled(false);
         guiGraphicStroke.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {

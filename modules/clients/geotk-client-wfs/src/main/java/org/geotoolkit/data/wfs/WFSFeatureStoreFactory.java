@@ -25,7 +25,6 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.client.AbstractClientFactory;
 import static org.geotoolkit.client.AbstractClientFactory.createVersionDescriptor;
 import org.geotoolkit.client.FeatureClientFactory;
@@ -77,8 +76,8 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
      */
     public static final ParameterDescriptor<Boolean> POST_REQUEST = new ParameterBuilder()
             .addName("post")
-            .addName(new ResourceInternationalString("org/geotoolkit/wfs/bundle", "post"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/wfs/bundle", "post_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.post))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.postRemarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.FALSE);
     /**
@@ -86,8 +85,8 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
      */
     public static final ParameterDescriptor<Boolean> LONGITUDE_FIRST = new ParameterBuilder()
             .addName("longitudeFirst")
-            .addName(new ResourceInternationalString("org/geotoolkit/wfs/bundle", "longitudeFirst"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/wfs/bundle", "longitudeFirst_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.longitudeFirst))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.longitudeFirstRemarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.FALSE);
 
@@ -106,12 +105,12 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
      */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/wfs/bundle", "datastoreDescription");
+        return Bundle.formatInternational(Bundle.Keys.datastoreDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/wfs/bundle", "datastoreTitle");
+        return Bundle.formatInternational(Bundle.Keys.datastoreTitle);
     }
 
     /**

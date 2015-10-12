@@ -83,12 +83,12 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
     private final ButtonGroup groupVisit = new ButtonGroup();
 
     private final JButton guiSelect;
-    private final JRadioButtonMenuItem guiIntersect = new JRadioButtonMenuItem(MessageBundle.getString("select_intersect"),ICON_INTERSECT);
-    private final JRadioButtonMenuItem guiWithin = new JRadioButtonMenuItem(MessageBundle.getString("select_within"),ICON_WITHIN);
-    private final JRadioButtonMenuItem guiLasso = new JRadioButtonMenuItem(MessageBundle.getString("select_lasso"),ICON_LASSO);
-    private final JRadioButtonMenuItem guiSquare = new JRadioButtonMenuItem(MessageBundle.getString("select_square"),ICON_SQUARE);
-    private final JRadioButtonMenuItem guiGeographic = new JRadioButtonMenuItem(MessageBundle.getString("select_geographic"),ICON_GEOGRAPHIC);
-    private final JRadioButtonMenuItem guiVisual = new JRadioButtonMenuItem(MessageBundle.getString("select_visual"),ICON_VISUAL);
+    private final JRadioButtonMenuItem guiIntersect = new JRadioButtonMenuItem(MessageBundle.format("select_intersect"),ICON_INTERSECT);
+    private final JRadioButtonMenuItem guiWithin = new JRadioButtonMenuItem(MessageBundle.format("select_within"),ICON_WITHIN);
+    private final JRadioButtonMenuItem guiLasso = new JRadioButtonMenuItem(MessageBundle.format("select_lasso"),ICON_LASSO);
+    private final JRadioButtonMenuItem guiSquare = new JRadioButtonMenuItem(MessageBundle.format("select_square"),ICON_SQUARE);
+    private final JRadioButtonMenuItem guiGeographic = new JRadioButtonMenuItem(MessageBundle.format("select_geographic"),ICON_GEOGRAPHIC);
+    private final JRadioButtonMenuItem guiVisual = new JRadioButtonMenuItem(MessageBundle.format("select_visual"),ICON_VISUAL);
 
     private final DefaultSelectionHandler handler = new DefaultSelectionHandler();
 
@@ -115,13 +115,13 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
         menu.add(guiGeographic);
         menu.add(guiVisual);
         menu.add(new JSeparator(SwingConstants.HORIZONTAL));
-        menu.add(new JMenuItem(new AbstractAction(MessageBundle.getString("copyselection")) {
+        menu.add(new JMenuItem(new AbstractAction(MessageBundle.format("copyselection")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 copyToClipboard(true,false);
             }
         }));
-        menu.add(new JMenuItem(new AbstractAction(MessageBundle.getString("copyselectionappend")) {
+        menu.add(new JMenuItem(new AbstractAction(MessageBundle.format("copyselectionappend")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 copyToClipboard(true,true);
@@ -129,7 +129,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
         }));
 
         guiSelect = DropDownButtonFactory.createDropDownButton(ICON_SELECT, menu);
-        guiSelect.setToolTipText(MessageBundle.getString("map_select"));
+        guiSelect.setToolTipText(MessageBundle.format("map_select"));
         setMap(map);
 
         handler.setMenu(menu);

@@ -51,13 +51,13 @@ public class JOtherTreeCellRenderer extends DefaultTreeCellRenderer{
         setToolTipText(null);
 
         if(value instanceof ElementManual){
-            lbl.setText(MessageBundle.getString("manualInt"));
+            lbl.setText(MessageBundle.format("manualInt"));
             lbl.setIcon(ICON_MANUAL_INTERVENTION);
         } else if(value instanceof ElementCondition) {
-            lbl.setText(MessageBundle.getString("conditionalTitle"));
+            lbl.setText(MessageBundle.format("conditionalTitle"));
             lbl.setIcon(ICON_CONDITIONAL_ELEMENT);
         }else if(value instanceof Constant) {
-            lbl.setText(MessageBundle.getString("constantTitle"));
+            lbl.setText(MessageBundle.format("constantTitle"));
             lbl.setIcon(ICON_CONDITIONAL_ELEMENT);
         } else if(value instanceof String) {
             lbl.setText((String) value);

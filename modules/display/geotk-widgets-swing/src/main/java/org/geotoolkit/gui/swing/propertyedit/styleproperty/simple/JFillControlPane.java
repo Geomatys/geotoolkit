@@ -39,7 +39,7 @@ import org.opengis.style.Fill;
  */
 public class JFillControlPane extends StyleElementEditor<Fill> {
 
-    private final Action colorChange = new AbstractAction(MessageBundle.getString("change")) {
+    private final Action colorChange = new AbstractAction(MessageBundle.format("change")) {
         @Override
         public void actionPerformed(ActionEvent e) {
             JOptionPane.showMessageDialog(null, paneFillChooser, "", JOptionPane.PLAIN_MESSAGE);

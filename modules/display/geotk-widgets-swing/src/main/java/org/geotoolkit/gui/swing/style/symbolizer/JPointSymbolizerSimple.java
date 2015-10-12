@@ -220,13 +220,13 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
         guiStroke = new JStrokeControlPane();
         guiFill = new JFillControlPane();
 
-        jLabel1.setText(MessageBundle.getString("type")); // NOI18N
+        jLabel1.setText(MessageBundle.format("type")); // NOI18N
 
-        jLabel2.setText(MessageBundle.getString("fill")); // NOI18N
+        jLabel2.setText(MessageBundle.format("fill")); // NOI18N
 
-        jLabel10.setText(MessageBundle.getString("border")); // NOI18N
+        jLabel10.setText(MessageBundle.format("border")); // NOI18N
 
-        jLabel4.setText(MessageBundle.getString("size")); // NOI18N
+        jLabel4.setText(MessageBundle.format("size")); // NOI18N
 
         guiSize.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -234,7 +234,7 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
             }
         });
 
-        jLabel7.setText(MessageBundle.getString("rotation")); // NOI18N
+        jLabel7.setText(MessageBundle.format("rotation")); // NOI18N
 
         guiRotation.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -242,7 +242,7 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
             }
         });
 
-        jLabel3.setText(MessageBundle.getString("opacity")); // NOI18N
+        jLabel3.setText(MessageBundle.format("opacity")); // NOI18N
 
         guiOpacity.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -250,7 +250,7 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
             }
         });
 
-        jLabel5.setText(MessageBundle.getString("displacementX")); // NOI18N
+        jLabel5.setText(MessageBundle.format("displacementX")); // NOI18N
 
         guiDisplacementY.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -264,7 +264,7 @@ public class JPointSymbolizerSimple extends StyleElementEditor<PointSymbolizer> 
             }
         });
 
-        jLabel8.setText(MessageBundle.getString("displacementY")); // NOI18N
+        jLabel8.setText(MessageBundle.format("displacementY")); // NOI18N
 
         guiGraphicSymbol.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {

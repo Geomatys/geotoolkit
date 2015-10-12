@@ -235,13 +235,13 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
 
         jSplitPane1.setRightComponent(jScrollPane1);
 
-        guiTabs.addTab(MessageBundle.getString("xmlGraphic"), jSplitPane1); // NOI18N
+        guiTabs.addTab(MessageBundle.format("xmlGraphic"), jSplitPane1); // NOI18N
 
         guiXmlPane.setLayout(new BorderLayout());
 
         jPanel1.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-        guiApply.setText(MessageBundle.getString("apply")); // NOI18N
+        guiApply.setText(MessageBundle.format("apply")); // NOI18N
         guiApply.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiApplyActionPerformed(evt);
@@ -255,7 +255,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
 
         guiXmlPane.add(jScrollPane2, BorderLayout.CENTER);
 
-        guiTabs.addTab(MessageBundle.getString("xmlview"), guiXmlPane); // NOI18N
+        guiTabs.addTab(MessageBundle.format("xmlview"), guiXmlPane); // NOI18N
 
         add(guiTabs, BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -341,7 +341,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
 
     @Override
     public String getTitle() {
-        return MessageBundle.getString("sldeditor");
+        return MessageBundle.format("sldeditor");
     }
 
     @Override

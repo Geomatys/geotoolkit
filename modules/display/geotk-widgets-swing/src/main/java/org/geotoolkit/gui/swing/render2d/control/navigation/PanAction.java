@@ -42,7 +42,7 @@ public class PanAction extends AbstractMapAction {
     public PanAction(boolean infoOnClick) {
         this.infoOnClick = infoOnClick;
         putValue(SMALL_ICON, ICON);
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_pan"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("map_pan"));
     }
 
     /**

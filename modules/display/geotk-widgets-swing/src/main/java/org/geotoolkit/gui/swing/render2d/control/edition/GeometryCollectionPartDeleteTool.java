@@ -35,7 +35,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 public class GeometryCollectionPartDeleteTool extends AbstractEditionTool {
 
     public GeometryCollectionPartDeleteTool() {
-        super(950,"geometryCollectionPartDelete", MessageBundle.getI18NString("removePart"),
+        super(950,"geometryCollectionPartDelete", MessageBundle.formatInternational(MessageBundle.Keys.removePart),
              new SimpleInternationalString("Tool to remove geometry collection parts."), 
              IconBundle.getIcon("16_remove_subpolygon"),FeatureMapLayer.class);
     }

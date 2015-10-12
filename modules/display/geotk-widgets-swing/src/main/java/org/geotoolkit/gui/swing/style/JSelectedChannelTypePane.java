@@ -132,7 +132,7 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
             }
         });
 
-        guiLabelName.setText(MessageBundle.getString("name")); // NOI18N
+        guiLabelName.setText(MessageBundle.format("name")); // NOI18N
 
         guiName.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {

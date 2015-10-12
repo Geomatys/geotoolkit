@@ -29,7 +29,6 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
@@ -83,12 +82,12 @@ public class CSWClientFactory extends AbstractClientFactory{
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/csw/bundle", "serverDescription");
+        return Bundle.formatInternational(Bundle.Keys.serverDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/csw/bundle", "serverTitle");
+        return Bundle.formatInternational(Bundle.Keys.serverTitle);
     }
 
     @Override

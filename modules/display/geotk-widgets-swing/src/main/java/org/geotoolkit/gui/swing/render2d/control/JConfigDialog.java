@@ -132,16 +132,16 @@ public class JConfigDialog extends javax.swing.JDialog {
 
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.LEFT);
 
-        colorApply.setText(MessageBundle.getString("apply")); // NOI18N
+        colorApply.setText(MessageBundle.format("apply")); // NOI18N
         colorApply.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 colorApplyActionPerformed(evt);
             }
         });
 
-        guiGrid.setText(MessageBundle.getString("grid")); // NOI18N
+        guiGrid.setText(MessageBundle.format("grid")); // NOI18N
 
-        guiCRS.setText(MessageBundle.getString("crs")); // NOI18N
+        guiCRS.setText(MessageBundle.format("crs")); // NOI18N
         guiCRS.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 choose(evt);
@@ -178,14 +178,14 @@ public class JConfigDialog extends javax.swing.JDialog {
 
         jTabbedPane1.addTab("Background", jPanel3);
 
-        guiScaleActivate.setText(MessageBundle.getString("map_control_activate")); // NOI18N
+        guiScaleActivate.setText(MessageBundle.format("map_control_activate")); // NOI18N
         guiScaleActivate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiScaleActivateActionPerformed(evt);
             }
         });
 
-        jLabel1.setText(MessageBundle.getString("map_control_unit")); // NOI18N
+        jLabel1.setText(MessageBundle.format("map_control_unit")); // NOI18N
 
         guiUnit.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -221,7 +221,7 @@ public class JConfigDialog extends javax.swing.JDialog {
 
         jTabbedPane1.addTab("Scale bar", jPanel2);
 
-        guiNorthActivate.setText(MessageBundle.getString("map_control_activate")); // NOI18N
+        guiNorthActivate.setText(MessageBundle.format("map_control_activate")); // NOI18N
         guiNorthActivate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiNorthActivateActionPerformed(evt);

@@ -65,11 +65,11 @@ public class JHaloPane extends StyleElementEditor<Halo> {
         setMaximumSize(new Dimension(625, 32767));
         setPreferredSize(new Dimension(625, 156));
 
-        jLabel6.setText(MessageBundle.getString("halo")); // NOI18N
+        jLabel6.setText(MessageBundle.format("halo")); // NOI18N
 
-        jLabel7.setText(MessageBundle.getString("radius")); // NOI18N
+        jLabel7.setText(MessageBundle.format("radius")); // NOI18N
 
-        jLabel9.setText(MessageBundle.getString("color")); // NOI18N
+        jLabel9.setText(MessageBundle.format("color")); // NOI18N
 
         guiRadius.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {

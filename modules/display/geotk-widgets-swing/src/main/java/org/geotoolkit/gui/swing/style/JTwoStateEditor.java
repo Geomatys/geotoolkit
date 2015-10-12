@@ -92,8 +92,8 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
         current.addPropertyChangeListener(this);
 
         typeselect = new JButton(DEFAULT_SIMPLE ? ICON_SIMPLE : ICON_ADVANCED);
-        typeselect.setToolTipText(MessageBundle.getString(DEFAULT_SIMPLE ? 
-                "style.twostate.simple" : "style.twostate.advanced"));
+        typeselect.setToolTipText(MessageBundle.format(DEFAULT_SIMPLE ? 
+                "style_twostate_simple" : "style_twostate_advanced"));
         typeselect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -106,8 +106,8 @@ public class JTwoStateEditor<T> extends StyleElementEditor<T> implements Propert
                 current.addPropertyChangeListener(JTwoStateEditor.this);
                 DEFAULT_SIMPLE = current == simple;
                 typeselect.setIcon(DEFAULT_SIMPLE ? ICON_SIMPLE : ICON_ADVANCED);
-                typeselect.setToolTipText(MessageBundle.getString(DEFAULT_SIMPLE ? 
-                        "style.twostate.simple" : "style.twostate.advanced"));
+                typeselect.setToolTipText(MessageBundle.format(DEFAULT_SIMPLE ? 
+                        "style_twostate_simple" : "style_twostate_advanced"));
                 
                 //copy the style between editors
                 current.parse(ele);

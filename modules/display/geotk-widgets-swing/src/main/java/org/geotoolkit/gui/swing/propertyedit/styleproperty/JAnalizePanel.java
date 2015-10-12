@@ -212,13 +212,13 @@ public class JAnalizePanel extends javax.swing.JPanel {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        guiLblCount.setText(MessageBundle.getString("count")); // NOI18N
+        guiLblCount.setText(MessageBundle.format("count")); // NOI18N
 
-        guiLblMinimum.setText(MessageBundle.getString("minimum")); // NOI18N
+        guiLblMinimum.setText(MessageBundle.format("minimum")); // NOI18N
 
-        guiLblMaximum.setText(MessageBundle.getString("maximum")); // NOI18N
+        guiLblMaximum.setText(MessageBundle.format("maximum")); // NOI18N
 
-        guiLblSum.setText(MessageBundle.getString("sum")); // NOI18N
+        guiLblSum.setText(MessageBundle.format("sum")); // NOI18N
 
         guiCount.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         guiCount.setText("0");
@@ -238,9 +238,9 @@ public class JAnalizePanel extends javax.swing.JPanel {
 
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
-        guiLblMean.setText(MessageBundle.getString("mean")); // NOI18N
+        guiLblMean.setText(MessageBundle.format("mean")); // NOI18N
 
-        guiLblMedian.setText(MessageBundle.getString("median")); // NOI18N
+        guiLblMedian.setText(MessageBundle.format("median")); // NOI18N
 
         guiMean.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         guiMean.setText("0");
@@ -250,9 +250,9 @@ public class JAnalizePanel extends javax.swing.JPanel {
 
         jSeparator3.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
-        guiLblMethod.setText(MessageBundle.getString("method")); // NOI18N
+        guiLblMethod.setText(MessageBundle.format("method")); // NOI18N
 
-        guiLblClasses.setText(MessageBundle.getString("classes")); // NOI18N
+        guiLblClasses.setText(MessageBundle.format("classes")); // NOI18N
 
         guiMethod.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -379,7 +379,7 @@ public class JAnalizePanel extends javax.swing.JPanel {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        guiLblDivision.setText(MessageBundle.getString("division")); // NOI18N
+        guiLblDivision.setText(MessageBundle.format("division")); // NOI18N
 
         guiDivision.setModel(new javax.swing.SpinnerNumberModel(50, 1, 100, 1));
         guiDivision.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -504,9 +504,9 @@ public class JAnalizePanel extends javax.swing.JPanel {
 
                 final String txt;
                 switch(mt){
-                    case EL : txt = MessageBundle.getString("el"); break;
-                    case MANUAL : txt = MessageBundle.getString("manual"); break;
-                    default : txt = MessageBundle.getString("qantile"); break;
+                    case EL : txt = MessageBundle.format("el"); break;
+                    case MANUAL : txt = MessageBundle.format("manual"); break;
+                    default : txt = MessageBundle.format("qantile"); break;
                 }
                 MethodRenderer.this.setText(txt);
             }

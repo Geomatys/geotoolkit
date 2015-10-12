@@ -130,9 +130,9 @@ public class JLineSymbolizerSimple extends StyleElementEditor<LineSymbolizer> {
         guiStrokeControlPane = new JStrokeControlPane();
         guiDisplacementX = new JNumberExpressionPane();
 
-        jLabel1.setText(MessageBundle.getString("lineShapeAndColor")); // NOI18N
+        jLabel1.setText(MessageBundle.format("lineShapeAndColor")); // NOI18N
 
-        jLabel5.setText(MessageBundle.getString("displacementX")); // NOI18N
+        jLabel5.setText(MessageBundle.format("displacementX")); // NOI18N
 
         guiStrokeControlPane.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {

@@ -153,10 +153,10 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
 
     /** Creates new form DefaultMapLayerTablePanel */
     public LayerFeaturePropertyPanel() {
-        super(MessageBundle.getString("property_feature_table"),ICON_TABLE,null,MessageBundle.getString("crs"));
+        super(MessageBundle.format("property_feature_table"),ICON_TABLE,null,MessageBundle.format("crs"));
         initComponents();
         
-        JLabel label = new JLabel(MessageBundle.getString("cql.text.help"));
+        JLabel label = new JLabel(MessageBundle.format("cql_text_help"));
         guiPanFilter.add(BorderLayout.NORTH, label);
         guiPanFilter.add(BorderLayout.CENTER,guiCQL);
         
@@ -322,7 +322,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
 
         jPanel2.setLayout(new BorderLayout());
 
-        guiQueryButton.setText(MessageBundle.getString("ok")); // NOI18N
+        guiQueryButton.setText(MessageBundle.format("ok")); // NOI18N
         guiQueryButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiQueryButtonActionPerformed(evt);
@@ -337,7 +337,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
         jPanel4.setLayout(new GridLayout(2, 1));
 
         jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
-        jLabel1.setText(MessageBundle.getString("version")); // NOI18N
+        jLabel1.setText(MessageBundle.format("version")); // NOI18N
 
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -361,7 +361,7 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
 
         jPanel1.setOpaque(false);
 
-        jcb_edit.setText(MessageBundle.getString("property_edit")); // NOI18N
+        jcb_edit.setText(MessageBundle.format("property_edit")); // NOI18N
         jcb_edit.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jcb_edit.setEnabled(false);
         jcb_edit.addActionListener(new ActionListener() {
@@ -373,23 +373,23 @@ public class LayerFeaturePropertyPanel extends AbstractPropertyPane implements L
         guiCount.setHorizontalAlignment(SwingConstants.CENTER);
         guiCount.setText(" ");
 
-        guiCommit.setText(MessageBundle.getString("commit")); // NOI18N
+        guiCommit.setText(MessageBundle.format("commit")); // NOI18N
         guiCommit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiCommitActionPerformed(evt);
             }
         });
 
-        guiRollback.setText(MessageBundle.getString("rollback")); // NOI18N
+        guiRollback.setText(MessageBundle.format("rollback")); // NOI18N
         guiRollback.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiRollbackActionPerformed(evt);
             }
         });
 
-        jbu_action.setText(MessageBundle.getString("property_action")); // NOI18N
+        jbu_action.setText(MessageBundle.format("property_action")); // NOI18N
 
-        guiShowId.setText(MessageBundle.getString("show_id")); // NOI18N
+        guiShowId.setText(MessageBundle.format("show_id")); // NOI18N
         guiShowId.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiShowIdActionPerformed(evt);

@@ -36,7 +36,7 @@ public class RefreshAction extends AbstractMapAction {
 
     public RefreshAction() {
         putValue(SMALL_ICON, ICON);
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_refresh"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("map_refresh"));
     }
 
     /**

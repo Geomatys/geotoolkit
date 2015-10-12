@@ -103,9 +103,9 @@ public class JParameterHelpPanel extends JTextPane {
             // get parameter class, default value and unit
             if (parameterType.equals(ParameterType.SIMPLE)) {
                 if (minOccurs == 1 && maxOccurs == 1) {
-                    mandatory = MessageBundle.getString("parameters.editorHelpMandatory");
+                    mandatory = MessageBundle.format("parameters_editorHelpMandatory");
                 } else {
-                    mandatory = MessageBundle.getString("parameters.editorHelpOptional");
+                    mandatory = MessageBundle.format("parameters_editorHelpOptional");
                 }
                 dataType = ((ParameterDescriptor)paramDesc).getValueClass().getSimpleName();
                 defaultValue = String.valueOf(((ParameterDescriptor)paramDesc).getDefaultValue());
@@ -131,7 +131,7 @@ public class JParameterHelpPanel extends JTextPane {
             sb.append("<tbody>");
             if (mandatory != null) {
                 sb.append("<tr>");
-                    sb.append("<td>").append(MessageBundle.getString("parameters.editorHelpMandatoryLabel")).append("</td>");
+                    sb.append("<td>").append(MessageBundle.format("parameters_editorHelpMandatoryLabel")).append("</td>");
                     sb.append("<td class=\"data\">").append(mandatory).append("</td>");
                 sb.append("</tr>");
             }
@@ -139,38 +139,38 @@ public class JParameterHelpPanel extends JTextPane {
             if (parameterType.equals(ParameterType.SIMPLE)) {
                 if (dataType != null) {
                     sb.append("<tr>");
-                        sb.append("<td>").append(MessageBundle.getString("parameters.editorHelpTypeLabel")).append("</td>");
+                        sb.append("<td>").append(MessageBundle.format("parameters_editorHelpTypeLabel")).append("</td>");
                         sb.append("<td class=\"data\">").append(dataType).append("</td>");
                     sb.append("</tr>");
                 }
                 
                 if (defaultValue != null) {
                     sb.append("<tr>");
-                        sb.append("<td>").append(MessageBundle.getString("parameters.editorHelpDefaultLabel")).append("</td>");
+                        sb.append("<td>").append(MessageBundle.format("parameters_editorHelpDefaultLabel")).append("</td>");
                         sb.append("<td class=\"data\">").append(defaultValue).append("</td>");
                     sb.append("</tr>");
                 }
                 
                 if (validValues != null) {
                     sb.append("<tr>");
-                        sb.append("<td>").append(MessageBundle.getString("parameters.editorHelpValidLabel")).append("</td>");
+                        sb.append("<td>").append(MessageBundle.format("parameters_editorHelpValidLabel")).append("</td>");
                         sb.append("<td class=\"data\">").append(validValues).append("</td>");
                     sb.append("</tr>");
                 }
                 
                 if (dataUnits != null) {
                     sb.append("<tr>");
-                        sb.append("<td>").append(MessageBundle.getString("parameters.editorHelpUnitLabel")).append("</td>");
+                        sb.append("<td>").append(MessageBundle.format("parameters_editorHelpUnitLabel")).append("</td>");
                         sb.append("<td class=\"data\">").append(dataUnits).append("</td>");
                     sb.append("</tr>");
                 }
             } else {
                 sb.append("<tr>");
-                    sb.append("<td>").append(MessageBundle.getString("parameters.minOccurs")).append("</td>");
+                    sb.append("<td>").append(MessageBundle.format("parameters_minOccurs")).append("</td>");
                     sb.append("<td class=\"data\">").append(minOccurs).append("</td>");
                 sb.append("</tr>");
                 sb.append("<tr>");
-                    sb.append("<td>").append(MessageBundle.getString("parameters.maxOccurs")).append("</td>");
+                    sb.append("<td>").append(MessageBundle.format("parameters_maxOccurs")).append("</td>");
                     sb.append("<td class=\"data\">").append(maxOccurs).append("</td>");
                 sb.append("</tr>");
             }
@@ -180,7 +180,7 @@ public class JParameterHelpPanel extends JTextPane {
             sb.append("<br/>");
             
             if (description != null) {
-                sb.append("<h3>").append(MessageBundle.getString("parameters.editorHelpDescriptionLabel")).append(" : ").append("</h3>");
+                sb.append("<h3>").append(MessageBundle.format("parameters_editorHelpDescriptionLabel")).append(" : ").append("</h3>");
                 sb.append("<p>").append(description).append("</p>");
             }
             
@@ -188,7 +188,7 @@ public class JParameterHelpPanel extends JTextPane {
             sb.append("<br/>");
             if (validationError != null) {
                 sb.append("<div id=\"error\">");
-                    sb.append("<h3>").append(MessageBundle.getString("parameters.editorHelpValidationErrorLabel")).append(" : ").append("</h3>");
+                    sb.append("<h3>").append(MessageBundle.format("parameters_editorHelpValidationErrorLabel")).append(" : ").append("</h3>");
                     sb.append("<p>").append(validationError).append("</p>");
                 sb.append("</div>");
             }

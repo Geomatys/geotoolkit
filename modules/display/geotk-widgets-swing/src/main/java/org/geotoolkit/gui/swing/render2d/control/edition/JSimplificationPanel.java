@@ -154,14 +154,14 @@ public class JSimplificationPanel extends javax.swing.JPanel {
         guiDouglas = new javax.swing.JRadioButton();
         guiTopology = new javax.swing.JRadioButton();
 
-        guiRollback.setText(MessageBundle.getString("cancel")); // NOI18N
+        guiRollback.setText(MessageBundle.format("cancel")); // NOI18N
         guiRollback.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiRollbackActionPerformed(evt);
             }
         });
 
-        guiApply.setText(MessageBundle.getString("apply")); // NOI18N
+        guiApply.setText(MessageBundle.format("apply")); // NOI18N
         guiApply.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiApplyActionPerformed(evt);
@@ -170,18 +170,18 @@ public class JSimplificationPanel extends javax.swing.JPanel {
 
         guiError.setForeground(new java.awt.Color(255, 0, 0));
 
-        lbl.setText(MessageBundle.getString("factor")); // NOI18N
+        lbl.setText(MessageBundle.format("factor")); // NOI18N
 
         guiIndice.setModel(new javax.swing.SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(1.0d)));
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(MessageBundle.getString("crs"))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(MessageBundle.format("crs"))); // NOI18N
 
         groupCRS.add(guiMapCrs);
         guiMapCrs.setSelected(true);
-        guiMapCrs.setText(MessageBundle.getString("map")); // NOI18N
+        guiMapCrs.setText(MessageBundle.format("map")); // NOI18N
 
         groupCRS.add(guiDataCrs);
-        guiDataCrs.setText(MessageBundle.getString("data")); // NOI18N
+        guiDataCrs.setText(MessageBundle.format("data")); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -203,14 +203,14 @@ public class JSimplificationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(MessageBundle.getString("type"))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(MessageBundle.format("type"))); // NOI18N
 
         groupSimplify.add(guiDouglas);
         guiDouglas.setSelected(true);
-        guiDouglas.setText(MessageBundle.getString("douglaspeuker")); // NOI18N
+        guiDouglas.setText(MessageBundle.format("douglaspeuker")); // NOI18N
 
         groupSimplify.add(guiTopology);
-        guiTopology.setText(MessageBundle.getString("topologic")); // NOI18N
+        guiTopology.setText(MessageBundle.format("topologic")); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);

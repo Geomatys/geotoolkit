@@ -49,8 +49,8 @@ public class SessionRollbackAction extends AbstractAction implements FeatureStor
 
     public SessionRollbackAction(final FeatureMapLayer layer) {
         putValue(SMALL_ICON, ICON_ROLLBACK);
-        putValue(NAME, MessageBundle.getString("sessionRollback"));
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("sessionRollback"));
+        putValue(NAME, MessageBundle.format("sessionRollback"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("sessionRollback"));
         setLayer(layer);
     }
 

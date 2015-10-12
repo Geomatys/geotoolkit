@@ -34,7 +34,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 public class GeometryMoveTool extends AbstractEditionTool {
 
     public GeometryMoveTool() {
-        super(200,"geometryMove", MessageBundle.getI18NString("move"),
+        super(200,"geometryMove", MessageBundle.formatInternational(MessageBundle.Keys.move),
              new SimpleInternationalString("Tool for moving geometry around."), 
              IconBundle.getIcon("16_move"), FeatureMapLayer.class);
     }

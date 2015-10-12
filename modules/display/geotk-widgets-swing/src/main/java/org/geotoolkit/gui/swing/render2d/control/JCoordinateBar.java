@@ -80,7 +80,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance();
 
     private final myListener listener = new myListener();
-    private String error = MessageBundle.getString("map_control_coord_error");
+    private String error = MessageBundle.format("map_control_coord_error");
 
     private final JButton guiHint = new JButton(ICON_HINT);
     private final JScaleCombo guiCombo = new JScaleCombo();
@@ -116,7 +116,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         paneTemp.setPreferredSize(new Dimension(120, 120));
 
         //the hints menu -------------------------------------------------------
-        final JCheckBoxMenuItem guiAxis = new JCheckBoxMenuItem(MessageBundle.getString("map_xy_ratio")){
+        final JCheckBoxMenuItem guiAxis = new JCheckBoxMenuItem(MessageBundle.format("map_xy_ratio")){
             @Override
             public boolean isSelected() {
                 if(map == null) return false;
@@ -133,7 +133,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
             }
         });
 
-        final JCheckBoxMenuItem guiStyleOrder = new JCheckBoxMenuItem(MessageBundle.getString("map_style_order")){
+        final JCheckBoxMenuItem guiStyleOrder = new JCheckBoxMenuItem(MessageBundle.format("map_style_order")){
             @Override
             public boolean isSelected() {
                 if(map == null) return false;
@@ -153,7 +153,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
             }
         });
 
-        final JCheckBoxMenuItem guiAntiAliasing = new JCheckBoxMenuItem(MessageBundle.getString("antialiasing")){
+        final JCheckBoxMenuItem guiAntiAliasing = new JCheckBoxMenuItem(MessageBundle.format("antialiasing")){
             @Override
             public boolean isSelected() {
                 if(map == null) return false;
@@ -174,7 +174,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         });
 
         final ButtonGroup group = new ButtonGroup();
-        final JRadioButtonMenuItem guiNone = new JRadioButtonMenuItem(MessageBundle.getString("interpolation_none")){
+        final JRadioButtonMenuItem guiNone = new JRadioButtonMenuItem(MessageBundle.format("interpolation_none")){
             @Override
             public boolean isSelected() {
                 if(map == null) return false;
@@ -182,7 +182,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
                         map.getCanvas().getRenderingHint(RenderingHints.KEY_INTERPOLATION));
             }
         };
-        final JRadioButtonMenuItem guiLinear = new JRadioButtonMenuItem(MessageBundle.getString("interpolation_linear")){
+        final JRadioButtonMenuItem guiLinear = new JRadioButtonMenuItem(MessageBundle.format("interpolation_linear")){
             @Override
             public boolean isSelected() {
                 if(map == null) return false;
@@ -190,7 +190,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
                         map.getCanvas().getRenderingHint(RenderingHints.KEY_INTERPOLATION));
             }
         };
-        final JRadioButtonMenuItem guiBicubic = new JRadioButtonMenuItem(MessageBundle.getString("interpolation_bicubic")){
+        final JRadioButtonMenuItem guiBicubic = new JRadioButtonMenuItem(MessageBundle.format("interpolation_bicubic")){
             @Override
             public boolean isSelected() {
                 if(map == null) return false;
@@ -223,7 +223,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         guiLinear.addActionListener(interListener);
         guiBicubic.addActionListener(interListener);
 
-        final JCheckBoxMenuItem guiMultiThread = new JCheckBoxMenuItem(MessageBundle.getString("multithread")){
+        final JCheckBoxMenuItem guiMultiThread = new JCheckBoxMenuItem(MessageBundle.format("multithread")){
             @Override
             public boolean isSelected() {
                 if(map == null) return false;
@@ -248,7 +248,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         guiHintMenu.add(guiStyleOrder);
         guiHintMenu.add(guiAntiAliasing);
         guiHintMenu.add(new JSeparator());
-        guiHintMenu.add(new JMenuItem(MessageBundle.getString("interpolation")));
+        guiHintMenu.add(new JMenuItem(MessageBundle.format("interpolation")));
         guiHintMenu.add(guiNone);
         guiHintMenu.add(guiLinear);
         guiHintMenu.add(guiBicubic);
@@ -290,7 +290,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         guiHint.setMargin(new Insets(defaultInsetTop, 0, defaultInsetBottom, 0));
 
         guiDimensions.setMargin(new Insets(defaultInsetTop, 0, defaultInsetBottom, 0));
-        guiDimensions.setToolTipText(MessageBundle.getString("map_elevation_slider"));
+        guiDimensions.setToolTipText(MessageBundle.format("map_elevation_slider"));
         guiDimensions.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

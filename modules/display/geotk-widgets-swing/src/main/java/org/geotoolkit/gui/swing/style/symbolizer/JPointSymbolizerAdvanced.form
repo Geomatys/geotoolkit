@@ -39,7 +39,7 @@
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="General">
-              <ResourceString PropertyName="titleX" bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="general" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString PropertyName="titleX" bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="general" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -89,7 +89,7 @@
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Graphics">
-              <ResourceString PropertyName="titleX" bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="graphic" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString PropertyName="titleX" bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="graphic" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </TitledBorder>
           </Border>
         </Property>

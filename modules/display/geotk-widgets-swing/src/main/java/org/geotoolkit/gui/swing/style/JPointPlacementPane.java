@@ -81,7 +81,7 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
             }
         });
 
-        guiLabelRotation.setText(MessageBundle.getString("rotation")); // NOI18N
+        guiLabelRotation.setText(MessageBundle.format("rotation")); // NOI18N
 
         guiRotation.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -89,9 +89,9 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
             }
         });
 
-        jLabel1.setText(MessageBundle.getString("anchor")); // NOI18N
+        jLabel1.setText(MessageBundle.format("anchor")); // NOI18N
 
-        jLabel2.setText(MessageBundle.getString("displacement")); // NOI18N
+        jLabel2.setText(MessageBundle.format("displacement")); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);

@@ -292,14 +292,14 @@ public class JClipboardPanel extends javax.swing.JPanel {
         guiApply = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
-        guiApply.setText(MessageBundle.getString("paste")); // NOI18N
+        guiApply.setText(MessageBundle.format("paste")); // NOI18N
         guiApply.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pasteFromApp(evt);
             }
         });
 
-        jLabel1.setText(MessageBundle.getString("clipboard")); // NOI18N
+        jLabel1.setText(MessageBundle.format("clipboard")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

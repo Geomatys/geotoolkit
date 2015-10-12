@@ -142,9 +142,9 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
 
         guiEditPane.setLayout(new java.awt.BorderLayout());
 
-        guiCreateNew.setText(MessageBundle.getString("chooserfeaturestore.new")); // NOI18N
+        guiCreateNew.setText(MessageBundle.format("chooserfeaturestore_new")); // NOI18N
 
-        guiConnect.setText(MessageBundle.getString("chooserfeaturestore.connect")); // NOI18N
+        guiConnect.setText(MessageBundle.format("chooserfeaturestore_connect")); // NOI18N
         guiConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiConnectActionPerformed(evt);
@@ -203,7 +203,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             store = getFeatureStore();
             chooser.setSource(store);
             guiInfoLabel.setForeground(Color.GREEN);
-            guiInfoLabel.setText(MessageBundle.getString("chooserfeaturestore.ok"));
+            guiInfoLabel.setText(MessageBundle.format("chooserfeaturestore_ok"));
         } catch (DataStoreException ex) {
             guiInfoLabel.setForeground(Color.RED);
             guiInfoLabel.setText(""+ex.getMessage());

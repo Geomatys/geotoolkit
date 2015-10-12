@@ -29,7 +29,6 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.util.collection.MapUtilities;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
@@ -51,7 +50,7 @@ public abstract class AbstractClientFactory extends Factory implements ClientFac
     /**
      * commonly used translation for version parameters.
      */
-    public static final InternationalString I18N_VERSION = new ResourceInternationalString("org/geotoolkit/client/bundle","version");
+    public static final InternationalString I18N_VERSION = Bundle.formatInternational(Bundle.Keys.version);
 
     /**
      * Identifier, Mandatory.
@@ -59,8 +58,8 @@ public abstract class AbstractClientFactory extends Factory implements ClientFac
      */
     public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
             .addName("identifier")
-            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "identifier"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "identifier_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.identifier))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.identifierRemarks))
             .setRequired(true)
             .create(String.class, null);
 
@@ -70,8 +69,8 @@ public abstract class AbstractClientFactory extends Factory implements ClientFac
      */
     public static final ParameterDescriptor<String> VERSION = new ParameterBuilder()
             .addName("version")
-            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "version"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "version_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.version))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.versionRemarks))
             .setRequired(true)
             .create(String.class, null);
 
@@ -127,8 +126,8 @@ public abstract class AbstractClientFactory extends Factory implements ClientFac
      */
     public static final ParameterDescriptor<URL> URL = new ParameterBuilder()
             .addName("url")
-            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "url"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "url_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.url))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.urlRemarks))
             .setRequired(true)
             .create(URL.class, null);
     /**
@@ -136,8 +135,8 @@ public abstract class AbstractClientFactory extends Factory implements ClientFac
      */
     public static final ParameterDescriptor<ClientSecurity> SECURITY = new ParameterBuilder()
             .addName("security")
-            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "security"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "security_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.security))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.securityRemarks))
             .setRequired(false)
             .create(ClientSecurity.class, null);
 
@@ -146,8 +145,8 @@ public abstract class AbstractClientFactory extends Factory implements ClientFac
      */
     public static final ParameterDescriptor<Boolean> IMAGE_CACHE = new ParameterBuilder()
             .addName("imagecache")
-            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "imageCache"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "imageCache_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.imageCache))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.imageCacheRemarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.FALSE);
 
@@ -157,8 +156,8 @@ public abstract class AbstractClientFactory extends Factory implements ClientFac
      */
     public static final ParameterDescriptor<Integer> TIMEOUT = new ParameterBuilder()
             .addName("timeout")
-            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "timeout"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "timeout_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.timeout))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.timeoutRemarks))
             .setRequired(false)
             .create(Integer.class, 20000);
 
@@ -167,8 +166,8 @@ public abstract class AbstractClientFactory extends Factory implements ClientFac
      */
     public static final ParameterDescriptor<Boolean> NIO_QUERIES = new ParameterBuilder()
             .addName("nio")
-            .addName(new ResourceInternationalString("org/geotoolkit/client/bundle", "nio"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/client/bundle", "nio_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.nio))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.nioRemarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.FALSE);
 

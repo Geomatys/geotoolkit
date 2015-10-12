@@ -36,7 +36,7 @@ public class ZoomOutAction extends AbstractMapAction {
 
     public ZoomOutAction() {
         putValue(SMALL_ICON, ICON);
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_zoom_out"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("map_zoom_out"));
     }
 
     /**

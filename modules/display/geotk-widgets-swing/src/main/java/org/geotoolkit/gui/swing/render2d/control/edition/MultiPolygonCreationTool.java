@@ -37,7 +37,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 public class MultiPolygonCreationTool extends AbstractEditionTool {
 
     public MultiPolygonCreationTool() {
-        super(1300,"multipolygonCreation",MessageBundle.getI18NString("createMultiPolygon"),
+        super(1300,"multipolygonCreation",MessageBundle.formatInternational(MessageBundle.Keys.createMultiPolygon),
              new SimpleInternationalString("Tool for creating multi-polygons."), 
              IconBundle.getIcon("16_newgeometry"), FeatureMapLayer.class);
     }

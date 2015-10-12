@@ -163,15 +163,15 @@ public class JPolygonSymbolizerSimple extends StyleElementEditor<PolygonSymboliz
         guiStrokeControlPane = new JStrokeControlPane();
         guiFillControlPane = new JFillControlPane();
 
-        jLabel2.setText(MessageBundle.getString("shapeFill")); // NOI18N
+        jLabel2.setText(MessageBundle.format("shapeFill")); // NOI18N
 
-        jLabel5.setText(MessageBundle.getString("displacementX")); // NOI18N
+        jLabel5.setText(MessageBundle.format("displacementX")); // NOI18N
 
-        jLabel6.setText(MessageBundle.getString("displacementY")); // NOI18N
+        jLabel6.setText(MessageBundle.format("displacementY")); // NOI18N
 
-        jLabel10.setText(MessageBundle.getString("shapeBorder")); // NOI18N
+        jLabel10.setText(MessageBundle.format("shapeBorder")); // NOI18N
 
-        guiOffsetLabel.setText(MessageBundle.getString("offset")); // NOI18N
+        guiOffsetLabel.setText(MessageBundle.format("offset")); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);

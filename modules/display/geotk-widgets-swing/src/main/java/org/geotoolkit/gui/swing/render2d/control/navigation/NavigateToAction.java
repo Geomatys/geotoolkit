@@ -40,7 +40,7 @@ public class NavigateToAction extends AbstractMapAction {
 
     public NavigateToAction() {
         putValue(SMALL_ICON, ICON);
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_nav_to"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("map_nav_to"));
     }
 
     @Override
