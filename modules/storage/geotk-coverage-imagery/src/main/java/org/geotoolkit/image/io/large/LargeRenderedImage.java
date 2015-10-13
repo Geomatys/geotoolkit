@@ -421,7 +421,7 @@ public class LargeRenderedImage implements RenderedImage, Disposable {
         }
 
         // Prepare for tile loading
-        tileLock.writeLock().lock();
+        tileLock.writeLock().lock();//-- lock about boolean array isRead[]
         try {
             try {
                 if (isRead[tileY][tileX]) {

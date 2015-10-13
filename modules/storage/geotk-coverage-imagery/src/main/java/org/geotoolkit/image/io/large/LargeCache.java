@@ -38,9 +38,11 @@ import org.apache.sis.util.logging.Logging;
 /**
  * Manage {@link RenderedImage} and its {@link Raster} to don't exceed JVM memory capacity.
  *
- * TODO : make memory be entirely managed by the cache, instead of allow a portion of memory to each {@link org.geotoolkit.image.io.large.ImageTilesCache}.
+ * TODO : make memory be entirely managed by the cache, instead of allow a portion of
+ * memory to each {@link org.geotoolkit.image.io.large.ImageTilesCache}.
  * The aim is to just delegate tile manipulation to them, and get the total control over memory here.
- * Maybe a priority system would be useful to determine which tile to release first (based on the number of times a tile has been queried ?)
+ * Maybe a priority system would be useful to determine which tile to release first (based on the number
+ * of times a tile has been queried ?)
  *
  * @author Rémi Maréchal (Geomatys)
  * @author Alexis Manin  (Geomatys)
@@ -48,9 +50,6 @@ import org.apache.sis.util.logging.Logging;
 public final class LargeCache implements TileCache {
 
     private static final Logger LOGGER = Logging.getLogger(LargeCache.class.getName());
-
-    private static final BlockingQueue<Runnable> FLUSH_QUEUE = new LinkedBlockingQueue<>(64);
-    static final ThreadPoolExecutor WRITER__EXECUTOR = new ThreadPoolExecutor(1, 4, 5, TimeUnit.MINUTES, FLUSH_QUEUE, new ThreadPoolExecutor.CallerRunsPolicy());
     private final ReferenceQueue<RenderedImage> phantomQueue = new ReferenceQueue<>();
 
     private volatile long memoryCapacity;
@@ -116,7 +115,7 @@ public final class LargeCache implements TileCache {
     public static synchronized LargeCache getInstance() {
         if(INSTANCE==null){
             final long memoryCapacity = ImageCacheConfiguration.getCacheMemorySize();
-            final boolean enableSwap = ImageCacheConfiguration.isCacheSwapEnable();
+            final boolean enableSwap  = ImageCacheConfiguration.isCacheSwapEnable();
             INSTANCE = new LargeCache(memoryCapacity, enableSwap);
         }
         return INSTANCE;
