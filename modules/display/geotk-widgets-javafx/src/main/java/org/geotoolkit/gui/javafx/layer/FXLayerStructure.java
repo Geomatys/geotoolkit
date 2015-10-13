@@ -31,6 +31,7 @@ import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.amended.AmendedCoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.type.FeatureType;
@@ -242,15 +243,16 @@ public class FXLayerStructure extends FXPropertyPane {
             }
 
 
+            final TabPane tabs = new TabPane();
+            setCenter(tabs);
 
+            final Tab tabprops = new Tab("Propriétés");
+            tabprops.setContent(webPane);
+            tabs.getTabs().add(tabprops);
 
+            //dimension editor
             final CoverageDescription desc = ref.getMetadata();
             if(desc!=null && !desc.getAttributeGroups().isEmpty()){
-                final TabPane tabs = new TabPane();
-                final Tab tabprops = new Tab("Propriétés");
-                tabprops.setContent(webPane);
-                tabs.getTabs().add(tabprops);
-
                 final Tab tabbands = new Tab("Bands");
                 tabs.getTabs().add(tabbands);
 
@@ -269,11 +271,15 @@ public class FXLayerStructure extends FXPropertyPane {
                         vbox.getChildren().add(fxcb);
                     }
                 }
-
-                setCenter(tabs);
-            }else{
-                setCenter(webPane);
             }
+
+            //override projection
+            if(ref instanceof AmendedCoverageReference){
+                final Tab taboverride = new Tab("Overrides");
+                taboverride.setContent(new FXCoverageDecoratorPane((AmendedCoverageReference) ref));
+                tabs.getTabs().add(taboverride);
+            }
+
 
         }
 

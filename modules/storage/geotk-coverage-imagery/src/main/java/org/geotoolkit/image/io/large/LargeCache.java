@@ -24,10 +24,6 @@ import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.lang.ref.ReferenceQueue;
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.jai.TileCache;
@@ -37,9 +33,11 @@ import org.apache.sis.util.logging.Logging;
 /**
  * Manage {@link RenderedImage} and its {@link Raster} to don't exceed JVM memory capacity.
  *
- * TODO : make memory be entirely managed by the cache, instead of allow a portion of memory to each {@link org.geotoolkit.image.io.large.ImageTilesCache}.
+ * TODO : make memory be entirely managed by the cache, instead of allow a portion of
+ * memory to each {@link org.geotoolkit.image.io.large.ImageTilesCache}.
  * The aim is to just delegate tile manipulation to them, and get the total control over memory here.
- * Maybe a priority system would be useful to determine which tile to release first (based on the number of times a tile has been queried ?)
+ * Maybe a priority system would be useful to determine which tile to release first (based on the number
+ * of times a tile has been queried ?)
  *
  * @author Rémi Maréchal (Geomatys)
  * @author Alexis Manin  (Geomatys)
@@ -48,8 +46,6 @@ public final class LargeCache implements TileCache {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
 
-    private static final BlockingQueue<Runnable> FLUSH_QUEUE = new LinkedBlockingQueue<>(64);
-    static final ThreadPoolExecutor WRITER__EXECUTOR = new ThreadPoolExecutor(1, 4, 5, TimeUnit.MINUTES, FLUSH_QUEUE, new ThreadPoolExecutor.CallerRunsPolicy());
     private final ReferenceQueue<RenderedImage> phantomQueue = new ReferenceQueue<>();
 
     private volatile long memoryCapacity;
@@ -115,7 +111,7 @@ public final class LargeCache implements TileCache {
     public static synchronized LargeCache getInstance() {
         if(INSTANCE==null){
             final long memoryCapacity = ImageCacheConfiguration.getCacheMemorySize();
-            final boolean enableSwap = ImageCacheConfiguration.isCacheSwapEnable();
+            final boolean enableSwap  = ImageCacheConfiguration.isCacheSwapEnable();
             INSTANCE = new LargeCache(memoryCapacity, enableSwap);
         }
         return INSTANCE;
