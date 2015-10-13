@@ -576,6 +576,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
 
                     GridCoverageReadParam readParam = new GridCoverageReadParam();
                     readParam.setEnvelope(CRS.transform(gridToCRS, sliceExtent));
+                    readParam.setResolution(high[0]-low[0], high[1]-low[1]);
                     readParam.setCoordinateReferenceSystem(gridGeometry.getCoordinateReferenceSystem());
                     readParam.setDeferred(true);
                     final GridCoverage coverage = reader.read(covRef.getImageIndex(), readParam);
@@ -585,8 +586,6 @@ public class JColorMapPane extends StyleElementEditor<ColorMap> implements Prope
                 covRef.recycle(reader);
             }
         } catch (CoverageStoreException ex) {
-            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-        } catch (DataStoreException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
         } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, ex.getMessage(), ex);

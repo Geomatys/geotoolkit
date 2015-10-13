@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.logging.Level;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -50,6 +52,7 @@ import javafx.scene.text.FontWeight;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.ClientFactory;
 import org.geotoolkit.client.ClientFinder;
+import org.geotoolkit.coverage.amended.AmendedCoverageStore;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFactory;
 import org.geotoolkit.data.FeatureStoreFinder;
@@ -65,6 +68,7 @@ import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreFactory;
+import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStoreFinder;
 import org.opengis.parameter.ParameterValueGroup;
@@ -130,6 +134,7 @@ public class FXStoreChooser extends SplitPane {
     private final ScrollPane listScroll = new ScrollPane(factoryView);
     private final Button connectButton = new Button(GeotkFX.getString(FXStoreChooser.class,"apply"));
     private final Label infoLabel = new Label();
+    private final BooleanProperty decorateProperty = new SimpleBooleanProperty(false);
         
     public FXStoreChooser() {
         this(null);
@@ -195,14 +200,18 @@ public class FXStoreChooser extends SplitPane {
             }
         });
         
-        
         connectButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent event) {
                 try {
                     layerChooser.setSource(null);
-                    final Object store = getStore();
+                    Object store = getStore();
+
+                    if(decorateProperty.get() && store instanceof CoverageStore){
+                        //decorate store
+                        store = new AmendedCoverageStore((CoverageStore) store);
+                    }
                     layerChooser.setSource(store);
                 } catch (DataStoreException ex) {
                     infoLabel.setText("Error "+ex.getMessage());
@@ -212,7 +221,11 @@ public class FXStoreChooser extends SplitPane {
         });
         
     }
-    
+
+    public BooleanProperty decorateProperty(){
+        return decorateProperty;
+    }
+
     private void setLayerSelectionVisible(boolean layerVisible) {
         layerChooser.setVisible(layerVisible);
     }
@@ -281,6 +294,7 @@ public class FXStoreChooser extends SplitPane {
 
     private static List showDialog(Node parent, Predicate predicate, boolean layerVisible) throws DataStoreException{
         final FXStoreChooser chooser = new FXStoreChooser(predicate);
+        chooser.decorateProperty().set(true);
         chooser.setLayerSelectionVisible(layerVisible);        
         
         final boolean res = FXOptionDialog.showOkCancel(parent, chooser, "", true);
