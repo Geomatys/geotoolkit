@@ -35,7 +35,6 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.util.collection.MapUtilities;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -63,7 +62,6 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
         MultiPolygon.class
     };
 
-    private static final String BUNDLE_PATH = "org/geotoolkit/data/bundle";
 
     /**
      * Identifier, Mandatory.
@@ -71,8 +69,8 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
      */
     public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
             .addName("identifier")
-            .addName(new ResourceInternationalString(BUNDLE_PATH, "paramIdentifierAlias"))
-            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "paramIdentifierRemarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.paramIdentifierAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramIdentifierRemarks))
             .setRequired(true)
             .create(String.class, null);
 
@@ -82,8 +80,8 @@ public abstract class AbstractFeatureStoreFactory extends Factory implements Fea
      */
     public static final ParameterDescriptor<String> NAMESPACE = new ParameterBuilder()
             .addName("namespace")
-            .addName(new ResourceInternationalString(BUNDLE_PATH, "paramNamespaceAlias"))
-            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "paramNamespaceRemarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.paramNamespaceAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramNamespaceRemarks))
             .setRequired(false)
             .create(String.class, null);
 

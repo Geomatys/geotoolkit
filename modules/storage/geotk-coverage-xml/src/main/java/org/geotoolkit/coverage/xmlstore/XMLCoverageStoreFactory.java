@@ -22,7 +22,6 @@ import java.util.Collections;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
@@ -49,7 +48,6 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
     /** factory identification **/
     public static final String NAME = "coverage-xml-pyramid";
     public static final DefaultServiceIdentification IDENTIFICATION;
-    private static final String BUNDLE_PATH = "org/geotoolkit/coverage/xmlstore/bundle";
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
         final Identifier id = new DefaultIdentifier(NAME);
@@ -65,8 +63,8 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
      */
     public static final ParameterDescriptor<URL> PATH = new ParameterBuilder()
             .addName("path")
-            .addName(new ResourceInternationalString(BUNDLE_PATH, "coverageXMLPath"))
-            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "coverageXMLPathRemarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.coverageXMLPath))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.coverageXMLPathRemarks))
             .setRequired(true)
             .create(URL.class, null);
     /**
@@ -74,8 +72,8 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
      */
     public static final ParameterDescriptor<Boolean> CACHE_TILE_STATE = new ParameterBuilder()
             .addName("cacheTileState")
-            .addName(new ResourceInternationalString(BUNDLE_PATH, "coverageXMLTileState"))
-            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "coverageXMLTileStateRemarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.coverageXMLTileState))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.coverageXMLTileStateRemarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.FALSE);
 
@@ -90,12 +88,12 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/coverage/xmlstore/bundle", "coverageXMLDescription");
+        return Bundle.formatInternational(Bundle.Keys.coverageXMLDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/coverage/xmlstore/bundle", "coverageXMLTitle");
+        return Bundle.formatInternational(Bundle.Keys.coverageXMLTitle);
     }
 
     @Override

@@ -27,6 +27,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javax.measure.unit.Unit;
 import org.apache.sis.io.wkt.Colors;
+import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.measure.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -294,10 +295,18 @@ public class FXLayerStructure extends FXPropertyPane {
          *  3) Turn quoted WKT names ("foo") in italic characters.
          */
         buffer.setLength(0);
-        String text, warning;
+        String text;
+        String warning = null;
         try {
             text = formatter.format(item);
-            warning = formatter.getWarning();
+            Warnings warnings = formatter.getWarnings();
+            if(warnings!=null){
+                warning = "";
+                for(int i=0,n=warnings.getNumMessages();i<n;i++){
+                    if(i!=0) warning += "\n";
+                    warning += warnings.getMessage(i);
+                }
+            }
         } catch (RuntimeException e) {
             text = String.valueOf((item instanceof IdentifiedObject)?((IdentifiedObject)item).getName():"");
             warning = e.getLocalizedMessage();

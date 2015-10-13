@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import javax.imageio.ImageIO;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
@@ -33,6 +32,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
+import org.geotoolkit.storage.coverage.Bundle;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -64,8 +64,8 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
      */
     public static final ParameterDescriptor<URL> PATH = new ParameterBuilder()
             .addName("path")
-            .addName(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "path"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "path_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.path))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.path_remarks))
             .setRequired(true)
             .create(URL.class, null);
 
@@ -81,16 +81,16 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
         TYPE = new ParameterBuilder()
             .addName("type")
-            .addName(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "type"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "type_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.type))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.type_remarks))
             .setRequired(true)
             .createEnumerated(String.class, validValues.toArray(new String[validValues.size()]), "AUTO");
     }
 
     public static final ParameterDescriptor<String> PATH_SEPARATOR = new ParameterBuilder()
             .addName("pathSeparator")
-            .addName(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "pathSeparator"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/coverage/bundle", "pathSeparator_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.pathSeparator))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.pathSeparator_remarks))
             .setRequired(false)
             .create(String.class, null);
 
@@ -105,14 +105,13 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageFileDescription");
+        return Bundle.formatInternational(Bundle.Keys.coverageFileDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageFileTitle");
+        return Bundle.formatInternational(Bundle.Keys.coverageFileTitle);
     }
-
 
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {

@@ -43,7 +43,6 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.db.AbstractJDBCFeatureStoreFactory.*;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -132,12 +131,12 @@ public class SOSDatabaseFeatureStoreFactory extends AbstractFeatureStoreFactory 
      */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/om/bundle", "SOSdatastoreDescription");
+        return Bundle.formatInternational(Bundle.Keys.SOSdatastoreDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/om/bundle", "SOSdatastoreTitle");
+        return Bundle.formatInternational(Bundle.Keys.SOSdatastoreTitle);
     }
 
     /**

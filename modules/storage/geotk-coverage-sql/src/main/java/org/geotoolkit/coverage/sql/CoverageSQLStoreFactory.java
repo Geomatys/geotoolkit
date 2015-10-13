@@ -18,7 +18,6 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Collections;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.storage.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
@@ -98,12 +97,12 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory {
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageSQLDescription");
+        return Bundle.formatInternational(Bundle.Keys.coverageSQLDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageSQLTitle");
+        return Bundle.formatInternational(Bundle.Keys.coverageSQLTitle);
     }
 
     @Override

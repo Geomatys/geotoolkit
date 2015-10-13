@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.dbf;
 
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
@@ -78,7 +77,7 @@ public class DbaseFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFa
      */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseFolderDescription");
+        return Bundle.formatInternational(Bundle.Keys.databaseFolderDescription);
     }
 
     /**
@@ -86,7 +85,7 @@ public class DbaseFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFa
      */
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseFolderTitle");
+        return Bundle.formatInternational(Bundle.Keys.databaseFolderTitle);
     }
 
 

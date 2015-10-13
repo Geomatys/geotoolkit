@@ -61,8 +61,6 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     static final QueryCapabilities CAPABILITIES = new DefaultQueryCapabilities(false);
 
-    static final String BUNDLE_PATH = "org/geotoolkit/gml/bundle";
-
     private final File file;
     private String name;
     private FeatureType featureType;
