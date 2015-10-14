@@ -24,6 +24,7 @@ import java.io.InvalidObjectException;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
+import org.apache.sis.util.iso.SimpleInternationalString;
 import org.apache.sis.xml.IdentifierSpace;
 
 
@@ -71,9 +72,25 @@ class CitationConstant extends DefaultCitation {
      * @param identifier The identifier, or {@code null} if none.
      */
     CitationConstant(final ResponsibleParty party, final String name, final String identifier) {
-        super(party);
+        setParty(this, party);
         replacement = new Serialized(name);
         setIdentifier(identifier);
+    }
+
+    static void setParty(final DefaultCitation citation, final ResponsibleParty party) {
+        if (party != null) {
+            citation.setCitedResponsibleParties(Collections.singleton(party));
+            citation.setTitle(party.getOrganisationName());
+            if (citation.getTitle() == null) {
+                citation.setTitle(party.getPositionName());
+                if (citation.getTitle() == null) {
+                    String n = party.getIndividualName();
+                    if (n != null) {
+                        citation.setTitle(new SimpleInternationalString(n));
+                    }
+                }
+            }
+        }
     }
 
     /**

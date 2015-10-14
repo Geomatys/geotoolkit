@@ -31,16 +31,16 @@ import org.geotoolkit.wms.AbstractGetMap;
  * @module pending
  */
 public abstract class AbstractNcGetMap extends AbstractGetMap implements NcGetMapRequest {
-    
+
     /**
      * Default logger for all GetMap requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractNcGetMap.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ncwms");
+
     protected Integer opacity = null;
-    
+
     protected Integer numColorBands = null;
-    
+
     protected Boolean logScale = null;
 
     /**
@@ -48,8 +48,8 @@ public abstract class AbstractNcGetMap extends AbstractGetMap implements NcGetMa
      */
     protected AbstractNcGetMap(final String serverURL, final String version, final ClientSecurity security) {
         super(serverURL, version, security);
-    }    
-    
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -97,20 +97,20 @@ public abstract class AbstractNcGetMap extends AbstractGetMap implements NcGetMa
     public void setLogScale(final Boolean logScale) {
         this.logScale = logScale;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     protected void prepareParameters() {
         super.prepareParameters();
-        
+
         if (opacity != null)
             requestParameters.put("OPACITY", String.valueOf(opacity));
-        
+
         if (numColorBands != null)
             requestParameters.put("NUMCOLORBANDS", String.valueOf(numColorBands));
-        
+
         if (logScale != null)
             requestParameters.put("LOGSCALE", String.valueOf(logScale));
 

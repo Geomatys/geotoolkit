@@ -36,7 +36,7 @@ public class ZoomInAction extends AbstractMapAction {
 
     public ZoomInAction() {
         putValue(SMALL_ICON, ICON);
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_zoom_in"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("map_zoom_in"));
     }
 
     /**

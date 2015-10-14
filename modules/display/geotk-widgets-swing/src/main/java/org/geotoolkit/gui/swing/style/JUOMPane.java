@@ -86,7 +86,7 @@ public class JUOMPane extends StyleElementEditor<Unit>{
 
         setOpaque(false);
 
-        guiLabel.setText(MessageBundle.getString("unit")); // NOI18N
+        guiLabel.setText(MessageBundle.format("unit")); // NOI18N
 
         jcb_uom.setModel(new DefaultComboBoxModel(new String[] { "Pixels", "Meters", "Feet" }));
         jcb_uom.addItemListener(new ItemListener() {

@@ -17,22 +17,21 @@
 package org.geotoolkit.ignrm;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Client Security object relying on an IGN token.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class TokenClientSecurity extends DefaultClientSecurity{
-    
+
     private final Token token;
 
     public TokenClientSecurity(final Token token) {
@@ -43,23 +42,19 @@ public class TokenClientSecurity extends DefaultClientSecurity{
     @Override
     public URL secure(URL url) {
         String strUrl = url.toString();
-        
+
         if(strUrl.endsWith("/")){
             strUrl = strUrl.substring(0,strUrl.length()-1);
         }
-        
+
         try {
             strUrl = strUrl + "&" + token.getName() +"="+token.getValue();
             return new URL(strUrl);
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(TokenClientSecurity.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(TokenClientSecurity.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (XMLStreamException ex) {
-            Logger.getLogger(TokenClientSecurity.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | XMLStreamException ex) {
+            Logging.getLogger("org.geotoolkit.ignrm").log(Level.SEVERE, null, ex);
         }
-        
+
         return url;
     }
-    
+
 }

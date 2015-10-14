@@ -63,14 +63,14 @@
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="mime" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="mime" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="url" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="url" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

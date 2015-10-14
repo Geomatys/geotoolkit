@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -32,18 +31,19 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.csw.xml.Acknowledgement;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
  * This is a general acknowledgement response message for all requests that may be processed in an asynchronous manner.
- * 
+ *
  * EchoedRequest - Echoes the submitted request message
  * RequestId     - identifier for polling purposes (if no response handler is available, or the URL scheme is unsupported)
- * 
+ *
  * <p>Java class for AcknowledgementType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AcknowledgementType">
  *   &lt;complexContent>
@@ -57,8 +57,8 @@ import org.geotoolkit.csw.xml.Acknowledgement;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -79,14 +79,14 @@ public class AcknowledgementType implements Acknowledgement {
     private XMLGregorianCalendar timeStamp;
 
     /**
-     * An empty constructor used by JAXB 
+     * An empty constructor used by JAXB
      */
     public AcknowledgementType() {
-        
+
     }
-    
+
     /**
-     * Build a new Anknowledgement message. 
+     * Build a new Anknowledgement message.
      */
     public AcknowledgementType(final String requestId, final EchoedRequestType echoedRequest, final Long timeStamp) {
         this.requestId     = requestId;
@@ -99,11 +99,11 @@ public class AcknowledgementType implements Acknowledgement {
                 DatatypeFactory factory = DatatypeFactory.newInstance();
                 this.timeStamp = factory.newXMLGregorianCalendar(cal);
             } catch (DatatypeConfigurationException ex) {
-                Logger.getLogger(AcknowledgementType.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.csw.xml.v202").log(Level.SEVERE, null, ex);
             }
         }
     }
-            
+
     /**
      * Gets the value of the echoedRequest property.
      */

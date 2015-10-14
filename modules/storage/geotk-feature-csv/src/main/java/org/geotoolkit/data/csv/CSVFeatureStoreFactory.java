@@ -26,7 +26,6 @@ import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 
 import org.opengis.metadata.Identifier;
@@ -35,7 +34,6 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.data.csv.CSVFeatureStore.*;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -69,8 +67,8 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
      */
     public static final ParameterDescriptor<Character> SEPARATOR = new ParameterBuilder()
             .addName("separator")
-            .addName(new ResourceInternationalString(BUNDLE_PATH, "paramSeparatorAlias"))
-            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "paramSeparatorRemarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.paramSeparatorAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramSeparatorRemarks))
             .setRequired(false)
             .create(Character.class, ';');
 
@@ -85,12 +83,12 @@ public class CSVFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/csv/bundle", "datastoreDescription");
+        return Bundle.formatInternational(Bundle.Keys.datastoreDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/csv/bundle", "datastoreTitle");
+        return Bundle.formatInternational(Bundle.Keys.datastoreTitle);
     }
 
     @Override

@@ -68,7 +68,7 @@ import org.openide.awt.DropDownButtonFactory;
  */
 public class JSelectionBar extends AbstractMapControlBar implements ActionListener{
 
-    private static final Logger LOGGER = Logging.getLogger(JSelectionBar.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.control");
 
     private static final ImageIcon ICON_SELECT = IconBuilder.createIcon(FontAwesomeIcons.ICON_LOCATION_ARROW, 16, FontAwesomeIcons.DEFAULT_COLOR);
     private static final ImageIcon ICON_INTERSECT = IconBundle.getIcon("16_select_intersect");
@@ -83,12 +83,12 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
     private final ButtonGroup groupVisit = new ButtonGroup();
 
     private final JButton guiSelect;
-    private final JRadioButtonMenuItem guiIntersect = new JRadioButtonMenuItem(MessageBundle.getString("select_intersect"),ICON_INTERSECT);
-    private final JRadioButtonMenuItem guiWithin = new JRadioButtonMenuItem(MessageBundle.getString("select_within"),ICON_WITHIN);
-    private final JRadioButtonMenuItem guiLasso = new JRadioButtonMenuItem(MessageBundle.getString("select_lasso"),ICON_LASSO);
-    private final JRadioButtonMenuItem guiSquare = new JRadioButtonMenuItem(MessageBundle.getString("select_square"),ICON_SQUARE);
-    private final JRadioButtonMenuItem guiGeographic = new JRadioButtonMenuItem(MessageBundle.getString("select_geographic"),ICON_GEOGRAPHIC);
-    private final JRadioButtonMenuItem guiVisual = new JRadioButtonMenuItem(MessageBundle.getString("select_visual"),ICON_VISUAL);
+    private final JRadioButtonMenuItem guiIntersect = new JRadioButtonMenuItem(MessageBundle.format("select_intersect"),ICON_INTERSECT);
+    private final JRadioButtonMenuItem guiWithin = new JRadioButtonMenuItem(MessageBundle.format("select_within"),ICON_WITHIN);
+    private final JRadioButtonMenuItem guiLasso = new JRadioButtonMenuItem(MessageBundle.format("select_lasso"),ICON_LASSO);
+    private final JRadioButtonMenuItem guiSquare = new JRadioButtonMenuItem(MessageBundle.format("select_square"),ICON_SQUARE);
+    private final JRadioButtonMenuItem guiGeographic = new JRadioButtonMenuItem(MessageBundle.format("select_geographic"),ICON_GEOGRAPHIC);
+    private final JRadioButtonMenuItem guiVisual = new JRadioButtonMenuItem(MessageBundle.format("select_visual"),ICON_VISUAL);
 
     private final DefaultSelectionHandler handler = new DefaultSelectionHandler();
 
@@ -115,13 +115,13 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
         menu.add(guiGeographic);
         menu.add(guiVisual);
         menu.add(new JSeparator(SwingConstants.HORIZONTAL));
-        menu.add(new JMenuItem(new AbstractAction(MessageBundle.getString("copyselection")) {
+        menu.add(new JMenuItem(new AbstractAction(MessageBundle.format("copyselection")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 copyToClipboard(true,false);
             }
         }));
-        menu.add(new JMenuItem(new AbstractAction(MessageBundle.getString("copyselectionappend")) {
+        menu.add(new JMenuItem(new AbstractAction(MessageBundle.format("copyselectionappend")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 copyToClipboard(true,true);
@@ -129,7 +129,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
         }));
 
         guiSelect = DropDownButtonFactory.createDropDownButton(ICON_SELECT, menu);
-        guiSelect.setToolTipText(MessageBundle.getString("map_select"));
+        guiSelect.setToolTipText(MessageBundle.format("map_select"));
         setMap(map);
 
         handler.setMenu(menu);
@@ -218,7 +218,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
             if(systemclipboard){
                 GeotkClipboard.setSystemClipboardValue(sb.toString());
             }
-            
+
             //push value in geotk clipboard
             Transferable trs = GeotkClipboard.INSTANCE.getContents(this);
             if(append && trs instanceof FeatureCollectionListTransferable){
@@ -228,7 +228,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
                 trs = new FeatureCollectionListTransferable(selections);
                 GeotkClipboard.INSTANCE.setContents(trs, null);
             }
-            
+
         }
     }
 

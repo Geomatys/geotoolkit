@@ -27,7 +27,6 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -38,7 +37,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class ProcessedCoverageReference extends DefaultCoverageReference{
 
-    private static final Logger LOGGER = Logging.getLogger(ProcessedCollection.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.map");
 
     private ProcessDescriptor processDescriptor;
     private ParameterValueGroup inputParam;

@@ -27,7 +27,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.PropertyType;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.ArrayEditor;
@@ -48,6 +47,7 @@ import org.geotoolkit.gui.swing.propertyedit.featureeditor.StyleEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.TimeStampEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.UnitEditor;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.opengis.util.InternationalString;
 
 /**
@@ -67,9 +67,7 @@ public class JAttributeEditor extends JPanel implements PropertyChangeListener, 
     /*
      * Not supported text gived to notSupported TextField.
      */
-    private static final String BUNDLE_PATH = "org/geotoolkit/gui/swing/resource/Bundle";
-    private static final String NOT_SUPPORTED_KEY = "notSupported";
-    private static final InternationalString NOT_SUPPORTED = new ResourceInternationalString(BUNDLE_PATH, NOT_SUPPORTED_KEY);
+    private static final InternationalString NOT_SUPPORTED = MessageBundle.formatInternational(MessageBundle.Keys.notSupported);
 
     /**
      * Unmodifiable list of default editors.

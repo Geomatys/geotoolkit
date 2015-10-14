@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -105,7 +104,7 @@ import org.opengis.util.GenericName;
  */
 public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
 
-    private static final Logger LOGGER = Logging.getLogger(JClassificationIntervalStylePanel.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.styleproperty");
     private static final NumberFormat FORMAT = NumberFormat.getNumberInstance();
     private static final ImageIcon DELETE = IconBuilder.createIcon(FontAwesomeIcons.ICON_TRASH_O, 16, FontAwesomeIcons.DEFAULT_COLOR);
 
@@ -135,7 +134,7 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
     private FeatureMapLayer layer = null;
 
     public JClassificationIntervalStylePanel() {
-        super(MessageBundle.getString("property_style_classification_interval"),
+        super(MessageBundle.format("property_style_classification_interval"),
               IconBundle.getIcon("16_classification_interval"),
               IconBundle.getIcon("preview_style_class2").getImage(),
               "");
@@ -268,7 +267,7 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
         guiTable = new JXTable();
         guiInvert = new JButton();
 
-        guiRemoveAll.setText(MessageBundle.getString("remove_all_values")); // NOI18N
+        guiRemoveAll.setText(MessageBundle.format("remove_all_values")); // NOI18N
         guiRemoveAll.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiRemoveAllActionPerformed(evt);
@@ -277,7 +276,7 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
 
         jPanel1.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 5));
 
-        guiLblProperty.setText(MessageBundle.getString("property")); // NOI18N
+        guiLblProperty.setText(MessageBundle.format("property")); // NOI18N
 
         guiProperty.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -285,9 +284,9 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
             }
         });
 
-        guiLblPalette.setText(MessageBundle.getString("palette")); // NOI18N
+        guiLblPalette.setText(MessageBundle.format("palette")); // NOI18N
 
-        guiLblModel.setText(MessageBundle.getString("model")); // NOI18N
+        guiLblModel.setText(MessageBundle.format("model")); // NOI18N
 
         guiModel.setText(" ");
         guiModel.addActionListener(new ActionListener() {
@@ -296,15 +295,14 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
             }
         });
 
-        guiGenerate.setText(MessageBundle.getString("generate")); // NOI18N
+        guiGenerate.setText(MessageBundle.format("generate")); // NOI18N
         guiGenerate.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiGenerateActionPerformed(evt);
             }
         });
 
-        ResourceBundle bundle = ResourceBundle.getBundle("org/geotoolkit/gui/swing/resource/Bundle"); // NOI18N
-        guiLblNormalize.setText(bundle.getString("normalize")); // NOI18N
+        guiLblNormalize.setText(MessageBundle.format("normalize")); // NOI18N
 
         guiNormalize.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -312,14 +310,14 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
             }
         });
 
-        guiClassify.setText(MessageBundle.getString("classify")); // NOI18N
+        guiClassify.setText(MessageBundle.format("classify")); // NOI18N
         guiClassify.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiClassifyActionPerformed(evt);
             }
         });
 
-        guiLblMethod.setText(MessageBundle.getString("method")); // NOI18N
+        guiLblMethod.setText(MessageBundle.format("method")); // NOI18N
 
         guiMethod.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -327,7 +325,7 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
             }
         });
 
-        guiLblClasses.setText(MessageBundle.getString("classes")); // NOI18N
+        guiLblClasses.setText(MessageBundle.format("classes")); // NOI18N
 
         guiClasses.setModel(new SpinnerNumberModel(Integer.valueOf(5), Integer.valueOf(1), null, Integer.valueOf(1)));
         guiClasses.addChangeListener(new ChangeListener() {
@@ -408,7 +406,7 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
 
         jScrollPane1.setViewportView(guiTable);
 
-        guiInvert.setText(bundle.getString("invert_palette")); // NOI18N
+        guiInvert.setText(MessageBundle.format("invert_palette")); // NOI18N
         guiInvert.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiInvertActionPerformed(evt);
@@ -577,9 +575,9 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
 
                 final String txt;
                 switch(mt){
-                    case EL : txt = MessageBundle.getString("el"); break;
-                    case MANUAL : txt = MessageBundle.getString("manual"); break;
-                    default : txt = MessageBundle.getString("qantile"); break;
+                    case EL : txt = MessageBundle.format("el"); break;
+                    case MANUAL : txt = MessageBundle.format("manual"); break;
+                    default : txt = MessageBundle.format("qantile"); break;
                 }
                 MethodRenderer.this.setText(txt);
             }
@@ -860,8 +858,8 @@ public class JClassificationIntervalStylePanel extends AbstractPropertyPane{
         public String getColumnName(final int columnIndex) {
             switch(columnIndex){
                 case 0: return "";
-                case 1: return MessageBundle.getString("value");
-                case 2: return MessageBundle.getString("title");
+                case 1: return MessageBundle.format("value");
+                case 2: return MessageBundle.format("title");
                 case 3: return "";
             }
 

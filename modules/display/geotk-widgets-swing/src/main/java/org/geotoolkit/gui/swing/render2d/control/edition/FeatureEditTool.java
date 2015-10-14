@@ -30,7 +30,7 @@ import org.apache.sis.util.iso.SimpleInternationalString;
 public class FeatureEditTool extends AbstractEditionTool {
 
     public FeatureEditTool() {
-        super(2000,"featureEdit", MessageBundle.getI18NString("editor"),
+        super(2000,"featureEdit", MessageBundle.formatInternational(MessageBundle.Keys.editor),
              new SimpleInternationalString("editor"), 
              null,FeatureMapLayer.class);
     }

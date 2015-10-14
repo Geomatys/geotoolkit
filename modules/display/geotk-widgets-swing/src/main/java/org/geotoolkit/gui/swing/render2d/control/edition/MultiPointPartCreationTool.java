@@ -35,7 +35,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 public class MultiPointPartCreationTool extends AbstractEditionTool {
 
     public MultiPointPartCreationTool() {
-        super(1150,"multipointPartCreation", MessageBundle.getI18NString("createPart"),
+        super(1150,"multipointPartCreation", MessageBundle.formatInternational(MessageBundle.Keys.createPart),
              new SimpleInternationalString("Tool to create part of a MultiPoint."), 
              IconBundle.getIcon("16_add_subpolygon"), FeatureMapLayer.class);
     }

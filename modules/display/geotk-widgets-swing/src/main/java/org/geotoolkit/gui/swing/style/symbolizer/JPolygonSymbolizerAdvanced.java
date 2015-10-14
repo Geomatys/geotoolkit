@@ -151,7 +151,7 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
 
         setOpaque(false);
 
-        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
+        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("general"))); // NOI18N
         jPanel1.setOpaque(false);
 
         guiGeom.addPropertyChangeListener(new PropertyChangeListener() {
@@ -190,7 +190,7 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel4.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("displacement"))); // NOI18N
+        jPanel4.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("displacement"))); // NOI18N
         jPanel4.setOpaque(false);
 
         guiOffset.addPropertyChangeListener(new PropertyChangeListener() {
@@ -226,7 +226,7 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fill"))); // NOI18N
+        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("fill"))); // NOI18N
         jPanel2.setOpaque(false);
 
         guiFill.addPropertyChangeListener(new PropertyChangeListener() {
@@ -252,7 +252,7 @@ public class JPolygonSymbolizerAdvanced extends StyleElementEditor<PolygonSymbol
                 .addContainerGap())
         );
 
-        jPanel3.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("stroke"))); // NOI18N
+        jPanel3.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("stroke"))); // NOI18N
         jPanel3.setOpaque(false);
 
         guiStroke.addPropertyChangeListener(new PropertyChangeListener() {

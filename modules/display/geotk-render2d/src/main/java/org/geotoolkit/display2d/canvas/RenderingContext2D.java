@@ -39,7 +39,6 @@ import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import org.apache.sis.geometry.Envelope2D;
-import org.apache.sis.geometry.GeneralDirectPosition;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display.canvas.CanvasUtilities;
@@ -61,7 +60,6 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -75,7 +73,7 @@ import org.opengis.util.FactoryException;
  */
 public class RenderingContext2D implements RenderingContext{
 
-    private static final Logger LOGGER = Logging.getLogger(RenderingContext2D.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.canvas");
     private static final int MAX_WRAP = 3;
     private static final Map<Font,FontMetrics> fontMetrics = new HashMap<>();
 
@@ -83,7 +81,7 @@ public class RenderingContext2D implements RenderingContext{
     private static final int OBJECTIVE_TRS = 1;
     private static final int OTHER_TRS = 2;
     private int current = DISPLAY_TRS;
-    
+
     public final GeometryFactory GF = new GeometryFactory();
 
     /**
@@ -255,7 +253,7 @@ public class RenderingContext2D implements RenderingContext{
 
         //calculate the resolution -----------------------------------------------
         this.dpi = dpi;
-        this.resolution = new double[2]; //-- explicitely exprime resolution only into multidimensional CRS horizontal 2D part 
+        this.resolution = new double[2]; //-- explicitely exprime resolution only into multidimensional CRS horizontal 2D part
         this.resolution[0] = canvasObjectiveBounds.getWidth()/canvasDisplayBounds.getWidth();
         this.resolution[1] = canvasObjectiveBounds.getHeight()/canvasDisplayBounds.getHeight();
         adjustResolutionWithDPI(resolution);
@@ -369,22 +367,22 @@ public class RenderingContext2D implements RenderingContext{
                 if(nbRight>MAX_WRAP) nbRight = MAX_WRAP;
                 wraps.wrapDecNb = nbLeft;
                 wraps.wrapIncNb = nbRight;
-                
+
                 //increment by one for possible geometry overlaping the meridian
                 //those will need and extra repetition
                 nbLeft++;
                 nbRight++;
-                
+
                 //normal transforms
                 wraps.wrapObj = new AffineTransform2D(new AffineTransform());
                 wraps.wrapObjToDisp = objToDisp;
-                
+
                 //decreasing and increasing wraps
                 wraps.wrapDecObjToDisp = new AffineTransform2D[nbLeft];
                 wraps.wrapDecObj       = new AffineTransform2D[nbLeft];
                 wraps.wrapIncObjToDisp = new AffineTransform2D[nbRight];
                 wraps.wrapIncObj       = new AffineTransform2D[nbRight];
-                
+
                 final AffineTransform dif = new AffineTransform();
                 final AffineTransform step = new AffineTransform(objToDisp);
                 dif.setToTranslation(x2-x1,y2-y1);
@@ -410,20 +408,20 @@ public class RenderingContext2D implements RenderingContext{
                     final double max = canvasObjectiveBBox2D.getMaximum(0);
                     env.setRange(0, min, max);
                     wraps.wrapDecLine = GF.createLineString(new Coordinate[]{
-                        new Coordinate(min, env.getMinimum(1)), 
+                        new Coordinate(min, env.getMinimum(1)),
                         new Coordinate(max, env.getMinimum(1))});
                     wraps.wrapIncLine = GF.createLineString(new Coordinate[]{
-                        new Coordinate(min, env.getMaximum(1)), 
+                        new Coordinate(min, env.getMaximum(1)),
                         new Coordinate(max, env.getMaximum(1))});
                 }else{
                     final double min = canvasObjectiveBBox2D.getMinimum(1);
                     final double max = canvasObjectiveBBox2D.getMaximum(1);
                     env.setRange(1, min, max);
                     wraps.wrapDecLine = GF.createLineString(new Coordinate[]{
-                        new Coordinate(env.getMinimum(0), min), 
+                        new Coordinate(env.getMinimum(0), min),
                         new Coordinate(env.getMinimum(0), max)});
                     wraps.wrapIncLine = GF.createLineString(new Coordinate[]{
-                        new Coordinate(env.getMaximum(0), min), 
+                        new Coordinate(env.getMaximum(0), min),
                         new Coordinate(env.getMaximum(0), max)});
                 }
                 wraps.wrapArea = (com.vividsolutions.jts.geom.Polygon)JTS.toGeometry(env);
@@ -733,10 +731,10 @@ public class RenderingContext2D implements RenderingContext{
             return getResolution();
         } else {
             final double[] newRes = new double[2];
-            
+
             assert resolution.length == 2 : "RenderingContext2D : Resolution array should have length equals to 2. Founded length : "+resolution.length;
-            assert CRS.equalsIgnoreMetadata(canvasObjectiveBBox2D.getCoordinateReferenceSystem(), objectiveCRS2D) : "RenderingContext2D : canvasObjectiveBBox2D should own same CRS than objectiveCRS2D"; 
-            
+            assert CRS.equalsIgnoreMetadata(canvasObjectiveBBox2D.getCoordinateReferenceSystem(), objectiveCRS2D) : "RenderingContext2D : canvasObjectiveBBox2D should own same CRS than objectiveCRS2D";
+
             try {
                 final CoordinateReferenceSystem target2DCRS = CRSUtilities.getCRS2D(crs);
                 ReferencingUtilities.convertResolution(canvasObjectiveBBox2D, resolution, target2DCRS, newRes);

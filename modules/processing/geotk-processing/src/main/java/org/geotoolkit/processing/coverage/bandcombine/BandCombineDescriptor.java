@@ -24,8 +24,8 @@ import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -57,16 +57,16 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
     static {
         Map<String, Object> propertiesInCov = new HashMap<String, Object>();
         propertiesInCov.put(IdentifiedObject.NAME_KEY,        "coverages");
-        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "bandcombine.inCoverages"));
-        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "bandcombine.inCoveragesDesc"));
+        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_inCoverages));
+        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_inCoveragesDesc));
         IN_COVERAGES = new DefaultParameterDescriptor<Coverage[]>(propertiesInCov, Coverage[].class, null, null, null, null, null, true);
         
         INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_COVERAGES);
 
         Map<String, Object> propertiesOutCov = new HashMap<String, Object>();
         propertiesOutCov.put(IdentifiedObject.NAME_KEY,        "result");
-        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "bandcombine.outCoverage"));
-        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "bandcombine.outCoverageDesc"));
+        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_outCoverage));
+        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandcombine_outCoverageDesc));
         OUT_COVERAGE = new DefaultParameterDescriptor<Coverage>(propertiesOutCov, Coverage.class, null, null, null, null, null, true);
 
         OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_COVERAGE);

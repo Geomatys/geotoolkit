@@ -20,7 +20,6 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FileFeatureStoreFactory;
@@ -62,8 +61,8 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
      */
     public static final ParameterDescriptor<Integer> COORDINATE_ACCURACY = new ParameterBuilder()
             .addName("coordinate_accuracy")
-            .addName(new ResourceInternationalString("org/geotoolkit/geojson/bundle", "coordinate_accuracy"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/geojson/bundle", "coordinate_accuracy_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.coordinate_accuracy))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.coordinate_accuracy_remarks))
             .setRequired(false)
             .create(Integer.class, 7);
 
@@ -90,7 +89,7 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
      */
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/geojson/bundle", "datastoreTitle");
+        return Bundle.formatInternational(Bundle.Keys.datastoreTitle);
     }
 
     /**
@@ -102,7 +101,7 @@ public class GeoJSONFeatureStoreFactory extends AbstractFileFeatureStoreFactory 
      */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/geojson/bundle", "datastoreDescription");
+        return Bundle.formatInternational(Bundle.Keys.datastoreDescription);
     }
 
     /**

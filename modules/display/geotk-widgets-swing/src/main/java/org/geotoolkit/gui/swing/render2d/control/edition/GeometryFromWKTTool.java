@@ -33,7 +33,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 public class GeometryFromWKTTool extends AbstractEditionTool {
 
     public GeometryFromWKTTool() {
-        super(100,"geometryFromWKT", MessageBundle.getI18NString("wkt"),
+        super(100,"geometryFromWKT", MessageBundle.formatInternational(MessageBundle.Keys.wkt),
              new SimpleInternationalString("Tool for moving editing geometry using WKT."), 
              IconBundle.getIcon("16_wkt"),FeatureMapLayer.class);
     }

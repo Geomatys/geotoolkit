@@ -311,7 +311,7 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
         try {
             ((SpatialRefSysMap) definitions).dispose();
         } catch (SQLException exception) {
-            Logging.unexpectedException(DirectPostgisFactory.class, "dispose", exception);
+            Logging.unexpectedException(null, DirectPostgisFactory.class, "dispose", exception);
         }
         authority   = null;
         authorities = null;

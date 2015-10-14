@@ -62,7 +62,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class FilterTestConstants {
 
 
-    private static final Logger LOGGER = Logging.getLogger(FilterTestConstants.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
 
     public static final FilterFactory2 FF = (FilterFactory2)
             FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));

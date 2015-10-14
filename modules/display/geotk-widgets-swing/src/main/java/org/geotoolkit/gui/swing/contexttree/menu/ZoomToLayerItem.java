@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.geom.NoninvertibleTransformException;
 import java.lang.ref.WeakReference;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import org.geotoolkit.gui.swing.contexttree.AbstractTreePopupItem;
@@ -19,6 +18,7 @@ import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -32,7 +32,7 @@ public class ZoomToLayerItem extends AbstractTreePopupItem{
      * Creates a new instance of ZoomToLayerItem
      */
     public ZoomToLayerItem() {
-        super(MessageBundle.getString("map_zoom_to_layer"));
+        super(MessageBundle.format("map_zoom_to_layer"));
 
         addActionListener(new ActionListener() {
             @Override
@@ -43,10 +43,8 @@ public class ZoomToLayerItem extends AbstractTreePopupItem{
                 if(map == null || layer == null) return;
                 try {
                     map.getCanvas().setVisibleArea(layer.getBounds());
-                } catch (NoninvertibleTransformException ex) {
-                    Logger.getLogger(ZoomToLayerItem.class.getName()).log(Level.WARNING, null, ex);
-                } catch (TransformException ex) {
-                    Logger.getLogger(ZoomToLayerItem.class.getName()).log(Level.WARNING, null, ex);
+                } catch (NoninvertibleTransformException | TransformException ex) {
+                    Logging.getLogger("org.geotoolkit.gui.swing.contexttree.menu").log(Level.WARNING, null, ex);
                 }
             }
         });

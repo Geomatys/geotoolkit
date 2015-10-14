@@ -507,7 +507,7 @@ public class IdentifiedObjectFinder {
                     }
                 }
             }
-            final Logger logger = Logging.getLogger(IdentifiedObjectFinder.class);
+            final Logger logger = Logging.getLogger("org.geotoolkit.referencing.factory");
             logger.log(Level.FINEST, "No match found for \"{0}\" among {1}",
                     new Object[] {object.getName(), codes});
         }

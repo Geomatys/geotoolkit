@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
@@ -48,7 +47,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public class LenghtHandler implements CanvasHandler {
 
-    private static final Logger LOGGER = Logging.getLogger(LenghtHandler.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.control.information");
 
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
@@ -144,8 +143,8 @@ public class LenghtHandler implements CanvasHandler {
         public void mouseExited(MouseEvent e) {
             map.setCursor(null);
         }
-        
-        
+
+
 
     }
 

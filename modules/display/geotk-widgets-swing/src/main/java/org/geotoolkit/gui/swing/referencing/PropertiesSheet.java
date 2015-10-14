@@ -42,6 +42,7 @@ import org.geotoolkit.io.X364;
 import org.apache.sis.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.resources.Vocabulary;
+import org.apache.sis.io.wkt.Warnings;
 import org.apache.sis.util.CharSequences;
 import org.apache.sis.util.StringBuilders;
 
@@ -205,7 +206,8 @@ public class PropertiesSheet extends JComponent {
         String text, warning;
         try {
             text = formatter.format(item);
-            warning = formatter.getWarning();
+            Warnings w = formatter.getWarnings();
+            warning = (w != null) ? w.toString() : null;
         } catch (RuntimeException e) {
             text = String.valueOf(item.getName());
             warning = e.getLocalizedMessage();

@@ -46,7 +46,7 @@ import org.geotoolkit.math.XMath;
  */
 public class Map3D extends AbstractCanvas<Scene3D> implements GLEventListener {
 
-    public static final Logger LOGGER = Logging.getLogger(Map3D.class);
+    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display3d");
 
     /**
      * Keep it, we might need it for dispose.

@@ -42,7 +42,7 @@ import org.opengis.style.Symbolizer;
  */
 public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? extends Symbolizer>> implements SymbolizerRenderer{
 
-    protected static final Logger LOGGER = Logging.getLogger(AbstractSymbolizerRenderer.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.style.renderer");
 
     protected final SymbolizerRendererService service;
     protected final RenderingContext2D renderingContext;
@@ -75,7 +75,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
     public SymbolizerRendererService getService() {
         return service;
     }
-    
+
     @Override
     public void portray(final Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
         while(graphics.hasNext()){

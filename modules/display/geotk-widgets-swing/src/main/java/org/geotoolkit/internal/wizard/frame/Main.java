@@ -255,7 +255,7 @@ public final class Main extends JFrame implements ActionListener {
         if (ArraysExt.containsIgnoreCase(args, "--nimbus")) try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (ReflectiveOperationException | UnsupportedLookAndFeelException e) {
-            Logging.recoverableException(Main.class, "<init>", e);
+            Logging.recoverableException(null, Main.class, "<init>", e);
         } else {
             GraphicsUtilities.setLookAndFeel(Main.class, "<init>");
         }

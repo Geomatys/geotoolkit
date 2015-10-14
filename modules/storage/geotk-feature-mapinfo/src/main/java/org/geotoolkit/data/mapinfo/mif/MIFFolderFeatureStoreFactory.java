@@ -20,7 +20,6 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -68,12 +67,12 @@ public class MIFFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/mapinfo/bundle", "datastoreFolderDescription");
+        return Bundle.formatInternational(Bundle.Keys.datastoreFolderDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/mapinfo/bundle", "datastoreFolderTitle");
+        return Bundle.formatInternational(Bundle.Keys.datastoreFolderTitle);
     }
 
 

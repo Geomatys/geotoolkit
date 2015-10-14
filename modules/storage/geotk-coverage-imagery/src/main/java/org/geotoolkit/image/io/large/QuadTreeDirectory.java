@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Create tree directory made, starting from tree root directory, define by user.
@@ -31,7 +32,7 @@ import java.util.logging.Logger;
  */
 public class QuadTreeDirectory {
 
-    private static final Logger LOGGER = Logger.getLogger(QuadTreeDirectory.class.getName());
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
 
     private static final String D00 = "/00";
     private static final String D01 = "/01";
@@ -71,7 +72,7 @@ public class QuadTreeDirectory {
 
     /**
      * Root directory where tiles are stored.
-     * 
+     *
      * @return root directory
      */
     public String getTreeRootPath() {

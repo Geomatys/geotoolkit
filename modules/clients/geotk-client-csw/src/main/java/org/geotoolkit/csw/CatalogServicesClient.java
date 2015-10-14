@@ -51,7 +51,7 @@ public class CatalogServicesClient extends AbstractClient {
     /**
      * Used for debugging purpose
      */
-    private static final Logger LOGGER = Logging.getLogger(CatalogServicesClient.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw");
     /**
      * Stored capabilities object that can be updated by calling {@link CatalogServicesServer.updateGetCapabilities}
      */

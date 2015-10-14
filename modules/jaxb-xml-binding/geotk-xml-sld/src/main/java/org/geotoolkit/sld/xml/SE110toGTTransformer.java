@@ -208,7 +208,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         try {
             uri = new URI(ort.getHref());
         } catch (URISyntaxException ex) {
-            Logging.getLogger(SLD110toGTTransformer.class).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
         }
 
         if (uri != null) {
@@ -453,7 +453,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                 try{
                     return xmlUtilities.readFeatureTypeStyle(or, Specification.SymbologyEncoding.V_1_1_0);
                 }catch(JAXBException ex){
-                    Logging.getLogger(SE110toGTTransformer.class).log(Level.WARNING, null, ex);
+                    Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                 }
                 return null;
             }
@@ -556,7 +556,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             try{
                 return xmlUtilities.readRule(or, Specification.SymbologyEncoding.V_1_1_0);
             } catch (JAXBException ex) {
-                Logging.getLogger(SE110toGTTransformer.class).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
             }
             return null;
         }
@@ -1082,7 +1082,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                         final BufferedImage image = ImageIO.read(is);
                         icon = new ImageIcon(image);
                     }catch(IOException ex){
-                        Logging.getLogger(GTtoSE110Transformer.class.getName()).log(Level.WARNING, null, ex);
+                        Logging.getLogger("org.geotoolkit.sld.xml").log(Level.WARNING, null, ex);
                     }
                 }
             }

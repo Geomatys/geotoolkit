@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
@@ -40,7 +39,6 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrim
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
@@ -58,6 +56,7 @@ import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Position;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Class with static methods to help the conversion process between JTS
@@ -96,10 +95,8 @@ public final class JTSUtils {
                 final String strCRS = SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1);
                 try {
                     crs = CRS.decode(strCRS);
-                } catch (NoSuchAuthorityCodeException ex) {
-                    Logger.getLogger(JTSUtils.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (FactoryException ex) {
-                    Logger.getLogger(JTSUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    Logging.getLogger("org.geotoolkit.geometry.isoonjts").log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -121,7 +118,7 @@ public final class JTSUtils {
                 pointList.add(coordinateToDirectPosition(candidate.getCoordinateN(i), crs));
             }
             return (JTSLineString)ls;
-           
+
         } else if (jtsGeom instanceof com.vividsolutions.jts.geom.LinearRing) {
             return linearRingToRing((com.vividsolutions.jts.geom.LinearRing) jtsGeom, crs);
 
@@ -139,7 +136,7 @@ public final class JTSUtils {
             SurfaceBoundary boundary = pf.createSurfaceBoundary(externalRing, internalRings);
             Polygon polygon = gf.createPolygon(boundary);
             return (JTSPolygon) polygon;
-            
+
             /*ArrayList<Polygon> patches = new ArrayList<Polygon>();
             patches.add(polygon);
             PolyhedralSurface result = gf.createPolyhedralSurface(patches);
@@ -483,7 +480,7 @@ public final class JTSUtils {
     /**
      * Creates a JTS LineString from the four corners of the specified Envelope.
      * @param envelope The Envelope to be converted
-     * @return A JTS Geometry 
+     * @return A JTS Geometry
      */
     public static com.vividsolutions.jts.geom.Geometry getEnvelopeGeometry(
             final Envelope envelope) {

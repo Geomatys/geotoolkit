@@ -18,7 +18,6 @@
 package org.geotoolkit.gui.swing.style.symbolizer;
 
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 
 import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.display2d.ext.isoline.symbolizer.IsolineSymbolizer;
@@ -43,6 +42,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 import static org.geotoolkit.style.StyleConstants.*;
 
@@ -54,8 +54,6 @@ import static org.geotoolkit.style.StyleConstants.*;
 public class JIsolineSymbolizerPane extends StyleElementEditor<IsolineSymbolizer> implements PropertyPane {
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
-
-    private static final String BUNDLE_PATH = "org/geotoolkit/gui/swing/resource/Bundle";
 
     private final JColorMapPane guiColorMapPane = new JColorMapPane();
     private final JLineSymbolizerPane guiLineSymbolizerPane = new JLineSymbolizerPane();
@@ -69,10 +67,10 @@ public class JIsolineSymbolizerPane extends StyleElementEditor<IsolineSymbolizer
 
     public JIsolineSymbolizerPane() {
         super(IsolineSymbolizer.class);
-        guiShowTextCB.setText(new ResourceInternationalString(BUNDLE_PATH, "isolineEditor.showLabel").toString());
+        guiShowTextCB.setText(MessageBundle.format("isolineEditor_showLabel"));
         guiShowTextCB.setSelected(false);
 
-        guiIsolineOnlyCB.setText(new ResourceInternationalString(BUNDLE_PATH, "isolineEditor.isolineOnly").toString());
+        guiIsolineOnlyCB.setText(MessageBundle.format("isolineEditor_isolineOnly"));
         guiIsolineOnlyCB.setSelected(false);
 
         setLayout(new BorderLayout());
@@ -82,9 +80,9 @@ public class JIsolineSymbolizerPane extends StyleElementEditor<IsolineSymbolizer
         topPanel.add(guiIsolineOnlyCB);
 
         JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.LEFT);
-        tabbedPane.add(new ResourceInternationalString(BUNDLE_PATH, "isolineEditor.colormap").toString(), guiColorMapPane);
-        tabbedPane.add(new ResourceInternationalString(BUNDLE_PATH, "isolineEditor.line").toString(), guiLineSymbolizerPane);
-        tabbedPane.add(new ResourceInternationalString(BUNDLE_PATH, "isolineEditor.text").toString(), guiTextSymbolizerPane);
+        tabbedPane.add(MessageBundle.format("isolineEditor_colormap"), guiColorMapPane);
+        tabbedPane.add(MessageBundle.format("isolineEditor_line"), guiLineSymbolizerPane);
+        tabbedPane.add(MessageBundle.format("isolineEditor_text"), guiTextSymbolizerPane);
         add(BorderLayout.NORTH, topPanel);
         add(BorderLayout.CENTER, tabbedPane);
 
@@ -244,7 +242,7 @@ public class JIsolineSymbolizerPane extends StyleElementEditor<IsolineSymbolizer
 
     @Override
     public String getTitle() {
-        return new ResourceInternationalString(BUNDLE_PATH, "isolineEditor.displayName").toString();
+        return MessageBundle.format("isolineEditor_displayName");
     }
 
     @Override
@@ -260,7 +258,7 @@ public class JIsolineSymbolizerPane extends StyleElementEditor<IsolineSymbolizer
 
     @Override
     public String getToolTip() {
-        return new ResourceInternationalString(BUNDLE_PATH, "isolineEditor.displayName").toString();
+        return MessageBundle.format("isolineEditor_displayName");
     }
 
     @Override

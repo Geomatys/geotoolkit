@@ -25,7 +25,6 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
@@ -63,8 +62,8 @@ public class PostgresFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory
      */
     public static final ParameterDescriptor<Boolean> LOOSEBBOX = new ParameterBuilder()
             .addName("Loose bbox")
-            .addName(new ResourceInternationalString("org/geotoolkit/db/postgres/bundle", "lbbox"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/db/postgres/bundle", "lbbox_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.lbbox))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.lbbox_remarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.TRUE);
 

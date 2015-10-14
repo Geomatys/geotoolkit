@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
@@ -47,6 +46,7 @@ import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.parameter.Parameters.*;
 
 /**
@@ -66,7 +66,7 @@ public class SpatialJoinProcess extends AbstractProcess {
 
     /**
      *  {@inheritDoc }
-     */ 
+     */
     @Override
     protected void execute() {
         final FeatureCollection sourceFeatureList = value(VectorDescriptor.FEATURE_IN, inputParameters);
@@ -74,7 +74,7 @@ public class SpatialJoinProcess extends AbstractProcess {
         final boolean method = value(SpatialJoinDescriptor.INTERSECT, inputParameters);
 
         final FeatureCollection resultFeatureList =
-                new SpatialJoinFeatureCollection(sourceFeatureList, targetFeatureList, method); 
+                new SpatialJoinFeatureCollection(sourceFeatureList, targetFeatureList, method);
 
         getOrCreate(VectorDescriptor.FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
@@ -143,7 +143,7 @@ public class SpatialJoinProcess extends AbstractProcess {
                 try {
                     featureOut = (FeatureCollection) proc.call().parameter("feature_out").getValue();
                 } catch (ProcessException ex) {
-                    Logger.getLogger(SpatialJoinProcess.class.getName()).log(Level.WARNING, null, ex);
+                    Logging.getLogger("org.geotoolkit.processing.vector.spatialjoin").log(Level.WARNING, null, ex);
                     return null;
                 }
 

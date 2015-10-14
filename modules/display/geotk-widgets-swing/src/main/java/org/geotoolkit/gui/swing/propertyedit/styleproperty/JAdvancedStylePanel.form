@@ -34,7 +34,7 @@
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
               <JTabbedPaneConstraints tabName="Graphic&#xa;">
                 <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="xmlGraphic" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="xmlGraphic" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                 </Property>
               </JTabbedPaneConstraints>
             </Constraint>
@@ -83,7 +83,7 @@
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
               <JTabbedPaneConstraints tabName="XML">
                 <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="xmlview" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="xmlview" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                 </Property>
               </JTabbedPaneConstraints>
             </Constraint>
@@ -105,7 +105,7 @@
                 <Component class="javax.swing.JButton" name="guiApply">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="apply" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="apply" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                   <Events>

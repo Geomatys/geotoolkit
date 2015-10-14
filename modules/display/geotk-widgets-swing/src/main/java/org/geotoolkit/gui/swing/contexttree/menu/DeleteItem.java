@@ -47,7 +47,7 @@ public class DeleteItem extends AbstractTreePopupItem{
      * delete item for jcontexttree
      */
     public DeleteItem(){
-        super( MessageBundle.getString("contexttreetable_delete") );
+        super( MessageBundle.format("contexttreetable_delete") );
         init();
     }
 

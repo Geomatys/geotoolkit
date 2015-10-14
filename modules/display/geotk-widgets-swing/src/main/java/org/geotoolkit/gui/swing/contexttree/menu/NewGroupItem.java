@@ -47,7 +47,7 @@ public class NewGroupItem extends AbstractTreePopupItem{
      * delete item for jcontexttree
      */
     public NewGroupItem(){
-        super( MessageBundle.getString("contexttreetable_newgroup") );
+        super( MessageBundle.format("contexttreetable_newgroup") );
         init();
     }
 

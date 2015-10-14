@@ -32,15 +32,15 @@ import org.apache.sis.util.logging.Logging;
 
 /**
  * This element provides information about the status of the search request.
- *  
+ *
  * status    - status of the search
  * timestamp - The date and time when the result set was last updated (ISO 8601 format)
- *          
- * 
+ *
+ *
  * <p>Java class for RequestStatusType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="RequestStatusType">
  *   &lt;complexContent>
@@ -51,16 +51,16 @@ import org.apache.sis.util.logging.Logging;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestStatusType")
 public class RequestStatusType implements RequestStatus {
 
-    private static final Logger LOGGER = Logging.getLogger(RequestStatusType.class);
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw.xml.v200");
+
     @XmlAttribute(required = true)
     private StatusType status;
     @XmlAttribute
@@ -76,21 +76,21 @@ public class RequestStatusType implements RequestStatus {
         }
         factory = candidate;
     }
-    
+
      /**
      * An empty constructor used by JAXB
      */
     RequestStatusType() {
-        
+
     }
-    
+
     /**
      * Build a new request statuc with the specified XML gregorian calendar.
      */
     public RequestStatusType(final XMLGregorianCalendar timestamp) {
         this.timestamp = timestamp;
     }
-    
+
     /**
      * Build a new request statuc with the specified .
      */
@@ -104,7 +104,7 @@ public class RequestStatusType implements RequestStatus {
     }
     /**
      * Gets the value of the status property.
-     * 
+     *
      */
     public StatusType getStatus() {
         return status;
@@ -112,7 +112,7 @@ public class RequestStatusType implements RequestStatus {
 
     /**
      * Sets the value of the status property.
-     * 
+     *
      */
     public void setStatus(final StatusType value) {
         this.status = value;
@@ -120,7 +120,7 @@ public class RequestStatusType implements RequestStatus {
 
     /**
      * Gets the value of the timestamp property.
-     * 
+     *
      */
     public XMLGregorianCalendar getTimestamp() {
         return timestamp;
@@ -132,13 +132,13 @@ public class RequestStatusType implements RequestStatus {
     public void setTimestamp(final XMLGregorianCalendar value) {
         this.timestamp = value;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[requestStatusType]");
         if (status != null)
             s.append("status: ").append(status.value()).append('\n');
-        
+
         if (timestamp != null)
             s.append("timeStamp: ").append(timestamp);
         return s.toString();

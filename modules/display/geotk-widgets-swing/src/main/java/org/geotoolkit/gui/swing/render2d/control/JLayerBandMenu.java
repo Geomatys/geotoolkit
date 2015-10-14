@@ -69,7 +69,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
     private WeakReference<JMap2D> map = null;
 
     public JLayerBandMenu(final JNavigator navigator){
-        super(MessageBundle.getString("layers"));
+        super(MessageBundle.format("layers"));
         this.navigator = navigator;
     }
 

@@ -18,13 +18,13 @@ package org.geotoolkit.processing.coverage.merge;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.ProcessBundle;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.opengis.coverage.Coverage;
 import org.opengis.geometry.Envelope;
@@ -69,20 +69,20 @@ public class MergeDescriptor extends AbstractProcessDescriptor {
     static {
         Map<String, Object> propertiesInCov = new HashMap<String, Object>();
         propertiesInCov.put(IdentifiedObject.NAME_KEY,        "coverages");
-        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "merge.inCoverages"));
-        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "merge.inCoveragesDesc"));
+        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inCoverages));
+        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inCoveragesDesc));
         IN_COVERAGES = new DefaultParameterDescriptor<Coverage[]>(propertiesInCov, Coverage[].class, null, null, null, null, null, true);
         
         Map<String, Object> propertiesInEnv = new HashMap<String, Object>();
         propertiesInEnv.put(IdentifiedObject.NAME_KEY,        "envelope");
-        propertiesInEnv.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "merge.inEnvelope"));
-        propertiesInEnv.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "merge.inEnvelopeDesc"));
+        propertiesInEnv.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inEnvelope));
+        propertiesInEnv.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inEnvelopeDesc));
         IN_ENVELOPE = new DefaultParameterDescriptor<Envelope>(propertiesInEnv, Envelope.class, null, null, null, null, null, true);
 
         Map<String, Object> propertiesInResolution = new HashMap<String, Object>();
         propertiesInResolution.put(IdentifiedObject.NAME_KEY,        "resolution");
-        propertiesInResolution.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "merge.inResolution"));
-        propertiesInResolution.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "merge.inResolutionDesc"));
+        propertiesInResolution.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inResolution));
+        propertiesInResolution.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inResolutionDesc));
         IN_RESOLUTION = new DefaultParameterDescriptor<Double>(propertiesInResolution, Double.class, null, null, null, null, null, true);
 
         
@@ -90,8 +90,8 @@ public class MergeDescriptor extends AbstractProcessDescriptor {
 
         Map<String, Object> propertiesOutCov = new HashMap<String, Object>();
         propertiesOutCov.put(IdentifiedObject.NAME_KEY,        "result");
-        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "merge.outCoverage"));
-        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "merge.outCoverageDesc"));
+        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_outCoverage));
+        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_outCoverageDesc));
         OUT_COVERAGE = new DefaultParameterDescriptor<Coverage>(propertiesOutCov, Coverage.class, null, null, null, null, null, true);
 
         OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_COVERAGE);

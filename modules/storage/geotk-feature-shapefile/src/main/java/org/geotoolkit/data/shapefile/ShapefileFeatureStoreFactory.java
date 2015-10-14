@@ -45,7 +45,6 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -97,8 +96,8 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
      */
     public static final ParameterDescriptor<Boolean> MEMORY_MAPPED = new ParameterBuilder()
             .addName("memory mapped buffer")
-            .addName(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "memory mapped buffer"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "memory mapped buffer_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.memory_mapped_buffer))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.memory_mapped_buffer_remarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.FALSE);
 
@@ -107,8 +106,8 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
      */
     public static final ParameterDescriptor<Boolean> CREATE_SPATIAL_INDEX = new ParameterBuilder()
             .addName("create spatial index")
-            .addName(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "create spatial index"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "create spatial index_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.create_spatial_index))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.create_spatial_index_remarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.TRUE);
 
@@ -117,8 +116,8 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
      */
     public static final ParameterDescriptor<Charset> DBFCHARSET = new ParameterBuilder()
             .addName("charset")
-            .addName(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "charset"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "charset_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.charset))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.charset_remarks))
             .setRequired(false)
             .create(Charset.class, Charset.forName("ISO-8859-1"));
 
@@ -127,8 +126,8 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
      */
     public static final ParameterDescriptor<Boolean> LOAD_QIX = new ParameterBuilder()
             .addName("load qix")
-            .addName(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "load qix"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "load qix_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.load_qix))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.load_qix_remarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.FALSE);
 
@@ -155,7 +154,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
      */
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "datastoreTitle");
+        return Bundle.formatInternational(Bundle.Keys.datastoreTitle);
     }
 
     /**
@@ -167,7 +166,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
      */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "datastoreDescription");
+        return Bundle.formatInternational(Bundle.Keys.datastoreDescription);
     }
 
     /**

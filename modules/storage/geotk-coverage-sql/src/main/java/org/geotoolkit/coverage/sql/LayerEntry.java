@@ -332,7 +332,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                 entry = domains.getEntry(name);
             } catch (NoSuchRecordException exception) {
                 entry = DomainOfLayerEntry.NULL;
-                Logging.recoverableException(LayerEntry.class, "getDomain", exception);
+                Logging.recoverableException(null, LayerEntry.class, "getDomain", exception);
             }
             domains.release();
             domain = entry;

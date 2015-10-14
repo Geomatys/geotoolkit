@@ -244,10 +244,10 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         jSplitPane1.setDividerLocation(240);
 
         jLabel5.setFont(new Font("Lucida Grande", 1, 13)); // NOI18N
-        jLabel5.setText(MessageBundle.getString("symbolLayer")); // NOI18N
+        jLabel5.setText(MessageBundle.format("symbolLayer")); // NOI18N
 
         jLabel7.setFont(new Font("Lucida Grande", 1, 13)); // NOI18N
-        jLabel7.setText(MessageBundle.getString("symbolPreview")); // NOI18N
+        jLabel7.setText(MessageBundle.format("symbolPreview")); // NOI18N
 
         GroupLayout guiOverviewLabelLayout = new GroupLayout(guiOverviewLabel);
         guiOverviewLabel.setLayout(guiOverviewLabelLayout);
@@ -260,7 +260,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
             .addGap(0, 109, Short.MAX_VALUE)
         );
 
-        jAddButton.setText(MessageBundle.getString("addSymbol")); // NOI18N
+        jAddButton.setText(MessageBundle.format("addSymbol")); // NOI18N
         jAddButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 jAddButtonActionPerformed(evt);
@@ -305,7 +305,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         jSplitPane1.setLeftComponent(jPanel1);
 
         jLabel6.setFont(new Font("Lucida Grande", 1, 13)); // NOI18N
-        jLabel6.setText(MessageBundle.getString("editSymbol")); // NOI18N
+        jLabel6.setText(MessageBundle.format("editSymbol")); // NOI18N
 
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);

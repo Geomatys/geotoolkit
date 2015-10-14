@@ -87,7 +87,7 @@
             <Component class="javax.swing.JButton" name="guiConnect">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="chooserserver.connect" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="chooserserver_connect" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <Events>

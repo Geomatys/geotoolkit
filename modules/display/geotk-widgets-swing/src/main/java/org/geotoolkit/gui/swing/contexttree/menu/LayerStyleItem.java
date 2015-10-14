@@ -51,7 +51,7 @@ public class LayerStyleItem extends AbstractTreePopupItem {
      * Creates a new instance of DefaultContextPropertyPop
      */
     public LayerStyleItem() {
-        super(MessageBundle.getString("contexttreetable_properties"));
+        super(MessageBundle.format("contexttreetable_properties"));
         init();
     }
 

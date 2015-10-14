@@ -74,7 +74,7 @@ public interface WarningProducer extends Localized {
     /**
      * The logger to use as a fallback when no warning listener can be reach.
      */
-    Logger LOGGER = Logging.getLogger(WarningProducer.class);
+    Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io");
 
     /**
      * Invoked when a warning occurred. This method is typically invoked by the class implementing

@@ -36,7 +36,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 public class PolygonHoleCreationTool extends AbstractEditionTool {
 
     public PolygonHoleCreationTool() {
-        super(1270,"polygonHoleCreation", MessageBundle.getI18NString("createHole"),
+        super(1270,"polygonHoleCreation", MessageBundle.formatInternational(MessageBundle.Keys.createHole),
              new SimpleInternationalString("Tool to create holes in a Polygon."), 
              IconBundle.getIcon("16_add_subpolygon"), FeatureMapLayer.class);
     }

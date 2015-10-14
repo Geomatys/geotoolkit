@@ -24,7 +24,6 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
@@ -78,12 +77,12 @@ public class OSMClientFactory extends AbstractClientFactory{
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/osm/bundle", "serverDescription");
+        return Bundle.formatInternational(Bundle.Keys.serverDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/osm/bundle", "serverTitle");
+        return Bundle.formatInternational(Bundle.Keys.serverTitle);
     }
 
 

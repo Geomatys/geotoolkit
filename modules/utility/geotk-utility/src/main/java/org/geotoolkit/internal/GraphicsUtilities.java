@@ -75,7 +75,7 @@ public final class GraphicsUtilities extends Static {
         if (laf != null) try {
             UIManager.setLookAndFeel(laf);
         } catch (ReflectiveOperationException | UnsupportedLookAndFeelException e) {
-            Logging.recoverableException(caller, method, e);
+            Logging.recoverableException(null, caller, method, e);
         }
     }
 

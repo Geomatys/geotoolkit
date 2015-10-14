@@ -87,28 +87,28 @@
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="shapeFill" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="shapeFill" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="displacementX" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="displacementX" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="displacementY" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="displacementY" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel10">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="shapeBorder" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="shapeBorder" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -121,7 +121,7 @@
     <Component class="javax.swing.JLabel" name="guiOffsetLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="offset" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="offset" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

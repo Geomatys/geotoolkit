@@ -20,9 +20,7 @@ import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.db.AbstractJDBCFeatureStoreFactory;
 import org.geotoolkit.db.DefaultJDBCFeatureStore;
 import org.geotoolkit.db.JDBCFeatureStore;
@@ -87,12 +85,12 @@ public class MySQLFeatureStoreFactory extends AbstractJDBCFeatureStoreFactory {
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/mysql/bundle", "datastoreTitle");
+        return Bundle.formatInternational(Bundle.Keys.datastoreTitle);
     }
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/mysql/bundle", "datastoreDescription");
+        return Bundle.formatInternational(Bundle.Keys.datastoreDescription);
     }
 
     @Override

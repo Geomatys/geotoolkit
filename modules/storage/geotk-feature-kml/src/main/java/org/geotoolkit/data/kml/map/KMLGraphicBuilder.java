@@ -41,7 +41,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 
@@ -140,7 +139,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         try {
             builder = new KMLGraphicBuilder();
         } catch (IOException ex) {
-            Logging.getLogger(KMLGraphicBuilder.class).log(Level.SEVERE, "Error initializing KML graphic builder", ex);
+            Logging.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, "Error initializing KML graphic builder", ex);
         }
         INSTANCE = builder;
     }
@@ -647,10 +646,8 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
             try {
                 this.portrayKml(cache.kml);
                 context2D.getLabelRenderer(true).portrayLabels();
-            } catch (TransformException ex) {
-                Logger.getLogger(KmlMapLayer.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(KmlMapLayer.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (TransformException | IOException ex) {
+                Logging.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, null, ex);
             }
 
             cache.styles.clear();

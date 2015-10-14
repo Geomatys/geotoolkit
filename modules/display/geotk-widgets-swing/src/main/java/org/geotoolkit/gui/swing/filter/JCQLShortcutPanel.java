@@ -287,7 +287,7 @@ public class JCQLShortcutPanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.GridBagLayout());
 
-        jXTitledSeparator5.setTitle(MessageBundle.getString("function")); // NOI18N
+        jXTitledSeparator5.setTitle(MessageBundle.format("function")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -295,7 +295,7 @@ public class JCQLShortcutPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 0);
         add(jXTitledSeparator5, gridBagConstraints);
 
-        jXTitledSeparator2.setTitle(MessageBundle.getString("compare")); // NOI18N
+        jXTitledSeparator2.setTitle(MessageBundle.format("compare")); // NOI18N
 
         jPanel4.setLayout(new java.awt.GridLayout(0, 4));
 
@@ -390,7 +390,7 @@ public class JCQLShortcutPanel extends javax.swing.JPanel {
         jButton17.setName(" NOT"); // NOI18N
         jPanel4.add(jButton17);
 
-        jXTitledSeparator3.setTitle(MessageBundle.getString("spatial")); // NOI18N
+        jXTitledSeparator3.setTitle(MessageBundle.format("spatial")); // NOI18N
 
         jPanel5.setLayout(new java.awt.GridLayout(0, 3));
 
@@ -471,7 +471,7 @@ public class JCQLShortcutPanel extends javax.swing.JPanel {
         jButton29.setName(" WITHIN(exp1,exp2)"); // NOI18N
         jPanel5.add(jButton29);
 
-        jXTitledSeparator4.setTitle(MessageBundle.getString("temporal")); // NOI18N
+        jXTitledSeparator4.setTitle(MessageBundle.format("temporal")); // NOI18N
 
         jPanel6.setLayout(new java.awt.GridLayout(0, 3));
 
@@ -609,7 +609,7 @@ public class JCQLShortcutPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         add(guiFilterOps, gridBagConstraints);
 
-        jXTitledSeparator1.setTitle(MessageBundle.getString("operand")); // NOI18N
+        jXTitledSeparator1.setTitle(MessageBundle.format("operand")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -668,7 +668,7 @@ public class JCQLShortcutPanel extends javax.swing.JPanel {
         jPanel1.setLayout(new java.awt.GridLayout(1, 2));
 
         typeGroup.add(guiSimple);
-        guiSimple.setText(MessageBundle.getString("cql.simple")); // NOI18N
+        guiSimple.setText(MessageBundle.format("cql_simple")); // NOI18N
         guiSimple.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiSimpleguiToggleAction(evt);
@@ -677,7 +677,7 @@ public class JCQLShortcutPanel extends javax.swing.JPanel {
         jPanel1.add(guiSimple);
 
         typeGroup.add(guiAdvanced);
-        guiAdvanced.setText(MessageBundle.getString("cql.advanced")); // NOI18N
+        guiAdvanced.setText(MessageBundle.format("cql_advanced")); // NOI18N
         guiAdvanced.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiAdvancedguiToggleAction(evt);

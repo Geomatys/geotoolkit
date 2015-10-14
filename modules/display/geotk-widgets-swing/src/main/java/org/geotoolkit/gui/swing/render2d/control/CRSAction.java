@@ -41,7 +41,7 @@ public class CRSAction extends AbstractMapAction {
     public CRSAction(final JMap2D map){
         super(map);
         putValue(NAME, "CRS");
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_crs"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("map_crs"));
     }
 
     @Override

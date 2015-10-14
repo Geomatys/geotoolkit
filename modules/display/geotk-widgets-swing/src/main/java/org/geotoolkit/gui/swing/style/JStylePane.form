@@ -34,7 +34,7 @@
           </Border>
         </Property>
         <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="" key="general" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="" key="general" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
 
@@ -112,7 +112,7 @@
         <Component class="javax.swing.JLabel" name="guiName">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="name" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="name" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -126,7 +126,7 @@
               </FontInfo>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="title" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="title" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -137,14 +137,14 @@
         <Component class="javax.swing.JLabel" name="guiAbstract">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="abstract" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="abstrac" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="guiLabelDefault">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="default" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="defaut" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>

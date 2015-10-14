@@ -227,7 +227,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
             return geometry.getGeographicBoundingBox();
         } catch (TransformException e) {
             // Returning 'null' is allowed by the method contract.
-            Logging.recoverableException(GridCoverageReference.class, "getGeographicBoundingBox", e);
+            Logging.recoverableException(null, GridCoverageReference.class, "getGeographicBoundingBox", e);
             return null;
         }
     }
@@ -537,7 +537,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
                        resolution.getHeight() <= requested.getHeight() + SpatialRefSysEntry.EPS;
             }
         } catch (TransformException e) {
-            Logging.recoverableException(GridCoverageEntry.class, "hasEnoughResolution", e);
+            Logging.recoverableException(null, GridCoverageEntry.class, "hasEnoughResolution", e);
         }
         return true;
     }

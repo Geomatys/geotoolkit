@@ -27,9 +27,9 @@ import org.apache.sis.util.logging.Logging;
  * @author Guilhem Legal (Geomatys)
  */
 public class SensorMLUtilities {
- 
-    private static final Logger LOGGER = Logging.getLogger(SensorMLUtilities.class);
-    
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.sml.xml");
+
     public static String getSensorMLType(final AbstractSensorML sml) {
         if (sml.getMember() != null)  {
             //assume only one member
@@ -40,7 +40,7 @@ public class SensorMLUtilities {
         }
         return "unknow";
     }
-    
+
     public static String getSensorMLType(final AbstractProcess process) {
         if (process instanceof System) {
             return "System";
@@ -55,7 +55,7 @@ public class SensorMLUtilities {
         }
         return "unknow";
     }
-    
+
     public static List<String> getChildrenIdentifiers(final AbstractSensorML sml) {
         if (sml.getMember() != null)  {
             //assume only one member
@@ -66,7 +66,7 @@ public class SensorMLUtilities {
         }
         return new ArrayList<>();
     }
-    
+
     public static List<String> getChildren(final AbstractProcess process) {
         final List<String> results = new ArrayList<>();
         if (process instanceof System) {
@@ -100,7 +100,7 @@ public class SensorMLUtilities {
         }
         return results;
     }
-    
+
     public static String getSmlID(final AbstractSensorML sensor) {
         if (sensor != null && sensor.getMember().size() > 0) {
             final AbstractProcess process = sensor.getMember().get(0).getRealProcess();
@@ -108,7 +108,7 @@ public class SensorMLUtilities {
         }
         return "unknow_identifier";
     }
-    
+
     public static String getSmlID(final AbstractProcess process) {
         final List<? extends AbstractIdentification> idents = process.getIdentification();
 

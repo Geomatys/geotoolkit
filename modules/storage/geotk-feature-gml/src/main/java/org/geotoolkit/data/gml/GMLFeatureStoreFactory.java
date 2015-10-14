@@ -26,7 +26,6 @@ import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -66,8 +65,8 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
      */
     public static final ParameterDescriptor<Boolean> SPARSE = new ParameterBuilder()
             .addName("sparse")
-            .addName(new ResourceInternationalString("org/geotoolkit/gml/bundle", "paramSparseAlias"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/gml/bundle", "paramSparseRemarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.paramSparseAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramSparseRemarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.FALSE);
     
@@ -77,8 +76,8 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
      */
     public static final ParameterDescriptor<String> XSD = new ParameterBuilder()
             .addName("xsd")
-            .addName(new ResourceInternationalString("org/geotoolkit/gml/bundle", "paramXSDAlias"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/gml/bundle", "paramXSDRemarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.paramXSDAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramXSDRemarks))
             .setRequired(false)
             .create(String.class, null);
 
@@ -87,15 +86,15 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
      */
     public static final ParameterDescriptor<String> XSD_TYPE_NAME = new ParameterBuilder()
             .addName("xsdtypename")
-            .addName(new ResourceInternationalString("org/geotoolkit/gml/bundle", "paramXSDTypeNameAlias"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/gml/bundle", "paramXSDTypeNameRemarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.paramXSDTypeNameAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramXSDTypeNameRemarks))
             .setRequired(false)
             .create(String.class, null);
     
     public static final ParameterDescriptor<Boolean> LONGITUDE_FIRST = new ParameterBuilder()
             .addName("longitudeFirst")
-            .addName(new ResourceInternationalString("org/geotoolkit/gml/bundle", "longitudeFirstAlias"))
-            .setRemarks(new ResourceInternationalString("org/geotoolkit/gml/bundle", "longitudeFirstRemarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.longitudeFirstAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.longitudeFirstRemarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.TRUE);
     
@@ -110,12 +109,12 @@ public class GMLFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/gml/bundle", "datastoreDescription");
+        return Bundle.formatInternational(Bundle.Keys.datastoreDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/gml/bundle", "datastoreTitle");
+        return Bundle.formatInternational(Bundle.Keys.datastoreTitle);
     }
 
     @Override

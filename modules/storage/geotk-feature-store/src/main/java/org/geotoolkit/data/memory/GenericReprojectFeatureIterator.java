@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -191,7 +190,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
                                     throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
                                 }
                             }else{
-                                Logging.getLogger(GenericReprojectFeatureIterator.class).log(
+                                Logging.getLogger("org.geotoolkit.data.memory").log(
                                         Level.WARNING, "A feature in type :"+getFeatureType().getName() +" has no crs.");
                             }
                         }
@@ -200,7 +199,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
                 }
                 properties.add(prop);
             }
-            
+
             final Feature f = FF.createFeature(properties, schema, next.getIdentifier().getID());
             f.getUserData().putAll(next.getUserData());
             return f;
@@ -280,7 +279,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
                                     throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
                                 }
                             }else{
-                                Logging.getLogger(GenericReprojectFeatureIterator.class).log(
+                                Logging.getLogger("org.geotoolkit.data.memory").log(
                                         Level.WARNING, "A feature in type :"+getFeatureType().getName() +" has no crs.");
                             }
                         }
@@ -289,7 +288,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
                 }
                 properties.add(prop);
             }
-            
+
             feature.getUserData().clear();
             feature.getUserData().putAll(next.getUserData());
             return feature;
@@ -374,7 +373,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
                                     throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
                                 }
                             }else{
-                                Logging.getLogger(GenericReprojectFeatureIterator.class).log(
+                                Logging.getLogger("org.geotoolkit.data.memory").log(
                                         Level.WARNING, "A feature in type :"+getFeatureType().getName() +" has no crs.");
                             }
                         }
@@ -412,7 +411,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
                 return FeatureTypeUtilities.transform(
                         getOriginalFeatureCollection().getFeatureType(), targetCrs);
             } catch (MismatchedFeatureException ex) {
-                Logger.getLogger(GenericReprojectFeatureIterator.class.getName()).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.data.memory").log(Level.WARNING, null, ex);
             }
             return super.getFeatureType();
         }
@@ -532,7 +531,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
                                 throw new FeatureStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
                             }
                         }else{
-                            Logging.getLogger(GenericReprojectFeatureIterator.class).log(
+                            Logging.getLogger("org.geotoolkit.data.memory").log(
                                     Level.WARNING, "A feature has no crs.");
                         }
                     }
@@ -541,7 +540,7 @@ public abstract class GenericReprojectFeatureIterator<R extends FeatureReader>
             }
             properties.add(prop);
         }
-        
+
         final Feature f = FF.createFeature(properties, schema, next.getIdentifier().getID());
         f.getUserData().clear();
         f.getUserData().putAll(next.getUserData());

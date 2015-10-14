@@ -126,7 +126,7 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
 
         setOpaque(false);
 
-        guiLabelOffset.setText(MessageBundle.getString("offset2")); // NOI18N
+        guiLabelOffset.setText(MessageBundle.format("offset2")); // NOI18N
 
         guiOffset.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -140,9 +140,9 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
             }
         });
 
-        guiLabelInitial.setText(MessageBundle.getString("initial_gap")); // NOI18N
+        guiLabelInitial.setText(MessageBundle.format("initial_gap")); // NOI18N
 
-        guiLabelGap.setText(MessageBundle.getString("gap")); // NOI18N
+        guiLabelGap.setText(MessageBundle.format("gap")); // NOI18N
 
         guiGap.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -171,11 +171,11 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
             }
         });
 
-        guiLabelRepeat.setText(MessageBundle.getString("repeated")); // NOI18N
+        guiLabelRepeat.setText(MessageBundle.format("repeated")); // NOI18N
 
-        guiLabelAlign.setText(MessageBundle.getString("aligned")); // NOI18N
+        guiLabelAlign.setText(MessageBundle.format("aligned")); // NOI18N
 
-        guiLabelGeneralize.setText(MessageBundle.getString("generalize")); // NOI18N
+        guiLabelGeneralize.setText(MessageBundle.format("generalize")); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);

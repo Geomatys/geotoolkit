@@ -56,7 +56,7 @@ import org.opengis.util.FactoryException;
  */
 public class LuceneUtils {
 
-    private static final Logger LOGGER = Logging.getLogger(LuceneUtils.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.lucene");
 
     public static final GeometryFactory GF = new GeometryFactory();
 

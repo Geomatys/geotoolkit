@@ -476,7 +476,7 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      */
     protected static synchronized Logger getLogger() {
         if (logger == null) {
-            logger = Logging.getLogger(Formulas.class);
+            logger = Logging.getLogger("org.geotoolkit.openoffice");
         }
         return logger;
     }

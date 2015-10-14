@@ -38,24 +38,24 @@ import org.apache.sis.util.logging.Logging;
 /**
  * A DbaseFileReader is used to read a dbase III format file. <br>
  * The general use of this class is: <CODE><PRE>
- * 
+ *
  * FileChannel in = new FileInputStream(&quot;thefile.dbf&quot;).getChannel();
  * DbaseFileReader r = new DbaseFileReader( in );
- * Object[] fields = new Object[r.getHeader().getNumFields()]; 
+ * Object[] fields = new Object[r.getHeader().getNumFields()];
  * while (r.hasNext()) {
  *    Row row = r.next();
  *    row.readAll(fields);
  *    //do stuff
  * }
  * r.close();
- * 
- * </PRE></CODE> 
+ *
+ * </PRE></CODE>
  * For consumers who wish to be a bit more selective with their reading
- * of rows, the read(column) method has been added. 
+ * of rows, the read(column) method has been added.
  * Remember that the Row object is always the same.
  * The values are parsed as they are read, so it pays to copy them out (as each
  * call to Row.read() will result in an expensive String parse).
- * 
+ *
  * @author Ian Schneider
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -64,19 +64,19 @@ public final class DbaseFileReader implements Closeable{
 	/**
 	 * Logger.
 	 */
-	private static final Logger LOGGER = Logging.getLogger(DbaseFileReader.class);
+	private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.dbf");
 
     public static final Charset DEFAULT_STRING_CHARSET = Charset.forName("ISO-8859-1");
 
     public final class Row {
-        
+
         public Object read(final int column) throws IOException {
             final int offset = header.getFieldOffset(column);
             final DbaseField field = fieldReaders[column];
             prepareFieldRead(field, offset);
             return field.read(charBuffer);
         }
-        
+
         public Object[] readAll(Object[] entry) throws IOException {
             if(entry == null){
                 entry = new Object[fieldReaders.length];
@@ -94,7 +94,7 @@ public final class DbaseFileReader implements Closeable{
 
             return entry;
         }
-        
+
     }
 
     protected final DbaseFileHeader header;
@@ -112,16 +112,16 @@ public final class DbaseFileReader implements Closeable{
 
     /**
      * Creates a new instance of DBaseFileReader
-     * 
+     *
      * @param dbfChannel The readable channel to use.
-     * @param useMemoryMappedBuffer 
-     * @param charset 
+     * @param useMemoryMappedBuffer
+     * @param charset
      * @throws IOException If an error occurs while initializing.
      */
 
-    public DbaseFileReader(final ReadableByteChannel dbfChannel, 
+    public DbaseFileReader(final ReadableByteChannel dbfChannel,
             final boolean useMemoryMappedBuffer, Charset charset) throws IOException {
-        
+
         if(charset == null) charset = DEFAULT_STRING_CHARSET;
 
         this.channel = dbfChannel;
@@ -149,16 +149,16 @@ public final class DbaseFileReader implements Closeable{
             fill(buffer, channel);
             buffer.flip();
         }
-        
+
         // The entire file is in little endian
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        
+
         // Set up some buffers and lookups for efficiency
         fieldReaders = new DbaseField[header.getNumFields()];
         for (int i = 0, ii = header.getNumFields(); i < ii; i++) {
             fieldReaders[i] = header.getField(i);
         }
-        
+
         charBuffer = CharBuffer.allocate(header.getRecordLength() - 1);
         decoder = charset.newDecoder();
     }
@@ -178,7 +178,7 @@ public final class DbaseFileReader implements Closeable{
 
     /**
      * Fill buffer if remaining is smaller then one record size.
-     * @throws IOException 
+     * @throws IOException
      */
     private void bufferCheck() throws IOException {
         buffer.limit(buffer.capacity());
@@ -191,7 +191,7 @@ public final class DbaseFileReader implements Closeable{
 
     /**
      * Get the header from this file. The header is read upon instantiation.
-     * 
+     *
      * @return The header associated with this file or null if an error
      *         occurred.
      */
@@ -201,7 +201,7 @@ public final class DbaseFileReader implements Closeable{
 
     /**
      * Query the reader as to whether there is another record.
-     * 
+     *
      * @return True if more records exist, false otherwise.
      */
     public boolean hasNext() {
@@ -221,20 +221,20 @@ public final class DbaseFileReader implements Closeable{
 
     private void checkNext() throws IOException{
         if(next!=null)return;
-        
+
         if(cnt != 0){
             //move cursor to next record if it's not the first
             buffer.position(buffer.position()+header.getRecordLength());
         }
         prepareNext();
     }
-        
+
     /**
      * fill buffer with current record, skip it if it's deleted
      * @throws IOException
      */
     private void prepareNext() throws IOException {
-                
+
         boolean foundRecord = false;
         while (!foundRecord) {
             bufferCheck();
@@ -250,10 +250,10 @@ public final class DbaseFileReader implements Closeable{
             foundRecord = true;
             next = row;
         }
-        
+
         cnt++;
     }
-    
+
     private void prepareFieldRead(final DbaseField field, final int fieldOffset) throws CharacterCodingException{
         //prepare byte buffer
         final int previousposition = buffer.position();
@@ -262,7 +262,7 @@ public final class DbaseFileReader implements Closeable{
         charBuffer.clear();
         buffer.position(previousposition+fieldOffset);
         buffer.limit(buffer.position()+field.fieldLength);
-        CoderResult result = decoder.decode(buffer, charBuffer, true);        
+        CoderResult result = decoder.decode(buffer, charBuffer, true);
         if(result == CoderResult.OVERFLOW){
             result.throwException();
         } else if(result != CoderResult.UNDERFLOW) {
@@ -280,11 +280,11 @@ public final class DbaseFileReader implements Closeable{
         buffer.position(previousposition);
         charBuffer.flip();
     }
-    
+
     /**
      * Transfer, by bytes, the next record to the writer.
      * @param writer
-     * @throws IOException  
+     * @throws IOException
      */
     public void transferTo(final DbaseFileWriter writer) throws IOException {
         bufferCheck();
@@ -296,10 +296,10 @@ public final class DbaseFileReader implements Closeable{
 
     /**
      * Navigate to the given record index.
-     * 
+     *
      * @param recno
      * @throws IOException
-     * @throws UnsupportedOperationException 
+     * @throws UnsupportedOperationException
      */
     public void goTo(final int recno) throws IOException, UnsupportedOperationException {
 
@@ -323,7 +323,7 @@ public final class DbaseFileReader implements Closeable{
         }
 
     }
-    
+
     /**
      * If this method return true, then the index navigation (goto method) can be used.
      * @return true if source is a FileChannel
@@ -331,10 +331,10 @@ public final class DbaseFileReader implements Closeable{
     public boolean IsRandomAccessEnabled() {
         return this.randomAccessEnabled;
     }
-    
+
     /**
      * Clean up all resources associated with this reader.<B>Highly recomended.</B>
-     * 
+     *
      * @throws IOException If an error occurs.
      */
     @Override
@@ -348,5 +348,5 @@ public final class DbaseFileReader implements Closeable{
     public boolean isClosed() {
         return !channel.isOpen();
     }
-    
+
 }

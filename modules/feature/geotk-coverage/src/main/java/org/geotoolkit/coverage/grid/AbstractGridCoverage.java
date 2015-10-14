@@ -56,7 +56,7 @@ public abstract class AbstractGridCoverage extends AbstractCoverage implements G
     /**
      * The logger for grid coverage operations.
      */
-    public static final Logger LOGGER = Logging.getLogger(AbstractGridCoverage.class);
+    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.grid");
 
     /**
      * Sources grid coverage, or {@code null} if none. This information is lost during

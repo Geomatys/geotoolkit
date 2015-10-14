@@ -162,9 +162,9 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
 
         setOpaque(false);
 
-        jLabel2.setText(MessageBundle.getString("mime")); // NOI18N
+        jLabel2.setText(MessageBundle.format("mime")); // NOI18N
 
-        jLabel3.setText(MessageBundle.getString("url")); // NOI18N
+        jLabel3.setText(MessageBundle.format("url")); // NOI18N
 
         guiPreview.setLayout(null);
 

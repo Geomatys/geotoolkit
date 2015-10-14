@@ -51,6 +51,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.InternationalString;
+import org.apache.sis.io.wkt.Warnings;
 
 /**
  *
@@ -62,7 +63,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
     private MapLayer layer;
 
     public JLayerDataStructurePanel() {
-        super(MessageBundle.getString("dataStructure"), null, null, null);
+        super(MessageBundle.format("dataStructure"), null, null, null);
         setLayout(new BorderLayout());
         textPane.setEditable(false);
         textPane.setContentType("text/html");
@@ -224,7 +225,7 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
 //                final ColorModel cm = image.getColorModel();
 
             } catch (Exception ex) {
-                Logging.getLogger(JLayerDataStructurePanel.class).log(Level.INFO, ex.getMessage(),ex);
+                Logging.getLogger("org.geotoolkit.gui.swing.propertyedit").log(Level.INFO, ex.getMessage(),ex);
             }
         }
 
@@ -248,7 +249,8 @@ public class JLayerDataStructurePanel extends AbstractPropertyPane {
         String text, warning;
         try {
             text = formatter.format(item);
-            warning = formatter.getWarning();
+            Warnings w = formatter.getWarnings();
+            warning = (w != null) ? w.toString() : null;
         } catch (RuntimeException e) {
             text = String.valueOf((item instanceof IdentifiedObject)?((IdentifiedObject)item).getName():"");
             warning = e.getLocalizedMessage();

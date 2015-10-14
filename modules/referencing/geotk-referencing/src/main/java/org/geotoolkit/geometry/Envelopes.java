@@ -572,7 +572,7 @@ public final class Envelopes extends Static {
      * that they can be silently ignored in most cases.
      */
     private static void recoverableException(final TransformException exception) {
-        Logging.recoverableException(Envelopes.class, "transform", exception);
+        Logging.recoverableException(null, Envelopes.class, "transform", exception);
     }
 
     /**

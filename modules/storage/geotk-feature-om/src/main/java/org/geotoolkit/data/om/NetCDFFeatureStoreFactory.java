@@ -24,7 +24,6 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.NAMESPACE;
@@ -81,12 +80,12 @@ public class NetCDFFeatureStoreFactory extends AbstractFeatureStoreFactory {
      */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/om/bundle", "NCdatastoreDescription");
+        return Bundle.formatInternational(Bundle.Keys.NCdatastoreDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/om/bundle", "NCdatastoreTitle");
+        return Bundle.formatInternational(Bundle.Keys.NCdatastoreTitle);
     }
 
     /**

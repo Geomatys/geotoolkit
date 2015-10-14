@@ -39,14 +39,14 @@ import org.opengis.referencing.operation.MathTransform;
  */
 public class JSimplificationPanel extends javax.swing.JPanel {
 
-    private static final Logger LOGGER = Logging.getLogger(JSimplificationPanel.class);
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.control.edition");
+
     public static final String GEOMETRY_PROPERTY = "geometry";
-        
+
     private JMap2D map;
     private Feature original = null;
     private Geometry current = null;
-    
+
     public JSimplificationPanel(final JMap2D map) {
         this.map = map;
         initComponents();
@@ -59,12 +59,12 @@ public class JSimplificationPanel extends javax.swing.JPanel {
     public void setMap(JMap2D map) {
         this.map = map;
     }
-    
+
     public void setGeometry(final Feature feature){
         this.original = feature;
         this.current = null;
     }
-    
+
     /**
      * @return Geometry is data CRS.
      */
@@ -75,19 +75,19 @@ public class JSimplificationPanel extends javax.swing.JPanel {
             return current;
         }
     }
-    
+
     private boolean generate(){
-        
+
         if(original == null){
             return false;
         }
-        
+
         if(map == null){
             return false;
         }
-        
+
         final boolean mapCrs = guiMapCrs.isSelected();
-        
+
         try{
             final CoordinateReferenceSystem mapCRS = map.getCanvas().getObjectiveCRS2D();
             final GeometryDescriptor desc = original.getDefaultGeometryProperty().getDescriptor();
@@ -95,13 +95,13 @@ public class JSimplificationPanel extends javax.swing.JPanel {
             Geometry geom = (Geometry) original.getDefaultGeometryProperty().getValue();
             geom = (Geometry) geom.clone();
             final Class clazz = desc.getType().getBinding();
-            
+
             if(mapCrs){
                 //reproject geometry in map crs for simplification
                 final MathTransform trs = CRS.findMathTransform(dataCRS,mapCRS,true);
                 geom = JTS.transform(geom, trs);
             }
-            
+
             if(guiDouglas.isSelected()){
                 final DouglasPeuckerSimplifier simplifier = new DouglasPeuckerSimplifier(geom);
                 simplifier.setDistanceTolerance((Double)guiIndice.getValue());
@@ -111,16 +111,16 @@ public class JSimplificationPanel extends javax.swing.JPanel {
                 simplifier.setDistanceTolerance((Double)guiIndice.getValue());
                 current = simplifier.getResultGeometry();
             }
-            
+
             if(mapCrs){
                 //reproject geometry in data crs
                 final MathTransform trs = CRS.findMathTransform(mapCRS,dataCRS,true);
                 current = JTS.transform(current, trs);
             }
-            
+
             //ensure geometry type is preserved
             current = JTSMapping.convertType(current, clazz);
-            
+
             guiError.setText("");
             return true;
         }catch(Exception ex){
@@ -128,9 +128,9 @@ public class JSimplificationPanel extends javax.swing.JPanel {
             guiError.setText(ex.getLocalizedMessage());
             return false;
         }
-        
-    }    
-    
+
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -154,14 +154,14 @@ public class JSimplificationPanel extends javax.swing.JPanel {
         guiDouglas = new javax.swing.JRadioButton();
         guiTopology = new javax.swing.JRadioButton();
 
-        guiRollback.setText(MessageBundle.getString("cancel")); // NOI18N
+        guiRollback.setText(MessageBundle.format("cancel")); // NOI18N
         guiRollback.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiRollbackActionPerformed(evt);
             }
         });
 
-        guiApply.setText(MessageBundle.getString("apply")); // NOI18N
+        guiApply.setText(MessageBundle.format("apply")); // NOI18N
         guiApply.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiApplyActionPerformed(evt);
@@ -170,18 +170,18 @@ public class JSimplificationPanel extends javax.swing.JPanel {
 
         guiError.setForeground(new java.awt.Color(255, 0, 0));
 
-        lbl.setText(MessageBundle.getString("factor")); // NOI18N
+        lbl.setText(MessageBundle.format("factor")); // NOI18N
 
         guiIndice.setModel(new javax.swing.SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(1.0d)));
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(MessageBundle.getString("crs"))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(MessageBundle.format("crs"))); // NOI18N
 
         groupCRS.add(guiMapCrs);
         guiMapCrs.setSelected(true);
-        guiMapCrs.setText(MessageBundle.getString("map")); // NOI18N
+        guiMapCrs.setText(MessageBundle.format("map")); // NOI18N
 
         groupCRS.add(guiDataCrs);
-        guiDataCrs.setText(MessageBundle.getString("data")); // NOI18N
+        guiDataCrs.setText(MessageBundle.format("data")); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -203,14 +203,14 @@ public class JSimplificationPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(MessageBundle.getString("type"))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(MessageBundle.format("type"))); // NOI18N
 
         groupSimplify.add(guiDouglas);
         guiDouglas.setSelected(true);
-        guiDouglas.setText(MessageBundle.getString("douglaspeuker")); // NOI18N
+        guiDouglas.setText(MessageBundle.format("douglaspeuker")); // NOI18N
 
         groupSimplify.add(guiTopology);
-        guiTopology.setText(MessageBundle.getString("topologic")); // NOI18N
+        guiTopology.setText(MessageBundle.format("topologic")); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);

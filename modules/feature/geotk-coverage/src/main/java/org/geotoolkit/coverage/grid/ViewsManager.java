@@ -589,7 +589,7 @@ testLinear: for (int i=0; i<numBands; i++) {
              * because this exception may be normal. We pretend that the log come from
              * GridCoverage2D.view, which is the public method that invoked this one.
              */
-            Logging.recoverableException(GridCoverage2D.class, "view", exception);
+            Logging.recoverableException(null, GridCoverage2D.class, "view", exception);
         }
         /*
          * STEP 5 - Transcode the image sample values. The "SampleTranscode" operation is

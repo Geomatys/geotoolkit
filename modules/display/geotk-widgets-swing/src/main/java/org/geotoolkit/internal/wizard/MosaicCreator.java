@@ -81,7 +81,7 @@ final class MosaicCreator extends DeferredWizardResult implements IIOWriteProgre
                 param.setOpaqueBorderFilter(colors);
             }
             param.setTileWritingPolicy(TileWritingPolicy.WRITE_NEWS_NONEMPTY);
-            Logging.getLogger(MosaicBuilder.class).setLevel(Level.FINE);
+            Logging.getLogger("org.geotoolkit.image.io.mosaic").setLevel(Level.FINE);
             builder.setLogLevel(Level.INFO);
             builder.listeners().addIIOWriteProgressListener(this);
             try {

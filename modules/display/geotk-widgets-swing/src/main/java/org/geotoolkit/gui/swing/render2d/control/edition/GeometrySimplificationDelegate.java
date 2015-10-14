@@ -108,7 +108,7 @@ public class GeometrySimplificationDelegate extends AbstractFeatureEditionDelega
             simplifyPanel = new JSimplificationPanel(map);
             simplifyPanel.addPropertyChangeListener(DialogDecoration.this);
             
-            frame = new JInternalFrame(MessageBundle.getString("simplification"));
+            frame = new JInternalFrame(MessageBundle.format("simplification"));
             frame.setContentPane(simplifyPanel);      
             frame.setResizable(true);
             frame.setClosable(true);

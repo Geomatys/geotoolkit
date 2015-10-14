@@ -36,7 +36,7 @@ import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
 import org.apache.sis.internal.referencing.provider.Mercator1SP;
 import org.apache.sis.internal.referencing.provider.LambertConformal1SP;
 import org.apache.sis.internal.referencing.provider.Mercator2SP;
-import org.geotoolkit.referencing.operation.provider.TransverseMercator;
+import org.apache.sis.internal.referencing.provider.TransverseMercator;
 import org.apache.sis.referencing.operation.transform.AbstractMathTransform;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.geotoolkit.resources.Errors;
@@ -361,13 +361,13 @@ public final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // Transverse Mercator
         // /////////////////////////////////////////////////////////////////////
-        if (IdentifiedObjects.isHeuristicMatchForName(TransverseMercator.PARAMETERS, desc)) {
+        if (IdentifiedObjects.isHeuristicMatchForName(new TransverseMercator().getParameters(), desc)) {    // TODO: avoid creation of temporary object.
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_TransverseMercator);
             stack.addAscii(PCSCitationGeoKey, name);
 
             // params
-            stack.addDouble(ProjNatOriginLongGeoKey,    value(parameters,TransverseMercator.CENTRAL_MERIDIAN));
+            stack.addDouble(ProjNatOriginLongGeoKey,    value(parameters,TransverseMercator.LONGITUDE_OF_ORIGIN));
             stack.addDouble(ProjNatOriginLatGeoKey,     value(parameters,TransverseMercator.LATITUDE_OF_ORIGIN));
             stack.addDouble(ProjScaleAtNatOriginGeoKey, value(parameters,TransverseMercator.SCALE_FACTOR));
             stack.addDouble(ProjFalseEastingGeoKey,     value(parameters,TransverseMercator.FALSE_EASTING));
@@ -644,7 +644,7 @@ public final class GeoTiffCRSWriter {
                     }
                 } catch (IllegalArgumentException e) {
                     // TODO: Workaround for a problem in "Ordnance Survey National Transformation" not yet fixed.
-                    Logging.recoverableException(GeoTiffCRSWriter.class, "getEPSGCode", e);
+                    Logging.recoverableException(null, GeoTiffCRSWriter.class, "getEPSGCode", e);
                 }
             }
         }

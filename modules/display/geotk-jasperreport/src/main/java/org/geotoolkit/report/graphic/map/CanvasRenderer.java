@@ -175,10 +175,8 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         try {
             setVisibleArea(area);
             setRotation(rotation);
-        } catch (NoninvertibleTransformException ex) {
-            Logging.getLogger(CanvasRenderer.class).log(Level.WARNING, null, ex);
-        } catch (TransformException ex) {
-            Logging.getLogger(CanvasRenderer.class).log(Level.WARNING, null, ex);
+        } catch (NoninvertibleTransformException | TransformException ex) {
+            Logging.getLogger("org.geotoolkit.report.graphic.map").log(Level.WARNING, null, ex);
         }
 
         g2d = (Graphics2D) g.create();

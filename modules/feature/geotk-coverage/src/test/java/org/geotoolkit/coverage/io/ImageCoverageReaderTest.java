@@ -126,7 +126,7 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
         final String xml = XML.marshal(metadata);
         assertFalse("Nothing to write.", xml.isEmpty());
         assertXmlEquals(TestData.url(ImageCoverageReaderTest.class, "MatrixMetadata.xml"),
-                xml, 0.0001, "xmlns:*", "xsi:schemaLocation");
+                xml, 0.0001, null, new String[] {"xmlns:*", "xsi:schemaLocation"});
     }
 
     /**

@@ -17,10 +17,7 @@
 package org.geotoolkit.ncwms;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.storage.coverage.CoverageStore;
@@ -28,10 +25,8 @@ import org.geotoolkit.storage.coverage.CoverageStoreFactory;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -89,12 +84,12 @@ public class NcWMSClientFactory extends AbstractClientFactory implements Coverag
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/ncwms/bundle", "serverTitle");
+        return Bundle.formatInternational(Bundle.Keys.serverTitle);
     }
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/ncwms/bundle", "serverDescription");
+        return Bundle.formatInternational(Bundle.Keys.serverDescription);
     }
 
     @Override

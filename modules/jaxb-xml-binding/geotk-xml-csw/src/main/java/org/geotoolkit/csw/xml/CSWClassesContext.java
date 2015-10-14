@@ -27,6 +27,7 @@ import javax.imageio.spi.ServiceRegistry;
 import org.geotoolkit.feature.catalog.util.Multiplicity;
 import org.geotoolkit.ows.xml.v100.ExceptionReport;
 import org.apache.sis.metadata.iso.DefaultMetadata;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -35,7 +36,7 @@ import org.apache.sis.metadata.iso.DefaultMetadata;
  */
 public class CSWClassesContext {
 
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.csw.xml");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw.xml");
 
     protected CSWClassesContext() {}
 

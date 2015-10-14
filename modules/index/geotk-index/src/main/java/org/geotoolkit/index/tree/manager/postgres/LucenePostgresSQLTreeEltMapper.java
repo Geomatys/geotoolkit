@@ -63,7 +63,7 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
 
     private String schemaName;
 
-    protected static final Logger LOGGER = Logging.getLogger(LucenePostgresSQLTreeEltMapper.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree.manager.postgres");
 
     public LucenePostgresSQLTreeEltMapper(final CoordinateReferenceSystem crs, final DataSource source, File directory) throws SQLException {
         try {
@@ -153,14 +153,14 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
             }
         });
     }
-    
+
     public static boolean treeExist(final DataSource source, File directory) {
         try {
             Connection conn = source.getConnection();
             boolean exist = schemaExist(conn, directory.getAbsolutePath());
             conn.close();
             return exist;
-            
+
         } catch (SQLException ex) {
             LOGGER.log(Level.WARNING, "Error sxhile looking for postgres tree existence", ex);
             return false;
@@ -298,7 +298,7 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
         }
         return result;
     }
-    
+
     @Override
     public Map<Integer, NamedEnvelope> getFullMap() throws IOException {
         Map<Integer, NamedEnvelope> result = new HashMap<>();

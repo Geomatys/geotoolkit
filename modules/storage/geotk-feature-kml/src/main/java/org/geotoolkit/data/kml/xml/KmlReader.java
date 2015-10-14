@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 
@@ -122,6 +121,7 @@ import org.geotoolkit.xml.StaxStreamReader;
 
 import org.geotoolkit.feature.Feature;
 
+import org.apache.sis.util.logging.Logging;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 import static org.geotoolkit.data.kml.KmlUtilities.*;
 
@@ -284,7 +284,7 @@ public class KmlReader extends StaxStreamReader {
 
     /**
      * <p>This method returns kml namespace version uri.</p>
-     * 
+     *
      * @return
      */
     public String getVersionUri() {
@@ -891,7 +891,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */
@@ -1000,7 +1000,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -1056,7 +1056,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -1282,7 +1282,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @param eName
      * @return
      * @throws XMLStreamException
@@ -1321,7 +1321,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @param eName
      * @return
      * @throws XMLStreamException
@@ -1489,7 +1489,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -2031,7 +2031,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -2344,7 +2344,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -2624,7 +2624,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @param stopName
      * @return
      * @throws XMLStreamException
@@ -2652,7 +2652,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -2847,7 +2847,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -2926,7 +2926,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -3778,7 +3778,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -3872,7 +3872,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -3977,7 +3977,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -4072,7 +4072,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -4167,7 +4167,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -4264,7 +4264,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -4392,7 +4392,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -4482,7 +4482,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -4573,7 +4573,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @param stopTag
      * @return
      * @throws XMLStreamException
@@ -4645,7 +4645,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @param stopTag
      * @return
      * @throws XMLStreamException
@@ -4689,7 +4689,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @param eName
      * @return
      * @throws XMLStreamException
@@ -4787,7 +4787,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */
@@ -4870,7 +4870,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */
@@ -4880,7 +4880,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */
@@ -4891,7 +4891,7 @@ public class KmlReader extends StaxStreamReader {
         try {
             resultat = XAL_READER.readAddressDetails();
         } catch (XalException ex) {
-            Logger.getLogger(KmlReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.data.kml.map").log(Level.SEVERE, null, ex);
         }
         return resultat;
     }
@@ -5215,7 +5215,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */
@@ -5257,7 +5257,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */
@@ -5299,7 +5299,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
@@ -5451,7 +5451,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */
@@ -5573,7 +5573,7 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      */

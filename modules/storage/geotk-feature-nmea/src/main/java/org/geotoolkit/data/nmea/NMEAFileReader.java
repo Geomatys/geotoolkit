@@ -37,7 +37,7 @@ import org.geotoolkit.feature.type.FeatureType;
  */
 public class NMEAFileReader implements FeatureReader {
 
-    private static final Logger LOGGER = Logging.getLogger(NMEAFileReader.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.nmea");
 
     private static final SentenceFactory FACTORY = SentenceFactory.getInstance();
 

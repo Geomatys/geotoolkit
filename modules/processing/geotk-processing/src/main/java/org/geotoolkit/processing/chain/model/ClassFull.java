@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -96,7 +96,7 @@ public class ClassFull {
         try {
             return Class.forName(name);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ClassFull.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.processing.chain.model").log(Level.SEVERE, null, ex);
         }
         return null;
     }

@@ -94,7 +94,7 @@ public class JOffSetPane extends StyleElementEditor<Expression> {
 
         setOpaque(false);
 
-        guiLabel.setText(MessageBundle.getString("offset")); // NOI18N
+        guiLabel.setText(MessageBundle.format("offset")); // NOI18N
 
         guiOffset.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {

@@ -41,7 +41,7 @@ import org.geotoolkit.map.MapItem;
 public class MultiThreadedRendering{
 
     private static final ExecutorService executor = Executors.newFixedThreadPool(20);
-    
+
     private final MapItem context;
     private final Map<MapItem, GraphicJ2D> layerGraphics;
     private final RenderingContext2D renderingContext;
@@ -166,15 +166,15 @@ public class MultiThreadedRendering{
             return;
         }else if(size == 1){
             //bypass threading
-            final MapItem child = layers.get(0);            
+            final MapItem child = layers.get(0);
             if (!child.isVisible()) {
                 return;
-            }            
+            }
             final GraphicJ2D gra = layerGraphics.get(child);
             gra.paint(renderingContext);
             return;
         }
-        
+
         for (final MapItem child : layers) {
 
             //we ignore invisible layers
@@ -205,10 +205,10 @@ public class MultiThreadedRendering{
                     wake();
                 }
             };
-            
+
             executor.execute(call);
         }
-        
+
 
         //we now wait for every rendering to finish
         synchronized(this){
@@ -255,7 +255,7 @@ public class MultiThreadedRendering{
 //                            obj = gra.query(renderingContext);
 //                        } catch (PortrayalException ex) {
 //                            img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-//                            Logging.getLogger(MultiThreadedRendering.class).log(Level.WARNING, null, ex);
+//                            Logging.getLogger("org.geotoolkit.display2d.container").log(Level.WARNING, null, ex);
 //                        }
 //
 //                        if(obj instanceof BufferedImage){
@@ -283,7 +283,7 @@ public class MultiThreadedRendering{
 //                            try {
 //                                buffer = ImageIO.read((URL) obj);
 //                            } catch (IOException ex) {
-//                                Logging.getLogger(MultiThreadedRendering.class).log(Level.WARNING, null, ex);
+//                                Logging.getLogger("org.geotoolkit.display2d.container").log(Level.WARNING, null, ex);
 //                            }
 //                            img = buffer;
 //                        }else{

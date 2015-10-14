@@ -20,9 +20,6 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.geotoolkit.filter.DefaultFilterFactory2;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -33,6 +30,7 @@ import static org.junit.Assert.*;
 import org.opengis.style.SemanticType;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.GenericName;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -177,7 +175,7 @@ public class WeakListenerTest {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException ex) {
-                Logger.getLogger(WeakListenerTest.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.style").log(Level.SEVERE, null, ex);
             }
         }
     }

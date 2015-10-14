@@ -37,7 +37,7 @@
     <Component class="javax.swing.JButton" name="guiApply">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="paste" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="paste" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -47,7 +47,7 @@
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="clipboard" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="clipboard" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

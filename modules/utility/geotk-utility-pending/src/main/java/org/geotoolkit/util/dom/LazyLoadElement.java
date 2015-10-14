@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  */
 public class LazyLoadElement implements Element {
 
-    private static final Logger LOGGER = Logging.getLogger(LazyLoadElement.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.util.dom");
 
     private final File xmlFile;
     private volatile Element element;

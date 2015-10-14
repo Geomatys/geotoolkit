@@ -31,7 +31,6 @@ import org.apache.sis.util.Classes;
 import org.apache.sis.util.collection.TreeTable.Node;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.utility.parameter.ParametersExt;
-import org.geotoolkit.storage.AbstractDataStore;
 import org.geotoolkit.storage.DataNode;
 import org.geotoolkit.storage.StorageEvent;
 import org.geotoolkit.storage.StorageListener;
@@ -54,7 +53,7 @@ public abstract class AbstractCoverageStore extends CoverageStore {
 
     protected static final String NO_NAMESPACE = "no namespace";
 
-    private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
+    private final Logger Logger = Logging.getLogger("org.geotoolkit.storage.coverage");
     private final String defaultNamespace;
     protected final ParameterValueGroup parameters;
     protected final Set<StorageListener> listeners = new HashSet<>();
@@ -114,7 +113,7 @@ public abstract class AbstractCoverageStore extends CoverageStore {
             sb.append(' ');
             sb.append(node.toString());
         } catch (DataStoreException ex) {
-            Logger.getLogger(AbstractDataStore.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.storage").log(Level.WARNING, null, ex);
         }
 
         return sb.toString();

@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -43,6 +42,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Feature collection that takes it's source from a single selector.
@@ -177,7 +177,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection{
         try {
             return getSession().getFeatureStore().isWritable(query.getTypeName());
         } catch (DataStoreException ex) {
-            Logger.getLogger(DefaultSelectorFeatureCollection.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.data").log(Level.WARNING, null, ex);
             return false;
         }
     }

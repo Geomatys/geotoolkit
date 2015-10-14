@@ -42,7 +42,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public interface StorageListener<S extends StorageEvent,C extends StorageEvent> extends EventListener{
 
-    static final Logger LOGGER = Logging.getLogger(StorageListener.class);
+    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage");
 
     /**
      * Fired when the internal structure of the storage has changed.

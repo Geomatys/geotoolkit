@@ -83,7 +83,7 @@ import org.opengis.util.FactoryException;
  */
 public class ResampleProcess extends AbstractProcess {
 
-    private static final Logger LOGGER = Logging.getLogger(ResampleProcess.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.processing.coverage.resample");
 
     /**
      * The corner to use for performing calculation. By default {@link GridGeometry#getGridToCRS()}
@@ -874,7 +874,7 @@ public class ResampleProcess extends AbstractProcess {
      * @param exception The error.
      */
     private static void recoverableException(final String method, final Exception exception) {
-        Logging.recoverableException(ResampleProcess.class, method, exception);
+        Logging.recoverableException(null, ResampleProcess.class, method, exception);
     }
 
 

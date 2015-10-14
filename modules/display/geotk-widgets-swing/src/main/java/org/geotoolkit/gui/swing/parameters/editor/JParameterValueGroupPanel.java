@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package  org.geotoolkit.gui.swing.parameters.editor;
+package org.geotoolkit.gui.swing.parameters.editor;
 
 import java.awt.GridBagConstraints;
 import java.beans.PropertyChangeEvent;
@@ -41,20 +41,20 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Quentin Boileau (Geomatys)
  */
 public final class JParameterValueGroupPanel extends JPanel implements PropertyChangeListener {
-    
+
     public static final String PARAMETER_EDITOR_ADDED_EVENT = "parameterEditorAdded";
-    
+
     private ParameterDescriptorGroup descGroup;
-    
+
     private final PropertyChangeListener editorListener;
     private List<JParameterValuePanel> simpleParameters;
     private List<JParameterValueGroupListPanel> groupParameters;
-    
+
     /**
      * Create JParameterValueGroupPanel from ParameterDescriptorGroup
      * @param descriptor
      * @param parent
-     * @param listener 
+     * @param listener
      */
     public JParameterValueGroupPanel(final ParameterDescriptorGroup descriptor, final JParameterValueGroupListPanel parent,
             final PropertyChangeListener listener, final List<PropertyValueEditor> availableEditors, final CustomParameterEditor customEditor) {
@@ -65,22 +65,22 @@ public final class JParameterValueGroupPanel extends JPanel implements PropertyC
      * @param valueGroup
      * @param parent
      * @param parent
-     * @param listener 
+     * @param listener
      */
-    public JParameterValueGroupPanel(final ParameterValueGroup valueGroup, final JParameterValueGroupListPanel parent, 
+    public JParameterValueGroupPanel(final ParameterValueGroup valueGroup, final JParameterValueGroupListPanel parent,
             final PropertyChangeListener listener, final List<PropertyValueEditor> availableEditors, final CustomParameterEditor customEditor) {
-        
+
         this.descGroup = valueGroup.getDescriptor();
         final List<GeneralParameterDescriptor> descriptors = descGroup.descriptors();
-        
+
         this.editorListener = listener;
         this.simpleParameters = new LinkedList<JParameterValuePanel>();
         this.groupParameters = new LinkedList<JParameterValueGroupListPanel>();
-        
+
         for (GeneralParameterDescriptor param : descriptors) {
-            
+
             final String paramCode = param.getName().getCode();
-             
+
             GeneralParameterValuePanel comp = null;
             if (param instanceof ParameterDescriptor) {
                 comp = new JParameterValuePanel(valueGroup.parameter(paramCode), this, availableEditors, customEditor);
@@ -91,28 +91,28 @@ public final class JParameterValueGroupPanel extends JPanel implements PropertyC
             }
         }
         //sort in alphabetical order using parameters code
-        Collections.sort(simpleParameters); 
-        Collections.sort(groupParameters); 
-        
+        Collections.sort(simpleParameters);
+        Collections.sort(groupParameters);
+
         initComponents();
-        
+
         paddingPanel.setOpaque(false);
         parametersContainerPanel.setOpaque(false);
         this.setOpaque(false);
-        
+
         updateContent();
     }
 
     public ParameterValueGroup getParameterValue() {
         //valueGroup to fill
         final ParameterValueGroup valueGroup = descGroup.createValue();
-        
+
         for (GeneralParameterDescriptor desc : descGroup.descriptors()) {
             final String paramCode = desc.getName().getCode();
-            
+
             //Simple parameter -> find parameter associated panel and set value
             if (desc instanceof ParameterDescriptor) {
-                
+
                 ParameterValue paramValue = null;
                 for (JParameterValuePanel simpleValuePanel : simpleParameters) {
                     if (simpleValuePanel.getDescriptor().equals(desc)) {
@@ -120,17 +120,17 @@ public final class JParameterValueGroupPanel extends JPanel implements PropertyC
                         break;
                     }
                 }
-                
+
                 if (paramValue != null) {
                     ParametersExt.getOrCreateValue(valueGroup, paramCode).setValue(paramValue.getValue());
                 } else {
                     if (desc.getMinimumOccurs() > 0) {
-                        Logging.getLogger(JParameterValueGroupPanel.class).log(Level.WARNING, "Mandatory parameter {0} doesn't have a value", paramCode);
+                        Logging.getLogger("org.geotoolkit.gui.swing.parameters.editor").log(Level.WARNING, "Mandatory parameter {0} doesn't have a value", paramCode);
                     }
                 }
-                
+
             } else {
-                
+
                 //group parameter -> find group panels, create groups if needed and deep copy into it.
                 List<ParameterValueGroup> paramValues = null;
                 for (JParameterValueGroupListPanel groupValuePanel : groupParameters) {
@@ -139,10 +139,10 @@ public final class JParameterValueGroupPanel extends JPanel implements PropertyC
                         break;
                     }
                 }
-                
+
                 if (paramValues != null && !paramValues.isEmpty()) {
                     int groupsSize =  valueGroup.groups(paramCode).size();
-                            
+
                     // paramValues.size() should never be beyond min/max occurs of group
                     // define by group descriptor. This is ensured by editor
                     if (groupsSize < paramValues.size()) {
@@ -151,43 +151,43 @@ public final class JParameterValueGroupPanel extends JPanel implements PropertyC
                             valueGroup.addGroup(paramCode);
                         }
                     }
-                    
+
                     List<ParameterValueGroup> groups = valueGroup.groups(paramCode);
-                    
+
                     for (int i=0; i<paramValues.size(); i++) {
                         ParametersExt.deepCopy(paramValues.get(i), groups.get(i));
                     }
-                    
+
                 } else {
                     if (desc.getMinimumOccurs() > 0) {
-                        Logging.getLogger(JParameterValueGroupPanel.class).log(Level.WARNING, "Mandatory parameter {0} doesn't have a value", paramCode);
+                        Logging.getLogger("org.geotoolkit.gui.swing.parameters.editor").log(Level.WARNING, "Mandatory parameter {0} doesn't have a value", paramCode);
                     }
                 }
             }
         }
-        
+
         return valueGroup;
     }
 
      public boolean validateValues() {
          boolean valid = true;
-         
+
          for (JParameterValuePanel simpleParam : simpleParameters) {
              if (!simpleParam.validateValue()) {
                  valid = false;
              }
          }
-         
+
          for (JParameterValueGroupListPanel groupParam : groupParameters) {
              if (!groupParam.validateValues()) {
                  valid = false;
              }
          }
-         
+
          return valid;
      }
-     
-     
+
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -220,18 +220,18 @@ public final class JParameterValueGroupPanel extends JPanel implements PropertyC
      * Remove and rebuild parameters list using GridBag layout.
      */
     public void updateContent() {
-        
+
         //clear
         parametersContainerPanel.removeAll();
-        
+
         GridBagConstraints constraint;
         JSeparator separator;
-        
+
         int index = 0;
-        
+
         //first all simple parameters
         for (JParameterValuePanel param : simpleParameters) {
-            
+
             if (param != null) {
                 param.addPropertyChangeListener(editorListener);
                 param.addPropertyChangeListener(this);
@@ -239,12 +239,12 @@ public final class JParameterValueGroupPanel extends JPanel implements PropertyC
                 index++;
             }
         }
-        
+
         //finish with group parameters
         for (GeneralParameterValuePanel param : groupParameters) {
-            
+
             if (param != null) {
-                
+
                 // separator
                 constraint = new GridBagConstraints();
                 constraint.gridx = 0;
@@ -257,7 +257,7 @@ public final class JParameterValueGroupPanel extends JPanel implements PropertyC
                 separator.setBorder(new EmptyBorder(8, 0, 0, 0));
                 parametersContainerPanel.add(separator, constraint);
                 index++;
-                
+
                 //group
                 constraint = new GridBagConstraints();
                 constraint.gridx = 0;
@@ -275,11 +275,11 @@ public final class JParameterValueGroupPanel extends JPanel implements PropertyC
         }
         this.revalidate();
     }
-    
-    
+
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        
+
     }
-    
+
 }

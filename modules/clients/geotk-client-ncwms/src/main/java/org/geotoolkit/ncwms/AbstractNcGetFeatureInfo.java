@@ -25,21 +25,21 @@ import org.geotoolkit.wms.AbstractGetFeatureInfo;
 /**
  * Abstract implementation of {@link NcGetFeatureInfoRequest}, which defines the parameters for
  * a GetFeatureInfo request.
- * 
+ *
  * @author Olivier Terral (Geomatys)
  * @module pending
  */
 public abstract class AbstractNcGetFeatureInfo extends AbstractGetFeatureInfo implements  NcGetFeatureInfoRequest {
-    
+
     /**
      * Default logger for all GetFeatureInfo requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractNcGetFeatureInfo.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ncwms");
+
     protected Integer opacity = null;
-    
+
     protected Integer numColorBands = null;
-    
+
     protected Boolean logScale = null;
 
     /**
@@ -47,8 +47,8 @@ public abstract class AbstractNcGetFeatureInfo extends AbstractGetFeatureInfo im
      */
     protected AbstractNcGetFeatureInfo(final String serverURL, final String version, final ClientSecurity security) {
         super(serverURL, version, security);
-    }    
-    
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -64,7 +64,7 @@ public abstract class AbstractNcGetFeatureInfo extends AbstractGetFeatureInfo im
     public void setOpacity(final Integer opacity) {
         this.opacity = opacity;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -96,20 +96,20 @@ public abstract class AbstractNcGetFeatureInfo extends AbstractGetFeatureInfo im
     public void setLogScale(final Boolean logScale) {
         this.logScale = logScale;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     protected void prepareParameters() {
         super.prepareParameters();
-        
+
         if (opacity != null)
             requestParameters.put("OPACITY", String.valueOf(opacity));
-        
+
         if (numColorBands != null)
             requestParameters.put("NUMCOLORBANDS", String.valueOf(numColorBands));
-        
+
         if (logScale != null)
             requestParameters.put("LOGSCALE", String.valueOf(logScale));
 

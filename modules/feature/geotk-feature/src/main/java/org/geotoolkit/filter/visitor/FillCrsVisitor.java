@@ -18,23 +18,22 @@ package org.geotoolkit.filter.visitor;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.opengis.filter.expression.Literal;
 import org.opengis.geometry.BoundingBox;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Used to clean PropertyEqualsTo on identifiers.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class FillCrsVisitor extends DuplicatingFilterVisitor{
-    
+
     public static final FillCrsVisitor VISITOR = new FillCrsVisitor();
 
     @Override
@@ -54,14 +53,12 @@ public class FillCrsVisitor extends DuplicatingFilterVisitor{
                     JTS.setCRS(geo, crs);
                 }
                 obj = geo;
-            } catch (NoSuchAuthorityCodeException ex) {
-                Logger.getLogger(FillCrsVisitor.class.getName()).log(Level.SEVERE, null, ex);
             } catch (FactoryException ex) {
-                Logger.getLogger(FillCrsVisitor.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.filter.visitor").log(Level.SEVERE, null, ex);
             }
         }
-        
+
         return getFactory(extraData).literal(obj);
     }
-    
+
 }

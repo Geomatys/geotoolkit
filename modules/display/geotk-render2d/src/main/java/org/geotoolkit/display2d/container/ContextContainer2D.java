@@ -70,7 +70,7 @@ public class ContextContainer2D extends DefaultGraphicContainer implements MapCo
 
     public static final String CONTEXT_PROPERTY = "context";
 
-    private static final Logger LOGGER = Logging.getLogger(ContextContainer2D.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.container");
 
     public static final Style DEFAULT_SELECTION_STYLE;
     public static final Symbolizer DEFAULT_LINE_SELECTION_SYMBOL;

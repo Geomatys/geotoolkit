@@ -416,6 +416,6 @@ final class TileTable extends Table implements Comparator<TileManager> {
      * @since 3.15
      */
     private static void recoverableException(final Exception e) {
-        Logging.recoverableException(TileTable.class, "getTiles", e);
+        Logging.recoverableException(null, TileTable.class, "getTiles", e);
     }
 }

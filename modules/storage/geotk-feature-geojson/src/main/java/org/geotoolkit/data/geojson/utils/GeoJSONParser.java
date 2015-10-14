@@ -41,7 +41,7 @@ import static org.geotoolkit.data.geojson.binding.GeoJSONGeometry.*;
 public class GeoJSONParser {
 
     public static final JsonFactory FACTORY = new JsonFactory();
-    public final static Logger LOGGER = Logging.getLogger(GeoJSONParser.class);
+    public final static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.geojson.utils");
 
     private Boolean lazy;
 

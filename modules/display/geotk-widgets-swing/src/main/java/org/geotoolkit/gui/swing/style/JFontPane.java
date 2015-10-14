@@ -148,7 +148,7 @@ public class JFontPane extends StyleElementEditor<Font>{
 
         setOpaque(false);
 
-        guiLabelFamily.setText(MessageBundle.getString("family")); // NOI18N
+        guiLabelFamily.setText(MessageBundle.format("family")); // NOI18N
 
         guiFamily.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -156,7 +156,7 @@ public class JFontPane extends StyleElementEditor<Font>{
             }
         });
 
-        guiLabelStyle.setText(MessageBundle.getString("style")); // NOI18N
+        guiLabelStyle.setText(MessageBundle.format("style")); // NOI18N
 
         guiStyle.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -164,7 +164,7 @@ public class JFontPane extends StyleElementEditor<Font>{
             }
         });
 
-        guiLabelSize.setText(MessageBundle.getString("size")); // NOI18N
+        guiLabelSize.setText(MessageBundle.format("size")); // NOI18N
 
         guiSize.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -172,7 +172,7 @@ public class JFontPane extends StyleElementEditor<Font>{
             }
         });
 
-        guiLabelWeight.setText(MessageBundle.getString("weight")); // NOI18N
+        guiLabelWeight.setText(MessageBundle.format("weight")); // NOI18N
 
         guiWeight.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {

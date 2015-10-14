@@ -30,7 +30,7 @@
           <ComponentRef name="buttonGroup1"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_topleft" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_topleft" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
         <Property name="hideActionText" type="boolean" value="true"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
@@ -46,7 +46,7 @@
           <ComponentRef name="buttonGroup1"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_topmiddle" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_topmiddle" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
         <Property name="hideActionText" type="boolean" value="true"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
@@ -62,7 +62,7 @@
           <ComponentRef name="buttonGroup1"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_topright" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_topright" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
         <Property name="hideActionText" type="boolean" value="true"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
@@ -78,7 +78,7 @@
           <ComponentRef name="buttonGroup1"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_centerleft" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_centerleft" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
         <Property name="hideActionText" type="boolean" value="true"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
@@ -94,7 +94,7 @@
           <ComponentRef name="buttonGroup1"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_centermiddle" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_centermiddle" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
         <Property name="hideActionText" type="boolean" value="true"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
@@ -110,7 +110,7 @@
           <ComponentRef name="buttonGroup1"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_centerright" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_centerright" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
         <Property name="hideActionText" type="boolean" value="true"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
@@ -126,7 +126,7 @@
           <ComponentRef name="buttonGroup1"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_bottomleft" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_bottomleft" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
         <Property name="hideActionText" type="boolean" value="true"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
@@ -142,7 +142,7 @@
           <ComponentRef name="buttonGroup1"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_bottommiddle" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_bottommiddle" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
         <Property name="hideActionText" type="boolean" value="true"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
@@ -158,7 +158,7 @@
           <ComponentRef name="buttonGroup1"/>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_bottomright" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_bottomright" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
         <Property name="hideActionText" type="boolean" value="true"/>
         <Property name="horizontalAlignment" type="int" value="2"/>

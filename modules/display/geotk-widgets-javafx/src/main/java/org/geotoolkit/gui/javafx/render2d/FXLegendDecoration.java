@@ -4,30 +4,20 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.EventType;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendService;
@@ -39,98 +29,99 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * A decoration which will display legend for a given map context. Legend can be
  * displayed a simple decoration on map, or in a popup.
- * 
+ *
  * @author Alexis Manin (Geomatys)
  */
 public class FXLegendDecoration extends StackPane implements FXMapDecoration {
-    
+
     private final SimpleBooleanProperty popupMode = new SimpleBooleanProperty();
-    
+
     /** A progress indicator displayed when computing a new legend. */
     private final ProgressIndicator computingIndicator = new ProgressIndicator();
     /** A trigger to notify when progress indicator must display. */
     private final SimpleBooleanProperty computingRunning = new SimpleBooleanProperty(false);
-    
+
     /**
      * The {@link ImageView} which will contains the legend image.
      */
     private final ImageView legendGraphic = new ImageView();
-    
+
     /**
-     * A scroll pane in which we will display legend. It allows user to navigate 
+     * A scroll pane in which we will display legend. It allows user to navigate
      * if the legend height is bigger than current map.
      */
-    //private final ScrollPane scrollPane = new ScrollPane(legendGraphic);    
-    
+    //private final ScrollPane scrollPane = new ScrollPane(legendGraphic);
+
     private final Popup p = new Popup();
-    
+
     /** The template which contains rules to use to paint legend. */
     public LegendTemplate legendTemplate;
 
     public final SimpleObjectProperty<FXMap> map2D = new SimpleObjectProperty<>();
-    
+
     /** Target map context of the legend. */
     public final SimpleObjectProperty<MapContext> mapContext = new SimpleObjectProperty<>();
-    
+
     /**
-     * A listener to register on current {@link MapContext} 
+     * A listener to register on current {@link MapContext}
      */
     private final ContextListener contextListener;
-    
+
     public FXLegendDecoration() {
         this(null, false);
     }
-    
+
     public FXLegendDecoration(final LegendTemplate template, boolean displayAsPopup) {
         legendTemplate = template;
         popupMode.set(displayAsPopup);
-        
+
         popupMode.addListener(this::updatePopupMode);
-        
+
         prefWidthProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
             refresh();
         });
         prefHeightProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
             refresh();
         });
-        
+
         addEventHandler(MouseEvent.ANY, new DragLegend());
-        
+
         contextListener = new LegendRefresh();
         mapContext.addListener(this::updateContext);
-        
+
         map2D.addListener(this::updateMap2D);
-        
+
         setAlignment(Pos.TOP_LEFT);
-        
+
         visibleProperty().bind(mapContext.isNotNull());
         managedProperty().bind(visibleProperty());
-        
+
         computingIndicator.visibleProperty().bind(computingRunning);
-        
+
         getChildren().addAll(legendGraphic, computingIndicator);
         p.getContent().add(this);
         setFocusTraversable(true);
     }
-    
+
     @Override
     public void refresh() {
         computingRunning.set(true);
         TaskManager.INSTANCE.submit(() -> {
             try {
                 if (mapContext.get() != null && legendTemplate != null) {
-                    final Dimension d = DefaultLegendService.legendPreferredSize(legendTemplate, mapContext.get());                    
+                    final Dimension d = DefaultLegendService.legendPreferredSize(legendTemplate, mapContext.get());
                     WritableImage fxImage = null;
                     try {
                         final BufferedImage legend = DefaultLegendService.portray(legendTemplate, mapContext.get(), d);
                         fxImage = SwingFXUtils.toFXImage(legend, null);
                     } catch (PortrayalException ex) {
                         // TODO : make an image displaying error
-                        Logger.getLogger(FXLegendDecoration.class.getName()).log(Level.WARNING, null, ex);
+                        Logging.getLogger("org.geotoolkit.gui.javafx.render2d").log(Level.WARNING, null, ex);
                     }
 
                     final WritableImage toShow = fxImage;
@@ -164,7 +155,7 @@ public class FXLegendDecoration extends StackPane implements FXMapDecoration {
     public Node getComponent() {
         return this;
     }
-    
+
     /**
      * When watched {@link MapContext} changes, we update current decoration listener.
      * @param obs
@@ -175,13 +166,13 @@ public class FXLegendDecoration extends StackPane implements FXMapDecoration {
         if (oldContext != null) {
             oldContext.removeContextListener(contextListener);
         }
-        
+
         if (newContext != null) {
             newContext.addContextListener(contextListener);
         }
         refresh();
     }
-    
+
     /**
      * Update decoration registration when target {@link FXMap} changes.
      * @param obs
@@ -205,12 +196,12 @@ public class FXLegendDecoration extends StackPane implements FXMapDecoration {
             mapContext.set(null);
         }
     }
-    
+
     /**
      * Called when popup mode is (de)activated, to update display.
      * @param obs
      * @param oldValue
-     * @param newValue 
+     * @param newValue
      */
     private void updatePopupMode(final ObservableValue<? extends Boolean> obs, final Boolean oldValue, final Boolean newValue) {
         if (map2D.get() != null) {
@@ -223,7 +214,7 @@ public class FXLegendDecoration extends StackPane implements FXMapDecoration {
             }
         }
     }
-    
+
     /**
      * A simple listener whose role is to launch legend update when watched {@link MapContext}
      * changes.
@@ -247,15 +238,15 @@ public class FXLegendDecoration extends StackPane implements FXMapDecoration {
     }
 
     /**
-     * Move legend on drag action. 
+     * Move legend on drag action.
      */
     private class DragLegend extends AbstractMouseHandler {
 
         private Cursor defaultCursor;
-        
+
         private double startX = 0;
         private double startY = 0;
-        
+
         @Override
         public void mouseDragged(MouseEvent me) {
             if (MouseButton.PRIMARY.equals(me)) {

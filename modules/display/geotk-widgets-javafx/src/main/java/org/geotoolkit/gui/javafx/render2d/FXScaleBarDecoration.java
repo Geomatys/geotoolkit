@@ -28,7 +28,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
@@ -44,6 +43,7 @@ import org.geotoolkit.display2d.ext.scalebar.J2DScaleBarUtilities;
 import org.geotoolkit.display2d.ext.scalebar.ScaleBarTemplate;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Decoration displaying a scale bar
@@ -181,7 +181,7 @@ public class FXScaleBarDecoration extends BorderPane implements FXMapDecoration 
             objCRS = map.getCanvas().getObjectiveCRS();
             dispCRS = map.getCanvas().getDisplayCRS();
         } catch (NoninvertibleTransformException | TransformException ex) {
-            Logger.getLogger(FXScaleBarDecoration.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.gui.javafx.render2d").log(Level.WARNING, null, ex);
             return;
         }
 

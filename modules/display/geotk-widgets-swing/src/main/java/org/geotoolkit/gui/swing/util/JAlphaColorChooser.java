@@ -68,7 +68,7 @@ public class JAlphaColorChooser extends javax.swing.JPanel {
         guiOpacity.setMaximum(255);
         guiOpacity.setValue(255);
 
-        jLabel1.setText(MessageBundle.getString("opacity")); // NOI18N
+        jLabel1.setText(MessageBundle.format("opacity")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

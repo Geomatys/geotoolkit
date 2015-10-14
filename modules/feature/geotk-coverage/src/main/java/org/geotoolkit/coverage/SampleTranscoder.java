@@ -297,7 +297,7 @@ final class SampleTranscoder extends PointOpImage {
             record.setSourceClassName(GridSampleDimension.class.getName());
             record.setSourceMethodName("<classinit>");
             record.setThrown(exception);
-            final Logger logger = Logging.getLogger(GridSampleDimension.class);
+            final Logger logger = Logging.getLogger("org.geotoolkit.coverage");
             record.setLoggerName(logger.getName());
             logger.log(record);
         }

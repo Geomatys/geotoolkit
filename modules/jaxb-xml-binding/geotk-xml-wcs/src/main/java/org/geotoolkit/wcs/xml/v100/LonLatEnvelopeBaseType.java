@@ -18,7 +18,6 @@ package org.geotoolkit.wcs.xml.v100;
 
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -27,18 +26,18 @@ import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
- * Envelope defines an extent using a pair of positions defining opposite corners in arbitrary dimensions. 
- * 
+ * Envelope defines an extent using a pair of positions defining opposite corners in arbitrary dimensions.
+ *
  * <p>Java class for LonLatEnvelopeBaseType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LonLatEnvelopeBaseType">
  *   &lt;complexContent>
@@ -51,8 +50,8 @@ import org.opengis.util.FactoryException;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,10 +60,10 @@ import org.opengis.util.FactoryException;
     LonLatEnvelopeType.class
 })
 public class LonLatEnvelopeBaseType extends EnvelopeType implements Envelope{
-    
+
     LonLatEnvelopeBaseType(){
     }
-    
+
     public LonLatEnvelopeBaseType(final List<DirectPositionType> pos, final String srsName) {
         super(pos, srsName);
     }
@@ -73,10 +72,8 @@ public class LonLatEnvelopeBaseType extends EnvelopeType implements Envelope{
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         try {
             return CRS.decode(getSrsName());
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(LonLatEnvelopeBaseType.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(LonLatEnvelopeBaseType.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.wcs.xml.v100").log(Level.SEVERE, null, ex);
         }
         return null;
     }

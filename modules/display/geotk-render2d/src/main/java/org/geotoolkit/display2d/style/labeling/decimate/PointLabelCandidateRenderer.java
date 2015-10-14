@@ -28,13 +28,13 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
 import org.geotoolkit.display2d.style.labeling.candidate.PointCandidate;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -61,12 +61,12 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
         try {
             shapes = label.getGeometry().getDisplayGeometryJTS();
         } catch (TransformException ex) {
-            Logger.getLogger(PointLabelCandidateRenderer.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.display2d.style.labeling.decimate").log(Level.WARNING, null, ex);
         }
         if(shapes == null) return null;
 
         final List<Candidate> candidates = new ArrayList<>(shapes.length);
-        
+
         for(int i=0; i<shapes.length; i++){
             final Geometry shape = shapes[i];
             final Point pt = GO2Utilities.getBestPoint(shape);
@@ -94,7 +94,7 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
                     refX,refY
                     ));
         }
-        
+
         return candidates.toArray(EMPTY);
     }
 
@@ -156,12 +156,12 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
         //paint text------------------------------------------------------------
         g2.setPaint(label.getTextPaint());
         g2.drawString(label.getText(), pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
-        
+
         //reset rotation
         if(rotation != 0){
             g2.rotate(-rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
         }
-        
+
     }
 
 }

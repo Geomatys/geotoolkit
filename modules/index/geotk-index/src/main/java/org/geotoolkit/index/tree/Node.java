@@ -22,24 +22,24 @@ import static org.geotoolkit.internal.tree.TreeUtilities.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.internal.tree.TreeAccessFile;
 import org.geotoolkit.internal.tree.TreeAccessMemory;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Default implementation Node use in Tree.<br/><br/>
- * 
+ *
  * In Tree, Node architecture is organize like a chained list.<br/><br/>
- * 
+ *
  * &nbsp;N1 (root)<br/>
  * &nbsp;&nbsp;/-&gt;N2---------------------------&gt;N3----------------------------&gt;N4<br/>
  * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/--&gt;N5--&gt;N6--&gt;N7&nbsp;&nbsp;
  * &nbsp;&nbsp;&nbsp;/--&gt;N8--&gt;N9--&gt;N10&nbsp;&nbsp;&nbsp;&nbsp;
  * &nbsp;/--&gt;N11--&gt;N12--&gt;N13<br/><br/>
- * 
+ *
  * Note : Neither Node has an identifier equal to 0.<br/>
  * zero is reserved to significate end of chained list or no parent like tree root Node.
  *
@@ -47,48 +47,48 @@ import org.geotoolkit.internal.tree.TreeAccessMemory;
  * @author Remi Marechal (Geomatys).
  */
 public class Node {
-    
+
     /**
      * Single Node identifier.
      */
     protected final int nodeId;
-    
+
     /**
      * Node boundary.
      */
     protected double[] boundary;
-    
+
     /**
      * Identifier of parent Node.<br/>
      * If Node have no parent like tree trunk (see {@link AbstractTree#root) the value is 0.
      */
     protected int parentId;
-    
+
     /**
      * Identifier of sibling Node.<br/>
      * Note : all sibling Node have same parent identifiers.<br/>
-     * When it s the last sibling Node of the current chained list Tree level the value is zero. 
+     * When it s the last sibling Node of the current chained list Tree level the value is zero.
      */
     protected int siblingId;
-    
+
     /**
      * There are 2 cases : <br/>
      * if Node is a data (see {@link Node#isData()) childID is the tree identifier of a data.<br/>
      * else childID is the identifier of the first children from Node chained list architecture.
      */
     protected int childId;// < 0 if it is a data.
-    
+
     /**
      * Number of children.
      */
     protected int childCount;
-    
+
     /**
-     * Object which store Node attributs on a file define by user (see {@link TreeAccessFile}) 
+     * Object which store Node attributs on a file define by user (see {@link TreeAccessFile})
      * or in memory (see{@link TreeAccessMemory).
      */
     protected TreeAccess tAF;
-    
+
     /**
      * {@code Byte} which use to test some properties.<br/>
      * first bit is at 1 if Node is a leaf.(see {@link TreeUtilities#IS_LEAF).<br/>
@@ -100,15 +100,15 @@ public class Node {
 
     /**
      * Create a Node adapted for standard Tree implementation.
-     * 
+     *
      * @param tAF Object which store Node attributs.
      * @param nodeId invariable single integer Node identifier.
      * @param boundary double table which represent boundary Node coordinates.
      * @param properties define type of Node. see ({@link Node#properties}).
      * @param parentId identifier of parent Node Tree architecture.
      * @param siblingId identifier of sibling Node.
-     * @param childId if Node is a data it is the identifier of the data which is 
-     * store in this tree (see {@link Node#childId}) else it is the first child of this Node. 
+     * @param childId if Node is a data it is the identifier of the data which is
+     * store in this tree (see {@link Node#childId}) else it is the first child of this Node.
      * @see TreeAccess
      */
     public Node(final TreeAccess tAF, final int nodeId, final double[] boundary, final byte properties, final int parentId, final int siblingId, final int childId) {
@@ -124,27 +124,27 @@ public class Node {
 
     /**
      * Return invariable single Node identifier.
-     * 
+     *
      * @return invariable single Node identifier.
      * @see Node#nodeId.
      */
     public int getNodeId() {
         return nodeId;
     }
-    
+
      /**
      * Return invariable single Node identifier from its parent Node.
-     * 
+     *
      * @return invariable single Node identifier from its parent Node.
      * @see Node#parentId.
      */
     public int getParentId() {
         return parentId;
     }
-    
+
     /**
      * Affect a new parent identifier.
-     * 
+     *
      * @param parentId identifier of new parent.
      */
     public void setParentId(final int parentId) {
@@ -153,17 +153,17 @@ public class Node {
 
     /**
      * Return invariable single Node identifier of its sibling Node.
-     * 
+     *
      * @return invariable single Node identifier from its sibling Node.
      * @see Node#siblingId.
      */
     public int getSiblingId() {
         return siblingId;
     }
-    
+
     /**
      * Affect a new sibling identifier.
-     * 
+     *
      * @param siblingId identifier of new sibling.
      */
     public void setSiblingId(final int siblingId) {
@@ -172,7 +172,7 @@ public class Node {
 
     /**
      * Return invariable single Node identifier of its first children or data tree identifier value.
-     * 
+     *
      * @return invariable single Node identifier of its first children or data tree identifier value.
      * @see Node#childId.
      */
@@ -182,16 +182,16 @@ public class Node {
 
     /**
      * Affect a new child identifier.
-     * 
+     *
      * @param childId identifier of new child.
      */
     public void setChildId(final int childId) {
         this.childId = childId;
     }
-    
+
     /**
      * Return {@code Byte} which contains type of Node.
-     * 
+     *
      * @return {@code Byte} which contains type of Node.
      * @see Node#properties
      */
@@ -201,16 +201,16 @@ public class Node {
 
     /**
      * Affect a new type on this Node.
-     * 
+     *
      * @param properties newest type.
      */
     public void setProperties(final byte properties) {
         this.properties = properties;
     }
-    
+
     /**
      * Return boundary of this Node.
-     * 
+     *
      * @return boundary of this Node.
      */
     public double[] getBoundary() {
@@ -219,7 +219,7 @@ public class Node {
 
     /**
      * Affect a new boundary on this Node.
-     * 
+     *
      * @param boundary newest boundary.
      */
     public void setBoundary(final double[] boundary) {
@@ -228,14 +228,14 @@ public class Node {
 
     /**
      * Return TreeAccess pointer.
-     * 
+     *
      * @return TreeAccess pointer.
      * @see TreeAccess
      */
     public TreeAccess getTreeAccess() {
         return tAF;
     }
-    
+
     /**
      * A leaf is a {@code Node} which contains only some data Node.
      *
@@ -245,9 +245,9 @@ public class Node {
     public boolean isLeaf() {
         return (properties &  IS_LEAF) !=  0;
     }
-    
+
     /**
-     * A leaf is a {@code Node} at extremity of {@code Tree} 
+     * A leaf is a {@code Node} at extremity of {@code Tree}
      * which contains a single data tree identifier.
      *
      * @return true if it is a leaf else false (branch).
@@ -259,19 +259,19 @@ public class Node {
 
     /**
      * Return true if Node don't contains children else false.
-     * 
+     *
      * @return true if Node don't contains children else false.
      */
     public boolean isEmpty() {
         return childCount == 0;
     }
-    
+
     /**
      * Add some children Node.
-     * 
+     *
      * @param nodes children Node which will be added.
      * @throws IOException if problem during Node writing from {@link TreeAccessFile}.
-     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node) 
+     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node)
      */
     public void addChildren(final Node[] nodes) throws IOException {
         for(Node fnod : nodes) {
@@ -295,12 +295,12 @@ public class Node {
 
     /**
      * Return all children from this Node.<br/><br/>
-     * 
+     *
      * Note : if is leaf all children returned are data type else other type.
-     * 
+     *
      * @return all children from this Node.
-     * @throws IOException if problem during Node reading from {@link TreeAccessFile}. 
-     * @see TreeAccessFile#readNode(int) 
+     * @throws IOException if problem during Node reading from {@link TreeAccessFile}.
+     * @see TreeAccessFile#readNode(int)
      */
     public Node[] getChildren() throws IOException {
         final Node[] children = new Node[childCount];
@@ -317,13 +317,13 @@ public class Node {
 
     /**
      * Remove specified child Node.<br/><br/>
-     * 
+     *
      * Return true if child Node was found and should be removed else false.
-     * 
+     *
      * @param node Node which will be removed.
      * @return true if child Node was found and should be removed else false.
      * @throws IOException if problem during Node writing from {@link TreeAccessFile}.
-     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node) 
+     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node)
      */
     public boolean removeChild(final Node node) throws IOException {
         boolean found = false;
@@ -335,7 +335,7 @@ public class Node {
                 found = true;
             }
         } else {
-            
+
             if (getChildId() == node.getNodeId()) {
                 setChildId(node.getSiblingId());
                 childCount--;
@@ -351,7 +351,7 @@ public class Node {
                 Node precChild = tAF.readNode(getChildId());
                 boundary = precChild.getBoundary().clone();
                 int sibl = precChild.getSiblingId();
-                
+
                 while (sibl != 0) {
                     if (sibl == node.getNodeId()) {
                         sibl = node.getSiblingId();
@@ -374,17 +374,17 @@ public class Node {
         if (found) tAF.removeNode(node);
         return found;
     }
-    
+
     /**
      * Remove specified data.<br/><br/>
-     * 
+     *
      * Return true if data was found and should be removed else false.
-     * 
+     *
      * @param identifier tree identifier.
      * @param coordinates data boundary
      * @return true if data was found and should be removed else false.
      * @throws IOException if problem during Node writing from {@link TreeAccessFile}.
-     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node) 
+     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node)
      */
     public boolean removeData(final int identifier, final double ...coordinates) throws IOException {
         if (!((properties & 5) != 0))// test isleaf or iscell
@@ -427,7 +427,7 @@ public class Node {
         tAF.writeNode(this);
         return true;
     }
-    
+
     /**
      * Initialize Node.
      */
@@ -439,18 +439,18 @@ public class Node {
 
     /**
      * Return children number.
-     * 
+     *
      * @return children number.
      */
     public int getChildCount() {
         return childCount;
     }
-    
+
     /**
      * Affect a new children number value.
-     * 
+     *
      * @param value new children number value.
-     * @see TreeAccessFile#readNode(int) 
+     * @see TreeAccessFile#readNode(int)
      */
     public void setChildCount(final int value) {
         childCount = value;
@@ -458,12 +458,12 @@ public class Node {
 
     /**
      * Add a new child in this Node.<br/><br/>
-     * 
+     *
      * Added child own a sibling id equal to last child Node identifier.
-     * 
+     *
      * @param node added child.
      * @throws IOException if problem during Node writing from {@link TreeAccessFile}.
-     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node) 
+     * @see TreeAccessFile#writeNode(org.geotoolkit.index.tree.Node)
      */
     public void addChild(final Node node) throws IOException {
         final double[] nodeBoundary = node.getBoundary();
@@ -484,15 +484,15 @@ public class Node {
         tAF.writeNode(this);
         tAF.writeNode(node);
     }
-    
+
     /**
      * Verify some internal Node properties.<br/><br/>
-     * 
+     *
      * Return false if a Node properties doesn't match with an expected results else true.
-     * 
+     *
      * @return false if a Node properties doesn't match with an expected results else true.
-     * @throws IOException if problem during Node reading from {@link TreeAccessFile}. 
-     * @see TreeAccessFile#readNode(int) 
+     * @throws IOException if problem during Node reading from {@link TreeAccessFile}.
+     * @see TreeAccessFile#readNode(int)
      */
     public boolean checkInternal() throws IOException {
         if (isEmpty()) return true;
@@ -534,18 +534,18 @@ public class Node {
     }
 
     /**
-     * Return true if children number is higher than maximum elements permit 
+     * Return true if children number is higher than maximum elements permit
      * per Node else false.
-     * 
+     *
      * @return true if children number is higher than maximum elements permit per Node else false.
      * @throws IOException if problem during reading Node in {@link TreeAccessFile}.
      * But exception only return from {@link HilbertNode} sub-implementation.
-     * @see HilbertNode#isFull() 
+     * @see HilbertNode#isFull()
      */
     public boolean isFull() throws IOException {
         return getChildCount() >= tAF.getMaxElementPerCells();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -562,7 +562,7 @@ public class Node {
                 return Classes.getShortClassName(this)+"Data : parent : "+getParentId()+" ID : "+getNodeId()+" sibling : "+getSiblingId()+" value : "+(-getChildId())+" bound : "+Arrays.toString(getBoundary());
             }
         } catch (IOException ex) {
-            Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.index.tree").log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -582,9 +582,9 @@ public class Node {
         } else {
             boundBool = Arrays.equals(objBound, boundThis);
         }
-        return objNode.getNodeId() == getNodeId() 
+        return objNode.getNodeId() == getNodeId()
                 && boundBool
-                && objNode.getParentId() == getParentId() 
+                && objNode.getParentId() == getParentId()
                 && objNode.getSiblingId() == getSiblingId()
                 && objNode.getChildId() == getChildId()
                 && objNode.getChildCount() == getChildCount();

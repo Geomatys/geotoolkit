@@ -35,7 +35,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 public class PointCreationTool extends AbstractEditionTool {
 
     public PointCreationTool() {
-        super(1400,"pointCreation",MessageBundle.getI18NString("createPoint"),
+        super(1400,"pointCreation",MessageBundle.formatInternational(MessageBundle.Keys.createPoint),
              new SimpleInternationalString("Tool for creating points."), 
              IconBundle.getIcon("16_newgeometry"), FeatureMapLayer.class);
     }

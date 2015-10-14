@@ -78,7 +78,7 @@ import org.opengis.geometry.Envelope;
 @XmlAccessorType(XmlAccessType.NONE)
 public class XMLMosaic implements GridMosaic {
 
-    private static final Logger LOGGER = Logging.getLogger(XMLMosaic.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.xmlstore");
 
     /** Executor used to write images */
     private static final RejectedExecutionHandler LOCAL_REJECT_EXECUTION_HANDLER = new ThreadPoolExecutor.CallerRunsPolicy();
@@ -121,7 +121,7 @@ public class XMLMosaic implements GridMosaic {
     Boolean cacheTileState;
 
     File folder;
-    
+
     final ReentrantReadWriteLock bitsetLock = new ReentrantReadWriteLock();
 
     /**
@@ -245,7 +245,7 @@ public class XMLMosaic implements GridMosaic {
                             nodatas[i] = nodat[0];//-- only one value by band is supported
                         }
                     }
-                    
+
                     final PixelIterator pix = PixelIteratorFactory.createDefaultWriteableIterator(emptyTile, emptyTile);
                     int d = 0;
                     while (pix.next()) {
@@ -256,7 +256,7 @@ public class XMLMosaic implements GridMosaic {
             } else {
                 ColorModel colorModel = ref.getColorModel();
                 SampleModel sampleModel = ref.getSampleModel();
-                
+
                 if (colorModel != null && sampleModel != null) {
                     long[] colorMap = null;
                     if (colorModel instanceof IndexColorModel) {
@@ -265,7 +265,7 @@ public class XMLMosaic implements GridMosaic {
                         int[] rgbs  = new int[mapSize];
                         indexColorMod.getRGBs(rgbs);
                         colorMap = new long[mapSize];
-                        for (int p = 0; p < mapSize; p++) colorMap[p] = rgbs[p]; 
+                        for (int p = 0; p < mapSize; p++) colorMap[p] = rgbs[p];
                     }
                     emptyTile = ImageUtils.createImage(tileWidth, tileHeight, SampleType.valueOf(sampleModel.getDataType()), sampleModel.getNumBands(), ImageUtils.getEnumPhotometricInterpretation(colorModel), ImageUtils.getEnumPlanarConfiguration(sampleModel), colorMap);
 
@@ -279,7 +279,7 @@ public class XMLMosaic implements GridMosaic {
                 ImageIO.write(emptyTile, pyramid.getPyramidSet().getFormatName(), out);
                 out.flush();
             } catch (IOException ex) {
-                Logger.getLogger(XMLMosaic.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
             emptyTileEncoded = out.toByteArray();
         }
@@ -497,10 +497,10 @@ public class XMLMosaic implements GridMosaic {
 
     /**
      * Returns the {@linkplain File file path} of tile at col and row index position.<br><br>
-     * 
-     * Moreover, this method check all possible path file suffix from pyramid SPI 
-     * and return the first that exist else return {@code null} if any exists. 
-     * 
+     *
+     * Moreover, this method check all possible path file suffix from pyramid SPI
+     * and return the first that exist else return {@code null} if any exists.
+     *
      * @param col mosaic column index.
      * @param row mosaic row index.
      * @return {@linkplain File file path} of tile at col and row index position if exist, else return {@code null}.
@@ -513,26 +513,26 @@ public class XMLMosaic implements GridMosaic {
         }
         return null;
     }
-    
+
     /**
      * Return the first available tile path {@link File} use to write tile.<br>
-     * 
+     *
      * You may choose another suffix {@link File}, with travel {@link #getTileFiles(int, int) } results.
-     * 
+     *
      * @param col mosaic column index.
      * @param row mosaic row index.
      * @return the first available tile path {@link File} use to write tile.
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     private File getDefaultTileFile(int col, int row) throws DataStoreException {
         final File fil = getTileFiles(col, row)[0];
 //        assert !fil.exists(): "created file should not exist : path : "+fil.getPath();
         return fil;
     }
-    
+
     /**
      * Returns all possible {@linkplain File files} from all suffix from reader spi.
-     * 
+     *
      * @param col mosaic column index.
      * @param row mosaic row index.
      * @return all possible {@linkplain File files} from all suffix from reader spi.
@@ -652,7 +652,7 @@ public class XMLMosaic implements GridMosaic {
                 final int tileIndex = getTileIndex(x, y);
                 checkPosition(x, y);
 
-                
+
                 File f = getTileFile(x, y);
                 if (f == null) f = getDefaultTileFile(x, y);
                 f.getParentFile().mkdirs();
@@ -711,10 +711,10 @@ public class XMLMosaic implements GridMosaic {
             }
         }
     }
-    
+
     @XmlElement
     protected String getEmptyMask() {
-        // Flush only if user did not specify to cache tile states.     
+        // Flush only if user did not specify to cache tile states.
         bitsetLock.readLock().lock();
         try {
             if (tileEmpty == null || cacheTileState) {
@@ -861,7 +861,7 @@ public class XMLMosaic implements GridMosaic {
                         try {
                             out.close();
                         } catch (IOException ex) {
-                            Logger.getLogger(XMLMosaic.class.getName()).log(Level.SEVERE, null, ex);
+                            LOGGER.log(Level.SEVERE, null, ex);
                         }
                     }
                 }

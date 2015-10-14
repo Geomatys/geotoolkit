@@ -28,7 +28,6 @@ import java.util.EventListener;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
 
@@ -40,6 +39,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Implementation of {@link RenderedImage} that is computed on the fly using portrayal rendering.
@@ -353,7 +353,7 @@ public class PortrayalRenderedImage implements RenderedImage{
 
             cvs.setVisibleArea(canvasEnv);
         } catch (NoninvertibleTransformException | TransformException | PortrayalException ex) {
-            Logger.getLogger(PortrayalRenderedImage.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.display2d.service").log(Level.SEVERE, null, ex);
         }
 
         //cut the canvas buffer in pieces

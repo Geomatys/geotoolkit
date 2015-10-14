@@ -29,7 +29,7 @@
         <Component class="javax.swing.JButton" name="guiQueryButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="ok" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="ok" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -89,7 +89,7 @@
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="version" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="version" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -155,7 +155,7 @@
         <Component class="javax.swing.JCheckBox" name="jcb_edit">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="property_edit" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="property_edit" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
@@ -177,7 +177,7 @@
         <Component class="javax.swing.JButton" name="guiCommit">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="commit" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="commit" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -187,7 +187,7 @@
         <Component class="javax.swing.JButton" name="guiRollback">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="rollback" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="rollback" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -197,14 +197,14 @@
         <Component class="javax.swing.JButton" name="jbu_action">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="property_action" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="property_action" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="guiShowId">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="show_id" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="show_id" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>

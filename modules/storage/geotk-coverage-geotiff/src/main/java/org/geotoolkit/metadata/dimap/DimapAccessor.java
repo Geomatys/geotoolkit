@@ -58,7 +58,6 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.metadata.dimap.DimapConstants.*;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.temporal.object.ISODateParser;
@@ -129,7 +128,7 @@ import static org.geotoolkit.util.DomUtilities.textValueSafe;
 @SuppressWarnings("restriction")
 public final class DimapAccessor extends Static {
 
-    private static final Logger LOGGER = Logging.getLogger(DimapAccessor.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.metadata.dimap");
 
     private DimapAccessor() {
     }

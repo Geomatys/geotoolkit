@@ -81,7 +81,7 @@ import org.xml.sax.SAXException;
  */
 public final class DecorationXMLParser {
 
-    private static final Logger LOGGER = Logging.getLogger(DecorationXMLParser.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.ext");
 
     private static final String TAG_DECORATION = "Decoration";
     private static final String TAG_BACKGROUND = "Background";
@@ -439,7 +439,7 @@ public final class DecorationXMLParser {
         try {
             color = ObjectConverters.convert(strColor, Color.class);
         } catch (UnconvertibleObjectException e) {
-            Logging.recoverableException(DecorationXMLParser.class, "parseColor", e);
+            Logging.recoverableException(LOGGER, DecorationXMLParser.class, "parseColor", e);
             return null;
             // TODO - do we really want to ignore?
         }
@@ -573,7 +573,7 @@ public final class DecorationXMLParser {
                     el.setTextContent(IdentifiedObjects.lookupIdentifier(gridTemplate.getCRS(), true));
                     deco.appendChild(el);
                 } catch (FactoryException ex) {
-                    Logger.getLogger(DecorationXMLParser.class.getName()).log(Level.WARNING, null, ex);
+                    LOGGER.log(Level.WARNING, null, ex);
                 }
 
                 final Element main = document.createElement(TAG_MAIN);

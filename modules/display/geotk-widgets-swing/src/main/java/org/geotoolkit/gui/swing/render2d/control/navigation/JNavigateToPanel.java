@@ -73,14 +73,14 @@ public class JNavigateToPanel extends javax.swing.JPanel {
         guiXValue = new javax.swing.JSpinner();
 
         guiNav.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/geotoolkit/gui/swing/resource/icon/jsorel/16x16/navto.png"))); // NOI18N
-        guiNav.setText(MessageBundle.getString("map_nav_to")); // NOI18N
+        guiNav.setText(MessageBundle.format("map_nav_to")); // NOI18N
         guiNav.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiNavActionPerformed(evt);
             }
         });
 
-        guiCRS.setText(MessageBundle.getString("crs")); // NOI18N
+        guiCRS.setText(MessageBundle.format("crs")); // NOI18N
         guiCRS.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiCRSActionPerformed(evt);

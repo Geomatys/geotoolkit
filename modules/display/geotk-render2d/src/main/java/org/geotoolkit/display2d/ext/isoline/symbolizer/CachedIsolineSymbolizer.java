@@ -46,7 +46,7 @@ import java.util.logging.Logger;
  */
 public class CachedIsolineSymbolizer extends CachedSymbolizer<IsolineSymbolizer> {
 
-    private static final Logger LOGGER = Logging.getLogger(CachedIsolineSymbolizer.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.ext.isoline.symbolizer");
 
     private CachedRasterSymbolizer cachedRS;
     private ProcessDescriptor isolineDesc;

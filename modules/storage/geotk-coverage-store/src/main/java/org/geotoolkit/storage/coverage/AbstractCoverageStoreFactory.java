@@ -17,7 +17,6 @@
 package org.geotoolkit.storage.coverage;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.sis.storage.DataStoreException;
@@ -25,7 +24,6 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.util.collection.MapUtilities;
@@ -44,24 +42,22 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public abstract class AbstractCoverageStoreFactory extends Factory implements CoverageStoreFactory {
 
-    private static final String BUNDLE_PATH = "org/geotoolkit/coverage/bundle";
-
     /**
      * Identifier, Mandatory.
      * Subclasses should redeclared this parameter with a different default value.
      */
     public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
             .addName("identifier")
-            .addName(new ResourceInternationalString(BUNDLE_PATH, "paramIdentifierAlias"))
-            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "paramIdentifierRemarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.paramIdentifierAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramIdentifierRemarks))
             .setRequired(true)
             .create(String.class, null);
 
     /** parameter for namespace of the coveragestore */
     public static final ParameterDescriptor<String> NAMESPACE = new ParameterBuilder()
             .addName("namespace")
-            .addName(new ResourceInternationalString(BUNDLE_PATH, "paramNamespaceAlias"))
-            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "paramNamespaceRemarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.paramNamespaceAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramNamespaceRemarks))
             .setRequired(false)
             .create(String.class, null);
     /**

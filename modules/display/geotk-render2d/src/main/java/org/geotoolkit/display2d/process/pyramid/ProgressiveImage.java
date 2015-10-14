@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.media.jai.RasterFactory;
 import javax.swing.event.EventListenerList;
 import org.geotoolkit.display.PortrayalException;
@@ -42,6 +41,7 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * On the fly calculated image. multi-threaded.
@@ -347,7 +347,7 @@ public class ProgressiveImage implements RenderedImage{
 //                try {
 //                    Thread.sleep(100);
 //                } catch (InterruptedException ex) {
-//                    Logger.getLogger(ProgressiveImage.class.getName()).log(Level.SEVERE, null, ex);
+//                    Logging.getLogger("org.geotoolkit.display2d.process.pyramid").log(Level.SEVERE, null, ex);
 //                }
 //            }
 //
@@ -473,7 +473,7 @@ public class ProgressiveImage implements RenderedImage{
         try {
             canvas.setVisibleArea(canvasEnv);
         } catch (NoninvertibleTransformException | TransformException ex) {
-            Logger.getLogger(ProgressiveImage.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.display2d.process.pyramid").log(Level.SEVERE, null, ex);
         }
 
         //cut the canvas buffer in pieces
@@ -510,7 +510,7 @@ public class ProgressiveImage implements RenderedImage{
 //            try {
 //                tiles.put(ts);
 //            } catch (InterruptedException ex) {
-//                Logger.getLogger(ProgressiveImage.class.getName()).log(Level.SEVERE, null, ex);
+//                Logging.getLogger("org.geotoolkit.display2d.process.pyramid").log(Level.SEVERE, null, ex);
 //            }
 //
 //            final Dimension canvasSize = new Dimension(
@@ -545,9 +545,9 @@ public class ProgressiveImage implements RenderedImage{
 //            try {
 //                canvas.getController().setVisibleArea(canvasEnv);
 //            } catch (NoninvertibleTransformException ex) {
-//                Logger.getLogger(ProgressiveImage.class.getName()).log(Level.SEVERE, null, ex);
+//                Logging.getLogger("org.geotoolkit.display2d.process.pyramid").log(Level.SEVERE, null, ex);
 //            } catch (TransformException ex) {
-//                Logger.getLogger(ProgressiveImage.class.getName()).log(Level.SEVERE, null, ex);
+//                Logging.getLogger("org.geotoolkit.display2d.process.pyramid").log(Level.SEVERE, null, ex);
 //            }
 //
 //            //cut the canvas buffer in pieces

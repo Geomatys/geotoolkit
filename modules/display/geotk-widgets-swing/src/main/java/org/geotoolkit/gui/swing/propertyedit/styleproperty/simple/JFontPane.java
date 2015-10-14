@@ -139,11 +139,11 @@ public class JFontPane extends StyleElementEditor<Font> {
         });
         jScrollPane3.setViewportView(guiSizeList);
 
-        jLabel1.setText(MessageBundle.getString("family")); // NOI18N
+        jLabel1.setText(MessageBundle.format("family")); // NOI18N
 
-        jLabel2.setText(MessageBundle.getString("type")); // NOI18N
+        jLabel2.setText(MessageBundle.format("type")); // NOI18N
 
-        jLabel3.setText(MessageBundle.getString("size")); // NOI18N
+        jLabel3.setText(MessageBundle.format("size")); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);

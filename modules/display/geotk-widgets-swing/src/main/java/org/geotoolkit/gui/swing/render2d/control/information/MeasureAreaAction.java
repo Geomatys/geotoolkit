@@ -32,7 +32,7 @@ public class MeasureAreaAction extends AbstractMapAction {
 
     public MeasureAreaAction(){
         putValue(SMALL_ICON, IconBundle.getIcon("16_mesure_area"));
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_measure_area"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("map_measure_area"));
     }
 
     @Override

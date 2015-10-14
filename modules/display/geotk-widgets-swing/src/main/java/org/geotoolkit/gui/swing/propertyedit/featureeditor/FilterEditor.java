@@ -21,7 +21,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import org.geotoolkit.cql.CQL;
@@ -30,6 +29,7 @@ import org.geotoolkit.gui.swing.filter.JCQLEditor;
 import org.geotoolkit.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Filter/Expression type editor.
@@ -88,13 +88,13 @@ public class FilterEditor extends PropertyValueEditor implements ActionListener{
             try {
                 value = JCQLEditor.showDialog(this, null, (Expression)value);
             } catch (CQLException ex) {
-                Logger.getLogger(FilterEditor.class.getName()).log(Level.INFO, ex.getMessage(), ex);
+                Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.featureeditor").log(Level.INFO, ex.getMessage(), ex);
             }
         }else{
             try {
                 value = JCQLEditor.showDialog(this, null, (Filter)value);
             } catch (CQLException ex) {
-                Logger.getLogger(FilterEditor.class.getName()).log(Level.INFO, ex.getMessage(), ex);
+                Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.featureeditor").log(Level.INFO, ex.getMessage(), ex);
             }
         }
 

@@ -57,7 +57,7 @@ public abstract class GeoTiffExtension {
 
     /**
      * Get all extensions.
-     * 
+     *
      * @return All geotiff extensions
      */
     public static GeoTiffExtension[] getExtensions(){
@@ -88,10 +88,10 @@ public abstract class GeoTiffExtension {
 
     /**
      * Modify the spatial metadata of the geotiff coverage.
-     * 
+     *
      * @param reader
      * @param metadata to be modified
-     * @return 
+     * @return
      * @throws java.io.IOException
      */
     public abstract SpatialMetadata fillSpatialMetaData(TiffImageReader reader, SpatialMetadata metadata) throws IOException;
@@ -99,14 +99,14 @@ public abstract class GeoTiffExtension {
     /**
      * Modify the given spatial metadata, adding a new crs axis dimension.
      * If the crs axis already exist it will not be added and only the value will be updated.
-     * 
+     *
      * This method should be used only to declare the geotiff on a new axis.
      * For example adding a temporal dimension and define it's value.
-     * 
+     *
      * @param metadata
      * @param axisCrs
      * @param value
-     * @throws FactoryException 
+     * @throws FactoryException
      */
      public static void setOrCreateSliceDimension(SpatialMetadata metadata, CoordinateReferenceSystem axisCrs, double value) throws FactoryException{
         //ensure no cache modify the values
@@ -121,7 +121,7 @@ public abstract class GeoTiffExtension {
         CoordinateReferenceSystem crs = rb.getCoordinateReferenceSystem(CoordinateReferenceSystem.class);
         if(crs==null){
             //no crs defined, we can't add any slice axis value
-            final Logger logger = Logging.getLogger(GeoTiffExtension.class);
+            final Logger logger = Logging.getLogger("org.geotoolkit.metadata.geotiff");
             logger.info("Tiff has no base CRS, slice dimension crs will not be added.");
             return;
         }
@@ -176,7 +176,7 @@ public abstract class GeoTiffExtension {
                     for (double[] ov : offsetVectors) {
                         acc.addOffsetVector(ov);
                     }
-            
+
         } else {
             //axis already exist, update the value
 

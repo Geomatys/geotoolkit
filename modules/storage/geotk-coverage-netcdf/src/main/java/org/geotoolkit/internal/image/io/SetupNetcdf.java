@@ -45,7 +45,7 @@ public final class SetupNetcdf implements SetupService {
             try {
                 n = Integer.parseInt(properties.getProperty("netcdfCacheLimit", "0"));
             } catch (NumberFormatException e) {
-                Logging.unexpectedException(org.geotoolkit.lang.Setup.class, "initialize", e);
+                Logging.unexpectedException(null, org.geotoolkit.lang.Setup.class, "initialize", e);
                 return;
             }
             if (n != 0) {

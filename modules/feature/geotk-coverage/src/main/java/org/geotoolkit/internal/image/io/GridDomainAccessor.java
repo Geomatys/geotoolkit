@@ -155,7 +155,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
                     // Should not happen. If it happen anyway, this is not a fatal error.
                     // The above metadata will be missing from the IIOMetadata object, but
                     // they were mostly for information purpose anyway.
-                    Logging.unexpectedException(GridDomainAccessor.class, "setGridGeometry", e);
+                    Logging.unexpectedException(null, GridDomainAccessor.class, "setGridGeometry", e);
                 }
             }
             setLimits(lower, upper);
@@ -212,7 +212,7 @@ public final class GridDomainAccessor extends MetadataNodeAccessor {
      * Gets the {@code "low"} and {@code "high"} attributes of the
      * {@code "RectifiedGridDomain/Limits"} node.
      *
-     * @return int[][] : 
+     * @return int[][] :
      *  int[0] is the lower bounds,
      *  int[1] is the upper bounds
      */

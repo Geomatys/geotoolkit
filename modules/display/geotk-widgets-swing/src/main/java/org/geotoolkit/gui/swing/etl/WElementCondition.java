@@ -83,7 +83,7 @@ public class WElementCondition extends Widget implements WPositionable {
         w_north.setLayout(LayoutFactory.createHorizontalFlowLayout(LayoutFactory.SerialAlignment.CENTER,5));
         w_north.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
 
-        final String title = MessageBundle.getString("conditionalTitle");
+        final String title = MessageBundle.format("conditionalTitle");
         w_title = new WName(scene, title, editable, false, true, this);
         w_title.setPreferredSize(leftExecDim);
         w_title.setAlignment(LabelWidget.Alignment.LEFT);
@@ -92,7 +92,7 @@ public class WElementCondition extends Widget implements WPositionable {
         final Widget w_separator1 = new LabelWidget(scene, "");
         w_separator1.setBorder(BorderFactory.createLineBorder(0, 1, 0, 0, CHAIN_TITLE_UNDERLINE_COLOR));
 
-        final String success = MessageBundle.getString("conditionalSuccess");
+        final String success = MessageBundle.format("conditionalSuccess");
         w_success = new WName(scene, success, editable, true, false, this);
         w_success.setPreferredSize(rightExecDim);
         w_success.setAlignment(LabelWidget.Alignment.RIGHT);
@@ -118,7 +118,7 @@ public class WElementCondition extends Widget implements WPositionable {
         final Widget w_south = new Widget(scene);
         w_south.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 0, 0, Color.DARK_GRAY));
         w_south.setLayout(LayoutFactory.createHorizontalFlowLayout(LayoutFactory.SerialAlignment.CENTER,5));
-        final String fail = MessageBundle.getString("conditionalFailed");
+        final String fail = MessageBundle.format("conditionalFailed");
         w_failed = new WName(scene, fail, editable, true, false, this);
         w_failed.setPreferredSize(rightExecDim);
         w_failed.setAlignment(LabelWidget.Alignment.RIGHT);

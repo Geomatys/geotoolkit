@@ -208,7 +208,7 @@ public final class IrregularAxesConverter {
                     return (ProjectedCRS) DiscreteReferencingFactory.createDiscreteCRS(targetCRS, nx, ny);
                 }
             } catch (FactoryException | TransformException e) {
-                Logging.recoverableException(IrregularAxesConverter.class, "canConvert", e);
+                Logging.recoverableException(null, IrregularAxesConverter.class, "canConvert", e);
             }
         }
         return null;

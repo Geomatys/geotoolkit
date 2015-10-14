@@ -36,7 +36,7 @@ import org.opengis.filter.Filter;
 public class DeleteSelectionAction extends AbstractAction {
 
     public DeleteSelectionAction(){
-        super(MessageBundle.getString("delete"));
+        super(MessageBundle.format("delete"));
     }
 
     @Override
@@ -62,8 +62,8 @@ public class DeleteSelectionAction extends AbstractAction {
         if (collection.isWritable()) {
             final Filter fid = layer.getSelectionFilter();
             if (fid != null) {
-                final int confirm = JOptionPane.showConfirmDialog(null, MessageBundle.getString("confirm_delete"),
-                        MessageBundle.getString("confirm_delete"), JOptionPane.OK_CANCEL_OPTION);
+                final int confirm = JOptionPane.showConfirmDialog(null, MessageBundle.format("confirm_delete"),
+                        MessageBundle.format("confirm_delete"), JOptionPane.OK_CANCEL_OPTION);
                 if (JOptionPane.OK_OPTION == confirm) {
 
                     try {

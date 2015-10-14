@@ -290,7 +290,7 @@ public class FeatureBuilder {
                     value = converted;
                 }
             } catch (UnconvertibleObjectException e) {
-                Logging.recoverableException(FeatureBuilder.class, "convert", e);
+                Logging.recoverableException(null, FeatureBuilder.class, "convert", e);
                 // TODO - do we really want to ignore?
             }
         } else {

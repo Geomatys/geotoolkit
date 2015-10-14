@@ -52,7 +52,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class JCoverageStoreChooser extends javax.swing.JPanel {
 
-    private static final Logger LOGGER = Logging.getLogger(JCoverageStoreChooser.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.chooser");
 
     private static final Comparator<CoverageStoreFactory> SORTER = new Comparator<CoverageStoreFactory>() {
         @Override
@@ -143,11 +143,11 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
 
         guiEditPane.setLayout(new java.awt.BorderLayout());
 
-        guiCreateNew.setText(MessageBundle.getString("choosercoveragestore.new")); // NOI18N
+        guiCreateNew.setText(MessageBundle.format("choosercoveragestore_new")); // NOI18N
 
         guiInfoLabel.setEditable(false);
 
-        guiConnect.setText(MessageBundle.getString("choosercoveragestore.connect")); // NOI18N
+        guiConnect.setText(MessageBundle.format("choosercoveragestore_connect")); // NOI18N
         guiConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiConnectActionPerformed(evt);
@@ -204,7 +204,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             store = getCoverageStore();
             chooser.setSource(store);
             guiInfoLabel.setForeground(Color.GREEN);
-            guiInfoLabel.setText(MessageBundle.getString("choosercoveragestore.ok"));
+            guiInfoLabel.setText(MessageBundle.format("choosercoveragestore_ok"));
         } catch (DataStoreException ex) {
             guiInfoLabel.setForeground(Color.RED);
             guiInfoLabel.setText(""+ex.getMessage());

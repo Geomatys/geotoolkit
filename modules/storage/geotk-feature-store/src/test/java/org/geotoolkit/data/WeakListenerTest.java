@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.data;
 
-import java.util.logging.Logger;
-import java.util.logging.Level;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.sis.storage.DataStoreException;
 
@@ -102,19 +100,4 @@ public class WeakListenerTest {
         //listener should have desapear now, so the event should not have been send
         assertEquals(1, count.get());
     }
-
-    private static void pause(){
-        for(int i=0;i<4;i++){
-            System.gc();
-            System.gc();
-            System.gc();
-            System.gc();
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(WeakListenerTest.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
 }

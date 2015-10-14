@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.referencing.CRS;
@@ -37,21 +36,22 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
- * All geometry elements are derived directly or indirectly from this abstract supertype. 
- * A geometry element may have an identifying attribute (gml:id), 
+ * All geometry elements are derived directly or indirectly from this abstract supertype.
+ * A geometry element may have an identifying attribute (gml:id),
  * one or more names (elements identifier and name) and a description (elements description and descriptionReference) .
  * It may be associated with a spatial reference system (attribute group gml:SRSReferenceGroup).
  * The following rules shall be adhered to:
  * -	Every geometry type shall derive from this abstract type.
  * -	Every geometry element (i.e. an element of a geometry type) shall be directly or indirectly in the substitution group of AbstractGeometry.
- * 
+ *
  * <p>Java class for AbstractGeometryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractGeometryType">
  *   &lt;complexContent>
@@ -61,8 +61,8 @@ import org.opengis.util.FactoryException;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractGeometryType")
@@ -88,8 +88,8 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     // Opengis attribute
     @XmlTransient
     private Precision precision;
-    
-    
+
+
     /**
      * empty constructor used by JAXB
      */
@@ -112,11 +112,11 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     }
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSrsName() {
@@ -125,11 +125,11 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(String value) {
         this.srsName = value;
@@ -137,11 +137,11 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     /**
      * Gets the value of the srsDimension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getSrsDimension() {
         return srsDimension;
@@ -149,11 +149,11 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     /**
      * Sets the value of the srsDimension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setSrsDimension(Integer value) {
         this.srsDimension = value;
@@ -161,11 +161,11 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     /**
      * Gets the value of the axisLabels property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
@@ -176,11 +176,11 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     /**
      * Gets the value of the uomLabels property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getUomLabels() {
         if (uomLabels == null) {
@@ -199,14 +199,14 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return getCoordinateReferenceSystem(true);
     }
-    
+
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem(boolean longitudeFirst) {
         if(srsName != null){
             try {
                 return CRS.decode(srsName, longitudeFirst);
             } catch (FactoryException ex) {
-                Logger.getLogger(org.geotoolkit.gml.xml.v311.AbstractGeometryType.class.getName()).log(Level.WARNING, "Could not decode CRS which name is : " + srsName, ex);
+                Logging.getLogger("org.geotoolkit.gml.xml.v321").log(Level.WARNING, "Could not decode CRS which name is : " + srsName, ex);
             }
         }
 
@@ -217,7 +217,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     public Precision getPrecision() {
         return precision;
     }
-    
+
     /**
      * @param precision the precision to set
      */
@@ -325,8 +325,8 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     }
 
     /**
-     * cant return immutable version of the object fir this module. 
-     * @return 
+     * cant return immutable version of the object fir this module.
+     * @return
      */
     @Override
     public Geometry toImmutable() {
@@ -384,7 +384,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     public boolean isEmpty() {
         return false;
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -442,6 +442,6 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
         }
         return sb.toString();
     }
-    
-    
+
+
 }

@@ -50,7 +50,7 @@
           </FontInfo>
         </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="property_title" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="property_title" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -173,7 +173,7 @@
             <Component class="javax.swing.JButton" name="guiBtnAddDimension">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="add_dimension" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="add_dimension" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <Events>

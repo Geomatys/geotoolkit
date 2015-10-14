@@ -786,7 +786,7 @@ public class Plot2D extends ZoomPane {
                 inferGraduation(axis, false);
             }
         } catch (NoninvertibleTransformException exception) {
-            Logging.unexpectedException(Plot2D.class, "transform", exception);
+            Logging.unexpectedException(null, Plot2D.class, "transform", exception);
         }
         repaint();
     }

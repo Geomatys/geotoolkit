@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -95,6 +94,7 @@ import org.geotoolkit.gui.swing.render3d.control.JMap3dConfigPanel;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
 import org.opengis.geometry.Envelope;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Simple Frame that can be used to quickly display a map or for debug purpose.
@@ -200,18 +200,18 @@ public class JMap2DFrame extends javax.swing.JFrame {
         lstproperty.add(new JLayerDataStructurePanel());
 
         LayerFilterPropertyPanel filters = new LayerFilterPropertyPanel();
-        filters.addPropertyPanel(MessageBundle.getString("filter"),new JCQLPropertyPanel());
+        filters.addPropertyPanel(MessageBundle.format("filter"),new JCQLPropertyPanel());
         lstproperty.add(filters);
 
         LayerStylePropertyPanel styles = new LayerStylePropertyPanel();
-        styles.addPropertyPanel(MessageBundle.getString("analyze"),new JSimpleStylePanel());
-        styles.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationSingleStylePanel());
-        styles.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationIntervalStylePanel());
-        styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JColorMapPane());
-        styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JCellSymbolizerPane());
-        styles.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JIsolineSymbolizerPane());
-        styles.addPropertyPanel(MessageBundle.getString("sld"),new JAdvancedStylePanel());
-        styles.addPropertyPanel(MessageBundle.getString("sld"),new JSLDImportExportPanel());
+        styles.addPropertyPanel(MessageBundle.format("analyze"),new JSimpleStylePanel());
+        styles.addPropertyPanel(MessageBundle.format("analyze_vector"),new JClassificationSingleStylePanel());
+        styles.addPropertyPanel(MessageBundle.format("analyze_vector"),new JClassificationIntervalStylePanel());
+        styles.addPropertyPanel(MessageBundle.format("analyze_raster"),new JColorMapPane());
+        styles.addPropertyPanel(MessageBundle.format("analyze_raster"),new JCellSymbolizerPane());
+        styles.addPropertyPanel(MessageBundle.format("analyze_raster"),new JIsolineSymbolizerPane());
+        styles.addPropertyPanel(MessageBundle.format("sld"),new JAdvancedStylePanel());
+        styles.addPropertyPanel(MessageBundle.format("sld"),new JSLDImportExportPanel());
         lstproperty.add(styles);
 
         property.setPropertyPanels(lstproperty);
@@ -487,7 +487,7 @@ private void openCoverageStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openCo
             }
 
         } catch (DataStoreException ex) {
-            Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.gui.swing.render2d").log(Level.SEVERE, null, ex);
         }
 
 
@@ -504,7 +504,7 @@ private void openFeatureStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openFea
             }
 
         } catch (DataStoreException ex) {
-            Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.gui.swing.render2d").log(Level.SEVERE, null, ex);
         }
 
 }//GEN-LAST:event_openFeatureStoreChooser
@@ -520,7 +520,7 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
         }
 
     } catch (DataStoreException ex) {
-        Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
+        Logging.getLogger("org.geotoolkit.gui.swing.render2d").log(Level.SEVERE, null, ex);
     }
 
 }//GEN-LAST:event_openServerChooser

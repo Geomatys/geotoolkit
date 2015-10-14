@@ -1,7 +1,7 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Logger;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -38,21 +37,21 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.sis.metadata.AbstractMetadata;
 import org.apache.sis.metadata.MetadataStandard;
-import org.apache.sis.metadata.iso.citation.Citations;
 import org.apache.sis.util.ComparisonMode;
 import org.opengis.feature.catalog.DefinitionSource;
 import org.opengis.feature.catalog.FeatureCatalogue;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.metadata.citation.ResponsibleParty;
+import org.geotoolkit.metadata.Citations;
 
 
 /**
  * A feature catalogue contains its identification and contact information, and definition of some number of feature types with other information necessary for those definitions.
- * 
+ *
  * <p>Java class for FC_FeatureCatalogue_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FC_FeatureCatalogue_Type">
  *   &lt;complexContent>
@@ -68,8 +67,8 @@ import org.opengis.metadata.citation.ResponsibleParty;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -87,15 +86,12 @@ import org.opengis.metadata.citation.ResponsibleParty;
 @XmlRootElement( name = "FC_FeatureCatalogue")
 public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCatalogue, Referenceable {
 
-    @XmlTransient
-    private static final Logger LOGGER = Logger.getLogger("featureCatalogueImpl");
-    
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     @XmlSchemaType(name = "ID")
     private String id;
-    
+
     @XmlElement(required = true)
     private String name;
     @XmlElement(required = true)
@@ -110,19 +106,19 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
     @XmlElement(required = true)
     private List<FeatureType> featureType;
     private List<DefinitionSource> definitionSource;
-    
+
     @XmlTransient
     private boolean isReference = false;
     @XmlTransient
     protected boolean rootElement = true;
-    
+
      /**
      * An empty constructor used by JAXB
      */
     public FeatureCatalogueImpl() {
-        
+
     }
-    
+
     /**
      * Clone a FeatureCatalogue
      */
@@ -140,7 +136,7 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
             this.id                 = feature.getId();
         }
     }
-    
+
     /**
      * Build a new FeatureCatalogue
      */
@@ -157,9 +153,9 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
         this.scope              = scope;
         this.versionDate        = versionDate;
         this.versionNumber      = versionNumber;
-        
+
     }
-    
+
 
     /**
      * Return the identifier of the catalog
@@ -168,10 +164,10 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
     public String getId() {
         return this.id;
     }
-    
+
     /**
      * Gets the value of the name property.
-     * 
+     *
      */
     @Override
     public String getName() {
@@ -180,7 +176,7 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -188,7 +184,7 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
 
     /**
      * Gets the value of the scope property.
-     * 
+     *
      */
     @Override
     public List<String> getScope() {
@@ -197,18 +193,18 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
         }
         return this.scope;
     }
-    
+
     public void setScope(final String scope) {
         if (this.scope == null) {
             this.scope = new ArrayList<String>();
         }
         this.scope.add(scope);
     }
-    
+
     public void setScope(final List<String> scope) {
         this.scope = scope;
     }
-    
+
 
     /**
      * Gets the value of the fieldOfApplication property.
@@ -220,21 +216,21 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
         }
         return this.fieldOfApplication;
     }
-    
+
     public void setFieldOfApplication(final String fieldOfApplication) {
         if (this.fieldOfApplication == null) {
             this.fieldOfApplication = new ArrayList<String>();
         }
         this.fieldOfApplication.add(fieldOfApplication);
     }
-    
+
     public void setFieldOfApplication(final List<String> fieldOfApplication) {
         this.fieldOfApplication = fieldOfApplication;
     }
 
     /**
      * Gets the value of the versionNumber property.
-     * 
+     *
     */
     @Override
     public String getVersionNumber() {
@@ -243,7 +239,7 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
 
     /**
      * Sets the value of the versionNumber property.
-     * 
+     *
      */
     public void setVersionNumber(final String value) {
         this.versionNumber = value;
@@ -251,7 +247,7 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
 
     /**
      * Gets the value of the versionDate property.
-     * 
+     *
     */
     @Override
     public Date getVersionDate() {
@@ -260,16 +256,16 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
 
     /**
      * Sets the value of the versionDate property.
-     *     
+     *
      */
     public void setVersionDate(final Date value) {
         this.versionDate = value;
     }
 
-    
+
     /**
      * Gets the value of the producer property.
-     * 
+     *
      */
     @Override
     public ResponsibleParty getProducer() {
@@ -308,16 +304,16 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
         }
         return this.featureType;
     }
-    
-    
+
+
     public void setFeatureType(final FeatureType featureType) {
         if (this.featureType == null) {
             this.featureType = new ArrayList<FeatureType>();
         }
         this.featureType.add(featureType);
     }
-    
-    
+
+
     public void setFeatureType(final List<FeatureType> featureType) {
         this.featureType = featureType;
     }
@@ -332,63 +328,63 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
         }
         return this.definitionSource;
     }
-    
+
     public void setDefinitionSource(final DefinitionSource definitionSource) {
         if (this.definitionSource == null) {
             this.definitionSource = new ArrayList<DefinitionSource>();
         }
         this.definitionSource.add(definitionSource);
     }
-    
+
     public void setDefinitionSource(final List<DefinitionSource> definitionSource) {
         this.definitionSource = definitionSource;
     }
-    
+
     @Override
     public void setReference(final boolean isReference) {
         this.isReference = isReference;
     }
-    
+
     @Override
     public boolean isReference() {
         return isReference;
     }
-    
+
     @Override
     public FeatureCatalogueImpl getReference() {
         FeatureCatalogueImpl result = new FeatureCatalogueImpl(this);
         result.setReference(true);
         return result;
     }
-    
-    
+
+
     private void beforeMarshal(final Marshaller marshaller) {
         if (rootElement) {
             beforeMarshal(new HashMap<String, Referenceable>());
         }
     }
-    
+
     public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
         if (id != null && !id.isEmpty()) {
             alreadySee.put(id, this);
         }
         rootElement = false;
-        
+
         List<FeatureType> replacement = new ArrayList<FeatureType>();
         for (FeatureType f: getFeatureType()) {
             FeatureTypeImpl fi = (FeatureTypeImpl) f;
-            
+
             if (alreadySee.get(fi.getId()) != null) {
                 replacement.add(fi.getReference());
             } else {
                 alreadySee = fi.beforeMarshal(alreadySee);
-                replacement.add(fi);    
+                replacement.add(fi);
             }
         }
         featureType = replacement;
         return alreadySee;
     }
-    
+
     /*@Override
     public String toString() {
         StringBuilder s = new StringBuilder("[FeatureCatalogue]:").append('\n');
@@ -397,37 +393,37 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
             s.append("reference mode").append('\n');
         } else {
             s.append("name").append(name).append('\n');
-       
+
             if (scope != null) {
                 s.append("scopes:").append('\n');
                 for (String sc: scope) {
                     s.append('\t').append(sc).append('\n');
                 }
             }
-        
+
             if (fieldOfApplication != null) {
                 s.append("field of applications:").append('\n');
                 for (String sc: fieldOfApplication) {
                     s.append('\t').append(sc).append('\n');
                 }
             }
-        
+
             if (versionNumber != null) {
                 s.append("Version Number:").append(versionNumber).append('\n');
             }
-        
+
             if (versionDate != null) {
                 s.append("Version Date:").append(versionDate).append('\n');
             }
-        
+
             if (producer != null) {
                 s.append("Producer:").append(producer.toString()).append('\n');
             }
-        
+
             if (functionalLanguage != null) {
                 s.append("functional language:").append(functionalLanguage).append('\n');
             }
-        
+
             if (featureType != null) {
                 this.setReference(true);
                 s.append("feature types:").append('\n');
@@ -445,8 +441,8 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
         }
         return s.toString();
     }*/
-    
-    
+
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -457,7 +453,7 @@ public class FeatureCatalogueImpl extends AbstractMetadata implements  FeatureCa
         }
         if (object instanceof FeatureCatalogueImpl) {
             final FeatureCatalogueImpl that = (FeatureCatalogueImpl) object;
-            
+
             return Objects.equals(this.definitionSource,   that.definitionSource)   &&
                    Objects.equals(this.featureType,        that.featureType)        &&
                    Objects.equals(this.fieldOfApplication, that.fieldOfApplication) &&

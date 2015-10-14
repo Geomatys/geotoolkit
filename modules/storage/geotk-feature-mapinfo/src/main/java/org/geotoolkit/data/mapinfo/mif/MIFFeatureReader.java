@@ -49,7 +49,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public class MIFFeatureReader implements FeatureReader {
 
-    private final static Logger LOGGER = Logger.getLogger(MIFFeatureReader.class.getName());
+    private final static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo.mif");
 
     private static final Pattern GEOMETRY_ID_PATTERN;
     static {
@@ -113,7 +113,7 @@ public class MIFFeatureReader implements FeatureReader {
             geometryId = null;
             geometryPattern = null;
         }
-        
+
         baseTypeAtts = master.getBaseType().getDescriptors().toArray(new PropertyDescriptor[0]);
     }
 
@@ -195,7 +195,7 @@ public class MIFFeatureReader implements FeatureReader {
                             } else try {
                                 value = ObjectConverters.convert(split[i], att.getBinding());
                             } catch (UnconvertibleObjectException e) {
-                                Logging.recoverableException(MIFFeatureReader.class, "next", e);
+                                Logging.recoverableException(LOGGER, MIFFeatureReader.class, "next", e);
                                 value = null;
                                 // TODO - do we really want to ignore the problem?
                             }

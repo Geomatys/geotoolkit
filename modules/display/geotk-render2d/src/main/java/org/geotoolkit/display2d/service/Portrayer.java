@@ -25,7 +25,6 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -59,6 +58,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Portrayal data, caches the Java2D canvas for further reuse.
@@ -343,7 +343,7 @@ public final class Portrayer {
                 try {
                     writer.dispose();
                 } catch (CoverageStoreException ex1) {
-                    Logger.getLogger(DefaultPortrayalService.class.getName()).log(Level.WARNING, null, ex1);
+                    Logging.getLogger("org.geotoolkit.display2d.service").log(Level.WARNING, null, ex1);
                 }
                 throw new PortrayalException(ex);
             }

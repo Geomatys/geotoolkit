@@ -40,7 +40,7 @@ public abstract class AbstractOMFeatureStore extends AbstractFeatureStore {
 
     protected final Map<GenericName, FeatureType> types;
 
-    protected static final Logger LOGGER = Logging.getLogger(AbstractOMFeatureStore.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.om");
 
     protected static final FeatureFactory FF = FeatureFactory.LENIENT;
 

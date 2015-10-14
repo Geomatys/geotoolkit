@@ -80,7 +80,7 @@ public class LayerGeneralPanel extends AbstractPropertyPane {
 
     /** Creates new form LayerGeneralPanel */
     public LayerGeneralPanel() {
-        super(MessageBundle.getString("property_general_title"),null,null,MessageBundle.getString("property_general_title"));
+        super(MessageBundle.format("property_general_title"),null,null,MessageBundle.format("property_general_title"));
         initComponents();
 
         guiTable.setDefaultRenderer(LayerGeneralTableRowModel.CrsCookie.class, new CrsRenderer());
@@ -142,7 +142,7 @@ public class LayerGeneralPanel extends AbstractPropertyPane {
         guiTable = new Outline();
 
         jLabel15.setFont(jLabel15.getFont().deriveFont(jLabel15.getFont().getStyle() | Font.BOLD));
-        jLabel15.setText(MessageBundle.getString("property_title")); // NOI18N
+        jLabel15.setText(MessageBundle.format("property_title")); // NOI18N
 
         jPanelDimensions.setName("New attribute"); // NOI18N
 
@@ -152,7 +152,7 @@ public class LayerGeneralPanel extends AbstractPropertyPane {
 
         jLabel3.setText("upper");
 
-        guiBtnAddDimension.setText(MessageBundle.getString("add_dimension")); // NOI18N
+        guiBtnAddDimension.setText(MessageBundle.format("add_dimension")); // NOI18N
         guiBtnAddDimension.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiBtnAddDimensionActionPerformed(evt);

@@ -629,6 +629,6 @@ nextTable: for (final String table : tables.keySet()) {
         final LogRecord record = new LogRecord(level, message);
         record.setSourceClassName(Synchronizer.class.getName());
         record.setSourceMethodName(method);
-        Logging.getLogger(Synchronizer.class).log(record);
+        Logging.getLogger("org.geotoolkit.sql").log(record);
     }
 }

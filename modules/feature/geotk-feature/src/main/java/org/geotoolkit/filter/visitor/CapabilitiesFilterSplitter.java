@@ -30,9 +30,6 @@ import java.util.regex.Pattern;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.filter.binding.Binding;
-import org.geotoolkit.filter.binding.Bindings;
-import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.type.ComplexType;
 
 import org.opengis.filter.And;
@@ -131,7 +128,7 @@ import org.opengis.filter.temporal.TOverlaps;
  */
 public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisitor {
 
-    private static final Logger LOGGER = Logging.getLogger(CapabilitiesFilterSplitter.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter.visitor");
     private static final Pattern ID_PATTERN       = Pattern.compile("@(\\w+:)?id");
     private static final Pattern PROPERTY_PATTERN = Pattern.compile("(\\w+:)?(.+)");
 

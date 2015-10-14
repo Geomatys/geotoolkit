@@ -164,28 +164,28 @@
         <Component class="javax.swing.JLabel" name="guiLblCount">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="count" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="count" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="guiLblMinimum">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="minimum" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="minimum" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="guiLblMaximum">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="maximum" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="maximum" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="guiLblSum">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="sum" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="sum" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -225,14 +225,14 @@
         <Component class="javax.swing.JLabel" name="guiLblMean">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="mean" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="mean" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="guiLblMedian">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="median" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="median" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -256,14 +256,14 @@
         <Component class="javax.swing.JLabel" name="guiLblMethod">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="method" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="method" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="guiLblClasses">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="classes" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="classes" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -336,7 +336,7 @@
                 <Component class="javax.swing.JLabel" name="guiLblDivision">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="division" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="division" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>

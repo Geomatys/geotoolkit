@@ -23,8 +23,8 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.ProcessBundle;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -38,21 +38,14 @@ import org.opengis.util.InternationalString;
  */
 public class IsolineDescriptor extends AbstractProcessDescriptor {
 
-    private static final String BUNDLE_PATH = "org/geotoolkit/process/coverage/bundle";
-    private static final String ABSTRACT_KEY    = "isoline.abstract";
-    private static final String IN_COVERAGE_KEY = "isoline.inCoverage";
-    private static final String IN_INTERVAL_KEY = "isoline.inIntervals";
-    private static final String OUT_FCOLL_KEY   = "isoline.outFeatureCollection";
-
-
     public static final String NAME = "isoline";
-    public static final InternationalString abs = new ResourceInternationalString(BUNDLE_PATH, ABSTRACT_KEY);
+    public static final InternationalString abs = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_abstract);
 
     /*
      * Coverage
      */
     public static final String IN_COVERAGE_PARAM_NAME = "inCoverage";
-    public static final InternationalString IN_COVERAGE_PARAM_REMARKS = new ResourceInternationalString(BUNDLE_PATH, IN_COVERAGE_KEY);
+    public static final InternationalString IN_COVERAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_inCoverage);
     public static final ParameterDescriptor<GridCoverage2D> COVERAGE =
             new DefaultParameterDescriptor(IN_COVERAGE_PARAM_NAME, IN_COVERAGE_PARAM_REMARKS, GridCoverage2D.class, null, true);
 
@@ -60,7 +53,7 @@ public class IsolineDescriptor extends AbstractProcessDescriptor {
      * Intervals
      */
     public static final String IN_INTERVAL_PARAM_NAME = "inIntervals";
-    public static final InternationalString IN_INTERVAL_PARAM_REMARKS = new ResourceInternationalString(BUNDLE_PATH, IN_INTERVAL_KEY);
+    public static final InternationalString IN_INTERVAL_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_inIntervals);
     public static final ParameterDescriptor<double[]> INTERVALS =
             new DefaultParameterDescriptor(IN_INTERVAL_PARAM_NAME, IN_INTERVAL_PARAM_REMARKS, double[].class, null, true);
 
@@ -73,7 +66,7 @@ public class IsolineDescriptor extends AbstractProcessDescriptor {
      * FeatureCollection of isoline
      */
     public static final String OUT_FCOLL_PARAM_NAME = "outFeatureCollection";
-    public static final InternationalString OUT_FCOLL_PARAM_REMARKS = new ResourceInternationalString(BUNDLE_PATH, OUT_FCOLL_KEY);
+    public static final InternationalString OUT_FCOLL_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_isoline_outFeatureCollection);
     public static final ParameterDescriptor<FeatureCollection> FCOLL =
             new DefaultParameterDescriptor(OUT_FCOLL_PARAM_NAME, OUT_FCOLL_PARAM_REMARKS, FeatureCollection.class, null, true);
 

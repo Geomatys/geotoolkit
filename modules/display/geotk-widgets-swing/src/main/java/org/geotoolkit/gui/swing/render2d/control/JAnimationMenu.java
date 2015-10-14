@@ -51,7 +51,7 @@ public abstract class JAnimationMenu extends JMenu{
     private final JMenuItem run = new JMenuItem();
     private final JSpinner factor = new JSpinner(new SpinnerNumberModel(1000d, 0.1d, Double.POSITIVE_INFINITY, 10d));
     private final JSpinner refresh = new JSpinner(new SpinnerNumberModel(500, 100, 60000, 100));
-    private final JCheckBoxMenuItem backward = new JCheckBoxMenuItem(MessageBundle.getString("backward"));
+    private final JCheckBoxMenuItem backward = new JCheckBoxMenuItem(MessageBundle.format("backward"));
 
     private WeakReference<JMap2D> map = null;
 
@@ -81,16 +81,16 @@ public abstract class JAnimationMenu extends JMenu{
         };
 
     public JAnimationMenu(){
-        super(MessageBundle.getString("animation"));
+        super(MessageBundle.format("animation"));
 
         final JPanel panFactor = new JPanel(new BorderLayout());
         panFactor.setOpaque(false);
-        panFactor.add(BorderLayout.WEST,new JLabel(MessageBundle.getString("temp_factor")));
+        panFactor.add(BorderLayout.WEST,new JLabel(MessageBundle.format("temp_factor")));
         panFactor.add(BorderLayout.CENTER,factor);
 
         final JPanel panRefresh = new JPanel(new BorderLayout());
         panRefresh.setOpaque(false);
-        panRefresh.add(BorderLayout.WEST,new JLabel(MessageBundle.getString("temp_refresh")));
+        panRefresh.add(BorderLayout.WEST,new JLabel(MessageBundle.format("temp_refresh")));
         panRefresh.add(BorderLayout.CENTER,refresh);
 
         add(run);
@@ -100,7 +100,7 @@ public abstract class JAnimationMenu extends JMenu{
         add(backward);
 
         run.setIcon((running)? ICON_PAUSE : ICON_PLAY);
-        run.setText( MessageBundle.getString((running)?"stop":"run"));
+        run.setText( MessageBundle.format((running)?"stop":"run"));
 
         run.setRolloverIcon((running)? ICON_PAUSE_OVER : ICON_PLAY_OVER);
 
@@ -110,7 +110,7 @@ public abstract class JAnimationMenu extends JMenu{
                 running = !running;
                 run.setIcon((running)? ICON_PAUSE : ICON_PLAY);
                 run.setRolloverIcon((running)? ICON_PAUSE_OVER : ICON_PLAY_OVER);
-                run.setText( MessageBundle.getString((running)?"stop":"run"));
+                run.setText( MessageBundle.format((running)?"stop":"run"));
                 if(running){
                     timer.start();
                 }else{

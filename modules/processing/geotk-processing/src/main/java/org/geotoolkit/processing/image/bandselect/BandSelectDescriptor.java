@@ -25,8 +25,8 @@ import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.image.ImageProcessingRegistry;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -61,22 +61,22 @@ public class BandSelectDescriptor extends AbstractProcessDescriptor {
     static {
         Map<String, Object> propertiesInCov = new HashMap<String, Object>();
         propertiesInCov.put(IdentifiedObject.NAME_KEY,        "image");
-        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/image/bundle", "bandselect.inImage"));
-        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/image/bundle", "bandselect.inImageDesc"));
+        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandselect_inImage));
+        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandselect_inImageDesc));
         IN_IMAGE = new DefaultParameterDescriptor<RenderedImage>(propertiesInCov, RenderedImage.class, null, null, null, null, null, true);
         
         Map<String, Object> propertiesInBands = new HashMap<String, Object>();
         propertiesInBands.put(IdentifiedObject.NAME_KEY,        "bands");
-        propertiesInBands.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/image/bundle", "bandselect.inBands"));
-        propertiesInBands.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/image/bundle", "bandselect.inBandsDesc"));
+        propertiesInBands.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandselect_inBands));
+        propertiesInBands.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandselect_inBandsDesc));
         IN_BANDS = new DefaultParameterDescriptor<int[]>(propertiesInBands, int[].class, null, null, null, null, null, true);
         
         INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_IMAGE, IN_BANDS);
 
         Map<String, Object> propertiesOutCov = new HashMap<String, Object>();
         propertiesOutCov.put(IdentifiedObject.NAME_KEY,        "result");
-        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/image/bundle", "bandselect.outImage"));
-        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/image/bundle", "bandselect.outImageDesc"));
+        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandselect_outImage));
+        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandselect_outImageDesc));
         OUT_IMAGE = new DefaultParameterDescriptor<RenderedImage>(propertiesOutCov, RenderedImage.class, null, null, null, null, null, true);
 
         OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_IMAGE);

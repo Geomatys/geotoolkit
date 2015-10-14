@@ -23,8 +23,8 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.observation.AbstractObservationStoreFactory;
+import org.geotoolkit.observation.Bundle;
 import org.geotoolkit.observation.ObservationStore;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
@@ -56,8 +56,8 @@ public class XmlObservationStoreFactory extends AbstractObservationStoreFactory 
      * url to the file.
      */
     public static final ParameterDescriptor<File> FILE_PATH = createDescriptor("url",
-                    new ResourceInternationalString("org/geotoolkit/observation/bundle","paramURLAlias"),
-                    new ResourceInternationalString("org/geotoolkit/observation/bundle","paramURLRemarks"),
+                    Bundle.formatInternational(Bundle.Keys.paramURLAlias),
+                    Bundle.formatInternational(Bundle.Keys.paramURLRemarks),
                     File.class,null,null,null,null,null,true);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =

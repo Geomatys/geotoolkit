@@ -89,14 +89,14 @@ public abstract class AbstractFeatureStore extends FeatureStore {
 
     protected static final String NO_NAMESPACE = "no namespace";
 
-    private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
+    private final Logger Logger = Logging.getLogger("org.geotoolkit.data");
 
     protected final ParameterValueGroup parameters;
     protected String defaultNamespace;
     protected final Set<StorageListener> listeners = new HashSet<>();
-    
+
     protected AbstractFeatureStore(final ParameterValueGroup params) {
-        
+
         this.parameters = params;
         String namespace = null;
         if(params != null){
@@ -107,7 +107,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
                 //example : gpx
             }
         }
-        
+
         if (namespace == null) {
             defaultNamespace = "http://geotoolkit.org";
         } else if (namespace.equals(NO_NAMESPACE)) {
@@ -121,7 +121,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     public ParameterValueGroup getConfiguration() {
         return parameters;
     }
-    
+
     protected String getDefaultNamespace() {
         return defaultNamespace;
     }
@@ -134,7 +134,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     public Metadata getMetadata() throws DataStoreException {
         return null;
     }
-    
+
     @Override
     public VersionControl getVersioning(String typeName) throws VersioningException{
         final GenericName n = NamesExt.valueOf(typeName);
@@ -143,7 +143,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
 
     /**
      * Overwrite to enable versioning.
-     * @param version 
+     * @param version
      */
     @Override
     public VersionControl getVersioning(GenericName typeName) throws VersioningException{
@@ -165,7 +165,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     public Session createSession(final boolean async, Version version) {
         return new DefaultSession(this, async,version);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -219,7 +219,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     /**
      * Default implementation, will return a list with the single feature tpe from method
      * {@link #getFeatureType(org.geotoolkit.feature.type.Name) }
-     * 
+     *
      * @param typeName
      * @return
      * @throws DataStoreException
@@ -275,13 +275,13 @@ public abstract class AbstractFeatureStore extends FeatureStore {
      * This implementation will aquiere a reader and iterate to expend an envelope.
      * Subclasses should override this method if they have a faster way to
      * calculate envelope.
-     * @throws DataStoreException 
+     * @throws DataStoreException
      * @throws FeatureStoreRuntimeException
      */
     @Override
     public Envelope getEnvelope(Query query) throws DataStoreException, FeatureStoreRuntimeException {
         // TODO query = addSeparateFeatureHint(query);
-        
+
         if(query.retrieveAllProperties()){
             //we simplify it, get only geometry attributes + sort attribute
             final FeatureType ft = getFeatureType(query.getTypeName());
@@ -299,23 +299,23 @@ public abstract class AbstractFeatureStore extends FeatureStore {
                     }
                 }
             }
-            
+
             if(names.isEmpty()){
                 //no geometry field
                 return null;
             }
-            
+
             final QueryBuilder qb = new QueryBuilder(query);
             qb.setProperties(names.toArray(new GenericName[names.size()]));
             query = qb.buildQuery();
         }
-        
-        
+
+
         final GenericName[] wantedProp = query.getPropertyNames();
         if(wantedProp.length==0){
             return null;
         }
-        
+
         final FeatureReader reader = getFeatureReader(query);
         return FeatureStoreUtilities.calculateEnvelope(reader);
     }
@@ -347,7 +347,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     public final FeatureWriter getFeatureWriter(GenericName typeName, Filter filter) throws DataStoreException {
         return getFeatureWriter(typeName, filter, null);
     }
-    
+
     /**
      * {@inheritDoc }
      *
@@ -357,7 +357,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     public final FeatureWriter getFeatureWriterAppend(final GenericName typeName) throws DataStoreException {
         return getFeatureWriterAppend(typeName,null);
     }
-    
+
     /**
      * {@inheritDoc }
      *
@@ -390,7 +390,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
 
     /**
      * Fires a schema add event to all listeners.
-     * 
+     *
      * @param name added schema name
      * @param type added feature type
      */
@@ -572,7 +572,7 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     /**
      * Convinient method to handle adding features operation by using the
      * FeatureWriter.
-     * 
+     *
      * @param groupName
      * @param filter
      * @throws DataStoreException
@@ -702,5 +702,5 @@ public abstract class AbstractFeatureStore extends FeatureStore {
     public void forwardContentEvent(StorageEvent event){
         sendContentEvent(event.copy(this));
     }
-    
+
 }

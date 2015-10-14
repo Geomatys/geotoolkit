@@ -28,18 +28,18 @@ import org.apache.sis.util.logging.Logging;
  * @module pending
  */
 public class NcGetMetadataMinMax extends NcGetMetadata implements NcGetMetadataMinMaxRequest {
-    
+
     /**
      * Default logger for all GetMetadata requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(NcGetMetadataMinMax.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ncwms");
+
     private String crs = null;
-    
+
     private String bbox = null;
-    
+
     private String width = null;
-    
+
     private String height = null;
 
     /**
@@ -47,15 +47,15 @@ public class NcGetMetadataMinMax extends NcGetMetadata implements NcGetMetadataM
      */
     protected NcGetMetadataMinMax(final String serverURL) {
         super(serverURL);
-    }    
+    }
 
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     protected void prepareParameters() {
-        super.prepareParameters();        
+        super.prepareParameters();
         requestParameters.put("crs", getCrs());
         requestParameters.put("bbox", getBbox());
         requestParameters.put("width", getWidth());

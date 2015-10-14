@@ -118,7 +118,7 @@ public class JCQLEditor extends javax.swing.JPanel{
         guiProperties.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         guiScroll.setViewportView(guiProperties);
 
-        jXTitledSeparator6.setTitle(MessageBundle.getString("properties")); // NOI18N
+        jXTitledSeparator6.setTitle(MessageBundle.format("properties")); // NOI18N
 
         javax.swing.GroupLayout guiPropertiesPaneLayout = new javax.swing.GroupLayout(guiPropertiesPane);
         guiPropertiesPane.setLayout(guiPropertiesPaneLayout);
@@ -213,7 +213,7 @@ public class JCQLEditor extends javax.swing.JPanel{
 
 
     public String getTitle() {
-        return MessageBundle.getString("property_cql_filter");
+        return MessageBundle.format("property_cql_filter");
     }
 
     public ImageIcon getIcon() {

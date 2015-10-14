@@ -51,7 +51,6 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.map.AbstractMapItem;
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
@@ -66,7 +65,7 @@ import org.opengis.util.InternationalString;
  * @module pending
  */
 public class J2DLegendUtilities {
-    private static final Logger LOGGER = Logging.getLogger(J2DLegendUtilities.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.ext.legend");
 
     private static final int GLYPH_SPACE = 5;
 
@@ -147,8 +146,8 @@ public class J2DLegendUtilities {
     }
 
     /**
-     * Draw legend using given {@link LegendTemplate} as rendering hint. At the 
-     * end of the drawning, input {@link Graphics2D} origin is reset at the origin 
+     * Draw legend using given {@link LegendTemplate} as rendering hint. At the
+     * end of the drawning, input {@link Graphics2D} origin is reset at the origin
      * it was when given as parameter.
      * @param item The map item to draw legend for.
      * @param g2d The graphic object to draw legend in.
@@ -165,7 +164,7 @@ public class J2DLegendUtilities {
             final Map<GenericName, BufferedImage> legendResults) {
 
         final AffineTransform origin =  g2d.getTransform();
-        
+
         final FontMetrics layerFontMetric = g2d.getFontMetrics(template.getLayerFont());
         final FontMetrics ruleFontMetric = g2d.getFontMetrics(template.getRuleFont());
         final int ruleFontHeight = ruleFontMetric.getHeight();
@@ -298,7 +297,7 @@ public class J2DLegendUtilities {
                             title = titleTmp.toString();
                         }
                     }
-                    
+
                     if (title.isEmpty()) {
                         moveY += glyphHeight;
                     } else {
@@ -490,14 +489,14 @@ public class J2DLegendUtilities {
                 if (l != 0) {
                     toSet.height += template.getGapSize();
                 }
-                
+
                 // Determines space to reserve for title.
                 final Dimension titleDim = estimateTitle(currentItem, layerFontMetric);
                 toSet.height += titleDim.height;
                 if (toSet.width < titleDim.width) {
                     toSet.width = titleDim.width;
                 }
-                if (titleDim.height > 0) {                    
+                if (titleDim.height > 0) {
                     toSet.height += template.getGapSize();
                 }
             }
@@ -630,11 +629,11 @@ public class J2DLegendUtilities {
 
     /**
      * Ensure that the current map item is visible. For {@link MapLayer}, it means
-     * that it is visible itself. For MapItems, we check recursively all of its 
-     * children until we find a visible {@link MapLayer}. An item is considered 
+     * that it is visible itself. For MapItems, we check recursively all of its
+     * children until we find a visible {@link MapLayer}. An item is considered
      * invisible if itself or all of its children are marked as not visible.
      * @param toCheck The map item to analyse. Cannot be null.
-     * @return True if input item or at least one of its {@link MapLayer} child 
+     * @return True if input item or at least one of its {@link MapLayer} child
      * is visible. False otherwise.
      */
     public static boolean isVisible(final MapItem toCheck) {
@@ -649,7 +648,7 @@ public class J2DLegendUtilities {
             return false;
         } else {
             return toCheck.isVisible();
-        }               
+        }
     }
 
     private static void checkMinimumSize(final Dimension dim) {
@@ -660,7 +659,7 @@ public class J2DLegendUtilities {
             dim.height = 1;
         }
     }
-    
+
     private static Dimension estimateTitle(final MapItem source, final FontMetrics fontRules) {
         final Dimension dim = new Dimension(0, 0);
         String title = "";

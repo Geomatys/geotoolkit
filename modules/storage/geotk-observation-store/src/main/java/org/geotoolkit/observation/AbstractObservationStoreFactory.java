@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.measure.unit.Unit;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -45,15 +44,13 @@ import org.opengis.referencing.IdentifiedObject;
  */
 public abstract class AbstractObservationStoreFactory extends Factory implements ObservationStoreFactory {
  
-    private static final String BUNDLE_PATH = "org/geotoolkit/observation/bundle";
-
     /**
      * Identifier, Mandatory.
      * Subclasses should redeclared this parameter with a different default value.
      */
     public static final ParameterDescriptor<String> IDENTIFIER = createDescriptor("identifier",
-                    new ResourceInternationalString(BUNDLE_PATH,"paramIdentifierAlias"),
-                    new ResourceInternationalString(BUNDLE_PATH,"paramIdentifierRemarks"),
+                    Bundle.formatInternational(Bundle.Keys.paramIdentifierAlias),
+                    Bundle.formatInternational(Bundle.Keys.paramIdentifierRemarks),
                     String.class,null,null,null,null,null,true);
 
     /**
@@ -61,8 +58,8 @@ public abstract class AbstractObservationStoreFactory extends Factory implements
      * Default namespace used for feature type.
      */
     public static final ParameterDescriptor<String> NAMESPACE = createDescriptor("namespace",
-                    new ResourceInternationalString(BUNDLE_PATH,"paramNamespaceAlias"),
-                    new ResourceInternationalString(BUNDLE_PATH,"paramNamespaceRemarks"),
+                    Bundle.formatInternational(Bundle.Keys.paramNamespaceAlias),
+                    Bundle.formatInternational(Bundle.Keys.paramNamespaceRemarks),
                     String.class,null,null,null,null,null,false);
     
     /**

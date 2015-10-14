@@ -79,16 +79,16 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
     public static final String PROPERY_SUFFIX_RANGE = "_range";
     public static final String PROPERY_SUFFIX_RMS = "_rms";
     public static final String PROPERY_SUFFIX_SUM = "_sum";
-    
-    private static final Logger LOGGER = Logging.getLogger(CellSymbolizer.class);
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.ext.cellular");
     public static final String NAME = "Cell";
 
     @XmlElement(name = "CellSize",namespace="http://geotoolkit.org")
     private int cellSize;
-    
+
     @XmlElement(name = "Rule", type = RuleType.class)
     private RuleType ruleType;
-    
+
     @XmlTransient
     private Rule rule;
 
@@ -121,7 +121,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
     public Expression getGeometry() {
         return null;
     }
-    
+
     @Override
     public String getExtensionName() {
         return NAME;
@@ -202,7 +202,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
             return s;
         }
     }
-    
+
     public static SimpleFeatureType buildCellType(CoverageMapLayer layer) throws DataStoreException{
         return buildCellType(layer.getCoverageReference());
     }
@@ -254,7 +254,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         ftb.add(PROPERY_GEOM_CENTER, Point.class,crs);
         ftb.add(PROPERY_GEOM_CONTOUR, Polygon.class,crs);
         ftb.setDefaultGeometry(PROPERY_GEOM_CENTER);
-        
+
         for(int b=0,n=nbBand;b<n;b++){
             final String name = "band_"+b;
             final String bandName = (bandnames!=null) ? bandnames[b] : "";
@@ -290,7 +290,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         }
         return ftb.buildSimpleFeatureType();
     }
-    
+
     public static SimpleFeatureType buildCellType(final FeatureType basetype, CoordinateReferenceSystem crs){
         crs = (crs==null)? basetype.getCoordinateReferenceSystem() : crs;
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -302,7 +302,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
         ftb.add(PROPERY_GEOM_CENTER, Point.class,crs);
         ftb.add(PROPERY_GEOM_CONTOUR, Polygon.class,crs);
         ftb.setDefaultGeometry(PROPERY_GEOM_CENTER);
-        
+
         //loop on all properties, extract numeric fields only
         for(PropertyDescriptor desc : basetype.getDescriptors()){
             if(desc instanceof AttributeDescriptor){
@@ -342,7 +342,7 @@ public class CellSymbolizer extends SymbolizerType implements ExtensionSymbolize
                 }
             }
         }
-        
+
         return ftb.buildSimpleFeatureType();
     }
 

@@ -26,9 +26,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.renderer.style.ExternalGraphicFactory;
 import org.apache.sis.internal.util.UnmodifiableArrayList;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Factory capable to read SVG files.
@@ -61,7 +61,7 @@ public class SVGGraphicFactory implements ExternalGraphicFactory {
             try{
                 stream = SVGGraphicFactory.class.getResourceAsStream(uri.toString());
             }catch(Exception e){
-                Logger.getLogger(SVGGraphicFactory.class.getName()).log(Level.WARNING, e.getMessage(), e);
+                Logging.getLogger("org.geotoolkit.renderer.svg").log(Level.WARNING, e.getMessage(), e);
             }
         }
 
@@ -78,12 +78,12 @@ public class SVGGraphicFactory implements ExternalGraphicFactory {
     @Override
     public void renderImage(final URI uri, final String mime, Float size, final Graphics2D g,
             final Point2D center, final RenderingHints hints) throws Exception {
-        
+
         if(size == null || Float.isNaN(size)){
             size = 12f;
         }
         final float rsize = size/2f;
-        
+
         g.translate(center.getX()-rsize,center.getY()-rsize);
         SvgUtils.render(uri, new Point2D.Float(size, size), g, hints);
         g.translate(-center.getX()+rsize,-center.getY()+rsize);

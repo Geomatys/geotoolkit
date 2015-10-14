@@ -47,7 +47,7 @@ import org.apache.sis.util.ObjectConverters;
  */
 public class WPSConverterRegistry {
 
-    private static final Logger LOGGER = Logging.getLogger(WPSConverterRegistry.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wps.converters");
     private final List<WPSObjectConverter> converters;
     private static WPSConverterRegistry INSTANCE;
 

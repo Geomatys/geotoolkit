@@ -54,8 +54,8 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
 
         guiMarkPane.setCandidates(StyleBank.getInstance().getCandidates(new StyleBank.ByClassComparator(Mark.class)));
         
-        guiTabs.addTab(MessageBundle.getString("wellknownedform"), guiMarkPane);
-        guiTabs.addTab(MessageBundle.getString("external"), guiExternalGraphicPane);
+        guiTabs.addTab(MessageBundle.format("wellknownedform"), guiMarkPane);
+        guiTabs.addTab(MessageBundle.format("external"), guiExternalGraphicPane);
         guiTabs.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 guiMarkPane.parse(currentMark);

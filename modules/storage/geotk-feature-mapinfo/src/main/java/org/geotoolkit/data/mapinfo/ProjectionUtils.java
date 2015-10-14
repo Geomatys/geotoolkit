@@ -53,6 +53,7 @@ import org.apache.sis.geometry.DirectPosition2D;
 import org.apache.sis.geometry.Envelope2D;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.ArgumentChecks;
+import org.apache.sis.util.logging.Logging;
 
 import static org.geotoolkit.data.mapinfo.ProjectionParameters.getProjectionParameters;
 
@@ -67,7 +68,7 @@ public class ProjectionUtils {
     private static final String MAP_INFO_NAMESPACE = org.apache.sis.metadata.iso.citation.Citations.getIdentifier(Citations.MAP_INFO);
     private static final char NAMESPACE_SEPARATOR = ':';
 
-    private static final Logger LOGGER = Logger.getLogger(ProjectionUtils.class.getName());
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo");
 
     private static final CRSFactory CRS_FACTORY = FactoryFinder.getCRSFactory(null);
     private static final CSFactory CS_FACTORY = FactoryFinder.getCSFactory(null);

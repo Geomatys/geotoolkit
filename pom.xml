@@ -173,14 +173,15 @@
            Global properties.
        =========================================================== -->
   <properties>
-    <geoapi.version>4.0.0-MC0005</geoapi.version> <!-- Must be same than the version used by SIS. -->
-    <sis.version>0.6-jdk7-MC0020</sis.version>
+    <geoapi.version>4.0.0-MC0006</geoapi.version> <!-- Must be same than the version used by SIS. -->
+    <sis.version>0.7-jdk7-MC0022</sis.version>
     <derby.version>10.10.1.1</derby.version> <!-- If updated, need to search occurrences in APT files. -->
     <netcdf.version>4.3.21</netcdf.version>
     <lucene.version>4.10.4</lucene.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <website.encoding>UTF-8</website.encoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+    <sis.build.helper>0.7-jdk7-MC0022</sis.build.helper>
   </properties>
 
 
@@ -226,7 +227,7 @@
           <groupId>org.apache.sis.core</groupId>
           <artifactId>sis-referencing</artifactId>
           <version>${sis.version}</version>
-      </dependency>    
+      </dependency>
 
       <dependency>
           <groupId>org.apache.sis.core</groupId>
@@ -274,17 +275,15 @@
           <version>${sis.version}</version>
       </dependency>
 
-      <!-- Imaging. JAI 1.1.4 is not official release, but brings a bug fix
-           on "warp grid" operation. -->
       <dependency>
         <groupId>javax.media</groupId>
         <artifactId>jai_core</artifactId>
-        <version>1.1.4</version>
+        <version>1.1.3</version>
       </dependency>
       <dependency>
         <groupId>javax.media</groupId>
         <artifactId>jai_codec</artifactId>
-        <version>1.1.4</version>
+        <version>1.1.3</version>
       </dependency>
       <dependency>
         <groupId>javax.media</groupId>
@@ -593,7 +592,7 @@
         <artifactId>groovy-all</artifactId>
         <version>2.2.2</version>
       </dependency>
-      
+
       <!-- YAML -->
       <dependency>
         <groupId>org.yaml</groupId>
@@ -963,7 +962,7 @@
           <tagletArtifact>
             <groupId>org.apache.sis.core</groupId>
             <artifactId>sis-build-helper</artifactId>
-            <version>0.4</version>
+            <version>0.5</version>
           </tagletArtifact>
 
           <!-- Creates links to existing javadoc-generated documentation of external referenced classes. -->

@@ -129,7 +129,7 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
 
     @Override
     public String getTitle() {
-        return MessageBundle.getString("style.cellsymbolizer.tooltip");
+        return MessageBundle.format("style_cellsymbolizer_tooltip");
     }
 
     @Override
@@ -301,7 +301,7 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
         pan_info = new javax.swing.JPanel();
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, MessageBundle.getString("style.cellsymbolizer.cellsize")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, MessageBundle.format("style_cellsymbolizer_cellsize")); // NOI18N
 
         guiCellSize.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(3), Integer.valueOf(3), null, Integer.valueOf(1)));
         guiCellSize.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -310,11 +310,11 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, MessageBundle.getString("style.cellsymbolizer.type")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, MessageBundle.format("style_cellsymbolizer_type")); // NOI18N
 
         guiTypeList.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Point", "Text" }));
 
-        org.openide.awt.Mnemonics.setLocalizedText(but_edit, MessageBundle.getString("style.cellsymbolizer.edit")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(but_edit, MessageBundle.format("style_cellsymbolizer_edit")); // NOI18N
         but_edit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 but_editActionPerformed(evt);
@@ -322,7 +322,7 @@ public class JCellSymbolizerPane extends StyleElementEditor<CellSymbolizer> impl
         });
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel3, MessageBundle.getString("style.cellsymbolizer.filter")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel3, MessageBundle.format("style_cellsymbolizer_filter")); // NOI18N
 
         pan_info.setLayout(new java.awt.BorderLayout());
         jScrollPane1.setViewportView(pan_info);

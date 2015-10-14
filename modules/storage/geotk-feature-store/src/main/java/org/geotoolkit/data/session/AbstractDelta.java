@@ -35,7 +35,7 @@ abstract class AbstractDelta implements Delta{
     protected static final FilterFactory2 FF = (FilterFactory2)
             FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
-    private static final Logger LOGGER = Logging.getLogger(AbstractDelta.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.session");
 
     protected final Session session;
     protected final GenericName type;

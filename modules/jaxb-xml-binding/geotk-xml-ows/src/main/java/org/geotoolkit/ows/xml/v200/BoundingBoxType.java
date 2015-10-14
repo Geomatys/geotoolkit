@@ -34,17 +34,18 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
  * This type is adapted from the EnvelopeType of GML 3.1,
  *       with modified contents and documentation for encoding a MINIMUM size box
  *       SURROUNDING all associated data.
- * 
+ *
  * <p>Java class for BoundingBoxType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BoundingBoxType">
  *   &lt;complexContent>
@@ -59,8 +60,8 @@ import org.opengis.util.FactoryException;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BoundingBoxType", propOrder = {
@@ -72,8 +73,8 @@ import org.opengis.util.FactoryException;
 })
 public class BoundingBoxType implements BoundingBox {
 
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.ows.xml.v200");
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ows.xml.v200");
+
     @XmlList
     @XmlElement(name = "LowerCorner", type = Double.class)
     private List<Double> lowerCorner = new ArrayList<>();
@@ -128,10 +129,10 @@ public class BoundingBoxType implements BoundingBox {
         }
     }
 
-    
+
     /**
      * Gets the value of the lowerCorner property.
-     * 
+     *
      */
     @Override
     public List<Double> getLowerCorner() {
@@ -143,7 +144,7 @@ public class BoundingBoxType implements BoundingBox {
 
     /**
      * Gets the value of the upperCorner property.
-     * 
+     *
      */
     @Override
     public List<Double> getUpperCorner() {
@@ -155,11 +156,11 @@ public class BoundingBoxType implements BoundingBox {
 
     /**
      * Gets the value of the crs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getCrs() {
@@ -168,11 +169,11 @@ public class BoundingBoxType implements BoundingBox {
 
     /**
      * Sets the value of the crs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCrs(String value) {
         this.crs = value;
@@ -180,11 +181,11 @@ public class BoundingBoxType implements BoundingBox {
 
     /**
      * Gets the value of the dimensions property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     @Override
     public Integer getDimensions() {
@@ -193,11 +194,11 @@ public class BoundingBoxType implements BoundingBox {
 
     /**
      * Sets the value of the dimensions property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setDimensions(Integer value) {
         this.dimensions = value;

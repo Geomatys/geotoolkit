@@ -68,9 +68,9 @@ public class JFillPane extends StyleElementEditor<Fill> {
         guiMarkPane.setBorder(new LineBorder(new Color(102, 102, 102), 1, true));
         guiExternalGraphicPane.setBorder(new LineBorder(new Color(102, 102, 102), 1, true));
         
-        guiTabbedPane.addTab(MessageBundle.getString("plainColor"), guiColorChooser);
-        guiTabbedPane.addTab(MessageBundle.getString("predefinedShape"), guiMarkPane);
-        guiTabbedPane.addTab(MessageBundle.getString("image"), guiExternalGraphicPane);
+        guiTabbedPane.addTab(MessageBundle.format("plainColor"), guiColorChooser);
+        guiTabbedPane.addTab(MessageBundle.format("predefinedShape"), guiMarkPane);
+        guiTabbedPane.addTab(MessageBundle.format("image"), guiExternalGraphicPane);
 
         add(guiTabbedPane, java.awt.BorderLayout.CENTER);
     }

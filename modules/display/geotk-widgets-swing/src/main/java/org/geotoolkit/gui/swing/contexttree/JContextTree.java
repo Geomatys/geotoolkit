@@ -39,7 +39,6 @@ import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DropMode;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -278,19 +277,19 @@ public class JContextTree extends JScrollPane {
             return "";
         }
     }
-    
+
     private static String label(final MapItem item) {
         String label = "";
-        
+
         final Description desc = item.getDescription();
         if (desc != null && desc.getTitle() != null) {
             label = desc.getTitle().toString().replace("{}", "");
-        } 
-        
+        }
+
         if (label.isEmpty() && item.getName() != null) {
             label = item.getName();
         }
-        
+
         return label;
     }
 
@@ -579,11 +578,8 @@ public class JContextTree extends JScrollPane {
             final TreePath sourcePath;
             try {
                 sourcePath = (TreePath) transferable.getTransferData(ITEM_FLAVOR);
-            } catch (UnsupportedFlavorException ex) {
-                Logging.getLogger(JContextTree.class).log(Level.INFO, null, ex);
-                return false;
-            } catch (IOException ex) {
-                Logging.getLogger(JContextTree.class).log(Level.INFO, null, ex);
+            } catch (UnsupportedFlavorException | IOException ex) {
+                Logging.getLogger("org.geotoolkit.gui.swing.contexttree").log(Level.INFO, null, ex);
                 return false;
             }
 
@@ -786,7 +782,7 @@ public class JContextTree extends JScrollPane {
                     final DefaultMutableTreeNode imgNode = new DefaultMutableTreeNode(img);
                     this.add(imgNode);
                 } catch (PortrayalException ex) {
-                    Logger.getLogger(JContextTree.class.getName()).log(Level.WARNING, null, ex);
+                    Logging.getLogger("org.geotoolkit.gui.swing.contexttree").log(Level.WARNING, null, ex);
                 }
 
             }else{

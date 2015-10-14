@@ -63,7 +63,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRendererService<RasterSymbolizer, CachedRasterSymbolizer>{
 
-    private static final Logger LOGGER = Logging.getLogger(DefaultRasterSymbolizerRendererService.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.style.renderer");
 
     private static final int LEGEND_PALETTE_WIDTH = 30;
     private static final Font LEGEND_FONT = new Font(Font.SERIF, Font.BOLD, 12);
@@ -295,7 +295,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                     if(color == null) try {
                         color = ObjectConverters.convert(pt.getValue().toString(), Color.class);
                     } catch (UnconvertibleObjectException e) {
-                        Logging.recoverableException(DefaultRasterSymbolizerRendererService.class, "getMapColor", e);
+                        Logging.recoverableException(LOGGER, DefaultRasterSymbolizerRendererService.class, "getMapColor", e);
                         // TODO - do we really want to ignore?
                     }
                     colorMap.put(pt.getData().toString(), color);

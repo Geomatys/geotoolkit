@@ -36,8 +36,8 @@ import org.opengis.util.FactoryException;
  */
 public class DefaultGetMap extends AbstractRequest implements GetMapRequest{
 
-    private static final Logger LOGGER = Logging.getLogger(DefaultGetMap.class);
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.googlemaps");
+
     private static final String PARAMETER_MAPTYPE   = "maptype";
     private static final String PARAMETER_ZOOM      = "zoom";
     private static final String PARAMETER_CENTER    = "center";
@@ -45,19 +45,19 @@ public class DefaultGetMap extends AbstractRequest implements GetMapRequest{
     private static final String PARAMETER_FORMAT    = "format";
     private static final String PARAMETER_SENSOR    = "sensor";
     private static final String PARAMETER_KEY       = "key";
-    
+
     private String mapType = null;
     private int zoom = 0;
     private DirectPosition center = null;
     private Dimension dimension = null;
     private String format = null;
     private String key = null;
-    
+
     public DefaultGetMap(final StaticGoogleMapsClient server, final String key){
         super(server);
         this.key = key;
     }
-    
+
     @Override
     public String getMapType() {
         return mapType;
@@ -107,17 +107,17 @@ public class DefaultGetMap extends AbstractRequest implements GetMapRequest{
     public void setFormat(final String format) {
         this.format = format;
     }
-    
+
     @Override
     protected void prepareParameters() {
         super.prepareParameters();
-        
+
         ArgumentChecks.ensureNonNull("map type", mapType);
         ArgumentChecks.ensureNonNull("dimension", dimension);
         ArgumentChecks.ensureNonNull("center", center);
         ArgumentChecks.ensureNonNull("format", format);
-        
-        
+
+
         //center must be expressed in lat/lon
         DirectPosition position = center;
         try{
@@ -129,21 +129,21 @@ public class DefaultGetMap extends AbstractRequest implements GetMapRequest{
         }catch(FactoryException ex){
             LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
         }
-        
+
         requestParameters.put(PARAMETER_MAPTYPE, mapType);
         requestParameters.put(PARAMETER_FORMAT, format);
         requestParameters.put(PARAMETER_ZOOM, Integer.toString(zoom));
-        requestParameters.put(PARAMETER_DIMENSION,  (int)dimension.getWidth() +"x"+ (int)dimension.getHeight() );        
+        requestParameters.put(PARAMETER_DIMENSION,  (int)dimension.getWidth() +"x"+ (int)dimension.getHeight() );
         requestParameters.put(PARAMETER_CENTER, position.getOrdinate(1) +","+ position.getOrdinate(0));
-        
+
         //dont know what exactly this do but necessary
         requestParameters.put(PARAMETER_SENSOR, "false");
-        
+
         //user key if present
         if(key != null){
             requestParameters.put(PARAMETER_KEY, key);
         }
-        
+
     }
 
 }

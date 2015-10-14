@@ -24,7 +24,6 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.display.PortrayalException;
@@ -39,6 +38,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.geometry.Envelope;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -49,7 +49,7 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
 
     protected volatile GridCoverage2D buffer = null;
     private volatile Updater updater = null;
-    
+
     public StatefullMapLayerJ2D(J2DCanvas canvas, T item, boolean allowChildren) {
         super(canvas, item, allowChildren);
     }
@@ -57,23 +57,23 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
     @Override
     public void paint(RenderingContext2D renderingContext) {
         super.paint(renderingContext);
-        
+
         if(!item.isVisible()) return;
-        
+
         final Envelope env = renderingContext.getCanvasObjectiveBounds();
         final Envelope env2d = renderingContext.getCanvasObjectiveBounds2D();
         final Dimension rect = renderingContext.getCanvasDisplayBounds().getSize();
         updateRequest(env, env2d, rect);
-        
-        GridCoverage2D coverage = this.buffer;        
+
+        GridCoverage2D coverage = this.buffer;
         if(coverage == null) return;
-        
+
         final Graphics2D g = renderingContext.getGraphics();
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)item.getOpacity()));
         try {
             GO2Utilities.portray(renderingContext, coverage);
         } catch (PortrayalException ex) {
-            Logger.getLogger(StatefullMapLayerJ2D.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.display2d.container.statefull").log(Level.SEVERE, null, ex);
         }
     }
 
@@ -89,12 +89,12 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
             update();
         }
     }
-    
+
     private final AtomicBoolean needUpdate = new AtomicBoolean();
     private Envelope env;
     private Envelope env2d;
     private Dimension dim;
-    
+
     private synchronized void updateRequest(Envelope env, Envelope env2d, Dimension dim){
         boolean mustUpdate = false;
         if(this.env == null || !this.env.equals(env) ||
@@ -109,12 +109,12 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
             update();
         }
     }
-    
+
     protected synchronized void update(){
         needUpdate.set(true);
         checkUpdater();
     }
-    
+
     private synchronized void checkUpdater(){
         if(needUpdate.get() && updater == null){
             needUpdate.set(false);
@@ -124,22 +124,22 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
             }
         }
     }
-    
-    
+
+
     protected final class Updater implements Runnable{
-        
+
         private Envelope env;
         private Envelope env2d;
         private Dimension dim;
-        
+
         private Updater(Envelope env, Envelope env2d, Dimension dim){
             this.env = env;
             this.env2d = env2d;
             this.dim = dim;
         }
-                
+
         @Override
-        public void run() {            
+        public void run() {
             try{
                 final MapContext context = MapBuilder.createContext();
                 context.items().add(item);
@@ -154,13 +154,13 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
                 buffer = gcb.getGridCoverage2D();
             }catch(Exception ex){
                 ex.printStackTrace();
-            }    
+            }
             getCanvas().repaint();
-            
+
             updater = null;
             checkUpdater();
         }
-        
+
     }
-    
+
 }

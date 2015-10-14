@@ -200,11 +200,11 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
         contentPanel = new javax.swing.JPanel();
 
         guiCodeLbl.setLabelFor(guiCodeTF);
-        org.openide.awt.Mnemonics.setLocalizedText(guiCodeLbl, MessageBundle.getString("parameters.code")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(guiCodeLbl, MessageBundle.format("parameters_code")); // NOI18N
         guiCodeLbl.setFocusable(false);
 
         guiClassLbl.setLabelFor(guiTypeCB);
-        org.openide.awt.Mnemonics.setLocalizedText(guiClassLbl, MessageBundle.getString("parameters.type")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(guiClassLbl, MessageBundle.format("parameters_type")); // NOI18N
         guiClassLbl.setFocusable(false);
 
         guiTypeCB.addActionListener(new java.awt.event.ActionListener() {
@@ -214,7 +214,7 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
         });
 
         guiRemarkLbl.setLabelFor(guiRemarkTA);
-        org.openide.awt.Mnemonics.setLocalizedText(guiRemarkLbl, MessageBundle.getString("parameters.description")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(guiRemarkLbl, MessageBundle.format("parameters_description")); // NOI18N
         guiRemarkLbl.setFocusable(false);
 
         guiRemarkTA.setColumns(20);
@@ -224,10 +224,10 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
         guiMandatory.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
 
         guiMandatoryLbl.setLabelFor(guiMandatory);
-        org.openide.awt.Mnemonics.setLocalizedText(guiMandatoryLbl, MessageBundle.getString("parameters.mandatory")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(guiMandatoryLbl, MessageBundle.format("parameters_mandatory")); // NOI18N
         guiMandatoryLbl.setFocusable(false);
 
-        org.openide.awt.Mnemonics.setLocalizedText(guiDefaultValueLbl, MessageBundle.getString("parameters.defaultValue")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(guiDefaultValueLbl, MessageBundle.format("parameters_defaultValue")); // NOI18N
 
         defaultValueEditor.setBorder(null);
 
@@ -285,7 +285,7 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
         parameterEditPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {defaultValueEditor, guiDefaultValueLbl});
 
         guiGroupCodeLbl.setLabelFor(guiGroupCodeTF);
-        org.openide.awt.Mnemonics.setLocalizedText(guiGroupCodeLbl, MessageBundle.getString("parameters.code")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(guiGroupCodeLbl, MessageBundle.format("parameters_code")); // NOI18N
         guiGroupCodeLbl.setFocusable(false);
 
         guiGroupRemarkTA.setColumns(20);
@@ -293,19 +293,19 @@ public class JParameterDescriptorEditorPanel extends javax.swing.JPanel implemen
         jScrollPane2.setViewportView(guiGroupRemarkTA);
 
         guiGroupRemarkLbl.setLabelFor(guiGroupRemarkTA);
-        org.openide.awt.Mnemonics.setLocalizedText(guiGroupRemarkLbl, MessageBundle.getString("parameters.description")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(guiGroupRemarkLbl, MessageBundle.format("parameters_description")); // NOI18N
 
         guiGroupMinOccurs.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         guiGroupMinOccurs.setLabelFor(guiMinOccursSp);
-        org.openide.awt.Mnemonics.setLocalizedText(guiGroupMinOccurs, MessageBundle.getString("parameters.min")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(guiGroupMinOccurs, MessageBundle.format("parameters_min")); // NOI18N
         guiGroupMinOccurs.setFocusable(false);
 
         guiGroupMaxOccurs.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         guiGroupMaxOccurs.setLabelFor(guiMaxOccursSp);
-        org.openide.awt.Mnemonics.setLocalizedText(guiGroupMaxOccurs, MessageBundle.getString("parameters.max")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(guiGroupMaxOccurs, MessageBundle.format("parameters_max")); // NOI18N
         guiGroupMaxOccurs.setFocusable(false);
 
-        org.openide.awt.Mnemonics.setLocalizedText(guiGroupOccurencesLbl, MessageBundle.getString("parameters.occurences")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(guiGroupOccurencesLbl, MessageBundle.format("parameters_occurences")); // NOI18N
 
         javax.swing.GroupLayout parameterGroupEditPanelLayout = new javax.swing.GroupLayout(parameterGroupEditPanel);
         parameterGroupEditPanel.setLayout(parameterGroupEditPanelLayout);

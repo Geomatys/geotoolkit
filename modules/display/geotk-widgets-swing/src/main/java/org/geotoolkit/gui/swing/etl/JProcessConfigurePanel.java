@@ -183,7 +183,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
                             value = ConstantUtilities.stringToValue(cst.getValue(), paramClass);
                             parameter.parameter(paramName).setValue(value);
                             notSupportedInput.add(paramName);
-                            final JTextField notSupportedTf = new JTextField(MessageBundle.getString("inputNotSupported"));
+                            final JTextField notSupportedTf = new JTextField(MessageBundle.format("inputNotSupported"));
                             notSupportedTf.setEnabled(false);
                             editor.add(BorderLayout.CENTER, notSupportedTf);
                             canToggle = false;
@@ -224,7 +224,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
 
                     if (!ChainDataTypes.VALID_TYPES.contains(paramClass)) {
                         notSupportedInput.add(paramName);
-                        final JTextField notSupportedTf = new JTextField(MessageBundle.getString("inputNotSupported"));
+                        final JTextField notSupportedTf = new JTextField(MessageBundle.format("inputNotSupported"));
                         notSupportedTf.setEnabled(false);
                         editor.add(BorderLayout.CENTER, notSupportedTf );
                         canToggle = false;
@@ -276,9 +276,9 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
 
         updateParameterEditorState();
         this.displayHelp = true;
-        guiToggleHelpBtn.setText(MessageBundle.getString("hideHelp"));
+        guiToggleHelpBtn.setText(MessageBundle.format("hideHelp"));
         setHelpContent(descriptor);
-        this.guiParameterTitleLabel.setText(MessageBundle.getString("processInputParameters") + descriptor.getIdentifier().getCode() + " : ");
+        this.guiParameterTitleLabel.setText(MessageBundle.format("processInputParameters") + descriptor.getIdentifier().getCode() + " : ");
     }
 
     /**
@@ -298,7 +298,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
                 guiSplitPane.setDividerSize(DIVIDER_SIZE);
                 guiSplitPane.setDividerLocation(lastParamPanelSize + (DIVIDER_SIZE / 2));
                 guiHelpPane.setVisible(true);
-                guiToggleHelpBtn.setText(MessageBundle.getString("hideHelp"));
+                guiToggleHelpBtn.setText(MessageBundle.format("hideHelp"));
                 optionPaneDialog.setSize(lastParamPanelSize + lastHelpPanelSize + DIVIDER_SIZE, optionPaneDialog.getHeight());
 
             } else {
@@ -307,7 +307,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
                 guiSplitPane.setDividerLocation(lastParamPanelSize + (DIVIDER_SIZE / 2));
                 guiSplitPane.setDividerSize(0);
                 guiHelpPane.setVisible(false);
-                guiToggleHelpBtn.setText(MessageBundle.getString("showHelp"));
+                guiToggleHelpBtn.setText(MessageBundle.format("showHelp"));
                 optionPaneDialog.setSize(lastParamPanelSize + (DIVIDER_SIZE / 2), optionPaneDialog.getHeight());
             }
         }
@@ -348,9 +348,9 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
             description = paramDesc.getRemarks() != null ? paramDesc.getRemarks().toString() : null;
             dataType = paramDesc.getValueClass().getSimpleName();
             if (paramDesc.getMinimumOccurs() == 1 && paramDesc.getMaximumOccurs() == 1) {
-                mandatory = MessageBundle.getString("editorHelpMandatory");
+                mandatory = MessageBundle.format("editorHelpMandatory");
             } else {
-                mandatory = MessageBundle.getString("editorHelpOptional");
+                mandatory = MessageBundle.format("editorHelpOptional");
             }
             defaultValue = String.valueOf(paramDesc.getDefaultValue());
             final Set valueSet = paramDesc.getValidValues();
@@ -371,22 +371,22 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
         sb.append("<hr/>");
         sb.append("<ul>");
         if (mandatory != null) {
-            sb.append("<li>").append(MessageBundle.getString("editorHelpMandatoryLabel")).append(" : ").append(mandatory).append("</li>");
+            sb.append("<li>").append(MessageBundle.format("editorHelpMandatoryLabel")).append(" : ").append(mandatory).append("</li>");
         }
         if (dataType != null) {
-            sb.append("<li>").append(MessageBundle.getString("editorHelpTypeLabel")).append(" : ").append(dataType).append("</li>");
+            sb.append("<li>").append(MessageBundle.format("editorHelpTypeLabel")).append(" : ").append(dataType).append("</li>");
         }
         if (defaultValue != null) {
-            sb.append("<li>").append(MessageBundle.getString("editorHelpDefaultLabel")).append(" : ").append(defaultValue).append("</li>");
+            sb.append("<li>").append(MessageBundle.format("editorHelpDefaultLabel")).append(" : ").append(defaultValue).append("</li>");
         }
         if (validValues != null) {
-            sb.append("<li>").append(MessageBundle.getString("editorHelpValidLabel")).append(" : ").append(Arrays.toString(validValues)).append("</li>");
+            sb.append("<li>").append(MessageBundle.format("editorHelpValidLabel")).append(" : ").append(Arrays.toString(validValues)).append("</li>");
         }
         if (dataUnits != null) {
-            sb.append("<li>").append(MessageBundle.getString("editorHelpUnitLabel")).append(" : ").append(dataUnits).append("</li>");
+            sb.append("<li>").append(MessageBundle.format("editorHelpUnitLabel")).append(" : ").append(dataUnits).append("</li>");
         }
         sb.append("</ul>");
-        sb.append("<h3>").append(MessageBundle.getString("editorHelpDescriptionLabel")).append(" : ").append("</h3>");
+        sb.append("<h3>").append(MessageBundle.format("editorHelpDescriptionLabel")).append(" : ").append("</h3>");
         sb.append("<p>").append(description).append("</p>");
         sb.append("</html>");
         guiHelpTextPane.setText(sb.toString());
@@ -749,7 +749,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
                 }
             }
         });
-        optionPaneDialog.setTitle(MessageBundle.getString("configProcessTitle")+descriptor.getIdentifier().getCode());
+        optionPaneDialog.setTitle(MessageBundle.format("configProcessTitle")+descriptor.getIdentifier().getCode());
         optionPaneDialog.setContentPane(optPane);
         optionPaneDialog.pack();
         optionPaneDialog.setResizable(true);
@@ -770,7 +770,7 @@ public class JProcessConfigurePanel extends javax.swing.JPanel {
         if (editor.getComponentCount() == 0) {
             parameterActivated.remove(paramName);
             notSupportedInput.add(paramName);
-            final JTextField notSupportedTf = new JTextField(MessageBundle.getString("inputNotSupported"));
+            final JTextField notSupportedTf = new JTextField(MessageBundle.format("inputNotSupported"));
             notSupportedTf.setEnabled(false);
             editor.add(BorderLayout.CENTER, notSupportedTf );
             return false;

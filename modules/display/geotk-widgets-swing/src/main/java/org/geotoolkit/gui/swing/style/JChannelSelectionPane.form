@@ -52,7 +52,7 @@
             </Property>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.channelselection.native" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style_channelselection_native" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -65,7 +65,7 @@
               <ComponentRef name="group"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="rgb" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="rgb" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -78,7 +78,7 @@
               <ComponentRef name="group"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="single" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="single" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -151,7 +151,7 @@
                   <Color blue="33" green="0" red="ff" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.channelSelection.redchannel" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style_channelSelection_redchannel" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -166,7 +166,7 @@
                   <Color blue="0" green="cc" red="0" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.channelSelection.greenchannel" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style_channelSelection_greenchannel" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -181,7 +181,7 @@
                   <Color blue="ff" green="33" red="33" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.channelSelection.bluechannel" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style_channelSelection_bluechannel" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -227,7 +227,7 @@
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.channelSelection.graychannel" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style_channelSelection_graychannel" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>

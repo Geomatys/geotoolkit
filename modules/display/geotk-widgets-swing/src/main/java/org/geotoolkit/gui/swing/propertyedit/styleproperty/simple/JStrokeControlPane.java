@@ -38,7 +38,7 @@ import org.opengis.style.Stroke;
  */
 public class JStrokeControlPane extends StyleElementEditor<Stroke> {
 
-    private final AbstractAction strokeChange = new AbstractAction(MessageBundle.getString("change")) {
+    private final AbstractAction strokeChange = new AbstractAction(MessageBundle.format("change")) {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(JStrokeControlPane.this, paneStrokeChooser, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)) {

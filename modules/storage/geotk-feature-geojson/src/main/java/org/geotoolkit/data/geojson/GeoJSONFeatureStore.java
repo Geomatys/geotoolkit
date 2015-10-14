@@ -59,7 +59,7 @@ import java.util.logging.Logger;
  */
 public class GeoJSONFeatureStore extends AbstractFeatureStore {
 
-    private static final Logger LOGGER = Logging.getLogger(GeoJSONFeatureStore.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.geojson");
     private static final String DESC_FILE_SUFFIX = "_Type.json";
 
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
@@ -441,12 +441,12 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     ////////////////////////////////////////////////////////////////////////////
     //Fallback on iterative reader and writer //////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures, 
+    public List<FeatureId> addFeatures(final GenericName groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }

@@ -40,9 +40,9 @@ import org.opengis.util.FactoryException;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -77,8 +77,8 @@ import org.opengis.util.FactoryException;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -155,7 +155,7 @@ public class Layer implements AbstractLayer {
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
     private Integer fixedHeight;
-    
+
     /**
      * An empty constructor used by JAXB.
      */
@@ -164,13 +164,13 @@ public class Layer implements AbstractLayer {
 
      /**
       * Build a root layer with only few arguments
-      * 
+      *
       * @param title                   The title of the layer.
       * @param _abstract               A description of the layer.
       * @param crs                     The list of supported CRS.
       * @param exGeographicBoundingBox A general bounding box including all the child map.
       */
-     public Layer(final String title, final String _abstract, final List<String> crs, 
+     public Layer(final String title, final String _abstract, final List<String> crs,
              final EXGeographicBoundingBox exGeographicBoundingBox, final List<AbstractLayer> layers) {
          this.title                   = title;
          this._abstract               = _abstract;
@@ -182,28 +182,28 @@ public class Layer implements AbstractLayer {
                 throw new IllegalArgumentException("not good version of layer. expected 1.3.0");
             }
          }
-         
+
          this.crs                     = crs;
          this.exGeographicBoundingBox = exGeographicBoundingBox;
      }
-     
+
      /**
       * Build a root layer with only few arguments
-      * 
+      *
       * @param title                   The title of the layer.
       * @param _abstract               A description of the layer.
       * @param crs                     The list of supported CRS.
       * @param exGeographicBoundingBox A general bounding box including all the child map.
       */
-     public Layer(final String name, final String title, final String _abstract, final List<String> crs, 
+     public Layer(final String name, final String title, final String _abstract, final List<String> crs,
              final EXGeographicBoundingBox exGeographicBoundingBox, final List<AbstractLayer> layers) {
          this(title,_abstract,crs,exGeographicBoundingBox,layers);
          this.name = name;
      }
-     
+
      /**
       * Build a child layer for the specified version
-      * 
+      *
       * @param name      The title of the layer.
       * @param _abstract A description of the layer.
       * @param keyword   A keyword on the layer.
@@ -215,7 +215,7 @@ public class Layer implements AbstractLayer {
       * @param style      An object describing the style of the layer.
       * @param version    The version of the wms service.
       */
-     public Layer(final String name, final String _abstract, final String keyword, final List<String> crs, 
+     public Layer(final String name, final String _abstract, final String keyword, final List<String> crs,
              final EXGeographicBoundingBox exGeographicBoundingBox, final BoundingBox boundingBox, final String queryable,
              final List<AbstractDimension> dimensions, final List<Style> styles) {
          this.name                    = name;
@@ -228,7 +228,7 @@ public class Layer implements AbstractLayer {
          for (Style s: styles) {
              style.add(s);
          }
-         
+
          this.crs                     = crs;
          this.dimension               = new ArrayList<Dimension>();
          for (AbstractDimension d: dimensions) {
@@ -240,11 +240,11 @@ public class Layer implements AbstractLayer {
          }
          this.exGeographicBoundingBox = exGeographicBoundingBox;
      }
-     
-     
-     
-     
-     
+
+
+
+
+
     /**
      * Build a full Layer object.
      */
@@ -255,7 +255,7 @@ public class Layer implements AbstractLayer {
             final List<DataURL> dataURL, final List<FeatureListURL> featureListURL, final List<Style> style, final Double minScaleDenominator,
             final Double maxScaleDenominator, final List<Layer> layer, final String queryable, final Integer cascaded,
             final Integer opaque, final Integer noSubsets, final Integer fixedWidth,  final Integer fixedHeight) {
-        
+
         this._abstract               = _abstract;
         this.attribution             = attribution;
         this.authorityURL            = authorityURL;
@@ -280,7 +280,7 @@ public class Layer implements AbstractLayer {
         this.queryable               = queryable;
         this.style                   = style;
         this.title                   = title;
-        
+
     }
 
     /**
@@ -309,7 +309,7 @@ public class Layer implements AbstractLayer {
 
     /**
      * Gets the value of the keywordList property.
-     * 
+     *
      */
     @Override
     public KeywordList getKeywordList() {
@@ -318,13 +318,13 @@ public class Layer implements AbstractLayer {
 
     /**
      * Gets the value of the crs property.
-     * 
+     *
      */
     @Override
     public List<String> getCRS() {
         return crs;
     }
-    
+
 
     /**
      * Gets the value of the exGeographicBoundingBox property.
@@ -332,11 +332,11 @@ public class Layer implements AbstractLayer {
     public AbstractGeographicBoundingBox getEXGeographicBoundingBox() {
         return exGeographicBoundingBox;
     }
-    
-    
+
+
     /**
      * Gets the value of the boundingBox property.
-     * 
+     *
      */
     @Override
     public List<BoundingBox> getBoundingBox() {
@@ -345,16 +345,16 @@ public class Layer implements AbstractLayer {
 
     /**
      * Gets the value of the dimension property.
-     * 
+     *
      */
     @Override
     public List<Dimension> getDimension() {
         return dimension;
     }
-    
+
     /**
      * Gets the value of the attribution property.
-     * 
+     *
      */
     public Attribution getAttribution() {
         return attribution;
@@ -362,7 +362,7 @@ public class Layer implements AbstractLayer {
 
     /**
      * Gets the value of the authorityURL property.
-     * 
+     *
      */
     public List<AuthorityURL> getAuthorityURL() {
         return authorityURL;
@@ -393,7 +393,7 @@ public class Layer implements AbstractLayer {
 
     /**
      * Gets the value of the featureListURL property.
-     * 
+     *
      */
     public List<FeatureListURL> getFeatureListURL() {
         return featureListURL;
@@ -481,10 +481,10 @@ public class Layer implements AbstractLayer {
     public Integer getFixedHeight() {
         return fixedHeight;
     }
-    
+
     /**
      * Gets all values of each dimension property.
-     * 
+     *
      */
     @Override
     public List<AbstractDimension> getAbstractDimension() {
@@ -492,7 +492,7 @@ public class Layer implements AbstractLayer {
         /*Transform a  List<Dimension> to an  List<AbstractDimension>*/
         for( Dimension dim : getDimension() ){
             list.add((AbstractDimension) dim);
-        }    
+        }
         return list;
     }
 
@@ -516,7 +516,7 @@ public class Layer implements AbstractLayer {
             env.setRange(1, bbox.getMiny(), bbox.getMaxy());
             return env;
         } catch (FactoryException e) {
-            Logging.getLogger(Layer.class).warning(e.getMessage());
+            Logging.getLogger("org.geotoolkit.wms.xml.v130").warning(e.getMessage());
         }
 
         return null;
@@ -552,7 +552,7 @@ public class Layer implements AbstractLayer {
     public void setKeywordList(final KeywordList keywordList) {
         this.keywordList = keywordList;
     }
-    
+
     @Override
     public void setKeywordList(final List<String> keywordList) {
         if (keywordList != null) {
@@ -604,7 +604,7 @@ public class Layer implements AbstractLayer {
         }
         this.attribution = new Attribution(title, href, l);
     }
-    
+
     /**
      * @param authorityURL the authorityURL to set
      */
@@ -616,14 +616,14 @@ public class Layer implements AbstractLayer {
     public void setAuthorityURL(final String format, final String href) {
         this.authorityURL.add(new AuthorityURL(format, href));
     }
-    
+
     /**
      * @param identifier the identifier to set
      */
     public void setIdentifier(final List<Identifier> identifier) {
         this.identifier = identifier;
     }
-    
+
     /**
      * @param identifier the identifier to set
      */
@@ -643,7 +643,7 @@ public class Layer implements AbstractLayer {
     public void setMetadataURL(final String format, final String href, final String type) {
         this.metadataURL.add(new MetadataURL(format, href, type));
     }
-    
+
     /**
      * @param dataURL the dataURL to set
      */
@@ -655,7 +655,7 @@ public class Layer implements AbstractLayer {
     public void setDataURL(final String format, final String href) {
         this.dataURL.add(new DataURL(format, href));
     }
-    
+
     /**
      * @param featureListURL the featureListURL to set
      */
@@ -683,7 +683,7 @@ public class Layer implements AbstractLayer {
             }
         }
     }
-    
+
     /**
      * @param minScaleDenominator the minScaleDenominator to set
      */

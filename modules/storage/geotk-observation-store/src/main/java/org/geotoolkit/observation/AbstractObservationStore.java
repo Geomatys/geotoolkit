@@ -28,14 +28,14 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public abstract class AbstractObservationStore extends ObservationStore {
 
-    protected static final Logger LOGGER = Logging.getLogger(AbstractObservationStore.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.observation");
+
     protected final ParameterValueGroup parameters;
-    
+
     protected AbstractObservationStore(final ParameterValueGroup params) {
         this.parameters = params;
     }
-    
+
     @Override
     public Metadata getMetadata() throws DataStoreException {
         return null;

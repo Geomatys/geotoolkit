@@ -55,7 +55,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class MeasureUtilities {
 
-    private static final Logger LOGGER = Logging.getLogger(MeasureUtilities.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display");
 
     public static double calculateLenght(final Geometry geom, final CoordinateReferenceSystem geomCRS, final Unit<Length> unit){
 

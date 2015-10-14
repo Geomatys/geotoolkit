@@ -243,7 +243,7 @@ public final class TransformedShape extends AffineTransform implements Shape {
         try {
             return shape.contains(inverseTransform(p, point));
         } catch (NoninvertibleTransformException exception) {
-            Logging.recoverableException(TransformedShape.class, "contains", exception);
+            Logging.recoverableException(null, TransformedShape.class, "contains", exception);
             return false;
         }
     }
@@ -285,7 +285,7 @@ public final class TransformedShape extends AffineTransform implements Shape {
         try {
             return shape.contains(AffineTransforms2D.inverseTransform(this, r, rectangle));
         } catch (NoninvertibleTransformException exception) {
-            Logging.recoverableException(TransformedShape.class, "contains", exception);
+            Logging.recoverableException(null, TransformedShape.class, "contains", exception);
             return false; // Consistent with the Shape interface contract.
         }
     }
@@ -326,7 +326,7 @@ public final class TransformedShape extends AffineTransform implements Shape {
         try {
             return shape.intersects(AffineTransforms2D.inverseTransform(this, r, rectangle));
         } catch (NoninvertibleTransformException exception) {
-            Logging.recoverableException(TransformedShape.class, "intersects", exception);
+            Logging.recoverableException(null, TransformedShape.class, "intersects", exception);
             return true; // Consistent with the Shape interface contract.
         }
     }

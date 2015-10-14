@@ -116,7 +116,7 @@ public class LayerStylePropertyPanel extends MultiPropertyPanel {
 
     @Override
     public String getTitle() {
-        return MessageBundle.getString("property_style");
+        return MessageBundle.format("property_style");
     }
 
     @Override
@@ -131,7 +131,7 @@ public class LayerStylePropertyPanel extends MultiPropertyPanel {
     
     @Override
     public String getToolTip() {
-        return MessageBundle.getString("property_style");
+        return MessageBundle.format("property_style");
     }
 
     @Override

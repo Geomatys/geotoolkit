@@ -204,7 +204,7 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
                         value = converted;
                     }
                 } catch (UnconvertibleObjectException e) {
-                    Logging.recoverableException(DefaultAttribute.class, "checkType", e);
+                    Logging.recoverableException(null, DefaultAttribute.class, "checkType", e);
                     // TODO - do we really want to ignore?
                 }
             }

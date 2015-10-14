@@ -54,31 +54,31 @@ import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * Allow to copy geometry from clipboards
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class JClipboardPanel extends javax.swing.JPanel {
 
-    private static final Logger LOGGER = Logging.getLogger(JClipboardPanel.class);
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.control.edition");
+
     public static final String GEOMETRY_PROPERTY = "geometry";
-    
+
     private final WKTReader reader = new WKTReader();
-    
+
     private Geometry original = null;
     private Geometry current = null;
     private CoordinateReferenceSystem crs = null;
-    
+
     public JClipboardPanel() {
         initComponents();
     }
-    
+
     public void setGeometry(Geometry geom){
         this.original = geom;
         this.current = null;
     }
-    
+
     public Geometry getGeometry(){
         if(current == null){
             return original;
@@ -94,9 +94,9 @@ public class JClipboardPanel extends javax.swing.JPanel {
     public CoordinateReferenceSystem getCrs() {
         return crs;
     }
-    
+
     private boolean checkClipboard(boolean system){
-        
+
         Object candidate = null;
         if(system){
             //extract geometry from system clipboard
@@ -105,7 +105,7 @@ public class JClipboardPanel extends javax.swing.JPanel {
         }else{
             //extract geometry from application clipboard
             final Transferable trs = GeotkClipboard.INSTANCE.getContents(this);
-            for(DataFlavor df : trs.getTransferDataFlavors()){                
+            for(DataFlavor df : trs.getTransferDataFlavors()){
                 try {
                     candidate = trs.getTransferData(df);
                     candidate = adapt(candidate);
@@ -116,63 +116,63 @@ public class JClipboardPanel extends javax.swing.JPanel {
                     LOGGER.log(Level.FINE, ex.getMessage(),ex);
                     continue;
                 }
-                
+
                 if(candidate != null){
                     //we found something in the clipboard which can be matched as a geometry
                     break;
-                }                                
+                }
             }
         }
-        
-        
+
+
         if(candidate instanceof Geometry){
             current = (Geometry) candidate;
-            
+
             //reproject geometry if necessary
             if(crs != null){
                 try{
                     final CoordinateReferenceSystem currentCRS = JTS.findCoordinateReferenceSystem(current);
-                    
+
                     if(currentCRS != null){
                         if(!CRS.equalsIgnoreMetadata(currentCRS, crs)){
                             final MathTransform trs = CRS.findMathTransform(currentCRS, crs);
                             current = JTS.transform(current, trs);
                         }
                     }
-                    
+
                 }catch(FactoryException ex){
                     LOGGER.log(Level.FINE, ex.getMessage(),ex);
                 }catch(TransformException ex){
                     LOGGER.log(Level.FINE, ex.getMessage(),ex);
                 }
             }
-            
+
             return true;
         }
-        
+
         //ensure the geometry type match
         if(current != null && original != null){
             current = JTSMapping.convertType(current,original.getClass());
         }
-        
+
         return false;
     }
-    
+
     /**
      * Try to convert extract a geometry from the given object
      * @return Geometry or null if failed to adapt candidate to a geometry
      */
-    private Geometry adapt(Object candidate){        
+    private Geometry adapt(Object candidate){
         if(candidate == null){
             return null;
-        }        
+        }
         if(candidate instanceof Geometry){
             //already a geometry
             return (Geometry) candidate;
         }
-        
+
         Geometry result = null;
-        
+
         if(candidate instanceof String){
             try {
                 //try to parse it from WKT
@@ -196,7 +196,7 @@ public class JClipboardPanel extends javax.swing.JPanel {
                 while(ite.hasNext()){
                     candidate = FeatureUtilities.deepCopy(ite.next());
                 }
-                
+
             }catch(NoSuchIdentifierException ex){
                 LOGGER.log(Level.FINE, ex.getMessage(),ex);
             }catch(ProcessException ex){
@@ -215,11 +215,11 @@ public class JClipboardPanel extends javax.swing.JPanel {
                     geometries.add(g);
                 }
             }
-            
+
             //then merge the geometries
             if(!geometries.isEmpty()){
                 result = geometries.get(0);
-                
+
                 while(geometries.size()>1){
                     Geometry second = geometries.remove(1);
                     final CoordinateReferenceSystem crs1 = getCRS(result);
@@ -236,10 +236,10 @@ public class JClipboardPanel extends javax.swing.JPanel {
                                 LOGGER.log(Level.FINE, ex.getMessage(),ex);
                             }
                         }
-                        
+
                         result = result.union(second);
                         JTS.setCRS(result, crs1);
-                        
+
                     }else{
                         result = result.union(second);
                         if(crs1 != null){
@@ -248,12 +248,12 @@ public class JClipboardPanel extends javax.swing.JPanel {
                             JTS.setCRS(result, crs2);
                         }
                     }
-                    
-                }                
-                
-            }            
+
+                }
+
+            }
         }
-        
+
         if(candidate instanceof Feature){
             final Feature f = (Feature) candidate;
             if(f.getDefaultGeometryProperty() != null){
@@ -263,11 +263,11 @@ public class JClipboardPanel extends javax.swing.JPanel {
                 JTS.setCRS(result, f.getDefaultGeometryProperty().getType().getCoordinateReferenceSystem());
             }
         }
-        
-        
+
+
         return result;
     }
-    
+
     private static CoordinateReferenceSystem getCRS(final Geometry geom){
         try {
             return JTS.findCoordinateReferenceSystem(geom);
@@ -278,8 +278,8 @@ public class JClipboardPanel extends javax.swing.JPanel {
         }
         return null;
     }
-    
-    
+
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -292,14 +292,14 @@ public class JClipboardPanel extends javax.swing.JPanel {
         guiApply = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
-        guiApply.setText(MessageBundle.getString("paste")); // NOI18N
+        guiApply.setText(MessageBundle.format("paste")); // NOI18N
         guiApply.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pasteFromApp(evt);
             }
         });
 
-        jLabel1.setText(MessageBundle.getString("clipboard")); // NOI18N
+        jLabel1.setText(MessageBundle.format("clipboard")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

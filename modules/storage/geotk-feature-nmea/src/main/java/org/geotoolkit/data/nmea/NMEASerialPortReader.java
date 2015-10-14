@@ -55,7 +55,7 @@ import org.geotoolkit.data.memory.MemoryFeatureStore;
  */
 public class NMEASerialPortReader implements ProviderListener<NMEABuilder.FeatureEvent> {
 
-    private static final Logger LOGGER = Logging.getLogger(NMEASerialPortReader.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.nmea");
 
     /** A timeout used for connexion request on ports */
     public static final int CONNEXION_TIMEOUT = 100;

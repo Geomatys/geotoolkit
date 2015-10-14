@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -13,7 +13,7 @@
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
- */ 
+ */
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
 
@@ -31,14 +31,14 @@ import org.junit.Test;
  * that is wrapped with the "case" tags. It contains two
  * geometry objects and then one or more tests to apply
  * to those geometries.
- * 
+ *
  * @author Jody Garnett
  * @author Joel Skelton
  * @module pending
  */
 public class GeometryTestCase {
-    
-    private static final Logger LOG = Logging.getLogger(GeometryTestCase.class);
+
+    private static final Logger LOG = Logging.getLogger("org.geotoolkit.geometry.isoonjts.spatialschema.geometry");
     private List operationList;
     private Geometry geomA;
     private Geometry geomB;
@@ -51,7 +51,7 @@ public class GeometryTestCase {
         this.operationList = new ArrayList();
         this.geomA = null;
         this.geomB = null;
-        description = "No description";        
+        description = "No description";
     }
 
     /**
@@ -108,7 +108,7 @@ public class GeometryTestCase {
 
     @Test
     public void test(){
-        
+
     }
 
 }

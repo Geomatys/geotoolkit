@@ -31,41 +31,41 @@ import org.opengis.util.InternationalString;
  */
 public enum FileFormat {
 
-    ACCESS_DATABASE("filter_access", "mdb"),
-    AUTOCAD_DWG("filter_dwg", "dwg"),
-    COMMA_SEPARATED_VALUES("filter_csv", "csv"),
-    DIMAP("filter_dimap", "tif", "tiff"),
-    ERDAS_IMAGE("filter_erdas_img", "img"),
-    ERMAPPER_COMPRESSED_WAVELETS("filter_ecw", "ecw"),
-    ESRI_SHAPEFILE("filter_shapefile", "shp"),
-    ESRI_ASCII_GRID("filter_asc", "asc"),
-    GEOTIFF("filter_geotiff", "tif", "tiff"),
-    GEOGRAPHY_MARKUP_LANGUAGE("filter_gml", "gml"),
-    KEYHOLE_MARKUP_LANGUAGE("filter_kml", "kml"),
-    KEYHOLE_MARKUP_LANGUAGE_ZIPPED("filter_kmz", "kmz"),
-    JOINT_PHOTOGRAPHIC_EXPERTS_GROUP("filter_jpg", "jpg", "jpeg", "gif"),
-    JPEG_2000("filter_jpg2", "jp2", "j2k"),
-    MAPINFO_EXCHANGE("filter_mif", "mif"),
-    MAPINFO_TAB("filter_tab", "tab"),
-    MICROSTATION_DGN("filter_microstation_dgn", "dgn"),
-    NETCDF_GRIB("filter_netcdfgrib", "nc", "ncml", "cdf", "grib","grib1","grib2","grb","grb1","grb2","grd"),
-    NMEA("filter_nmea", "txt", "log"),
-    PDF("filter_pdf", "pdf"),
-    PORTABLE_NETWORK_GRAPHICS("filter_png", "png"),
-    SCALABLE_VECTOR_GRAPHICS("filter_svg", "svg"),
-    STYLE_LAYER_DESCRIPTOR("filter_sld", "sld"),
-    TIFF("filter_tiff", "tif", "tiff"),
-    VISUALDEM("filter_vdem", "dem"),
-    WEBMAPCONTEXT("filter_wmc", "wmc"),
-    S57("filter_s57", "000"),
-    WORLD_IMAGE("filter_world_image", "jpg", "jpeg", "bmp", "png");
+    ACCESS_DATABASE(MessageBundle.Keys.filter_access, "mdb"),
+    AUTOCAD_DWG(MessageBundle.Keys.filter_dwg, "dwg"),
+    COMMA_SEPARATED_VALUES(MessageBundle.Keys.filter_csv, "csv"),
+    DIMAP(MessageBundle.Keys.filter_dimap, "tif", "tiff"),
+    ERDAS_IMAGE(MessageBundle.Keys.filter_erdas_img, "img"),
+    ERMAPPER_COMPRESSED_WAVELETS(MessageBundle.Keys.filter_ecw, "ecw"),
+    ESRI_SHAPEFILE(MessageBundle.Keys.filter_shapefile, "shp"),
+    ESRI_ASCII_GRID(MessageBundle.Keys.filter_asc, "asc"),
+    GEOTIFF(MessageBundle.Keys.filter_geotiff, "tif", "tiff"),
+    GEOGRAPHY_MARKUP_LANGUAGE(MessageBundle.Keys.filter_gml, "gml"),
+    KEYHOLE_MARKUP_LANGUAGE(MessageBundle.Keys.filter_kml, "kml"),
+    KEYHOLE_MARKUP_LANGUAGE_ZIPPED(MessageBundle.Keys.filter_kmz, "kmz"),
+    JOINT_PHOTOGRAPHIC_EXPERTS_GROUP(MessageBundle.Keys.filter_jpg, "jpg", "jpeg", "gif"),
+    JPEG_2000(MessageBundle.Keys.filter_jpg2, "jp2", "j2k"),
+    MAPINFO_EXCHANGE(MessageBundle.Keys.filter_mif, "mif"),
+    MAPINFO_TAB(MessageBundle.Keys.filter_tab, "tab"),
+    MICROSTATION_DGN(MessageBundle.Keys.filter_microstation_dgn, "dgn"),
+    NETCDF_GRIB(MessageBundle.Keys.filter_netcdfgrib, "nc", "ncml", "cdf", "grib","grib1","grib2","grb","grb1","grb2","grd"),
+    NMEA(MessageBundle.Keys.filter_nmea, "txt", "log"),
+    PDF(MessageBundle.Keys.filter_pdf, "pdf"),
+    PORTABLE_NETWORK_GRAPHICS(MessageBundle.Keys.filter_png, "png"),
+    SCALABLE_VECTOR_GRAPHICS(MessageBundle.Keys.filter_svg, "svg"),
+    STYLE_LAYER_DESCRIPTOR(MessageBundle.Keys.filter_sld, "sld"),
+    TIFF(MessageBundle.Keys.filter_tiff, "tif", "tiff"),
+    VISUALDEM(MessageBundle.Keys.filter_vdem, "dem"),
+    WEBMAPCONTEXT(MessageBundle.Keys.filter_wmc, "wmc"),
+    S57(MessageBundle.Keys.filter_s57, "000"),
+    WORLD_IMAGE(MessageBundle.Keys.filter_world_image, "jpg", "jpeg", "bmp", "png");
 
     private final InternationalString desc;
     private final String[] ends;
     private WeakReference<FileFilter> ref;
 
-    FileFormat(final String i18n, final String... ends) {
-        this.desc = MessageBundle.getI18NString(i18n);
+    FileFormat(final short i18n, final String... ends) {
+        this.desc = MessageBundle.formatInternational(i18n);
         this.ends = new String[ends.length];
         String dot = ".";
         for (int i = 0; i < ends.length; i++) {

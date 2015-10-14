@@ -34,7 +34,7 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
     /**
      * Default logger for all GetMap requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractGetTile.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wmts");
 
     /**
      * The version to use for this webservice request.
@@ -203,7 +203,7 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
         requestParameters.put("TILEMATRIX",   tileMatrix);
         requestParameters.put("TILECOL",      tileCol + "");
         requestParameters.put("TILEROW",      tileRow + "");
-        
+
         requestParameters.putAll(dimensions());
     }
 

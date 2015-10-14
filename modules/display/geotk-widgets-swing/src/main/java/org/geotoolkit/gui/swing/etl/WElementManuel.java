@@ -58,7 +58,7 @@ public class WElementManuel extends Widget implements WPositionable {
 
         setBorder(BorderFactory.createRoundedBorder(20, 20, 8, 8, Color.WHITE, Color.DARK_GRAY));
 
-        final String name = MessageBundle.getString("manualInt");
+        final String name = MessageBundle.format("manualInt");
 
         execWidget = new WName(scene, name, editable, true, true, this);
         execWidget.setFont(CHAIN_ELEMENT_EXECUTION_TITLE_FONT);
@@ -91,8 +91,8 @@ public class WElementManuel extends Widget implements WPositionable {
                             final ChainScene scene = (ChainScene) getScene();
                             final WElementManuel elem = (WElementManuel) widget;
                             final ElementManual manual = elem.getObject();
-                            final String msg = MessageBundle.getString("manualDesc");
-                            final String title = MessageBundle.getString("manualInt");
+                            final String msg = MessageBundle.format("manualDesc");
+                            final String title = MessageBundle.format("manualInt");
                             final String desc = (String) JOptionPane.showInputDialog(null, msg, title, JOptionPane.PLAIN_MESSAGE, null, null, manual.getDescription());
                             if (desc != null) {
                                 manual.setDescription(desc);
@@ -131,8 +131,8 @@ public class WElementManuel extends Widget implements WPositionable {
         public void edit(Widget widget) {
            final WElementManuel elem = (WElementManuel) widget;
             final ElementManual manuel = elem.getObject();
-            final String msg = MessageBundle.getString("manualDesc");
-            final String title = MessageBundle.getString("manualInt");
+            final String msg = MessageBundle.format("manualDesc");
+            final String title = MessageBundle.format("manualInt");
             final String desc = (String) JOptionPane.showInputDialog(null, msg, title, JOptionPane.PLAIN_MESSAGE, null, null, manuel.getDescription());
             if (desc != null) {
                 manuel.setDescription(desc);

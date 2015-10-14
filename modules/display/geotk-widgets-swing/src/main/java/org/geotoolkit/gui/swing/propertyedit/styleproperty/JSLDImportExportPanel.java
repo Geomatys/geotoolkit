@@ -51,7 +51,7 @@ public class JSLDImportExportPanel extends AbstractPropertyPane{
 
     /** Creates new form JSLDExportPanel */
     public JSLDImportExportPanel() {
-        super(MessageBundle.getString("import_export"), 
+        super(MessageBundle.format("import_export"), 
               IconBundle.getIcon("16_advanced_style"), 
               null, 
               null);
@@ -132,7 +132,7 @@ public class JSLDImportExportPanel extends AbstractPropertyPane{
                 try {
                     tool.writeStyle(chooser.getSelectedFile(), style, version);
                 } catch (JAXBException ex) {
-                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.WARNING,ex.getMessage(),ex);
+                    Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.styleproperty").log(Level.WARNING,ex.getMessage(),ex);
                 }
             }
         }
@@ -170,10 +170,8 @@ public class JSLDImportExportPanel extends AbstractPropertyPane{
                         }
                     }
                     break parse;
-                } catch (JAXBException ex) {
-                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
-                } catch (FactoryException ex) {
-                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
+                } catch (JAXBException | FactoryException ex) {
+                    Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.styleproperty").log(Level.FINEST,ex.getMessage(),ex);
                 }
 
                 try {
@@ -185,10 +183,8 @@ public class JSLDImportExportPanel extends AbstractPropertyPane{
                     layer.setStyle(style);
 
                     break parse;
-                } catch (JAXBException ex) {
-                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
-                } catch (FactoryException ex) {
-                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
+                } catch (JAXBException | FactoryException ex) {
+                    Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.styleproperty").log(Level.FINEST,ex.getMessage(),ex);
                 }
 
             }

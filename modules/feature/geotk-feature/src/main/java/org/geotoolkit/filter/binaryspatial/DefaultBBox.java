@@ -25,7 +25,6 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.DefaultPropertyName;
@@ -50,6 +49,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Immutable "BBOX" filter.
@@ -197,14 +197,8 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
             if(!CRS.equalsIgnoreMetadata(this.crs,candidateCrs)){
                 try {
                     candidate = JTS.transform(candidate, CRS.findMathTransform(candidateCrs, this.crs));
-                } catch (MismatchedDimensionException ex) {
-                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
-                    return false;
-                } catch (TransformException ex) {
-                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
-                    return false;
-                } catch (FactoryException ex) {
-                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
+                } catch (MismatchedDimensionException | TransformException | FactoryException ex) {
+                    Logging.getLogger("org.geotoolkit.filter.binaryspatial").log(Level.WARNING, null, ex);
                     return false;
                 }
             }

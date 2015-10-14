@@ -77,7 +77,7 @@ public class PeriodDurationType implements PeriodDuration {
             final DatatypeFactory factory = DatatypeFactory.newInstance();
             this.tmPeriodDuration = factory.newDuration(s);
         } catch (DatatypeConfigurationException ex) {
-            Logging.getLogger(PeriodDurationType.class).log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
+            Logging.getLogger("org.geotoolkit.gts.xml").log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
         }
 
     }
@@ -88,7 +88,7 @@ public class PeriodDurationType implements PeriodDuration {
             final DatatypeFactory factory = DatatypeFactory.newInstance();
             this.tmPeriodDuration = factory.newDuration(isPositive, years, months, days, hours, minutes, seconds);
         } catch (DatatypeConfigurationException ex) {
-            Logging.getLogger(PeriodDurationType.class).log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
+            Logging.getLogger("org.geotoolkit.gts.xml").log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
         }
 
     }
@@ -99,7 +99,7 @@ public class PeriodDurationType implements PeriodDuration {
             final DatatypeFactory factory = DatatypeFactory.newInstance();
             this.tmPeriodDuration = factory.newDuration(isPositive, years, months, days, hours, minutes, seconds);
         } catch (DatatypeConfigurationException ex) {
-            Logging.getLogger(PeriodDurationType.class).log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
+            Logging.getLogger("org.geotoolkit.gts.xml").log(Level.WARNING, "Error while initializing the TM_PeriodDuration", ex);
         }
 
     }

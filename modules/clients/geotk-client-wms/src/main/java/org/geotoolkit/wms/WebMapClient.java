@@ -65,7 +65,7 @@ import java.util.logging.Logger;
  */
 public class WebMapClient extends AbstractCoverageClient {
 
-    private static final Logger LOGGER = Logging.getLogger(WebMapClient.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
     /**
      * Defines the timeout in milliseconds for the GetCapabilities request.

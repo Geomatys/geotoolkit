@@ -25,24 +25,24 @@ import org.opengis.util.NoSuchIdentifierException;
 
 
 public class UnionDemo {
-   
+
     private static FeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
     private static FeatureType type;
-    
+
     public static void main(String[] args) throws ProcessException, NoSuchIdentifierException{
-        Demos.init();        
-        
-        
+        Demos.init();
+
+
         // Inputs
         final FeatureCollection featureList = buildFeatureList();
         System.out.println("Input FeatureCollection 1 : "+featureList);
         System.out.println("----------------------------------------------------------------------------------------");
-        
+
         final FeatureCollection featureUnionList = buildFeatureUnionList();
         System.out.println("Input FeatureCollection 2 : "+featureUnionList);
-        
-        
+
+
         //get the description of the process we want
         ProcessDescriptor descriptor = ProcessFinder.getProcessDescriptor("vector", "union");
 
@@ -50,26 +50,26 @@ public class UnionDemo {
         ParameterValueGroup in = descriptor.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("feature_union").setValue(featureUnionList);
-        
+
         //the name of the geometry used for the union.
         in.parameter("input_geometry_name").setValue("geom1");
-        
+
         //create a process with input
         org.geotoolkit.process.Process process = descriptor.createProcess(in);
 
         //get the result
         final FeatureCollection featuresOut = (FeatureCollection) process.call().parameter("feature_out").getValue();
-        
+
         System.out.println("----------------------------------------------------------------------------------------");
         System.out.println("Resulting FeatureCollection : "+featuresOut);
     }
-    
-    
+
+
     /**
      * Create the FeatureType used for the first input FeatureCollection
      * @returna SimpleFeatureType
      * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException 
+     * @throws FactoryException
      */
     private static FeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -87,7 +87,7 @@ public class UnionDemo {
      * Create the FeatureType used for the second input FeatureCollection
      * @return a SimpleFeatureType
      * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException 
+     * @throws FactoryException
      */
     private static FeatureType createSimpleType2() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -103,7 +103,7 @@ public class UnionDemo {
     }
 
     /**
-     * Build the first FeatureCollection usind createSimpleType() as FeatureType. 
+     * Build the first FeatureCollection usind createSimpleType() as FeatureType.
      * It define 4 features with basic geometry and property.
      * @return FeatureCollection
      */
@@ -111,10 +111,8 @@ public class UnionDemo {
 
         try {
             type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(UnionDemo.class.getName()).log(Level.WARNING, null, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(UnionDemo.class.getName()).log(Level.WARNING, null, ex);
+            Logger.getLogger("org.geotoolkit.pending.demo.processing").log(Level.WARNING, null, ex);
         }
 
         final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
@@ -185,7 +183,7 @@ public class UnionDemo {
     }
 
     /**
-     * Build the second FeatureCollection usind createSimpleType2() as FeatureType. 
+     * Build the second FeatureCollection usind createSimpleType2() as FeatureType.
      * It define 4 features with basic geometry and property.
      * @return FeatureCollection
      */
@@ -193,10 +191,8 @@ public class UnionDemo {
 
         try {
             type = createSimpleType2();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(UnionDemo.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(UnionDemo.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.pending.demo.processing").log(Level.SEVERE, null, ex);
         }
 
         final FeatureCollection featureList = FeatureStoreUtilities.collection("", type);
@@ -269,7 +265,7 @@ public class UnionDemo {
         sfb.setPropertyValue("att", 12);
         myFeature4 = sfb.buildFeature("id-14");
         featureList.add(myFeature4);
-        
+
         Feature myFeature5;
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
@@ -289,5 +285,5 @@ public class UnionDemo {
 
         return featureList;
     }
-    
+
 }

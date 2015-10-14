@@ -170,25 +170,25 @@ public final class GO2Utilities {
     public static final Point2D GLYPH_POINT;
     public static final Shape GLYPH_TEXT;
 
-    protected static final Logger LOGGER = Logging.getLogger(GO2Utilities.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d");
     /**
      * A tolerance value for black color. Used in {@linkplain #removeBlackBorder(java.awt.image.WritableRenderedImage)}
      * to define an applet of black colors to replace with alpha data.
      */
     private static final int COLOR_TOLERANCE = 13;
-    
+
     /**
      * Palette of black colors samples computed with {@link #COLOR_TOLERANCE}.
      * Used in {@linkplain #removeBlackBorder(java.awt.image.WritableRenderedImage)}.
      */
     private static final double[][] BLACK_COLORS;
-    
+
     static{
-        
+
         List<double[]> blackColorsList = new ArrayList<>();
         fillColorToleranceTable(0, 2, blackColorsList, new double[]{0, 0, 0, 255}, COLOR_TOLERANCE);
         BLACK_COLORS = blackColorsList.toArray(new double[0][]);
-        
+
         final ServiceLoader<SymbolizerRendererService> loader = ServiceLoader.load(SymbolizerRendererService.class);
         for(SymbolizerRendererService renderer : loader){
             RENDERERS.put(renderer.getCachedSymbolizerClass(), renderer);
@@ -1014,7 +1014,7 @@ public final class GO2Utilities {
      * - null
      * - Expression.NIL
      * - PropertyName with null or empty name
-     * 
+     *
      * @param exp
      * @return true if empty
      */
@@ -1030,7 +1030,7 @@ public final class GO2Utilities {
         }
         return false;
     }
-    
+
     /**
      * Returns the symbolizers that apply on the given feature.
      */
@@ -1341,9 +1341,9 @@ public final class GO2Utilities {
     /**
      * Try to get the most representative point of a a geometry.
      * This is used by PointSymbolizer and TextSymbiolizer.
-     * 
+     *
      * @param geom, not null
-     * @return 
+     * @return
      */
     public static Point getBestPoint(Geometry geom){
         Point pt = null;
@@ -1456,12 +1456,12 @@ public final class GO2Utilities {
         if(Double.isNaN(env.getMinimum(1))){ env.setRange(1, Double.NEGATIVE_INFINITY, env.getMaximum(1));  }
         if(Double.isNaN(env.getMaximum(1))){ env.setRange(1, env.getMinimum(1), Double.POSITIVE_INFINITY);  }
     }
-    
+
     //-- Some utility methods for any Renderer.
-    
+
     /**
      * Remove black border of an ARGB image to replace them with transparent pixels.
-     * 
+     *
      * @param toFilter Image to remove black border from.
      */
     public static void removeBlackBorder(final WritableRenderedImage toFilter) {
@@ -1477,7 +1477,7 @@ public final class GO2Utilities {
             LOGGER.log(Level.FINER, "Ignoring black border removal, because image is too small (image < 1x1)");
         }
     }
-    
+
     /**
      * Add an alpha band to the image and remove any black border if asked.
      *
@@ -1493,7 +1493,7 @@ public final class GO2Utilities {
         }
         return img;
     }
-    
+
     private static void fillColorToleranceTable(int index, int maxIndex, List<double[]> container, double[] baseColor, int tolerance) {
         for (int j = 0 ; j < tolerance; j++) {
             final double[] color = new double[baseColor.length];

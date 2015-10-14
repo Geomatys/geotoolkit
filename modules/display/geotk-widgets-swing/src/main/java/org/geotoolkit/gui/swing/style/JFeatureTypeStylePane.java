@@ -79,14 +79,14 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
         setOpaque(false);
 
         jXTitledPanel1.setBorder(BorderFactory.createEtchedBorder());
-        jXTitledPanel1.setTitle(MessageBundle.getString("general")); // NOI18N
+        jXTitledPanel1.setTitle(MessageBundle.format("general")); // NOI18N
 
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | Font.BOLD));
-        jLabel1.setText(MessageBundle.getString("title")); // NOI18N
+        jLabel1.setText(MessageBundle.format("title")); // NOI18N
 
-        jLabel2.setText(MessageBundle.getString("name")); // NOI18N
+        jLabel2.setText(MessageBundle.format("name")); // NOI18N
 
-        jLabel3.setText(MessageBundle.getString("abstract")); // NOI18N
+        jLabel3.setText(MessageBundle.format("abstrac")); // NOI18N
 
         jtf_title.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -137,22 +137,22 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
         );
 
         jXTitledPanel2.setBorder(BorderFactory.createEtchedBorder());
-        jXTitledPanel2.setTitle(MessageBundle.getString("filter2")); // NOI18N
+        jXTitledPanel2.setTitle(MessageBundle.format("filter2")); // NOI18N
 
-        jck_any.setText(MessageBundle.getString("semantic_any")); // NOI18N
+        jck_any.setText(MessageBundle.format("semantic_any")); // NOI18N
 
-        jck_point.setText(MessageBundle.getString("semantic_point")); // NOI18N
+        jck_point.setText(MessageBundle.format("semantic_point")); // NOI18N
 
-        jck_line.setText(MessageBundle.getString("semantic_line")); // NOI18N
+        jck_line.setText(MessageBundle.format("semantic_line")); // NOI18N
 
-        jck_polygon.setText(MessageBundle.getString("semantic_polygon")); // NOI18N
+        jck_polygon.setText(MessageBundle.format("semantic_polygon")); // NOI18N
 
-        jck_text.setText(MessageBundle.getString("semantic_text")); // NOI18N
+        jck_text.setText(MessageBundle.format("semantic_text")); // NOI18N
 
-        jck_raster.setText(MessageBundle.getString("semantic_raster")); // NOI18N
+        jck_raster.setText(MessageBundle.format("semantic_raster")); // NOI18N
 
         jLabel4.setHorizontalAlignment(SwingConstants.RIGHT);
-        jLabel4.setText(MessageBundle.getString("featuretypename")); // NOI18N
+        jLabel4.setText(MessageBundle.format("featuretypename")); // NOI18N
         jLabel4.setEnabled(false);
 
         guiftn.setEnabled(false);

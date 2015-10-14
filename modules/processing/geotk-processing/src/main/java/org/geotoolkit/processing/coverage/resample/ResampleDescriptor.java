@@ -19,7 +19,6 @@ package org.geotoolkit.processing.coverage.resample;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -31,6 +30,7 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.referencing.NamedIdentifier;
+import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.parameter.ParameterDescriptor;
@@ -217,16 +217,14 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
         properties.put(IdentifiedObject.ALIAS_KEY, new NamedIdentifier(Citations.JAI, "source0"));
         IN_COVERAGE = new DefaultParameterDescriptor<>(properties, GridCoverage2D.class,
                         null, null, null, null, null, true);
-        
-        final String BUNDLE_PATH = "org/geotoolkit/process/coverage/bundle";
-        
+                
         INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", 
                 IN_COVERAGE, IN_INTERPOLATION_TYPE, IN_COORDINATE_REFERENCE_SYSTEM, IN_GRID_GEOMETRY, IN_BACKGROUND);
 
         final Map<String, Object> propertiesOut = new HashMap<>();
         propertiesOut.put(IdentifiedObject.NAME_KEY, "result");
-        propertiesOut.put(IdentifiedObject.ALIAS_KEY, new ResourceInternationalString(BUNDLE_PATH, "resample.outCoverage"));
-        propertiesOut.put(IdentifiedObject.REMARKS_KEY, new ResourceInternationalString(BUNDLE_PATH, "resample.outCoverageDesc"));
+        propertiesOut.put(IdentifiedObject.ALIAS_KEY, ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_resample_outCoverage));
+        propertiesOut.put(IdentifiedObject.REMARKS_KEY, ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_resample_outCoverageDesc));
         OUT_COVERAGE = new DefaultParameterDescriptor<>(
                 propertiesOut, Coverage.class, null, null, null, null, null, true);
 

@@ -36,7 +36,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 public class GeometrySimplificationTool extends AbstractEditionTool {
 
     public GeometrySimplificationTool() {
-        super(150,"geometrySimplification", MessageBundle.getI18NString("simplification"),
+        super(150,"geometrySimplification", MessageBundle.formatInternational(MessageBundle.Keys.simplification),
              new SimpleInternationalString("Tool to simplify geometries."), 
              IconBundle.getIcon("16_goto"), FeatureMapLayer.class);
     }

@@ -147,7 +147,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      *
      * @since 3.16
      */
-    static final Logger LOGGER = Logging.getLogger(Tile.class);
+    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.mosaic");
 
     /*
      * IMPLEMENTATION NOTE: Try to keep Tile as compact as possible memory-wise (i.e. put as few
@@ -204,7 +204,7 @@ public class Tile implements Comparable<Tile>, Serializable {
 
     /**
      * The size of the image to be read, or 0 if not yet computed. Values are stored
-     * as <strong>unsigned</strong> integers to aggregate some different SPOT Image tiles, 
+     * as <strong>unsigned</strong> integers to aggregate some different SPOT Image tiles,
      * where tile width and tile height may exceed short max value.
      */
     private int width, height;

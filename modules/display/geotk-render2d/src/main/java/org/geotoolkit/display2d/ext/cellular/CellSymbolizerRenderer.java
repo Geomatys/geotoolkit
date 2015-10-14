@@ -69,7 +69,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureType;
 /**
  * TODO : For features, compute statistics only if input symbolizer needs
  *  it, and compute them only on required fields.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedCellSymbolizer>{
@@ -192,7 +192,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
                                 stats[i][row][col].accept(num.doubleValue());
                             }
                         } catch (UnconvertibleObjectException e) {
-                            Logging.recoverableException(CellSymbolizerRenderer.class, "portray", e);
+                            Logging.recoverableException(LOGGER, CellSymbolizerRenderer.class, "portray", e);
                             // TODO - do we really want to ignore?
                         }
                     }
@@ -215,7 +215,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         final ProjectedFeature pf = new ProjectedFeature(params,feature);
 
         final DefaultCachedRule renderers = new DefaultCachedRule(new CachedRule[]{symbol.getCachedRule()},renderingContext);
-        
+
         //expand the search area by the maximum symbol size
         float symbolsMargin = renderers.getMargin(null, renderingContext);
         if(symbolsMargin==0) symbolsMargin = 300f;
@@ -223,7 +223,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
             params.objectiveJTSEnvelope = new com.vividsolutions.jts.geom.Envelope(params.objectiveJTSEnvelope);
             params.objectiveJTSEnvelope.expandBy(symbolsMargin);
         }
-        
+
         for(int r=0;r<nbRow;r++){
             for(int c=0;c<nbCol;c++){
                 pf.setCandidate(feature);
@@ -302,7 +302,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         delta = tr.deltaTransform(delta, delta);
         final int decimateY = length(delta);
 
-        final Rectangle2D shp = new Rectangle2D.Double(env.getMinimum(0) / decimateX, env.getMinimum(1) / decimateY, 
+        final Rectangle2D shp = new Rectangle2D.Double(env.getMinimum(0) / decimateX, env.getMinimum(1) / decimateY,
                                                        env.getSpan(0)    / decimateX, env.getSpan(1)    / decimateY);
         final RenderedImage image = coverage.getRenderedImage();
         final int nbBand = image.getSampleModel().getNumBands();
@@ -318,7 +318,7 @@ public class CellSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<C
         //iterator on image
         final CellIterator ite = new CellIterator(image,decimateX,decimateY);
         final DefaultCachedRule renderers = new DefaultCachedRule(new CachedRule[]{symbol.getCachedRule()},renderingContext);
-        
+
         //expand the search area by the maximum symbol size
         float symbolsMargin = renderers.getMargin(null, renderingContext);
         if(symbolsMargin==0) symbolsMargin = 300f;

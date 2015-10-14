@@ -19,8 +19,6 @@ package org.geotoolkit.gui.swing.chooser;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -54,7 +52,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class JFeatureStoreChooser extends javax.swing.JPanel {
 
-    private static final Logger LOGGER = Logging.getLogger(JFeatureStoreChooser.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.chooser");
 
     private static final Comparator<FeatureStoreFactory> SORTER = new Comparator<FeatureStoreFactory>() {
         @Override
@@ -144,9 +142,9 @@ public class JFeatureStoreChooser extends javax.swing.JPanel {
 
         guiEditPane.setLayout(new java.awt.BorderLayout());
 
-        guiCreateNew.setText(MessageBundle.getString("chooserfeaturestore.new")); // NOI18N
+        guiCreateNew.setText(MessageBundle.format("chooserfeaturestore_new")); // NOI18N
 
-        guiConnect.setText(MessageBundle.getString("chooserfeaturestore.connect")); // NOI18N
+        guiConnect.setText(MessageBundle.format("chooserfeaturestore_connect")); // NOI18N
         guiConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiConnectActionPerformed(evt);
@@ -205,7 +203,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             store = getFeatureStore();
             chooser.setSource(store);
             guiInfoLabel.setForeground(Color.GREEN);
-            guiInfoLabel.setText(MessageBundle.getString("chooserfeaturestore.ok"));
+            guiInfoLabel.setText(MessageBundle.format("chooserfeaturestore_ok"));
         } catch (DataStoreException ex) {
             guiInfoLabel.setForeground(Color.RED);
             guiInfoLabel.setText(""+ex.getMessage());
@@ -265,7 +263,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             chooser.guiEditor.setAvailableEditors(editors);
         }
         chooser.setLayerSelectionVisible(layerVisible);
-        
+
         final int res = JOptionDialog.show(parent, chooser, JOptionPane.OK_CANCEL_OPTION);
 
         if (JOptionPane.OK_OPTION == res) {

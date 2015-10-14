@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -13,7 +13,7 @@
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
- */ 
+ */
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
 import java.util.ArrayList;
@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CRSFactory;
@@ -43,7 +42,7 @@ import org.apache.sis.util.logging.Logging;
 
 /**
  * Provided test case.
- *  
+ *
  * @author Jody Garnett
  * @author Joel Skelton
  * @module pending
@@ -68,11 +67,11 @@ public abstract class AbstractGeometryTest extends TestCase{
      * @throws FactoryException
      */
     static {
-        CRSFactory crsFact = AuthorityFactoryFinder.getCRSFactory(null);        
+        CRSFactory crsFact = AuthorityFactoryFinder.getCRSFactory(null);
         try {
             crs = crsFact.createFromWKT(WGS84_WKT);
         } catch (FactoryException ex) {
-            Logging.getLogger(AbstractGeometryTest.class).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.geometry.isoonjts.spatialschema.geometry").log(Level.WARNING, null, ex);
         }
         GEOMETRY_FACTORY = new JTSGeometryFactory(crs);
         PRIMITIVE_FACTORY = new JTSPrimitiveFactory(crs);

@@ -20,8 +20,8 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  *  Creates image {@link ResampleGrid} objects for the given {@link MathTransform2D}. The
- * generated grid contain transformed coordinated from <cite>target</cite> to <cite>source</cite> CRS. 
- * (i.e. the image grid shall transform coordinates from target to source CRS). 
+ * generated grid contain transformed coordinated from <cite>target</cite> to <cite>source</cite> CRS.
+ * (i.e. the image grid shall transform coordinates from target to source CRS).
  * Consequently, consider invoking {@code transform.inverse()} if the grid
  * object is going to be used in an image reprojection.
  *
@@ -42,7 +42,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Remi Marechal       (Geomatys).
  */
 public class GridFactory {
-    
+
     /**
      * The minimal size, in pixels. If the cell size is lower than this threshold,
      * we will abandon the attempt to create a {@link ResampleGrid}.
@@ -71,7 +71,7 @@ public class GridFactory {
      * transform, and the same coordinate transformed using the warp.
      */
     private final double tolerance;
-    
+
     /**
      * Creates a new factory.
      *
@@ -97,7 +97,7 @@ public class GridFactory {
         }
         return value;
     }
-    
+
     /**
      * Implementation of the public {@link #create(CharSequence name, MathTransform2D, Rectangle)}
      * method, invoked only if the Warp object was not found in the cache.
@@ -121,7 +121,7 @@ public class GridFactory {
              * Typically happen when the transform does not support the derivative function,
              * in which case we will fallback on the generic (but slow) adapter.
              */
-            Logging.recoverableException(GridFactory.class, "create", e);
+            Logging.recoverableException(null, GridFactory.class, "create", e);
             throw new TransformException("grid creation : derivative function not supported by current Mathtransform", e);
         }
         /*
@@ -174,7 +174,7 @@ public class GridFactory {
             /*
              * The method does not converge.
              */
-            Logging.recoverableException(GridFactory.class, "create", e);
+            Logging.recoverableException(null, GridFactory.class, "create", e);
             throw new ArithmeticException("grid creation : current mathtransform does not converge.");
         }
         if (depth.width == 0 && depth.height == 0) {
@@ -218,15 +218,15 @@ public class GridFactory {
          */
         final int xStep     =  domain.width  / (1 << depth.width);
         final int yStep     =  domain.height / (1 << depth.height);
-        
+
         /*
-         * Grid width equals xNumCells + 1. 
+         * Grid width equals xNumCells + 1.
          * xNumCells is the number of sub-division on x axis.
          */
         final int xNumCells = (domain.width  + xStep-1) / xStep;
-        
+
         /*
-         * Grid height equals yNumCells + 1. 
+         * Grid height equals yNumCells + 1.
          * xNumCells is the number of sub-division on y axis.
          */
         final int yNumCells = (domain.height + yStep-1) / yStep;
@@ -247,7 +247,7 @@ public class GridFactory {
         transform.transform(warpPositions, 0, warpPositions, 0, p/2);
         return new ResampleGrid(domain.x,domain.y, xStep, yStep, xNumCells + 1, yNumCells + 1, warpPositions);
     }
-    
+
     /**
      * Computes the number of subdivisions (in power of 2) to apply in order to get a good
      * {@code WarpGrid} approximation. The {@code width} and {@code height} fields in the
@@ -367,7 +367,7 @@ public class GridFactory {
         tolerance.height = oldTolY;
         return new Dimension(nx, ny);
     }
-    
+
     /**
      * Increments the width, the height or both values in the given dimension, depending on which
      * dimension are not affine. This method <strong>most</strong> be invoked using the following

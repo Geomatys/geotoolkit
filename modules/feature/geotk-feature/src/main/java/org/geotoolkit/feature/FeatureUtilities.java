@@ -54,7 +54,7 @@ public final class FeatureUtilities {
      */
     public static final String ATT_VERSIONING = "versioning";
 
-    private static final Logger LOGGER = Logging.getLogger(FeatureUtilities.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature");
 
     private static final FeatureFactory FF = FeatureFactory.LENIENT;
 
@@ -168,7 +168,7 @@ public final class FeatureUtilities {
         // to strings for the rest, so the only non word character is really ":"
         return "fid-" + new UID().toString().replace(':', '_');
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // COPY OPERATIONS /////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -396,7 +396,7 @@ public final class FeatureUtilities {
         if(src instanceof org.geotoolkit.util.Cloneable){
             return ((org.geotoolkit.util.Cloneable)src).clone();
         }
-        
+
         //can't find a solution to duplicate this object
         LOGGER.log(Level.FINEST, "Do not know how to deep copy {0}", type.getName());
         return src;
@@ -708,7 +708,7 @@ public final class FeatureUtilities {
                 val = ObjectConverters.convert(val, pd.getValueClass());
                 param.setValue(val);
             } catch (UnconvertibleObjectException e) {
-                Logging.recoverableException(FeatureUtilities.class, "toParameter", e);
+                Logging.recoverableException(null, FeatureUtilities.class, "toParameter", e);
                 // TODO - do we really want to ignore?
             }
         }

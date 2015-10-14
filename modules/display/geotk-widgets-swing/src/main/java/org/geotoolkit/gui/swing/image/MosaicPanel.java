@@ -190,7 +190,7 @@ final class MosaicPanel extends ZoomPane {
                 try {
                     geometry = manager.getGridGeometry();
                 } catch (IOException e) {
-                    Logging.recoverableException(MosaicPanel.class, "getArea", e);
+                    Logging.recoverableException(null, MosaicPanel.class, "getArea", e);
                     managers[j] = null;
                     continue; // We will just ignore that tile manager.
                 }
@@ -233,7 +233,7 @@ final class MosaicPanel extends ZoomPane {
             try {
                 tiles = manager.getTiles();
             } catch (IOException e) {
-                Logging.recoverableException(MosaicPanel.class, "paintComponent", e);
+                Logging.recoverableException(null, MosaicPanel.class, "paintComponent", e);
                 managers[j] = null;
                 continue; // We will just ignore that tile manager.
             }
@@ -249,7 +249,7 @@ final class MosaicPanel extends ZoomPane {
                 } catch (IOException e) {
                     // Unexpected because if this exception were to occur, it should have
                     // been thrown sooner (when we asked for the bounds of the whole mosaic).
-                    Logging.unexpectedException(MosaicPanel.class, "paintComponent", e);
+                    Logging.unexpectedException(null, MosaicPanel.class, "paintComponent", e);
                     continue;
                 }
                 // The affine transform is usually the same instance for every tiles at

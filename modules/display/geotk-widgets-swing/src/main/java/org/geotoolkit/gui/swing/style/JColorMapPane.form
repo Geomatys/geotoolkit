@@ -48,7 +48,7 @@
     <Component class="javax.swing.JButton" name="guiAddOne">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="add_value" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="add_value" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -58,7 +58,7 @@
     <Component class="javax.swing.JButton" name="guiRemoveAll">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="remove_all_values" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="remove_all_values" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -174,7 +174,7 @@
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.rastercolormappane.nan" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style_rastercolormappane_nan" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -184,14 +184,14 @@
         <Component class="javax.swing.JLabel" name="guiLblPalette">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.rastercolormappane.palette" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style_rastercolormappane_palette" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="guiGenerate">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="generate" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="generate" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -203,7 +203,7 @@
         <Component class="javax.swing.JCheckBox" name="guiInvert">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.rastercolormappane.invert" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style_rastercolormappane_invert" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -211,7 +211,7 @@
           <Properties>
             <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.rastercolormappane.band" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style_rastercolormappane_band" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -225,7 +225,7 @@
         <Component class="javax.swing.JLabel" name="guiLblStep">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.rastersymbolizer.divisions" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style_rastersymbolizer_divisions" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -239,7 +239,7 @@
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="method" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="method" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -251,7 +251,7 @@
         <Component class="javax.swing.JLabel" name="minLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="minimum" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="minimum" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -265,7 +265,7 @@
         <Component class="javax.swing.JLabel" name="maxLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="maximum" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="maximum" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -279,14 +279,14 @@
         <Component class="javax.swing.JLabel" name="guiNoDataLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="noData" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="noData" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="guiFitToData">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style.rastercolormappane.fittodata" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="style_rastercolormappane_fittodata" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -319,7 +319,7 @@
         </Property>
         <Property name="horizontalAlignment" type="int" value="0"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="jenks.notable" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="jenks_notable" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>

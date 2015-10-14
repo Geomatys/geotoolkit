@@ -22,7 +22,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -42,6 +41,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableRule;
 import org.opengis.filter.Filter;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -91,24 +91,24 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         jPanel1.setBorder(BorderFactory.createEtchedBorder());
         jPanel1.setOpaque(false);
 
-        guiFilterEdit.setText(MessageBundle.getString("edit")); // NOI18N
+        guiFilterEdit.setText(MessageBundle.format("edit")); // NOI18N
         guiFilterEdit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiFilterEditActionPerformed(evt);
             }
         });
 
-        guiLabelMinScale.setText(MessageBundle.getString("minscale")); // NOI18N
+        guiLabelMinScale.setText(MessageBundle.format("minscale")); // NOI18N
 
         jsp_minscale.setModel(new SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(1000.0d)));
 
-        guiLabelMaxScale.setText(MessageBundle.getString("maxscale")); // NOI18N
+        guiLabelMaxScale.setText(MessageBundle.format("maxscale")); // NOI18N
 
         jsp_maxscale.setModel(new SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(1000.0d)));
 
         jck_else.setText(" ");
 
-        guiLabelElse.setText(MessageBundle.getString("else_filter")); // NOI18N
+        guiLabelElse.setText(MessageBundle.format("else_filter")); // NOI18N
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -172,11 +172,11 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         jPanel2.setOpaque(false);
 
         guiLabelTitle.setFont(guiLabelTitle.getFont().deriveFont(guiLabelTitle.getFont().getStyle() | Font.BOLD));
-        guiLabelTitle.setText(MessageBundle.getString("title")); // NOI18N
+        guiLabelTitle.setText(MessageBundle.format("title")); // NOI18N
 
-        guiLabelAbstract.setText(MessageBundle.getString("abstract")); // NOI18N
+        guiLabelAbstract.setText(MessageBundle.format("abstrac")); // NOI18N
 
-        guiLabelName.setText(MessageBundle.getString("name")); // NOI18N
+        guiLabelName.setText(MessageBundle.format("name")); // NOI18N
 
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -252,7 +252,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
             rule.setFilter(nf);
             guiCQL.setFilter(rule.getFilter());
         } catch (CQLException ex) {
-            Logger.getLogger(JRulePane.class.getName()).log(Level.INFO, ex.getMessage(), ex);
+            Logging.getLogger("org.geotoolkit.gui.swing.style").log(Level.INFO, ex.getMessage(), ex);
         }
 
     }//GEN-LAST:event_guiFilterEditActionPerformed
@@ -335,7 +335,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
     public void apply() {
         create();
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{guiLabelAbstract,guiLabelElse,guiLabelMaxScale,guiLabelMinScale,guiLabelName,guiLabelTitle};

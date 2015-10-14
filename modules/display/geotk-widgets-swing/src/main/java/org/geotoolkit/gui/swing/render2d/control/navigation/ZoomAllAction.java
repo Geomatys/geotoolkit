@@ -42,7 +42,7 @@ public class ZoomAllAction extends AbstractMapAction {
 
     public ZoomAllAction() {
         putValue(SMALL_ICON, ICON);
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_zoom_all"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("map_zoom_all"));
     }
 
     @Override

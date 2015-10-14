@@ -24,8 +24,8 @@ import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -61,22 +61,22 @@ public class BandSelectDescriptor extends AbstractProcessDescriptor {
     static {
         Map<String, Object> propertiesInCov = new HashMap<String, Object>();
         propertiesInCov.put(IdentifiedObject.NAME_KEY,        "coverage");
-        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "bandselect.inCoverage"));
-        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "bandselect.inCoverageDesc"));
+        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandselect_inCoverage));
+        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandselect_inCoverageDesc));
         IN_COVERAGE = new DefaultParameterDescriptor<Coverage>(propertiesInCov, Coverage.class, null, null, null, null, null, true);
         
         Map<String, Object> propertiesInBands = new HashMap<String, Object>();
         propertiesInBands.put(IdentifiedObject.NAME_KEY,        "bands");
-        propertiesInBands.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "bandselect.inBands"));
-        propertiesInBands.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "bandselect.inBandsDesc"));
+        propertiesInBands.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandselect_inBands));
+        propertiesInBands.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandselect_inBandsDesc));
         IN_BANDS = new DefaultParameterDescriptor<int[]>(propertiesInBands, int[].class, null, null, null, null, null, true);
         
         INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_COVERAGE, IN_BANDS);
 
         Map<String, Object> propertiesOutCov = new HashMap<String, Object>();
         propertiesOutCov.put(IdentifiedObject.NAME_KEY,        "result");
-        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "bandselect.outCoverage"));
-        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/coverage/bundle", "bandselect.outCoverageDesc"));
+        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandselect_outCoverage));
+        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_bandselect_outCoverageDesc));
         OUT_COVERAGE = new DefaultParameterDescriptor<Coverage>(propertiesOutCov, Coverage.class, null, null, null, null, null, true);
 
         OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_COVERAGE);

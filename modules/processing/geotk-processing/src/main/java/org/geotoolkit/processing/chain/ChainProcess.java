@@ -56,7 +56,7 @@ import org.opengis.util.NoSuchIdentifierException;
  */
 public class ChainProcess extends AbstractProcess {
 
-    protected static final Logger LOGGER = Logging.getLogger(ChainProcess.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.processing.chain");
 
     private Process currentProcess;
 

@@ -16,20 +16,14 @@
  */
 package org.geotoolkit.wcs;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.Client;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.wcs.xml.WCSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -84,12 +78,12 @@ public class WCSClientFactory extends AbstractClientFactory{
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/wcs/bundle", "serverDescription");
+        return Bundle.formatInternational(Bundle.Keys.serverDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/wcs/bundle", "serverTitle");
+        return Bundle.formatInternational(Bundle.Keys.serverTitle);
     }
 
     @Override

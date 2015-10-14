@@ -36,7 +36,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 public class PolygonHoleDeleteTool extends AbstractEditionTool {
 
     public PolygonHoleDeleteTool() {
-        super(1260,"polygonHoleDelete", MessageBundle.getI18NString("removeHole"),
+        super(1260,"polygonHoleDelete", MessageBundle.formatInternational(MessageBundle.Keys.removeHole),
              new SimpleInternationalString("Tool to remove polygon holes."), 
              IconBundle.getIcon("16_remove_subpolygon"), FeatureMapLayer.class);
     }

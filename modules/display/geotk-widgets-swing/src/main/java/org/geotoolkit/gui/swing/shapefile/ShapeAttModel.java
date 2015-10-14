@@ -53,9 +53,9 @@ class ShapeAttModel extends AbstractTableModel{
     @Override
     public String getColumnName(final int columnIndex) {
         if(columnIndex == 0){
-            return MessageBundle.getString("shp_name");
+            return MessageBundle.format("shp_name");
         }else{
-            return MessageBundle.getString("shp_type");
+            return MessageBundle.format("shp_type");
         }
     }
 

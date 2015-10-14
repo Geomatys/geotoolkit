@@ -55,7 +55,6 @@ import org.geotoolkit.feature.op.AliasOperation;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
-import org.geotoolkit.feature.type.DefaultFeatureType;
 import org.geotoolkit.feature.type.DefaultOperationDescriptor;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
 import org.geotoolkit.xsd.xml.v2001.ComplexType;
@@ -95,6 +94,7 @@ import org.geotoolkit.xsd.xml.v2001.SimpleContent;
 import org.geotoolkit.xsd.xml.v2001.SimpleRestrictionType;
 import org.geotoolkit.xsd.xml.v2001.Union;
 import org.opengis.feature.MismatchedFeatureException;
+import org.apache.sis.util.logging.Logging;
 import org.w3c.dom.Node;
 
 /**
@@ -106,7 +106,7 @@ import org.w3c.dom.Node;
  */
 public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFeatureTypeReader {
 
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature.xml.jaxp");
     private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
     private static final Cache<String,Schema> SCHEMA_CACHE = new Cache<>(60,60,true);
 
@@ -893,7 +893,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                 adb.setType(atb.buildType());
                 copyMinMax(ele, adb);
                 atts.add(adb.buildDescriptor());
-                
+
             }else if(particle instanceof GroupRef){
                 final GroupRef ref = (GroupRef) particle;
                 final QName groupRef = ref.getRef();

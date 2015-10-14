@@ -39,7 +39,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
-import org.geotoolkit.internal.ClassLoaderInternationalString;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 
 /**
@@ -62,7 +61,6 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageC
     }
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    private static final String BUNDLE_PATH = "org/geotoolkit/wms/bundle";
 
     /**
      * Version, Mandatory.
@@ -93,12 +91,12 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageC
 
     @Override
     public CharSequence getDescription() {
-        return new ClassLoaderInternationalString(WMSClientFactory.class,BUNDLE_PATH, "coverageDescription");
+        return Bundle.formatInternational(Bundle.Keys.coverageDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ClassLoaderInternationalString(WMSClientFactory.class,BUNDLE_PATH, "coverageTitle");
+        return Bundle.formatInternational(Bundle.Keys.coverageTitle);
     }
 
     @Override

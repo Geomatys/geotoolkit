@@ -67,18 +67,18 @@ public class JStylePane extends StyleElementEditor<MutableStyle>{
         guiLabelDefault = new JLabel();
 
         jXTitledPanel1.setBorder(BorderFactory.createEtchedBorder());
-        jXTitledPanel1.setTitle(MessageBundle.getString("general")); // NOI18N
+        jXTitledPanel1.setTitle(MessageBundle.format("general")); // NOI18N
 
         jck_default.setText(" ");
 
-        guiName.setText(MessageBundle.getString("name")); // NOI18N
+        guiName.setText(MessageBundle.format("name")); // NOI18N
 
         guiTitle.setFont(guiTitle.getFont().deriveFont(guiTitle.getFont().getStyle() | Font.BOLD));
-        guiTitle.setText(MessageBundle.getString("title")); // NOI18N
+        guiTitle.setText(MessageBundle.format("title")); // NOI18N
 
-        guiAbstract.setText(MessageBundle.getString("abstract")); // NOI18N
+        guiAbstract.setText(MessageBundle.format("abstrac")); // NOI18N
 
-        guiLabelDefault.setText(MessageBundle.getString("default")); // NOI18N
+        guiLabelDefault.setText(MessageBundle.format("defaut")); // NOI18N
 
         GroupLayout jXTitledPanel1Layout = new GroupLayout(jXTitledPanel1);
         jXTitledPanel1.setLayout(jXTitledPanel1Layout);

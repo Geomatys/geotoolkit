@@ -25,7 +25,6 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.text.NumberFormat;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.unit.SI;
 import static javax.swing.SwingConstants.*;
 import org.geotoolkit.display.PortrayalException;
@@ -35,6 +34,7 @@ import org.geotoolkit.display2d.ext.PositionedGraphic2D;
 import static org.apache.sis.util.ArgumentChecks.*;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Java2D graphic object displaying a scalebar.
@@ -85,11 +85,8 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
         final double[] center;
         try {
             center = context.getCanvas().getObjectiveCenter().getCoordinate();
-        } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger(GraphicScaleBarJ2D.class.getName()).log(Level.WARNING, null, ex);
-            return;
-        } catch (TransformException ex) {
-            Logger.getLogger(GraphicScaleBarJ2D.class.getName()).log(Level.WARNING, null, ex);
+        } catch (NoninvertibleTransformException | TransformException ex) {
+            Logging.getLogger("org.geotoolkit.display2d.ext.scalebar").log(Level.WARNING, null, ex);
             return;
         }
         final Point2D centerPoint = new Point2D.Double(center[0], center[1]);

@@ -23,7 +23,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -56,11 +55,11 @@ import org.geotoolkit.wmc.xml.v110.*;
 import org.apache.sis.xml.MarshallerPool;
 import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
 import org.opengis.util.FactoryException;
 import javax.xml.bind.JAXBContext;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -139,10 +138,8 @@ public class WMCUtilities {
             BoundingBoxType bbox = general.getBoundingBox();
             try {
                 srs = CRS.decode(bbox.getSRS(), true);
-            } catch (NoSuchAuthorityCodeException ex) {
-                Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
             } catch (FactoryException ex) {
-                Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);
             }
             final double width = bbox.getMaxx().subtract(bbox.getMinx()).doubleValue();
             final double height = bbox.getMaxy().subtract(bbox.getMiny()).doubleValue();
@@ -176,7 +173,7 @@ public class WMCUtilities {
                 parameters.put("url", serviceURL);
                 server = factory.open(parameters);
             } catch (Exception ex) {
-                Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);
                 continue;
             }
 
@@ -192,7 +189,7 @@ public class WMCUtilities {
                         }
                     }
                 } catch (DataStoreException ex) {
-                    Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
+                    Logging.getLogger("org.geotoolkit.wmc").log(Level.SEVERE, null, ex);
                     continue;
                 }
 

@@ -56,7 +56,7 @@ import org.opengis.filter.Filter;
  * @module pending
  */
 public abstract class AbstractGetFeature extends AbstractRequest implements GetFeatureRequest{
-    protected static final Logger LOGGER = Logging.getLogger(AbstractGetFeature.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.wfs");
     protected final String version;
 
     private QName typeName       = null;

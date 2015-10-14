@@ -33,7 +33,7 @@
     <Container class="javax.swing.JTabbedPane" name="jTabbedPane1">
       <AccessibilityProperties>
         <Property name="AccessibleContext.accessibleName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="libPoliceStyle" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="libPoliceStyle" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
         </Property>
       </AccessibilityProperties>
 
@@ -106,14 +106,14 @@
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="color" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="color" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel10">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="label" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="label" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -147,7 +147,7 @@
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
               <JTabbedPaneConstraints tabName="Position">
                 <Property name="tabTitle" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="position" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="position" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                 </Property>
               </JTabbedPaneConstraints>
             </Constraint>

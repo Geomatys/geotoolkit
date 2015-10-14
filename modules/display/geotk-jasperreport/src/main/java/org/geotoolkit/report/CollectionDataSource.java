@@ -56,7 +56,7 @@ public class CollectionDataSource implements JRDataSource {
         this.col = null;
         this.iterator = iterator;
     }
-    
+
     public CollectionDataSource cloneDataSource(){
         if(col!=null){
             return new CollectionDataSource(col);
@@ -107,7 +107,7 @@ public class CollectionDataSource implements JRDataSource {
                 try {
                     return ObjectConverters.convert(prop.getValue(), clazz);
                 } catch (UnconvertibleObjectException e) {
-                    Logging.recoverableException(CollectionDataSource.class, "getFieldValue", e);
+                    Logging.recoverableException(null, CollectionDataSource.class, "getFieldValue", e);
                     // TODO - do we really want to ignore?
                 }
             }

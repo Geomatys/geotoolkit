@@ -108,9 +108,9 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    final String save = MessageBundle.getString("save");
-                    final String cancel = MessageBundle.getString("cancel");
-                    final String delete = MessageBundle.getString("delete");
+                    final String save = MessageBundle.format("save");
+                    final String cancel = MessageBundle.format("cancel");
+                    final String delete = MessageBundle.format("delete");
 
                     final Object res = JOptionDialog.show(null,split,new String[]{delete,cancel,save});
                     if(save == res){

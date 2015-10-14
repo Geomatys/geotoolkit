@@ -32,7 +32,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.data.osm.model.IdentifiedElement;
 import org.geotoolkit.data.osm.model.Node;
@@ -40,6 +39,7 @@ import org.geotoolkit.data.osm.model.Relation;
 import org.geotoolkit.data.osm.model.Way;
 
 import org.geotoolkit.util.FileUtilities;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Store osm model objects in JavaDB.
@@ -234,12 +234,8 @@ public class OSMJavaDB {
                     }else{
                         rs.close();
                     }
-                } catch (SQLException ex) {
-                    Logger.getLogger(OSMJavaDB.class.getName()).log(Level.WARNING, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(OSMJavaDB.class.getName()).log(Level.WARNING, null, ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(OSMJavaDB.class.getName()).log(Level.WARNING, null, ex);
+                } catch (SQLException | IOException | ClassNotFoundException ex) {
+                    Logging.getLogger("org.geotoolkit.data.osm.db").log(Level.WARNING, null, ex);
                 }
             }
         }

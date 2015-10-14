@@ -99,13 +99,13 @@ public class StyleEditor extends PropertyValueEditor implements ActionListener{
         layer.setStyle((MutableStyle)value);
 
         final LayerStylePropertyPanel editors = new LayerStylePropertyPanel();
-        editors.addPropertyPanel(MessageBundle.getString("analyze"),new JSimpleStylePanel());
-        editors.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationSingleStylePanel());
-        editors.addPropertyPanel(MessageBundle.getString("analyze_vector"),new JClassificationIntervalStylePanel());
-        editors.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JColorMapPane());
-        editors.addPropertyPanel(MessageBundle.getString("analyze_raster"),new JCellSymbolizerPane());
-        editors.addPropertyPanel(MessageBundle.getString("sld"),new JAdvancedStylePanel());
-        editors.addPropertyPanel(MessageBundle.getString("sld"),new JSLDImportExportPanel());
+        editors.addPropertyPanel(MessageBundle.format("analyze"),new JSimpleStylePanel());
+        editors.addPropertyPanel(MessageBundle.format("analyze_vector"),new JClassificationSingleStylePanel());
+        editors.addPropertyPanel(MessageBundle.format("analyze_vector"),new JClassificationIntervalStylePanel());
+        editors.addPropertyPanel(MessageBundle.format("analyze_raster"),new JColorMapPane());
+        editors.addPropertyPanel(MessageBundle.format("analyze_raster"),new JCellSymbolizerPane());
+        editors.addPropertyPanel(MessageBundle.format("sld"),new JAdvancedStylePanel());
+        editors.addPropertyPanel(MessageBundle.format("sld"),new JSLDImportExportPanel());
         editors.setTarget(layer);
         
 

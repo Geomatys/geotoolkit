@@ -19,12 +19,12 @@ package org.geotoolkit.processing.image.dynamicrange;
 import java.awt.image.RenderedImage;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.ProcessBundle;
 import org.geotoolkit.processing.image.ImageProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -69,28 +69,28 @@ public class DynamicRangeStretchDescriptor extends AbstractProcessDescriptor {
     static {
         Map<String, Object> propertiesInCov = new HashMap<String, Object>();
         propertiesInCov.put(IdentifiedObject.NAME_KEY,        "image");
-        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/image/bundle", "colorstretch.inImage"));
-        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/image/bundle", "colorstretch.inImageDesc"));
+        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inImage));
+        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inImageDesc));
         IN_IMAGE = new DefaultParameterDescriptor<RenderedImage>(propertiesInCov, RenderedImage.class, null, null, null, null, null, true);
         
         Map<String, Object> propertiesInBands = new HashMap<String, Object>();
         propertiesInBands.put(IdentifiedObject.NAME_KEY,        "bands");
-        propertiesInBands.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/image/bundle", "colorstretch.inBands"));
-        propertiesInBands.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/image/bundle", "colorstretch.inBandsDesc"));
+        propertiesInBands.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inBands));
+        propertiesInBands.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inBandsDesc));
         IN_BANDS = new DefaultParameterDescriptor<int[]>(propertiesInBands, int[].class, null, null, null, null, null, true);
         
         Map<String, Object> propertiesInRanges = new HashMap<String, Object>();
         propertiesInRanges.put(IdentifiedObject.NAME_KEY,        "ranges");
-        propertiesInRanges.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/image/bundle", "colorstretch.inRanges"));
-        propertiesInRanges.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/image/bundle", "colorstretch.inRangesDesc"));
+        propertiesInRanges.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inRanges));
+        propertiesInRanges.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inRangesDesc));
         IN_RANGES = new DefaultParameterDescriptor<double[][]>(propertiesInRanges, double[][].class, null, null, null, null, null, true);
         
         INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_IMAGE, IN_BANDS, IN_RANGES);
 
         Map<String, Object> propertiesOutCov = new HashMap<String, Object>();
         propertiesOutCov.put(IdentifiedObject.NAME_KEY,        "result");
-        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString("org/geotoolkit/process/image/bundle", "colorstretch.outImage"));
-        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString("org/geotoolkit/process/image/bundle", "colorstretch.outImageDesc"));
+        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_outImage));
+        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_outImageDesc));
         OUT_IMAGE = new DefaultParameterDescriptor<RenderedImage>(propertiesOutCov, RenderedImage.class, null, null, null, null, null, true);
 
         OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_IMAGE);

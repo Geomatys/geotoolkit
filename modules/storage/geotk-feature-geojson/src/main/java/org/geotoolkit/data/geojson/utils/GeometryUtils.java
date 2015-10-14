@@ -18,7 +18,6 @@ package org.geotoolkit.data.geojson.utils;
 
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.geojson.binding.*;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.lang.Static;
@@ -28,14 +27,12 @@ import static org.geotoolkit.data.geojson.binding.GeoJSONGeometry.*;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.logging.Logger;
 
 /**
  * @author Quentin Boileau (Geomatys)
  */
 public final class GeometryUtils extends Static {
 
-    private static final Logger LOGGER = Logging.getLogger(GeometryUtils.class);
     private static final GeometryFactory GF = new GeometryFactory();
 
     /**
@@ -331,7 +328,7 @@ public final class GeometryUtils extends Static {
         for (int i = 0; i < totalPoly; i++) {
             coords[i] = getCoordinateSequencesFromPolygon((Polygon) multiPolygon.getGeometryN(i));
         }
-        
+
         jsonMPoly.setCoordinates(toArray(coords));
         return jsonMPoly;
     }

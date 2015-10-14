@@ -62,22 +62,22 @@ import org.opengis.style.RasterSymbolizer;
  */
 public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
 
-    private static final Logger LOGGER = Logging.getLogger(StatefullTileJ2D.class);
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.container.statefull");
+
     private final GridMosaic mosaic;
     private final Point3d coordinate;
     private final CachedRule[] rules;
-    
+
     protected volatile GridCoverage2D buffer = null;
     protected AffineTransform2D trs = null;
     protected RenderedImage img = null;
-    private volatile Updater updater = null;    
+    private volatile Updater updater = null;
     private final AtomicBoolean needUpdate = new AtomicBoolean();
     private Envelope env2d;
     private volatile boolean obsoleted = false;
     private boolean loaded = false;
 
-    public StatefullTileJ2D(GridMosaic mosaic, Point3d coordinate, J2DCanvas canvas, 
+    public StatefullTileJ2D(GridMosaic mosaic, Point3d coordinate, J2DCanvas canvas,
             CoverageMapLayer item, CachedRule[] rules) {
         super(canvas, item, false);
         this.mosaic = mosaic;
@@ -92,7 +92,7 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
     public Point3d getCoordinate() {
         return coordinate;
     }
-    
+
     public boolean isLoaded(){
         return loaded;
     }
@@ -100,31 +100,31 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
     public void setObsoleted(boolean obsoleted) {
         this.obsoleted = obsoleted;
     }
-    
+
     @Override
     public void paint(RenderingContext2D renderingContext) {
-        
-        GridCoverage2D coverage = this.buffer;        
+
+        GridCoverage2D coverage = this.buffer;
         if(coverage == null){
             final Envelope env2d = renderingContext.getCanvasObjectiveBounds2D();
             updateRequest(env2d);
             return;
         }
-                
+
         //we must switch to objectiveCRS for grid coverage
         renderingContext.switchToDisplayCRS();
-        
+
         final AffineTransform objToDisp = renderingContext.getObjectiveToDisplay();
         final AffineTransform comp = new AffineTransform(objToDisp);
         comp.concatenate(trs);
-          
+
         final Graphics2D g = renderingContext.getGraphics();
         g.drawRenderedImage(img, comp);
     }
-        
+
     private void updateRequest(Envelope env2d){
         if(obsoleted) return;
-        
+
         boolean mustUpdate = false;
         if(this.env2d == null || !this.env2d.equals(env2d)){
             mustUpdate = true;
@@ -136,10 +136,10 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
             checkUpdater();
         }
     }
-        
+
     private synchronized void checkUpdater(){
         if(obsoleted) return;
-        
+
         if(needUpdate.get() && updater == null){
             needUpdate.set(false);
             if(env2d != null){
@@ -148,22 +148,22 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
             }
         }
     }
-    
-    
+
+
     protected class Updater implements Runnable{
-        
+
         private Envelope env2d;
-        
+
         private Updater(Envelope env2d){
             this.env2d = env2d;
         }
-                
+
         @Override
         public void run() {
             if(obsoleted || loaded){
                 updater = null;
                 return;
-            }    
+            }
             try{
                 final MathTransform trs = AbstractGridMosaic.getTileGridToCRS(
                         mosaic, new Point((int)coordinate.x, (int)coordinate.y));
@@ -171,11 +171,11 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                 final CoordinateReferenceSystem pyramidCRS2D = CRSUtilities.getCRS2D(mosaic.getPyramid().getCoordinateReferenceSystem());
                 final GridCoverage2D coverage = prepareTile(env2d.getCoordinateReferenceSystem(), pyramidCRS2D, tr, trs);
                 if(coverage != null){
-                    
+
                     //we copy the image in a buffered image with a well knowed data typeand color model
                     //this can significantly improve performances.
                     RenderedImage ri = null;
-                    
+
                     for(final CachedRule rule : rules){
                         for(final CachedSymbolizer symbol : rule.symbolizers()){
                             if(symbol.getSource() instanceof RasterSymbolizer){
@@ -188,36 +188,36 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                             }
                         }
                     }
-                    
+
                     if(ri == null){
                         //should not happen
                         ri = coverage.getRenderedImage();
                     }
-                    
-                    
+
+
                     final BufferedImage img = new BufferedImage(ri.getWidth(), ri.getHeight(), BufferedImage.TYPE_INT_ARGB);
                     img.createGraphics().drawRenderedImage(ri, new AffineTransform());
                     StatefullTileJ2D.this.img = img;
-                    
+
                     StatefullTileJ2D.this.trs = (AffineTransform2D) coverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
                     StatefullTileJ2D.this.buffer = coverage;
                 }
-                
+
                 getCanvas().repaint();
             }catch(Exception ex){
                 ex.printStackTrace();
             }finally{
                 loaded = true;
             }
-            
+
             updater = null;
             checkUpdater();
         }
     }
-    
-    private static GridCoverage2D prepareTile(final CoordinateReferenceSystem objCRS2D, 
+
+    private static GridCoverage2D prepareTile(final CoordinateReferenceSystem objCRS2D,
             final CoordinateReferenceSystem tileCRS ,final TileReference tile, MathTransform trs) {
-        
+
         Object input = tile.getInput();
         RenderedImage image = null;
         if(input instanceof RenderedImage){
@@ -235,9 +235,9 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                 ImageIOUtilities.releaseReader(reader);
             }
         }
-        
+
         final boolean needReproject = !CRS.equalsIgnoreMetadata(tileCRS,objCRS2D);
-        
+
         if (needReproject) {
             //will be reprojected, we must check that image has alpha support
             //otherwise we will have black borders after reprojection
@@ -247,24 +247,24 @@ public class StatefullTileJ2D extends StatefullMapItemJ2D<MapItem> {
                 image = buffer;
             }
         }
-        
+
         //build the coverage
         final GridCoverageBuilder gcb = new GridCoverageBuilder();
         final GridEnvelope2D ge = new GridEnvelope2D(0, 0, image.getWidth(), image.getHeight());
         final GridGeometry2D gridgeo = new GridGeometry2D(ge, PixelOrientation.UPPER_LEFT, trs, tileCRS, null);
         gcb.setName("tile");
         gcb.setGridGeometry(gridgeo);
-        gcb.setRenderedImage(image);        
+        gcb.setRenderedImage(image);
         GridCoverage2D coverage = (GridCoverage2D) gcb.build();
-        
+
         if (needReproject) {
             try {
                 coverage = GO2Utilities.resample(coverage.view(ViewType.NATIVE),objCRS2D);
             } catch (ProcessException ex) {
-                Logger.getLogger(StatefullTileJ2D.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
         }
-                
-        return coverage;        
+
+        return coverage;
     }
 }

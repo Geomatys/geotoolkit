@@ -41,7 +41,7 @@ import org.geotoolkit.math.XMath;
  */
 public class GridMosaicRenderedImage implements RenderedImage {
 
-    private static final Logger LOGGER = Logging.getLogger(GridMosaicRenderedImage.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.storage.coverage");
 
     /**
      * A tile cache
@@ -57,7 +57,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
      * Tile range to map as a rendered image in the mosaic
      */
     private final Rectangle gridRange;
-    
+
     /**
      * The color model of the mosaic rendered image
      */
@@ -75,7 +75,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
     public GridMosaicRenderedImage(final GridMosaic mosaic){
         this(mosaic,new Rectangle(mosaic.getGridSize()));
     }
-    
+
     /**
      * Constructor
      * @param mosaic the mosaic to read as a rendered image
@@ -85,7 +85,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
     public GridMosaicRenderedImage(final GridMosaic mosaic, Rectangle gridRange){
         ArgumentChecks.ensureNonNull("mosaic", mosaic);
         ArgumentChecks.ensureNonNull("range", gridRange);
-        
+
         if(mosaic.getGridSize().width == 0 || mosaic.getGridSize().height == 0){
             throw new IllegalArgumentException("Mosaic grid can not be empty.");
         }
@@ -136,8 +136,8 @@ public class GridMosaicRenderedImage implements RenderedImage {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     public Rectangle getGridRange() {
         return (Rectangle) gridRange.clone();
@@ -351,7 +351,7 @@ public class GridMosaicRenderedImage implements RenderedImage {
     private boolean isTileMissing(int x, int y) throws DataStoreException{
         return mosaic.isMissing(x+gridRange.x, y+gridRange.y);
     }
-    
+
     private TileReference getTileReference(int x, int y) throws DataStoreException{
         return mosaic.getTile(x+gridRange.x,y+gridRange.y,null);
     }

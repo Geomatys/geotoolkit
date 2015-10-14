@@ -46,7 +46,6 @@ import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.FeatureUtilities;
 
 /**
  * Read types of .mif file, and manage readers / writers (from mif/mid mapinfo exchange format).
@@ -56,7 +55,7 @@ import org.geotoolkit.feature.FeatureUtilities;
  */
 public class MIFManager {
 
-    public static final Logger LOGGER = Logging.getLogger(MIFManager.class.getName());
+    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.mapinfo.mif");
 
     /**
      * A pattern frequently used to find MIF categories (for words without digit).
@@ -804,7 +803,7 @@ public class MIFManager {
          final StringBuilder builder = new StringBuilder();
         final FeatureType fType = toParse.getType();
 
-        
+
         if(mifBaseType.equals(fType) || mifBaseType.equals(fType.getSuper())
                 || fType.getDescriptors().containsAll(mifBaseType.getDescriptors())) {
             final PropertyDescriptor[] atts = mifBaseType.getDescriptors().toArray(new PropertyDescriptor[0]);

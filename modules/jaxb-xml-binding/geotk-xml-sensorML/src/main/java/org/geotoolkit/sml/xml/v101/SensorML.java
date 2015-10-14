@@ -19,7 +19,6 @@ package org.geotoolkit.sml.xml.v101;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -51,6 +50,7 @@ import org.geotoolkit.sml.xml.System;
 import org.geotoolkit.sml.xml.SMLMember;
 import javax.xml.namespace.QName;
 import org.apache.sis.util.ComparisonMode;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -631,7 +631,7 @@ public class SensorML extends SensorObject implements AbstractSensorML {
             } else if (process instanceof ComponentArrayType) {
                 this.process = factory.createComponentArray((ComponentArrayType) process);
             } else {
-                Logger.getLogger("SensorML").warning("Unexpected AbstractProcessType:" + process);
+                Logging.getLogger("SensorML").warning("Unexpected AbstractProcessType:" + process);
             }
         }
         public Member(final SystemType system) {

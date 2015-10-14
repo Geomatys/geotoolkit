@@ -20,7 +20,6 @@ package org.geotoolkit.processing.coverage.metadataextractor;
 import java.io.File;
 import java.net.URL;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -33,6 +32,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.opengis.coverage.Coverage;
 import org.opengis.metadata.Metadata;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -43,7 +43,7 @@ public class ExtractionProcess extends AbstractProcess {
     ExtractionProcess(final ParameterValueGroup input) {
        super(ExtractionDescriptor.INSTANCE, input);
     }
-    
+
     @Override
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
@@ -57,7 +57,7 @@ public class ExtractionProcess extends AbstractProcess {
             try {
                 ((ImageCoverageReader)reader).setInput(input);
             } catch (CoverageStoreException ex) {
-                Logger.getLogger(ExtractionProcess.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
             }
         }
         //Coverage case is not supported yet
@@ -67,7 +67,7 @@ public class ExtractionProcess extends AbstractProcess {
             try {
                 reader = ((CoverageReference)input).acquireReader();
             } catch (DataStoreException ex) {
-                Logger.getLogger(ExtractionProcess.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
             }
             //Case if we directly get a reader
         } else if (input instanceof GridCoverageReader || input instanceof ImageCoverageReader) {
@@ -81,17 +81,17 @@ public class ExtractionProcess extends AbstractProcess {
             try {
                 output = ((GridCoverageReader)reader).getMetadata();
             } catch (CoverageStoreException ex) {
-                Logger.getLogger(ExtractionProcess.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
             }
         }
         if (reader instanceof ImageCoverageReader){
             try {
                 output = ((ImageCoverageReader)reader).getMetadata();
             } catch (CoverageStoreException ex) {
-                Logger.getLogger(ExtractionProcess.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.processing.coverage.metadataextractor").log(Level.SEVERE, null, ex);
             }
         }
         Parameters.getOrCreate(ExtractionDescriptor.OUT_METADATA, outputParameters).setValue(output);
     }
-    
+
 }

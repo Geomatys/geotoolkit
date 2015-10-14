@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.apache.sis.internal.jaxb.IdentifierMapWithSpecialCases;
+import org.apache.sis.internal.jaxb.ModifiableIdentifierMap;
 import org.geotoolkit.gml.xml.AbstractGML;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.apache.sis.metadata.AbstractMetadata;
@@ -390,7 +390,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
          * We do not cache (for now) the IdentifierMap because it is cheap to create, and if were
          * caching it we would need anyway to check if 'identifiers' still references the same list.
          */
-        return new IdentifierMapWithSpecialCases(identifiers);
+        return new ModifiableIdentifierMap(identifiers);
     }
 
     public Collection<GenericName> getAlias() {

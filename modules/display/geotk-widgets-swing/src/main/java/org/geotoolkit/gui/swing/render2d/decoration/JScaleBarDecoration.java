@@ -30,7 +30,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.swing.JComponent;
@@ -41,6 +40,7 @@ import org.geotoolkit.display2d.ext.scalebar.ScaleBarTemplate;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Decoration displaying a scale bar
@@ -154,7 +154,7 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
             objCRS = map.getCanvas().getObjectiveCRS();
             dispCRS = map.getCanvas().getDisplayCRS();
         } catch (NoninvertibleTransformException | TransformException ex) {
-            Logger.getLogger(JScaleBarDecoration.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.gui.swing.render2d.decoration").log(Level.WARNING, null, ex);
             return;
         }
 

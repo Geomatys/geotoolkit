@@ -493,7 +493,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
         } catch (Exception e) {
             // Should never happen. If it happen anyway, this is not a fatal error.
             // But log a complete warning with full stack trace so we can fix.
-            Logging.unexpectedException(CategoryTable.class, "configure", e);
+            Logging.unexpectedException(null, CategoryTable.class, "configure", e);
         }
 
         table.setRowHeight(ROW_HEIGHT);

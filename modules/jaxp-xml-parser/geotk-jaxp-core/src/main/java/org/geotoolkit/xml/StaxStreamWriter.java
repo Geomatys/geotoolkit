@@ -71,7 +71,7 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
     /**
      * Logger for this writer.
      */
-    protected static final Logger LOGGER = Logging.getLogger(StaxStreamWriter.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.xml");
 
     protected XMLStreamWriter writer;
 

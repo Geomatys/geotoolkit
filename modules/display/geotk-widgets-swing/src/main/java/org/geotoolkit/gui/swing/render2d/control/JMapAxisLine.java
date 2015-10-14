@@ -69,7 +69,7 @@ import static java.awt.event.KeyEvent.*;
  */
  public class JMapAxisLine extends JNavigator implements PropertyChangeListener, ContextListener {
 
-    private static final Logger LOGGER = Logging.getLogger(JMapAxisLine.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.control");
 
     private static final Color MAIN = new Color(0f,0.3f,0.6f,1f);
     private static final Color SECOND = new Color(0f,0.3f,0.6f,0.4f);
@@ -213,7 +213,7 @@ import static java.awt.event.KeyEvent.*;
         menu.addSeparator();
 
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_move_elevation_center")) {
+                new AbstractAction(MessageBundle.format("map_move_elevation_center")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         moveTo(popupEdit);
@@ -226,7 +226,7 @@ import static java.awt.event.KeyEvent.*;
             }
         });
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_move_elevation_maximum")) {
+                new AbstractAction(MessageBundle.format("map_move_elevation_maximum")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
@@ -257,7 +257,7 @@ import static java.awt.event.KeyEvent.*;
             }
         });
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_move_elevation_minimum")) {
+                new AbstractAction(MessageBundle.format("map_move_elevation_minimum")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
@@ -292,7 +292,7 @@ import static java.awt.event.KeyEvent.*;
         menu.addSeparator();
 
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_remove_elevation")) {
+                new AbstractAction(MessageBundle.format("map_remove_elevation")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
@@ -319,7 +319,7 @@ import static java.awt.event.KeyEvent.*;
         });
 
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_remove_elevation_maximum")) {
+                new AbstractAction(MessageBundle.format("map_remove_elevation_maximum")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
@@ -348,7 +348,7 @@ import static java.awt.event.KeyEvent.*;
             }
         });
         menu.add(new JMenuItem(
-                new AbstractAction(MessageBundle.getString("map_remove_elevation_minimum")) {
+                new AbstractAction(MessageBundle.format("map_remove_elevation_minimum")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
@@ -432,12 +432,12 @@ import static java.awt.event.KeyEvent.*;
         }
         repaint();
     }
-    
+
     /**
      * Get value checking orientation.
-     * 
+     *
      * @param me
-     * @return 
+     * @return
      */
     private int getCoord(Point me){
         final int coord;
@@ -468,9 +468,9 @@ import static java.awt.event.KeyEvent.*;
             final Double[] range = getMap().getCanvas().getAxisRange(axisIndexFinder);
 
             if(range != null){
-                
+
                 final int coord = getCoord(e.getPoint());
-                
+
                 if(range[0] != null){
                     int pos = (int)getModel().getGraphicValueAt(range[0]);
                     if( Math.abs(coord-pos) < LIMIT_WIDTH*2 ){
@@ -705,7 +705,7 @@ import static java.awt.event.KeyEvent.*;
         }else{
             throw new IllegalArgumentException("Invalid orientation : "+orientation);
         }
-        
+
         if(range[0] != null) start = getModel().getGraphicValueAt(range[0]);
         if(range[1] != null) end = getModel().getGraphicValueAt(range[1]);
 
@@ -734,7 +734,7 @@ import static java.awt.event.KeyEvent.*;
         }
 
         final Graphics2D g2d = (Graphics2D) g;
-        
+
         if(orientation == SwingConstants.SOUTH || orientation == SwingConstants.NORTH){
             g2d.setColor(SECOND);
             g2d.fillRect((int)start,0,(int)(end-start),getHeight());
@@ -745,7 +745,7 @@ import static java.awt.event.KeyEvent.*;
             g2d.drawLine((int)end,0,  (int)end, getHeight());
             g2d.setStroke(new BasicStroke(LIMIT_WIDTH*4));
             g2d.drawLine((int)center,0,  (int)center, getHeight());
-            
+
         }else if(orientation == SwingConstants.EAST || orientation == SwingConstants.WEST){
             g2d.setColor(SECOND);
             g2d.fillRect(0,(int)start,getWidth(),(int)(end-start));
@@ -757,8 +757,8 @@ import static java.awt.event.KeyEvent.*;
 
             g2d.setStroke(new BasicStroke(LIMIT_WIDTH*4));
             g2d.drawLine(0, (int)center, getWidth(), (int)center);
-        }        
-        
+        }
+
     }
 
     /**

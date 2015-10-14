@@ -434,7 +434,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
                     }
                     format.setModel(model);
                 } catch (CoverageStoreException e) {
-                    Logging.unexpectedException(NewGridCoverageReference.class, "getAlternativeFormats", e);
+                    Logging.unexpectedException(null, NewGridCoverageReference.class, "getAlternativeFormats", e);
                     // Keep the current combo box content unchanged.
                 }
                 filename.setText(file.getName());

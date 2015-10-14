@@ -91,7 +91,7 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
             // TODO: temporary fix, catch UnsupportedOperationException in the case of
             // a converter found which does not override the inverse() method
             // To fix in apache-sis
-            Logging.recoverableException(AbstractPropertyEqual.class, "evaluate", e);
+            Logging.recoverableException(null, AbstractPropertyEqual.class, "evaluate", e);
             // TODO - do we really want to ignore?
         }
 
@@ -116,7 +116,7 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
                 }
             }
         } catch (UnconvertibleObjectException e) {
-            Logging.recoverableException(AbstractPropertyEqual.class, "evaluate", e);
+            Logging.recoverableException(null, AbstractPropertyEqual.class, "evaluate", e);
             // TODO - do we really want to ignore?
         }
 

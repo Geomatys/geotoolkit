@@ -24,13 +24,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.filter.function.javascript.JavaScriptFunction;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Groovy function.
@@ -127,7 +126,7 @@ public class GroovyFunction extends AbstractFunction {
         }
         return compiled;
     }
-    
+
     @Override
     public Object evaluate(final Object feature) {
 
@@ -144,7 +143,7 @@ public class GroovyFunction extends AbstractFunction {
             script.setBinding(bindings);
             return script.run();
         } catch (CompilationFailedException ex) {
-            Logger.getLogger(JavaScriptFunction.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.filter.function.groovy").log(Level.WARNING, null, ex);
         }
 
         return "";

@@ -29,15 +29,15 @@ import org.apache.sis.util.logging.Logging;
  * @module pending
  */
 public abstract class AbstractNcGetTimeseries extends AbstractNcGetFeatureInfo implements NcGetTimeseriesRequest {
-    
+
     /**
      * Default logger for all GetTimeseries requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(NcGetVerticalProfile.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.ncwms");
+
     private String dateBegin = null;
     private String dateEnd = null;
-    
+
 
     /**
      * {@inheritDoc}
@@ -45,7 +45,7 @@ public abstract class AbstractNcGetTimeseries extends AbstractNcGetFeatureInfo i
     protected AbstractNcGetTimeseries(final String serverURL, final String version, final ClientSecurity security) {
         super(serverURL, version, security);
     }
-        
+
     /**
      * {@inheritDoc}
      */
@@ -61,7 +61,7 @@ public abstract class AbstractNcGetTimeseries extends AbstractNcGetFeatureInfo i
     public void setDateBegin(final String dateBegin) {
         this.dateBegin = dateBegin;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -77,7 +77,7 @@ public abstract class AbstractNcGetTimeseries extends AbstractNcGetFeatureInfo i
     public void setDateEnd(final String dateEnd) {
         this.dateEnd = dateEnd;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -87,8 +87,8 @@ public abstract class AbstractNcGetTimeseries extends AbstractNcGetFeatureInfo i
 
         // Tests if the mandatory parameters are available
         if (dateBegin == null || dateEnd == null)
-            throw new IllegalArgumentException("Must provide a valid TIME period parameter");    
-        
+            throw new IllegalArgumentException("Must provide a valid TIME period parameter");
+
         requestParameters.put("TIME", dateBegin + "/" + dateEnd);
     }
 }

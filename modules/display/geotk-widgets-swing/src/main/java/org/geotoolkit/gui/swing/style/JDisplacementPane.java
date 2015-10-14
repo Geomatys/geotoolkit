@@ -113,9 +113,9 @@ public class JDisplacementPane extends StyleElementEditor<Displacement>{
 
         setOpaque(false);
 
-        guiLabelX.setText(MessageBundle.getString("x")); // NOI18N
+        guiLabelX.setText(MessageBundle.format("x")); // NOI18N
 
-        jLabel2.setText(MessageBundle.getString("y")); // NOI18N
+        jLabel2.setText(MessageBundle.format("y")); // NOI18N
         jLabel2.setVerticalTextPosition(SwingConstants.TOP);
 
         guiX.addPropertyChangeListener(new PropertyChangeListener() {

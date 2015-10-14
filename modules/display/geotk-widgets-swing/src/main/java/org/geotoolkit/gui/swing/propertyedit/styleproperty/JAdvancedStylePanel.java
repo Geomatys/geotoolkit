@@ -88,13 +88,13 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
 
     private MapLayer layer = null;
     private Object style = null;
-    
+
     private StyleElementEditor editor = null;
     private TreePath editedPath = null;
-    
+
     //used to dissociate selection and apply
     private volatile boolean applying = false;
-        
+
     private final TreeSelectionListener treeListener = new TreeSelectionListener() {
 
         @Override
@@ -102,13 +102,13 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
             final TreePath path = e.getNewLeadSelectionPath();
 
             //we validate the previous edition pane
-            
+
             if(!applying){
                 //we keep the same editor if we are currently applying changes
                 applyEditor(e.getOldLeadSelectionPath());
 
                 pan_info.removeAll();
-                
+
                 if (path != null) {
                     final Object val = path.getLastPathComponent();
                     editor = StyleElementEditor.findEditor(val);
@@ -125,7 +125,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
             }
         }
     };
-        
+
     private final Weak layerListener = new Weak(this);
 
     /** Creates new form JAdvancedStylePanel */
@@ -134,7 +134,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
         initComponents();
         tree.addTreeSelectionListener(treeListener);
         guiXml.setEditorKit(new XMLEditorKit());
-        
+
         guiTabs.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -151,7 +151,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
                 }
             }
         });
-        
+
         tree.getModel().addTreeModelListener(new TreeModelListener() {
 
             public void treeNodesChanged(TreeModelEvent e) {
@@ -173,15 +173,15 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
             public void treeStructureChanged(TreeModelEvent e) {
             }
         });
-        
+
     }
 
-    private void applyEditor(final TreePath oldPath){        
+    private void applyEditor(final TreePath oldPath){
         if(editor == null) return;
 
         //create implies a call to apply if a style element is present
         final Object obj = editor.create();
-        
+
         if(obj instanceof Symbolizer){
             //in case of a symbolizer we must update it.
             if(oldPath != null && oldPath.getLastPathComponent() != null){
@@ -198,7 +198,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
                 }
             }
         }
-        
+
     }
 
     /** This method is called from within the constructor to
@@ -235,13 +235,13 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
 
         jSplitPane1.setRightComponent(jScrollPane1);
 
-        guiTabs.addTab(MessageBundle.getString("xmlGraphic"), jSplitPane1); // NOI18N
+        guiTabs.addTab(MessageBundle.format("xmlGraphic"), jSplitPane1); // NOI18N
 
         guiXmlPane.setLayout(new BorderLayout());
 
         jPanel1.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-        guiApply.setText(MessageBundle.getString("apply")); // NOI18N
+        guiApply.setText(MessageBundle.format("apply")); // NOI18N
         guiApply.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiApplyActionPerformed(evt);
@@ -255,7 +255,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
 
         guiXmlPane.add(jScrollPane2, BorderLayout.CENTER);
 
-        guiTabs.addTab(MessageBundle.getString("xmlview"), guiXmlPane); // NOI18N
+        guiTabs.addTab(MessageBundle.format("xmlview"), guiXmlPane); // NOI18N
 
         add(guiTabs, BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -264,24 +264,22 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
         if(layer != null){
             final StyleXmlIO tool = new StyleXmlIO();
             try {
-                final MutableStyle style = tool.readStyle(new StringReader(guiXml.getText()), 
+                final MutableStyle style = tool.readStyle(new StringReader(guiXml.getText()),
                         Specification.SymbologyEncoding.V_1_1_0);
 
                 layer.setStyle(style);
                 setTarget(layer);
-            } catch (JAXBException ex) {
-                Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
-            } catch (FactoryException ex) {
-                Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
+            } catch (JAXBException | FactoryException ex) {
+                Logging.getLogger("org.geotoolkit.gui.swing.propertyedit.styleproperty").log(Level.FINEST,ex.getMessage(),ex);
             }
         }
     }//GEN-LAST:event_guiApplyActionPerformed
-    
+
     @Override
     public boolean canHandle(Object target) {
         return target instanceof MapLayer;
     }
-    
+
     @Override
     public void apply() {
 
@@ -299,10 +297,10 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
     @Override
     public void setLayer(final MapLayer layer) {
         if(this.layer==layer)return;
-        
+
         if(this.layer!=null){
             layerListener.unregisterSource(this.layer);
-        }        
+        }
         this.layer = layer;
         if(this.layer!=null){
             layerListener.registerSource(this.layer);
@@ -335,7 +333,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
     public ImageIcon getIcon() {
         return IconBundle.getIcon("16_advanced_style");
     }
-    
+
     @Override
     public Image getPreview() {
         return null;
@@ -343,7 +341,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
 
     @Override
     public String getTitle() {
-        return MessageBundle.getString("sldeditor");
+        return MessageBundle.format("sldeditor");
     }
 
     @Override
@@ -369,12 +367,12 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
     public Component getComponent() {
         return this;
     }
-    
+
     @Override
     protected Object[] getFirstColumnComponents() {
         return new Object[]{};
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     JButton guiApply;
     JTabbedPane guiTabs;
@@ -389,7 +387,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
     JStyleTree tree;
     // End of variables declaration//GEN-END:variables
 
-    //style events    
+    //style events
     @Override
     public void styleChange(MapLayer source, EventObject event) {}
 
@@ -412,13 +410,13 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
                 return new XMLView(elem);
             }
         };
-                
+
         @Override
         public ViewFactory getViewFactory() {
             return xmlViewFactory;
         }
     }
-        
+
     /*
     * Copyright 2006-2008 Kees de Kooter
     *
@@ -435,7 +433,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
     * limitations under the License.
     */
     public static final class XMLView extends PlainView {
- 
+
         private static final Map<Pattern, Color> PATTERNS = new HashMap<Pattern, Color>();
         static {
             PATTERNS.put(Pattern.compile("(\\<!\\[CDATA\\[).*"),    new Color(0, 190, 0)); // cdata start
@@ -446,7 +444,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
             PATTERNS.put(Pattern.compile("[a-z-]*\\=(\"[^\"]*\")"), new Color(0,0, 190)); // attribute value
             PATTERNS.put(Pattern.compile("(<!--.*-->)"),            new Color(0, 190, 0)); // comment
         }
-        
+
         public XMLView(Element element) {
             super(element);
         }
@@ -504,6 +502,6 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
         }
 
     }
-    
-    
+
+
 }

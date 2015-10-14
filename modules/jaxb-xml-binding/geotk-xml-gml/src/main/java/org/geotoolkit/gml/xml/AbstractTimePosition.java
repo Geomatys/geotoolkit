@@ -36,7 +36,7 @@ import org.opengis.temporal.TemporalPosition;
 @XmlTransient
 public abstract class AbstractTimePosition {
 
-    protected static final Logger LOGGER = Logging.getLogger(AbstractTimePosition.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml.xml");
 
     protected static final List<DateFormat> FORMATTERS = new ArrayList<DateFormat>();
 
@@ -52,8 +52,8 @@ public abstract class AbstractTimePosition {
         return null;
     }
 
-    public abstract Date getDate(); 
-    
+    public abstract Date getDate();
+
     protected Date parseDate(final String value) {
         if (value != null && !value.isEmpty()) {
             for (DateFormat df : FORMATTERS) {
@@ -69,6 +69,6 @@ public abstract class AbstractTimePosition {
         LOGGER.log(Level.WARNING, "Unable to parse date value:{0}", value);
         return null;
     }
-    
+
     public abstract TimeIndeterminateValueType getIndeterminatePosition();
 }

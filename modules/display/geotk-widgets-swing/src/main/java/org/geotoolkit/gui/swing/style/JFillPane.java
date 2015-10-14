@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ResourceBundle;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -119,8 +118,7 @@ public class JFillPane extends StyleElementEditor<Fill>{
 
         setOpaque(false);
 
-        ResourceBundle bundle = ResourceBundle.getBundle("org/geotoolkit/gui/swing/resource/Bundle"); // NOI18N
-        butFill.setText(bundle.getString("fill")); // NOI18N
+        butFill.setText(MessageBundle.format("fill")); // NOI18N
         butFill.setBorderPainted(false);
         butFill.setPreferredSize(new Dimension(49, 22));
         butFill.addActionListener(new ActionListener() {
@@ -129,11 +127,11 @@ public class JFillPane extends StyleElementEditor<Fill>{
             }
         });
 
-        guiLabelFill.setText(MessageBundle.getString("graphic")); // NOI18N
+        guiLabelFill.setText(MessageBundle.format("graphic")); // NOI18N
 
-        guiLabelAlpha.setText(MessageBundle.getString("opacity")); // NOI18N
+        guiLabelAlpha.setText(MessageBundle.format("opacity")); // NOI18N
 
-        guiLabelColor.setText(MessageBundle.getString("color")); // NOI18N
+        guiLabelColor.setText(MessageBundle.format("color")); // NOI18N
 
         guiColor.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {

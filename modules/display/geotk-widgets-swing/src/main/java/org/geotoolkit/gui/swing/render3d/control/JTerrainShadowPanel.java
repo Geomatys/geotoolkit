@@ -57,16 +57,16 @@ public class JTerrainShadowPanel extends javax.swing.JPanel {
         azimutSpinner = new javax.swing.JSpinner();
         rotationSpinner = new javax.swing.JSpinner();
 
-        guiShadowEnable.setText(MessageBundle.getString("org.geotoolkit.gui.swing.render3d.show")); // NOI18N
+        guiShadowEnable.setText(MessageBundle.format("org_geotoolkit_gui_swing_render3d_show")); // NOI18N
         guiShadowEnable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiShadowEnableActionPerformed(evt);
             }
         });
 
-        jLabel1.setText(MessageBundle.getString("org.geotoolkit.gui.swing.render3d.azimut")); // NOI18N
+        jLabel1.setText(MessageBundle.format("org_geotoolkit_gui_swing_render3d_azimut")); // NOI18N
 
-        jLabel2.setText(MessageBundle.getString("org.geotoolkit.gui.swing.render3d.rotation")); // NOI18N
+        jLabel2.setText(MessageBundle.format("org_geotoolkit_gui_swing_render3d_rotation")); // NOI18N
 
         azimutSpinner.setModel(new javax.swing.SpinnerNumberModel(45.0d, 0.0d, 90.0d, 1.0d));
         azimutSpinner.addChangeListener(new javax.swing.event.ChangeListener() {

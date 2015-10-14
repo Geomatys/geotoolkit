@@ -24,7 +24,6 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.ConcatenatedOperation;
 import org.opengis.referencing.operation.CoordinateOperation;
-import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.Transformation;
 
 import org.geotoolkit.test.TestBase;
@@ -119,7 +118,7 @@ public abstract strictfp class TransformTestBase extends MathTransformTestCase {
             return true;
         }
         if (operation instanceof ConcatenatedOperation) {
-            for (final SingleOperation step : ((ConcatenatedOperation) operation).getOperations()) {
+            for (final CoordinateOperation step : ((ConcatenatedOperation) operation).getOperations()) {
                 if (step instanceof Transformation) {
                     return true;
                 }

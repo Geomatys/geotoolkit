@@ -190,7 +190,7 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection> 
 
         group.add(guiCheckNative);
         guiCheckNative.setSelected(true);
-        guiCheckNative.setText(MessageBundle.getString("style.channelselection.native")); // NOI18N
+        guiCheckNative.setText(MessageBundle.format("style_channelselection_native")); // NOI18N
         guiCheckNative.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiCheckNativeActionPerformed(evt);
@@ -199,7 +199,7 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection> 
         jPanel1.add(guiCheckNative);
 
         group.add(guiChkRGB);
-        guiChkRGB.setText(MessageBundle.getString("rgb")); // NOI18N
+        guiChkRGB.setText(MessageBundle.format("rgb")); // NOI18N
         guiChkRGB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiChkRGBActionPerformed(evt);
@@ -208,7 +208,7 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection> 
         jPanel1.add(guiChkRGB);
 
         group.add(guiChkGray);
-        guiChkGray.setText(MessageBundle.getString("single")); // NOI18N
+        guiChkGray.setText(MessageBundle.format("single")); // NOI18N
         guiChkGray.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiChkGrayActionPerformed(evt);
@@ -220,15 +220,15 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection> 
 
         guiLblRed.setFont(guiLblRed.getFont().deriveFont(guiLblRed.getFont().getStyle() | Font.BOLD));
         guiLblRed.setForeground(new Color(255, 0, 51));
-        guiLblRed.setText(MessageBundle.getString("style.channelSelection.redchannel")); // NOI18N
+        guiLblRed.setText(MessageBundle.format("style_channelSelection_redchannel")); // NOI18N
 
         guiLblGreen.setFont(guiLblGreen.getFont().deriveFont(guiLblGreen.getFont().getStyle() | Font.BOLD));
         guiLblGreen.setForeground(new Color(0, 204, 0));
-        guiLblGreen.setText(MessageBundle.getString("style.channelSelection.greenchannel")); // NOI18N
+        guiLblGreen.setText(MessageBundle.format("style_channelSelection_greenchannel")); // NOI18N
 
         guiLblBlue.setFont(guiLblBlue.getFont().deriveFont(guiLblBlue.getFont().getStyle() | Font.BOLD));
         guiLblBlue.setForeground(new Color(51, 51, 255));
-        guiLblBlue.setText(MessageBundle.getString("style.channelSelection.bluechannel")); // NOI18N
+        guiLblBlue.setText(MessageBundle.format("style_channelSelection_bluechannel")); // NOI18N
 
         GroupLayout jPanel4Layout = new GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -267,7 +267,7 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection> 
 
         guiLblGray.setFont(guiLblGray.getFont().deriveFont(guiLblGray.getFont().getStyle() | Font.BOLD));
         guiLblGray.setForeground(new Color(153, 153, 153));
-        guiLblGray.setText(MessageBundle.getString("style.channelSelection.graychannel")); // NOI18N
+        guiLblGray.setText(MessageBundle.format("style_channelSelection_graychannel")); // NOI18N
 
         GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);

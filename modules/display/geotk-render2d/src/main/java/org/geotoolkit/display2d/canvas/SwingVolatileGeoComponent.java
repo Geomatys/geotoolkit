@@ -24,7 +24,6 @@ import java.awt.image.RenderedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -35,6 +34,7 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -102,7 +102,7 @@ public class SwingVolatileGeoComponent extends JComponent{
                                     coverage = gcb.getGridCoverage2D();
                                 }
                             }catch(Exception ex){
-                                Logger.getLogger(SwingVolatileGeoComponent.class.getName()).log(Level.INFO, ex.getMessage(), ex);
+                                Logging.getLogger("org.geotoolkit.display2d.canvas").log(Level.INFO, ex.getMessage(), ex);
                                 //we tryed
                             }
                         }
@@ -145,7 +145,7 @@ public class SwingVolatileGeoComponent extends JComponent{
                 try {
                     GO2Utilities.portray(context, coverage);
                 } catch (PortrayalException ex) {
-                    Logger.getLogger(SwingVolatileGeoComponent.class.getName()).log(Level.INFO, ex.getMessage(), ex);
+                    Logging.getLogger("org.geotoolkit.display2d.canvas").log(Level.INFO, ex.getMessage(), ex);
                 }
             }
         }

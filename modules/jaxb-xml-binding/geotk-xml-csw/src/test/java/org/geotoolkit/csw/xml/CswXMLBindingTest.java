@@ -93,7 +93,7 @@ public class CswXMLBindingTest {
        TimeZone.setDefault(TimeZone.getTimeZone("CET"));
    }
 
-    private static final Logger LOGGER = Logging.getLogger(CswXMLBindingTest.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.csw.xml");
 
     private final MarshallerPool pool = CSWMarshallerPool.getInstance();
 

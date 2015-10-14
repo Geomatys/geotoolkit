@@ -17,9 +17,9 @@
 package org.geotoolkit.storage;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -46,12 +46,9 @@ public abstract class AbstractDataStore extends AbstractStorage{
             sb.append(' ');
             sb.append(node.toString());
         } catch (DataStoreException ex) {
-            Logger.getLogger(AbstractDataStore.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.storage").log(Level.WARNING, null, ex);
         }
 
         return sb.toString();
     }
-
-
-
 }

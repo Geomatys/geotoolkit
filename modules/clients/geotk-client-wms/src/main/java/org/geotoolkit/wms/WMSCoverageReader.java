@@ -34,7 +34,6 @@ import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -43,7 +42,6 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.feature.type.NamesExt;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.util.GenericName;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
@@ -59,7 +57,7 @@ import org.opengis.util.NameSpace;
  */
 public class WMSCoverageReader extends GridCoverageReader{
 
-    private static final Logger LOGGER = Logging.getLogger(WMSCoverageReader.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
     public WMSCoverageReader(final WMSCoverageReference reference) {
         try {

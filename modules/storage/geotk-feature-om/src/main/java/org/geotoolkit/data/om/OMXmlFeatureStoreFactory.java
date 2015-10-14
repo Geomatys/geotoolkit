@@ -25,7 +25,6 @@ import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.storage.DataStoreException;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.NAMESPACE;
@@ -82,12 +81,12 @@ public class OMXmlFeatureStoreFactory extends AbstractFeatureStoreFactory {
      */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/om/bundle", "OMdatastoreDescription");
+        return Bundle.formatInternational(Bundle.Keys.OMdatastoreDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/om/bundle", "OMdatastoreTitle");
+        return Bundle.formatInternational(Bundle.Keys.OMdatastoreTitle);
     }
 
     /**

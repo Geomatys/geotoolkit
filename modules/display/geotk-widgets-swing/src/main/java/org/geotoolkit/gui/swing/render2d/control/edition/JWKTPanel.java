@@ -96,14 +96,14 @@ public class JWKTPanel extends javax.swing.JPanel {
         guiError = new javax.swing.JLabel();
         guiPane = new javax.swing.JPanel();
 
-        guiRollback.setText(MessageBundle.getString("cancel")); // NOI18N
+        guiRollback.setText(MessageBundle.format("cancel")); // NOI18N
         guiRollback.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiRollbackActionPerformed(evt);
             }
         });
 
-        guiApply.setText(MessageBundle.getString("apply")); // NOI18N
+        guiApply.setText(MessageBundle.format("apply")); // NOI18N
         guiApply.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiApplyActionPerformed(evt);

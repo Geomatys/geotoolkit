@@ -43,7 +43,7 @@ import org.netbeans.api.visual.widget.Widget;
  */
 public abstract class ChainScene extends GraphScene<ProcessDescriptor,String> implements ChainListener {
 
-    protected static final Logger LOGGER = Logging.getLogger(ChainScene.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.etl");
     protected static final Color IN_OUT_COLOR = new Color(120, 210, 150);
 
     protected static final Object IN = "IN";
@@ -52,13 +52,13 @@ public abstract class ChainScene extends GraphScene<ProcessDescriptor,String> im
     protected final LayerWidget mainLayer = new LayerWidget(this);
     protected final LayerWidget actionLayer = new LayerWidget(this);
     protected final LayerWidget connectionLayer = new LayerWidget(this);
-    
+
     protected static final WidgetAction HOVER_ACTION = ActionFactory.createHoverAction (new ProviderWidgetHover());
     protected final Map<Object,Widget> mapping = new IdentityHashMap<Object, Widget>();
 
-    
+
     public abstract EventChain getChain();
-    
+
     public LayerWidget getMainLayer() {
         return mainLayer;
     }
@@ -78,7 +78,7 @@ public abstract class ChainScene extends GraphScene<ProcessDescriptor,String> im
     public Map<Object, Widget> getMapping() {
         return mapping;
     }
-    
+
     public final void addWigetToMainLayer(Widget widget) {
         widget.getActions().addAction(HOVER_ACTION);
         this.getMainLayer().addChild(widget);
@@ -175,7 +175,7 @@ public abstract class ChainScene extends GraphScene<ProcessDescriptor,String> im
      * @param desc ElementProcess
      */
     protected abstract void removeElementProcess(final ElementProcess desc);
-    
+
     /**
      * Create an manual intervention element in scene.
      * @param mi ElementManual
@@ -187,8 +187,8 @@ public abstract class ChainScene extends GraphScene<ProcessDescriptor,String> im
      * @param mi ElementManual
      */
     protected abstract void removeElementManual(final ElementManual mi);
-    
-    
+
+
     /**
      * Create an conditional element in scene.
      * @param ce ElementCondition

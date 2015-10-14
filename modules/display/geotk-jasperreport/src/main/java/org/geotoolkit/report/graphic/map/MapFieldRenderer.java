@@ -84,7 +84,7 @@ public class MapFieldRenderer implements JRFieldRenderer{
             try {
                 DefaultPortrayalService.prepareCanvas(renderable, canvasDef, sceneDef, viewDef);
             } catch (PortrayalException ex) {
-                Logging.getLogger(MapFieldRenderer.class).log(Level.WARNING, ex.getLocalizedMessage(), ex);
+                Logging.getLogger("org.geotoolkit.report.graphic.map").log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }
             map.setDelegate(renderable);
         }

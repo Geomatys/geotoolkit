@@ -32,7 +32,6 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -62,6 +61,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -169,7 +169,7 @@ public class PyramidalModelWriter extends GridCoverageWriter {
                     break;
                 }
             } catch (InterruptedException ex) {
-                Logger.getLogger(PyramidalModelWriter.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.SEVERE, null, ex);
             }
         }
     }

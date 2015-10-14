@@ -519,7 +519,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
          */
         @Override
         public void recoverableException(final Throwable error) {
-            Logging.recoverableException(ImageFileProperties.class, "setImageInput", error);
+            Logging.recoverableException(null, ImageFileProperties.class, "setImageInput", error);
         }
     }
 

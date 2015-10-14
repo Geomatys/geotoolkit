@@ -89,7 +89,7 @@ public class JChainParametersPanel extends JPanel{
         final JPanel guiPanel = new JPanel(new BorderLayout());
 
         final JLabel guiLabel = new JLabel(
-                MessageBundle.getString(in ? "chainInputs" : "chainOutputs"));
+                MessageBundle.format(in ? "chainInputs" : "chainOutputs"));
         guiLabel.setBorder(BorderFactory.createEmptyBorder(6, 4, 6, 4));
         guiTopPanel.add(guiLabel);
 

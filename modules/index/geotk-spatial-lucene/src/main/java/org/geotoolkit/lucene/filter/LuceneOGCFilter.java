@@ -18,7 +18,6 @@ package org.geotoolkit.lucene.filter;
 
 import java.io.IOException;
 import java.util.BitSet;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.*;
@@ -43,7 +42,7 @@ import org.geotoolkit.index.tree.TreeX;
 import org.geotoolkit.index.tree.manager.NamedEnvelope;
 
 import static org.geotoolkit.lucene.LuceneUtils.*;
-        
+
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -77,14 +76,14 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
 
     private final SpatialFilterType filterType;
 
-    private static final Logger LOGGER = Logging.getLogger(LuceneOGCFilter.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.lucene.filter");
 
     private final Filter filter;
 
     private Tree tree;
-    
+
     private boolean envelopeOnly = false;
-    
+
     private LuceneOGCFilter(final Filter filter){
         this.filter = filter;
         this.filterType = getSpatialFilterType(filter);
@@ -93,7 +92,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter implements 
     public Filter getOGCFilter(){
         return filter;
     }
-    
+
     @Override
     public void applyRtreeOnFilter(final Tree rTree, final boolean envelopeOnly) {
         this.tree         = rTree;

@@ -26,18 +26,18 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class PGTreeWrapper implements Tree {
 
-    private static final Logger LOGGER = Logging.getLogger(PGTreeWrapper.class);
-    
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree.manager.postgres");
+
     private long lastUpdate;
-    
+
     private Tree rTree;
-    
+
     private final DataSource source;
-    
+
     private final File directory;
-    
+
     private final TreeElementMapper mapper;
-            
+
     public PGTreeWrapper(final File directory, final DataSource source, TreeElementMapper mapper, CoordinateReferenceSystem crs) throws IOException, SQLException, StoreIndexException {
         TreeAccess ta  = new TreeAccessSQLByteArray(directory, source, TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER, 5, crs);
         rTree          = new StarRTree<>(ta, mapper);
@@ -46,7 +46,7 @@ public class PGTreeWrapper implements Tree {
         this.directory = directory;
         lastUpdate     = System.currentTimeMillis();
     }
-    
+
     public PGTreeWrapper(final byte[] data, final File directory, final DataSource source, TreeElementMapper mapper) throws IOException, SQLException, ClassNotFoundException, StoreIndexException {
         TreeAccess ta  = new TreeAccessSQLByteArray(directory, source, data, TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER);
         rTree          = new StarRTree<>(ta, mapper);
@@ -136,8 +136,8 @@ public class PGTreeWrapper implements Tree {
     public boolean isClosed() {
         return rTree.isClosed();
     }
-    
-    
+
+
     private void updateTree() throws StoreIndexException {
         try {
             if ((System.currentTimeMillis() - lastUpdate) > (5 * 60 * 1000)) {
@@ -156,5 +156,5 @@ public class PGTreeWrapper implements Tree {
     public String toString() {
         return rTree.toString();
     }
-   
+
 }

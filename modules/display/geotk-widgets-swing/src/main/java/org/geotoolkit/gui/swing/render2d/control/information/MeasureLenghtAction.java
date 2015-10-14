@@ -32,7 +32,7 @@ public class MeasureLenghtAction extends AbstractMapAction {
 
     public MeasureLenghtAction(){
         putValue(SMALL_ICON, IconBundle.getIcon("16_mesure_lenght"));
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_measure_lenght"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("map_measure_lenght"));
     }
 
     @Override

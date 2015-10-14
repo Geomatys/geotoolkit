@@ -308,7 +308,7 @@ public final class Registry extends Static {
     private static void log(final String method, final LogRecord record) {
         record.setSourceClassName(Registry.class.getName());
         record.setSourceMethodName(method);
-        final Logger logger = Logging.getLogger(Registry.class);
+        final Logger logger = Logging.getLogger("org.geotoolkit.image.jai");
         record.setLoggerName(logger.getName());
         logger.log(record);
     }

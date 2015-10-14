@@ -21,7 +21,6 @@ import com.vividsolutions.jts.geom.Envelope;
 import java.awt.Shape;
 import java.util.Arrays;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -35,6 +34,7 @@ import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * convenient class to manipulate geometry in the 2d engine.
@@ -108,7 +108,7 @@ public class ProjectedGeometry  {
                 dataToDisplay = (MathTransform2D) CRS.findMathTransform(dataCRS, params.displayCRS);
             }
         } catch (Exception ex) {
-            Logger.getLogger(ProjectedGeometry.class.getName()).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, null, ex);
         }
     }
 
@@ -172,9 +172,9 @@ public class ProjectedGeometry  {
      */
     public com.vividsolutions.jts.geom.Geometry[] getObjectiveGeometryJTS() throws TransformException {
         if(objectiveGeometryJTS == null && geomSet){
-            
+
             objectiveGeometryJTS = new com.vividsolutions.jts.geom.Geometry[1];
-            
+
             com.vividsolutions.jts.geom.Geometry objBase;
             if(dataToObjective == null){
                 //we assume data and objective are in the same crs
@@ -184,20 +184,20 @@ public class ProjectedGeometry  {
                 objBase = transformer.transform(getDataGeometryJTS());
             }
 
-            
+
             if(params.context.wraps != null){
-                
+
                 com.vividsolutions.jts.geom.Envelope objBounds = objBase.getEnvelopeInternal();
                 final double dx = params.context.wraps.wrapPoints[1].getOrdinate(0) - params.context.wraps.wrapPoints[0].getOrdinate(0);
                 final double dy = params.context.wraps.wrapPoints[1].getOrdinate(1) - params.context.wraps.wrapPoints[0].getOrdinate(1);
-                
+
                 // fix the geometry if some points wrap around the meridian
                 // we expect the warp points to be axis aligned, TODO handle other cases
                 if(dx!=0 && dy!=0){
                     throw new TransformException("Coordinate Reference System, wrap around points are not axis aligned.");
                 }
-                
-                if( (dx>0 && (objBounds.getWidth() > (dx/2.0))) || 
+
+                if( (dx>0 && (objBounds.getWidth() > (dx/2.0))) ||
                     (dy>0 && (objBounds.getHeight() > (dy/2.0)))){
                     // this is a possible wrap around geometry
                     final double[] wrapTranslate = new double[]{dx,dy};
@@ -206,25 +206,25 @@ public class ProjectedGeometry  {
                     objBase = transformer.transform(objBase);
                     objBounds = objBase.getEnvelopeInternal();
                 }
-                
+
                 //check if the geometry overlaps the meridian
                 int nbIncRep = params.context.wraps.wrapIncNb;
                 int nbDecRep = params.context.wraps.wrapDecNb;
                 com.vividsolutions.jts.geom.Geometry objBoundsGeom = JTS.toGeometry(objBounds);
-                
-                // geometry cross the far east meridian, geometry is like : 
+
+                // geometry cross the far east meridian, geometry is like :
                 // POLYGON(-179,10,  181,10,  181,-10,  179,-10)
                 if(objBoundsGeom.intersects(params.context.wraps.wrapIncLine)){
                     //duplicate geometry on the other warp line
                     nbDecRep++;
                 }
-                // geometry cross the far west meridian, geometry is like : 
+                // geometry cross the far west meridian, geometry is like :
                 // POLYGON(-179,10, -181,10, -181,-10,  -179,-10)
                 else if(objBoundsGeom.intersects(params.context.wraps.wrapDecLine)){
                     //duplicate geometry on the other warp line
                     nbIncRep++;
                 }
-                
+
                 objectiveGeometryJTS = new com.vividsolutions.jts.geom.Geometry[nbIncRep+nbDecRep+1];
                 int n=0;
                 for(int i=0;i<nbIncRep;i++){
@@ -248,14 +248,14 @@ public class ProjectedGeometry  {
                     //some of the wrapped geometries do not intersect the visible area
                     objectiveGeometryJTS = Arrays.copyOf(objectiveGeometryJTS, n);
                 }
-                
-                
+
+
             }else{
                 //geometry is valid with no modifications or repetition
                 objectiveGeometryJTS = new com.vividsolutions.jts.geom.Geometry[1];
                 objectiveGeometryJTS[0] = objBase;
             }
-            
+
         }
         return objectiveGeometryJTS;
     }
@@ -313,7 +313,7 @@ public class ProjectedGeometry  {
                         //clip to display bounds
                         displayShape[i] = Clipper.clipToRect(displayShape[i], params.displayClipRect);
                     }
-                    
+
                 }
                 //TODO find a way to reactive curves is there is no transformation
                 //displayShape = ProjectedShape.wrap(shape, dataToDisplay);

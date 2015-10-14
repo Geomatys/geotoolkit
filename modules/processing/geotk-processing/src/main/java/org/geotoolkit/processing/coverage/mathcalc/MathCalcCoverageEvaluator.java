@@ -20,7 +20,6 @@ package org.geotoolkit.processing.coverage.mathcalc;
 import java.util.AbstractMap;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.CRS;
@@ -30,6 +29,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -54,7 +54,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
         positionGeo = new GeneralDirectPosition(crs);
         pick = new DynamicPick(coverages, mapping, positionGeo);
     }
-    
+
     @Override
     public void evaluate(DirectPosition position, double[] sampleBuffer) {
         //update pick object position before evaluation
@@ -75,7 +75,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
         private final GeneralDirectPosition[] coverageCoord;
         private final DirectPosition coord;
         private final double[] sampleBuffer;
-        
+
         private DynamicPick(Coverage[] coverages, String[] mapping, DirectPosition coord) throws FactoryException{
             this.coverages = coverages;
             this.mapping = mapping;
@@ -88,7 +88,7 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
                 coverageCoord[i] = new GeneralDirectPosition(coverages[i].getCoordinateReferenceSystem());
             }
         }
-        
+
         @Override
         public Object get(Object key) {
             //search the coverage for given name
@@ -100,18 +100,18 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
                     try {
                         baseToCoverage[i].transform(coord, coverageCoord[i]);
                     } catch (Exception ex) {
-                        Logger.getLogger(MathCalcProcess.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+                        Logging.getLogger("org.geotoolkit.processing.coverage.mathcalc").log(Level.WARNING, ex.getMessage(), ex);
                         return Double.NaN;
                     }
                     break;
                 }
             }
-            
+
             if(index<0){
                 // no coverage for this name
                 return Double.NaN;
             }
-            
+
             //find value at given coordinate
             coverages[index].evaluate(coverageCoord[index],sampleBuffer);
             return sampleBuffer[0];
@@ -122,5 +122,5 @@ public class MathCalcCoverageEvaluator implements FillCoverage.SampleEvaluator {
             throw new UnsupportedOperationException("Not supported.");
         }
     }
-    
+
 }

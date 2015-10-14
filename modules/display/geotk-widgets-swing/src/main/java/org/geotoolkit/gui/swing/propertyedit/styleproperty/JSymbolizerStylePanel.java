@@ -41,7 +41,7 @@ public class JSymbolizerStylePanel extends AbstractPropertyPane {
 
     /** Creates new form XMLStylePanel */
     public JSymbolizerStylePanel() {
-        super(MessageBundle.getString("property_style_simple"), 
+        super(MessageBundle.format("property_style_simple"), 
               IconBundle.getIcon("16_simple_style"), 
               null, 
               "");
@@ -83,7 +83,7 @@ public class JSymbolizerStylePanel extends AbstractPropertyPane {
             final JScrollPane jsp = new JScrollPane(detail);
             add(BorderLayout.CENTER, jsp );
         }else{
-            add(BorderLayout.CENTER,new JLabel("<b>" + MessageBundle.getString("property_style_unknown_simplestyle") + "</b>"));
+            add(BorderLayout.CENTER,new JLabel("<b>" + MessageBundle.format("property_style_unknown_simplestyle") + "</b>"));
         }
 
         revalidate();

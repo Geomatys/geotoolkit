@@ -140,7 +140,7 @@ public class JLineSymbolizerAdvanced extends StyleElementEditor<LineSymbolizer> 
 
         setOpaque(false);
 
-        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
+        jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("general"))); // NOI18N
         jPanel1.setOpaque(false);
 
         guiGeom.addPropertyChangeListener(new PropertyChangeListener() {
@@ -174,7 +174,7 @@ public class JLineSymbolizerAdvanced extends StyleElementEditor<LineSymbolizer> 
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("stroke"))); // NOI18N
+        jPanel2.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("stroke"))); // NOI18N
         jPanel2.setOpaque(false);
 
         guiStroke.addPropertyChangeListener(new PropertyChangeListener() {
@@ -198,7 +198,7 @@ public class JLineSymbolizerAdvanced extends StyleElementEditor<LineSymbolizer> 
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("displacement"))); // NOI18N
+        jPanel3.setBorder(BorderFactory.createTitledBorder(MessageBundle.format("displacement"))); // NOI18N
         jPanel3.setOpaque(false);
 
         guiOffset.addPropertyChangeListener(new PropertyChangeListener() {

@@ -21,6 +21,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -33,7 +34,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javax.imageio.ImageIO;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.controlsfx.dialog.ExceptionDialog;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -72,7 +72,7 @@ public final class GeotkFX {
 
     public static final String BUNDLE_PATH = "org/geotoolkit/gui/javafx/internal/Bundle";
     public static final String CSS_PATH = "/org/geotoolkit/gui/javafx/style/StyleEditor.css";
-    public static final ResourceBundle BUNDLE = ResourceBundle.getBundle(BUNDLE_PATH);
+    public static final ResourceBundle BUNDLE = ResourceBundle.getBundle(BUNDLE_PATH,Locale.getDefault(),GeotkFX.class.getClassLoader());
     private static FilterFactory2 FF;
     private static MutableStyleFactory SF;
     
@@ -142,7 +142,7 @@ public final class GeotkFX {
         }catch(MissingResourceException ex){
             throw new RuntimeException("Missing resource key : "+key,ex);
         }
-        return new ResourceInternationalString(BUNDLE_PATH, key);
+        return new ClassLoaderInternationalString(GeotkFX.class,BUNDLE_PATH, key);
     }
 
     public static InternationalString getI18NString(Class clazz, final String key){

@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
@@ -34,7 +34,7 @@ import org.apache.sis.util.logging.Logging;
  * @module pending
  */
 public class RunStoredTest extends TestCase {
-    private static final Logger LOG = Logging.getLogger(RunStoredTest.class);
+    private static final Logger LOG = Logging.getLogger("org.geotoolkit.geometry.isoonjts.spatialschema.geometry");
     private static String TEST_DIRECTORY = "src/main/resources/org/geotoolkit/test-data/xml/geometry";
 
     private FilenameFilter xmlFilter = new FilenameFilter() {
@@ -45,7 +45,7 @@ public class RunStoredTest extends TestCase {
 
     /**
      * Load and run all test files.
-     * @throws IOException 
+     * @throws IOException
      */
     public void testGeometriesFromXML() throws IOException {
         GeometryTestParser parser = new GeometryTestParser();

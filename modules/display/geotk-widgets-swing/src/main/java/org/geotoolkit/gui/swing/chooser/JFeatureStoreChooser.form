@@ -85,14 +85,14 @@
             <Component class="javax.swing.JCheckBox" name="guiCreateNew">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="chooserfeaturestore.new" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="chooserfeaturestore_new" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="guiConnect">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="chooserfeaturestore.connect" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="chooserfeaturestore_connect" replaceFormat="MessageBundle.format(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <Events>

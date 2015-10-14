@@ -66,7 +66,7 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
     private final JLayerComboBox guiLayers = new JLayerComboBox();
 
     private final JPopupMenu menu = new JPopupMenu();
-    private final JButton active = new JButton(MessageBundle.getString("ok"));
+    private final JButton active = new JButton(MessageBundle.format("ok"));
 
     /**
      * Creates a new instance of JMap2DControlBar
@@ -85,8 +85,8 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
         guiLayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         final JPanel pane = new JPanel(new GridBagLayout());
-        final JLabel lbl1 = new JLabel(MessageBundle.getString("layers"));
-        final JLabel lbl2 = new JLabel(MessageBundle.getString("editTool"));
+        final JLabel lbl1 = new JLabel(MessageBundle.format("layers"));
+        final JLabel lbl2 = new JLabel(MessageBundle.format("editTool"));
         final JScrollPane pane1 = new JScrollPane(guiLayers);
         final JScrollPane pane2 = new JScrollPane(guiTools);
         pane1.setPreferredSize(new Dimension(280, 140));
@@ -119,7 +119,7 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
         menu.add(active);// ok button
 
         guiEdit = DropDownButtonFactory.createDropDownButton(ICON_EDIT, menu);
-        guiEdit.setToolTipText(MessageBundle.getString("map_edit"));
+        guiEdit.setToolTipText(MessageBundle.format("map_edit"));
         guiEdit.addActionListener(this);
         active.addActionListener(this);
         add(guiEdit);

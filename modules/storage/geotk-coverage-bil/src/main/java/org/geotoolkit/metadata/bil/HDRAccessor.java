@@ -20,11 +20,9 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Static;
-import org.apache.sis.util.logging.Logging;
 
 /**
  * Utility class to read HDR file.
@@ -48,16 +46,14 @@ public final class HDRAccessor extends Static {
     public static final String XDIM         = "XDIM";
     public static final String YDIM         = "YDIM";
     public static final String NODATA       = "NODATA";
-    
-    private static final Logger LOGGER = Logging.getLogger(HDRAccessor.class);
 
     private HDRAccessor() {
     }
 
     public static Map<String,String> read(final Object file) throws IOException{
-        final Map<String,String> parameters = new HashMap<String, String>();        
+        final Map<String,String> parameters = new HashMap<String, String>();
         final LineNumberReader reader = IOUtilities.openLatin(file);
-        
+
         String line = null;
         while ((line = reader.readLine()) != null) {
             final int index = line.indexOf(' ');
@@ -65,8 +61,8 @@ public final class HDRAccessor extends Static {
             final String value = line.substring(index+1).trim();
             parameters.put(key, value);
         }
-        
+
         return parameters;
     }
-    
+
 }

@@ -147,7 +147,7 @@ public class XmlFeatureTypeTest {
         assertEquals(1, types.size());
         assertEquals(complexType, types.get(0));
     }
-    
+
     @Test
     public void testReadVeryComplexFeatureType() throws Exception {
         final XmlFeatureTypeReader reader = getReader(true);
@@ -207,7 +207,7 @@ public class XmlFeatureTypeTest {
         }
 
         assertNotNull(type);
-        
+
         assertEquals(typeWithAtts.getDescriptors().size(), types.get(0).getDescriptors().size());
         final int size = typeWithAtts.getDescriptors().size();
         Iterator<PropertyDescriptor> expIt = typeWithAtts.getDescriptors().iterator();
@@ -219,7 +219,7 @@ public class XmlFeatureTypeTest {
             assertEquals(expDesc.getType(), resDesc.getType());
             assertEquals(expDesc, resDesc);
         }
-        
+
         assertEquals(typeWithAtts, types.get(0));
 
     }
@@ -251,7 +251,7 @@ public class XmlFeatureTypeTest {
         assertEquals("CodeWithAuthorityType", itype.getName().tip().toString());
         final ComplexType ct = (ComplexType) itype;
         assertEquals(2, ct.getDescriptors().size());
-        
+
     }
 
     @Test
@@ -330,7 +330,7 @@ public class XmlFeatureTypeTest {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/TypeWithSubstitution2.xsd"), temp);
 
     }
-    
+
     protected static String getStringResponse(URLConnection conec) throws UnsupportedEncodingException, IOException {
         final StringWriter sw     = new StringWriter();
         final BufferedReader in   = new BufferedReader(new InputStreamReader(conec.getInputStream(), "UTF-8"));
@@ -341,7 +341,7 @@ public class XmlFeatureTypeTest {
         }
         return sw.toString();
     }
-    
+
     private static XmlFeatureTypeReader getReader(boolean skipStandardObjectProperties) {
         final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
         reader.setSkipStandardObjectProperties(skipStandardObjectProperties);

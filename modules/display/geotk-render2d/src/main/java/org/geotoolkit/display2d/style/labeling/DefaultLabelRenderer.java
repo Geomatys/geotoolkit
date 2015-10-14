@@ -35,11 +35,10 @@ import static org.apache.sis.util.ArgumentChecks.*;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.opengis.referencing.operation.TransformException;
-import sun.java2d.SunGraphics2D;
 
 /**
  * Default implementation of label renderer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -47,7 +46,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
 
     private final List<LabelLayer> layers = new ArrayList<>();
     protected RenderingContext2D context = null;
-    
+
     public DefaultLabelRenderer() {
     }
 
@@ -67,23 +66,23 @@ public class DefaultLabelRenderer implements LabelRenderer{
 
     /**
      * {@inheritDoc }
-     */ 
+     */
     @Override
     public RenderingContext2D getRenderingContext() {
         return context;
     }
-    
+
     /**
      * {@inheritDoc }
-     */ 
+     */
     @Override
     public void append(final LabelLayer layer) {
         layers.add(layer);
     }
-    
+
     /**
      * {@inheritDoc }
-     */ 
+     */
     @Override
     public void portrayLabels(){
         final Graphics2D g2 = context.getGraphics();
@@ -116,7 +115,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
             //point to change from tile to tile
             geoms = label.getGeometry().getDisplayGeometryJTS();
         } catch (TransformException ex) {
-            Logging.getLogger(DefaultLabelRenderer.class).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.display2d.style.labeling").log(Level.WARNING, null, ex);
             return;
         }
 
@@ -125,7 +124,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
             final Point pt = GO2Utilities.getBestPoint(geom);
             if(pt==null) continue;
             final Coordinate point = pt.getCoordinate();
-            
+
             float refX = (float)point.x;
             float refY = (float)point.y;
 
@@ -179,7 +178,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
         try {
             geoms = label.getGeometry().getDisplayShape();
         } catch (TransformException ex) {
-            Logging.getLogger(DefaultLabelRenderer.class).log(Level.WARNING, null, ex);
+            Logging.getLogger("org.geotoolkit.display2d.style.labeling").log(Level.WARNING, null, ex);
             return;
         }
 
@@ -205,7 +204,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
         final Graphics2D g2 = context.getGraphics();
         //enable antialiasing for labels
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
+
         for(LabelDescriptor label : layer.labels()){
             if(label instanceof PointLabelDescriptor){
                 portray(g2, (PointLabelDescriptor)label);
@@ -214,5 +213,5 @@ public class DefaultLabelRenderer implements LabelRenderer{
             }
         }
     }
-        
+
 }

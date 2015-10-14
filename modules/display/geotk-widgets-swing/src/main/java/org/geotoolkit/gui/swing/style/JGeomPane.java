@@ -76,7 +76,7 @@ public class JGeomPane extends StyleElementEditor<Expression> {
 
         setOpaque(false);
 
-        guiLabel.setText(MessageBundle.getString("geometry")); // NOI18N
+        guiLabel.setText(MessageBundle.format("geometry")); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);

@@ -27,7 +27,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ComboBoxEditor;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
@@ -42,6 +41,7 @@ import javax.swing.event.EventListenerList;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -63,7 +63,7 @@ public class JScaleCombo extends JComboBox {
                 repaint();
                 addItemListener(action);
             } catch (TransformException ex) {
-                Logger.getLogger(JScaleCombo.class.getName()).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.gui.swing.render2d.control").log(Level.WARNING, null, ex);
             }
         }
     };
@@ -78,7 +78,7 @@ public class JScaleCombo extends JComboBox {
                 try {
                     map.getCanvas().setGeographicScale(((Number) getSelectedItem()).doubleValue());
                 } catch (TransformException ex) {
-                    Logger.getLogger(JScaleCombo.class.getName()).log(Level.WARNING, null, ex);
+                    Logging.getLogger("org.geotoolkit.gui.swing.render2d.control").log(Level.WARNING, null, ex);
                 }
             }
         }

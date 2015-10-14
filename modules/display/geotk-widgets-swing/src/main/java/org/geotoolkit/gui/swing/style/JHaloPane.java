@@ -102,7 +102,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
             }
         });
 
-        guiLabelWidth.setText(MessageBundle.getString("radius")); // NOI18N
+        guiLabelWidth.setText(MessageBundle.format("radius")); // NOI18N
 
         guiRadius.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {

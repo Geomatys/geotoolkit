@@ -334,7 +334,7 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
                                     final String       method,
                                     final SQLException exception)
     {
-        Logging.unexpectedException(classe, method, exception);
+        Logging.unexpectedException(null, classe, method, exception);
     }
 
     /**

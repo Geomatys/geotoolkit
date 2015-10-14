@@ -35,7 +35,7 @@ import org.geotoolkit.feature.type.GeometryDescriptor;
 public class MultiLinePartCreationTool extends AbstractEditionTool {
 
     public MultiLinePartCreationTool() {
-        super(1050,"multilinePartCreation", MessageBundle.getI18NString("createPart"),
+        super(1050,"multilinePartCreation", MessageBundle.formatInternational(MessageBundle.Keys.createPart),
              new SimpleInternationalString("Tool to create part of a MultiLine."), 
              IconBundle.getIcon("16_add_subpolygon"), FeatureMapLayer.class);
     }

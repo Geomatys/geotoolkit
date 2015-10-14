@@ -24,14 +24,12 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -73,12 +71,12 @@ public class ShapefileFolderFeatureStoreFactory extends AbstractFolderFeatureSto
 
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "datastoreFolderDescription");
+        return Bundle.formatInternational(Bundle.Keys.datastoreFolderDescription);
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "datastoreFolderTitle");
+        return Bundle.formatInternational(Bundle.Keys.datastoreFolderTitle);
     }
 
 

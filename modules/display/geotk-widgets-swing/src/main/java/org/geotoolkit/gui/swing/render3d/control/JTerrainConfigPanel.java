@@ -276,7 +276,7 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
         guiApply = new JButton();
 
         jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
-        jLabel1.setText(MessageBundle.getString("org.geotoolkit.gui.swing.render3d.mnt")); // NOI18N
+        jLabel1.setText(MessageBundle.format("org_geotoolkit_gui_swing_render3d_mnt")); // NOI18N
 
         jScrollPane1.setViewportView(guiMntList);
 
@@ -296,7 +296,7 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
         );
 
         jLabel2.setHorizontalAlignment(SwingConstants.CENTER);
-        jLabel2.setText(MessageBundle.getString("org.geotoolkit.gui.swing.render3d.layer")); // NOI18N
+        jLabel2.setText(MessageBundle.format("org_geotoolkit_gui_swing_render3d_layer")); // NOI18N
 
         jScrollPane2.setViewportView(guiLayerList);
 
@@ -315,7 +315,7 @@ public class JTerrainConfigPanel extends javax.swing.JPanel {
                 .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
         );
 
-        guiApply.setText(MessageBundle.getString("apply")); // NOI18N
+        guiApply.setText(MessageBundle.format("apply")); // NOI18N
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);

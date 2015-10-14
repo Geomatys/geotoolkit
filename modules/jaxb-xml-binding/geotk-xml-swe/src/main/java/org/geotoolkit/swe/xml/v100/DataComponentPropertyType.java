@@ -18,7 +18,6 @@ package org.geotoolkit.swe.xml.v100;
 
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -55,15 +54,16 @@ import org.geotoolkit.swe.xml.Position;
 import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.Vector;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
  * Complex Type for all properties taking the AnyData Group
- * 
+ *
  * <p>Java class for DataComponentPropertyType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DataComponentPropertyType">
  *   &lt;complexContent>
@@ -75,8 +75,8 @@ import org.geotoolkit.swe.xml.Vector;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -200,7 +200,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
         ObjectFactory factory = new ObjectFactory();
         this.abstractDataRecord = factory.createDataRecord(dataRecord);
     }
-    
+
     public DataComponentPropertyType(final AbstractDataRecordType component, final String name) {
         this.name = name;
         final ObjectFactory sweFactory = new ObjectFactory();
@@ -212,7 +212,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
             throw new IllegalArgumentException("this type is not yet handled in dataComponentPropertyType:" + component);
         }
     }
-    
+
     public DataComponentPropertyType(final String name, final String role, final QuantityRange quantityRange) {
         this.name      = name;
         this.role      = role;
@@ -362,7 +362,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
             }
         }
     }
-    
+
     @Override
     public void setToHref() {
         if (abstractDataRecord != null) {
@@ -412,7 +412,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
         } else if (obj instanceof DataArrayType) {
             abstractDataArray = factory.createDataArray((DataArrayType) obj);
         } else if (obj != null) {
-            Logger.getLogger("org.geotoolkit.swe.xml.v100").log(Level.WARNING, "Unimplemented case:{0}", obj.getClass().getName());
+            Logging.getLogger("org.geotoolkit.swe.xml.v100").log(Level.WARNING, "Unimplemented case:{0}", obj.getClass().getName());
         }
 
     }
@@ -445,7 +445,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
             return null;
         }
     }
-    
+
 
     /**
      * Gets the value of the count property.
@@ -584,7 +584,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
 
     /**
      * Gets the value of the abstractDataRecord property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}
@@ -597,7 +597,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
      *     {@link JAXBElement }{@code <}{@link ConditionalValueType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
      *     {@link JAXBElement }{@code <}{@link VectorType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractDataRecordType> getAbstractDataRecord() {
         return abstractDataRecord;
@@ -613,7 +613,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
 
     /**
      * Sets the value of the abstractDataRecord property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link EnvelopeType }{@code >}
@@ -626,7 +626,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
      *     {@link JAXBElement }{@code <}{@link ConditionalValueType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
      *     {@link JAXBElement }{@code <}{@link VectorType }{@code >}
-     *     
+     *
      */
     public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
@@ -634,14 +634,14 @@ public class DataComponentPropertyType implements DataComponentProperty {
 
     /**
      * Gets the value of the abstractDataArray property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractDataArrayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CurveType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DataArrayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SquareMatrixType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends AbstractDataArrayType> getAbstractDataArray() {
         return abstractDataArray;
@@ -649,14 +649,14 @@ public class DataComponentPropertyType implements DataComponentProperty {
 
     /**
      * Sets the value of the abstractDataArray property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractDataArrayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link CurveType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DataArrayType }{@code >}
      *     {@link JAXBElement }{@code <}{@link SquareMatrixType }{@code >}
-     *     
+     *
      */
     public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayType> value) {
         this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayType> ) value);

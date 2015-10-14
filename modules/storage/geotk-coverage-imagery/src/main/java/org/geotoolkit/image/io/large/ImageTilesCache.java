@@ -58,7 +58,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
      *
      * @see #checkMap()
      */
-    private static final Logger LOGGER = Logging.getLogger(ImageTilesCache.class.getCanonicalName());
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
 
     private static final String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
     private static final String FORMAT = "geotiff";
@@ -92,7 +92,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
      * Tile by Tile locks.
      */
     private final WeakValueHashMap<Point,ReadWriteLock> locks = new WeakValueHashMap<>(Point.class);
-    
+
     /**
      * Contains tiles of pointed image.
      * TODO : Replace LargeRaster type with simple raster ? (Raster weight will be embed in {@link org.geotoolkit.image.io.large.CachedTile}
@@ -432,7 +432,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
 
             ReadWriteLock rwl = getLock((Point) keys[idTile]);
             rwl.writeLock().lock();
-            
+
             try {
                 final TileRasterCache tr;
                 synchronized (tiles) {
@@ -454,7 +454,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
             if (++idTile == keys.length) break;
         }
 
-        if (usedCapacity.get() > maxCacheSize) 
+        if (usedCapacity.get() > maxCacheSize)
              throw new IllegalStateException("Impossible to put Tiles into swap cache. "
                      + "The LargeCache capacity has not beeing discrease."
                      + "Maximum allowed cache capacity = "+maxCacheSize

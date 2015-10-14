@@ -71,7 +71,7 @@ public class ElementFeatureWriter {
     /**
      * Logger for this writer.
      */
-    protected static final Logger LOGGER = Logging.getLogger(JAXPStreamFeatureWriter.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature.xml.jaxp");
 
     /**
      * The pool of marshallers used for marshalling geometries.

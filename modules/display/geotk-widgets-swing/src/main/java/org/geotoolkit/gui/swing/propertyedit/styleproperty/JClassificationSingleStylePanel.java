@@ -111,7 +111,7 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
     private FeatureMapLayer layer = null;
 
     public JClassificationSingleStylePanel() {
-        super(MessageBundle.getString("property_style_classification_unique"),
+        super(MessageBundle.format("property_style_classification_unique"),
               IconBundle.getIcon("16_classification_single"),
               IconBundle.getIcon("preview_style_class1").getImage(),
               "");
@@ -186,14 +186,14 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
         jScrollPane1 = new JScrollPane();
         guiTable = new JXTable();
 
-        guiAddOne.setText(MessageBundle.getString("add_value")); // NOI18N
+        guiAddOne.setText(MessageBundle.format("add_value")); // NOI18N
         guiAddOne.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiAddOneActionPerformed(evt);
             }
         });
 
-        guiRemoveAll.setText(MessageBundle.getString("remove_all_values")); // NOI18N
+        guiRemoveAll.setText(MessageBundle.format("remove_all_values")); // NOI18N
         guiRemoveAll.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiRemoveAllActionPerformed(evt);
@@ -202,13 +202,13 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
 
         jPanel1.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 5));
 
-        guiLblProperty.setText(MessageBundle.getString("property")); // NOI18N
+        guiLblProperty.setText(MessageBundle.format("property")); // NOI18N
 
-        guiOther.setText(MessageBundle.getString("otherRule")); // NOI18N
+        guiOther.setText(MessageBundle.format("otherRule")); // NOI18N
 
-        guiLblPalette.setText(MessageBundle.getString("palette")); // NOI18N
+        guiLblPalette.setText(MessageBundle.format("palette")); // NOI18N
 
-        guiLblModel.setText(MessageBundle.getString("model")); // NOI18N
+        guiLblModel.setText(MessageBundle.format("model")); // NOI18N
 
         guiModel.setText(" ");
         guiModel.addActionListener(new ActionListener() {
@@ -217,7 +217,7 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
             }
         });
 
-        guiGenerate.setText(MessageBundle.getString("generate")); // NOI18N
+        guiGenerate.setText(MessageBundle.format("generate")); // NOI18N
         guiGenerate.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiGenerateActionPerformed(evt);
@@ -297,7 +297,7 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
     }// </editor-fold>//GEN-END:initComponents
 
     private void guiAddOneActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiAddOneActionPerformed
-        String val = JOptionPane.showInputDialog(MessageBundle.getString("value")+" :");
+        String val = JOptionPane.showInputDialog(MessageBundle.format("value")+" :");
         MutableRule r = builder.createRule((PropertyName) guiProperty.getSelectedItem(), val);
 
         model.fts.rules().add(r);
@@ -684,8 +684,8 @@ public class JClassificationSingleStylePanel extends AbstractPropertyPane{
         public String getColumnName(final int columnIndex) {
             switch(columnIndex){
                 case 0: return "";
-                case 1: return MessageBundle.getString("value");
-                case 2: return MessageBundle.getString("title");
+                case 1: return MessageBundle.format("value");
+                case 2: return MessageBundle.format("title");
                 case 3: return "";
             }
 

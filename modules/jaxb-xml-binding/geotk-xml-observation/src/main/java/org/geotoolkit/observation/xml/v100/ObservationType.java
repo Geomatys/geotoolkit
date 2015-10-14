@@ -92,30 +92,30 @@ public class ObservationType implements Entry, AbstractObservation {
     protected static final org.geotoolkit.gml.xml.v311.ObjectFactory GML_FACTORY = new org.geotoolkit.gml.xml.v311.ObjectFactory();
 
     protected static final ObjectFactory OM_FACTORY = new ObjectFactory();
-    
+
     /**
      * A logger (debugging purpose)
      */
-    protected static final Logger LOGGER = Logging.getLogger(ObservationType.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.observation.xml.v100");
+
     /**
      *The observation name
      */
     @XmlElement(namespace = "http://www.opengis.net/gml")
     private String name;
-    
+
     /**
      * La description de l'observation
      */
     @XmlTransient
     private String definition;
-    
+
     /**
      * La station à laquelle a été pris cet échantillon.
      */
     @XmlElement(required = true)
     private FeaturePropertyType featureOfInterest;
-    
+
     /**
      * Référence vers le {@linkplain Phenomenon phénomène} observé.
      */
@@ -127,51 +127,51 @@ public class ObservationType implements Entry, AbstractObservation {
      */
     @XmlElement(required = true)
     private ProcessType procedure;
-    
+
      /**
      * Référence vers la {@linkplain Distribution distribution} associée à cet observable.
-     
+
     @XmlTransient
     private Distribution distribution;*/
-    
+
     /**
      * La qualité de la donnée. Peut être nul si cette information n'est pas disponible.
      */
     @XmlTransient
     private ElementType resultQuality;
-    
+
     /**
-     * le resultat de l'observation de n'importe quel type 
+     * le resultat de l'observation de n'importe quel type
      */
     @XmlElementRef(name= "result", namespace="http://www.opengis.net/om/1.0")
     private JAXBElement<Object> result;
-    
+
     /**
-     *  
+     *
      */
      @XmlElement
      private TimeGeometricPrimitivePropertyType samplingTime;
-   
-     
+
+
      /**
       *
       */
      @XmlTransient
      private DefaultMetadata observationMetadata;
-     
+
     /**
-     * 
+     *
      */
      @XmlElement
     private TimeGeometricPrimitivePropertyType procedureTime;
-   
-    
+
+
     /**
      *
      */
     @XmlElement
     private Object procedureParameter;
-    
+
     /**
      * Build An empty observation (used for JAXB serialization)
      */
@@ -200,8 +200,8 @@ public class ObservationType implements Entry, AbstractObservation {
 
     /**
      * Construit une observation.
-     * 
-     * 
+     *
+     *
      * @param featureOfInterest La station d'observation (par exemple une position de pêche).
      * @param observedProperty  Le phénomène observé.
      * @param procedure         La procédure associée.
@@ -217,7 +217,7 @@ public class ObservationType implements Entry, AbstractObservation {
                             final AbstractTimeGeometricPrimitiveType  samplingTime,
                             final DefaultMetadata      observationMetadata,
                             final AbstractTimeGeometricPrimitiveType  procedureTime,
-                            final Object               procedureParameter) 
+                            final Object               procedureParameter)
     {
         this.name                = name;
         this.definition          = definition;
@@ -237,15 +237,15 @@ public class ObservationType implements Entry, AbstractObservation {
         this.resultQuality       = quality;
         this.result              = OM_FACTORY.createResult(result);
         this.observationMetadata = observationMetadata;
-        this.procedureParameter  = procedureParameter; 
+        this.procedureParameter  = procedureParameter;
         this.samplingTime        = new TimeGeometricPrimitivePropertyType(samplingTime);
         this.procedureTime       = new TimeGeometricPrimitivePropertyType(procedureTime);
     }
-    
+
     /**
      * Build a new observation.
-     * 
-     * 
+     *
+     *
      * @param featureOfInterest The observation station.
      * @param observedProperty  The observed phenomenon.
      * @param procedure         The associated procedure.
@@ -275,7 +275,7 @@ public class ObservationType implements Entry, AbstractObservation {
         if (procedure != null) {
             this.procedure       = new ProcessType(procedure);
         }
-        this.resultQuality       = null;      
+        this.resultQuality       = null;
         this.result              = OM_FACTORY.createResult(result);
         this.observationMetadata = null;
         this.procedureTime       = null;
@@ -313,7 +313,7 @@ public class ObservationType implements Entry, AbstractObservation {
         this.procedureParameter  = null;
         this.samplingTime        = new TimeGeometricPrimitivePropertyType(samplingTime);
     }
-    
+
     /**
      * Build a new observation.
      *
@@ -335,11 +335,11 @@ public class ObservationType implements Entry, AbstractObservation {
 
     /**
      * Construit un nouveau template temporaire d'observation a partir d'un template fournit en argument.
-     * On y rajoute un samplingTime et un id temporaire. 
+     * On y rajoute un samplingTime et un id temporaire.
      */
     @Override
     public ObservationType getTemporaryTemplate(final String temporaryName, TemporalGeometricPrimitive time) {
-        if (time == null) { 
+        if (time == null) {
             TimePositionType begin = new  TimePositionType("1900-01-01T00:00:00");
             time = new TimePeriodType(begin);
         }
@@ -361,16 +361,16 @@ public class ObservationType implements Entry, AbstractObservation {
                                     this.procedure.getHref(),
                                     res,
                                     (AbstractTimeGeometricPrimitiveType)time);
-        
+
     }
-    
+
     /**
      */
     @Override
     public void setName(final String name) {
         this.name  = name;
     }
-    
+
     @Override
     public Identifier getName() {
         return new DefaultIdentifier(this.name);
@@ -380,7 +380,7 @@ public class ObservationType implements Entry, AbstractObservation {
     public String getIdentifier() {
         return name;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -412,7 +412,7 @@ public class ObservationType implements Entry, AbstractObservation {
             }
         }
     }
-    
+
     @Override
     public FeaturePropertyType getPropertyFeatureOfInterest(){
         return featureOfInterest;
@@ -442,11 +442,11 @@ public class ObservationType implements Entry, AbstractObservation {
             this.observedProperty = new PhenomenonPropertyType(observedProperty);
         }
     }
-    
+
     public void setPropertyObservedProperty(final PhenomenonPropertyType observedProperty) {
         this.observedProperty = observedProperty;
     }
-    
+
     @Override
     public PhenomenonPropertyType getPropertyObservedProperty() {
        return observedProperty;
@@ -459,14 +459,14 @@ public class ObservationType implements Entry, AbstractObservation {
     public ProcessType getProcedure() {
         return procedure;
     }
-    
+
     @Override
     public void setProcedure(final String procedureID) {
         if (procedureID != null) {
             this.procedure = new ProcessType(procedureID);
         }
     }
-    
+
     /**
      * fixe le capteur qui a effectué cette observation.
      */
@@ -492,7 +492,7 @@ public class ObservationType implements Entry, AbstractObservation {
         }
         return null;
     }
-    
+
     /**
      * Set the result of the observation.
      */
@@ -509,7 +509,7 @@ public class ObservationType implements Entry, AbstractObservation {
     /**
      * Update the result of the obervation by setting the specified String value and numbers of result.
      * and the last date of measure.
-     * 
+     *
      * @param values A datablock of values.
      * @param nbResult the number of result in the datablock.
       * @param lastDate The last date of measure. If this parameter is null, the last date will be kept.
@@ -536,14 +536,14 @@ public class ObservationType implements Entry, AbstractObservation {
             return samplingTime.getTimeGeometricPrimitive();
         }
         return null;
-        
+
     }
-    
+
     @Override
     public void emptySamplingTime() {
         this.samplingTime = null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -578,7 +578,7 @@ public class ObservationType implements Entry, AbstractObservation {
             this.samplingTime = new TimeGeometricPrimitivePropertyType(pt);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -586,7 +586,7 @@ public class ObservationType implements Entry, AbstractObservation {
     public Metadata getObservationMetadata() {
         return observationMetadata;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -596,30 +596,30 @@ public class ObservationType implements Entry, AbstractObservation {
             return procedureTime.getTimeGeometricPrimitive();
         }
         return null;
-        
+
     }
-    
+
     /**
      * {@inheritDoc}
-     */ 
+     */
     @Override
     public Object getProcedureParameter() {
         return procedureParameter;
     }
-    
-   
+
+
     /**
      * {@inheritDoc}
-     */ 
+     */
     @Override
     public String getDefinition() {
         return definition;
     }
-    
+
     /**
      * Return true if the observation match the specified template.
      * @param abstractTemplate
-     */ 
+     */
     @Override
     public boolean matchTemplate(final Observation abstractTemplate) {
         if (abstractTemplate == null) {
@@ -638,7 +638,7 @@ public class ObservationType implements Entry, AbstractObservation {
         } else {
             obsProperty = this.observedProperty == null && template.observedProperty == null;
         }
-        
+
         final boolean obsFoi;
         if (this.featureOfInterest != null && template.featureOfInterest != null) {
             obsFoi = Objects.equals(this.featureOfInterest.getAbstractFeature(),    template.featureOfInterest.getAbstractFeature());
@@ -649,31 +649,31 @@ public class ObservationType implements Entry, AbstractObservation {
         } else {
             obsFoi = this.featureOfInterest == null && template.featureOfInterest == null;
         }
-        
+
         boolean match = obsFoi                                                                   &&
                         Objects.equals(this.procedure,           template.procedure)           &&
-                        Objects.equals(this.resultQuality,       template.resultQuality)       && 
+                        Objects.equals(this.resultQuality,       template.resultQuality)       &&
                         Objects.equals(this.observationMetadata, template.observationMetadata) &&
                         Objects.equals(this.procedureTime,       template.procedureTime)       &&
                         Objects.equals(this.procedureParameter,  template.procedureParameter)  &&
                         obsProperty;
         if (!match) {
             LOGGER.severe("error matching template report:" +
-                   "\nFOI  =>" + obsFoi                                                                   + 
-                   "\nPROC =>" + Objects.equals(this.procedure,           template.procedure)           + 
-                   "\nQUAL =>" + Objects.equals(this.resultQuality,       template.resultQuality)       + 
-                   "\nMETA =>" + Objects.equals(this.observationMetadata, template.observationMetadata) + 
-                   "\nPTI  =>" + Objects.equals(this.procedureTime,       template.procedureTime)       + 
-                   "\nPPAM =>" + Objects.equals(this.procedureParameter,  template.procedureParameter)  + 
+                   "\nFOI  =>" + obsFoi                                                                   +
+                   "\nPROC =>" + Objects.equals(this.procedure,           template.procedure)           +
+                   "\nQUAL =>" + Objects.equals(this.resultQuality,       template.resultQuality)       +
+                   "\nMETA =>" + Objects.equals(this.observationMetadata, template.observationMetadata) +
+                   "\nPTI  =>" + Objects.equals(this.procedureTime,       template.procedureTime)       +
+                   "\nPPAM =>" + Objects.equals(this.procedureParameter,  template.procedureParameter)  +
                    "\nPHEN =>" + obsProperty);
         }
         return match;
-        
-             
-               
-        
+
+
+
+
     }
-    
+
     /**
      * Retourne un code représentant cette observation.
      */
@@ -702,7 +702,7 @@ public class ObservationType implements Entry, AbstractObservation {
             return Objects.equals(this.featureOfInterest,   that.featureOfInterest)   &&
                    Objects.equals(this.observedProperty,    that.observedProperty)    &&
                    Objects.equals(this.procedure,           that.procedure)           &&
-                   Objects.equals(this.resultQuality,       that.resultQuality)       && 
+                   Objects.equals(this.resultQuality,       that.resultQuality)       &&
                    res                                                                  &&
                    Objects.equals(this.samplingTime,        that.samplingTime)        &&
                    Objects.equals(this.observationMetadata, that.observationMetadata) &&
@@ -711,7 +711,7 @@ public class ObservationType implements Entry, AbstractObservation {
         }
         return false;
     }
-    
+
     /**
      * Verifie si l'observation est complete.
      */
@@ -719,7 +719,7 @@ public class ObservationType implements Entry, AbstractObservation {
         //TODO appeler les isCOmplete des attributs
         return (procedure != null) && (observedProperty != null) && (featureOfInterest != null) && (result != null);
     }
-    
+
     /**
      * Retourne une chaine de charactere representant l'observation.
      */
@@ -761,7 +761,7 @@ public class ObservationType implements Entry, AbstractObservation {
     public String getId() {
         return name;
     }
-    
+
     @Override
     public void setId(String id) {
         // do nothing no id on v 1.0.0

@@ -128,10 +128,10 @@ public class XMLPyramid implements Pyramid {
                 crsobj = (CoordinateReferenceSystem) Base64.decodeToObject(serializedCrs);
             } catch (Exception ex) {
                 final String msg = "Unable to read base64 serialized CRS, fallback to WKT : "+ex.getMessage();
-                Logging.getLogger(this.getClass()).log(Level.WARNING, msg);
+                Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, msg);
             }
         }
-        
+
         if (crs != null && crsobj == null) {
             try {
                 if (crs.startsWith("EPSG")) {
@@ -149,25 +149,25 @@ public class XMLPyramid implements Pyramid {
 
     void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) throws DataStoreException {
         ArgumentChecks.ensureNonNull("Input CRS", crs);
-        //-- init 
+        //-- init
         crsobj = crs;
         this.crs = null;
         this.serializedCrs = null;
-        
+
         //-- try wkt2 writing
         final WKTFormat f = new WKTFormat(null, null);
         f.setConvention(Convention.WKT2);
         this.crs = f.format(crs);
-        
+
         if (crs instanceof Serializable) {
             try {
                 this.serializedCrs = Base64.encodeObject((Serializable)crs);
             } catch (IOException serializedEx) {
-                Logging.getLogger(this.getClass()).log(Level.WARNING, serializedEx.getMessage(), serializedEx);
+                Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, serializedEx.getMessage(), serializedEx);
             }
         }
-        
-        
+
+
 //////        //-- if problem try to serialize  CRS
 //////        if (f.getWarnings() != null) {
 //////            if (crs instanceof Serializable) {

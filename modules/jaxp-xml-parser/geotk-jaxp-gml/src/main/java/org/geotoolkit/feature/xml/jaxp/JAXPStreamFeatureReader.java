@@ -80,6 +80,7 @@ import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.type.GeometryType;
 import org.geotoolkit.feature.type.OperationDescriptor;
 import org.geotoolkit.feature.type.OperationType;
+import org.apache.sis.util.logging.Logging;
 import org.w3c.dom.Document;
 
 
@@ -95,7 +96,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     public static final String READ_EMBEDDED_FEATURE_TYPE = "readEmbeddedFeatureType";
     public static final String SKIP_UNEXPECTED_PROPERTY_TAGS = "skipUnexpectedPropertyTags";
     public static final String BINDING_PACKAGE = "bindingPackage";
-    protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature.xml.jaxp");
     private static final FeatureFactory FF = FeatureFactory.LENIENT;
     private Unmarshaller unmarshaller;
     public static final String LONGITUDE_FIRST = "longitudeFirst";
@@ -119,7 +120,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         }
     };
 
-    
+
     private final Map<String,String> schemaLocations = new HashMap<>();
 
     public JAXPStreamFeatureReader() {
@@ -453,7 +454,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
                     if(propertyType instanceof ComplexType){
                         final ComplexAttribute catt = (ComplexAttribute) value;
-                        
+
                         if (pdesc.getMaxOccurs() > 1) {
                             propertyContainer.add(FF.createComplexAttribute(catt.getProperties(), (AttributeDescriptor) pdesc, null));
                         } else {
@@ -564,7 +565,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 } else {
                     longitudeFirst = true;
                 }
-            
+
                 final Geometry jtsGeom;
                 final Object geometry = ((JAXBElement) unmarshaller.unmarshal(reader)).getValue();
                 if (geometry instanceof JTSGeometry) {

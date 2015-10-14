@@ -40,7 +40,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -90,6 +89,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Default implementation of portrayal service.
@@ -607,7 +607,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                 try {
                     writer.dispose();
                 } catch (CoverageStoreException ex1) {
-                    Logger.getLogger(DefaultPortrayalService.class.getName()).log(Level.WARNING, null, ex1);
+                    Logging.getLogger("org.geotoolkit.display2d.service").log(Level.WARNING, null, ex1);
                 }
                 throw new PortrayalException(ex);
             }
@@ -706,7 +706,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         return writeException(e, dim, opaque, null);
     }
 
-        
+
     /**
      * Write an exception in an image. It is possible to set the image as transparent or
      * opaque.
@@ -717,7 +717,7 @@ public final class DefaultPortrayalService implements PortrayalService{
      *               Otherwise the image will be transparent, only the exception trace will
      *               be displayed.
      * @param writingColor the color of the error message. if null, {@code Color.RED} will be used.
-     * 
+     *
      * @return The image with the exception in it.
      */
     public static BufferedImage writeException(final Exception e, final Dimension dim, final boolean opaque, final Color writingColor){
@@ -740,7 +740,7 @@ public final class DefaultPortrayalService implements PortrayalService{
         } else {
             writeColor = writingColor;
         }
-        
+
         g.setColor(writeColor);
         if(maxCharPerLine < 1){
             //not enough space to draw error, simply use a red background

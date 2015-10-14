@@ -160,7 +160,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
     /**
      * The logger for zoom events.
      */
-    private static final Logger LOGGER = Logging.getLogger(ZoomPane.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing");
 
     /**
      * Small number for floating point comparisons.

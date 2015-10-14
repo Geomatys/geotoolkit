@@ -125,10 +125,10 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
         guiExpenderBtn.setIcon(CARET_DOWN);
         
         //ToolTipText on buttons.
-        guiExpenderBtn.setToolTipText(MessageBundle.getString("parameters.collapse"));
-        guiNewGroupBtn.setToolTipText(MessageBundle.getString("parameters.addNewGroupParameter"));
-        guiNewParamBtn.setToolTipText(MessageBundle.getString("parameters.addNewSimpleParameter"));
-        guiRemoveParamBtn.setToolTipText(MessageBundle.getString("parameters.removeParameter"));
+        guiExpenderBtn.setToolTipText(MessageBundle.format("parameters_collapse"));
+        guiNewGroupBtn.setToolTipText(MessageBundle.format("parameters_addNewGroupParameter"));
+        guiNewParamBtn.setToolTipText(MessageBundle.format("parameters_addNewSimpleParameter"));
+        guiRemoveParamBtn.setToolTipText(MessageBundle.format("parameters_removeParameter"));
        
         //label init
         guiGroupNameLbl.setText(code);
@@ -291,12 +291,12 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
         expended = !expended;
         if (expended) {
             guiExpenderBtn.setIcon(CARET_DOWN);
-            guiExpenderBtn.setToolTipText(MessageBundle.getString("parameters.collapse"));
+            guiExpenderBtn.setToolTipText(MessageBundle.format("parameters_collapse"));
             bottomPanel.setVisible(true);
             
         } else {
             guiExpenderBtn.setIcon(CARET_RIGHT);
-            guiExpenderBtn.setToolTipText(MessageBundle.getString("parameters.expend"));
+            guiExpenderBtn.setToolTipText(MessageBundle.format("parameters_expend"));
             bottomPanel.setVisible(false);
         }
     }//GEN-LAST:event_guiExpenderBtnActionPerformed

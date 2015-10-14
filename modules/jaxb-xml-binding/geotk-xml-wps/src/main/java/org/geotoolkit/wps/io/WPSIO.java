@@ -22,7 +22,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.util.*;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.measure.unit.Unit;
 
@@ -33,7 +32,6 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.wps.converters.WPSConverterRegistry;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.converters.WPSObjectConverter;
@@ -55,9 +53,6 @@ import org.opengis.sld.StyledLayerDescriptor;
  * @author Quentin Boileau (Geomatys).
  */
 public final class WPSIO {
-
-    private static final Logger LOGGER = Logging.getLogger(WPSIO.class);
-
     /**
      * A key for userdata map of an {@link org.geotoolkit.parameter.ExtendedParameterDescriptor} object. The aim is to
      * link it with a list of {@link FormatSupport} wanted for the parameter.

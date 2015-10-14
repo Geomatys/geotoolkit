@@ -73,7 +73,7 @@ import org.opengis.util.FactoryException;
  */
 public class WMSCoverageReference extends AbstractCoverageReference{
 
-    protected static final Logger LOGGER = Logging.getLogger(WMSCoverageReference.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
 
     /**
      * Configure the politic when the requested envelope is in CRS:84.

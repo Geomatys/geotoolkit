@@ -31,7 +31,6 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.StringUtilities;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
@@ -55,11 +54,11 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     static {
         ISO_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+0"));
     }
-    
+
     /**
      * Default logger for all GetMap requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractGetMap.class);
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms");
     /**
      * The version to use for this webservice request.
      */
@@ -76,7 +75,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     protected String sldBody = null;
     protected Boolean transparent = null;
     protected WebMapClient server = null;
-    
+
     /**
      * Defines the server url and the service version for this kind of request.
      *
@@ -87,7 +86,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         super(serverURL,security,null);
         this.version = version;
     }
-    
+
     protected AbstractGetMap(final WebMapClient server, final String version, final ClientSecurity security) {
         super(server.getURL().toString(),security,null);
         this.server = server;
@@ -341,9 +340,9 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
                         if(styles != null && !styles.isEmpty()){
                             final String name = styles.get(0).getName();
                             final String title = styles.get(0).getTitle();
-                            if(name!=null){ 
+                            if(name!=null){
                                 sb.append(name);
-                            }else if(title!=null){ 
+                            }else if(title!=null){
                                 sb.append(title);
                             }
                         }
@@ -353,7 +352,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
                     LOGGER.log(Level.FINE, ex.getMessage(),ex);
                 }
             }
-            
+
         }
 
         requestParameters.put(styleParam, styleValue);
@@ -435,8 +434,8 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
                        (!ad.equals(AxisDirection.SOUTH)) && (!ad.equals(AxisDirection.NORTH))) {
 
                 /*
-                 * If other dimension is present in requested CRS, check if current layer capabilities 
-                 * support this dimension before add CQL filter on request. 
+                 * If other dimension is present in requested CRS, check if current layer capabilities
+                 * support this dimension before add CQL filter on request.
                  */
                 if (server != null && layers.length == 1) {
                     try {
@@ -444,7 +443,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
                         final AbstractLayer layer = capa.getLayerFromName(layers[0]);
                         final List capaDims  = layer.getDimension();
                         boolean dimensionSupported = false;
-                        
+
                         for (Object capaDim : capaDims) {
                             if (capaDim instanceof AbstractDimension) {
                                 AbstractDimension absDim = (AbstractDimension) capaDim;
@@ -462,9 +461,9 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
                                 map.put("cql_filter", newFilter);
                             }
                         }
-                        
+
                     } catch (CapabilitiesException ex) {
-                        // no nothing 
+                        // no nothing
                     }
                 }
             }

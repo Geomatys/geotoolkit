@@ -31,9 +31,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ParameterValueType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ParameterValueType">
  *   &lt;complexContent>
@@ -55,11 +55,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ParameterValueType", propOrder = {
+@XmlType(/*name = "ParameterValueType",*/ propOrder = {
     "value",
     "dmsAngleValue",
     "stringValue",
@@ -88,11 +88,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public MeasureType getValue() {
         return value;
@@ -100,11 +100,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureType }
-     *     
+     *
      */
     public void setValue(MeasureType value) {
         this.value = value;
@@ -112,11 +112,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the dmsAngleValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DMSAngleType }
-     *     
+     *
      */
     public DMSAngleType getDmsAngleValue() {
         return dmsAngleValue;
@@ -124,11 +124,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the dmsAngleValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DMSAngleType }
-     *     
+     *
      */
     public void setDmsAngleValue(DMSAngleType value) {
         this.dmsAngleValue = value;
@@ -136,11 +136,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the stringValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getStringValue() {
         return stringValue;
@@ -148,11 +148,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the stringValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setStringValue(String value) {
         this.stringValue = value;
@@ -160,11 +160,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the integerValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getIntegerValue() {
         return integerValue;
@@ -172,11 +172,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the integerValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setIntegerValue(Integer value) {
         this.integerValue = value;
@@ -184,11 +184,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the booleanValue property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public java.lang.Boolean isBooleanValue() {
         return booleanValue;
@@ -196,11 +196,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the booleanValue property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link java.lang.Boolean }
-     *     
+     *
      */
     public void setBooleanValue(java.lang.Boolean value) {
         this.booleanValue = value;
@@ -208,11 +208,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the valueList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link MeasureListType }
-     *     
+     *
      */
     public MeasureListType getValueList() {
         return valueList;
@@ -220,11 +220,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the valueList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link MeasureListType }
-     *     
+     *
      */
     public void setValueList(MeasureListType value) {
         this.valueList = value;
@@ -235,7 +235,7 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Integer }
-     * 
+     *
      */
     public List<Integer> getIntegerValueList() {
         if (integerValueList == null) {
@@ -246,11 +246,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the valueFile property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValueFile() {
         return valueFile;
@@ -258,11 +258,11 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the valueFile property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValueFile(String value) {
         this.valueFile = value;
@@ -270,12 +270,12 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Gets the value of the operationParameterProperty property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link OperationParameterPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link OperationParameterPropertyType }{@code >}
-     *     
+     *
      */
     public JAXBElement<OperationParameterPropertyType> getOperationParameterProperty() {
         return operationParameterProperty;
@@ -283,12 +283,12 @@ public class ParameterValueType extends AbstractGeneralParameterValueType {
 
     /**
      * Sets the value of the operationParameterProperty property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link OperationParameterPropertyType }{@code >}
      *     {@link JAXBElement }{@code <}{@link OperationParameterPropertyType }{@code >}
-     *     
+     *
      */
     public void setOperationParameterProperty(JAXBElement<OperationParameterPropertyType> value) {
         this.operationParameterProperty = ((JAXBElement<OperationParameterPropertyType> ) value);

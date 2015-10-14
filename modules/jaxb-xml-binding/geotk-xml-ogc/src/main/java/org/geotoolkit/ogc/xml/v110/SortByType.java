@@ -25,14 +25,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.SortBy;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for SortByType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SortByType">
  *   &lt;complexContent>
@@ -44,8 +43,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,16 +60,16 @@ public class SortByType implements SortBy {
      * An empty constructor used by JAXB
      */
     public SortByType() {
-        
+
     }
-    
+
     /**
      * Build a new sort by list.
      */
     public SortByType(final List<SortPropertyType> sortProperty) {
         this.sortProperty = sortProperty;
     }
-    
+
     public SortByType(final SortByType that) {
         if (that != null && that.sortProperty != null) {
             this.sortProperty = new ArrayList<>();
@@ -79,7 +78,7 @@ public class SortByType implements SortBy {
             }
         }
     }
-    
+
     /**
      * Gets the value of the sortProperty property.
      * (unmodifiable)

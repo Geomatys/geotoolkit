@@ -35,7 +35,6 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.unit.Unit;
 import javax.swing.ProgressMonitor;
 import net.iharder.Base64;
@@ -70,6 +69,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -345,7 +345,7 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
                         try {
                             writeTile(pyramidId, mosaicId, tx, ty, img);
                         } catch (DataStoreException ex) {
-                            Logger.getLogger(PGCoverageReference.class.getName()).log(Level.SEVERE, null, ex);
+                            Logging.getLogger("org.geotoolkit.coverage.postgresql").log(Level.SEVERE, null, ex);
                         }
                     }
                 });
@@ -585,7 +585,7 @@ public class PGCoverageReference extends AbstractPyramidalCoverageReference {
 
     @Override
     public void setSampleDimensions(List<GridSampleDimension> dimensions) throws DataStoreException {
-        
+
         boolean versionSupport = isVersionColumnExist();
 
         if (dimensions != null) {

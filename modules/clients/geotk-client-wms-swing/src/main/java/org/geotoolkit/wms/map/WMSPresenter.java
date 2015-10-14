@@ -79,7 +79,7 @@ import org.opengis.util.FactoryException;
  */
 public class WMSPresenter extends AbstractInformationPresenter{
 
-    private static final Logger LOGGER = Logging.getLogger(WMSPresenter.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.wms.map");
 
     public WMSPresenter() {
         super(100);
@@ -116,7 +116,7 @@ public class WMSPresenter extends AbstractInformationPresenter{
         final JPanel guiCenterPanel = new JPanel(new BorderLayout());
         guiCenterPanel.setPreferredSize(new Dimension(350, 300));
 
-        final JLabel guiMimeLabel = new JLabel(MessageBundle.getString("mimeType") +"  ");
+        final JLabel guiMimeLabel = new JLabel(MessageBundle.format("mimeType") +"  ");
         final JComboBox guiMimeTypes = new JComboBox();
         guiMimeTypes.setModel(new ListComboBoxModel(mimeTypes));
         guiTopPanel.add(BorderLayout.WEST, guiMimeLabel);

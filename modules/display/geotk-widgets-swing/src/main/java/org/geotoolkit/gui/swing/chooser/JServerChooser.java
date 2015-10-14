@@ -54,7 +54,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class JServerChooser extends javax.swing.JPanel {
 
-    private static final Logger LOGGER = Logging.getLogger(JCoverageStoreChooser.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.chooser");
 
     private static final Comparator<ClientFactory> SORTER = new Comparator<ClientFactory>() {
         @Override
@@ -142,7 +142,7 @@ public class JServerChooser extends javax.swing.JPanel {
 
         guiInfoLabel.setEditable(false);
 
-        guiConnect.setText(MessageBundle.getString("chooserserver.connect")); // NOI18N
+        guiConnect.setText(MessageBundle.format("chooserserver_connect")); // NOI18N
         guiConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiConnectActionPerformed(evt);
@@ -196,7 +196,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             store = getServer();
             chooser.setSource(store);
             guiInfoLabel.setForeground(Color.GREEN);
-            guiInfoLabel.setText(MessageBundle.getString("chooserserver.ok"));
+            guiInfoLabel.setText(MessageBundle.format("chooserserver_ok"));
         } catch (DataStoreException ex) {
             guiInfoLabel.setForeground(Color.RED);
             guiInfoLabel.setText(""+ex.getMessage());

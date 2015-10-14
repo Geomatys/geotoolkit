@@ -20,7 +20,6 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -79,7 +78,7 @@ public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
      */
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString(BUNDLE_PATH, "datastoreFolderDescription");
+        return Bundle.formatInternational(Bundle.Keys.datastoreFolderDescription);
     }
 
     /**
@@ -87,7 +86,7 @@ public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
      */
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString(BUNDLE_PATH, "datastoreFolderTitle");
+        return Bundle.formatInternational(Bundle.Keys.datastoreFolderTitle);
     }
 
     /**

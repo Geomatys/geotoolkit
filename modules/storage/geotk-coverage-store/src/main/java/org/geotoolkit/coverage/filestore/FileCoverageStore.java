@@ -56,7 +56,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class FileCoverageStore extends AbstractCoverageStore implements DataFileStore {
 
-    private static final Logger LOGGER = Logging.getLogger(FileCoverageStore.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.filestore");
 
     private static final String REGEX_SEPARATOR;
     static {

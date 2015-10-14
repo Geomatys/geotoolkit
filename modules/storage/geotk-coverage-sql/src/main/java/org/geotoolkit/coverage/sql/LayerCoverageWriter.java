@@ -349,7 +349,7 @@ public class LayerCoverageWriter extends GridCoverageWriter {
             for (final Tile tile : files) {
                 final File file = (File) tile.getInput();
                 if (!file.delete()) {
-                    Logging.getLogger(LayerCoverageWriter.class).warning(errors().getString(Errors.Keys.CantDeleteFile_1, file));
+                    Logging.getLogger("org.geotoolkit.coverage.sql").warning(errors().getString(Errors.Keys.CantDeleteFile_1, file));
                 }
             }
             throw e;

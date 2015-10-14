@@ -85,7 +85,7 @@ import org.geotoolkit.internal.Loggers;
  */
 public class EditionHelper {
 
-    private static final Logger LOGGER = Logging.getLogger(EditionHelper.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.javafx.render2d.edition");
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
     private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
                                                 new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
@@ -154,7 +154,7 @@ public class EditionHelper {
 
         /**
          * Remove the selected node from the geometry.
-         * 
+         *
          */
         public void deleteSelectedNode() {
             if(!hasNodeSelected()) return;
@@ -162,7 +162,7 @@ public class EditionHelper {
             //save datas
             final int srid = geometry.get().getSRID();
             final Object userData = geometry.get().getUserData();
-            
+
             final Geometry geo = geometry.get().getGeometryN(numSubGeom);
 
             if(numHole < 0){
@@ -243,7 +243,7 @@ public class EditionHelper {
 
             geometry.get().setSRID(srid);
             geometry.get().setUserData(userData);
-            
+
         }
 
         @Override
@@ -278,10 +278,10 @@ public class EditionHelper {
      * It defines the buffer size of the intersection area.
      * If size is too small picking will become impossible.
      * If size is too big picking won't select the most appropriate element.
-     * 
+     *
      * Recommended size range 3 - 10
-     * 
-     * @param mousePointerSize 
+     *
+     * @param mousePointerSize
      */
     public void setMousePointerSize(int mousePointerSize) {
         this.mousePointerSize = mousePointerSize;
@@ -312,7 +312,7 @@ public class EditionHelper {
     }
 
     /**
-     * 
+     *
      * @return constraint geometry
      */
     public Geometry getConstraint() {

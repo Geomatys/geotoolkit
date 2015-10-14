@@ -39,7 +39,7 @@ import org.geotoolkit.feature.type.PropertyDescriptor;
  */
 public class JGeomBox extends JComboBox {
 
-    private static final String ALL_GEOM = MessageBundle.getString("allGeom");
+    private static final String ALL_GEOM = MessageBundle.format("allGeom");
     private MapLayer layer = null;
 
     public JGeomBox() {

@@ -21,7 +21,6 @@ import java.util.TreeSet;
 
 import org.apache.sis.util.ObjectConverters;
 
-import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.FeatureType;
@@ -196,7 +195,7 @@ public final class FeatureValidationUtilities {
 //                        throw new IllegalArgumentException( descriptor.getLocalName()+ " could not convert "+value+" into "+target);
 //                    }
                 } catch (UnconvertibleObjectException e) {
-                    Logging.recoverableException(FeatureValidationUtilities.class, "parse", e);
+                    Logging.recoverableException(null, FeatureValidationUtilities.class, "parse", e);
                     // TODO - do we really want to ignore?
                 }
             }

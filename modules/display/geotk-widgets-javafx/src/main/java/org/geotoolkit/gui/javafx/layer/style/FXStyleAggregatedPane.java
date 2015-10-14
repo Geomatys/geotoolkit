@@ -74,17 +74,17 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  */
 public class FXStyleAggregatedPane extends FXPropertyPane{
-    
+
     private static final MenuItem DUMMY = new CustomMenuItem();
     static {
         DUMMY.setVisible(false);
     }
-    
+
     @FXML protected TreeTableView tree;
     @FXML protected BorderPane contentPane;
 
     protected final ObservableList<Object> menuItems = FXCollections.observableArrayList();;
-    
+
     //current style element editor
     private TreeItem editorPath;
     private FXStyleElementController editor = null;
@@ -169,7 +169,7 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
             updateEditor(layer.getStyle());
             return;
         } catch (JAXBException | FactoryException ex) {
-            Logging.getLogger(FXStyleXMLPane.class).log(Level.FINEST,ex.getMessage(),ex);
+            Logging.getLogger("org.geotoolkit.gui.javafx.layer.style").log(Level.FINEST,ex.getMessage(),ex);
         }
 
         try {
@@ -177,7 +177,7 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
             layer.setStyle(style);
             updateEditor(layer.getStyle());
         } catch (JAXBException | FactoryException ex) {
-            Logging.getLogger(FXStyleXMLPane.class).log(Level.FINEST,ex.getMessage(),ex);
+            Logging.getLogger("org.geotoolkit.gui.javafx.layer.style").log(Level.FINEST,ex.getMessage(),ex);
         }
 
     }
@@ -194,7 +194,7 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
         try {
             tool.writeStyle(result, style, Specification.StyledLayerDescriptor.V_1_1_0);
         } catch (JAXBException ex) {
-            Logging.getLogger(FXStyleXMLPane.class).log(Level.WARNING,ex.getMessage(),ex);
+            Logging.getLogger("org.geotoolkit.gui.javafx.layer.style").log(Level.WARNING,ex.getMessage(),ex);
         }
     }
 
@@ -304,9 +304,9 @@ public class FXStyleAggregatedPane extends FXPropertyPane{
 
     }
 
-    protected void updateEditor(MutableStyle styleElement) {        
+    protected void updateEditor(MutableStyle styleElement) {
         tree.setRoot(new FXStyleTree.StyleTreeItem(styleElement));
         FXUtilities.expandAll(tree.getRoot());
     }
-    
+
 }

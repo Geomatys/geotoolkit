@@ -216,7 +216,7 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
         jPanel1.setLayout(new GridLayout(1, 2, 10, 0));
 
         guiAddMark.setIcon(ICO_ADD);
-        guiAddMark.setText(MessageBundle.getString("new_mark")); // NOI18N
+        guiAddMark.setText(MessageBundle.format("new_mark")); // NOI18N
         guiAddMark.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiAddMarkActionPerformed(evt);
@@ -225,7 +225,7 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
         jPanel1.add(guiAddMark);
 
         guiAddExternal.setIcon(ICO_ADD);
-        guiAddExternal.setText(MessageBundle.getString("new_external")); // NOI18N
+        guiAddExternal.setText(MessageBundle.format("new_external")); // NOI18N
         guiAddExternal.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiAddExternalActionPerformed(evt);

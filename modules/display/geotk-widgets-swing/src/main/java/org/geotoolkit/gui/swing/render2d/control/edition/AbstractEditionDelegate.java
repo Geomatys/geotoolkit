@@ -31,8 +31,8 @@ import org.apache.sis.util.logging.Logging;
  */
 public class AbstractEditionDelegate extends MouseNavigatonListener implements EditionDelegate{
 
-    protected static final Logger LOGGER = Logging.getLogger(AbstractEditionDelegate.class);
-    
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gui.swing.render2d.control.edition");
+
     protected AbstractEditionDelegate(final JMap2D map){
         super(map);
     }

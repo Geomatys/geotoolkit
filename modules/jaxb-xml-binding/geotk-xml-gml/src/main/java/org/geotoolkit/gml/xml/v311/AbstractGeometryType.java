@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -48,6 +47,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.apache.sis.internal.simple.SimpleCitation;
+import org.apache.sis.util.logging.Logging;
 
 
 
@@ -243,14 +243,14 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return getCoordinateReferenceSystem(true);
     }
-    
+
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem(final boolean longitudeFirst) {
         if(srsName != null){
             try {
                 return CRS.decode(srsName, longitudeFirst);
             } catch (FactoryException ex) {
-                Logger.getLogger(AbstractGeometryType.class.getName()).log(Level.WARNING, "Could not decode CRS which name is : " + srsName, ex);
+                Logging.getLogger("org.geotoolkit.gml.xml.v311").log(Level.WARNING, "Could not decode CRS which name is : " + srsName, ex);
             }
         }
 

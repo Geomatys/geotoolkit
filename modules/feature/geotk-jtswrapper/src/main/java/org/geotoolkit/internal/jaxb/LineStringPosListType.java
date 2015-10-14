@@ -4,7 +4,6 @@ package org.geotoolkit.internal.jaxb;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -15,8 +14,8 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineS
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -59,10 +58,8 @@ public class LineStringPosListType {
         if (this.srsName != null) {
             try {
                 crs = CRS.decode(srsName);
-            } catch (NoSuchAuthorityCodeException ex) {
-                Logger.getLogger(LineStringPosListType.class.getName()).log(Level.WARNING, null, ex);
             } catch (FactoryException ex) {
-                Logger.getLogger(LineStringPosListType.class.getName()).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.internal.jaxb").log(Level.WARNING, null, ex);
             }
         }
         final JTSLineString result = new JTSLineString(crs);

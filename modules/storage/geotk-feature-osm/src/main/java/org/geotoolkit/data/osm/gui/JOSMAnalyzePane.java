@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -53,6 +52,7 @@ import org.geotoolkit.data.osm.xml.OSMXMLConstants;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.Feature;
 
+import org.apache.sis.util.logging.Logging;
 import org.jdesktop.swingx.JXErrorPane;
 
 /**
@@ -76,7 +76,7 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
     /** Creates new form JOSMAnalyzePane */
     public JOSMAnalyzePane() {
         initComponents();
-        
+
         rootTreeNode.add(nodeTreeNode);
         rootTreeNode.add(wayTreeNode);
         rootTreeNode.add(relationTreeNode);
@@ -135,7 +135,7 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
             try {
                 store.close();
             } catch (DataStoreException ex) {
-                Logger.getLogger(JOSMAnalyzePane.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.data.osm.gui").log(Level.SEVERE, null, ex);
             }
             store = null;
         }
@@ -324,7 +324,7 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
                         new AnalyzeThread((Class)o).start();
                     }
                 });
-                
+
                 if(o.equals(Node.class)){
                     item.setText("Analyze node tags");
                     TreeMenu.this.add(item);
@@ -390,7 +390,7 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
                     }else{
                         result.incrementValue(value);
                     }
-                    
+
                 }
             }finally{
                 reader.close();

@@ -30,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for OperationParameterGroupType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="OperationParameterGroupType">
  *   &lt;complexContent>
@@ -45,11 +45,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "OperationParameterGroupType", propOrder = {
+@XmlType(/*name = "OperationParameterGroupType",*/ propOrder = {
     "maximumOccurs",
     "parameter"
 })
@@ -62,11 +62,11 @@ public class OperationParameterGroupType extends AbstractGeneralOperationParamet
 
     /**
      * Gets the value of the maximumOccurs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMaximumOccurs() {
         return maximumOccurs;
@@ -74,11 +74,11 @@ public class OperationParameterGroupType extends AbstractGeneralOperationParamet
 
     /**
      * Sets the value of the maximumOccurs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMaximumOccurs(Integer value) {
         this.maximumOccurs = value;
@@ -86,14 +86,14 @@ public class OperationParameterGroupType extends AbstractGeneralOperationParamet
 
     /**
      * Gets the value of the parameter property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractGeneralOperationParameterPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractGeneralOperationParameterPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractGeneralOperationParameterPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractGeneralOperationParameterPropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<AbstractGeneralOperationParameterPropertyType>> getParameter() {
         if (parameter == null) {

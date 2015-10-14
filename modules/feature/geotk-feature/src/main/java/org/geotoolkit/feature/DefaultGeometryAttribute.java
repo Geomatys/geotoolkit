@@ -18,7 +18,6 @@
 package org.geotoolkit.feature;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.geotoolkit.feature.type.GeometryType;
@@ -26,7 +25,6 @@ import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -38,6 +36,7 @@ import java.util.Objects;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.apache.sis.util.logging.Logging;
 
 
 /**
@@ -94,10 +93,8 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
                 if(val instanceof Geometry){
                     try {
                         crs = JTS.findCoordinateReferenceSystem((Geometry) val);
-                    } catch (NoSuchAuthorityCodeException ex) {
-                        Logger.getLogger(DefaultGeometryAttribute.class.getName()).log(Level.WARNING, null, ex);
                     } catch (FactoryException ex) {
-                        Logger.getLogger(DefaultGeometryAttribute.class.getName()).log(Level.WARNING, null, ex);
+                        Logging.getLogger("org.geotoolkit.feature").log(Level.WARNING, null, ex);
                     }
                 }else if(val instanceof org.opengis.geometry.Geometry){
                     crs = ((org.opengis.geometry.Geometry)val).getCoordinateReferenceSystem();

@@ -17,13 +17,13 @@
 
 package org.geotoolkit.processing.coverage.shadedrelief;
 
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.processing.ProcessBundle;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
@@ -38,22 +38,14 @@ import org.opengis.util.InternationalString;
  */
 public class ShadedReliefDescriptor extends AbstractProcessDescriptor {
 
-    private static final String BUNDLE_PATH = "org/geotoolkit/process/coverage/bundle";
-    private static final String ABSTRACT_KEY    = "shadedrelief.abstract";
-    private static final String IN_COVERAGE_KEY = "shadedrelief.inCoverage";
-    private static final String IN_ELEVATION_KEY = "shadedrelief.inElevation";
-    private static final String IN_ELECONV_KEY = "shadedrelief.inEleConv";
-    private static final String OUT_COVERAGE_KEY   = "shadedrelief.outCoverage";
-
-
     public static final String NAME = "shadedrelief";
-    public static final InternationalString abs = new ResourceInternationalString(BUNDLE_PATH, ABSTRACT_KEY);
+    public static final InternationalString abs = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_shadedrelief_abstract);
 
     /*
      * Coverage base image
      */
     public static final String IN_COVERAGE_PARAM_NAME = "inCoverage";
-    public static final InternationalString IN_COVERAGE_PARAM_REMARKS = new ResourceInternationalString(BUNDLE_PATH, IN_COVERAGE_KEY);
+    public static final InternationalString IN_COVERAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_shadedrelief_inCoverage);
     public static final ParameterDescriptor<GridCoverage2D> COVERAGE =
             new DefaultParameterDescriptor(IN_COVERAGE_PARAM_NAME, IN_COVERAGE_PARAM_REMARKS, GridCoverage2D.class, null, true);
     
@@ -61,7 +53,7 @@ public class ShadedReliefDescriptor extends AbstractProcessDescriptor {
      * Coverage elevation
      */
     public static final String IN_ELEVATION_PARAM_NAME = "inElevation";
-    public static final InternationalString IN_ELEVATION_PARAM_REMARKS = new ResourceInternationalString(BUNDLE_PATH, IN_ELEVATION_KEY);
+    public static final InternationalString IN_ELEVATION_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_shadedrelief_inElevation);
     public static final ParameterDescriptor<GridCoverage2D> ELEVATION =
             new DefaultParameterDescriptor(IN_ELEVATION_PARAM_NAME, IN_ELEVATION_PARAM_REMARKS, GridCoverage2D.class, null, true);
     
@@ -69,7 +61,7 @@ public class ShadedReliefDescriptor extends AbstractProcessDescriptor {
      * Coverage elevation value to meters
      */
     public static final String IN_ELECONV_PARAM_NAME = "inEleEnv";
-    public static final InternationalString IN_ELECONV_PARAM_REMARKS = new ResourceInternationalString(BUNDLE_PATH, IN_ELEVATION_KEY);
+    public static final InternationalString IN_ELECONV_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_shadedrelief_inElevation);
     public static final ParameterDescriptor<MathTransform1D> ELECONV =
             new DefaultParameterDescriptor(IN_ELECONV_PARAM_NAME, IN_ELECONV_PARAM_REMARKS, MathTransform1D.class, null, true);
 
@@ -82,7 +74,7 @@ public class ShadedReliefDescriptor extends AbstractProcessDescriptor {
      * Coverage result
      */
     public static final String OUT_COVERAGE_PARAM_NAME = "outCoverage";
-    public static final InternationalString OUT_COVERAGE_PARAM_REMARKS = new ResourceInternationalString(BUNDLE_PATH, OUT_COVERAGE_KEY);
+    public static final InternationalString OUT_COVERAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_shadedrelief_outCoverage);
     public static final ParameterDescriptor<GridCoverage2D> OUTCOVERAGE =
             new DefaultParameterDescriptor(OUT_COVERAGE_PARAM_NAME, OUT_COVERAGE_PARAM_REMARKS, GridCoverage2D.class, null, true);
 

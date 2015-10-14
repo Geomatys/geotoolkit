@@ -65,6 +65,7 @@ import org.geotoolkit.feature.type.ComplexType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.feature.type.PropertyType;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -84,11 +85,11 @@ public class Utils {
      */
     public static final String ANY_PROPERTY_NAME = "_any";
 
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature.xml");
 
     private static final DateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private static final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'Z'");
-    
+
     private static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
     private static final String GML_321_NAMESPACE = "http://www.opengis.net/gml/3.2";
     public static final Set<GenericName> GML_FEATURE_TYPES;
@@ -196,7 +197,7 @@ NamesExt.create(GML_321_NAMESPACE, "@id"), NamesExt.create(GML_321_NAMESPACE, "b
         CLASS_BINDING.put("IDREF",    String.class);
         CLASS_BINDING.put("normalizedString",String.class); //TODO String value of the xml should be trimmed
         CLASS_BINDING.put("NMTOKEN",  String.class);
-        
+
         CLASS_BINDING.put("nonNegativeInteger", Integer.class);
         CLASS_BINDING.put("positiveInteger",    Integer.class);
         CLASS_BINDING.put("integerList",        Integer.class);
@@ -417,13 +418,13 @@ NamesExt.create(GML_321_NAMESPACE, "@id"), NamesExt.create(GML_321_NAMESPACE, "b
                 // maybe we can find a better way to handle Enum. for now we set a String value
                 } else if (binding.isEnum()){
                     result = new QName("http://www.w3.org/2001/XMLSchema", "string");
-                    
+
                 } else if (binding.equals(Object.class)) {
                   if ("3.2.1".equals(gmlVersion)) {
                         result = new QName(GML_321_NAMESPACE, "AbstractObject");
                     } else {
                         result = new QName(GML_311_NAMESPACE, "_Object");
-                    } 
+                    }
                 } else {
                     result = NAME_BINDING.get(binding);
                 }
@@ -640,14 +641,14 @@ NamesExt.create(GML_321_NAMESPACE, "@id"), NamesExt.create(GML_321_NAMESPACE, "b
             return name;
         }
     }
-    
+
     public static Set<String> listAllSubNamespaces(PropertyType type, String namespace){
         final Set<String> ns = new HashSet<>();
         final Set<GenericName> visited = new HashSet<>();
         listAllSubNamespaces(type, ns, visited, namespace);
         return ns;
     }
-    
+
     private static void listAllSubNamespaces(PropertyType type, Set<String> ns, Set<GenericName> visited, final String namespace){
         final GenericName name = type.getName();
         if(visited.contains(name)){
@@ -669,7 +670,7 @@ NamesExt.create(GML_321_NAMESPACE, "@id"), NamesExt.create(GML_321_NAMESPACE, "b
             }
         }
     }
-    
+
     public static Set<String> listAllNamespaces(PropertyType type){
         final Set<String> ns = new HashSet<>();
         final Set<GenericName> visited = new HashSet<>();

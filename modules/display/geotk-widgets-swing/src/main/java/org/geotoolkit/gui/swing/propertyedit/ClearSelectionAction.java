@@ -31,7 +31,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 public class ClearSelectionAction extends AbstractAction {
 
     public ClearSelectionAction() {
-        super(MessageBundle.getString("clear_selection"));
+        super(MessageBundle.format("clear_selection"));
     }
 
     @Override

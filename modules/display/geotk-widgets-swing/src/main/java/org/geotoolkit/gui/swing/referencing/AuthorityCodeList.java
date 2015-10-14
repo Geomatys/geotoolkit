@@ -152,9 +152,9 @@ final class AuthorityCodeList extends AbstractListModel<AuthorityCode> implement
                     process(get());
                 } catch (InterruptedException e) {
                     // Probably a cancelation, so stop the process.
-                    Logging.recoverableException(AuthorityCodeList.class, "<init>", e);
+                    Logging.recoverableException(null, AuthorityCodeList.class, "<init>", e);
                 } catch (ExecutionException e) {
-                    Logging.unexpectedException(AuthorityCodeList.class, "<init>", e.getCause());
+                    Logging.unexpectedException(null, AuthorityCodeList.class, "<init>", e.getCause());
                 }
                 setSelectedCode(selectedCode);
             }

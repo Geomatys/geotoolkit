@@ -22,7 +22,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.vecmath.Vector3f;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -43,6 +42,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  *
@@ -55,7 +55,7 @@ public class ShadedRelief extends AbstractProcess {
         try {
             MERCATOR = CRS.decode("EPSG:3395");
         } catch (FactoryException ex) {
-            Logger.getLogger(ShadedRelief.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger("org.geotoolkit.processing.coverage.shadedrelief").log(Level.SEVERE, null, ex);
         }
     }
 

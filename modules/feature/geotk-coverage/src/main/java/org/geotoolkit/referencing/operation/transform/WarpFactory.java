@@ -237,7 +237,7 @@ public class WarpFactory {
              * Typically happen when the transform does not support the derivative function,
              * in which case we will fallback on the generic (but slow) adapter.
              */
-            Logging.recoverableException(WarpFactory.class, "create", e);
+            Logging.recoverableException(null, WarpFactory.class, "create", e);
             return create(name, transform);
         }
         /*
@@ -290,7 +290,7 @@ public class WarpFactory {
             /*
              * The method does not converge.
              */
-            Logging.recoverableException(WarpFactory.class, "create", e);
+            Logging.recoverableException(null, WarpFactory.class, "create", e);
             return create(name, transform);
         }
         if (depth.width == 0 && depth.height == 0) {

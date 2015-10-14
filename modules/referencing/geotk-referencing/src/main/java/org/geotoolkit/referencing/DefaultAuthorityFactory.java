@@ -191,7 +191,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
      * is more related to factories management than referencing.
      */
     private void log(final Level level, final boolean longitudeFirst) {
-        final Logger logger = Logging.getLogger(AuthorityFactoryFinder.class);
+        final Logger logger = Logging.getLogger("org.geotoolkit.referencing");
         if (logger.isLoggable(level)) {
             final FactoryDependencies printer = new FactoryDependencies(this);
             printer.setAbridged(true);

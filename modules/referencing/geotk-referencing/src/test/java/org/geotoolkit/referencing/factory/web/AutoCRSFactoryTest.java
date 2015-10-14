@@ -30,7 +30,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.referencing.operation.projection.TransverseMercator;
+import org.apache.sis.referencing.operation.projection.TransverseMercator;
 import org.geotoolkit.referencing.operation.projection.Orthographic;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
@@ -127,7 +127,7 @@ public final strictfp class AutoCRSFactoryTest extends ReferencingTestBase {
         assertSame   (proj, factory.createObject(      "42001, 0,0"));
         assertSame   (proj, factory.createObject(      "42001 ,0,0"));
         assertNotSame(proj, factory.createObject("AUTO :42001,30,0"));
-        assertEquals ("Transverse_Mercator", proj.getConversionFromBase().getMethod().getName().getCode());
+        assertEquals ("Transverse Mercator", proj.getConversionFromBase().getMethod().getName().getCode());
     }
 
     /**
@@ -146,7 +146,7 @@ public final strictfp class AutoCRSFactoryTest extends ReferencingTestBase {
         assertSame   (proj, factory.createObject("AUTO2:42001, 9001,0,0"));
         assertSame   (proj, factory.createObject(      "42001, 9001,0,0"));
         assertNotSame(proj, factory.createObject("AUTO :42001, 9001,30,0"));
-        assertEquals ("Transverse_Mercator", proj.getConversionFromBase().getMethod().getName().getCode());
+        assertEquals ("Transverse Mercator", proj.getConversionFromBase().getMethod().getName().getCode());
         assertEquals (TransverseMercator.class, getProjectionClass(proj));
         /*
          * Use an other units.

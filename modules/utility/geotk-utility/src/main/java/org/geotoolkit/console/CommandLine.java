@@ -336,7 +336,7 @@ public abstract class CommandLine implements Runnable {
                     ((ConsoleHandler) handler).setEncoding(encoding.name());
                 } catch (UnsupportedEncodingException e) {
                     // Should not happen.
-                    Logging.unexpectedException(CommandLine.class, "initialize", e);
+                    Logging.unexpectedException(null, CommandLine.class, "initialize", e);
                 }
             }
         }

@@ -47,7 +47,7 @@ public final strictfp class LoggingPanelTest extends SwingTestBase<LoggingPanel>
      */
     public LoggingPanelTest() {
         super(LoggingPanel.class);
-        logger = Logging.getLogger(LoggingPanelTest.class);
+        logger = Logging.getLogger("org.geotoolkit.gui.swing");
         if (isDisplayEnabled()) {
             logger.setLevel(Level.ALL);
         }

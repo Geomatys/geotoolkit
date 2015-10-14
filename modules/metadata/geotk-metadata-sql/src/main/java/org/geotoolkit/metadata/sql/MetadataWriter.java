@@ -500,7 +500,7 @@ public class MetadataWriter extends MetadataSource {
                                             table + '.' + column + " ⇒ " + fkey.tableName + '.' + ID_COLUMN);
                                     record.setSourceMethodName("add");
                                     record.setSourceClassName(MetadataWriter.class.getName());
-                                    Logging.getLogger(MetadataWriter.class).log(record);
+                                    Logging.getLogger("org.geotoolkit.sql").log(record);
                                 }
                             }
                         }

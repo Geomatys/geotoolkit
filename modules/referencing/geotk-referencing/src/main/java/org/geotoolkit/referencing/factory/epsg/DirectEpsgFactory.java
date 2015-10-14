@@ -84,7 +84,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import org.apache.sis.internal.metadata.ReferencingServices;
 import org.apache.sis.internal.referencing.ReferencingUtilities;
 import org.apache.sis.referencing.cs.CoordinateSystems;
@@ -2089,7 +2088,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             if (op instanceof Conversion) {
                                 final Map<String,Object> properties = createProperties(
                                         "[Coordinate Reference System]", name, epsg, area, scope, remarks, deprecated);
-                                crs = factory.createProjectedCRS(properties, baseCRS, (Conversion)op, cs);
+                                crs = factory.createProjectedCRS(properties, baseCRS, (Conversion) op, cs);
                             } else {
                                 throw noSuchAuthorityCode(Projection.class, opCode);
                             }
@@ -2728,7 +2727,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         } catch (NoSuchIdentifierException exception) {
                             /*
                              * If we can not found the operation method by EPSG code, try searching
-                             * by operation name. As a side effect, this second attemt will produce
+                             * by operation name. As a side effect, this second attempt will produce
                              * a better error message if the operation is really not found.
                              */
                             if (methodIdentifier.equals(methodName)) throw exception;
@@ -2749,7 +2748,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      */
                     Map<String,Object> properties = createProperties("[Coordinate_Operation]",
                             name, epsg, area, scope, remarks, deprecated);
-                    if (version!=null && !(version = version.trim()).isEmpty()) {
+                    if (version != null && !(version = version.trim()).isEmpty()) {
                         properties.put(CoordinateOperation.OPERATION_VERSION_KEY, version);
                     }
                     if (!Double.isNaN(accuracy)) {
@@ -2764,7 +2763,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      * this specific case - not to be generalized to the whole EPSG database).
                      */
                     final CoordinateOperation operation;
-                    if (isConversion && (sourceCRS==null || targetCRS==null)) {
+                    if (isConversion && (sourceCRS == null || targetCRS == null)) {
                         // Note: we usually can't resolve sourceCRS and targetCRS because there
                         // is many of them for the same coordinate operation (projection) code.
                         operation = new DefaultConversion(properties, method, null, parameters);

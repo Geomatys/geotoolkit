@@ -499,7 +499,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
         try {
             reader.dispose();
         } catch (CoverageStoreException e) {
-            Logging.unexpectedException(getClass(), "dispose", e);
+            Logging.unexpectedException(null, getClass(), "dispose", e);
         }
         super.dispose();
     }

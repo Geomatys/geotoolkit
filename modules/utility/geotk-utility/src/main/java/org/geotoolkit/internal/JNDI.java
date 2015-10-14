@@ -121,7 +121,7 @@ public final class JNDI extends Static {
                     }
                     fixed = context.composeName(fixed, part);
                 } catch (NamingException e) {
-                    Logging.unexpectedException(JNDI.class, "fixName", e);
+                    Logging.unexpectedException(null, JNDI.class, "fixName", e);
                     return name;
                 }
             }

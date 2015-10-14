@@ -27,7 +27,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.swing.*;
@@ -78,6 +77,8 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.Description;
 import org.opengis.style.LineSymbolizer;
+import org.apache.sis.io.wkt.Warnings;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * CRSChooser component
@@ -147,7 +148,7 @@ public class JCRSChooser extends javax.swing.JDialog {
     private void init(){
         initComponents();
 
-        final JLabel lbl = new JLabel(MessageBundle.getString("loading"));
+        final JLabel lbl = new JLabel(MessageBundle.format("loading"));
         lbl.setHorizontalAlignment(SwingConstants.CENTER);
         lbl.setVerticalAlignment(SwingConstants.CENTER);
         lbl.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -229,7 +230,7 @@ public class JCRSChooser extends javax.swing.JDialog {
                 try {
                     crs = ReferencingUtilities.setLongitudeFirst(crs);
                 } catch (FactoryException ex) {
-                    Logger.getLogger(JCRSChooser.class.getName()).log(Level.SEVERE, null, ex);
+                    Logging.getLogger("org.geotoolkit.gui.swing.crschooser").log(Level.SEVERE, null, ex);
                 }
             }
             return crs;
@@ -255,7 +256,8 @@ public class JCRSChooser extends javax.swing.JDialog {
         String text, warning;
         try {
             text = formatter.format(item);
-            warning = formatter.getWarning();
+            Warnings w = formatter.getWarnings();
+            warning = (w != null) ? w.toString() : null;
         } catch (RuntimeException e) {
             text = String.valueOf((item!=null)?item.getName():"");
             warning = e.getLocalizedMessage();
@@ -382,8 +384,8 @@ public class JCRSChooser extends javax.swing.JDialog {
         but_fermer = new JButton();
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(MessageBundle.getString("crschooser_title")); 
-        jLabel1.setText(MessageBundle.getString("crschooser_crs")); 
+        setTitle(MessageBundle.format("crschooser_title")); 
+        jLabel1.setText(MessageBundle.format("crschooser_crs")); 
         gui_jtf_crs.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 gui_jtf_crsActionPerformed(evt);
@@ -397,7 +399,7 @@ public class JCRSChooser extends javax.swing.JDialog {
 
         pan_list.setLayout(new BorderLayout());
 
-        guiForceLongitudeFirst.setText(MessageBundle.getString("force_longitude_first")); 
+        guiForceLongitudeFirst.setText(MessageBundle.format("force_longitude_first")); 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -425,7 +427,7 @@ public class JCRSChooser extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab(MessageBundle.getString("crschooser_list"), jPanel1); 
+        jTabbedPane1.addTab(MessageBundle.format("crschooser_list"), jPanel1); 
         jScrollPane2.setViewportView(wktArea);
 
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
@@ -439,7 +441,7 @@ public class JCRSChooser extends javax.swing.JDialog {
             .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab(MessageBundle.getString("crschooser_wkt"), jPanel2); 
+        jTabbedPane1.addTab(MessageBundle.format("crschooser_wkt"), jPanel2); 
         jPanel3.setLayout(new BorderLayout());
         jPanel3.add(guiMap, BorderLayout.CENTER);
 
@@ -448,14 +450,14 @@ public class JCRSChooser extends javax.swing.JDialog {
         guiNav.setRollover(true);
         jPanel3.add(guiNav, BorderLayout.EAST);
 
-        jTabbedPane1.addTab(MessageBundle.getString("area_validity"), jPanel3); 
-        but_valider.setText(MessageBundle.getString("crschooser_apply"));         but_valider.addActionListener(new ActionListener() {
+        jTabbedPane1.addTab(MessageBundle.format("area_validity"), jPanel3); 
+        but_valider.setText(MessageBundle.format("crschooser_apply"));         but_valider.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 but_valideractionAjouter(evt);
             }
         });
 
-        but_fermer.setText(MessageBundle.getString("crschooser_cancel"));         but_fermer.addActionListener(new ActionListener() {
+        but_fermer.setText(MessageBundle.format("crschooser_cancel"));         but_fermer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 but_fermeractionFermer(evt);
             }

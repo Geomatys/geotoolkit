@@ -31,7 +31,6 @@ import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.util.ArgumentChecks;
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.metadata.Identifier;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -47,16 +46,15 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module pending
  */
 public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureStoreFactory{
-    protected static final Logger LOGGER = Logging.getLogger(AbstractFolderFeatureStoreFactory.class);
-    private static final String BUNDLE_PATH = "org/geotoolkit/data/bundle";
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data");
 
     /**
      * url to the folder.
      */
     public static final ParameterDescriptor<URL> URLFOLDER = new ParameterBuilder()
             .addName("url")
-            .addName(new ResourceInternationalString(BUNDLE_PATH, "paramURLAlias"))
-            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "paramURLRemarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.paramURLAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramURLRemarks))
             .setRequired(true)
             .create(URL.class, null);
 
@@ -65,15 +63,15 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
      */
     public static final ParameterDescriptor<Boolean> RECURSIVE = new ParameterBuilder()
             .addName("recursive")
-            .addName(new ResourceInternationalString(BUNDLE_PATH, "recursive"))
-            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "recursive_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.recursive))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.recursive_remarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.TRUE);
 
     public static final ParameterDescriptor<Boolean> EMPTY_DIRECTORY = new ParameterBuilder()
             .addName("emptyDirectory")
-            .addName(new ResourceInternationalString(BUNDLE_PATH, "emptyDirectory"))
-            .setRemarks(new ResourceInternationalString(BUNDLE_PATH, "emptyDirectory_remarks"))
+            .addName(Bundle.formatInternational(Bundle.Keys.emptyDirectory))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.emptyDirectory_remarks))
             .setRequired(false)
             .create(Boolean.class, Boolean.FALSE);
 

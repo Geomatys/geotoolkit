@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Generate a {@link org.geotoolkit.feature.simple.SimpleFeature} {@link java.util.List} from kml/kmz folder or file
@@ -55,7 +56,7 @@ import java.util.logging.Logger;
  */
 public class KmlFeatureUtilities {
 
-    private static final Logger LOGGER = Logger.getLogger(KmlFeatureUtilities.class.getName());
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.kml");
 
 
     /**
@@ -240,7 +241,7 @@ public class KmlFeatureUtilities {
 
         //add geometry
         simpleFeature.setPropertyValue("geometry", finalGeom);
-        
+
         //add other data
         for (String valName : values.keySet()) {
             simpleFeature.setPropertyValue(valName, values.get(valName));

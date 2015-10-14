@@ -83,14 +83,14 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
             try {
                 return getCompleteFeature(getFeatureId());
             } catch (DataStoreException ex) {
-                Logging.getLogger(ProjectedFeature.class).log(Level.WARNING, null, ex);
+                Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.WARNING, null, ex);
             }
         }
 
         //worst case, return the partial feature
         return candidate;
     }
-    
+
     @Override
     public ProjectedGeometry getGeometry(Expression geomExp) {
         if(geomExp == null) geomExp = DEFAULT_GEOM;
@@ -101,7 +101,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
 
             final FeatureType featuretype = candidate.getType();
             final PropertyDescriptor prop;
-            
+
             if(!isNullorEmpty(geomExp)) {
                 if(geomExp instanceof PropertyName){
                     prop = featuretype.getDescriptor(((PropertyName)geomExp).getPropertyName());
@@ -143,7 +143,7 @@ public class ProjectedFeature extends DefaultProjectedObject<Feature> {
         }
         return false;
     }
-    
+
     /**
      * Get the original FeatureMapLayer from where the feature is from.
      *

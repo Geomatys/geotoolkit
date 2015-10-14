@@ -64,7 +64,7 @@ import org.opengis.referencing.operation.MathTransform;
  */
 public class IOResampleProcess extends AbstractProcess {
 
-    private static final Logger LOGGER = Logging.getLogger(IOResampleProcess.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.processing.coverage.resample");
 
     private static final int LANCZOS_WINDOW = 2;
 

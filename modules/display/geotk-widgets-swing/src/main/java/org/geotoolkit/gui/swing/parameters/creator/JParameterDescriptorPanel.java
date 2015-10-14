@@ -61,7 +61,7 @@ public final class JParameterDescriptorPanel extends GeneralParameterDescriptorP
         this.type = paramDesc.getValueClass();
         this.defaultValue = paramDesc.getDefaultValue();
         
-        guiRemoveParamBtn.setToolTipText(MessageBundle.getString("parameters.removeParameter"));
+        guiRemoveParamBtn.setToolTipText(MessageBundle.format("parameters_removeParameter"));
         
         //disable remove button if parameter not removable
         guiRemoveParamBtn.setEnabled(editable);

@@ -22,12 +22,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
-import org.geotoolkit.storage.coverage.CoverageUtilities;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.storage.coverage.PyramidSet;
@@ -37,6 +35,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Define {@link Pyramid} and {@link GridMosaic} search rules.
@@ -50,14 +49,14 @@ public abstract class CoverageFinder {
      * Default epsilon used to compare mosaics scales.
      */
     public static final double DEFAULT_EPSILON = 1E-12;
-    
+
     protected CoverageFinder() {
     }
-    
+
     /**
      * Find the most appropriate mosaic in the pyramid with the given information.
      * Result GridMosaic can be on a different scale that the requested one.
-     * 
+     *
      * @param pyramid
      * @param scale
      * @param tolerance
@@ -68,10 +67,10 @@ public abstract class CoverageFinder {
      */
     public abstract GridMosaic findMosaic(final Pyramid pyramid, final double scale,
             final double tolerance, final Envelope env, Integer maxTileNumber) throws FactoryException;
-    
+
     /**
      * Find all mosaics in the pyramid which match given resolution and envelope.
-     * 
+     *
      * @param pyramid
      * @param resolution
      * @param tolerance
@@ -80,13 +79,13 @@ public abstract class CoverageFinder {
      * @throws IllegalArgumentException if no mosaic found when requested with bad resolution.
      * @throws DisjointCoverageDomainException if no mosaic intersect requested envelope
      */
-    public List<GridMosaic> findMosaics(final Pyramid pyramid, final double resolution, 
+    public List<GridMosaic> findMosaics(final Pyramid pyramid, final double resolution,
             final double tolerance, final Envelope env) throws DisjointCoverageDomainException {
         final List<GridMosaic> mosaics = new ArrayList<>(pyramid.getMosaics());
         Collections.sort(mosaics, SCALE_COMPARATOR);
         Collections.reverse(mosaics);
         final List<GridMosaic> result = new ArrayList<>();
-        
+
         //find the most accurate resolution
         final double[] scales = pyramid.getScales();
         if (scales.length == 0) return result;
@@ -100,7 +99,7 @@ public abstract class CoverageFinder {
                 bestScale = d;
             }
         }
-        
+
         int notIntersected = 0;
         //-- search mosaics
         for (GridMosaic candidate : mosaics) {
@@ -114,23 +113,23 @@ public abstract class CoverageFinder {
             if (scale != bestScale) continue;
             result.add(candidate);
         }
-        
+
         if (result.isEmpty()) {
             //-- determine distinction between no intersection with mosaic boundaries
-            if (notIntersected != 0) 
+            if (notIntersected != 0)
                 throw new DisjointCoverageDomainException("No mosaics intersects following requested envelope : "+env.toString());
-            
+
             //-- and scale not found.
             throw new IllegalArgumentException("Impossible to find appropriate mosaic at following requested resolution : "+resolution
                                                +"\n The available(s) mosaic(s) resolution(s) is(are) : "+Arrays.toString(scales));
         }
         return result;
     }
-        
+
     /**
      * Find the most appropriate pyramid in given pyramid set and given crs.
      * Returned Pyramid may not have the given crs.
-     * 
+     *
      * @param set : pyramid set to search in
      * @param crs searched crs
      * @return Pyramid, never null except if the pyramid set is empty
@@ -158,7 +157,7 @@ public abstract class CoverageFinder {
                 try {
                     pyramidBound = org.geotoolkit.referencing.CRS.transform(pyramidBound, crs2D);
                 } catch (TransformException ex) {
-                    Logger.getLogger(CoverageUtilities.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+                    Logging.getLogger("org.geotoolkit.storage.coverage").log(Level.WARNING, ex.getMessage(), ex);
                 }
                 if (!crsBound.intersects(pyramidBound, true)) continue;// no intersection
                 intersection.setEnvelope(crsBound);
@@ -203,8 +202,8 @@ public abstract class CoverageFinder {
         }
         // return first in list. impossible to define the most appropriate crs.
         return results.get(0);
-    } 
-    
+    }
+
     /**
      * Sort Grid Mosaic according to there scale, then on additional dimensions.
      */
@@ -222,7 +221,7 @@ public abstract class CoverageFinder {
                     final int c = Double.valueOf(ord1).compareTo(ord2);
                     if(c != 0) return c;
                 }
-                
+
                 return 0;
             }else if(res > 0){
                 return 1;

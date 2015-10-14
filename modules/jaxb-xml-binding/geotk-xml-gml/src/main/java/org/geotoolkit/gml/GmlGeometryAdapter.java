@@ -40,7 +40,7 @@ import org.apache.sis.internal.jaxb.AdapterReplacement;
  */
 public final class GmlGeometryAdapter extends GM_Object implements AdapterReplacement {
 
-    private static final Logger LOGGER = Logging.getLogger(GmlGeometryAdapter.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.gml");
 
     /**
      * Empty constructor for JAXB only.
@@ -95,7 +95,7 @@ public final class GmlGeometryAdapter extends GM_Object implements AdapterReplac
 
         } else if (metadata instanceof SurfaceType) {
             this.geometry = factory.createSurface((SurfaceType) metadata);
-            
+
         } else if (metadata instanceof org.geotoolkit.gml.xml.v321.PointType) {
             this.geometry = factory321.createPoint((org.geotoolkit.gml.xml.v321.PointType) metadata);
 

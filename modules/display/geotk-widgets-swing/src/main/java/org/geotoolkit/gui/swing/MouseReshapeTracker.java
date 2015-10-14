@@ -1210,7 +1210,7 @@ class MouseReshapeTracker extends MouseInputAdapter implements Shape {
                 try {
                     setFrame(x0, y0, dx, dy);
                 } catch (RuntimeException exception) {
-                    Logging.unexpectedException(MouseReshapeTracker.class, "mouseDragged", exception);
+                    Logging.unexpectedException(null, MouseReshapeTracker.class, "mouseDragged", exception);
                 }
                 source.repaint(x, y, width, height);
                 /*

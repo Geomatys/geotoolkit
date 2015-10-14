@@ -118,11 +118,11 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
 
         jPanel1.setOpaque(false);
 
-        guiLabelSize.setText(MessageBundle.getString("size")); // NOI18N
+        guiLabelSize.setText(MessageBundle.format("size")); // NOI18N
 
-        guiLabelRotation.setText(MessageBundle.getString("rotation")); // NOI18N
+        guiLabelRotation.setText(MessageBundle.format("rotation")); // NOI18N
 
-        guiLabelAlpha.setText(MessageBundle.getString("opacity")); // NOI18N
+        guiLabelAlpha.setText(MessageBundle.format("opacity")); // NOI18N
 
         guiDisplacement.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {

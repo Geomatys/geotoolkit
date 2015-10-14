@@ -83,7 +83,7 @@ public class WidgetsDemo extends javax.swing.JFrame {
         try {
             guiMap.getCanvas().setVisibleArea(context.getBounds());
         } catch (NoninvertibleTransformException | TransformException | IOException ex) {
-            Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger("org.geotoolkit.pending.demo.swing").log(Level.SEVERE, null, ex);
         }
 
 
@@ -105,14 +105,14 @@ public class WidgetsDemo extends javax.swing.JFrame {
         lstproperty.add(new JLayerCRSPane());
 
         LayerFilterPropertyPanel filters = new LayerFilterPropertyPanel();
-        filters.addPropertyPanel(MessageBundle.getString("filter"),new JCQLPropertyPanel());
+        filters.addPropertyPanel(MessageBundle.format("filter"),new JCQLPropertyPanel());
         lstproperty.add(filters);
 
         LayerStylePropertyPanel styles = new LayerStylePropertyPanel();
-        styles.addPropertyPanel(MessageBundle.getString("analyze"),new JSimpleStylePanel());
-        styles.addPropertyPanel(MessageBundle.getString("analyze"),new JClassificationSingleStylePanel());
-        styles.addPropertyPanel(MessageBundle.getString("analyze"),new JClassificationIntervalStylePanel());
-        styles.addPropertyPanel(MessageBundle.getString("sld"),new JAdvancedStylePanel());
+        styles.addPropertyPanel(MessageBundle.format("analyze"),new JSimpleStylePanel());
+        styles.addPropertyPanel(MessageBundle.format("analyze"),new JClassificationSingleStylePanel());
+        styles.addPropertyPanel(MessageBundle.format("analyze"),new JClassificationIntervalStylePanel());
+        styles.addPropertyPanel(MessageBundle.format("sld"),new JAdvancedStylePanel());
         lstproperty.add(styles);
 
         property.setPropertyPanels(lstproperty);
@@ -216,14 +216,8 @@ public class WidgetsDemo extends javax.swing.JFrame {
     public static void main(String args[]) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            Logger.getLogger("org.geotoolkit.pending.demo.swing").log(Level.SEVERE, null, ex);
         }
 
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -231,7 +225,7 @@ public class WidgetsDemo extends javax.swing.JFrame {
                 try {
                     new WidgetsDemo().setVisible(true);
                 } catch (DataStoreException ex) {
-                    Logger.getLogger(WidgetsDemo.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger("org.geotoolkit.pending.demo.swing").log(Level.SEVERE, null, ex);
                 }
             }
         });

@@ -43,7 +43,7 @@ import org.opengis.util.GenericName;
  */
 public class FileCoverageReference extends RecyclingCoverageReference{
 
-    private static final Logger LOGGER = Logging.getLogger(FileCoverageReference.class);
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.filestore");
 
     private final File file;
     private final int imageIndex;
@@ -123,7 +123,7 @@ public class FileCoverageReference extends RecyclingCoverageReference{
     public File getInput() {
         return file;
     }
-    
+
     public ImageReaderSpi getSpi() {
         return spi;
     }

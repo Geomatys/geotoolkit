@@ -41,7 +41,7 @@ public class ConfigAction extends AbstractMapAction {
         super(map);
         putValue(SMALL_ICON, ICON);
         putValue(NAME, "config");
-        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_config"));
+        putValue(SHORT_DESCRIPTION, MessageBundle.format("map_config"));
     }
 
     @Override

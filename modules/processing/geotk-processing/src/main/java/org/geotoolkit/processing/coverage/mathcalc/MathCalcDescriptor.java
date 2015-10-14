@@ -17,13 +17,13 @@
 
 package org.geotoolkit.processing.coverage.mathcalc;
 
-import org.apache.sis.util.iso.ResourceInternationalString;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.processing.ProcessBundle;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -36,8 +36,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  */
 public class MathCalcDescriptor extends AbstractProcessDescriptor {
-
-    private static final String BUNDLE_PATH = "org/geotoolkit/process/coverage/bundle";
     
     public static final String NAME = "mathcalc";
 
@@ -46,7 +44,7 @@ public class MathCalcDescriptor extends AbstractProcessDescriptor {
      */
     public static final ParameterDescriptor<Coverage[]> IN_COVERAGES =
             new DefaultParameterDescriptor("inCoverages", 
-                    new ResourceInternationalString(BUNDLE_PATH, "mathcalc.inCoverages"),
+                    ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inCoverages),
                     Coverage[].class, null, true);
     
     /**
@@ -54,7 +52,7 @@ public class MathCalcDescriptor extends AbstractProcessDescriptor {
      */
     public static final ParameterDescriptor<String> IN_FORMULA =
             new DefaultParameterDescriptor("inFormula", 
-                    new ResourceInternationalString(BUNDLE_PATH, "mathcalc.inFormula"),
+                    ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inFormula),
                     String.class, null, true);
     
     /**
@@ -62,7 +60,7 @@ public class MathCalcDescriptor extends AbstractProcessDescriptor {
      */
     public static final ParameterDescriptor<String[]> IN_MAPPING =
             new DefaultParameterDescriptor("inMapping", 
-                    new ResourceInternationalString(BUNDLE_PATH, "mathcalc.inMapping"),
+                    ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inMapping),
                     String[].class, null, true);
     
     /**
@@ -72,7 +70,7 @@ public class MathCalcDescriptor extends AbstractProcessDescriptor {
      */
     public static final ParameterDescriptor<CoverageReference> IN_RESULT_COVERAGE =
             new DefaultParameterDescriptor("inResultCoverage", 
-                    new ResourceInternationalString(BUNDLE_PATH, "mathcalc.inResultCoverage"),
+                    ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inResultCoverage),
                     CoverageReference.class, null, true);
     
      /**Input parameters */

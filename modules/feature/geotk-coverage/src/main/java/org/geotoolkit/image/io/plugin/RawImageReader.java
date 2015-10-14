@@ -572,7 +572,7 @@ public class RawImageReader extends SpatialImageReader {
                                     other = this;
                                 }
                             } catch (SecurityException e) {
-                                Logging.recoverableException(Spi.class, "onRegistration", e);
+                                Logging.recoverableException(null, Spi.class, "onRegistration", e);
                             }
                             registry.setOrdering(ImageReaderSpi.class, other, last);
                         }

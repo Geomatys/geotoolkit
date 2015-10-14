@@ -17,7 +17,6 @@
 package org.geotoolkit.display2d.primitive;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.storage.coverage.CoverageReference;
@@ -39,6 +38,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
+import org.apache.sis.util.logging.Logging;
 
 /**
  * Convenient representation of a coverage for rendering.
@@ -89,7 +89,7 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
      * @param param : expected coverage parameters
      * @return GridCoverage2D or {@code null} if the requested parameters are out of the coverage area.
      *
-     * @throws CoverageStoreException if problem during {@link CoverageReference#acquireReader() } 
+     * @throws CoverageStoreException if problem during {@link CoverageReference#acquireReader() }
      * or {@link GridCoverageReader#dispose() } call.
      */
     public GridCoverage2D getCoverage(final GridCoverageReadParam param) throws CoverageStoreException{
@@ -136,7 +136,7 @@ public class ProjectedCoverage implements ProjectedObject<CoverageMapLayer> {
             try {
                 env = CRS.transform(env, params.context.getObjectiveCRS2D());
             } catch (TransformException ex) {
-                Logger.getLogger(ProjectedCoverage.class.getName()).log(Level.SEVERE, null, ex);
+                Logging.getLogger("org.geotoolkit.display2d.primitive").log(Level.SEVERE, null, ex);
             }
             env = new GeneralEnvelope(env);
             GO2Utilities.removeNaN((GeneralEnvelope)env);
