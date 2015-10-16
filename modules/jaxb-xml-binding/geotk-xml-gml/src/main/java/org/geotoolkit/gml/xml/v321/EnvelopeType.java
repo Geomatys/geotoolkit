@@ -39,7 +39,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-
+import static org.geotoolkit.util.Utilities.listNullEquals;
 
 /**
  * <p>Java class for EnvelopeType complex type.
@@ -337,6 +337,7 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
      *     {@link Integer }
      *
      */
+    @Override
     public void setSrsDimension(Integer value) {
         this.srsDimension = value;
     }
@@ -452,12 +453,12 @@ public class EnvelopeType implements Envelope, org.geotoolkit.gml.xml.Envelope {
         if (object instanceof EnvelopeType) {
             final EnvelopeType that = (EnvelopeType) object;
 
-            return Objects.equals(this.getAxisLabels(), that.getAxisLabels()) &&
+            return listNullEquals(this.axisLabels,      that.axisLabels)      &&
                    Objects.equals(this.coordinates,     that.coordinates)     &&
                    Objects.equals(this.lowerCorner,     that.lowerCorner)     &&
-                   Objects.equals(this.getPos(),        that.getPos())        &&
+                   listNullEquals(this.pos,             that.pos)             &&
                    Objects.equals(this.srsDimension,    that.srsDimension)    &&
-                   Objects.equals(this.getUomLabels(),  that.getUomLabels())  &&
+                   listNullEquals(this.uomLabels,       that.uomLabels)       &&
                    Objects.equals(this.srsName,         that.srsName);
         }
         return false;

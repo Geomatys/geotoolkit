@@ -38,6 +38,7 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import static org.geotoolkit.util.Utilities.listNullEquals;
 
 
 /**
@@ -71,6 +72,7 @@ import org.opengis.util.FactoryException;
  *
  * @module pending
  */
+import org.geotoolkit.util.Utilities;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EnvelopeType", propOrder = {
     "lowerCorner",
@@ -405,21 +407,6 @@ public class EnvelopeType implements Envelope, Expression {
                    Objects.equals(this.srsName,         that.srsName);
         }
         return false;
-    }
-
-    /**
-     * Utility method to avoir to fill an empty list during equals.
-     * But we want to consider equals a null list and an empty one, for JAXB purpose
-     */
-    private static boolean listNullEquals(List l1, List l2) {
-        if (l1 == null && l2 != null && l2.isEmpty()) {
-            return true;
-        } else if (l2 == null && l1 != null && l1.isEmpty()) {
-            return true;
-        } else {
-            return Objects.equals(l1, l2);
-        }
-
     }
 
     @Override
