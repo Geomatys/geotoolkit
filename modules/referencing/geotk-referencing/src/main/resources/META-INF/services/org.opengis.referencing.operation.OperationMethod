@@ -16,7 +16,6 @@ org.geotoolkit.referencing.operation.provider.HotineObliqueMercator
 org.geotoolkit.referencing.operation.provider.HotineObliqueMercator$TwoPoint
 org.geotoolkit.referencing.operation.provider.CassiniSoldner
 org.geotoolkit.referencing.operation.provider.Stereographic
-org.geotoolkit.referencing.operation.provider.ObliqueStereographic
 org.geotoolkit.referencing.operation.provider.Polyconic
 org.geotoolkit.referencing.operation.provider.NewZealandMapGrid
 org.geotoolkit.referencing.operation.provider.Krovak

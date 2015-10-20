@@ -21,100 +21,31 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.OperationMethod;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.geotoolkit.resources.Errors;
 import org.apache.sis.parameter.Parameters;
 import org.apache.sis.util.ComparisonMode;
 import org.apache.sis.referencing.operation.matrix.Matrix2;
+import org.apache.sis.referencing.operation.transform.DefaultMathTransformFactory;
 import org.apache.sis.referencing.operation.projection.ProjectionException;
+import org.apache.sis.referencing.operation.projection.NormalizedProjection;
+import org.apache.sis.referencing.operation.projection.PolarStereographic;
+import org.apache.sis.internal.referencing.provider.PolarStereographicA;
+import org.apache.sis.internal.system.DefaultFactories;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
-import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic.PARAMETERS;
 
 
 /**
- * <cite>Stereographic</cite> projection. See the
- * <A HREF="http://mathworld.wolfram.com/StereographicProjection.html">Stereographic projection on
- * MathWorld</A> for an overview. See any of the following providers for a list of programmatic
- * parameters:
- * <p>
- * <ul>
- *   <li>{@link org.geotoolkit.referencing.operation.provider.Stereographic}</li>
- *   <li>{@link org.geotoolkit.referencing.operation.provider.PolarStereographic}</li>
- *   <li>{@link org.geotoolkit.referencing.operation.provider.PolarStereographic.North}</li>
- *   <li>{@link org.geotoolkit.referencing.operation.provider.PolarStereographic.South}</li>
- *   <li>{@link org.geotoolkit.referencing.operation.provider.PolarStereographic.VariantB}</li>
- * </ul>
- *
- * {@section Description}
- *
- * The directions starting from the central point are true, but the areas and the lengths become
- * increasingly deformed as one moves away from the center. This projection is used to represent
- * polar areas. It can be adapted for other areas having a circular form.
- * <p>
- * This implementation, and its subclasses, provides transforms for six cases of the
- * stereographic projection:
- * <p>
- * <ul>
- *   <li>{@code "Oblique_Stereographic"} (EPSG code 9809), alias {@code "Double_Stereographic"}
- *       in ESRI software</li>
- *   <li>{@code "Stereographic"} in ESRI software (<strong>NOT</strong> EPSG code 9809)</li>
- *   <li>{@code "Polar_Stereographic"} (EPSG code 9810, uses a series calculation for the
- *       inverse)</li>
- *   <li>{@code "Polar_Stereographic (variant B)"} (EPSG code 9829, uses a series calculation
- *       for the inverse)</li>
- *   <li>{@code "Stereographic_North_Pole"} in ESRI software (uses iteration for the inverse)</li>
- *   <li>{@code "Stereographic_South_Pole"} in ESRI software (uses iteration for the inverse)</li>
- * </ul>
- * <p>
- * Both the {@code "Oblique_Stereographic"} and {@code "Stereographic"} projections are "double"
- * projections involving two parts: 1) a conformal transformation of the geographic coordinates
- * to a sphere and 2) a spherical Stereographic projection. The EPSG considers both methods to
- * be valid, but considers them to be a different coordinate operation methods.
- * <p>
- * The {@code "Stereographic"} case uses the USGS equations of Snyder. This employs a simplified
- * conversion to the conformal sphere that computes the conformal latitude of each point on the
- * sphere.
- * <p>
- * The {@code "Oblique_Stereographic"} case uses equations from the EPSG. This uses a more
- * generalized form of the conversion to the conformal sphere; using only a single conformal
- * sphere at the origin point. Since this is a "double" projection, it is sometimes called
- * the "Double Stereographic". The {@code "Oblique_Stereographic"} is used in New Brunswick
- * (Canada) and the Netherlands.
- * <p>
- * The {@code "Stereographic"} and {@code "Double_Stereographic"} names are used in ESRI's
- * ArcGIS 8.x product. The {@code "Oblique_Stereographic"} name is the EPSG name for the
- * later only.
- *
- * {@note Tests points calculated with ArcGIS's <code>"Double_Stereographic"</code> are not always
- *        equal to points calculated with the <code>"Oblique_Stereographic"</code>. However, where
- *        there are differences, two different implementations of these equations (EPSG guidence
- *        note 7 and <code>libproj</code>) calculate the same values as we do. Until these
- *        differences are resolved, please be careful when using this projection.}
- *
- * If a {@link org.geotoolkit.referencing.operation.provider.Stereographic#LATITUDE_OF_ORIGIN
- * "latitude_of_origin"} parameter is supplied and is not consistent with the projection
- * classification (for example a latitude different from &plusmn;90&deg; for the polar case),
- * then the oblique or polar case will be automatically inferred from the latitude. In other
- * words, the latitude of origin has precedence on the projection classification. If omitted,
- * then the default value is 90&deg;N for {@code "Polar_Stereographic"} and 0&deg; for
- * {@code "Oblique_Stereographic"}.
- * <p>
- * Polar projections that use the series equations for the inverse calculation will be little bit
- * faster, but may be a little bit less accurate. If a polar {@code "latitude_of_origin"} is used
- * for the {@code "Oblique_Stereographic"} or {@code "Stereographic"}, the iterative equations will
- * be used for inverse polar calculations.
- * <p>
- * The {@code "Polar Stereographic (variant B)"}, {@code "Stereographic_North_Pole"},
- * and {@code "Stereographic_South_Pole"} cases include a
- * {@link org.geotoolkit.referencing.operation.provider.PolarStereographic.VariantB#STANDARD_PARALLEL
- * "standard_parallel_1"} parameter. This parameter sets the latitude with a scale factor equal to
- * the supplied scale factor. The {@code "Polar Stereographic (variant A)"} forces its
- * {@code "latitude_of_origin"} parameter to &plusmn;90&deg;, depending on the hemisphere.
+ * <cite>Stereographic</cite> projection using USGS formulas.
+ * This is slightly different than the <cite>Oblique Stereographic</cite> provided in Apache SIS,
+ * which uses the formulas published in the EPSG guide.
  *
  * {@section References}
  * <ul>
@@ -138,10 +69,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
  *
- * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/random_issues.html#stereographic">Some Random Stereographic Issues</A>
- *
- * @since 1.0
- * @module
+ * @see <a href="http://www.remotesensing.org/geotiff/proj_list/random_issues.html#stereographic">Some Random Stereographic Issues</a>
  */
 public class Stereographic extends UnitaryProjection {
     /**
@@ -188,43 +116,33 @@ public class Stereographic extends UnitaryProjection {
      * @param  descriptor Typically {@code Stereographic.PARAMETERS}.
      * @param  values The parameter values of the projection to create.
      * @return The map projection.
-     *
-     * @since 3.00
      */
     public static MathTransform2D create(final OperationMethod descriptor,
                                          final ParameterValueGroup values)
     {
         final Parameters parameters = Parameters.castOrWrap(values);
         final double latitudeOfOrigin = toRadians(parameters.doubleValue(org.geotoolkit.referencing.operation.provider.Stereographic.LATITUDE_OF_ORIGIN));
-        final org.apache.sis.referencing.operation.projection.NormalizedProjection projection;
-        if (abs(latitudeOfOrigin - PI/2) < ANGLE_TOLERANCE) {
-            projection = new org.apache.sis.referencing.operation.projection.PolarStereographic(
-                    new org.apache.sis.internal.referencing.provider.PolarStereographicA(), parameters);
-            //projection = PolarStereographic.create(descriptor, parameters);
-        } else {
-            final boolean isSpherical = isSpherical(parameters);
-            final boolean isEPSG = nameMatches(parameters, PARAMETERS);
-            if (abs(latitudeOfOrigin) < ANGLE_TOLERANCE) {
-                if (isSpherical) {
-                    projection = new EquatorialStereographic.Spherical(descriptor, parameters);
-                } else if (!isEPSG) {
-                    projection = new EquatorialStereographic(descriptor, parameters);
-                } else {
-                    projection = new ObliqueStereographic(descriptor, parameters);
-                }
-            } else if (isSpherical) {
-                projection = new Stereographic.Spherical(descriptor, parameters);
-            } else if (!isEPSG) {
-                projection = new Stereographic(descriptor, parameters);
-            } else {
-                projection = new ObliqueStereographic(descriptor, parameters);
-            }
-        }
+        final DefaultMathTransformFactory factory = DefaultFactories.forBuildin(MathTransformFactory.class, DefaultMathTransformFactory.class);
         try {
-            return (MathTransform2D) projection.createMapProjection(
-                    org.apache.sis.internal.system.DefaultFactories.forBuildin(
-                            org.opengis.referencing.operation.MathTransformFactory.class));
-        } catch (org.opengis.util.FactoryException e) {
+            final NormalizedProjection projection;
+            if (abs(latitudeOfOrigin - PI/2) < ANGLE_TOLERANCE) {
+                projection = new PolarStereographic(factory.getOperationMethod(PolarStereographicA.NAME), parameters);
+            } else {
+                final boolean isSpherical = isSpherical(parameters);
+                if (abs(latitudeOfOrigin) < ANGLE_TOLERANCE) {
+                    if (isSpherical) {
+                        projection = new EquatorialStereographic.Spherical(descriptor, parameters);
+                    } else {
+                        projection = new EquatorialStereographic(descriptor, parameters);
+                    }
+                } else if (isSpherical) {
+                    projection = new Stereographic.Spherical(descriptor, parameters);
+                } else {
+                    projection = new Stereographic(descriptor, parameters);
+                }
+            }
+            return (MathTransform2D) projection.createMapProjection(factory);
+        } catch (FactoryException e) {
             throw new IllegalArgumentException(e); // TODO
         }
     }

@@ -33,17 +33,9 @@ import org.geotoolkit.metadata.Citations;
 
 
 /**
- * The base provider for "<cite>Stereographic</cite>" projections.
- * The default implementation uses USGS equations. This is <strong>not</strong> the provider
- * for EPSG:9809. For the later, use {@link ObliqueStereographic} instead.
- * <p>
- * The math transform implementations instantiated by this provider may be any of the following classes:
- * <p>
- * <ul>
- *   <li>{@link org.geotoolkit.referencing.operation.projection.Stereographic}</li>
- *   <li>{@link org.geotoolkit.referencing.operation.projection.PolarStereographic}</li>
- *   <li>{@link org.geotoolkit.referencing.operation.projection.EquatorialStereographic}</li>
- * </ul>
+ * The provider for "<cite>Stereographic</cite>" projections using USGS equations.
+ * This is <strong>not</strong> the provider for EPSG:9809.
+ * For the later, use the Apache SIS {@code ObliqueStereographic} instead.
  *
  * <!-- PARAMETERS Stereographic -->
  * <p>The following table summarizes the parameters recognized by this provider.
@@ -63,16 +55,6 @@ import org.geotoolkit.metadata.Citations;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/stereographic.html">Stereographic on RemoteSensing.org</A>
- * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
- *
- * @see ObliqueStereographic
- * @see PolarStereographic
- *
- * @since 2.4
- * @module
  */
 public class Stereographic extends MapProjection {
     /**
@@ -87,11 +69,7 @@ public class Stereographic extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
 
     /**
@@ -101,11 +79,7 @@ public class Stereographic extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
 
     /**
@@ -116,11 +90,7 @@ public class Stereographic extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">optional</a> as in
      * <cite>remotesensing.org</cite>. Valid values range is (0 &hellip; &infin;) and
      * default value is 1.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
     public static final ParameterDescriptor<Double> SCALE_FACTOR;
 
     /**
@@ -130,11 +100,7 @@ public class Stereographic extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
     public static final ParameterDescriptor<Double> FALSE_EASTING;
 
     /**
@@ -144,11 +110,7 @@ public class Stereographic extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
-    @Deprecated
     public static final ParameterDescriptor<Double> FALSE_NORTHING;
 
     /**

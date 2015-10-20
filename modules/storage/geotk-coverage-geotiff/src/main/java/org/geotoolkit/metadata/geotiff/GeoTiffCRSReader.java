@@ -75,7 +75,7 @@ import org.apache.sis.internal.referencing.provider.LambertConformal1SP;
 import org.apache.sis.internal.referencing.provider.LambertConformal2SP;
 import org.geotoolkit.referencing.operation.provider.NewZealandMapGrid;
 import org.geotoolkit.referencing.operation.provider.ObliqueMercator;
-import org.geotoolkit.referencing.operation.provider.ObliqueStereographic;
+import org.apache.sis.internal.referencing.provider.ObliqueStereographic;
 import org.geotoolkit.referencing.operation.provider.Orthographic;
 import org.apache.sis.internal.referencing.provider.PolarStereographicA;
 import org.geotoolkit.referencing.operation.provider.Stereographic;
@@ -808,7 +808,6 @@ final class GeoTiffCRSReader {
              * Lambert_conformal_conic_2SP
              */
             if (name.equalsIgnoreCase("lambert_conformal_conic_2SP")
-                    || name.equalsIgnoreCase("lambert_conformal_conic_2SP_Belgium")
                     || code == CT_LambertConfConic_2SP) {
                 parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_2SP");
                 parameters.parameter(code(LambertConformal2SP.LONGITUDE_OF_FALSE_ORIGIN)).setValue(getOriginLong(metadata));
@@ -866,8 +865,8 @@ final class GeoTiffCRSReader {
              */
             if (name.equalsIgnoreCase("oblique_stereographic")
                     || code == CT_ObliqueStereographic) {
-                parameters = mtFactory.getDefaultParameters(code(ObliqueStereographic.PARAMETERS));
-                parameters.parameter(code(ObliqueStereographic.CENTRAL_MERIDIAN)).setValue(getOriginLong(metadata));
+                parameters = mtFactory.getDefaultParameters(code(new ObliqueStereographic().getParameters()));  // TODO: use a more efficient way.
+                parameters.parameter(code(ObliqueStereographic.LONGITUDE_OF_ORIGIN)).setValue(getOriginLong(metadata));
                 parameters.parameter(code(ObliqueStereographic.LATITUDE_OF_ORIGIN)).setValue(getOriginLat(metadata));
                 parameters.parameter(code(ObliqueStereographic.SCALE_FACTOR)).setValue(metadata.getAsDouble(ProjScaleAtNatOriginGeoKey));
                 parameters.parameter(code(ObliqueStereographic.FALSE_EASTING)).setValue(getFalseEasting(metadata));

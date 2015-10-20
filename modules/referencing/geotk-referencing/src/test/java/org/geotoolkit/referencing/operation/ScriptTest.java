@@ -129,17 +129,6 @@ public final strictfp class ScriptTest extends ReferencingTestBase {
     }
 
     /**
-     * Run {@code "TransverseMercator.txt"}.
-     *
-     * @throws Exception If a test failed.
-     */
-    @Test
-    @Ignore("Platform-dependent failures: need to investigate")
-    public void testTransverseMercator() throws Exception {
-        runScript("TransverseMercator.txt");
-    }
-
-    /**
      * Run {@code "AlbersEqualArea.txt"}.
      *
      * @throws Exception If a test failed.
@@ -159,16 +148,6 @@ public final strictfp class ScriptTest extends ReferencingTestBase {
     @Ignore("Temporarily disabled. A tolerance threshold which is currently 1E-6 needs to be come 1.3E-6. But before to change the threshold, we are waiting to see if migration in SIS fix the issue.")
     public void testLambertAzimuthalEqualArea() throws Exception {
         runScript("LambertAzimuthalEqualArea.txt");
-    }
-
-    /**
-     * Run {@code "Stereographic.txt"}.
-     *
-     * @throws Exception If a test failed.
-     */
-    @Test
-    public void testStereographic() throws Exception {
-        runScript("Stereographic.txt");
     }
 
     /**

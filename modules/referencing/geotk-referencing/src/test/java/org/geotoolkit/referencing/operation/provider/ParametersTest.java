@@ -59,12 +59,10 @@ public final strictfp class ParametersTest {
         NewZealandMapGrid                 .PARAMETERS,
         ObliqueMercator                   .PARAMETERS,
         ObliqueMercator.TwoPoint          .PARAMETERS,
-        ObliqueStereographic              .PARAMETERS,
         Orthographic                      .PARAMETERS,
         Polyconic                         .PARAMETERS,
         PositionVector7Param              .PARAMETERS,
-        RGF93                             .PARAMETERS,
-        Stereographic                     .PARAMETERS
+        RGF93                             .PARAMETERS
     };
 
     /**
