@@ -48,7 +48,7 @@ import org.opengis.metadata.lineage.Lineage;
 import org.opengis.metadata.quality.DataQuality;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.util.InternationalString;
-import org.opengis.util.Enumerated;
+import org.opengis.util.ControlledVocabulary;
 
 import org.geotoolkit.util.Utilities;
 import org.apache.sis.util.ArgumentChecks;
@@ -357,7 +357,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
      * @return {@code true} if the value has been added, or {@code false} otherwise.
      * @throws IOException If an I/O operation was required and failed.
      */
-    private boolean setAttribute(final Enumerated code) throws IOException {
+    private boolean setAttribute(final ControlledVocabulary code) throws IOException {
         return (code != null) && setAttribute(Types.getCodeName(code));
     }
 
