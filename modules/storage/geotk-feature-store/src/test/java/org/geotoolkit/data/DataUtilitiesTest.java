@@ -21,7 +21,7 @@ import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.iterator.CheckCloseFeatureIterator;
 import org.geotoolkit.data.memory.MemoryFeatureStore;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 
 import org.junit.Test;

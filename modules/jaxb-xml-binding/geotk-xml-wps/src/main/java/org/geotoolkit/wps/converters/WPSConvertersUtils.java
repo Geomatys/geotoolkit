@@ -77,7 +77,7 @@ import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;

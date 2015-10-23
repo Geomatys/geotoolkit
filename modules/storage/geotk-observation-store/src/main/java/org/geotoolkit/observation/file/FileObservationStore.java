@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.observation.AbstractObservationStore;
 import org.geotoolkit.observation.ObservationReader;
 import static org.geotoolkit.observation.file.FileObservationStoreFactory.FILE_PATH;

@@ -49,7 +49,7 @@ import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;

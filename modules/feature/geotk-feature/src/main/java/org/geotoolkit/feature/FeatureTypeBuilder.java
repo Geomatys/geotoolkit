@@ -36,7 +36,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureType;
 import org.geotoolkit.feature.type.AttributeDescriptor;
 import org.geotoolkit.feature.type.AttributeType;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.geotoolkit.feature.type.GeometryDescriptor;

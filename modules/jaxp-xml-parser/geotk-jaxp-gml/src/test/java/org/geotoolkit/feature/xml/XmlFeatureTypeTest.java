@@ -34,7 +34,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import static org.geotoolkit.data.AbstractFeatureStore.GML_311_NAMESPACE;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.ComplexType;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.xml.DomCompare;

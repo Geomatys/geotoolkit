@@ -30,7 +30,7 @@ import java.util.Set;
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureStoreFinder;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.sql.DefaultDataSource;

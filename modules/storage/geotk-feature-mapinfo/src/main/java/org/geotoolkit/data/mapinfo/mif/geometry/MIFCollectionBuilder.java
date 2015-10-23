@@ -19,7 +19,7 @@ package org.geotoolkit.data.mapinfo.mif.geometry;
 import com.vividsolutions.jts.geom.*;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.mapinfo.mif.MIFUtils;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.feature.type.DefaultAttributeType;

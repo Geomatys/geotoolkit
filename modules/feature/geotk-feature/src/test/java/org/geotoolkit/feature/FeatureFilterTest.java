@@ -35,7 +35,7 @@ import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.feature.type.PropertyDescriptor;

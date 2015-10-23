@@ -20,6 +20,7 @@
 package org.geotoolkit.feature.type;
 
 
+import org.geotoolkit.util.NamesExt;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.geotoolkit.util.NamesExt;
 import java.util.Set;
 import java.io.IOException;
 import java.io.StringWriter;

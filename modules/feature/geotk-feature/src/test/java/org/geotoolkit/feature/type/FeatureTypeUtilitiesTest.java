@@ -21,7 +21,7 @@ package org.geotoolkit.feature.type;
 
 import com.vividsolutions.jts.geom.Point;
 
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.referencing.CRS;

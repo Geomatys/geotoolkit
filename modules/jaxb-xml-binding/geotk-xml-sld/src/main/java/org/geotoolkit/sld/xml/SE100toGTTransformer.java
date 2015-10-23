@@ -29,7 +29,7 @@ import javax.measure.unit.Unit;
 import javax.swing.Icon;
 import javax.xml.bind.JAXBElement;
 
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 
 import org.geotoolkit.ogc.xml.OGC100toGTTransformer;
 

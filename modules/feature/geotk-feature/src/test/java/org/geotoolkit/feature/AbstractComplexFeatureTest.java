@@ -31,6 +31,7 @@
  */
 package org.geotoolkit.feature;
 
+import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import java.util.ArrayList;
 import java.util.Collection;

@@ -44,7 +44,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.display.container.GraphicContainer;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.gui.swing.render2d.JMap2D;
 import org.geotoolkit.gui.swing.render2d.control.selection.DefaultSelectionHandler;
 import org.geotoolkit.font.FontAwesomeIcons;

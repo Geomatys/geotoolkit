@@ -10,7 +10,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 
 import org.geotoolkit.coverage.filestore.*;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.ProgressWindow;
 import org.geotoolkit.image.jai.Registry;

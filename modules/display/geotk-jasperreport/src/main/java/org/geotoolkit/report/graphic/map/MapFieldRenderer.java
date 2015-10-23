@@ -28,7 +28,7 @@ import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.report.JRFieldRenderer;
 import org.geotoolkit.report.graphic.EmptyRenderable;

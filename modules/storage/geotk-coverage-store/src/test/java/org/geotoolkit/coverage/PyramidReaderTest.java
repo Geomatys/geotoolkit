@@ -13,7 +13,7 @@ import org.apache.sis.measure.NumberRange;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.memory.MPCoverageStore;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.image.BufferedImages;

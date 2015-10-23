@@ -54,7 +54,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.version.VersionControl;

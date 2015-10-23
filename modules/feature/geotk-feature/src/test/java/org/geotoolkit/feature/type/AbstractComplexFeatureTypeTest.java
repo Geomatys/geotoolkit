@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import org.geotoolkit.feature.MockCRS;
 import org.geotoolkit.feature.MockDirectPosition2D;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.geotoolkit.feature.type.*;

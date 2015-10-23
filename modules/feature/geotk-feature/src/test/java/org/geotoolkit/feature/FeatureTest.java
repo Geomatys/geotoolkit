@@ -36,7 +36,7 @@ import org.junit.Test;
 
 import org.geotoolkit.feature.simple.SimpleFeature;
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 
 import static org.geotoolkit.test.Assert.*;

@@ -39,7 +39,7 @@ import org.geotoolkit.filter.identity.DefaultFeatureId;
 
 import org.geotoolkit.feature.Property;
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.feature.PropertyNotFoundException;
