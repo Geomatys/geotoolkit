@@ -87,6 +87,7 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
      *     {@link TimePositionType }
      *     
      */
+    @Override
     public TimePositionType getBeginPosition() {
         return beginPosition;
     }
@@ -111,6 +112,7 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
      *     {@link TimePositionType }
      *     
      */
+    @Override
     public TimePositionType getEndPosition() {
         return endPosition;
     }
@@ -135,6 +137,7 @@ public class EnvelopeWithTimePeriodType extends EnvelopeType implements Envelope
      *     {@link String }
      *     
      */
+    @Override
     public String getFrame() {
         if (frame == null) {
             return "#ISO-8601";

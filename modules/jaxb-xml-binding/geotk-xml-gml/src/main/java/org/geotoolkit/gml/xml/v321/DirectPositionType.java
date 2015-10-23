@@ -36,7 +36,7 @@ import org.apache.sis.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
-
+import static org.geotoolkit.util.Utilities.listNullEquals;
 
 /**
  * Direct position instances hold the coordinates for a position within some coordinate reference system (CRS). Since direct positions, as data types, will often be included in larger objects (such as geometry elements) that have references to CRS, the srsName attribute will in general be missing, if this particular direct position is included in a larger element with such a reference to a CRS. In this case, the CRS is implicitly assumed to take on the value of the containing object's CRS.
@@ -71,10 +71,10 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     private List<Double> value;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    protected String srsName;
+    private String srsName;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected Integer srsDimension;
+    private Integer srsDimension;
     @XmlAttribute
     private List<String> axisLabels;
     @XmlAttribute
@@ -148,7 +148,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
      * @param values a List of coordinates.
      */
     public DirectPositionType(final double... values) {
-        this.value = new ArrayList<Double>();
+        this.value = new ArrayList<>();
         for (Double pt: values) {
             if (pt != null && !pt.equals(Double.NaN)) {
                 this.value.add(pt);
@@ -160,11 +160,11 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     /**
      * Build a light direct position.
      *
-     * @param values a List of coordinates.
+     * @param position a GeoAPI direct position.
      */
     public DirectPositionType(final DirectPosition position, final boolean srsInfo) {
         if (position != null) {
-            this.value = new ArrayList<Double>();
+            this.value = new ArrayList<>();
             for (double d : position.getCoordinate()) {
                 value.add(d);
             }
@@ -185,7 +185,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     /**
      * Build a light direct position.
      *
-     * @param values a List of coordinates.
+     * @param position a Geotk direct position.
      */
     public DirectPositionType(final org.geotoolkit.gml.xml.DirectPosition position) {
         if (position != null) {
@@ -205,7 +205,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     @Override
     public List<Double> getValue() {
         if (value == null) {
-            value = new ArrayList<Double>();
+            value = new ArrayList<>();
         }
         return this.value;
     }
@@ -226,7 +226,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
      */
     public void setValue(final Double value) {
         if (this.value == null) {
-            this.value = new ArrayList<Double>();
+            this.value = new ArrayList<>();
         }
         this.value.add(value);
     }
@@ -289,7 +289,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     @Override
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
-            axisLabels = new ArrayList<String>();
+            axisLabels = new ArrayList<>();
         }
         return this.axisLabels;
     }
@@ -301,7 +301,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     @Override
     public List<String> getUomLabels() {
         if (uomLabels == null) {
-            uomLabels = new ArrayList<String>();
+            uomLabels = new ArrayList<>();
         }
         return this.uomLabels;
     }
@@ -321,7 +321,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     @Override
     public int getDimension() {
         if (srsDimension != null) {
-            return srsDimension.intValue();
+            return srsDimension;
         }
         return value.size();
     }
@@ -369,6 +369,18 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
                 s.append(v).append(", ");
             }
         }
+        if (axisLabels != null) {
+            s.append(" axisLabels: ").append('\n');
+            for(String v :axisLabels) {
+                s.append(v).append(", ");
+            }
+        }
+        if (uomLabels != null) {
+            s.append(" uomLabels: ").append('\n');
+            for(String v :uomLabels) {
+                s.append(v).append(", ");
+            }
+        }
         return s.toString();
     }
 
@@ -382,10 +394,10 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
         }
         if (object instanceof DirectPositionType) {
             final DirectPositionType that = (DirectPositionType) object;
-            return  Objects.equals(this.getAxisLabels(), that.getAxisLabels()) &&
+            return  listNullEquals(this.axisLabels,      that.axisLabels)      &&
                     Objects.equals(this.srsDimension,    that.srsDimension)    &&
                     Objects.equals(this.srsName,         that.srsName)         &&
-                    Objects.equals(this.getUomLabels(),  that.getUomLabels())  &&
+                    listNullEquals(this.uomLabels,       that.uomLabels)       &&
                     Objects.equals(this.value,           that.value);
         }
         return false;
@@ -395,7 +407,7 @@ public class DirectPositionType implements org.geotoolkit.gml.xml.DirectPosition
     public int hashCode() {
         int hash = 5;
         hash = 71 * hash + (this.value != null ? this.value.hashCode() : 0);
-        hash = 71 * hash + (this.srsDimension != null ? this.srsDimension.intValue() : 0);
+        hash = 71 * hash + (this.srsDimension != null ? this.srsDimension : 0);
         hash = 71 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
         hash = 71 * hash + (this.axisLabels != null ? this.axisLabels.hashCode() : 0);
         hash = 71 * hash + (this.uomLabels != null ? this.uomLabels.hashCode() : 0);
