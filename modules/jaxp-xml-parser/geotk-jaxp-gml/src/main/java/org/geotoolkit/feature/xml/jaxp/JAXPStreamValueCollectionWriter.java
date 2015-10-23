@@ -43,7 +43,7 @@ import org.apache.sis.xml.Namespaces;
 import org.geotoolkit.feature.Attribute;
 import org.geotoolkit.feature.ComplexAttribute;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryType;
 import org.opengis.filter.expression.Expression;

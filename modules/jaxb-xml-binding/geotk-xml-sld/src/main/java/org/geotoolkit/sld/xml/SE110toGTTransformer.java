@@ -42,7 +42,7 @@ import javax.swing.ImageIcon;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 
 import org.geotoolkit.ogc.xml.OGC110toGTTransformer;
 

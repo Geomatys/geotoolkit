@@ -25,7 +25,7 @@ import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 

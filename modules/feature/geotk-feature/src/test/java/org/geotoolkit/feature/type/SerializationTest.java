@@ -18,6 +18,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import org.geotoolkit.util.NamesExt;
 import java.util.Collections;
 import java.util.Collection;
 

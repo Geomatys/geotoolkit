@@ -49,7 +49,7 @@ import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryType;
 import org.opengis.util.GenericName;

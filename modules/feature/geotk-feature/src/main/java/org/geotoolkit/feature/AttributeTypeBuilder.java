@@ -28,7 +28,7 @@ import org.geotoolkit.factory.Hints;
 
 import org.geotoolkit.feature.type.AssociationType;
 import org.geotoolkit.feature.type.AttributeType;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureTypeFactory;
 import org.geotoolkit.feature.type.GeometryType;
 import org.opengis.util.GenericName;

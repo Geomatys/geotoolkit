@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.geojson;
 
+import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import com.vividsolutions.jts.geom.*;
 import org.apache.sis.storage.DataStoreException;

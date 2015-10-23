@@ -21,7 +21,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashMap;
 import java.util.Map;
 import static org.geotoolkit.data.AbstractFeatureStore.GML_311_NAMESPACE;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.util.GenericName;

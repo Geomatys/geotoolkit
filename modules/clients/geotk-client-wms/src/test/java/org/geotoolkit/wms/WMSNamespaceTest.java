@@ -22,7 +22,7 @@ import java.util.Set;
 import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
 
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.apache.sis.storage.DataStoreException;
 

@@ -22,7 +22,7 @@ import java.util.concurrent.CancellationException;
 import javax.swing.JLabel;
 import javax.swing.ProgressMonitor;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.storage.coverage.PyramidCoverageBuilder;
 import static org.geotoolkit.parameter.Parameters.*;
