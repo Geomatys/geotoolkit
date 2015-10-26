@@ -34,6 +34,9 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -90,9 +93,12 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display2d.canvas.J2DCanvasSVG;
+import org.geotoolkit.internal.io.IOUtilities;
 
 /**
  * Default implementation of portrayal service.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -428,36 +434,71 @@ public final class DefaultPortrayalService implements PortrayalService{
             //we succeeded in writing it with coverage writer directly.
             return;
         }
+        
+        if("image/svg+xml".equalsIgnoreCase(mime)){
+            //special canvas for svg
+            final Envelope contextEnv = viewDef.getEnvelope();
+            final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
+            final J2DCanvasSVG canvas = new J2DCanvasSVG(
+                    crs,
+                    canvasDef.getDimension(),
+                    sceneDef.getHints());
+            prepareCanvas(canvas, canvasDef, sceneDef, viewDef);
+            canvas.repaint();
 
-        //use the rendering engine to generate an image
-        BufferedImage image = portray(canvasDef,sceneDef,viewDef);
-
-        if(image == null){
-            throw new PortrayalException("No image created by the canvas.");
-        }
-
-
-        if(useCoverageWriter){
-            final Envelope env = viewDef.getEnvelope();
-            final Dimension dim = canvasDef.getDimension();
-            final double[] resolution = new double[]{
-                    env.getSpan(0) / (double)dim.width,
-                    env.getSpan(1) / (double)dim.height};
-
-            //check the image color model
-            image = (BufferedImage) rectifyImageColorModel(image, mime);
-
-            final GridCoverageBuilder gcb = new GridCoverageBuilder();
-            gcb.setEnvelope(env);
-            gcb.setRenderedImage(image);
-            final GridCoverage2D coverage = gcb.getGridCoverage2D();
-            writeCoverage(coverage, env, resolution, outputDef,null);
-        }else{
+            boolean close = false;
+            OutputStream outStream = null;
             try {
-                //image color model check is done in the writeImage method
-                writeImage(image, outputDef);
+                if(outputDef.getOutput() instanceof OutputStream){
+                    outStream = (OutputStream) outputDef.getOutput();
+                }else{
+                    outStream = IOUtilities.openWrite(outputDef.getOutput());
+                }
+                final Writer out = new OutputStreamWriter(outStream,"UTF-8");
+                canvas.getDocument(out);
             } catch (IOException ex) {
-                throw new PortrayalException(ex);
+                throw new PortrayalException(ex.getMessage(), ex);
+            } finally{
+                if(outStream!=null && close){
+                    try {
+                        outStream.close();
+                    } catch (IOException ex) {
+                        throw new PortrayalException(ex.getMessage(), ex);
+                    }
+                }
+            }
+
+        }else{
+            //use the rendering engine to generate an image
+            BufferedImage image = portray(canvasDef,sceneDef,viewDef);
+
+            if(image == null){
+                throw new PortrayalException("No image created by the canvas.");
+            }
+
+
+            if(useCoverageWriter){
+                final Envelope env = viewDef.getEnvelope();
+                final Dimension dim = canvasDef.getDimension();
+                final double[] resolution = new double[]{
+                        env.getSpan(0) / (double)dim.width,
+                        env.getSpan(1) / (double)dim.height};
+
+                //check the image color model
+                image = (BufferedImage) rectifyImageColorModel(image, mime);
+
+                final GridCoverageBuilder gcb = new GridCoverageBuilder();
+                gcb.setEnvelope(env);
+                gcb.setRenderedImage(image);
+                final GridCoverage2D coverage = gcb.getGridCoverage2D();
+                writeCoverage(coverage, env, resolution, outputDef,null);
+            }else{
+                try {
+                    //image color model check is done in the writeImage method
+                    writeImage(image, outputDef);
+                } catch (IOException ex) {
+                    throw new PortrayalException(ex);
+                }
             }
         }
 
