@@ -40,13 +40,15 @@ public class MapItemVisibleColumn extends TreeTableColumn{
             GeotkFX.getString(MapItemVisibleColumn.class, "viewTooltip"));
     private static final Tooltip HIDE_TOOLTIP = new Tooltip(
             GeotkFX.getString(MapItemVisibleColumn.class, "hideTooltip"));
-    public MapItemVisibleColumn() { 
+
+
+    public MapItemVisibleColumn() {
         setEditable(true);
         setPrefWidth(26);
         setMinWidth(26);
         setMaxWidth(26);
-                    
-        setCellValueFactory(param -> {
+
+        setCellValueFactory((Object param) -> {
             try {
                 return FXUtilities.beanProperty(((CellDataFeatures)param).getValue().getValue(), "visible", Boolean.class);
             } catch (IllegalArgumentException e) {
@@ -55,9 +57,9 @@ public class MapItemVisibleColumn extends TreeTableColumn{
         });
         setCellFactory((Object param) -> new VisibleCell());
     }
-    
-    private final class VisibleCell extends TreeTableCell{
-        
+
+    private static final class VisibleCell extends TreeTableCell{
+
         public VisibleCell() {
             setFont(FXUtilities.FONTAWESOME);
             setOnMouseClicked(this::mouseClick);
@@ -67,7 +69,7 @@ public class MapItemVisibleColumn extends TreeTableColumn{
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (FontAwesomeIcons.ICON_EYE_SLASH.equals(newValue)) {
                         setTooltip(VIEW_TOOLTIP);
-                    } else {
+                    } else if(FontAwesomeIcons.ICON_EYE.equals(newValue)) {
                         setTooltip(HIDE_TOOLTIP);
                     }
                 }
@@ -81,26 +83,21 @@ public class MapItemVisibleColumn extends TreeTableColumn{
             if(!isEditing()){
                 getTreeTableView().edit(getTreeTableRow().getIndex(), getTableColumn());
             }
-            commitEdit(!Boolean.TRUE.equals(getItem()));
+            if(getItem()!=null){
+                commitEdit(!Boolean.TRUE.equals(getItem()));
+            }
         }
-        
+
         @Override
         protected void updateItem(Object item, boolean empty) {
             super.updateItem(item, empty);
-            
-            if(!empty){
-                if(Boolean.TRUE.equals(item)){
-                    setText(FontAwesomeIcons.ICON_EYE);
-                }else if(Boolean.FALSE.equals(item)){
-                    setText(FontAwesomeIcons.ICON_EYE_SLASH);
-                }else{
-                    setText(null);
-                }
+
+            if(!empty && item != null){
+                setText(Boolean.TRUE.equals(item) ? FontAwesomeIcons.ICON_EYE : FontAwesomeIcons.ICON_EYE_SLASH);
             }else{
                 setText(null);
             }
         }
-
     }
     
 }
