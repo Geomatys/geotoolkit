@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.MultiSurface;
 import org.apache.sis.util.ComparisonMode;
@@ -55,6 +56,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
     "surfaceMember",
     "surfaceMembers"
 })
+@XmlRootElement(name = "MultiSurface")
 public class MultiSurfaceType extends AbstractGeometricAggregateType implements MultiSurface{
 
     private List<SurfacePropertyType> surfaceMember;
@@ -66,7 +68,7 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
      */
     public List<SurfacePropertyType> getSurfaceMember() {
         if (surfaceMember == null) {
-            surfaceMember = new ArrayList<SurfacePropertyType>();
+            surfaceMember = new ArrayList<>();
         }
         return this.surfaceMember;
     }
@@ -77,7 +79,7 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
 
     public void setSurfaceMember(final SurfacePropertyType surfaceMember) {
         if (this.surfaceMember == null) {
-            this.surfaceMember = new ArrayList<SurfacePropertyType>();
+            this.surfaceMember = new ArrayList<>();
         }
         this.surfaceMember.add(surfaceMember);
     }

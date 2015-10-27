@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -89,7 +90,7 @@ public class InputReferenceType implements ReferenceType {
     @XmlElement(name = "Header")
     protected List<InputReferenceType.Header> header;
     @XmlElement(name = "Body")
-    protected Object body;
+    protected Body body;
     @XmlElement(name = "BodyReference")
     protected InputReferenceType.BodyReference bodyReference;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink", required = true)
@@ -130,7 +131,7 @@ public class InputReferenceType implements ReferenceType {
      */
     public List<InputReferenceType.Header> getHeader() {
         if (header == null) {
-            header = new ArrayList<InputReferenceType.Header>();
+            header = new ArrayList<>();
         }
         return this.header;
     }
@@ -144,7 +145,10 @@ public class InputReferenceType implements ReferenceType {
      *     
      */
     public Object getBody() {
-        return body;
+        if (body != null) {
+            return body.getContent();
+        }
+        return null;
     }
 
     /**
@@ -156,7 +160,11 @@ public class InputReferenceType implements ReferenceType {
      *     
      */
     public void setBody(final Object value) {
-        this.body = value;
+        if (value != null) {
+            this.body = new Body(value);
+        } else {
+            this.body = null;
+        }
     }
 
     /**
@@ -358,7 +366,29 @@ public class InputReferenceType implements ReferenceType {
         }
 
     }
+    
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Body {
 
+        public Body() {
+            
+        }
+        
+        public Body(Object content) {
+            this.content = content;
+        }
+        
+        @XmlAnyElement(lax = true)
+        private Object content;
+
+        public Object getContent() {
+            return content;
+        }
+
+        public void setContent(final Object value) {
+            this.content = value;
+        }
+    }
 
     /**
      * <p>Java class for anonymous complex type.

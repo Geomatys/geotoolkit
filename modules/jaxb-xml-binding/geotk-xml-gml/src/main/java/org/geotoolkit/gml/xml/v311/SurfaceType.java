@@ -21,6 +21,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.sis.util.ComparisonMode;
@@ -57,6 +58,7 @@ import org.apache.sis.util.ComparisonMode;
     TriangulatedSurfaceType.class,
     PolyhedralSurfaceType.class
 })
+@XmlRootElement(name = "Surface")
 public class SurfaceType extends AbstractSurfaceType {
 
     @XmlElementRef(name = "patches", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:Execute xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ows="http://www.opengis.net/ows/1.1" service="WPS" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
+    <ows:Identifier>urn:ogc:cstl:wps:jts:intersection</ows:Identifier>
+    <wps:DataInputs>
+        <wps:Input>
+            <ows:Identifier>urn:ogc:cstl:wps:jts:intersection:input:geom1</ows:Identifier>
+            <wps:Data>
+                <wps:ComplexData mimeType="text/xml" encoding="UTF-8" schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd">
+                    <LineString srsName="EPSG:4326" xmlns="http://www.opengis.net/gml">
+                        <coordinates>-0.631235,46.307557 -0.262215,46.577225 0.106805,46.477874 0.220349,46.293364 0.475824,46.406909 0.887424,46.350136 1.029354,46.563032 1.213864,46.648191 1.526112,46.421102 1.795780,46.066275 2.108028,46.037889 2.178993,46.250785 2.193186,46.492067 2.193186,46.492067 2.051255,46.704963 2.051255,46.704963 </coordinates>
+                    </LineString>
+                </wps:ComplexData>
+            </wps:Data>
+        </wps:Input>
+        <wps:Input>
+          <ows:Identifier>urn:ogc:cstl:wps:jts:intersection:input:geom2</ows:Identifier>
+	  <wps:Data>
+              <wps:ComplexData>
+                  <LineString srsName="EPSG:4326" xmlns="http://www.opengis.net/gml">
+                      <coordinates>-0.631235,46.307557 -0.262215,46.577225 0.106805,46.477874 0.220349,46.293364 0.475824,46.406909 0.887424,46.350136 1.029354,46.563032 1.213864,46.648191 1.526112,46.421102 1.795780,46.066275 2.108028,46.037889 2.178993,46.250785 2.193186,46.492067 2.193186,46.492067 2.051255,46.704963 2.051255,46.704963 </coordinates>
+                  </LineString>
+              </wps:ComplexData>
+          </wps:Data>
+        </wps:Input>
+    </wps:DataInputs>
+    <wps:ResponseForm>
+        <wps:ResponseDocument>
+            <wps:Output asReference="false">
+                <ows:Identifier>urn:ogc:cstl:wps:jts:intersection:output:result_geom</ows:Identifier>
+            </wps:Output>
+        </wps:ResponseDocument>
+    </wps:ResponseForm>
+</wps:Execute>
+

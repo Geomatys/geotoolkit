@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.OrientableCurve;
 
@@ -50,6 +51,7 @@ import org.geotoolkit.gml.xml.OrientableCurve;
 @XmlType(name = "OrientableCurveType", propOrder = {
     "baseCurve"
 })
+@XmlRootElement(name="OrientableCurve")
 public class OrientableCurveType extends AbstractCurveType implements OrientableCurve{
 
     @XmlElement(required = true)

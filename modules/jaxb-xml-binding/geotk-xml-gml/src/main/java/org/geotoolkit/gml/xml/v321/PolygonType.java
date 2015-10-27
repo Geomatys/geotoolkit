@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Polygon;
 
@@ -51,6 +52,7 @@ import org.geotoolkit.gml.xml.Polygon;
     "exterior",
     "interior"
 })
+@XmlRootElement(name = "Polygon")
 public class PolygonType extends AbstractSurfaceType implements Polygon {
 
     private AbstractRingPropertyType exterior;
@@ -66,7 +68,7 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
             this.exterior = new AbstractRingPropertyType(exterior);
         }
         if (interiors != null) {
-            this.interior = new ArrayList<AbstractRingPropertyType>();
+            this.interior = new ArrayList<>();
             for (AbstractRingType inte : interiors) {
                 this.interior.add(new AbstractRingPropertyType(inte));
             }
@@ -114,6 +116,7 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
         return this.interior;
     }
 
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());
         if (interior != null && !interior.isEmpty()) {

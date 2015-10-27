@@ -92,7 +92,9 @@ public final class ComplexToFeatureConverter extends AbstractComplexInputConvert
                 throw new UnconvertibleObjectException(ex);
             }
         }
-        else if(WPSMimeType.APP_GML.val().equalsIgnoreCase(source.getMimeType())) {
+        else if(WPSMimeType.APP_GML.val().equalsIgnoreCase(source.getMimeType()) ||
+                WPSMimeType.TEXT_XML.val().equalsIgnoreCase(source.getMimeType()) ||
+                WPSMimeType.TEXT_GML.val().equalsIgnoreCase(source.getMimeType())) {
             //Read featureCollection
             XmlFeatureReader fcollReader = null;
             try {

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -51,9 +52,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "CompositeSurfaceType", propOrder = {
     "surfaceMember"
 })
-public class CompositeSurfaceType
-    extends AbstractSurfaceType
-{
+@XmlRootElement(name = "CompositeSurface")
+public class CompositeSurfaceType extends AbstractSurfaceType {
 
     @XmlElement(required = true)
     private List<SurfacePropertyType> surfaceMember;
@@ -63,20 +63,6 @@ public class CompositeSurfaceType
     /**
      * Gets the value of the surfaceMember property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the surfaceMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSurfaceMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SurfacePropertyType }
      * 
@@ -84,7 +70,7 @@ public class CompositeSurfaceType
      */
     public List<SurfacePropertyType> getSurfaceMember() {
         if (surfaceMember == null) {
-            surfaceMember = new ArrayList<SurfacePropertyType>();
+            surfaceMember = new ArrayList<>();
         }
         return this.surfaceMember;
     }

@@ -53,9 +53,7 @@ import org.geotoolkit.ows.xml.v110.CodeType;
     "responseForm"
 })
 @XmlRootElement(name = "Execute")
-public class Execute
-    extends RequestBaseType
-{
+public class Execute extends RequestBaseType {
 
     @XmlElement(name = "Identifier", namespace = "http://www.opengis.net/ows/1.1", required = true)
     protected CodeType identifier;

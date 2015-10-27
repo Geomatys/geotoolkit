@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -50,9 +51,8 @@ import javax.xml.bind.annotation.XmlType;
     "exterior",
     "interior"
 })
-public class SolidType
-    extends AbstractSolidType
-{
+@XmlRootElement(name = "Solid")
+public class SolidType extends AbstractSolidType {
 
     private ShellPropertyType exterior;
     private List<ShellPropertyType> interior;
@@ -84,20 +84,6 @@ public class SolidType
     /**
      * Gets the value of the interior property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the interior property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInterior().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ShellPropertyType }
      * 
@@ -105,7 +91,7 @@ public class SolidType
      */
     public List<ShellPropertyType> getInterior() {
         if (interior == null) {
-            interior = new ArrayList<ShellPropertyType>();
+            interior = new ArrayList<>();
         }
         return this.interior;
     }

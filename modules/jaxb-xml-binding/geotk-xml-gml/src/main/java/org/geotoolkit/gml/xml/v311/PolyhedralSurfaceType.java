@@ -20,6 +20,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -51,6 +52,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PolyhedralSurfaceType")
+@XmlRootElement(name = "PolyhedralSurface")
 public class PolyhedralSurfaceType extends SurfaceType {
 
     @XmlElementRef(name = "polygonPatches", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)

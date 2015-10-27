@@ -100,7 +100,7 @@ public class FileToComplexConverter extends AbstractComplexOutputConverter<File>
             complex.getContent().add("]]>");
         } else {
             //If no text format, We'll put it as a base64 object.
-            if (!encoding.equals(WPSEncoding.BASE64.getValue())) {
+            if (encoding == null || !encoding.equals(WPSEncoding.BASE64.getValue())) {
                 throw new UnconvertibleObjectException("Encoding should be in Base64 for complex request.");
             }
 

@@ -113,7 +113,9 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
         OutputStream geometryStream = null;
         try {
             geometryStream = new FileOutputStream(geometryFile);
-            if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())) {
+            if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())||
+                WPSMimeType.TEXT_XML.val().equalsIgnoreCase(reference.getMimeType()) ||
+                WPSMimeType.TEXT_GML.val().equalsIgnoreCase(reference.getMimeType())) {
                 final Marshaller m = WPSMarshallerPool.getInstance().acquireMarshaller();
                 m.marshal( JTStoGeometry.toGML(gmlVersion, source), geometryStream);
                 reference.setHref((String) params.get(TMP_DIR_URL) + File.separator + randomFileName);

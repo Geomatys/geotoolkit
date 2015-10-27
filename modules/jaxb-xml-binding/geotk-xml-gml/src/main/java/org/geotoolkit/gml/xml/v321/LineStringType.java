@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Envelope;
 import org.geotoolkit.gml.xml.LineString;
@@ -68,6 +69,7 @@ import org.opengis.geometry.DirectPosition;
     "posList",
     "coordinates"
 })
+@XmlRootElement(name = "LineString")
 public class LineStringType extends AbstractCurveType implements LineString {
 
     @XmlElementRefs({
