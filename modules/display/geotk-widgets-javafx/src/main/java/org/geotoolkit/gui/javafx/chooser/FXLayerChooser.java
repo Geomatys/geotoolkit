@@ -219,6 +219,10 @@ public class FXLayerChooser extends BorderPane{
         protected void updateItem(Object item, boolean empty) {
             super.updateItem(item, empty);
 
+            setText("");
+            setTooltip(null);
+            setGraphic(null);
+
             Object value = item;
 
             if(value instanceof FeatureType){
