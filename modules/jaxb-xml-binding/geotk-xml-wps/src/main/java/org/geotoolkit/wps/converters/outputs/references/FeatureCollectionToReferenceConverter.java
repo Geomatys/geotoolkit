@@ -122,7 +122,9 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
 
             reference.setHref(params.get(TMP_DIR_URL) + "/" + dataFileName);
             reference.setSchema(null);
-        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())) {
+        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())||
+                   WPSMimeType.TEXT_XML.val().equalsIgnoreCase(reference.getMimeType()) ||
+                   WPSMimeType.TEXT_GML.val().equalsIgnoreCase(reference.getMimeType())) {
             try {
                 final String schemaFileName = randomFileName + "_schema" + ".xsd";
                 //create file

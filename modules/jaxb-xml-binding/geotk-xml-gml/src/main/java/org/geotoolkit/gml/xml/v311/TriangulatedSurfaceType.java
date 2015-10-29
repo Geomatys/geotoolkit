@@ -18,6 +18,7 @@ package org.geotoolkit.gml.xml.v311;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
@@ -52,5 +53,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     TinType.class
 })
+@XmlRootElement(name = "TriangulatedSurface")
 public class TriangulatedSurfaceType extends SurfaceType {
 }

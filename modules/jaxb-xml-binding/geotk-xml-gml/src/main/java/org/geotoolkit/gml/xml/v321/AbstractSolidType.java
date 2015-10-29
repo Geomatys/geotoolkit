@@ -48,9 +48,6 @@ import javax.xml.bind.annotation.XmlType;
     SolidType.class,
     CompositeSolidType.class
 })
-public class AbstractSolidType
-    extends AbstractGeometricPrimitiveType
-{
-
+public class AbstractSolidType extends AbstractGeometricPrimitiveType {
 
 }

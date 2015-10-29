@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
@@ -65,6 +66,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 @XmlSeeAlso({
     RectifiedGridType.class
 })
+@XmlRootElement(name = "Grid")
 public class GridType extends AbstractGeometryType {
 
     @XmlElementRefs({

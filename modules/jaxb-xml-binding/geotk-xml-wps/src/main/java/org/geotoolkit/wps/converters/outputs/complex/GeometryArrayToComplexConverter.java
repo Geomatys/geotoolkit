@@ -85,7 +85,9 @@ public final class GeometryArrayToComplexConverter extends AbstractComplexOutput
             gmlVersion = "3.1.1";
         }
 
-        if (WPSMimeType.APP_GML.val().equalsIgnoreCase(complex.getMimeType())) {
+        if (WPSMimeType.APP_GML.val().equalsIgnoreCase(complex.getMimeType())||
+            WPSMimeType.TEXT_XML.val().equalsIgnoreCase(complex.getMimeType()) ||
+            WPSMimeType.TEXT_GML.val().equalsIgnoreCase(complex.getMimeType())) {
             try {
                 for(final Geometry jtsGeom : source){
                     final AbstractGeometry gmlGeom = JTStoGeometry.toGML(gmlVersion, jtsGeom);

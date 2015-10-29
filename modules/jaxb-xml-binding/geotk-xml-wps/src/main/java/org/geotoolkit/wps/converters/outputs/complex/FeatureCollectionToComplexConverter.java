@@ -95,7 +95,9 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
             } catch (UnsupportedEncodingException e) {
                 throw new UnconvertibleObjectException("Can't convert output stream into String.", e);
             }
-        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(complex.getMimeType())) {
+        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(complex.getMimeType())||
+                   WPSMimeType.TEXT_XML.val().equalsIgnoreCase(complex.getMimeType()) ||
+                   WPSMimeType.TEXT_GML.val().equalsIgnoreCase(complex.getMimeType())) {
 
             if (params.get(TMP_DIR_PATH) == null) {
                 throw new UnconvertibleObjectException("The output directory should be defined.");

@@ -23,6 +23,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -53,6 +54,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
     "origin",
     "offsetVector"
 })
+@XmlRootElement(name = "RectifiedGrid")
 public class RectifiedGridType extends GridType {
 
     @XmlElement(required = true)

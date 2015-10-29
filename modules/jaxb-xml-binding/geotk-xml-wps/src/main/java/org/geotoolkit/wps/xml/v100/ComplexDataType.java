@@ -59,7 +59,7 @@ public class ComplexDataType {
         @XmlElementRef(name = "math", namespace = "http://www.w3.org/1998/Math/MathML", type = org.geotoolkit.mathml.xml.Math.class),
         @XmlElementRef(name = "GeoJSON", namespace = "http://geotoolkit.org", type = org.geotoolkit.wps.xml.v100.ext.GeoJSONType.class)
     })
-    @XmlAnyElement
+    @XmlAnyElement(lax = true)
     protected List<Object> content;
     @XmlAttribute
     protected String mimeType;
