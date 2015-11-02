@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import org.geotoolkit.display2d.ext.dynamicrange.DynamicRangeSymbolizer;
 import org.geotoolkit.gui.javafx.style.FXStyleElementController;
@@ -101,6 +102,14 @@ public class FXDynamicRangeSymbolizer extends FXStyleElementController<DynamicRa
         uiChannelG.setLayer(layer);
         uiChannelB.setLayer(layer);
         uiChannelA.setLayer(layer);
+    }
+    
+    @FXML
+    public void fitToData(ActionEvent event){
+        uiChannelR.fitToData();
+        uiChannelG.fitToData();
+        uiChannelB.fitToData();
+        uiChannelA.fitToData();
     }
     
 }
