@@ -38,6 +38,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.opengis.geometry.Envelope;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.display2d.GO2Utilities;
 
 /**
  *
@@ -116,11 +117,11 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
 
         if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
+            final CoverageReference ref = cml.getCoverageReference();
+            GridCoverageReader reader = null;
             try {
-                final CoverageReference ref = cml.getCoverageReference();
-                final GridCoverageReader reader = ref.acquireReader();
-                List<GridSampleDimension> dims = reader.getSampleDimensions(ref.getImageIndex());
-
+                reader = ref.acquireReader();
+                final List<GridSampleDimension> dims = reader.getSampleDimensions(ref.getImageIndex());
 
                 final int nbdim;
                 if(dims==null){
@@ -152,10 +153,87 @@ public class FXDRChannel extends FXStyleElementController<DynamicRangeSymbolizer
                 ref.recycle(reader);
             } catch (CoverageStoreException ex) {
                 Logging.getLogger("org.geotoolkit.gui.javafx.style.dynamicrange").log(Level.SEVERE, null, ex);
+            } finally{
+                if(reader!=null) ref.recycle(reader);
             }
 
         }
 
     }
 
+    /**
+     * Try to find best values for band and min/max.
+     */
+    public void fitToData(){
+        final MapLayer cml = getLayer();
+        if(cml instanceof CoverageMapLayer){
+            final CoverageReference ref = ((CoverageMapLayer)cml).getCoverageReference();
+            GridCoverageReader reader = null;
+            try {
+                reader = ref.acquireReader();
+                List<GridSampleDimension> dims = reader.getSampleDimensions(ref.getImageIndex());
+                
+                final int nbdim;
+                if(dims==null){
+                    //read a very low resolution image to extract bands from it
+                    final GeneralGridGeometry gg = reader.getGridGeometry(ref.getImageIndex());
+                    final Envelope env = gg.getEnvelope();
+                    final double[] res = gg.getResolution();
+                    for(int i=0;i<res.length;i++){
+                        res[i] = env.getSpan(i);
+                    }
+                    final GridCoverageReadParam params = new GridCoverageReadParam();
+                    params.setEnvelope(env);
+                    params.setResolution(res);
+
+                    final GridCoverage2D cov = (GridCoverage2D) reader.read(ref.getImageIndex(), params);
+                    final RenderedImage ri = cov.getRenderedImage();
+                    nbdim = ri.getSampleModel().getNumBands();
+                }else{
+                    nbdim = dims.size();
+                }
+
+
+                //find best match band index
+                int index = 0;
+                switch (uiCsComponent.getValue()) {
+                    case DynamicRangeSymbolizer.DRChannel.BAND_RED:   index = 0; break;
+                    case DynamicRangeSymbolizer.DRChannel.BAND_GREEN: index = 1; break;
+                    case DynamicRangeSymbolizer.DRChannel.BAND_BLUE:  index = 2; break;
+                    case DynamicRangeSymbolizer.DRChannel.BAND_ALPHA: index = 3; break;
+                }
+
+                if(index>=nbdim) index = 0;
+                
+                uiBands.setValue(""+index);
+
+                //extract band min/max
+                double min = 0;
+                double max = 255;
+                if(dims!=null){
+                    final GridSampleDimension sd = dims.get(index);
+                    min = sd.getMinimumValue();
+                    max = sd.getMaximumValue();
+                }
+                
+                final DynamicRangeSymbolizer.DRBound boundMin = new DynamicRangeSymbolizer.DRBound();
+                boundMin.setMode(DynamicRangeSymbolizer.DRBound.MODE_EXPRESSION);
+                boundMin.setValue(GO2Utilities.FILTER_FACTORY.literal(min));
+                valueProperty().get().setLower(boundMin);
+                uiLower.valueProperty().setValue(boundMin);
+
+                final DynamicRangeSymbolizer.DRBound boundMax = new DynamicRangeSymbolizer.DRBound();
+                boundMax.setMode(DynamicRangeSymbolizer.DRBound.MODE_EXPRESSION);
+                boundMax.setValue(GO2Utilities.FILTER_FACTORY.literal(max));
+                valueProperty().get().setUpper(boundMax);
+                uiUpper.valueProperty().setValue(boundMax);
+                
+            } catch (CoverageStoreException ex) {
+                Logging.getLogger("org.geotoolkit.gui.javafx.style.dynamicrange").log(Level.SEVERE, null, ex);
+            } finally{
+                if(reader!=null) ref.recycle(reader);
+            }
+        }
+    }
+    
 }
