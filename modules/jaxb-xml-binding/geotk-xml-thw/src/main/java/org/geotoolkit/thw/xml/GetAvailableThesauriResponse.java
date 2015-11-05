@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -48,6 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "getAvailableThesauriResponse", propOrder = {
     "response"
 })
+@XmlRootElement(name = "GetAvailableThesauriResponse", namespace = "http://ws.geotk.org/")
 public class GetAvailableThesauriResponse {
 
     @XmlElement(name = "return")

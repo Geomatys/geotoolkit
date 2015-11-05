@@ -19,12 +19,8 @@ package org.geotoolkit.thw.xml;
 import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-/**
- *
- * @author Guilhem Legal (Geomatys)
- */
 
 /**
  *
@@ -38,6 +34,7 @@ import javax.xml.bind.annotation.XmlType;
     "theme",
     "thesaurusUri"
 })
+@XmlRootElement(name = "GetNumeredConcept", namespace = "http://ws.geotk.org/")
 public class GetNumeredConcept {
     
     private String uri;

@@ -20,6 +20,7 @@ package org.geotoolkit.thw.xml;
 import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -46,16 +47,19 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "getSupportedLangs", propOrder = {
     "thesaurus"
 })
+@XmlRootElement(name = "GetSupportedLangs", namespace = "http://ws.geotk.org/")
 public class GetSupportedLangs {
 
     private String thesaurus;
+    private String outputFormat;
 
     public GetSupportedLangs() {
 
     }
 
-    public GetSupportedLangs(String thesaurus) {
+    public GetSupportedLangs(String thesaurus, String outputFormat) {
         this.thesaurus = thesaurus;
+        this.outputFormat = outputFormat; 
     }
 
     public GetSupportedLangs(URI thesaurus) {
@@ -86,6 +90,20 @@ public class GetSupportedLangs {
      */
     public void setThesaurus(String value) {
         this.thesaurus = value;
+    }
+
+    /**
+     * @return the outputFormat
+     */
+    public String getOutputFormat() {
+        return outputFormat;
+    }
+
+    /**
+     * @param outputFormat the outputFormat to set
+     */
+    public void setOutputFormat(String outputFormat) {
+        this.outputFormat = outputFormat;
     }
 
 }
