@@ -19,6 +19,7 @@ package org.geotoolkit.thw.xml;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.skos.xml.Concept;
 
@@ -30,6 +31,7 @@ import org.geotoolkit.skos.xml.Concept;
 @XmlType(name = "GetNumeredConceptResponse", propOrder = {
     "response"
 })
+@XmlRootElement(name = "GetNumeredConceptResponse", namespace = "http://ws.geotk.org/")
 public class GetNumeredConceptResponse {
     
     @XmlElement(name = "return")

@@ -19,12 +19,14 @@ package org.geotoolkit.thw.xml;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Guilhem Legal
  * @since 2.4
  */
+@XmlRootElement(name = "GetLinkedCswResponse", namespace = "http://ws.geotk.org/")
 public class GetLinkedCswResponse {
     
     @XmlElement(name = "return")

@@ -21,6 +21,7 @@ import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -49,20 +50,23 @@ import javax.xml.bind.annotation.XmlType;
     "conceptUri",
     "propertyUri"
 })
+@XmlRootElement(name = "GetAllTranslationsForConcept", namespace = "http://ws.geotk.org/")
 public class GetAllTranslationsForConcept {
 
     @XmlElement(name = "concept_uri")
     private String conceptUri;
     @XmlElement(name = "property_uri")
     private String propertyUri;
+    private String outputFormat;
 
     public GetAllTranslationsForConcept() {
 
     }
 
-    public GetAllTranslationsForConcept(String conceptUri, String propertyUri) {
-        this.conceptUri  = conceptUri;
-        this.propertyUri = propertyUri;
+    public GetAllTranslationsForConcept(final String conceptUri, final String propertyUri, final String outputFormat) {
+        this.conceptUri   = conceptUri;
+        this.propertyUri  = propertyUri;
+        this.outputFormat = outputFormat;
     }
 
     public GetAllTranslationsForConcept(URI conceptUri, String propertyUri) {
@@ -118,6 +122,20 @@ public class GetAllTranslationsForConcept {
      */
     public void setPropertyUri(String value) {
         this.propertyUri = value;
+    }
+
+    /**
+     * @return the outputFormat
+     */
+    public String getOutputFormat() {
+        return outputFormat;
+    }
+
+    /**
+     * @param outputFormat the outputFormat to set
+     */
+    public void setOutputFormat(String outputFormat) {
+        this.outputFormat = outputFormat;
     }
 
 }

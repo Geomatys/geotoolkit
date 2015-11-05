@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.skos.xml.Concept;
 
@@ -48,6 +49,7 @@ import org.geotoolkit.skos.xml.Concept;
 @XmlType(name = "getTopmostConceptsResponse", propOrder = {
     "response"
 })
+@XmlRootElement(name = "GetTopmostConceptsResponse", namespace = "http://ws.geotk.org/")
 public class GetTopmostConceptsResponse {
 
     @XmlElement(name = "return")

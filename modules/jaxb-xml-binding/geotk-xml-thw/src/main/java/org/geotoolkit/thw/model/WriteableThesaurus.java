@@ -42,7 +42,11 @@ public interface WriteableThesaurus extends Thesaurus {
     
     void deleteConcept(final Concept concept) throws SQLException;
     
+    void deleteConcept(String conceptUri) throws SQLException;
+    
     void deleteConceptCascad(final Concept concept) throws SQLException;
+    
+    void deleteConceptCascade(String conceptUri) throws SQLException;
  
     void addLanguage(final ISOLanguageCode currentLanguage) throws SQLException;
     

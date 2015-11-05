@@ -24,7 +24,7 @@ import org.geotoolkit.skos.xml.RDF;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface Thesaurus {
+public interface Thesaurus extends AutoCloseable {
 
     /**
      * Return an URI identifying the thesaurus.
@@ -48,7 +48,9 @@ public interface Thesaurus {
     String getDescription();
     
     /**
-     * Set the description of the thesaurus.
+     * Change the description of the thesaurus.
+     * 
+     * @param description The description to set
      */
     void setDescription(final String description);
 
@@ -60,22 +62,28 @@ public interface Thesaurus {
     ISOLanguageCode getDefaultLanguage();
     
     /**
-     * Set the default language of the thesaurus.
+     * Change the default language of the thesaurus.
+     * 
+     * @param lang A ISO language.
      */
     void setDefaultLanguage(final ISOLanguageCode lang);
 
     /**
      * Return the database schema (specific to SQL implementation) of the thesaurus.
+     * @return 
      */
     String getSchema();
     
     /**
      * Return the name of the thesaurus.
+     * @return 
      */
     String getName();
     
     /**
-     * Set the name of the thesaurus.
+     * Chnage the name of the thesaurus.
+     * 
+     * @param name The new name of the thesaurus
      */
     void setName(String name);
     
@@ -87,45 +95,55 @@ public interface Thesaurus {
     boolean getState();
     
     /**
-     * Set the state (enabled / disabled) of the thesaurus.
+     * Change the state (enabled / disabled) of the thesaurus.
+     * @param state
      */
     void setState(boolean state);
 
     /**
      * Return the supported languages of this Thesaurus.
+     * @return 
      */
     List<ISOLanguageCode> getLanguage();
     
     /**
-     * Search in the thesaurus the concept matching the given term.
-     * Rteun a list of concpet with a score of match for each concept.
-     * 
-     * @param term
+     * Try to find the concept matching the specified term.
+     *
+     * @param brutTerm The term to search.
+     * @param language if not {@code null} add a language filter to the search.
      * @return
      */
-    List<ScoredConcept> search(final String term, final ISOLanguageCode language);
+    List<ScoredConcept> search(final String brutTerm, final ISOLanguageCode language);
 
     /**
-     * Search in the thesaurus the concept matching the given term with the specified search mode.
+     * Try to find the concept matching the specified term.
      *
-     * @param term
-     * @param searchMode
-     * @param geometric
+     * @param brutTerm The term to search.
+     * @param searchMode The mode used to search.
+     * @param geometric Special flag for geometric thesaurus.
+     * @param themes If not {@code null} add a theme filter to the search.
+     * @param language if not {@code null} add a language filter to the search.
+     * 
      * @return
      */
-    List<Concept> search(final String term, final int searchMode, final boolean geometric, final List<String> themes, final ISOLanguageCode language);
+    List<Concept> search(final String brutTerm, final int searchMode, final boolean geometric, final List<String> themes, final ISOLanguageCode language);
     
     /**
      * Return the top most concept of this thesaurus.
      * 
-     * @param themes can be {@code null}
+     * @param themes If not {@code null} add a theme filter to the search.
+     * @param language if not {@code null} add a language filter to the search.
+     * 
+     * @return A list of root concepts.
      */
     List<Concept> getTopMostConcepts(final List<String> themes, final ISOLanguageCode language);
     
     /**
      * Return the hierarchy roots concept of this thesaurus.
      * 
-     * @param themes can be {@code null}
+     * @param themes If not {@code null} add a theme filter to the search.
+     * 
+     * @return A list of hierarchy root concepts.
      */
     List<Concept> getHierarchyRoots(final List<String> themes);
 
@@ -149,68 +167,92 @@ public interface Thesaurus {
      * Return the concept identified by the specified URI.
      * with only the localized label in a specific language
      *
-     * @param uriConcept
+     * @param uriConcept The unique identifier of the concept
+     * @param language if not {@code null} the return concept will be localized only with this language.
      * @return
      */
     Concept getConcept(final String uriConcept, final ISOLanguageCode language);
 
     /**
      * Return The complete list of terms (prefered + alternative label) of the thesaurus
+     * 
+     * @param language if not {@code null} the return labels will be localized only with this language
+     * @return  A list of localized labels
      */
     List<String> getAllLabels(final ISOLanguageCode language);
 
     /**
      * Return The complete list of terms (prefered + alternative label) of the thesaurus,
      * Limited by the specified parameters.
+     * 
+     * @param limit if not equal to -1, the results size will not exceed this limit.
+     * @param language if not {@code null} the return labels will be localized only with this language
+     * @return  A list of localized labels
      */
     List<String> getAllLabels(final int limit, final ISOLanguageCode language);
 
     /**
      * Return The complete list of terms (prefered + alternative label) of the thesaurus
+     * @param language if not {@code null} the return labels will be localized only with this language
+     * 
+     * @return  A list of localized labels
      */
     List<String> getAllPreferedLabels(final ISOLanguageCode language);
 
     /**
      * Return The complete list of prefered label of the thesaurus.
      * Limited by the specified parameters.
+     * 
+     * @param limit if not equal to -1, the results size will not exceed this limit.
+     * @param language if not {@code null} the return labels will be localized only with this language
+     * 
+     * @return 
      */
     List<String> getAllPreferedLabels(final int limit, final ISOLanguageCode language);
     
     /**
      * Return The complete list of concept of the thesaurus,
      * Limited by the specified parameters.
+     * 
+     * @param limit if not equal to -1, the results size will not exceed this limit.
+     * @return A full list of concept in this thesaurus.
      */
     List<Concept> getAllConcepts(final int limit);
 
     /**
-     * Search in the thesaurus the labels matching the given term with the specified search mode.
+     * Try to find the concept matching the specified term.
      *
-     * @param term
-     * @param searchMode
-     * @param geometric
+     * @param brutTerm The term to search.
+     * @param searchMode The mode used to search.
+     * @param themes If not {@code null} add a theme filter to the search.
+     * @param language if not {@code null} add a language filter to the search.
+     * 
      * @return
      */
-    List<String> searchLabels(final String term, final int searchMode,final List<String> themes, final ISOLanguageCode language);
+    List<String> searchLabels(final String brutTerm, final int searchMode,final List<String> themes, final ISOLanguageCode language);
     
     /**
      * Returns a List that contains all words from the thesaurus.
      * 
-     * @param thesaurus
-     * @param buffer
+     * @param buffer The buffer to be fill with word.
+     * @param language if not {@code null} add a language filter to the search.
+     * 
      * @return 
      */
     List<Word> getWords(final List<Word> buffer, final ISOLanguageCode language);
 
     /**
-     * Close the connection to the database and clear the cache. 
+     * Close the ressources and clear the cache. 
      * (depending on implementation)
      */
+    @Override
     void close();
 
     String getConceptTheme(String uriConcept);
 
     /**
      *  Return a full description of the thesaurus in RDF format.
+     * @return 
      */
     RDF toRDF();
     
@@ -220,6 +262,7 @@ public interface Thesaurus {
      * in RDF format.
      * 
      * @param root A concept or {@code null} for a full descripton of the thesaurus.
+     * @return 
      */
     RDF toRDF(final Concept root);
 }

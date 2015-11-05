@@ -18,6 +18,7 @@ package org.geotoolkit.thw.xml;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -49,22 +50,25 @@ import javax.xml.bind.annotation.XmlType;
     "language",
     "thesaurusUri"
 })
+@XmlRootElement(name = "GetRelatedConcepts", namespace = "http://ws.geotk.org/")
 public class GetRelatedConcepts {
 
     private String concept;
     private String relation;
     private String language;
     private String thesaurusUri;
+    private String outputFormat;
 
     public GetRelatedConcepts() {
 
     }
 
-    public GetRelatedConcepts(final String concept, final String relation, final String language, final String thesaurusUri) {
+    public GetRelatedConcepts(final String concept, final String relation, final String language, final String thesaurusUri, final String outputFormat) {
         this.concept      = concept;
         this.language     = language;
         this.relation     = relation;
         this.thesaurusUri = thesaurusUri;
+        this.outputFormat = outputFormat;
     }
 
     /**
@@ -151,6 +155,20 @@ public class GetRelatedConcepts {
      */
     public void setThesaurusUri(String thesaurusUri) {
         this.thesaurusUri = thesaurusUri;
+    }
+
+    /**
+     * @return the outputFormat
+     */
+    public String getOutputFormat() {
+        return outputFormat;
+    }
+
+    /**
+     * @param outputFormat the outputFormat to set
+     */
+    public void setOutputFormat(String outputFormat) {
+        this.outputFormat = outputFormat;
     }
 
 }

@@ -19,6 +19,7 @@ package org.geotoolkit.thw.xml;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -46,19 +47,23 @@ import javax.xml.bind.annotation.XmlType;
     "language",
     "showDeactivated"
 })
+@XmlRootElement(name = "GetAllPreferedLabel", namespace = "http://ws.geotk.org/")
 public class GetAllPreferedLabel {
 
     private String language;
     
     private Boolean showDeactivated;
+    
+    private String outputFormat;
 
     public GetAllPreferedLabel() {
 
     }
 
-    public GetAllPreferedLabel(final String language, final boolean showDeactivated) {
+    public GetAllPreferedLabel(final String language, final boolean showDeactivated, String outputFormat) {
         this.language = language;
         this.showDeactivated = showDeactivated;
+        this.outputFormat = outputFormat;
     }
 
     /**
@@ -100,6 +105,20 @@ public class GetAllPreferedLabel {
      */
     public void setShowDeactivated(Boolean showDeactivated) {
         this.showDeactivated = showDeactivated;
+    }
+
+    /**
+     * @return the outputFormat
+     */
+    public String getOutputFormat() {
+        return outputFormat;
+    }
+
+    /**
+     * @param outputFormat the outputFormat to set
+     */
+    public void setOutputFormat(String outputFormat) {
+        this.outputFormat = outputFormat;
     }
 
 }

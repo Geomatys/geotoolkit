@@ -19,6 +19,7 @@ package org.geotoolkit.thw.xml;
 import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -45,16 +46,19 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "getAvailableLanguages", propOrder = {
     "concept"
 })
+@XmlRootElement(name = "GetAvailableLanguages", namespace = "http://ws.geotk.org/")
 public class GetAvailableLanguages {
 
     private String concept;
+    private String outputFormat;
 
     public GetAvailableLanguages() {
 
     }
 
-    public GetAvailableLanguages(final String concept) {
+    public GetAvailableLanguages(final String concept, String outputFormat) {
         this.concept = concept;
+        this.outputFormat = outputFormat;
     }
 
     public GetAvailableLanguages(final URI concept) {
@@ -85,6 +89,20 @@ public class GetAvailableLanguages {
      */
     public void setConcept(String value) {
         this.concept = value;
+    }
+
+    /**
+     * @return the outputFormat
+     */
+    public String getOutputFormat() {
+        return outputFormat;
+    }
+
+    /**
+     * @param outputFormat the outputFormat to set
+     */
+    public void setOutputFormat(String outputFormat) {
+        this.outputFormat = outputFormat;
     }
 
 }

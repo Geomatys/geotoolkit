@@ -16,11 +16,37 @@
  */
 package org.geotoolkit.thw.xml;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author Guilhem Legal
  * @since 2.4
  */
+@XmlRootElement(name = "GetLinkedCsw", namespace = "http://ws.geotk.org/")
 public class GetLinkedCsw {
     
+    private String outputFormat;
+    
+    public GetLinkedCsw() {
+        
+    }
+    
+    public GetLinkedCsw(final String outputFormat) {
+        this.outputFormat = outputFormat;
+    }
+
+    /**
+     * @return the outputFormat
+     */
+    public String getOutputFormat() {
+        return outputFormat;
+    }
+
+    /**
+     * @param outputFormat the outputFormat to set
+     */
+    public void setOutputFormat(String outputFormat) {
+        this.outputFormat = outputFormat;
+    }
 }

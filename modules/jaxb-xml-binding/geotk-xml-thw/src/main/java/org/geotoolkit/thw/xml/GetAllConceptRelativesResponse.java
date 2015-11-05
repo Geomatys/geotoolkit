@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -48,6 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "getAllConceptRelativesResponse", propOrder = {
     "response"
 })
+@XmlRootElement(name = "GetAllConceptRelativesResponse", namespace = "http://ws.geotk.org/")
 public class GetAllConceptRelativesResponse {
 
     @XmlElement(name = "return")
