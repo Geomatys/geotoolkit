@@ -1,12 +1,5 @@
 org.geotoolkit.referencing.operation.provider.Logarithmic
 org.geotoolkit.referencing.operation.provider.Exponential
-org.geotoolkit.referencing.operation.provider.EllipsoidToGeocentric
-org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid
-org.geotoolkit.referencing.operation.provider.GeocentricTranslation
-org.geotoolkit.referencing.operation.provider.PositionVector7Param
-org.geotoolkit.referencing.operation.provider.CoordinateFrameRotation
-org.geotoolkit.referencing.operation.provider.Molodensky
-org.geotoolkit.referencing.operation.provider.AbridgedMolodensky
 org.geotoolkit.referencing.operation.provider.AlbersEqualArea
 org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea
 org.geotoolkit.referencing.operation.provider.Orthographic

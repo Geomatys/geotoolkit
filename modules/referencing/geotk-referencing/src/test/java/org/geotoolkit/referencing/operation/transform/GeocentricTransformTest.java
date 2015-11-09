@@ -19,25 +19,16 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Collections;
 import java.util.Random;
-import javax.measure.unit.SI;
 import javax.vecmath.Point3d;
-
 import org.opengis.util.FactoryException;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.operation.NoninvertibleTransformException;
-
-import org.apache.sis.geometry.DirectPosition2D;
-import org.apache.sis.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
-import org.apache.sis.referencing.datum.BursaWolfParameters;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
-import org.apache.sis.referencing.operation.transform.CoordinateDomain;
+import org.apache.sis.referencing.operation.transform.EllipsoidalToCartesianTransform;
 import org.apache.sis.referencing.CommonCRS;
-
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -49,117 +40,22 @@ import static java.lang.StrictMath.*;
  * <p>
  * <ul>
  *   <li>{@link CoordinateOperation}</li>
- *   <li>{@link GeocentricTransform}</li>
+ *   <li>{@link EllipsoidalToCartesian}</li>
  *   <li>{@link DefaultEllipsoid}</li>
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
- *
- * @since 2.1
  */
 public final strictfp class GeocentricTransformTest extends TransformTestBase {
     /**
      * Creates the test suite.
      */
     public GeocentricTransformTest() {
-        super(GeocentricTransform.class, null);
+        super(EllipsoidalToCartesianTransform.class, null);
     }
 
     /**
-     * Tests the variants for different number of dimensions.
-     *
-     * @throws NoninvertibleTransformException Should never happen.
-     *
-     * @since 3.16
-     */
-    @Test
-    public void testForDimensions() throws NoninvertibleTransformException {
-        final double a = 6378137.0;
-        final double b = 6356752.0;
-        final GeocentricTransform tr2D, tr3D;
-
-        tr2D = new GeocentricTransform(a, b, SI.METRE, false);
-        assertEquals(2, tr2D.getSourceDimensions());
-        assertEquals(3, tr2D.getTargetDimensions());
-        assertSame(tr2D, tr2D.forDimensions(false, true));
-
-        tr3D = tr2D.forDimensions(true, true);
-        assertNotSame(tr2D, tr3D);
-        assertEquals(3, tr3D.getSourceDimensions());
-        assertEquals(3, tr3D.getTargetDimensions());
-
-        assertSame("Expected cached transform.", tr2D, tr3D.forDimensions(false, true));
-        assertSame("Expected cached transform.", tr2D, tr3D.inverse().forDimensions(true, false).inverse());
-    }
-
-    /**
-     * Tests using the coordinate given in EPSG example.
-     *
-     * Source point in WGS84: 53°48'33.820"N, 02°07'46.380"E, 73.00 metres.
-     * Target point in ED50:  53°48'36.565"N, 02'07"51.477"E, 28.02 metres.
-     * Datum shift: dX = +84.87m, dY = +96.49m, dZ = +116.95m.
-     *
-     * @throws TransformException Should never happen.
-     */
-    @Test
-    public void testEpsgExample() throws TransformException {
-        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
-        derivativeDeltas = new double[] {delta, delta};
-
-        double[] source = new double[] {
-             2 + ( 7 + 46.38/60)/60,  // Longitude
-            53 + (48 + 33.82/60)/60,  // Latitude
-            73.0                      // Height
-        };
-        double[] target = new double[] {
-            3771793.97,
-             140253.34,
-            5124304.35
-        };
-        tolerance = 1E-2;
-        transform = GeocentricTransform.create(CommonCRS.WGS84.ellipsoid(), true);
-        validate();
-        verifyTransform(source, target);
-        tolerance = 1E-1;
-        verifyInDomain(CoordinateDomain.GEOGRAPHIC, 306954540);
-        /*
-         * Applies the datum shift.
-         */
-        final BursaWolfParameters parameters = new BursaWolfParameters(null, null);
-        parameters.tX =  84.87;
-        parameters.tY =  96.49;
-        parameters.tZ = 116.95;
-        source = target;
-        target = new double[] {
-            3771878.84,
-             140349.83,
-            5124421.30
-        };
-        tolerance = 1E-2;
-        transform = new GeocentricAffineTransform(parameters);
-        validate();
-        verifyTransform(source, target);
-        verifyInDomain(CoordinateDomain.GEOCENTRIC, 288326602);
-        /*
-         * Back to geographic coordinates, now in ED50 datum.
-         */
-        source = target;
-        target = new double[] {
-             2 + ( 7 + 51.477/60)/60,  // Longitude
-            53 + (48 + 36.565/60)/60,  // Latitude
-            28.02                      // Height
-        };
-        tolerance = 1.5E-2;
-        transform = GeocentricTransform.create(CommonCRS.ED50.ellipsoid(), true).inverse();
-        validate();
-        verifyTransform(source, target);
-        tolerance = 10;
-        verifyInDomain(CoordinateDomain.GEOCENTRIC, 831342815);
-    }
-
-    /**
-     * Tests the {@link GeocentricTransform} class created by {@link #opFactory}.
+     * Tests the {@link EllipsoidalToCartesian} class created by {@link #opFactory}.
      *
      * @throws FactoryException Should never occur.
      * @throws TransformException Should never occur.
@@ -266,60 +162,5 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
                 // Orthodromic distance computation didn't converge. Ignore...
             }
         }
-    }
-
-    /**
-     * Executes the derivative test using the given ellipsoid.
-     *
-     * @param  ellipsoid The ellipsoid to use for the test.
-     * @param  hasHeight {@code true} if geographic coordinates include an ellipsoidal
-     *         height (i.e. are 3-D), or {@code false} if they are only 2-D.
-     * @throws TransformException Should never happen.
-     *
-     * @since 3.16
-     */
-    private void testDerivative(final Ellipsoid ellipsoid, final boolean hasHeight) throws TransformException {
-        transform = GeocentricTransform.create(ellipsoid, hasHeight);
-        DirectPosition point = hasHeight ? new GeneralDirectPosition(-10, 40, 200) : new DirectPosition2D(-10, 40);
-        /*
-         * Derivative of the direct transform.
-         */
-        tolerance = 1E-2;
-        derivativeDeltas = new double[] {toRadians(1.0 / 60) / 1852}; // Approximatively one metre.
-        verifyDerivative(point.getCoordinate());
-        /*
-         * Derivative of the inverse transform.
-         */
-        point = transform.transform(point, null);
-        transform = transform.inverse();
-        tolerance = 1E-8;
-        derivativeDeltas = new double[] {1}; // Approximatively one metre.
-        verifyDerivative(point.getCoordinate());
-    }
-
-    /**
-     * Tests the {@link GeocentricTransform#derivative} method on a sphere.
-     *
-     * @throws TransformException Should never happen.
-     *
-     * @since 3.16
-     */
-    @Test
-    public void testDerivativeSphere() throws TransformException {
-        testDerivative(CommonCRS.SPHERE.ellipsoid(), true);
-        testDerivative(CommonCRS.SPHERE.ellipsoid(), false);
-    }
-
-    /**
-     * Tests the {@link GeocentricTransform#derivative} method on an ellipsoid.
-     *
-     * @throws TransformException Should never happen.
-     *
-     * @since 3.16
-     */
-    @Test
-    public void testDerivative() throws TransformException {
-        testDerivative(CommonCRS.WGS84.ellipsoid(), true);
-        testDerivative(CommonCRS.WGS84.ellipsoid(), false);
     }
 }

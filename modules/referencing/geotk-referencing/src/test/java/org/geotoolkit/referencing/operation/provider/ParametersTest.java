@@ -31,29 +31,20 @@ import static org.junit.Assert.*;
  * Verifications on the {@code PARAMETERS} constant declared in each provider.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.20
- *
- * @since 3.20
  */
 public final strictfp class ParametersTest {
     /**
      * The parameter groups to be tested.
      */
     private final ParameterDescriptorGroup[] parameters = {
-        AbridgedMolodensky                .PARAMETERS,
         AlbersEqualArea                   .PARAMETERS,
         CassiniSoldner                    .PARAMETERS,
-        CoordinateFrameRotation           .PARAMETERS,
-        EllipsoidToGeocentric             .PARAMETERS,
         Exponential                       .PARAMETERS,
-        GeocentricToEllipsoid             .PARAMETERS,
-        GeocentricTranslation             .PARAMETERS,
         HotineObliqueMercator             .PARAMETERS,
         HotineObliqueMercator.TwoPoint    .PARAMETERS,
         Krovak                            .PARAMETERS,
         LambertAzimuthalEqualArea         .PARAMETERS,
         Logarithmic                       .PARAMETERS,
-        Molodensky                        .PARAMETERS,
         NADCON                            .PARAMETERS,
         NTv2                              .PARAMETERS,
         NewZealandMapGrid                 .PARAMETERS,
@@ -61,7 +52,6 @@ public final strictfp class ParametersTest {
         ObliqueMercator.TwoPoint          .PARAMETERS,
         Orthographic                      .PARAMETERS,
         Polyconic                         .PARAMETERS,
-        PositionVector7Param              .PARAMETERS,
         RGF93                             .PARAMETERS
     };
 

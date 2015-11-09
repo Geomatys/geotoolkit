@@ -120,7 +120,6 @@ public final class MathTransforms extends Static {
      * @see Matrices#createDimensionFilter(int, int[])
      */
     public static LinearTransform dimensionFilter(final int sourceDim, final int[] toKeep) throws IndexOutOfBoundsException {
-        return org.apache.sis.referencing.operation.transform.MathTransforms.linear(
-                org.geotoolkit.referencing.operation.matrix.Matrices.createDimensionFilter(sourceDim, toKeep));
+        return org.apache.sis.referencing.operation.transform.MathTransforms.linear(Matrices.createDimensionSelect(sourceDim, toKeep));
     }
 }

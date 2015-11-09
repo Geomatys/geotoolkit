@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.matrix;
 
-import java.awt.geom.AffineTransform;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import javax.vecmath.GMatrix;

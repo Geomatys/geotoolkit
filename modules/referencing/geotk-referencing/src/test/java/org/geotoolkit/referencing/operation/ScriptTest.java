@@ -88,26 +88,6 @@ public final strictfp class ScriptTest extends ReferencingTestBase {
     }
 
     /**
-     * Run {@code "AbridgedMolodensky.txt"}.
-     *
-     * @throws Exception If a test failed.
-     */
-    @Test
-    public void testAbridgedMolodesky() throws Exception {
-        runScript("AbridgedMolodensky.txt");
-    }
-
-    /**
-     * Run {@code "Molodensky.txt"}.
-     *
-     * @throws Exception If a test failed.
-     */
-    @Test
-    public void testMolodesky() throws Exception {
-        runScript("Molodensky.txt");
-    }
-
-    /**
      * Run {@code "DatumShift.txt"}.
      *
      * @throws Exception If a test failed.

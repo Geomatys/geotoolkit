@@ -95,14 +95,14 @@ public class Stereographic extends UnitaryProjection {
     final double sinφ0, cosφ0;
 
     /**
-     * Constants computed from the latitude of origin and the excentricity.
+     * Constants computed from the latitude of origin and the eccentricity.
      * It is equal to {@link #φ0} in the spherical and equatorial case.
      */
     private final double χ1;
 
     /**
      * Constants used for the oblique projections. All those constants are completely determined
-     * by {@link #φ0} and {@link #excentricity}. Consequently, there is no need to test them in
+     * by {@link #φ0} and {@link #eccentricity}. Consequently, there is no need to test them in
      * {@link #hashCode} or {@link #equals(Object, ComparisonMode)} methods.
      */
     private final double sinχ1, cosχ1;
@@ -155,7 +155,7 @@ public class Stereographic extends UnitaryProjection {
     protected Stereographic(final OperationMethod method, final Parameters parameters) {
         this(method, parameters, Double.NaN);
         double k0 = 2*msfn(sinφ0, cosφ0) / cosχ1;   // part of (14 - 15)
-        if (excentricity == 0) {
+        if (eccentricity == 0) {
             k0 = 2; // For fixing rounding errors.
         }
         /*
@@ -278,10 +278,10 @@ public class Stereographic extends UnitaryProjection {
         final double ct = ρ*cosχ1*cosce - y*sinχ1*since;
 
         // Compute latitude using iterative technique (3-4)
-        final double halfe = 0.5*excentricity;
+        final double halfe = 0.5*eccentricity;
         double φ = χ;
         for (int i=MAXIMUM_ITERATIONS;;) {
-            final double esinφ = excentricity * sin(φ);
+            final double esinφ = eccentricity * sin(φ);
             final double next = 2*atan(tp*pow((1+esinφ)/(1-esinφ), halfe)) - PI/2;
             if (abs(φ - (φ=next)) < ITERATION_TOLERANCE) {
                 break;

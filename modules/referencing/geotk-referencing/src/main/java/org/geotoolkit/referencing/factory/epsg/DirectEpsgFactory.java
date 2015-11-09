@@ -2813,14 +2813,23 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                                 final Unit<Length> axisUnit = ellipsoid.getAxisUnit();
                                 parameters.parameter("src_semi_major").setValue(ellipsoid.getSemiMajorAxis(), axisUnit);
                                 parameters.parameter("src_semi_minor").setValue(ellipsoid.getSemiMinorAxis(), axisUnit);
-                                parameters.parameter("src_dim").setValue(sourceCRS.getCoordinateSystem().getDimension());
+                                try {
+                                    parameters.parameter("dim").setValue(sourceCRS.getCoordinateSystem().getDimension());
+                                } catch (ParameterNotFoundException e) {
+                                    // TODO: "dim" parameter is present only for Molodensky operation.
+                                }
                             }
                             ellipsoid = ReferencingUtilities.getEllipsoidOfGeographicCRS(targetCRS);
                             if (ellipsoid != null) {
                                 final Unit<Length> axisUnit = ellipsoid.getAxisUnit();
                                 parameters.parameter("tgt_semi_major").setValue(ellipsoid.getSemiMajorAxis(), axisUnit);
                                 parameters.parameter("tgt_semi_minor").setValue(ellipsoid.getSemiMinorAxis(), axisUnit);
-                                parameters.parameter("tgt_dim").setValue(targetCRS.getCoordinateSystem().getDimension());
+                                try {
+                                    parameters.parameter("dim").setValue(targetCRS.getCoordinateSystem().getDimension());
+                                    // TODO: we should verify that the number of dimension is the same than source.
+                                } catch (ParameterNotFoundException e) {
+                                    // TODO: "dim" parameter is present only for Molodensky operation.
+                                }
                             }
                             // Since Geotk will implement the transformation as a concatenation of
                             // MathTransforms, it will not be able to find those parameters alone.

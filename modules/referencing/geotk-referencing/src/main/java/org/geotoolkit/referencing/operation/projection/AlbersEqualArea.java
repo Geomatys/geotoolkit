@@ -174,7 +174,7 @@ public class AlbersEqualArea extends UnitaryProjection {
         double  n      = sinφ;
         boolean secant = (abs(φ1 - phi2) >= ANGLE_TOLERANCE);
         final double ρ0;
-        if (excentricity == 0) {
+        if (eccentricity == 0) {
             if (secant) {
                 n = 0.5 * (n + sin(phi2));
             }
@@ -193,7 +193,7 @@ public class AlbersEqualArea extends UnitaryProjection {
             }
             c = m1*m1 + n*q1;
             ρ0 = sqrt(c - n * qsfn(sin(latitudeOfOrigin))) / n;
-            ec = 1 + (1-excentricitySquared) * atanh(excentricity) / excentricity;
+            ec = 1 + (1-eccentricitySquared) * atanh(eccentricity) / eccentricity;
         }
         this.n = n;
         /*
@@ -271,7 +271,7 @@ public class AlbersEqualArea extends UnitaryProjection {
         //
         // End of map projection. Now compute the derivative.
         //
-        double esinφ2 = excentricity * sinφ;
+        double esinφ2 = eccentricity * sinφ;
         esinφ2 *= esinφ2;
         final double dρ_dφ = -0.5 * n*dqsfn_dφ(sinφ, cos(φ)) / ρ;
         return new Matrix2(cosλ * ρ, dρ_dφ * sinλ,  // ∂x/∂λ, ∂x/∂φ
@@ -436,17 +436,17 @@ public class AlbersEqualArea extends UnitaryProjection {
      * @return the latitude
      */
     final double phi1(final double qs) throws ProjectionException {
-        final double tone_es = 1 - excentricitySquared;
+        final double tone_es = 1 - eccentricitySquared;
         double φ = asin(0.5 * qs);
-        if (excentricity < EPSILON) {
+        if (eccentricity < EPSILON) {
             return φ;
         }
         for (int i=0; i<MAXIMUM_ITERATIONS; i++) {
             final double sinφ  = sin(φ);
             final double cosφ  = cos(φ);
-            final double esinφ = excentricity * sinφ;
+            final double esinφ = eccentricity * sinφ;
             final double com   = 1.0 - esinφ*esinφ;
-            final double dφ    = 0.5 * com*com/cosφ * (qs/tone_es - sinφ/com - atanh(esinφ)/excentricity);
+            final double dφ    = 0.5 * com*com/cosφ * (qs/tone_es - sinφ/com - atanh(esinφ)/eccentricity);
             φ += dφ;
             if (abs(dφ) <= ITERATION_TOLERANCE) {
                 return φ;
