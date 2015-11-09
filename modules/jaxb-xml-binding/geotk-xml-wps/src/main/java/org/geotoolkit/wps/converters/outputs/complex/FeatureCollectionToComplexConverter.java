@@ -30,7 +30,7 @@ import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeWriter;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.UnconvertibleObjectException;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.feature.type.FeatureType;
@@ -95,7 +95,9 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
             } catch (UnsupportedEncodingException e) {
                 throw new UnconvertibleObjectException("Can't convert output stream into String.", e);
             }
-        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(complex.getMimeType())) {
+        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(complex.getMimeType())||
+                   WPSMimeType.TEXT_XML.val().equalsIgnoreCase(complex.getMimeType()) ||
+                   WPSMimeType.TEXT_GML.val().equalsIgnoreCase(complex.getMimeType())) {
 
             if (params.get(TMP_DIR_PATH) == null) {
                 throw new UnconvertibleObjectException("The output directory should be defined.");

@@ -14,8 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.feature.type;
+package org.geotoolkit.util;
 
+import org.geotoolkit.util.NamesExt;
 import javax.xml.namespace.QName;
 import static org.junit.Assert.*;
 import org.junit.Test;

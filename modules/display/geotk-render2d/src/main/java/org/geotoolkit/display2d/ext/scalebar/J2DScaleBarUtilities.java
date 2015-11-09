@@ -284,6 +284,7 @@ public class J2DScaleBarUtilities {
             tickX += visualLength;
         }
 
+        g2d.translate(-X, -Y);
         return logicalLength * template.getDivisionCount();
     }
 

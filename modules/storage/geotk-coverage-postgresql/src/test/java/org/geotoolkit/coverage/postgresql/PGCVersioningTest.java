@@ -44,7 +44,7 @@ import org.geotoolkit.coverage.io.CoverageReader;
 
 import static org.geotoolkit.coverage.postgresql.PGCoverageStoreFactory.*;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.version.Version;

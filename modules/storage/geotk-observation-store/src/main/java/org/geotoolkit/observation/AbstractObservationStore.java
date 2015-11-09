@@ -45,4 +45,28 @@ public abstract class AbstractObservationStore extends ObservationStore {
     public ParameterValueGroup getConfiguration() {
         return parameters;
     }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ObservationFilter getFilter() {
+        throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ObservationWriter getWriter() {
+        throw new UnsupportedOperationException("Writing is not supported on this observation store.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ObservationFilter cloneObservationFilter(ObservationFilter toClone) {
+        throw new UnsupportedOperationException("Filtering is not supported on this observation store.");
+    }
 }

@@ -41,7 +41,7 @@ public final class GeoJSONUtils extends Static {
     /**
      * Fallback CRS
      */
-    private static final CoordinateReferenceSystem DEFAULT_CRS = CommonCRS.WGS84.geographic();
+    private static final CoordinateReferenceSystem DEFAULT_CRS = CommonCRS.WGS84.normalizedGeographic();
 
     /**
      * Parse LinkedCRS (href + type).

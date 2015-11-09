@@ -40,7 +40,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.db.reverse.RelationMetaModel;
 import org.geotoolkit.feature.AbstractFeature;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.storage.DataStoreException;

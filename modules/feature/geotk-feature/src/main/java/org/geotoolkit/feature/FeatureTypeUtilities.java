@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature;
 
+import org.geotoolkit.util.NamesExt;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;

@@ -34,7 +34,7 @@ import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 
@@ -103,7 +103,9 @@ public final class FeatureToComplexConverter extends AbstractComplexOutputConver
                 throw new UnconvertibleObjectException("Can't convert output stream into String.", e);
             }
 
-        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(complex.getMimeType())) {
+        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(complex.getMimeType())||
+                   WPSMimeType.TEXT_XML.val().equalsIgnoreCase(complex.getMimeType()) ||
+                   WPSMimeType.TEXT_GML.val().equalsIgnoreCase(complex.getMimeType())) {
 
             if (params.get(TMP_DIR_PATH) == null) {
                 throw new UnconvertibleObjectException("The output directory should be defined.");

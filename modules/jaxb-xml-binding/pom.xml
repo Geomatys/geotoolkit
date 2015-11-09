@@ -109,6 +109,7 @@
     <module>geotk-xml-skos</module>
     <module>geotk-xml-mathml</module>
     <module>geotk-xml-providers</module>
+    <module>geotk-xml-thw</module>
   </modules>
 
 </project>

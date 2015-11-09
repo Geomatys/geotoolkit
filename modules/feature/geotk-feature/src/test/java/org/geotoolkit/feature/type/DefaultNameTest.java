@@ -17,6 +17,7 @@
 
 package org.geotoolkit.feature.type;
 
+import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import javax.xml.namespace.QName;
 import org.junit.Test;

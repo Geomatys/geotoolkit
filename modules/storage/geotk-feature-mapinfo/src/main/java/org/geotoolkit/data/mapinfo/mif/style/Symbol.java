@@ -17,7 +17,7 @@
 package org.geotoolkit.data.mapinfo.mif.style;
 
 import org.geotoolkit.data.mapinfo.mif.geometry.MIFPointBuilder;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.style.DefaultDescription;
 import org.opengis.util.GenericName;
 import org.opengis.style.Description;

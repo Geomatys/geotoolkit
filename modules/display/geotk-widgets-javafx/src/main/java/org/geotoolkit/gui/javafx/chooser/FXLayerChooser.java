@@ -47,7 +47,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;
@@ -218,6 +218,10 @@ public class FXLayerChooser extends BorderPane{
         @Override
         protected void updateItem(Object item, boolean empty) {
             super.updateItem(item, empty);
+
+            setText("");
+            setTooltip(null);
+            setGraphic(null);
 
             Object value = item;
 

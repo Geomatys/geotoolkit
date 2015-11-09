@@ -21,6 +21,7 @@ package org.geotoolkit.gml.xml.v321;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.Curve;
 
@@ -48,6 +49,7 @@ import org.geotoolkit.gml.xml.Curve;
 @XmlType(name = "CurveType", propOrder = {
     "segments"
 })
+@XmlRootElement(name = "Curve")
 public class CurveType extends AbstractCurveType implements Curve {
 
     @XmlElement(required = true)

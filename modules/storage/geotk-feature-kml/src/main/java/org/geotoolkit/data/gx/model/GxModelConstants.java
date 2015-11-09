@@ -19,7 +19,7 @@ package org.geotoolkit.data.gx.model;
 
 import org.geotoolkit.data.gx.xml.GxConstants;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 
 import org.geotoolkit.feature.FeatureFactory;

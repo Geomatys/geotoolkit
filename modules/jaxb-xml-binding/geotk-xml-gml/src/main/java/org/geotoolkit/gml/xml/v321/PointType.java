@@ -20,6 +20,7 @@ package org.geotoolkit.gml.xml.v321;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.UnmodifiableGeometryException;
@@ -56,6 +57,7 @@ import org.opengis.geometry.primitive.Point;
     "pos",
     "coordinates"
 })
+@XmlRootElement(name = "Point")
 public class PointType extends AbstractGeometricPrimitiveType implements Point,  org.geotoolkit.gml.xml.Point{
 
     private DirectPositionType pos;
@@ -75,7 +77,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
     public PointType(final String id, final DirectPosition pos) {
         super.setId(id);
         this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos, true);
-        if (this.pos.srsName == null) {
+        if (this.pos.getSrsName() == null) {
             this.pos.setSrsName(getSrsName());
         }
     }
@@ -87,7 +89,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
      */
     public PointType(final DirectPosition pos) {
         this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos, true);
-        if (this.pos.srsName == null) {
+        if (this.pos.getSrsName() == null) {
             this.pos.setSrsName(getSrsName());
         }
     }
@@ -100,7 +102,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point, 
      */
     public PointType(final DirectPosition pos, final boolean srsInfo) {
         this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos, srsInfo);
-        if (this.pos.srsName == null) {
+        if (this.pos.getSrsName() == null) {
             this.pos.setSrsName(getSrsName());
         }
     }

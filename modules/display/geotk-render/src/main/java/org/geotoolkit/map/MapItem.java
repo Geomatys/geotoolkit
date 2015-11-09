@@ -17,6 +17,7 @@
 
 package org.geotoolkit.map;
 
+import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Map;
 import org.opengis.style.Description;
@@ -32,7 +33,7 @@ public interface MapItem {
 
     public static final String NAME_PROPERTY = "name";
     public static final String DESCRIPTION_PROPERTY = "description";
-    public static final String VISIBILITY_PROPERTY = "visibility";
+    public static final String VISIBILITY_PROPERTY = "visible";
     
     /**
      * Set the item name, this should be used as an
@@ -114,5 +115,17 @@ public interface MapItem {
      * @param listener item listener to unregister.
      */
     void removeItemListener(ItemListener listener);
+
+    /**
+     * Register a property listener.
+     * @param listener property listener to register
+     */
+    void addPropertyChangeListener(PropertyChangeListener listener);
+
+    /**
+     * Unregister a property listener.
+     * @param listener property listener to register
+     */
+    void removePropertyChangeListener(PropertyChangeListener listener);
 
 }

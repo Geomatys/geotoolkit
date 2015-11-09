@@ -19,7 +19,7 @@ package org.geotoolkit.feature.type;
 import java.util.Collections;
 import java.util.logging.Level;
 
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 

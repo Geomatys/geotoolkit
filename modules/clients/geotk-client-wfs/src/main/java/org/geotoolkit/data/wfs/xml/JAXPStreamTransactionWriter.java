@@ -52,7 +52,7 @@ import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.sld.xml.StyleXmlIO;
 import org.apache.sis.xml.MarshallerPool;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.util.GenericName;

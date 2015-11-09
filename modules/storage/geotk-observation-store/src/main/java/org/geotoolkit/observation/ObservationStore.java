@@ -60,4 +60,26 @@ public abstract class ObservationStore extends DataStore {
      * @return An Observation Reader.
      */
     public abstract ObservationReader getReader();
+    
+    /**
+     * Return an Observation Filter on the data.
+     *
+     * @return An Observation Filter.
+     */
+    public abstract ObservationFilter getFilter();
+    
+    /**
+     * Return an Observation Writer on the data.
+     *
+     * @return An Observation Writer.
+     */
+    public abstract ObservationWriter getWriter();
+    
+    /**
+     * Return an Observation Writer on the data.
+     *
+     * @param toClone
+     * @return An Observation Writer.
+     */
+    public abstract ObservationFilter cloneObservationFilter(ObservationFilter toClone);
 }

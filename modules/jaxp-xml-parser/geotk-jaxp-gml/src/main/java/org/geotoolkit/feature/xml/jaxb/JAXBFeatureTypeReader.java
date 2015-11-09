@@ -43,7 +43,7 @@ import javax.xml.namespace.QName;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.collection.Cache;
 
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureTypeReader;

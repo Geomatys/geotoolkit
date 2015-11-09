@@ -1708,7 +1708,7 @@ public class TiffImageReader extends SpatialImageReader {
             final short type   = (short) defTab[1];
             final int count    = (int) defTab[2];
             //-- in tiff spec offset or data are always unsigned
-            final long offset  = defTab[3] & 0xFFFFFFFFL;
+            final long offset  = defTab[3] & 0xFFFFFFFFFFFFFFFFL; 
             final Map<String, Object> tagAttributs = new HashMap<>();
             tagAttributs.put(ATT_NAME, getName(tag));
             tagAttributs.put(ATT_TYPE, type);

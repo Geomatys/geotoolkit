@@ -23,7 +23,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.apache.sis.referencing.CommonCRS;
 
 import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.feature.type.GeometryDescriptor;
 import org.opengis.feature.MismatchedFeatureException;

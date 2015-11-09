@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.sld.xml.v100.LayerFeatureConstraints;
 import org.geotoolkit.sld.xml.v100.NamedLayer;
 import org.geotoolkit.sld.xml.v100.StyledLayerDescriptor;

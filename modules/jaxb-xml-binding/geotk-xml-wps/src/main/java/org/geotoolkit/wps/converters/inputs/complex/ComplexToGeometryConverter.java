@@ -72,7 +72,9 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
             if (data.size() != 1)
                 throw new UnconvertibleObjectException("Invalid data input : Only one geometry expected.");
 
-            if (WPSMimeType.APP_GML.val().equalsIgnoreCase(source.getMimeType())) {
+            if (WPSMimeType.APP_GML.val().equalsIgnoreCase(source.getMimeType()) ||
+                WPSMimeType.TEXT_XML.val().equalsIgnoreCase(source.getMimeType()) ||
+                WPSMimeType.TEXT_GML.val().equalsIgnoreCase(source.getMimeType()) ) {
                 dataMimeTypeIdentifier = "GML";
                 AbstractGeometryType abstractGeo = (AbstractGeometryType) data.get(0);
                 return GeometrytoJTS.toJTS(abstractGeo);

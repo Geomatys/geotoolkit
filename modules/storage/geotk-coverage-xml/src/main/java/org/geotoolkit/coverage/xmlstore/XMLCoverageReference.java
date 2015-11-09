@@ -46,7 +46,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.storage.coverage.Pyramid;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.util.GenericName;
 import org.geotoolkit.image.color.ScaledColorSpace;

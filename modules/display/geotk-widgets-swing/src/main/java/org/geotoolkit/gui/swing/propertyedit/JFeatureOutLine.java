@@ -31,7 +31,7 @@ import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreePath;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.util.EmptyCellRenderer;
 import org.geotoolkit.gui.swing.util.JOptionDialog;

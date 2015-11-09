@@ -37,7 +37,7 @@ import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.FeatureType;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
 
@@ -126,7 +126,9 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
             reference.setHref(params.get(TMP_DIR_URL) + "/" +dataFileName);
             reference.setSchema(null);
 
-        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())) {
+        } else if (WPSMimeType.APP_GML.val().equalsIgnoreCase(reference.getMimeType())||
+                   WPSMimeType.TEXT_XML.val().equalsIgnoreCase(reference.getMimeType()) ||
+                   WPSMimeType.TEXT_GML.val().equalsIgnoreCase(reference.getMimeType())) {
             //Write FeatureType
             try {
                 final String schemaFileName = randomFileName + "_schema" + ".xsd";

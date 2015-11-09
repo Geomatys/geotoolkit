@@ -184,6 +184,22 @@ public abstract class AbstractMapItem implements MapItem {
         listeners.remove(ItemListener.class, listener);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        listeners.add(PropertyChangeListener.class, listener);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        listeners.remove(PropertyChangeListener.class, listener);
+    }
+
     protected void fireItemChange(final int type, final MapItem item, final NumberRange<Integer> range, final EventObject orig) {
         //TODO make fire property change thread safe, preserve fire order
 
@@ -211,10 +227,16 @@ public abstract class AbstractMapItem implements MapItem {
     protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
         //TODO make fire property change thread safe, preserve fire order
         
+        final ItemListener[] listIs = listeners.getListeners(ItemListener.class);
+        final PropertyChangeListener[] listPs = listeners.getListeners(PropertyChangeListener.class);
+        if(listIs.length==0 && listPs.length==0) return;
+
+
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
-        final ItemListener[] lists = listeners.getListeners(ItemListener.class);
-        
-        for(PropertyChangeListener listener : lists){
+        for(PropertyChangeListener listener : listIs){
+            listener.propertyChange(event);
+        }
+        for(PropertyChangeListener listener : listPs){
             listener.propertyChange(event);
         }
     }

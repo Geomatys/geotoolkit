@@ -18,6 +18,8 @@
 package org.geotoolkit.util;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.Version;
 
@@ -195,5 +197,23 @@ public final class Utilities extends Static {
      */
     private static String name(final Object object) {
         return object.getClass().getSimpleName();
+    }
+    
+    /**
+     * Utility method to avoid to fill an empty list during equals.
+     * But we want to consider equals a null list and an empty one, for JAXB purpose
+     * @param l1 first list to compare
+     * @param l2 second list to compare
+     * @return True if the two list are equals, or if one is null and the other empty
+     */
+    public static boolean listNullEquals(List l1, List l2) {
+        if (l1 == null && l2 != null && l2.isEmpty()) {
+            return true;
+        } else if (l2 == null && l1 != null && l1.isEmpty()) {
+            return true;
+        } else {
+            return Objects.equals(l1, l2);
+        }
+
     }
 }

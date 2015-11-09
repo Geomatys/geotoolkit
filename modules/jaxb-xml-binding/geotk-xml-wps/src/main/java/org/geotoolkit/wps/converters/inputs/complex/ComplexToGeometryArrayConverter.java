@@ -72,9 +72,11 @@ public final class ComplexToGeometryArrayConverter extends AbstractComplexInputC
             final List<Object> data = source.getContent();
 
             if(!data.isEmpty()){
-                if (WPSMimeType.APP_GML.val().equalsIgnoreCase(source.getMimeType())) {
+                if (WPSMimeType.APP_GML.val().equalsIgnoreCase(source.getMimeType()) ||
+                    WPSMimeType.TEXT_XML.val().equalsIgnoreCase(source.getMimeType()) ||
+                    WPSMimeType.TEXT_GML.val().equalsIgnoreCase(source.getMimeType())) {
                     dataMimeTypeIdentifier = "GML";
-                    final List<Geometry> geoms = new ArrayList<Geometry>();
+                    final List<Geometry> geoms = new ArrayList<>();
                     for(int i = 0; i<data.size(); i++){
                         geoms.add(GeometrytoJTS.toJTS((AbstractGeometryType) data.get(i)));
                     }

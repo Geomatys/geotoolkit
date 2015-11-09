@@ -20,7 +20,7 @@ package org.geotoolkit.data.osm.model;
 import com.vividsolutions.jts.geom.Point;
 
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.type.NamesExt;
+import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.feature.FeatureFactory;

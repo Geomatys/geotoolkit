@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import org.geotoolkit.gui.javafx.style.dynamicrange.*?>
+<?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
@@ -8,6 +9,7 @@
    <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
+            <Button onAction="#fitToData" text="%org.geotoolkit.gui.javafx.style.dynamicrange.FXDynamicRangeSymbolizer.fitToData" />
             <FXDRChannel fx:id="uiChannelR" />
             <FXDRChannel fx:id="uiChannelG" />
             <FXDRChannel fx:id="uiChannelB" />
