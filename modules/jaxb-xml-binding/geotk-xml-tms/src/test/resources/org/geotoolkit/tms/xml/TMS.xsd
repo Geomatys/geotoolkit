@@ -1,0 +1,171 @@
+<!--
+
+Geotoolkit - An Open Source Java GIS Toolkit
+http://www.geotoolkit.org
+
+(C) 2015, Geomatys
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+@author : Johann Sorel (Geomatys)
+
+Based on Osgeo wiki : http://wiki.osgeo.org/wiki/Tile_Map_Service_Specification
+-->
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+
+    <!-- SERVICES -->
+    <xs:element name="Services">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="TileMapService" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- TILE MAP SERVICE -->
+    <xs:element name="TileMapService">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Title"                type="xs:string" minOccurs="0"/>
+                <xs:element name="Abstract"             type="xs:string" minOccurs="0"/>
+                <xs:element name="KeywordList"          type="xs:string" minOccurs="0"/>
+                <xs:element name="ContactInformation"   type="ContactInformationType" minOccurs="0"/>
+                <xs:element name="TileMaps"             type="TileMapsType" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="titleAtt"   type="xs:string" use="optional"/>
+            <xs:attribute name="version"    type="xs:string" use="optional"/>
+            <xs:attribute name="href"       type="xs:string" use="optional"/>
+            <xs:attribute name="services"   type="xs:string" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="ContactInformationType">
+        <xs:sequence>
+            <xs:element name="ContactPosition"              type="xs:string" minOccurs="0"/>
+            <xs:element name="ContactVoiceTelephone"        type="xs:string" minOccurs="0"/>
+            <xs:element name="ContactFacsimileTelephone"    type="xs:string" minOccurs="0"/>
+            <xs:element name="ContactElectronicMailAddress" type="xs:string" minOccurs="0"/>
+            <xs:element name="ContactPersonPrimary"         type="ContactPersonPrimaryType" minOccurs="0"/>
+            <xs:element name="ContactAddress"               type="ContactAddressType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TileMapsType">
+        <xs:sequence>
+            <xs:element ref="TileMap" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="ContactPersonPrimaryType">
+        <xs:sequence>
+            <xs:element name="ContactPerson"        type="xs:string" minOccurs="0"/>
+            <xs:element name="ContactOrganization"  type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="ContactAddressType">
+        <xs:sequence>
+            <xs:element name="AddressType"       type="xs:string" minOccurs="0"/>
+            <xs:element name="Address"           type="xs:string" minOccurs="0"/>
+            <xs:element name="City"              type="xs:string" minOccurs="0"/>
+            <xs:element name="StateOrProvince"   type="xs:string" minOccurs="0"/>
+            <xs:element name="PostCode"          type="xs:string" minOccurs="0"/>
+            <xs:element name="Country"           type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <!-- TILE MAP -->
+    <xs:element name="TileMap">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Title"                type="xs:string" minOccurs="0"/>
+                <xs:element name="Abstract"             type="xs:string" minOccurs="0"/>
+                <xs:element name="KeywordList"          type="xs:string" minOccurs="0"/>
+                <xs:element name="Face"                 type="xs:string" minOccurs="0"/>
+                <xs:element name="SRS"                  type="xs:string" minOccurs="0"/>
+                <xs:element name="Metadata"             type="MetadataType" minOccurs="0"/>
+                <xs:element name="Attribution"          type="AttributionType" minOccurs="0"/>
+                <xs:element name="WebMapContext"        type="WebMapContextType" minOccurs="0"/>
+                <xs:element name="BoundingBox"          type="BoundingBoxType" minOccurs="0"/>
+                <xs:element name="Origin"               type="OriginType" minOccurs="0"/>
+                <xs:element name="TileFormat"           type="TileFormatType" minOccurs="0"/>
+                <xs:element name="TileSets"             type="TileSetsType" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="titleAtt"       type="xs:string" use="optional"/>
+            <xs:attribute name="srsAtt"         type="xs:string" use="optional"/>
+            <xs:attribute name="version"        type="xs:string" use="optional"/>
+            <xs:attribute name="profile"        type="xs:string" use="optional"/>
+            <xs:attribute name="href"           type="xs:string" use="optional"/>
+            <xs:attribute name="tilemapservice" type="xs:string" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="MetadataType">
+        <xs:attribute name="type"       type="xs:string" use="optional"/>
+        <xs:attribute name="mime-type"  type="xs:string" use="optional"/>
+        <xs:attribute name="href"       type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="AttributionType">
+        <xs:sequence>
+            <xs:element name="Title"        type="xs:string" minOccurs="0"/>
+            <xs:element name="Logo"         type="LogoType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="LogoType">
+        <xs:attribute name="width" type="xs:int" use="optional"/>
+        <xs:attribute name="height" type="xs:int" use="optional"/>
+        <xs:attribute name="href" type="xs:string" use="optional"/>
+        <xs:attribute name="mime-type" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="WebMapContextType">
+        <xs:attribute name="href" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="BoundingBoxType">
+        <xs:attribute name="minx" type="xs:double" use="optional"/>
+        <xs:attribute name="miny" type="xs:double" use="optional"/>
+        <xs:attribute name="maxx" type="xs:double" use="optional"/>
+        <xs:attribute name="maxy" type="xs:double" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="OriginType">
+        <xs:attribute name="x" type="xs:double" use="optional"/>
+        <xs:attribute name="y" type="xs:double" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="TileFormatType">
+        <xs:attribute name="width" type="xs:int" use="optional"/>
+        <xs:attribute name="height" type="xs:int" use="optional"/>
+        <xs:attribute name="mime-type" type="xs:string" use="optional"/>
+        <xs:attribute name="extension" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="TileSetsType">
+        <xs:sequence>
+            <xs:element name="TileSet" type="TileSetType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="profile" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="TileSetType">
+        <xs:attribute name="href"               type="xs:string" use="optional"/>
+        <xs:attribute name="units-per-pixel"    type="xs:double" use="optional"/>
+        <xs:attribute name="order"              type="xs:int" use="optional"/>
+    </xs:complexType>
+
+</xs:schema>
+
+    
