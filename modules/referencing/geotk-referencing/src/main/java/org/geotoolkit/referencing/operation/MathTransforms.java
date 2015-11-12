@@ -118,7 +118,10 @@ public final class MathTransforms extends Static {
      *         is lower than 0 or not smaller than {@code sourceDim}.
      *
      * @see Matrices#createDimensionFilter(int, int[])
+     *
+     * @deprecated Moved to Apache SIS as {@code MathTransforms.linear(Matrices.createDimensionSelect(sourceDim, toKeep))}.
      */
+    @Deprecated
     public static LinearTransform dimensionFilter(final int sourceDim, final int[] toKeep) throws IndexOutOfBoundsException {
         return org.apache.sis.referencing.operation.transform.MathTransforms.linear(Matrices.createDimensionSelect(sourceDim, toKeep));
     }

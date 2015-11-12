@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.referencing.crs.PredefinedCRS;
 import org.apache.sis.referencing.datum.DefaultEllipsoid;
-import org.apache.sis.referencing.operation.transform.EllipsoidalToCartesianTransform;
+import org.apache.sis.referencing.operation.transform.EllipsoidToCentricTransform;
 import org.apache.sis.referencing.CommonCRS;
 import org.junit.*;
 
@@ -51,7 +51,7 @@ public final strictfp class GeocentricTransformTest extends TransformTestBase {
      * Creates the test suite.
      */
     public GeocentricTransformTest() {
-        super(EllipsoidalToCartesianTransform.class, null);
+        super(EllipsoidToCentricTransform.class, null);
     }
 
     /**
