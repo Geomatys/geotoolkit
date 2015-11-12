@@ -24,8 +24,8 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -60,7 +60,7 @@ public class LuceneUtils {
 
     public static final GeometryFactory GF = new GeometryFactory();
 
-    public static Directory getAppropriateDirectory(final File indexDirectory) throws IOException {
+    public static Directory getAppropriateDirectory(final Path indexDirectory) throws IOException {
 
         // for windows
         if (System.getProperty("os.name", "").startsWith("Windows")) {

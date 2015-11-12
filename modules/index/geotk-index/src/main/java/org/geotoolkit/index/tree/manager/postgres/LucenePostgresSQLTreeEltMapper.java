@@ -17,6 +17,10 @@
 
 package org.geotoolkit.index.tree.manager.postgres;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import org.apache.commons.io.IOUtils;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.index.tree.TreeElementMapper;
@@ -29,7 +33,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import javax.sql.DataSource;
 
-import java.io.*;
+import java.nio.file.Path;
 import java.security.AccessController;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivilegedAction;
@@ -65,9 +69,9 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.tree.manager.postgres");
 
-    public LucenePostgresSQLTreeEltMapper(final CoordinateReferenceSystem crs, final DataSource source, File directory) throws SQLException {
+    public LucenePostgresSQLTreeEltMapper(final CoordinateReferenceSystem crs, final DataSource source, Path directory) throws SQLException {
         try {
-            final String absolutePath = directory.getAbsolutePath();
+            final String absolutePath = directory.getFileName().toString();
             ensureNonNull("absolutePath", absolutePath);
             this.schemaName = getSchemaName(absolutePath);
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex){
@@ -81,23 +85,23 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
         //this.conn.setAutoCommit(false);
     }
 
-    public static TreeElementMapper createTreeEltMapperWithDB(File directory) throws SQLException, IOException {
+    public static TreeElementMapper createTreeEltMapperWithDB(Path directory) throws SQLException, IOException {
         final DataSource dataSource = PGDataSource.getDataSource();
         final Connection connection = dataSource.getConnection();
 
-        if (!schemaExist(connection,directory.getAbsolutePath())){
-            createSchema(connection,directory.getAbsolutePath());
+        if (!schemaExist(connection,directory.getFileName().toString())){
+            createSchema(connection,directory.getFileName().toString());
         }
         connection.close();
         return new LucenePostgresSQLTreeEltMapper(SQLRtreeManager.DEFAULT_CRS,dataSource, directory);
     }
 
-    public static void resetDB(File directory) throws SQLException, IOException {
+    public static void resetDB(Path directory) throws SQLException, IOException {
         final DataSource dataSource = PGDataSource.getDataSource();
         final Connection connection = dataSource.getConnection();
 
-        if (schemaExist(connection,directory.getAbsolutePath())){
-            dropSchema(connection,directory.getAbsolutePath());
+        if (schemaExist(connection,directory.getFileName().toString())){
+            dropSchema(connection,directory.getFileName().toString());
         }
         connection.close();
     }
@@ -154,10 +158,10 @@ public class LucenePostgresSQLTreeEltMapper implements TreeElementMapper<NamedEn
         });
     }
 
-    public static boolean treeExist(final DataSource source, File directory) {
+    public static boolean treeExist(final DataSource source, Path directory) {
         try {
             Connection conn = source.getConnection();
-            boolean exist = schemaExist(conn, directory.getAbsolutePath());
+            boolean exist = schemaExist(conn, directory.getFileName().toString());
             conn.close();
             return exist;
 

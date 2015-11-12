@@ -17,8 +17,9 @@
 
 package org.geotoolkit.lucene.index;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -40,7 +41,6 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.util.Version;
 import org.geotoolkit.index.tree.manager.SQLRtreeManager;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
@@ -107,7 +107,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      *
      * @throws IndexingException
      */
-    public LuceneIndexSearcher(final File configDir, final String serviceID) throws IndexingException {
+    public LuceneIndexSearcher(final Path configDir, final String serviceID) throws IndexingException {
         this(configDir, serviceID, null, false);
     }
 
@@ -120,7 +120,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      *
      * @throws org.geotoolkit.lucene.IndexingException
      */
-    public LuceneIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer) throws IndexingException {
+    public LuceneIndexSearcher(final Path configDir, final String serviceID, final Analyzer analyzer) throws IndexingException {
         this(configDir, serviceID, analyzer, false);
     }
     
@@ -134,7 +134,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      * 
      * @throws org.geotoolkit.lucene.IndexingException
      */
-    public LuceneIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer, final boolean envelopeOnly) throws IndexingException {
+    public LuceneIndexSearcher(final Path configDir, final String serviceID, final Analyzer analyzer, final boolean envelopeOnly) throws IndexingException {
         super(analyzer);
         this.envelopeOnly = envelopeOnly;
         if (envelopeOnly) {
@@ -143,10 +143,12 @@ public class LuceneIndexSearcher extends IndexLucene {
         try {
             // we get the last index directory
             long maxTime = 0;
-            File currentIndexDirectory = null;
-            if (configDir != null && configDir.exists() && configDir.isDirectory()) {
-                for (File indexDirectory : configDir.listFiles(new IndexDirectoryFilter(serviceID))) {
-                    String suffix = indexDirectory.getName();
+            Path currentIndexDirectory = null;
+            if (configDir != null && Files.isDirectory(configDir)) {
+                Iterator<Path> iterator = Files.newDirectoryStream(configDir).iterator();
+                while (iterator.hasNext()) {
+                    Path indexDirectory = iterator.next();
+                    String suffix = indexDirectory.getFileName().toString();
                     suffix = suffix.substring(suffix.lastIndexOf('-') + 1);
                     try {
                         long currentTime = Long.parseLong(suffix);
@@ -159,12 +161,12 @@ public class LuceneIndexSearcher extends IndexLucene {
                     }
                 }
             }
-            if (currentIndexDirectory != null && currentIndexDirectory.exists()) {
+            if (currentIndexDirectory != null && Files.exists(currentIndexDirectory)) {
                 setFileDirectory(currentIndexDirectory);
                 try {
                     this.numericFields          = new HashMap<>();
-                    final File numericFieldFile = new File(currentIndexDirectory, "numericFields.properties");
-                    final Properties prop       = FileUtilities.getPropertiesFromFile(numericFieldFile);
+                    final Path numericFieldFile = currentIndexDirectory.resolve("numericFields.properties");
+                    final Properties prop       = FileUtilities.getPropertiesFromFile(numericFieldFile.toFile());
                     for (String fieldName : prop.stringPropertyNames()) {
                         this.numericFields.put(fieldName, ((String)prop.get(fieldName)).charAt(0));
                     }
@@ -191,11 +193,11 @@ public class LuceneIndexSearcher extends IndexLucene {
      * initialize the IndexSearcher of this index.
      */
     private void initSearcher() throws CorruptIndexException, IOException {
-        final File indexDirectory = getFileDirectory();
+        final Path indexDirectory = getFileDirectory();
         this.rTree = SQLRtreeManager.get(indexDirectory, this);
         final IndexReader reader  = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(indexDirectory));
         searcher                  = new IndexSearcher(reader);
-        LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.getPath());
+        LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.toString());
        
     }
 
@@ -269,7 +271,7 @@ public class LuceneIndexSearcher extends IndexLucene {
             for (ScoreDoc doc : hits.scoreDocs) {
                 final Set<String> fieldsToLoad = new HashSet<>();
                 fieldsToLoad.add("id");
-                results.add(searcher.document(doc.doc, fieldsToLoad).get("id"));
+                results.add(searcher.doc(doc.doc, fieldsToLoad).get("id"));
             }
             if (results.size() > 1) {
                 LOGGER.log(Level.WARNING, "multiple record in lucene index for identifier: {0}", id);
@@ -336,7 +338,7 @@ public class LuceneIndexSearcher extends IndexLucene {
 
             final String field       = "title";
             String stringQuery       = spatialQuery.getQuery();
-            final QueryParser parser = new ExtendedQueryParser(Version.LATEST, field, analyzer, numericFields);
+            final QueryParser parser = new ExtendedQueryParser(field, analyzer, numericFields);
             parser.setDefaultOperator(Operator.AND);
             
             // remove term:* query

@@ -26,8 +26,10 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
 import java.util.logging.Logger;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
@@ -90,7 +92,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
     }
 
     private static final Map<String, NamedEnvelope> envelopes = new HashMap<>();
-    private static final File directory = new File("luceneSearcherTest");
+    private static final Path directory = Paths.get("luceneSearcherTest");
     private static LuceneIndexSearcher searcher;
     private static CoordinateReferenceSystem treeCrs;
     private org.opengis.filter.Filter filter;
@@ -98,22 +100,22 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
 
     @BeforeClass
     public static void setUpMethod() throws Exception {
-        if (directory.exists()) {
-            FileUtilities.deleteDirectory(directory);
+        if (Files.isDirectory(directory)) {
+            FileUtilities.deleteDirectory(directory.toFile());
         }
-        directory.mkdir();
+        Files.createDirectory(directory);
 
         // the tree CRS (must be) cartesian
         treeCrs = CRS.decode("CRS:84");
 
         //creating tree (R-Tree)------------------------------------------------
 
-        final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
+        final Analyzer analyzer  = new StandardAnalyzer();
         final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
         indexer.createIndex();
         indexer.destroy();
 
-        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9), false);
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(), false);
     }
 
     @AfterClass
@@ -121,13 +123,14 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         // postgres
         if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY) != null) {
             if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY).equals("postgres")) {
-                if (directory.exists() && directory.listFiles().length > 0)
-                    LucenePostgresSQLTreeEltMapper.resetDB(directory.listFiles()[0]);
+                if (Files.isDirectory(directory) && Files.newDirectoryStream(directory).iterator().hasNext()) {
+                    LucenePostgresSQLTreeEltMapper.resetDB(Files.newDirectoryStream(directory).iterator().next());
+                }
             }
         }
         searcher.destroy();
 
-        FileUtilities.deleteDirectory(directory);
+        FileUtilities.deleteDirectory(directory.toFile());
     }
 
 
@@ -2393,14 +2396,14 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
     public void QueryAndSpatialFilterAfterRemoveTest() throws Exception {
 
         // we remove a document
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
+        final Analyzer analyzer = new StandardAnalyzer();
 
         DocumentIndexer indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.removeDocument("box 2 projected");
         indexer.destroy();
 
         searcher.destroy();
-        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9), false);
+        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(), false);
 
         /*
          * case 1: a normal spatial request BBOX
@@ -2444,7 +2447,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
         indexer.destroy();
 
         searcher.destroy();
-        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9), false);
+        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(), false);
 
 
          //we perform a lucene query

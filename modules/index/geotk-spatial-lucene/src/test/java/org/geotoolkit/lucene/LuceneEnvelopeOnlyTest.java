@@ -25,7 +25,9 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
@@ -90,7 +92,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         }
     }
 
-    private static final File directory = new File("luceneEnvolopeOnlyTest");
+    private static final Path directory = Paths.get("luceneEnvolopeOnlyTest");
     private static IndexSearcher searcher;
     private static Query simpleQuery;
     private org.opengis.filter.Filter filter;
@@ -98,17 +100,16 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
     @BeforeClass
     public static void setUpMethod() throws Exception {
-
-        FileUtilities.deleteDirectory(directory);
-        directory.mkdir();
+        FileUtilities.deleteDirectory(directory.toFile());
+        Files.createDirectory(directory);
 
         //creating tree (R-Tree)------------------------------------------------
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
+        final Analyzer analyzer = new StandardAnalyzer();
         final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
         indexer.createIndex();
         indexer.destroy();
-
-        final Directory FSDirectory  = LuceneUtils.getAppropriateDirectory(directory.listFiles()[0]);
+        
+        final Directory FSDirectory  = LuceneUtils.getAppropriateDirectory(Files.newDirectoryStream(directory).iterator().next());
         final IndexReader reader = DirectoryReader.open(FSDirectory);
         searcher = new IndexSearcher(reader);
         //create a term query to search against all documents
@@ -120,11 +121,12 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         // postgres
         if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY) != null) {
             if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY).equals("postgres")) {
-                if (directory.exists() && directory.listFiles().length > 0)
-                    LucenePostgresSQLTreeEltMapper.resetDB(directory.listFiles()[0]);
+                if (Files.isDirectory(directory) && Files.newDirectoryStream(directory).iterator().hasNext()) {
+                    LucenePostgresSQLTreeEltMapper.resetDB(Files.newDirectoryStream(directory).iterator().next());
+                }
             }
         }
-        FileUtilities.deleteDirectory(directory);
+        FileUtilities.deleteDirectory(directory.toFile());
     }
 
     /**
@@ -2520,8 +2522,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
          */
 
         //we perform a lucene query
-        Analyzer analyzer    = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
-        QueryParser parser  = new QueryParser(org.apache.lucene.util.Version.LUCENE_4_9, "metafile", analyzer);
+        Analyzer analyzer    = new ClassicAnalyzer();
+        QueryParser parser  = new QueryParser("metafile", analyzer);
         Query query         = parser.parse("id:point*");
 
         docs = searcher.search(query, bboxQuery.getSpatialFilter(), 15);
@@ -2545,8 +2547,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
          */
 
         //we perform two lucene query
-        analyzer      = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
-        parser        = new QueryParser(org.apache.lucene.util.Version.LUCENE_4_9, "metafile", analyzer);
+        analyzer      = new ClassicAnalyzer();
+        parser        = new QueryParser("metafile", analyzer);
         query         = parser.parse("id:point*");
 
         TopDocs hits1 = searcher.search(query, 15);
@@ -2584,8 +2586,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
          */
 
         //we perform two lucene query
-        analyzer                = new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
-        parser                  = new QueryParser(org.apache.lucene.util.Version.LUCENE_4_9, "metafile", analyzer);
+        analyzer                = new ClassicAnalyzer();
+        parser                  = new QueryParser("metafile", analyzer);
         Query query1            = parser.parse("id:point*");
         Query query2            = parser.parse("id:box*");
 
@@ -2631,12 +2633,12 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
     public void QueryAndSpatialFilterAfterRemoveTest() throws Exception {
 
         // we remove a document
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
+        final Analyzer analyzer = new StandardAnalyzer();
         DocumentIndexer indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.removeDocument("box 2 projected");
         indexer.destroy();
 
-        IndexReader reader = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(directory.listFiles()[0]));
+        IndexReader reader = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(Files.newDirectoryStream(directory).iterator().next()));
         searcher = new IndexSearcher(reader);
 
         /*
@@ -2680,8 +2682,8 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
         indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.indexDocument(new DocumentEnvelope(docu, null));
         indexer.destroy();
-
-        reader = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(directory.listFiles()[0]));
+        
+        reader = DirectoryReader.open(LuceneUtils.getAppropriateDirectory(Files.newDirectoryStream(directory).iterator().next()));
         searcher = new IndexSearcher(reader);
 
 

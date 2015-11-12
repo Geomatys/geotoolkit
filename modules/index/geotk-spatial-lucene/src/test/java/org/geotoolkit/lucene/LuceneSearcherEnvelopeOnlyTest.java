@@ -25,6 +25,9 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 import java.util.logging.Logger;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
@@ -88,7 +91,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
     }
 
     private static final Map<String, NamedEnvelope> envelopes = new HashMap<>();
-    private static final File directory = new File("luceneSearcherEnvTest");
+    private static final Path directory = Paths.get("luceneSearcherEnvTest");
     private static LuceneIndexSearcher searcher;
     private static CoordinateReferenceSystem treeCrs;
     private org.opengis.filter.Filter filter;
@@ -97,19 +100,19 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
     @BeforeClass
     public static void setUpMethod() throws Exception {
 
-        FileUtilities.deleteDirectory(directory);
-        directory.mkdir();
+        FileUtilities.deleteDirectory(directory.toFile());
+        Files.createDirectory(directory);
 
         // the tree CRS (must be) cartesian
         treeCrs = CRS.decode("CRS:84");
 
         //creating tree (R-Tree)------------------------------------------------
 
-        final Analyzer analyzer  = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
+        final Analyzer analyzer  = new StandardAnalyzer();
         final DocumentIndexer indexer = new DocumentIndexer(directory, fillTestData(), analyzer);
         indexer.createIndex();
         indexer.destroy();
-        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9), true);
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(), true);
 
     }
 
@@ -118,14 +121,15 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
         // postgres
         if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY) != null) {
             if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY).equals("postgres")) {
-                if (directory.exists() && directory.listFiles().length > 0)
-                    LucenePostgresSQLTreeEltMapper.resetDB(directory.listFiles()[0]);
+                if (Files.isDirectory(directory) && Files.newDirectoryStream(directory).iterator().hasNext()) {
+                    LucenePostgresSQLTreeEltMapper.resetDB(Files.newDirectoryStream(directory).iterator().next());
+                }
             }
         }
         try {
             searcher.destroy();
         } finally {
-            FileUtilities.deleteDirectory(directory);
+            FileUtilities.deleteDirectory(directory.toFile());
         }
     }
 
@@ -2148,13 +2152,13 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
         /*
          * we remove a document
          */
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9);
+        final Analyzer analyzer = new StandardAnalyzer();
         DocumentIndexer indexer = new DocumentIndexer(directory, null, analyzer);
         indexer.removeDocument("box 2 projected");
         indexer.destroy();
         searcher.destroy();
 
-        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9), true);
+        searcher = new LuceneIndexSearcher(directory, null, new ClassicAnalyzer(), true);
 
         //we perform a lucene query
         results = searcher.doSearch(bboxQuery);
@@ -2183,7 +2187,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
         indexer.destroy();
         searcher.destroy();
 
-        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_4_9), true);
+        searcher = new LuceneIndexSearcher(directory, null, new StandardAnalyzer(), true);
 
          //we perform a lucene query
         results = searcher.doSearch(bboxQuery);

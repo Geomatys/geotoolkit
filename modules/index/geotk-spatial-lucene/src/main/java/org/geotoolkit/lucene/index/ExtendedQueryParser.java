@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.lucene.index;
 
-import java.nio.ByteBuffer;
 import java.util.Map;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -24,7 +23,6 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermRangeQuery;
-import org.apache.lucene.util.Version;
 
 /**
  *
@@ -34,8 +32,8 @@ public class ExtendedQueryParser extends QueryParser {
 
     private final Map<String, Character> numericFields;
     
-    public ExtendedQueryParser(final Version matchVersion, final String field, final Analyzer a, final Map<String, Character> numericFields) {
-        super(matchVersion, field, a);
+    public ExtendedQueryParser(final String field, final Analyzer a, final Map<String, Character> numericFields) {
+        super(field, a);
         this.numericFields = numericFields;
     }
 

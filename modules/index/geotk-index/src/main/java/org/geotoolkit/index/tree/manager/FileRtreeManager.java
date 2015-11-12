@@ -17,8 +17,9 @@
 
 package org.geotoolkit.index.tree.manager;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -32,15 +33,15 @@ import org.geotoolkit.index.tree.star.FileStarRTree;
  */
 public class FileRtreeManager extends AbstractRtreeManager {
 
-    public static Tree<NamedEnvelope> get(final File directory, final Object owner) {
+    public static Tree<NamedEnvelope> get(final Path directory, final Object owner) {
         Tree<NamedEnvelope> tree = CACHED_TREES.get(directory);
         if (tree == null || tree.isClosed()) {
-            final File treeFile   = new File(directory, "tree.bin");
-            final File mapperFile = new File(directory, "mapper.bin");
-            if (treeFile.exists()) {
+            final Path treeFile   = directory.resolve("tree.bin");
+            final Path mapperFile = directory.resolve("mapper.bin");
+            if (Files.exists(treeFile)) {
 
                 try {
-                    tree = new FileStarRTree<>(treeFile, new LuceneFileTreeEltMapper(mapperFile));//ecrire crs dans constructeur
+                    tree = new FileStarRTree<>(treeFile.toFile(), new LuceneFileTreeEltMapper(mapperFile.toFile()));//ecrire crs dans constructeur
                 } catch (ClassNotFoundException | IllegalArgumentException | StoreIndexException | IOException ex) {
                     LOGGER.log(Level.SEVERE, null, ex);
                 }
@@ -61,15 +62,15 @@ public class FileRtreeManager extends AbstractRtreeManager {
         return tree;
     }
 
-    private static Tree buildNewTree(final File directory) {
-        if (directory.exists()) {
+    private static Tree buildNewTree(final Path directory) {
+        if (Files.exists(directory)) {
             try {
                 //creating tree (R-Tree)------------------------------------------------
-                final File treeFile   = new File(directory, "tree.bin");
-                final File mapperFile = new File(directory, "mapper.bin");
-                treeFile.createNewFile();
-                mapperFile.createNewFile();
-                return new FileStarRTree(treeFile, 5, DEFAULT_CRS, new LuceneFileTreeEltMapper(DEFAULT_CRS, mapperFile));
+                final Path treeFile   = directory.resolve("tree.bin");
+                final Path mapperFile = directory.resolve("mapper.bin");
+                Files.createFile(treeFile);
+                Files.createFile(mapperFile);
+                return new FileStarRTree(treeFile.toFile(), 5, DEFAULT_CRS, new LuceneFileTreeEltMapper(DEFAULT_CRS, mapperFile.toFile()));
 
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, "Unable to create file to write Tree", ex);
@@ -80,16 +81,15 @@ public class FileRtreeManager extends AbstractRtreeManager {
         return null;
     }
 
-    public static Tree resetTree(final File directory, final Tree tree, final Object owner) throws StoreIndexException, IOException {
+    public static Tree resetTree(final Path directory, final Tree tree, final Object owner) throws StoreIndexException, IOException {
         if (tree != null) {
             close(directory, tree, owner);
         }
-        final File treeFile   = new File(directory, "tree.bin");
-        final File mapperFile = new File(directory, "mapper.bin");
-        if (treeFile.exists() && mapperFile.exists()) {
-            treeFile.delete();
-            mapperFile.delete();
-        }
+        final Path treeFile   = directory.resolve("tree.bin");
+        final Path mapperFile = directory.resolve("mapper.bin");
+        Files.deleteIfExists(treeFile);
+        Files.deleteIfExists(mapperFile);
+            
         return get(directory, owner);
     }
 }

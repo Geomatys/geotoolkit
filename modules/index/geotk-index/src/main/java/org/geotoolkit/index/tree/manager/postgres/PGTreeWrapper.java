@@ -3,6 +3,7 @@ package org.geotoolkit.index.tree.manager.postgres;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.logging.Logger;
@@ -34,11 +35,11 @@ public class PGTreeWrapper implements Tree {
 
     private final DataSource source;
 
-    private final File directory;
+    private final Path directory;
 
     private final TreeElementMapper mapper;
 
-    public PGTreeWrapper(final File directory, final DataSource source, TreeElementMapper mapper, CoordinateReferenceSystem crs) throws IOException, SQLException, StoreIndexException {
+    public PGTreeWrapper(final Path directory, final DataSource source, TreeElementMapper mapper, CoordinateReferenceSystem crs) throws IOException, SQLException, StoreIndexException {
         TreeAccess ta  = new TreeAccessSQLByteArray(directory, source, TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER, 5, crs);
         rTree          = new StarRTree<>(ta, mapper);
         this.mapper    = mapper;
@@ -47,7 +48,7 @@ public class PGTreeWrapper implements Tree {
         lastUpdate     = System.currentTimeMillis();
     }
 
-    public PGTreeWrapper(final byte[] data, final File directory, final DataSource source, TreeElementMapper mapper) throws IOException, SQLException, ClassNotFoundException, StoreIndexException {
+    public PGTreeWrapper(final byte[] data, final Path directory, final DataSource source, TreeElementMapper mapper) throws IOException, SQLException, ClassNotFoundException, StoreIndexException {
         TreeAccess ta  = new TreeAccessSQLByteArray(directory, source, data, TreeUtilities.STAR_NUMBER, TreeUtilities.VERSION_NUMBER);
         rTree          = new StarRTree<>(ta, mapper);
         this.mapper    = mapper;

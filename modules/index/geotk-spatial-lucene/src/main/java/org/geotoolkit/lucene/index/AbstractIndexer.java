@@ -17,7 +17,6 @@
 
 package org.geotoolkit.lucene.index;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
@@ -25,6 +24,8 @@ import java.util.logging.Level;
 
 // JTS dependencies
 import com.vividsolutions.jts.geom.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 // Apache Lucene dependencies
 import org.apache.lucene.analysis.Analyzer;
@@ -36,7 +37,6 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.util.Version;
 
 // Geotoolkit dependencies
 import org.geotoolkit.index.tree.StoreIndexException;
@@ -101,41 +101,47 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param configDirectory
      * @param analyzer
      */
-    public AbstractIndexer(final String indexID, final File configDirectory, final Analyzer analyzer) {
+    public AbstractIndexer(final String indexID, final Path configDirectory, final Analyzer analyzer) {
         super(analyzer);
-        
-        // we get the last index directory
-        long maxTime = 0;
-        File currentIndexDirectory = null;
-        if (configDirectory != null && configDirectory.exists() && configDirectory.isDirectory()) {
-            for (File indexDirectory : configDirectory.listFiles(new IndexDirectoryFilter(indexID))) {
-                String suffix = indexDirectory.getName();
-                suffix = suffix.substring(suffix.lastIndexOf('-') + 1);
-                try {
-                    long currentTime = Long.parseLong(suffix);
-                    if (currentTime > maxTime) {
-                        maxTime = currentTime;
-                        currentIndexDirectory = indexDirectory;
+        try {
+            // we get the last index directory
+            long maxTime = 0;
+            Path currentIndexDirectory = null;
+            if (configDirectory != null && Files.exists(configDirectory) && Files.isDirectory(configDirectory)) {
+
+                Iterator<Path> iterator = Files.newDirectoryStream(configDirectory).iterator();
+                while (iterator.hasNext()) {
+                    Path indexDirectory = iterator.next();
+                    String suffix = indexDirectory.getFileName().toString();
+                    suffix = suffix.substring(suffix.lastIndexOf('-') + 1);
+                    try {
+                        long currentTime = Long.parseLong(suffix);
+                        if (currentTime > maxTime) {
+                            maxTime = currentTime;
+                            currentIndexDirectory = indexDirectory;
+                        }
+                    } catch(NumberFormatException ex) {
+                        LOGGER.log(Level.WARNING, "Unable to parse the timestamp:{0}", suffix);
                     }
-                } catch(NumberFormatException ex) {
-                    LOGGER.log(Level.WARNING, "Unable to parse the timestamp:{0}", suffix);
                 }
             }
-        }
 
-        if (currentIndexDirectory == null) {
-            currentIndexDirectory = new File(configDirectory, indexID + "index-" + System.currentTimeMillis());
-            currentIndexDirectory.mkdir();
-            needCreation = true;
-            setFileDirectory(currentIndexDirectory);
-        } else {
-            LOGGER.finer("Index already created.");
-            deleteOldIndexDir(configDirectory, indexID, currentIndexDirectory.getName());
-            // must be set before reading tree
-            setFileDirectory(currentIndexDirectory);
-            needCreation = false;
+            if (currentIndexDirectory == null) {
+                currentIndexDirectory = configDirectory.resolve(indexID + "index-" + System.currentTimeMillis());
+                Files.createDirectory(currentIndexDirectory);
+                needCreation = true;
+                setFileDirectory(currentIndexDirectory);
+            } else {
+                LOGGER.finer("Index already created.");
+                deleteOldIndexDir(configDirectory, indexID, currentIndexDirectory.getFileName().toString());
+                // must be set before reading tree
+                setFileDirectory(currentIndexDirectory);
+                needCreation = false;
+            }
+            rTree = SQLRtreeManager.get(currentIndexDirectory, this);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
-        rTree = SQLRtreeManager.get(currentIndexDirectory, this);
     }
 
     /**
@@ -145,7 +151,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param indexID
      * @param configDirectory
      */
-    public AbstractIndexer(final String indexID, final File configDirectory) {
+    public AbstractIndexer(final String indexID, final Path configDirectory) {
         this(indexID, configDirectory, null);
     }
 
@@ -156,11 +162,15 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     /**
      * Replace the precedent index directory by another pre-generated.
      */
-    private void deleteOldIndexDir(final File configDirectory, final String serviceID, final String currentDirName) {
-        for (File indexDirectory : configDirectory.listFiles(new IndexDirectoryFilter(serviceID))) {
-            final String dirName = indexDirectory.getName();
-            if (!dirName.equals(currentDirName)) {
-                FileUtilities.deleteDirectory(indexDirectory);
+    private void deleteOldIndexDir(final Path configDirectory, final String serviceID, final String currentDirName) throws IOException {
+        Iterator<Path> iterator = Files.newDirectoryStream(configDirectory).iterator();
+        while (iterator.hasNext()) {
+            Path indexDirectory = iterator.next();
+            if (isIndexDir(indexDirectory, serviceID)) {
+                final String dirName = indexDirectory.getFileName().toString();
+                if (!dirName.equals(currentDirName)) {
+                    FileUtilities.deleteDirectory(indexDirectory.toFile());
+                }
             }
         }
         
@@ -188,7 +198,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         final long time = System.currentTimeMillis();
         int nbEntries = 0;
         try {
-            final IndexWriterConfig conf = new IndexWriterConfig(Version.LATEST, analyzer);
+            final IndexWriterConfig conf = new IndexWriterConfig(analyzer);
             final IndexWriter writer     = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID       = getServiceID();
             
@@ -227,7 +237,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         final long time  = System.currentTimeMillis();
         int nbEntries      = 0;
         try {
-            final IndexWriterConfig conf       = new IndexWriterConfig(Version.LATEST, analyzer);
+            final IndexWriterConfig conf       = new IndexWriterConfig(analyzer);
             final IndexWriter writer           = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID             = getServiceID();
 
@@ -316,7 +326,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void indexDocument(final E meta) {
         try {
-            final IndexWriterConfig config = new IndexWriterConfig(Version.LATEST, analyzer);
+            final IndexWriterConfig config = new IndexWriterConfig(analyzer);
             final IndexWriter writer = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), config);
 
             final int docId = writer.maxDoc();
@@ -355,7 +365,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     private void stopIndexation(final IndexWriter writer, final String serviceID) throws IOException {
         // writer.optimize(); no longer justified
         writer.close();
-        FileUtilities.deleteDirectory(getFileDirectory());
+        FileUtilities.deleteDirectory(getFileDirectory().toFile());
         if (indexationToStop.contains(serviceID)) {
             indexationToStop.remove(serviceID);
         }
@@ -368,12 +378,12 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * Store the numeric fields in a properties file int the index directory
      */
     protected void storeNumericFieldsFile() {
-        final File indexDirectory   = getFileDirectory();
-        final File numericFieldFile = new File(indexDirectory, "numericFields.properties");
+        final Path indexDirectory   = getFileDirectory();
+        final Path numericFieldFile = indexDirectory.resolve("numericFields.properties");
         final Properties prop       = new Properties();
         prop.putAll(numericFields);
         try {
-            FileUtilities.storeProperties(prop, numericFieldFile);
+            FileUtilities.storeProperties(prop, numericFieldFile.toFile());
         } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Unable to store the numeric fields properties file.", ex);
         }
@@ -421,7 +431,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                 }
             }
             
-            final IndexWriterConfig config = new IndexWriterConfig(Version.LATEST, analyzer);
+            final IndexWriterConfig config = new IndexWriterConfig(analyzer);
             final IndexWriter writer       = new IndexWriter(dir, config);
             writer.deleteDocuments(query);
             LOGGER.log(logLevel, "Metadata: {0} removed from the index", identifier);
@@ -517,8 +527,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @return the service ID of this index or "" if there is not explicit service ID.
      */
     protected String getServiceID() {
-        final File directory       = getFileDirectory();
-        final String directoryName = directory.getName();
+        final Path directory       = getFileDirectory();
+        final String directoryName = directory.getFileName().toString();
         final String serviceId;
         if (directoryName.contains("index")) {
             serviceId = directoryName.substring(0, directoryName.indexOf("index"));
