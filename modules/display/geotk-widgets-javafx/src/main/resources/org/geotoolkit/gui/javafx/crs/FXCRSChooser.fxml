@@ -12,15 +12,19 @@
         <columnConstraints>
           <ColumnConstraints hgrow="NEVER" />
           <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints vgrow="NEVER" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
             <RowConstraints vgrow="NEVER" />
         </rowConstraints>
          <children>
-            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.crs.FXCRSChooser.crs" />
-            <CheckBox fx:id="uiLongFirst" mnemonicParsing="false" styleClass="property-key" text="%org.geotoolkit.gui.javafx.crs.FXCRSChooser.longfirst" GridPane.columnIndex="1" GridPane.halignment="LEFT" />
-            <TextField fx:id="uiSearch" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+            <Label styleClass="property-key" text="%org.geotoolkit.gui.javafx.crs.FXCRSChooser.crs" GridPane.rowSpan="2" />
+            <CheckBox fx:id="uiLongFirst" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="property-key" text="%org.geotoolkit.gui.javafx.crs.FXCRSChooser.longfirst" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" />
+            <TextField fx:id="uiSearch" GridPane.columnSpan="3" GridPane.rowIndex="2" />
+            <CheckBox fx:id="uiAxisConv" mnemonicParsing="false" text="%org.geotoolkit.gui.javafx.crs.FXCRSChooser.axeconv" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ChoiceBox fx:id="uiChoice" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" />
