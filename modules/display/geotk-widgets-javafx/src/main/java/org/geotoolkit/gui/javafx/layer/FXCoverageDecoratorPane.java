@@ -17,8 +17,9 @@
 package org.geotoolkit.gui.javafx.layer;
 
 import java.awt.geom.AffineTransform;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -33,7 +34,6 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.gui.javafx.crs.FXCRSButton;
 import org.geotoolkit.internal.GeotkFX;
 import org.geotoolkit.internal.Loggers;
-import org.geotoolkit.storage.coverage.CoverageReference;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -42,6 +42,34 @@ import org.opengis.referencing.operation.MathTransform;
  * @author Johann Sorel (Geomatys)
  */
 public class FXCoverageDecoratorPane extends GridPane {
+
+    private static final StringConverter CVT =new StringConverter<Double>() {
+        private final DecimalFormat df = new DecimalFormat("#.#########");
+
+        @Override 
+        public synchronized String toString(Double value) {
+            if (value == null) {
+                return "";
+            }
+            return df.format(value);
+        }
+
+        @Override 
+        public synchronized Double fromString(String value) {
+            try {
+                if (value == null) {
+                    return null;
+                }
+                value = value.trim();
+                if (value.length() < 1) {
+                    return null;
+                }
+                return df.parse(value).doubleValue();
+            } catch (ParseException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    };
 
     @FXML private GridPane uiTrsPane;
     @FXML private CheckBox uiCrs;
@@ -75,6 +103,12 @@ public class FXCoverageDecoratorPane extends GridPane {
         uiShearY.setEditable(true);
         uiTranslateX.setEditable(true);
         uiTranslateY.setEditable(true);
+        uiScaleX.getValueFactory().setConverter(CVT);
+        uiScaleY.getValueFactory().setConverter(CVT);
+        uiShearX.getValueFactory().setConverter(CVT);
+        uiShearY.getValueFactory().setConverter(CVT);
+        uiTranslateX.getValueFactory().setConverter(CVT);
+        uiTranslateY.getValueFactory().setConverter(CVT);
 
         uiTrsPane.disableProperty().bind(uiGridToCrs.selectedProperty().not());
         crsButton.disableProperty().bind(uiCrs.selectedProperty().not());
