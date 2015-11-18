@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.observation.xml.v200.OMObservationType;
@@ -63,6 +64,7 @@ import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
     "offering",
     "observation"
 })
+@XmlRootElement(name="InsertObservation")
 public class InsertObservationType extends ExtensibleRequestType implements org.geotoolkit.sos.xml.InsertObservation {
 
     @XmlElement(required = true)
@@ -77,7 +79,7 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
     
     public InsertObservationType(final String version, final List<String> offering, final List<OMObservationType> observations) {
         super(version, "SOS");
-        this.observation = new ArrayList<Observation>();
+        this.observation = new ArrayList<>();
         this.offering = offering;
         for (OMObservationType om : observations) {
             this.observation.add(new Observation(om));
@@ -93,7 +95,7 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
      */
     public List<String> getOffering() {
         if (offering == null) {
-            offering = new ArrayList<String>();
+            offering = new ArrayList<>();
         }
         return this.offering;
     }
@@ -107,7 +109,7 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
      */
     public List<InsertObservationType.Observation> getObservation() {
         if (observation == null) {
-            observation = new ArrayList<InsertObservationType.Observation>();
+            observation = new ArrayList<>();
         }
         return this.observation;
     }
@@ -119,7 +121,7 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
 
     @Override
     public List<OMObservationType> getObservations() {
-        final List<OMObservationType> result = new ArrayList<OMObservationType>();
+        final List<OMObservationType> result = new ArrayList<>();
         for (InsertObservationType.Observation obs : observation) {
             result.add(obs.omObservation);
         }
