@@ -27,7 +27,7 @@ import org.opengis.util.InternationalString;
 
 import org.apache.sis.util.CharSequences;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.process.ProgressController;
 
 

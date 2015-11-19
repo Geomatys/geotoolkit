@@ -116,7 +116,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
                 FeatureStoreUtilities.write(writer, source);
             } catch (DataStoreException e) {
                 throw new UnconvertibleObjectException("Can't write Feature into GeoJSON output stream.", e);
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 throw new UnconvertibleObjectException(e);
             }
 
@@ -139,7 +139,7 @@ public final class FeatureCollectionToReferenceConverter extends AbstractReferen
 
             } catch (JAXBException ex) {
                 throw new UnconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
-            } catch (FileNotFoundException ex) {
+            } catch (IOException ex) {
                 throw new UnconvertibleObjectException("Can't create xsd schema file.", ex);
             }
 

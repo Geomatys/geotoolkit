@@ -21,6 +21,9 @@ import java.net.URL;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
@@ -182,14 +185,16 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
          * directory, then we must save what we found in the super.hints map even if that
          * directory is null - the fact that the directory was not found is significant.
          */
-        File directory = null;
+        Path directory = null;
         if (directoryKey != null) {
             if (userHints != null) {
                 Object hint = userHints.get(directoryKey);
-                if (hint instanceof File) {
-                    directory = (File) hint;
+                if (hint instanceof Path) {
+                    directory = (Path) hint;
+                } else if(hint instanceof File) {
+                    directory = ((File) hint).toPath();
                 } else if (hint instanceof String) {
-                    directory = new File((String) hint);
+                    directory = Paths.get((String) hint);
                 }
             }
         }
@@ -199,16 +204,18 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
          */
         String path = filename; // Will be used for formatting a "File not found" message if needed.
         final List<URL> definitionFiles = new ArrayList<>(4);
-        if (directory != null) try {
-            final File file = new File(directory, filename);
-            path = file.getPath();
-            if (file.isFile()) { // May throw a SecurityException.
-                definitionFiles.add(file.toURI().toURL());
+        if (directory != null) {
+            try {
+                final Path filePath = directory.resolve(filename);
+                path = filePath.toString();
+                if (Files.isRegularFile(filePath)) { // May throw a SecurityException.
+                    definitionFiles.add(filePath.toUri().toURL());
+                }
+            } catch (SecurityException exception) {
+                // Considered unexpected because if the user provided excplicitly a
+                // directory, we assume that he was expecting us to read its file.
+                Logging.unexpectedException(LOGGER, PropertyAuthorityFactory.class, "<init>", exception);
             }
-        } catch (SecurityException exception) {
-            // Considered unexpected because if the user provided excplicitly a
-            // directory, we assume that he was expecting us to read its file.
-            Logging.unexpectedException(LOGGER, PropertyAuthorityFactory.class, "<init>", exception);
         }
         /*
          * Now search for URL to resources, which may be entries in a JAR file.

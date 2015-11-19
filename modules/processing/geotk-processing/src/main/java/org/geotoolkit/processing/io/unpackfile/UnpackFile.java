@@ -17,26 +17,30 @@
 package org.geotoolkit.processing.io.unpackfile;
 
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.nio.ZipUtilities;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.processing.AbstractProcess;
+import org.opengis.parameter.ParameterValueGroup;
 import org.xeustechnologies.jtar.TarEntry;
 import org.xeustechnologies.jtar.TarInputStream;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.util.zip.GZIPInputStream;
-import java.net.URL;
-import java.util.List;
-import org.geotoolkit.util.FileUtilities;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.processing.AbstractProcess;
-import org.geotoolkit.process.ProcessException;
-import org.opengis.parameter.ParameterValueGroup;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
+
+import static java.nio.file.StandardOpenOption.WRITE;
+import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.processing.io.unpackfile.UnpackFileDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Uncompress an archive.
@@ -62,99 +66,85 @@ public class UnpackFile extends AbstractProcess {
         Object target = getOrCreate(TARGET_IN, inputParameters).getValue();
 
         try {
-            if (!(source instanceof File)) {
-                source = IOUtilities.tryToFile(source);
+            if (!(source instanceof Path)) {
+                source = IOUtilities.toPath(source);
             }
-            if (!(target instanceof File)) {
-                target = IOUtilities.tryToFile(target);
+            if (!(target instanceof Path)) {
+                target = IOUtilities.toPath(target);
             }
         } catch (IOException ex) {
             fireProcessFailed("Failed to unpack, source or target is not a valid file : " + source + "  " + target, ex);
             return;
         }
 
-        final File src = (File) source;
-        final File trg = (File) target;
+        final Path src = (Path) source;
+        final Path trg = (Path) target;
 
-        final String name = src.getName().toLowerCase();
-        final List<URL> urls = new ArrayList<URL>();
+        final String name = src.getFileName().toString().toLowerCase();
+        final List<URL> urls = new ArrayList<>();
 
         if (name.endsWith(".zip") || name.endsWith(".jar")) {
             try {
-                final List<File> files = FileUtilities.unzip(src, trg, null);
-                for(File f : files){
-                    urls.add(f.toURI().toURL());
+                final List<Path> files = ZipUtilities.unzip(src, trg, null);
+                for(Path f : files){
+                    urls.add(f.toUri().toURL());
                 }
             } catch (IOException ex) {
                 fireProcessFailed(ex.getMessage(), ex);
                 return;
             }
         } else if (name.endsWith(".tar")) {
-            TarInputStream tis = null;
-            try{
-                tis = new TarInputStream(new BufferedInputStream(new FileInputStream(src)));
+            try (InputStream is = Files.newInputStream(src);
+                 BufferedInputStream bis = new BufferedInputStream(is);
+                 TarInputStream tis  = new TarInputStream(bis)) {
+
                 TarEntry entry;
                 while ((entry = tis.getNextEntry()) != null) {
                     int count;
                     final byte data[] = new byte[2048];
 
-                    final File targetFile = new File(trg,entry.getName());
-                    urls.add(targetFile.toURI().toURL());
-                    final FileOutputStream fos = new FileOutputStream(targetFile);
-                    final BufferedOutputStream dest = new BufferedOutputStream(fos);
+                    final Path targetFile = trg .resolve(entry.getName());
+                    urls.add(targetFile.toUri().toURL());
 
-                    while ((count = tis.read(data)) != -1) {
-                        dest.write(data, 0, count);
+                    try (OutputStream os = Files.newOutputStream(targetFile, StandardOpenOption.CREATE, WRITE);
+                         BufferedOutputStream dest = new BufferedOutputStream(os)) {
+                        while ((count = tis.read(data)) != -1) {
+                            dest.write(data, 0, count);
+                        }
+                        dest.flush();
                     }
-                    dest.flush();
-                    dest.close();
                 }
-            }catch(IOException ex){
+            } catch(IOException ex){
                 fireProcessFailed(ex.getMessage(), ex);
                 return;
-            }finally{
-                try {
-                    tis.close();
-                } catch (IOException ex) {
-                    //we tryed
-                }
             }
         } else if (name.endsWith(".tar.gz")) {
-            GZIPInputStream gin = null;
-            TarInputStream tis = null;
-            try{
-                gin = new GZIPInputStream(new FileInputStream(src));
-                tis = new TarInputStream(new BufferedInputStream(gin));
+
+            try (InputStream is = Files.newInputStream(src);
+                 GZIPInputStream gin = new GZIPInputStream(is);
+                 BufferedInputStream bis = new BufferedInputStream(gin);
+                 TarInputStream tis  = new TarInputStream(bis)) {
+
                 TarEntry entry;
                 while ((entry = tis.getNextEntry()) != null) {
                     int count;
                     final byte data[] = new byte[2048];
 
-                    final File targetFile = new File(trg,entry.getName());
-                    urls.add(targetFile.toURI().toURL());
-                    final FileOutputStream fos = new FileOutputStream(targetFile);
-                    final BufferedOutputStream dest = new BufferedOutputStream(fos);
+                    final Path targetFile = trg .resolve(entry.getName());
+                    urls.add(targetFile.toUri().toURL());
 
-                    while ((count = tis.read(data)) != -1) {
-                        dest.write(data, 0, count);
+
+                    try (OutputStream os = Files.newOutputStream(targetFile, StandardOpenOption.CREATE, WRITE);
+                         BufferedOutputStream dest = new BufferedOutputStream(os)) {
+                        while ((count = tis.read(data)) != -1) {
+                            dest.write(data, 0, count);
+                        }
+                        dest.flush();
                     }
-                    dest.flush();
-                    dest.close();
                 }
             }catch(IOException ex){
                 fireProcessFailed(ex.getMessage(), ex);
                 return;
-            }finally{
-                try {
-                    if(tis!=null){
-                        tis.close();
-                    }
-                    if(gin != null){
-                        gin.close();
-                    }
-                } catch (IOException ex) {
-                    //we tryed
-                }
             }
 
         } else {

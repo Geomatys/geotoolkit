@@ -25,7 +25,6 @@ import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.storage.coverage.DefaultTileReference;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.util.ImageIOUtilities;
 
 /**
  *
@@ -52,7 +51,7 @@ public class RequestTileReference extends DefaultTileReference {
                 //reader is JAI, we don't want this implementation
                 //we use an ImageInputStream, this will avoid JAI readers since
                 //pure java reader should be first.
-                ImageIOUtilities.releaseReader(reader);
+                XImageIO.dispose(reader);
                 final ImageInputStream ninput = ImageIO.createImageInputStream(((Request)input).getResponseStream());
                 reader = XImageIO.getReader(ninput, Boolean.TRUE, Boolean.TRUE);
                 return reader;
@@ -60,7 +59,7 @@ public class RequestTileReference extends DefaultTileReference {
         }
 
         final Object inputTmp = ((Request)input).getResponseStream();
-        Object in = ImageIOUtilities.toSupportedInput(spi, inputTmp);
+        Object in = XImageIO.toSupportedInput(spi, inputTmp);
 
         final ImageReader reader = spi.createReaderInstance();
         reader.setInput(in, true, true);

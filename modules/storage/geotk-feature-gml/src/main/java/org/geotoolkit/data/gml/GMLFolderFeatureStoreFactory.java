@@ -20,6 +20,7 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.nio.IOUtilities;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -27,11 +28,14 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.logging.Level;
 
-import static org.geotoolkit.data.gml.GMLFeatureStore.*;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -104,18 +108,18 @@ public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
             return false;
         }
 
-        final URL path = (URL)obj;
-        File pathFile;
+        final URL url = (URL)obj;
+
         try {
-            pathFile = new File(path.toURI());
-        } catch (URISyntaxException e) {
+            Path path = IOUtilities.toPath(url);
+            if (Files.exists(path) && Files.isDirectory(path)){
+                try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(path, "*.gml")) {
+                    return dirStream.iterator().hasNext();
+                }
+            }
+        } catch (IOException e) {
             // Should not happen if the url is well-formed.
             LOGGER.log(Level.INFO, e.getLocalizedMessage());
-            pathFile = new File(path.toExternalForm());
-        }
-        if (pathFile.exists() && pathFile.isDirectory()){
-            final File[] files = pathFile.listFiles(new ExtentionFileNameFilter(".gml"));
-            return (files.length>0);
         }
         return false;
     }
@@ -123,25 +127,5 @@ public class GMLFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, false, false, false, GEOMS_ALL);
-    }
-
-    //FileNameFilter implementation
-    public static class ExtentionFileNameFilter implements FilenameFilter {
-
-        private final String[] ext;
-
-        public ExtentionFileNameFilter(String ... ext){
-            this.ext = ext;
-            for(int i=0;i<ext.length;i++){
-                ext[i] = ext[i].toLowerCase();
-            }
-        }
-        @Override
-        public boolean accept(File dir, String name) {
-            for(String str : ext){
-                if(name.toLowerCase().endsWith(str)) return true;
-            }
-            return false;
-        }
     }
 }

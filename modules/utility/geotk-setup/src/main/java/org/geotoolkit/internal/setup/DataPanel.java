@@ -29,6 +29,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -176,19 +179,19 @@ final class DataPanel extends JComponent {
                             break;
                         }
                         case NADCON: {
-//                          final File directory = Installation.NADCON.directory(true);
-//                          if (new File(directory, "conus.las").isFile() &&
-//                              new File(directory, "conus.los").isFile())
-//                          {
-//                              found = true;
-//                          }
+//                            final Path directory = Installation.NADCON.directory(true);
+//                            if (Files.isRegularFile(directory.resolve("conus.las")) &&
+//                                Files.isRegularFile(directory.resolve("conus.los")))
+//                            {
+//                                found = true;
+//                            }
                             break;
                         }
                         case RGF93: {
-//                          final File directory = Installation.NTv2.directory(true);
-//                          if (new File(directory, "ntf_r93.gsb").isFile()) {
-//                              found = true;
-//                          }
+//                            final Path directory = Installation.NTv2.directory(true);
+//                            if (Files.isRegularFile(directory.resolve("ntf_r93.gsb"))) {
+//                                found = true;
+//                            }
                             break;
                         }
                     }
@@ -276,19 +279,19 @@ final class DataPanel extends JComponent {
                     break;
                 }
                 case NADCON: {
-//                  final File directory = Installation.NADCON.validDirectory(true);
-//                  unzip(new URL("http://www.ngs.noaa.gov/PC_PROD/NADCON/GRIDS.zip"), directory);
+//                    final Path directory = Installation.NADCON.validDirectory(true);
+//                    unzip(new URL("http://www.ngs.noaa.gov/PC_PROD/NADCON/GRIDS.zip"), directory);
                     break;
                 }
                 case RGF93: {
-//                  final File directory = Installation.NTv2.validDirectory(true);
-//                  String url = "http://lambert93.ign.fr/fileadmin/files/" + "ntf_r93.gsb";
-//                  if (ByteOrder.BIG_ENDIAN.equals(ByteOrder.nativeOrder())) {
-//                      final int split = url.lastIndexOf('.');
-//                      url = new StringBuilder(url.length() + 2).append(url, 0, split)
-//                              .append("_b").append(url, split, url.length()).toString();
-//                  }
-//                  copy(new URL(url), new File(directory, "ntf_r93.gsb"));
+//                    final Path directory = Installation.NTv2.validDirectory(true);
+//                    String url = "http://lambert93.ign.fr/fileadmin/files/" + "ntf_r93.gsb";
+//                    if (ByteOrder.BIG_ENDIAN.equals(ByteOrder.nativeOrder())) {
+//                        final int split = url.lastIndexOf('.');
+//                        url = new StringBuilder(url.length() + 2).append(url, 0, split)
+//                                .append("_b").append(url, split, url.length()).toString();
+//                    }
+//                    copy(new URL(url), directory.resolve("ntf_r93.gsb"));
                     break;
                 }
             }
@@ -320,11 +323,11 @@ final class DataPanel extends JComponent {
          * @param  target The destination file.
          * @throws IOException If an error occurred while copying the entries.
          */
-        private void copy(final URL url, final File target) throws IOException {
+        private void copy(final URL url, final Path target) throws IOException {
             final URLConnection connection = url.openConnection();
             final int progressDivisor = connection.getContentLength() / 100;
             try (InputStream in = connection.getInputStream();
-                 OutputStream out = new FileOutputStream(target))
+                 OutputStream out = Files.newOutputStream(target))
             {
                 int done = 0;
                 final byte[] buffer = new byte[4096];
@@ -340,22 +343,22 @@ final class DataPanel extends JComponent {
         /**
          * Unzip the given stream to the given target directory.
          *
-         * @param  in The input stream to unzip. The stream will be closed.
+         * @param  url The input stream to unzip. The stream will be closed.
          * @param  target The destination directory.
          * @throws IOException If an error occurred while unzipping the entries.
          */
-        private void unzip(final URL url, final File target) throws IOException {
+        private void unzip(final URL url, final Path target) throws IOException {
             final URLConnection connection = url.openConnection();
             final int progressDivisor = connection.getContentLength() / 100;
             int done = 0;
-            try (ZipInputStream in = new ZipInputStream(connection.getInputStream())) {
+            try (ZipInputStream zin = new ZipInputStream(url.openStream())) {
                 final byte[] buffer = new byte[4096];
                 ZipEntry entry;
-                while ((entry = in.getNextEntry()) != null) {
-                    final File file = new File(target, entry.getName());
-                    try (OutputStream out = new FileOutputStream(file)) {
+                while ((entry = zin.getNextEntry()) != null) {
+                    final Path file = target.resolve(entry.getName());
+                    try (OutputStream out = Files.newOutputStream(file)) {
                         int n;
-                        while ((n = in.read(buffer)) >= 0) {
+                        while ((n = zin.read(buffer)) >= 0) {
                             out.write(buffer, 0, n);
                             if (progressDivisor > 0) {
                                 setProgress(Math.min(100, (done += n) / progressDivisor));
@@ -364,9 +367,9 @@ final class DataPanel extends JComponent {
                     }
                     final long time = entry.getTime();
                     if (time >= 0) {
-                        file.setLastModified(time);
+                        Files.setLastModifiedTime(file, FileTime.fromMillis(time));
                     }
-                    in.closeEntry();
+                    zin.closeEntry();
                 }
             }
         }

@@ -19,8 +19,9 @@ package org.geotoolkit.coverage.io;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.datum.PixelInCell;
@@ -104,26 +105,51 @@ final class MosaicCoverageReader extends ImageCoverageReader {
      * @param  generate If {@code true}, this constructor is allowed to generate its own mosaic
      *         from the given input.
      * @throws CoverageStoreException If the reader can not be created for the given file.
+     * @deprecated use {@link #MosaicCoverageReader(Path, boolean)} instead
      */
+    @Deprecated
     public MosaicCoverageReader(final File input, final boolean generate) throws CoverageStoreException {
-        File directory = input.getParentFile(); // May be null.
-        if (directory != null && !directory.isDirectory()) {
+        this(input.toPath(), generate);
+    }
+
+    /**
+     * Creates a mosaic reader using a cache of tiles at different resolutions. Tiles will be
+     * created the first time this constructor is invoked for a given input. The tiles will be
+     * created in a sub-directory having the same name than the given input, with an additional
+     * {@value #CACHE_EXTENSION} extension.
+     * <p>
+     * This method will fetch the {@linkplain CoordinateReferenceSystem Coordinate Reference System}
+     * from a file having the same name than the given {@code input} file but with the {@code ".prj"}
+     * suffix.
+     *
+     * @param  input The input to read.
+     * @param  generate If {@code true}, this constructor is allowed to generate its own mosaic
+     *         from the given input.
+     * @throws CoverageStoreException If the reader can not be created for the given file.
+     */
+    public MosaicCoverageReader(final Path input, final boolean generate) throws CoverageStoreException {
+        Path directory = input.getParent(); // May be null.
+        if (directory != null && !Files.isDirectory(directory)) {
             throw new CoverageStoreException(Errors.format(Errors.Keys.NotADirectory_1, directory));
+        }
+        if (directory == null) {
+            throw new CoverageStoreException(Errors.format(Errors.Keys.FileDoesNotExist_1, directory));
         }
         /*
          * Before to perform the more costly operations, try to load the ".prj" file.
          */
         try {
-            crs = PrjFiles.read((File) SupportFiles.changeExtension(input, "prj"));
+            crs = PrjFiles.read((Path) SupportFiles.changeExtension(input, "prj"));
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         /*
          * If a serialized TileManager exists, reuse it.
          */
-        directory = new File(directory, input.getName() + CACHE_EXTENSION);
-        final File serialized = new File(directory, TileManager.SERIALIZED_FILENAME);
-        if (serialized.exists()) {
+        final String inputName = input.getFileName().toString();
+        directory = directory.resolve(inputName + CACHE_EXTENSION);
+        final Path serialized = directory.resolve(TileManager.SERIALIZED_FILENAME);
+        if (Files.exists(serialized)) {
             TileManager[] managers = null;
             try {
                 managers = TileManagerFactory.DEFAULT.create(serialized);
@@ -151,13 +177,15 @@ final class MosaicCoverageReader extends ImageCoverageReader {
          * been created by a previous execution of this constructor.
          */
         final TileWritingPolicy policy;
-        if (directory.exists()) {
-            if (!directory.isDirectory()) {
+        if (Files.exists(directory)) {
+            if (!Files.isDirectory(directory)) {
                 throw new CoverageStoreException(Errors.format(Errors.Keys.NotADirectory_1, directory));
             }
             policy = TileWritingPolicy.NO_WRITE;
         } else {
-            if (!directory.mkdir()) {
+            try {
+                Files.createDirectory(directory);
+            } catch (IOException e) {
                 throw new CoverageStoreException(Errors.format(Errors.Keys.CantCreateDirectory_1, directory));
             }
             policy = TileWritingPolicy.OVERWRITE;
@@ -174,7 +202,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
         try {
             manager = builder.writeFromInput(input, params);
             if (policy == TileWritingPolicy.OVERWRITE) {
-                try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialized))) {
+                try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(serialized))) {
                     out.writeObject(manager);
                     out.writeObject(crs);
                 }

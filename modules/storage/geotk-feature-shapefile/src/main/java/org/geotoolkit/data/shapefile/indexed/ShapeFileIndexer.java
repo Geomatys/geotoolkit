@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Path;
 
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
@@ -86,12 +86,9 @@ public class ShapeFileIndexer {
 
         // Temporary file for building...
         final StorageFile storage = locker.getStorageFile(this.idxType.shpFileType);
-        final File treeFile = storage.getFile();
+        final Path treeFile = storage.getFile();
 
-        ShapefileReader reader = null;
-        try {
-            reader = locker.getSHPReader(true, false, false, null);
-
+        try (ShapefileReader reader = locker.getSHPReader(true, false, false, null)) {
             switch (idxType) {
             case QIX:
                 cnt = this.buildQuadTree(locker,reader, treeFile, verbose);
@@ -101,9 +98,6 @@ public class ShapeFileIndexer {
             }
         } catch(DataStoreException ex){
             //do nothing
-        }finally {
-            if (reader != null)
-                reader.close();
         }
 
         // Final index file
@@ -114,7 +108,7 @@ public class ShapeFileIndexer {
     }
 
     private int buildQuadTree(final AccessManager locker, final ShapefileReader reader, 
-            final File file, final boolean verbose)
+            final Path file, final boolean verbose)
             throws IOException, StoreException {
         byte order = 0;
 

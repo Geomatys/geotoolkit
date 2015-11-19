@@ -60,9 +60,9 @@ import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.CRS;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
-import org.geotoolkit.util.FileUtilities;
 
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -101,7 +101,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
 
     @BeforeClass
     public static void setUpMethod() throws Exception {
-        FileUtilities.deleteDirectory(directory.toFile());
+        IOUtilities.deleteRecursively(directory);
         Files.createDirectory(directory);
 
         //creating tree (R-Tree)------------------------------------------------
@@ -137,7 +137,7 @@ public class LuceneEnvelopeOnlyTest extends org.geotoolkit.test.TestBase {
                 }
             }
         }
-        FileUtilities.deleteDirectory(directory.toFile());
+        IOUtilities.deleteRecursively(directory);
     }
 
     /**

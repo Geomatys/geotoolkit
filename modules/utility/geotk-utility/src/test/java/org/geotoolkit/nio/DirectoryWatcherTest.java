@@ -1,4 +1,4 @@
-package org.geotoolkit.io;
+package org.geotoolkit.nio;
 
 import org.junit.After;
 import org.junit.Assume;
@@ -13,8 +13,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 /**
- * Initialisation for the tests over {@link org.geotoolkit.io.DirectoryWatcher} component, which is an use of {@link java.nio.file.WatchService} API
- * for recursive file-system change survey. See {@link org.geotoolkit.io.DirectWatchTest} and {@link org.geotoolkit.io.RecursiveWatchTest}
+ * Initialisation for the tests over {@link DirectoryWatcher} component, which is an use of {@link java.nio.file.WatchService} API
+ * for recursive file-system change survey. See {@link DirectWatchTest} and {@link RecursiveWatchTest}
  * for the real test cases.
  *
  * @author Alexis Manin (Geomatys)

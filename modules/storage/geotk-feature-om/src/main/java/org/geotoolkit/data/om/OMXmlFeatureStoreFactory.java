@@ -18,7 +18,9 @@
 
 package org.geotoolkit.data.om;
 
-import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -27,10 +29,8 @@ import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.NAMESPACE;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.createFixedIdentifier;
 import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -63,11 +63,11 @@ public class OMXmlFeatureStoreFactory extends AbstractFeatureStoreFactory {
     /**
      * Parameter for database port
      */
-    public static final ParameterDescriptor<File> FILE_PATH = new ParameterBuilder()
+    public static final ParameterDescriptor<URL> FILE_PATH = new ParameterBuilder()
             .addName("url")
             .setRemarks("url")
             .setRequired(true)
-            .create(File.class, null);
+            .create(URL.class, null);
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
@@ -122,9 +122,12 @@ public class OMXmlFeatureStoreFactory extends AbstractFeatureStoreFactory {
     @Override
     public FeatureStore open(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
-        
-        final File dataSource = (File) params.parameter(FILE_PATH.getName().toString()).getValue();
-        return new OMXmlFeatureStore(params, dataSource);
+        try {
+            final Path dataSource = IOUtilities.toPath(params.parameter(FILE_PATH.getName().toString()).getValue());
+            return new OMXmlFeatureStore(params, dataSource);
+        } catch (IOException e) {
+            throw new DataStoreException(e.getLocalizedMessage(), e);
+        }
     }
 
     @Override

@@ -19,10 +19,11 @@ package org.geotoolkit.data.osm.db;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -38,7 +39,7 @@ import org.geotoolkit.data.osm.model.Node;
 import org.geotoolkit.data.osm.model.Relation;
 import org.geotoolkit.data.osm.model.Way;
 
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.logging.Logging;
 
 /**
@@ -49,7 +50,7 @@ import org.apache.sis.util.logging.Logging;
  */
 public class OSMJavaDB {
 
-    private static final File OSM_CACHE_FOLDER = new File(System.getProperty("java.io.tmpdir") + File.separator + "osm_deflat");
+    private static final Path OSM_CACHE_FOLDER = Paths.get(System.getProperty("java.io.tmpdir"), "osm_deflat");
 
     private final Connection cnx;
     private final PreparedStatement sqlAddNode;
@@ -62,7 +63,7 @@ public class OSMJavaDB {
 
     public OSMJavaDB(final String name) throws SQLException {
         final String folder = getTempFolder(name);
-        FileUtilities.deleteDirectory(new File(folder));
+        IOUtilities.deleteSilently(Paths.get(folder));
 
         final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
         final String conecURL = "jdbc:derby:"+ folder + ";create=true";
@@ -190,11 +191,9 @@ public class OSMJavaDB {
             //no extension? use the full name
             name = pathName;
         }
-        final StringBuilder builder = new StringBuilder(OSM_CACHE_FOLDER.getAbsolutePath());
-        builder.append(File.separator);
-        builder.append(name);
 
-        return builder.toString();
+        Path subFolder = OSM_CACHE_FOLDER.toAbsolutePath().resolve(name);
+        return subFolder.toString();
     }
 
     private static final class ResultsetIterator implements Iterator{

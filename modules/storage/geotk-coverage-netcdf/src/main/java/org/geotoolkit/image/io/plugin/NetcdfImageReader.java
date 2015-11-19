@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.nio.file.NoSuchFileException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,7 @@ import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.internal.image.io.DimensionManager;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.NetcdfVariable;
@@ -796,13 +797,13 @@ public class NetcdfImageReader extends FileImageReader implements
         Object input = IOUtilities.changeExtension(this.input, "tfw");
         if (input != null) try {
             gridToCRS = SupportFiles.parseTFW(IOUtilities.open(input), input);
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             // Ignore. TODO: refactor in Apache SIS in order to check if file exists.
         }
         input = IOUtilities.changeExtension(this.input, "prj");
         if (input != null) try {
             crs = PrjFiles.read(IOUtilities.open(input), true);
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             // Ignore. TODO: refactor in Apache SIS in order to check if file exists.
         }
         if (gridToCRS != null || crs != null) {
@@ -928,6 +929,7 @@ public class NetcdfImageReader extends FileImageReader implements
                     /*
                      * The NetCDF library accepts URL, so don't create a temporary file for them.
                      * Just convert the URL to a String and use that directly.
+                     * TODO add Path to supported list ?
                      */
                     if (input instanceof String || input instanceof URL || input instanceof URI || input instanceof File) {
                         inputURL = input.toString();
@@ -936,7 +938,7 @@ public class NetcdfImageReader extends FileImageReader implements
                          * For other types (especially ImageInputStream), we need
                          * to copy the content to a temporary file before to open it.
                          */
-                        inputURL = getInputFile().getPath();
+                        inputURL = getInputPath().toString();
                         useCache = false;
                     }
                     break;
@@ -1483,7 +1485,7 @@ public class NetcdfImageReader extends FileImageReader implements
          * like {@link javax.imageio.stream.ImageInputStream}, because testing the stream
          * content would require copying it to a temporary file.
          *
-         * @param  source the object (typically a {@link File}) to be decoded.
+         * @param  source the object (typically a {@link File} or {@link java.nio.file.Path}) to be decoded.
          * @return {@code true} if it is likely that the given source can be decoded.
          * @throws IOException If an error occurred while opening the file.
          */
@@ -1519,6 +1521,7 @@ public class NetcdfImageReader extends FileImageReader implements
          * Returns an instance of the {@code NetcdfImageReader} implementation associated
          * with this service provider.
          *
+         * @param  extension An optional extension object, which may be null.
          * @param  extension An optional extension object, which may be null.
          * @return An image reader instance.
          * @throws IOException if the attempt to instantiate the reader fails.

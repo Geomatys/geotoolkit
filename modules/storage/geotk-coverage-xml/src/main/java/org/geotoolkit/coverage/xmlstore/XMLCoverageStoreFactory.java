@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage.xmlstore;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
@@ -107,7 +108,7 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
         }
         try {
             return new XMLCoverageStore(params);
-        } catch (URISyntaxException ex) {
+        } catch (IOException | URISyntaxException ex) {
             throw new DataStoreException(ex);
         }
     }

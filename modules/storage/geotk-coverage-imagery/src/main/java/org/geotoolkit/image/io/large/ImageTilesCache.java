@@ -16,31 +16,35 @@
  */
 package org.geotoolkit.image.io.large;
 
-import org.geotoolkit.util.ImageIOUtilities;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.RasterFactory;
 import java.awt.*;
 import java.awt.image.*;
-import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.collection.WeakValueHashMap;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.nio.IOUtilities;
 
 /**
  * Stock all {@link java.awt.image.Raster} contained from define {@link java.awt.image.RenderedImage}. It's a map whose key
@@ -60,7 +64,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
      */
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image.io.large");
 
-    private static final String TEMPORARY_PATH = System.getProperty("java.io.tmpdir");
+    private static final Path TEMPORARY_PATH = Paths.get(System.getProperty("java.io.tmpdir"));
     private static final String FORMAT = "geotiff";
     private static final ImageReaderSpi READER_SPI;
     private static final ImageWriterSpi WRITER_SPI;
@@ -180,7 +184,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
         if (cache.isEnableSwap()) {
             ArgumentChecks.ensureNonNull("READER_SPI", READER_SPI);
             ArgumentChecks.ensureNonNull("WRITER_SPI", WRITER_SPI);
-            final String dirPath = TEMPORARY_PATH + "/img_" + UUID.randomUUID().toString();
+            final Path dirPath = Files.createTempDirectory(TEMPORARY_PATH, "img");
             this.qTD = new QuadTreeDirectory(dirPath, numTilesX, numTilesY, FORMAT, true);
         } else {
             this.qTD = null;
@@ -256,9 +260,15 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
 
             if (qTD != null) {
                 //quad tree
-                final File removeFile = new File(qTD.getPath(tileCorner.x, tileCorner.y));
+                final Path removeFile = Paths.get(qTD.getPath(tileCorner.x, tileCorner.y));
                 //delete on hard disk if exist.
-                if (removeFile.exists()) removeFile.delete();
+                try {
+                    Files.deleteIfExists(removeFile);
+                } catch (IOException e) {
+                    //delete failed try to delete it when JVM shutdown
+                    LOGGER.log(Level.FINE,"Tile delete failed : "+ e.getLocalizedMessage(), e);
+                    IOUtilities.deleteOnExit(removeFile);
+                }
             }
 
         } finally {
@@ -313,8 +323,8 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
                 }
 
                 // If not, we must take it from input quad-tree.
-                final File tileFile = new File(qTD.getPath(tileCorner.x, tileCorner.y));
-                if (tileFile.exists()) {
+                final Path tileFile = Paths.get(qTD.getPath(tileCorner.x, tileCorner.y));
+                if (Files.exists(tileFile)) {
                     // TODO : Use a "pool" of readers, instead of creating one each time ?
                     final ImageReader imgReader = READER_SPI.createReaderInstance();
                     final BufferedImage buff;
@@ -322,7 +332,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
                         imgReader.setInput(tileFile);
                         buff = imgReader.read(0);
                     } finally {
-                        ImageIOUtilities.releaseReader(imgReader);
+                        releaseReader(imgReader);
                     }
                     //add in cache list.
                     final WritableRaster checkedRaster = checkRaster(buff.getRaster(), tileCorner);
@@ -339,7 +349,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
     /**
      * Remove all file and directory relevant to this cached image.
      */
-    void removeTiles() {
+    void removeTiles() throws IOException {
         //rendered image won't be used after this
         synchronized(tiles){
             tiles.clear();
@@ -379,8 +389,8 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
      * @throws java.io.IOException if impossible to write raster on disk.
      */
     private void writeRaster(final TileRasterCache lRaster) throws IOException {
-        final File tileFile = new File(qTD.getPath(lRaster.getGridX(), lRaster.getGridY()));
-        if (isWritableRenderedImage || !tileFile.exists()) {
+        final Path tileFile = Paths.get(qTD.getPath(lRaster.getGridX(), lRaster.getGridY()));
+        if (isWritableRenderedImage || !Files.exists(tileFile)) {
             final BufferedImage toWrite = new BufferedImage(
                     cm, RasterFactory.createWritableRaster(lRaster.getRaster().getSampleModel(), lRaster.getRaster().getDataBuffer(), WPOINT), true, null);
             // TODO : Optimize using a "writer pool" instead of creating one each time ?
@@ -389,8 +399,58 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
                 imgWriter.setOutput(tileFile);
                 imgWriter.write(toWrite);
             } finally {
-                ImageIOUtilities.releaseWriter(imgWriter);
+                releaseWriter(imgWriter);
             }
+        }
+    }
+
+    /**
+     * Release ImageReader and his input.
+     * TODO replace with XImageIO utility methods
+     * @param imageReader
+     */
+    private void releaseReader(ImageReader imageReader) {
+        if(imageReader != null) {
+            Object writerOutput = imageReader.getInput();
+            if(writerOutput instanceof OutputStream){
+                try {
+                    ((OutputStream)writerOutput).close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.INFO, ex.getMessage(),ex);
+                }
+            }else if(writerOutput instanceof ImageOutputStream){
+                try {
+                    ((ImageOutputStream)writerOutput).close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.INFO, ex.getMessage(),ex);
+                }
+            }
+            imageReader.dispose();
+        }
+    }
+
+    /**
+     * Release ImageWriter and his output.
+     * TODO replace with XImageIO utility methods
+     * @param imgWriter
+     */
+    private void releaseWriter(ImageWriter imgWriter) {
+        if(imgWriter != null) {
+            Object writerOutput = imgWriter.getOutput();
+            if(writerOutput instanceof OutputStream){
+                try {
+                    ((OutputStream)writerOutput).close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.INFO, ex.getMessage(),ex);
+                }
+            }else if(writerOutput instanceof ImageOutputStream){
+                try {
+                    ((ImageOutputStream)writerOutput).close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.INFO, ex.getMessage(),ex);
+                }
+            }
+            imgWriter.dispose();
         }
     }
 

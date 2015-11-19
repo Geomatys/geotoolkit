@@ -25,10 +25,13 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -105,36 +108,37 @@ public class DbaseFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFa
         }
 
         final URL path = (URL)obj;
-        File pathFile;
+        Path pathFile;
         try {
-            pathFile = new File(path.toURI());
+            pathFile = Paths.get(path.toURI());
         } catch (URISyntaxException e) {
             // Should not happen if the url is well-formed.
             LOGGER.log(Level.INFO, e.getLocalizedMessage());
-            pathFile = new File(path.toExternalForm());
+            pathFile = Paths.get(path.toExternalForm());
         }
-        if (pathFile.exists() && pathFile.isDirectory()){
-            File[] dbaseFiles = pathFile.listFiles(new ExtentionFileNameFilter(".dbf"));
-            File[] shapeFiles = pathFile.listFiles(new ExtentionFileNameFilter(".shp"));
-            return (shapeFiles.length==0 && dbaseFiles.length>0);
+
+        if (Files.exists(pathFile) && Files.isDirectory(pathFile)){
+            boolean dbfFiles = false;
+            boolean shpFiles = false;
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(pathFile)) {
+                for (Path candidate : stream) {
+                    final String ext = org.apache.sis.internal.storage.IOUtilities.extension(candidate);
+                    if ("dbf".equalsIgnoreCase(ext)) {
+                        dbfFiles = true;
+                    }
+                    if ("shp".equalsIgnoreCase(ext)) {
+                        shpFiles = true;
+                    }
+
+                }
+            } catch (IOException e) {
+                LOGGER.log(Level.FINE, e.getLocalizedMessage());
+            }
+            return (dbfFiles && shpFiles);
         }
         return false;
     }
 
-    //FileNameFilter implementation
-    public static class ExtentionFileNameFilter implements FilenameFilter {
-
-        private String ext;
-
-        public ExtentionFileNameFilter(String ext){
-            this.ext = ext.toLowerCase();
-        }
-        @Override
-        public boolean accept(File dir, String name) {
-            return name.toLowerCase().endsWith(ext);
-        }
-    }
-    
     @Override
     public FactoryMetadata getMetadata() {
         return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, DefaultFactoryMetadata.GEOMS_NONE);

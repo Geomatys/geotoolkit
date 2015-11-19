@@ -21,6 +21,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Arrays;
@@ -31,6 +32,7 @@ import javax.imageio.IIOException;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.metadata.IIOMetadata;
 
+import org.geotoolkit.nio.IOUtilities;
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -56,7 +58,6 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
@@ -128,7 +129,7 @@ public final class NewGridCoverageReference {
      * @see #extension
      * @see #getFile()
      */
-    public final File path;
+    public final Path path;
 
     /**
      * The filename, not including the {@linkplain #path} and {@linkplain #extension}.
@@ -300,9 +301,34 @@ public final class NewGridCoverageReference {
      * @param dateIndex  Index of the element to select in the {@code dateRanges} array.
      *
      * @since 3.16
+     * @deprecated use {@link #NewGridCoverageReference(NewGridCoverageReference, Path, int)} instead
      */
     NewGridCoverageReference(final NewGridCoverageReference master, final File file, final int dateIndex) {
-        String filename  = file.getName();
+        this(master, file.toPath(), dateIndex);
+    }
+
+    /**
+     * Creates a new instance which is a copy of the given instance except for the input file,
+     * image index and time range. This method is used only when iterating over the content of
+     * an aggregate (typically a NcML file).
+     * <p>
+     * This constructor does not clone the references to mutable objects.
+     * Consequently this instance is not allowed to be made visible through public API.
+     *
+     * {@section Note for implementors}
+     * The {@link WritableGridCoverageTable#addEntries} method assumes that the instance created by
+     * this method uses the same format and the same spatial extent than the master entry. If this
+     * assumption doesn't hold anymore in a future version, then {@code WritableGridCoverageTable}
+     * needs to be updated (see comments in its code).
+     *
+     * @param master     The reference to copy.
+     * @param file       The path, filename and index to the new image file.
+     * @param dateIndex  Index of the element to select in the {@code dateRanges} array.
+     *
+     * @since 3.16
+     */
+    NewGridCoverageReference(final NewGridCoverageReference master, final Path file, final int dateIndex) {
+        String filename  = file.getFileName().toString();
         String extension = null;
         final int s = filename.lastIndexOf('.');
         if (s > 0) {
@@ -310,7 +336,7 @@ public final class NewGridCoverageReference {
             filename = filename.substring(0, s);
         }
         this.database           = master.database;
-        this.path               = file.getParentFile();
+        this.path               = file.getParent();
         this.filename           = filename;
         this.extension          = extension;
         this.format             = master.format;
@@ -407,14 +433,14 @@ public final class NewGridCoverageReference {
          * Get the input, which must be an instance of File.
          * Split that input file into the path components.
          */
-        input = IOUtilities.tryToFile(input);
-        if (!(input instanceof File)) {
+        input = IOUtilities.tryToPath(input);
+        if (!(input instanceof Path)) {
             throw new IIOException(Errors.format(Errors.Keys.IllegalClass_2,
                     Classes.getShortClassName(input), File.class));
         }
-        final File inputFile = (File) input;
-        path = inputFile.getParentFile();
-        final String name = inputFile.getName();
+        final Path inputFile = (Path) input;
+        path = inputFile.getParent();
+        final String name = inputFile.getFileName().toString();
         final int split = name.lastIndexOf('.');
         if (split >= 0) {
             filename  = name.substring(0, split);
@@ -708,7 +734,7 @@ public final class NewGridCoverageReference {
      * @see #filename
      * @see #extension
      */
-    public File getFile() {
+    public Path getFile() {
         String name = filename;
         if (name == null) {
             return null;
@@ -716,7 +742,7 @@ public final class NewGridCoverageReference {
         if (extension != null) {
             name = name + '.' + extension;
         }
-        return new File(path, name);
+        return path.resolve(name);
     }
 
     /**

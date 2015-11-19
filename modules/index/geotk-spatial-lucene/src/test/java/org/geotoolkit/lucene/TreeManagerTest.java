@@ -27,7 +27,7 @@ import java.util.Iterator;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.manager.SQLRtreeManager;
 import org.geotoolkit.index.tree.manager.postgres.LucenePostgresSQLTreeEltMapper;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.IOUtilities;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -43,7 +43,7 @@ public class TreeManagerTest extends org.geotoolkit.test.TestBase {
     @BeforeClass
     public static void setUpMethod() throws Exception {
         if (Files.isDirectory(directory)) {
-            FileUtilities.deleteDirectory(directory.toFile());
+            IOUtilities.deleteRecursively(directory);
         }
         Files.createDirectory(directory);
     }
@@ -63,8 +63,7 @@ public class TreeManagerTest extends org.geotoolkit.test.TestBase {
                 }
             }
         }
-
-        FileUtilities.deleteDirectory(directory.toFile());
+        IOUtilities.deleteRecursively(directory);
     }
 
     @Test

@@ -17,10 +17,10 @@
 package org.geotoolkit.data.shapefile;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -28,6 +28,7 @@ import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
+import org.geotoolkit.nio.IOUtilities;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -79,14 +80,8 @@ public class StorageFileTest extends org.geotoolkit.test.TestBase {
 
     private void writeData(final StorageFile storage, final String writtenToStorageFile)
             throws IOException {
-        File file = storage.getFile();
-        file.deleteOnExit();
-
-        FileWriter writer = new FileWriter(file);
-
-        writer.write(writtenToStorageFile);
-
-        writer.close();
+        Path file = storage.getFile();
+        IOUtilities.writeString(writtenToStorageFile, file);
     }
 
     private void assertCorrectData(final ShpFiles files1, final ShpFileType type,

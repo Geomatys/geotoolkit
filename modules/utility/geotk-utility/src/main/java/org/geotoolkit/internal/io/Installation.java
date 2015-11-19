@@ -17,18 +17,16 @@
  */
 package org.geotoolkit.internal.io;
 
-import java.net.URL;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 import org.apache.sis.internal.system.OS;
 import org.geotoolkit.lang.Workaround;
-import org.geotoolkit.resources.Errors;
 import org.apache.sis.util.logging.Logging;
-import org.apache.sis.internal.storage.IOUtilities;
 
 
 /**
@@ -104,7 +102,7 @@ public enum Installation {
      * The default root directory. Computed only once at class initialization time in
      * order to make sure that the value stay consistent during all the JVM execution.
      */
-    private static final File DEFAULT_ROOT = root();
+    private static final Path DEFAULT_ROOT = root();
 
     /**
      * Whatever we are allowed to check for system preferences. This can be set to {@code false}
@@ -182,47 +180,47 @@ public enum Installation {
      *
      * @return The default installation root directory.
      */
-    private static File root() {
+    private static Path root() {
         try {
             final OS system = OS.current();
             if (system == OS.WINDOWS) {
                 final String app = System.getenv("APPDATA");
                 if (app != null) {
-                    final File file = new File(app);
-                    if (file.isDirectory()) {
-                        return new File(file, "Geotoolkit.org");
+                    final Path file = Paths.get(app);
+                    if (Files.isDirectory(file)) {
+                        return file.resolve("Geotoolkit.org");
                     }
                 }
             }
             final String directory = System.getProperty("user.home");
             if (directory != null) {
-                File file = new File(directory);
+                Path file =  Paths.get(directory);
                 String name = ".geotoolkit.org";
                 switch (system) {
                     case WINDOWS: {
-                        file = new File(file, "Application Data");
+                        file = file.resolve("Application Data");
                         name = "Geotoolkit.org";
                         break;
                     }
                     case MAC_OS: {
-                        file = new File(file, "Library");
+                        file = file.resolve("Library");
                         name = "Geotoolkit.org";
                         break;
                     }
                     // For Linux and unknown OS, keep the directory selected above.
                 }
-                if (file.isDirectory() && (!system.unix || file.canWrite())) {
-                    return new File(file, name);
+                if (Files.isDirectory(file) && (!system.unix || Files.isWritable(file))) {
+                    return file.resolve(name);
                 }
             }
         } catch (SecurityException e) {
             Logging.getLogger("org.geotoolkit").warning(e.toString());
         }
-        return new File(System.getProperty("java.io.tmpdir"), "Geotoolkit.org");
+        return Paths.get(System.getProperty("java.io.tmpdir"), "Geotoolkit.org");
     }
 
     /**
-     * If the preference is defined, returns its value as a {@link File}. Otherwise returns a
+     * If the preference is defined, returns its value as a {@link Path}. Otherwise returns a
      * sub-directory of the <cite>root directory</cite> where the later is defined as the first
      * of the following directories which is found suitable:
      * <p>
@@ -238,18 +236,18 @@ public enum Installation {
      *         are ignored and only the default directory is returned.
      * @return The directory (never {@code null}).
      */
-    public File directory(final boolean usePreferences) {
+    public Path directory(final boolean usePreferences) {
         if (usePreferences) {
             boolean user = true;
             do {
                 final String candidate = get(user);
                 if (candidate != null) {
-                    return new File(candidate);
+                    return Paths.get(candidate);
                 }
             } while ((user = !user) == false);
         }
         if (directory != null) {
-            return new File(ROOT_DIRECTORY.directory(true), directory);
+            return ROOT_DIRECTORY.directory(true).resolve(directory);
         } else {
             return DEFAULT_ROOT;
         }
@@ -263,60 +261,12 @@ public enum Installation {
      * @return The default directory.
      * @throws IOException If the subdirectory can't be created.
      */
-    public File validDirectory(final boolean usePreferences) throws IOException {
-        final File directory = directory(usePreferences);
-        if (!directory.isDirectory()) {
-            if (!directory.mkdirs()) {
-                throw new IOException(Errors.format(Errors.Keys.CantCreateFactoryForType_1, directory));
-            }
+    public Path validDirectory(final boolean usePreferences) throws IOException {
+        final Path directory = directory(usePreferences);
+        if (!Files.isDirectory(directory)) {
+            Files.createDirectories(directory);
         }
         return directory;
-    }
-
-    /**
-     * Returns a {@link File} if possible, or an {@link URL} otherwise, from a resource name.
-     * If the string is not an URL or an absolute path, then the file is searched on the classpath
-     * first, or in the directory given by {@link #directory(boolean)} if not found on the classpath.
-     *
-     * @param  caller The class to use for fetching resources, typically the caller class.
-     * @param  path   A string representation of a filename or a URL.
-     * @return A File or URL created from the string representation.
-     * @throws IOException if the URL cannot be created.
-     */
-    public Object toFileOrURL(final Class<?> caller, final String path) throws IOException {
-        final Object uof = IOUtilities.toFileOrURL(path, null);
-        if (uof instanceof URL) {
-            return uof;
-        }
-        File file = (File) uof;
-        if (!file.isAbsolute()) {
-            if (directory != null && file.getParent() == null) {
-                final URL url = caller.getResource(directory + '/' + file.getPath());
-                if (url != null) {
-                    return url;
-                }
-            }
-            // Just a file name, prepend base location.
-            file = new File(directory(true), file.getPath());
-        }
-        return file;
-    }
-
-    /**
-     * Tests if the file returned by {@link #toFileOrURL toFileOrURL} exists.
-     *
-     * @param  caller The class to use for fetching resources, typically the caller class.
-     * @param  path   A string representation of a filename or a URL.
-     * @return {@code true} if the file or URL exists.
-     * @throws IOException if the URL cannot be created.
-     */
-    public boolean exists(final Class<?> caller, final String path) throws IOException {
-        final Object uof = toFileOrURL(caller, path);
-        if (uof instanceof File) {
-            return ((File) uof).isFile();
-        } else {
-            return (uof != null);
-        }
     }
 
     /**
@@ -329,10 +279,10 @@ public enum Installation {
      * @since 3.11
      */
     public Properties getDataSource() throws IOException {
-        final File file = new File(directory(true), DATASOURCE_FILE);
-        if (file.isFile()) {
+        final Path file = directory(true).resolve(DATASOURCE_FILE);
+        if (Files.isRegularFile(file)) {
             final Properties properties;
-            try (InputStream in = new FileInputStream(file)) {
+            try (InputStream in = Files.newInputStream(file)) {
                 properties = new Properties();
                 properties.load(in);
             }

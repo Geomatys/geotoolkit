@@ -25,7 +25,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -34,7 +33,6 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import org.apache.sis.geometry.Envelopes;
 
@@ -54,6 +52,7 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
@@ -61,7 +60,6 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.util.Cancellable;
-import org.geotoolkit.util.ImageIOUtilities;
 
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -514,7 +512,7 @@ public class PyramidalModelReader extends GridCoverageReader{
                         } catch (IOException ex) {
                             throw new CoverageStoreException(ex.getMessage(),ex);
                         } finally {
-                            ImageIOUtilities.releaseReader(reader);
+                            XImageIO.disposeSilently(reader);
                         }
                     }
 

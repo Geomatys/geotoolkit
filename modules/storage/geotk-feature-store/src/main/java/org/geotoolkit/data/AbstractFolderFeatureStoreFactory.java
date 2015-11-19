@@ -16,9 +16,11 @@
  */
 package org.geotoolkit.data;
 
-import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -99,15 +101,15 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
         }
 
         final URL path = (URL)obj;
-        File pathFile;
+        Path pathFile;
         try {
-            pathFile = new File(path.toURI());
+            pathFile = Paths.get(path.toURI());
         } catch (URISyntaxException e) {
             // Should not happen if the url is well-formed.
             LOGGER.log(Level.INFO, e.getLocalizedMessage());
-            pathFile = new File(path.toExternalForm());
+            pathFile = Paths.get(path.toExternalForm());
         }
-        return (pathFile.exists() && pathFile.isDirectory());
+        return (Files.exists(pathFile) && Files.isDirectory(pathFile));
     }
 
     /**

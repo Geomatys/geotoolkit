@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.image.io;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.List;
 import java.util.Arrays;
@@ -39,16 +41,18 @@ import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.RenderedImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.util.collection.DeferringIterator;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.resources.Errors;
 
@@ -143,6 +147,9 @@ import org.apache.sis.util.logging.Logging;
  * @module
  */
 public final class XImageIO extends Static {
+
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.image");
+
     /**
      * Used in {@code switch} statements for selecting the method to invoke
      * for choosing an image reader or writer.
@@ -368,8 +375,8 @@ public final class XImageIO extends Static {
          * ImageInputStream, create the stream and check again.
          */
         if (usingImageInputStream != null) {
-            final ImageInputStream stream = createImageInputStream(input);
-            if (stream != null) {
+            try {
+                final ImageInputStream stream = CoverageIO.createImageInputStream(input);
                 it = usingImageInputStream.iterator();
                 while (it.hasNext()) {
                     final ImageReaderSpi spi = it.next();
@@ -381,18 +388,19 @@ public final class XImageIO extends Static {
                         return createReaderInstance(spi, stream, seekForwardOnly, ignoreMetadata);
                     }
                 }
+                //close stream if no spi support created stream
                 stream.close();
-            } else {
+            } catch (IOException e) {
                 /*
                  * The stream can not be created. It may be because the file doesn't exist.
                  * From this point we consider that the operation failed, but we need to
                  * build an error message as helpful as possible.
                  */
-                if (input instanceof File) {
-                    File file = (File) input;
+                if (input instanceof File || input instanceof Path) {
+                    Path file = (input instanceof File) ? ((File) input).toPath() : (Path) input;
                     short messageKey = Errors.Keys.FileDoesNotExist_1;
-                    File parent;
-                    while ((parent = file.getParentFile()) != null && !parent.isDirectory()) {
+                    Path parent;
+                    while ((parent = file.getParent()) != null && !Files.isDirectory(parent)) {
                         messageKey = Errors.Keys.NotADirectory_1;
                         file = parent;
                     }
@@ -621,6 +629,36 @@ public final class XImageIO extends Static {
     }
 
     /**
+     * Like {@link #close(ImageReader)} this method close the input stream of the given reader
+     * but also dispose ImageReader itself.
+     *
+     * @param reader The reader for which to close the input stream.
+     * @throws IOException If an error occurred while closing the stream.
+     */
+    public static void dispose(final ImageReader reader) throws IOException {
+        close(reader);
+        reader.dispose();
+    }
+
+    /**
+     * Like {@link #dispose(ImageReader)} this method close the input stream of the given reader
+     * but also dispose ImageReader itself without throwing an exception.
+     *
+     * @param reader reader to dispose
+     * @return dispose status. {@code true} if dispose succeed, {@code false} otherwise
+     */
+    public static boolean disposeSilently(final ImageReader reader) {
+        if(reader == null) return true;
+        try {
+            dispose(reader);
+            return true;
+        } catch (IOException e) {
+            LOGGER.log(Level.FINER, e.getLocalizedMessage(), e);
+            return false;
+        }
+    }
+
+    /**
      * Creates a new writer from the given provider, and initializes its output to the given value.
      *
      * @param  spi The provider to use for creating a new writer instance.
@@ -794,6 +832,37 @@ public final class XImageIO extends Static {
         final Object output = writer.getOutput();
         writer.setOutput(null);
         IOUtilities.close(output);
+    }
+
+    /**
+     * Like {@link #close(ImageWriter)} this method close the input stream of the given writer
+     * but also dispose ImageWriter itself.
+     *
+     * @param writer The writer for which to close the input stream.
+     * @throws IOException If an error occurred while closing the stream.
+     */
+    public static void dispose(final ImageWriter writer) throws IOException {
+        close(writer);
+        writer.dispose();
+    }
+
+    /**
+     * Like {@link #close(ImageWriter)} this method close the input stream of the given writer
+     * but also dispose ImageWriter itself without throwing an exception.
+     *
+     * @param writer The writer for which to close the input stream.
+     * @return dispose status. {@code true} if dispose succeed, {@code false} otherwise
+     */
+    public static boolean disposeSilently(final ImageWriter writer) {
+        if(writer == null) return true;
+        try {
+            close(writer);
+            writer.dispose();
+            return true;
+        } catch (IOException e) {
+            LOGGER.log(Level.FINER, e.getLocalizedMessage(), e);
+            return false;
+        }
     }
 
     /**
@@ -985,20 +1054,130 @@ public final class XImageIO extends Static {
     }
 
     /**
-     * Creates an image input stream for the given source. This method first delegates
-     * to {@link ImageIO#createImageInputStream(Object)}, then wraps the result in a
-     * {@link CheckedImageInputStream} if assertions are enabled.
+     * Check if the provided object is an instance of one of the given classes.
+     * Used test if an obect is compatible with {@link ImageWriterSpi#getOutputTypes()} or
+     * {@link ImageReaderSpi#getInputTypes()} supported classes.
      *
-     * @param  input The input for which an image input is desired.
-     * @return The image input stream, or {@code null}.
-     * @throws IOException If an error occurred while creating the stream.
-     *
-     * @since 3.14
+     * @param validTypes list of supported classes
+     * @param type candidate object
+     * @return true if candidate object class is an instance of supported class.
      */
-    private static ImageInputStream createImageInputStream(final Object input) throws IOException {
-        ImageInputStream in = ImageIO.createImageInputStream(input);
-        assert CheckedImageInputStream.isValid(in = // Intentional side effect.
-               CheckedImageInputStream.wrap(in));
+    public static boolean isValidType(final Class<?>[] validTypes, final Object type) {
+        for (final Class<?> t : validTypes) {
+            if (t.isInstance(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * Convert given input to an input support by given spi.
+     * In last case an ImageInputStream will be created.
+     *
+     * @param spi {@link ImageReaderSpi} reader spi
+     * @param input candidate object
+     * @return Input object if directly supported by ImageReaderSpi or input object converted into
+     * an {@link org.geotoolkit.coverage.io.ImageCoverageReader}
+     * @throws IOException if {@link org.geotoolkit.coverage.io.ImageCoverageReader} fail
+     */
+    public static Object toSupportedInput(ImageReaderSpi spi, Object input) throws IOException{
+        final Class[] supportedTypes = spi.getInputTypes();
+        Object in = null;
+
+        //try to reuse input if it's supported
+        for(Class type : supportedTypes){
+            if(type.isInstance(input)){
+                in = input;
+                break;
+            }
+        }
+
+        //use default image stream if necessary
+        if(in == null){
+            //may throw IOException
+            in = CoverageIO.createImageInputStream(input);
+        }
         return in;
+    }
+
+    /**
+     * Returns the mime type matching the extension of an image file.
+     * For example, for a file "my_image.png" it will return "image/png", in most cases.
+     *
+     * @param extension The extension of an image file.
+     * @return The mime type for the extension specified.
+     *
+     * @throws IIOException if no image reader are able to handle the extension given.
+     */
+    public static String fileExtensionToMimeType(final String extension) throws IIOException {
+        final Iterator<ImageReaderSpi> readers = IIORegistry.lookupProviders(ImageReaderSpi.class);
+        while (readers.hasNext()) {
+            final ImageReaderSpi reader = readers.next();
+            final String[] suffixes = reader.getFileSuffixes();
+            for (String suffixe : suffixes) {
+                if (extension.equalsIgnoreCase(suffixe)) {
+                    final String[] mimeTypes = reader.getMIMETypes();
+                    if (mimeTypes != null && mimeTypes.length > 0) {
+                        return mimeTypes[0];
+                    }
+                }
+            }
+        }
+        throw new IIOException("No available image reader able to handle the extension specified: "+ extension);
+    }
+
+    /**
+     * Returns the mime type matching the format name of an image file.
+     * For example, for a format name "png" it will return "image/png", in most cases.
+     *
+     * @param formatName name The format name of an image file.
+     * @return The mime type for the format name specified.
+     *
+     * @throws IIOException if no image reader are able to handle the format name given.
+     */
+    public static String formatNameToMimeType(final String formatName) throws IIOException {
+        final Iterator<ImageReaderSpi> readers = IIORegistry.lookupProviders(ImageReaderSpi.class);
+        while (readers.hasNext()) {
+            final ImageReaderSpi reader = readers.next();
+            final String[] formats = reader.getFormatNames();
+            for (String format : formats) {
+                if (formatName.equalsIgnoreCase(format)) {
+                    final String[] mimeTypes = reader.getMIMETypes();
+                    if (mimeTypes != null && mimeTypes.length > 0) {
+                        return mimeTypes[0];
+                    }
+                }
+            }
+        }
+        throw new IIOException("No available image reader able to handle the format name specified: "+ formatName);
+    }
+
+
+    /**
+     * Returns the format name matching the mime type of an image file.
+     * For example, for a mime type "image/png" it will return "png", in most cases.
+     *
+     * @param mimeType The mime type of an image file.
+     * @return The format name for the mime type specified.
+     *
+     * @throws IIOException if no image reader are able to handle the mime type given.
+     */
+    public static String mimeTypeToFormatName(final String mimeType) throws IIOException {
+        final Iterator<ImageReaderSpi> readers = IIORegistry.lookupProviders(ImageReaderSpi.class);
+        while (readers.hasNext()) {
+            final ImageReaderSpi reader = readers.next();
+            final String[] mimes = reader.getMIMETypes();
+            for (String mime : mimes) {
+                if (mimeType.equalsIgnoreCase(mime)) {
+                    final String[] formats = reader.getFormatNames();
+                    if (formats != null && formats.length > 0) {
+                        return formats[0];
+                    }
+                }
+            }
+        }
+        throw new IIOException("No available image reader able to handle the mime type specified: "+ mimeType);
     }
 }

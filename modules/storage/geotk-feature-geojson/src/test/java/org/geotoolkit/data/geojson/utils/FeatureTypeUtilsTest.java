@@ -12,8 +12,8 @@ import org.geotoolkit.feature.type.*;
 import org.opengis.util.FactoryException;
 
 import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,14 +29,12 @@ public class FeatureTypeUtilsTest extends org.geotoolkit.test.TestBase {
     @Test
     public void writeReadFTTest() throws Exception {
 
-        File featureTypeFile = File.createTempFile("complexFT", ".json");
-        featureTypeFile.createNewFile();
-        featureTypeFile.deleteOnExit();
+        Path featureTypeFile = Files.createTempFile("complexFT", ".json");
 
         FeatureType featureType = createComplexType();
         FeatureTypeUtils.writeFeatureType(featureType, featureTypeFile);
 
-        assertTrue(featureTypeFile.length() > 0);
+        assertTrue(Files.size(featureTypeFile) > 0);
 
         FeatureType readFeatureType = FeatureTypeUtils.readFeatureType(featureTypeFile);
 

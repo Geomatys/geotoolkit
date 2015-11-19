@@ -163,7 +163,7 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
              */
             @Override
             public void coverageAdding(CoverageDatabaseEvent event, NewGridCoverageReference reference) {
-                assertEquals("test-data",           reference.path.getName());
+                assertEquals("test-data",           reference.path.getFileName().toString());
                 assertEquals("matrix",              reference.filename);
                 assertEquals("txt",                 reference.extension);
                 assertEquals("matrix",              reference.format);
@@ -265,7 +265,7 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
              */
             @Override
             public void coverageAdding(CoverageDatabaseEvent event, NewGridCoverageReference reference) {
-                assertEquals ("Iroise",                reference.path.getName());
+                assertEquals ("Iroise",                reference.path.getFileName().toString());
                 assertEquals ("champs.r3_23-05-2007",  reference.filename);
                 assertEquals ("nc",                    reference.extension);
                 assertEquals ("NetCDF",                reference.format);
@@ -369,7 +369,7 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
              */
             @Override
             public void coverageAdding(CoverageDatabaseEvent event, NewGridCoverageReference reference) {
-                assertEquals ("Coriolis",              reference.path.getName());
+                assertEquals ("Coriolis",              reference.path.getFileName().toString());
                 assertEquals ("Aggregation",           reference.filename);
                 assertEquals ("ncml",                  reference.extension);
                 assertEquals ("Coriolis (salinity)",   reference.format);

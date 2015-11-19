@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.Locale;
 import javax.imageio.spi.ImageReaderSpi;
@@ -341,6 +342,7 @@ public abstract class TextImageReader extends StreamImageReader {
          */
         private static final Class<?>[] INPUT_TYPES = new Class<?>[] {
             File.class,
+            Path.class,
             URI.class,
             URL.class,
             URLConnection.class,

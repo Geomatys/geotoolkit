@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.coverage.filestore;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
@@ -124,7 +125,7 @@ public class FileCoverageStoreFactory extends AbstractCoverageStoreFactory{
         }
         try {
             return new FileCoverageStore(params);
-        } catch (URISyntaxException ex) {
+        } catch (IOException | URISyntaxException ex) {
             throw new DataStoreException(ex);
         }
     }

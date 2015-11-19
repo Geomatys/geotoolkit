@@ -14,12 +14,16 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util;
+package org.geotoolkit.nio;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -28,6 +32,11 @@ import java.util.zip.Checksum;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -51,8 +60,8 @@ public class ZipUtilitiesTest extends org.geotoolkit.test.TestBase {
         file1.deleteOnExit();
         archive.deleteOnExit();
 
-        FileUtilities.zip(archive, CHECKSUM, file1);
-        FileUtilities.unzip(archive, CHECKSUM);
+        ZipUtilities.zip(archive.toPath(), CHECKSUM, file1.toPath());
+        ZipUtilities.unzip(archive.toPath(), CHECKSUM);
 
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
@@ -66,8 +75,8 @@ public class ZipUtilitiesTest extends org.geotoolkit.test.TestBase {
         file1.deleteOnExit();
         archive.deleteOnExit();
 
-        FileUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, file1);
-        FileUtilities.unzip(archive, CHECKSUM);
+        ZipUtilities.zip(archive.toPath(), ZipOutputStream.DEFLATED, 9, CHECKSUM, file1.toPath());
+        ZipUtilities.unzip(archive.toPath(), CHECKSUM);
 
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
@@ -92,11 +101,11 @@ public class ZipUtilitiesTest extends org.geotoolkit.test.TestBase {
         final File archive = File.createTempFile("archive", ".zip");
         archive.deleteOnExit();
 
-        FileUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, dir);
+        ZipUtilities.zip(archive.toPath(), ZipOutputStream.DEFLATED, 9, CHECKSUM, dir.toPath());
         final File extract = File.createTempFile("extract", null);
         extract.delete();
 
-        FileUtilities.unzip(archive, extract, CHECKSUM);
+        ZipUtilities.unzip(archive.toPath(), extract.toPath(), CHECKSUM);
 
         final List<String> files = new ArrayList<String>();
         for (String file : extract.list()) {
@@ -130,7 +139,7 @@ public class ZipUtilitiesTest extends org.geotoolkit.test.TestBase {
             assertTrue(files.contains(element));
         }
 
-        org.geotoolkit.util.FileUtilities.deleteDirectory(extract);
+        IOUtilities.deleteRecursively(extract.toPath());
     }
 
     @Test
@@ -144,8 +153,8 @@ public class ZipUtilitiesTest extends org.geotoolkit.test.TestBase {
         String file1Path = file1.getAbsolutePath();
         String archivePath = archive.getAbsolutePath();
 
-        FileUtilities.zip(archivePath, ZipOutputStream.DEFLATED, 9, CHECKSUM, file1Path);
-        FileUtilities.unzip(archivePath, CHECKSUM);
+        ZipUtilities.zip(Paths.get(archivePath), ZipOutputStream.DEFLATED, 9, CHECKSUM, Paths.get(file1Path));
+        ZipUtilities.unzip(Paths.get(archivePath), CHECKSUM);
 
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
@@ -156,7 +165,7 @@ public class ZipUtilitiesTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     @Ignore
-    public void urlTest() throws IOException {
+    public void urlTest() throws IOException, URISyntaxException {
 
         File file1 = File.createTempFile("file1", ".txt");
         File archive = File.createTempFile("archive", ".zip");
@@ -166,8 +175,8 @@ public class ZipUtilitiesTest extends org.geotoolkit.test.TestBase {
         URL url1 = file1.toURI().toURL();
         URL urlArchive = archive.toURI().toURL();
 
-        FileUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, url1);
-        FileUtilities.unzip(urlArchive, CHECKSUM);
+        ZipUtilities.zip(archive.toPath(), ZipOutputStream.DEFLATED, 9, CHECKSUM, Paths.get(url1.toURI()));
+        ZipUtilities.unzip(Paths.get(urlArchive.toURI()), CHECKSUM);
 
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
@@ -184,11 +193,29 @@ public class ZipUtilitiesTest extends org.geotoolkit.test.TestBase {
         URI uri1 = file1.toURI();
         URI uriArchive = archive.toURI();
 
-        FileUtilities.zip(archive, ZipOutputStream.DEFLATED, 9, CHECKSUM, uri1);
-        FileUtilities.unzip(uriArchive, CHECKSUM);
+        ZipUtilities.zip(archive.toPath(), ZipOutputStream.DEFLATED, 9, CHECKSUM, Paths.get(uri1));
+        ZipUtilities.unzip(Paths.get(uriArchive), CHECKSUM);
 
         List<String> zipContent = listContent(archive);
         assertEquals(zipContent.get(0), file1.getName());
+    }
+
+    @Test
+    public void nioTest() throws IOException {
+
+        Path file1 = Files.createTempFile(null, "_geotk1");
+        Path dir1 = Files.createTempDirectory(null);
+        Path dir2 = Files.createTempDirectory(null);
+        Path file2 = Files.createTempFile(dir1, null, "_geotk2");
+        Path file3 = Files.createTempFile(dir2, null, "_geotk3");
+        Path archive = Files.createTempFile("archive", ".zip");
+
+        Path targetDir = Files.createTempDirectory(null);
+
+        ZipUtilities.zipNIO(archive, file1, dir1, dir2);
+        ZipUtilities.unzipNIO(archive, targetDir, true);
+
+        List<String> zipContent = listContent(archive);
     }
 
     /**
@@ -210,6 +237,8 @@ public class ZipUtilitiesTest extends org.geotoolkit.test.TestBase {
             zf = new ZipFile((File) archive);
         } else if (archive instanceof String) {
             zf = new ZipFile((String) archive);
+        } else if (archive instanceof Path) {
+            zf = new ZipFile(((Path) archive).toFile());
         }
 
         Enumeration entries = zf.entries();

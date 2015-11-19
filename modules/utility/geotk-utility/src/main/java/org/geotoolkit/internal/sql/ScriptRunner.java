@@ -55,6 +55,7 @@ import org.geotoolkit.resources.Vocabulary;
  * {@value #QUOTE} character is used for quoting text, the {@value #IDENTIFIER_QUOTE}
  * character is used for quoting identifier and the {@value #END_OF_STATEMENT} character
  * is used at the end for every SQL statement.
+ * TODO rewrite using Java NIO APO and PathMatcher
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.16

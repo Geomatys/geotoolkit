@@ -19,6 +19,8 @@ package org.geotoolkit.data.shapefile.lock;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.util.regex.Pattern;
 
 /**
  * Enumerates the known types of files associated with a shapefile.
@@ -65,10 +67,12 @@ public enum ShpFileType {
 
     public final String extension;
     public final String extensionWithPeriod;
+    public final Pattern pattern;
 
-    private ShpFileType(final String extension) {
+    ShpFileType(final String extension) {
         this.extension = extension.toLowerCase();
         this.extensionWithPeriod = "." + this.extension;
+        this.pattern = Pattern.compile(".*"+extension+"$", Pattern.CASE_INSENSITIVE);
     }
 
     /**
@@ -117,5 +121,14 @@ public enum ShpFileType {
         }else{
             return toBase(url.toExternalForm());
         }
+    }
+
+    public boolean match(Path path) {
+        final String fileName = path.getFileName().toString();
+        return pattern.matcher(fileName).matches();
+    }
+
+    public String toBase(Path obj) {
+        return toBase(obj.toString());
     }
 }

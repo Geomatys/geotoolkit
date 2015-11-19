@@ -19,10 +19,8 @@ package org.geotoolkit.internal.sql;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.DatabaseMetaData;
@@ -36,6 +34,7 @@ import java.util.Locale;
 
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.ArgumentChecks;
+import org.geotoolkit.nio.IOUtilities;
 
 
 /**
@@ -131,21 +130,18 @@ public enum Dialect {
                 connection.close();
             }
             if (setReadOnly) {
-                final File path = getFile(databaseURL);
-                if (path != null) try {
-                    final File file = new File(path.getParentFile(), path.getName() + ".properties");
-                    final Properties properties;
-                    try (InputStream propertyIn = new FileInputStream(file)) {
-                        properties = new Properties();
-                        properties.load(propertyIn);
-                    }
-                    if (!"true".equals(properties.put("readonly", "true"))) {
-                        try (OutputStream out = new FileOutputStream(file)) {
-                            properties.store(out, "HSQL database configuration");
+                final Path path = getPath(databaseURL);
+                if (path != null) {
+                    try {
+                        final String fileName = path.getFileName().toString();
+                        final Path propFile = path.resolveSibling(fileName + ".properties");
+                        final Properties properties = IOUtilities.getPropertiesFromFile(propFile);
+                        if (!"true".equals(properties.put("readonly", "true"))) {
+                            IOUtilities.storeProperties(properties, propFile, "HSQL database configuration");
                         }
+                    } catch (IOException e) {
+                        throw new SQLNonTransientException(e);
                     }
-                } catch (IOException e) {
-                    throw new SQLNonTransientException(e);
                 }
             }
         }
@@ -265,22 +261,22 @@ public enum Dialect {
 
     /**
      * Constructs the full path to a database in the given directory.
-     * The {@linkplain File#getName() name} of the given {@code path} shall be the
-     * database name (without extension), and the {@linkplain File#getParentFile() parent}
+     * The {@linkplain Path#getFileName()#toString() name} of the given {@code path} shall be the
+     * database name (without extension), and the {@linkplain Path#getParent() parent}
      * of the {@code path} shall be the directory where the database is saved.
      *
      * @param  path The path (without extension) to the database.
      * @return The URL.
      * @throws SQLException If the database doesn't support local database.
      */
-    public final String createURL(final File path) throws SQLException {
+    public final String createURL(final Path path) throws SQLException {
         if (subProtocols == null) {
             throw new SQLException();
         }
         // We do not use File.toURI() because HSQL doesn't seem to
         // expect an encoded URL (e.g. "%20" instead of spaces).}
         final StringBuilder url = new StringBuilder(protocol).append(subProtocols[0]).append(':');
-        final String p = path.getAbsolutePath().replace(File.separatorChar, '/');
+        final String p = path.toAbsolutePath().toString().replace(File.separatorChar, '/');
         if (!p.startsWith("/")) {
             url.append('/');
         }
@@ -289,12 +285,12 @@ public enum Dialect {
 
     /**
      * Given a database URL, gets the path to the database.
-     * This is the converse of {@link #createURL(File)}.
+     * This is the converse of {@link #createURL(Path)}.
      *
      * @param  databaseURL The database URL.
      * @return The path, or {@code null} if the given URL is not recognized.
      */
-    public final File getFile(final String databaseURL) {
+    public final Path getPath(final String databaseURL) {
         int offset = protocol.length();
         if (databaseURL != null && databaseURL.regionMatches(true, 0, protocol, 0, offset)) {
             if (subProtocols != null) {
@@ -315,7 +311,7 @@ public enum Dialect {
                     }
                 }
             }
-            return new File(databaseURL.substring(offset));
+            return Paths.get(databaseURL.substring(offset));
         }
         return null;
     }

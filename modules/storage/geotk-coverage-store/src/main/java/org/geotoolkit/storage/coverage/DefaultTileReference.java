@@ -21,7 +21,6 @@ import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.util.ImageIOUtilities;
 
 /**
  * Default implementation of a TileReference
@@ -59,7 +58,7 @@ public class DefaultTileReference implements TileReference{
             throw new IOException("Could not find image reader spi for input : "+input);
         }
         
-        Object in = ImageIOUtilities.toSupportedInput(spi, input);
+        Object in = XImageIO.toSupportedInput(spi, input);
 
         if(reader == null) {
             reader = spi.createReaderInstance();

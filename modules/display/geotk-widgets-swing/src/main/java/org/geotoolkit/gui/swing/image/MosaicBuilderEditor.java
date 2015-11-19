@@ -19,6 +19,8 @@ package org.geotoolkit.gui.swing.image;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -188,7 +190,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
          * Determines the default values. We fetch the values from the MosaicBuilder
          * if they are defined, or from the user's preferences otherwise.
          */
-        File directory;
+        Path directory;
         Dimension tileSize, minSize;
         final String preferredFormat;
         final Dimension[] subsamplings;
@@ -208,7 +210,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
                 preferredFormat = prefs.get(OUTPUT_FORMAT, "png");
             }
             if (directory == null) {
-                directory = new File(prefs.get(OUTPUT_DIRECTORY, System.getProperty("user.home", ".")));
+                directory = Paths.get(prefs.get(OUTPUT_DIRECTORY, System.getProperty("user.home", ".")));
             }
             if (tileSize == null) {
                 tileSize = DEFAULT_TILE_SIZE;
@@ -244,7 +246,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
         formatPanel.add(formatChoices, BorderLayout.CENTER);
         formatPanel.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.Format)));
         directoryField = new FileField(locale, null, true);
-        directoryField.setFile(directory);
+        directoryField.setFile(directory.toFile());
         directoryField.setBorder(BorderFactory.createTitledBorder(resources.getString(Vocabulary.Keys.OutputDirectory)));
         final JLabel explain = new JLabel(); // No purpose other than fill space at this time.
         /*

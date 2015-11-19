@@ -1,5 +1,8 @@
 package org.geotoolkit.data.geojson;
 
+import org.geotoolkit.data.geojson.binding.GeoJSONFeatureCollection;
+import org.geotoolkit.data.geojson.binding.GeoJSONObject;
+import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.util.NamesExt;
 import org.opengis.util.GenericName;
 import com.vividsolutions.jts.geom.*;
@@ -14,12 +17,14 @@ import org.apache.sis.referencing.CommonCRS;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.*;
+import static org.junit.Assert.*;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -278,6 +283,44 @@ public class GeoJSONReadTest extends org.geotoolkit.test.TestBase {
         Session session = store.createSession(false);
         FeatureCollection fcoll = session.getFeatureCollection(QueryBuilder.all(name));
         assertEquals(15, fcoll.size());
+    }
+
+    /**
+     * Test GeoJSONParser full and lazy reading on FeatureCollection
+     */
+    @Test
+    public void parserTest() throws URISyntaxException, IOException {
+        URL fcFile = GeoJSONReadTest.class.getResource("/org/geotoolkit/geojson/featurecollection.json");
+        Path fcPath = Paths.get(fcFile.toURI());
+
+        // test with full reading
+        GeoJSONObject geoJSONObject = GeoJSONParser.parse(fcPath, false);
+        assertTrue(geoJSONObject instanceof GeoJSONFeatureCollection);
+        GeoJSONFeatureCollection geojsonFC = (GeoJSONFeatureCollection) geoJSONObject;
+        assertFalse(geojsonFC.isLazyMode());
+        assertEquals(7, geojsonFC.getFeatures().size());
+
+        for (int i = 0; i < 7; i++) {
+            assertTrue(geojsonFC.hasNext());
+            assertNotNull(geojsonFC.next());
+        }
+        assertFalse(geojsonFC.hasNext()); //end of collection
+
+
+        // test in lazy reading
+        geoJSONObject = GeoJSONParser.parse(fcPath, true);
+        assertTrue(geoJSONObject instanceof GeoJSONFeatureCollection);
+        geojsonFC = (GeoJSONFeatureCollection) geoJSONObject;
+        assertTrue(geojsonFC.isLazyMode());
+        assertEquals(0, geojsonFC.getFeatures().size()); //lazy don't know number of features
+
+        for (int i = 0; i < 7; i++) {
+            assertTrue(geojsonFC.hasNext());
+            assertNotNull(geojsonFC.next());
+        }
+        assertFalse(geojsonFC.hasNext()); //end of collection
+
+
     }
 
     private FeatureType buildPropertyArrayFeatureType(String name, Class geomClass) {

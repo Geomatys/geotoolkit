@@ -24,8 +24,12 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Color;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +38,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
+
+import org.geotoolkit.nio.ZipUtilities;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReader;
@@ -63,7 +69,6 @@ import org.apache.sis.referencing.CommonCRS;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.util.FileUtilities;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.ExtensionSymbolizer;
@@ -75,6 +80,9 @@ import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 
+import static java.nio.file.StandardOpenOption.*;
+import static java.nio.file.StandardOpenOption.CREATE;
+
 /**
  *
  * @author Samuel Andrés
@@ -83,17 +91,20 @@ import org.opengis.style.TextSymbolizer;
 public class KmzContextInterpreter {
 
     private static final FeatureFactory FF = FeatureFactory.LENIENT;
-    private static final File FILES_DIR = new File("/tmp/files");
     private static final KmlFactory KML_FACTORY = DefaultKmlFactory.getInstance();
     private static AtomicInteger increment = new AtomicInteger();
-    private static final List<Entry<Rule, URI>> IDENTIFICATORS_MAP = new ArrayList<Entry<Rule, URI>>();
+    private static final List<Entry<Rule, URI>> IDENTIFICATORS_MAP = new ArrayList<>();
 
-    public KmzContextInterpreter() {
-        FILES_DIR.mkdir();
-        FILES_DIR.deleteOnExit();
+    private final Path tempDirectory;
+    private final Path filesDirectory;
+
+    public KmzContextInterpreter() throws IOException {
+        tempDirectory = Files.createTempDirectory("geotk_kmz");
+        filesDirectory = tempDirectory.resolve("files");
+        Files.createDirectories(filesDirectory);
     }
 
-    public void writeKmz(MapContext context, File kmzOutput)
+    public void writeKmz(MapContext context, Path kmzOutput)
             throws Exception {
 
         final Kml kml = KML_FACTORY.createKml();
@@ -102,8 +113,7 @@ public class KmzContextInterpreter {
         kml.setAbstractFeature(folder);
 
         // Creating KML file
-        final File docKml = new File("/tmp", "doc.kml");
-        docKml.deleteOnExit();
+        final Path docKml = tempDirectory.resolve("doc.kml");
 
         for (final MapLayer layer : context.layers()) {
             this.writeStyle(layer.getStyle(), folder);
@@ -127,7 +137,7 @@ public class KmzContextInterpreter {
         writer.dispose();
 
         // Creating KMZ
-        FileUtilities.zip(kmzOutput, ZipOutputStream.DEFLATED, 9, null, FILES_DIR, docKml);
+        ZipUtilities.zip(kmzOutput, ZipOutputStream.DEFLATED, 9, null, filesDirectory, docKml);
     }
 
     /**
@@ -458,12 +468,13 @@ public class KmzContextInterpreter {
         //targetCoverage.show();
 
         // Creating image file and Writting referenced image into.
-        final File img = new File(FILES_DIR, targetCoverage.getName().toString());
-        img.deleteOnExit();
-        ImageIO.write(targetCoverage.getRenderedImage(), "png", img);
+        final Path img = filesDirectory.resolve(targetCoverage.getName().toString()+".png");
+        try (OutputStream outputStream = Files.newOutputStream(img, CREATE, WRITE, TRUNCATE_EXISTING)) {
+            ImageIO.write(targetCoverage.getRenderedImage(), "png", outputStream);
+        }
 
         final Icon image = KML_FACTORY.createIcon(KML_FACTORY.createLink());
-        image.setHref(FILES_DIR.getName() + File.separator + targetCoverage.getName());
+        image.setHref(filesDirectory.getFileName().toString() + File.separator + targetCoverage.getName());
         groundOverlayProperties.add(FF.createAttribute(
                 targetCoverage.getName().toString(), KmlModelConstants.ATT_NAME, null));
         groundOverlayProperties.add(FF.createAttribute(

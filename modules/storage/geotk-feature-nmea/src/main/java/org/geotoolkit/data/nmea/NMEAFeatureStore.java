@@ -17,11 +17,12 @@
 package org.geotoolkit.data.nmea;
 
 import com.vividsolutions.jts.geom.Point;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+
+import java.io.*;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -105,15 +106,15 @@ public class NMEAFeatureStore extends AbstractFeatureStore {
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         try {
             return new NMEAFileReader(openConnexion());
-        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
             throw new DataStoreException(ex.getLocalizedMessage(), ex);
         }
     }
 
-    private InputStream openConnexion() throws FileNotFoundException {
+    private InputStream openConnexion() throws IOException {
         final URI source = parameters.parameter(NMEAFeatureStoreFactory.URLP.getName().getCode()).valueFile();
-        final File tmpFile = new File(source);
-        return new FileInputStream(tmpFile);
+        final Path tmpFile = Paths.get(source);
+        return Files.newInputStream(tmpFile);
     }
 
       //////////////////////////////////////

@@ -25,12 +25,13 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.zip.GZIPOutputStream;
-import org.geotoolkit.internal.io.IOUtilities;
+
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.nio.ZipUtilities;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.util.FileUtilities;
 import org.junit.Test;
 import org.opengis.parameter.ParameterValueGroup;
 import static org.junit.Assert.*;
@@ -134,7 +135,7 @@ public class IOProcessTest extends org.geotoolkit.test.TestBase {
         archiveZip.deleteOnExit();
         final File archiveTar = File.createTempFile("archive", ".tar.gz");
         archiveTar.deleteOnExit();
-        FileUtilities.zip(archiveZip, null, f);
+        ZipUtilities.zip(archiveZip.toPath(), null, f.toPath());
 
         // Create a TarOutputStream
         final TarOutputStream out = new TarOutputStream(
@@ -190,7 +191,7 @@ public class IOProcessTest extends org.geotoolkit.test.TestBase {
 
 
         // TEST TAR.GZ UNPACK --------------------------------------------------
-        FileUtilities.deleteDirectory(target);
+        IOUtilities.deleteRecursively(target.toPath());
         target.delete();
         target.mkdirs();
 

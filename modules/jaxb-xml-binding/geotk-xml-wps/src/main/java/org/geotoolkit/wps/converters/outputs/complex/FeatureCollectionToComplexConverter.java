@@ -118,7 +118,7 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
 
             } catch (JAXBException ex) {
                 throw new UnconvertibleObjectException("Can't write FeatureType into xsd schema.", ex);
-            } catch (FileNotFoundException ex) {
+            } catch (IOException ex) {
                 throw new UnconvertibleObjectException("Can't create xsd schema file.", ex);
             }
 

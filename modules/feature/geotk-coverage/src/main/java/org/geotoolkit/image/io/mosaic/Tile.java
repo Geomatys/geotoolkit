@@ -25,6 +25,8 @@ import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.io.*; // We use a lot of those imports.
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Iterator;
 import java.util.Collection;
@@ -38,6 +40,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.FileImageInputStream;
 import java.lang.reflect.Field;
 
+import org.geotoolkit.coverage.io.CoverageIO;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.io.TableWriter;
@@ -47,7 +50,7 @@ import org.apache.sis.util.logging.Logging;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.image.io.ImageReaderAdapter;
@@ -68,8 +71,8 @@ import static org.apache.sis.util.ArgumentChecks.*;
  *   tiles, but this is not mandatory. An {@linkplain ImageReader image reader} will be instantiated
  *   and the {@linkplain #getInput input} will be assigned to it before a tile is read.</p></li>
  *
- *   <li><p><b>An input</b>, typically a {@linkplain File file}, {@linkplain URL}, {@linkplain URI}
- *   or {@linkplain String}. The input is typically different for every tile to be read, but this
+ *   <li><p><b>An input</b>, typically a {@linkplain Path path}, {@linkplain File file}, {@linkplain URL},
+ *   {@linkplain URI} or {@linkplain String}. The input is typically different for every tile to be read, but this
  *   is not mandatory. For example different tiles could be stored at different
  *   {@linkplain #getImageIndex image index} in the same file.</p></li>
  *
@@ -463,8 +466,33 @@ public class Tile implements Comparable<Tile>, Serializable {
      *          input file) is found, or if an error occurred while reading that file.
      *
      * @see TileManagerFactory#listTiles(ImageReaderSpi, File[])
+     * @deprecated use {@link #Tile(ImageReaderSpi, Path, int)} instead
      */
     public Tile(final ImageReaderSpi provider, final File input, final int imageIndex) throws IOException {
+        this(provider, input, imageIndex, null, SupportFiles.parseTFW(input.toPath()));
+    }
+
+    /**
+     * Creates a tile for the given file path and its <cite>World File</cite>. The world file typically
+     * has a {@code "tfw"} extension (if the input is a TIFF image) or a {@code "jgw"} extension
+     * (if the input is a JPEG image), and must exists.
+     *
+     * @param provider
+     *          The image reader provider to use. The same provider is typically given to every
+     *          {@code Tile} objects to be given to the same {@link TileManager} instance, but
+     *          this is not mandatory. If {@code null}, the provider will be inferred from the
+     *          input. If it can't be inferred, then an exception is thrown.
+     * @param input
+     *          The input to be given to the image reader.
+     * @param imageIndex
+     *          The image index to be given to the image reader for reading this tile.
+     * @throws IOException
+     *          If no {@code ".tfw} or {@code ".jgw"} file (depending on the extension of the
+     *          input file) is found, or if an error occurred while reading that file.
+     *
+     * @see TileManagerFactory#listTiles(ImageReaderSpi, File[])
+     */
+    public Tile(final ImageReaderSpi provider, final Path input, final int imageIndex) throws IOException {
         this(provider, input, imageIndex, null, SupportFiles.parseTFW(input));
     }
 
@@ -678,7 +706,8 @@ public class Tile implements Comparable<Tile>, Serializable {
                     }
                 }
                 if (stream == null) {
-                    stream = getInputStream();
+                    //may throw IOException
+                    stream = CoverageIO.createImageInputStream(input);
                 }
                 actualInput = stream;
             }
@@ -749,68 +778,6 @@ public class Tile implements Comparable<Tile>, Serializable {
     }
 
     /**
-     * Creates an image input stream for the given source. This method first delegates
-     * to {@link ImageIO#createImageInputStream(Object)}, then wraps the result in a
-     * {@link CheckedImageInputStream} if assertions are enabled.
-     *
-     * @param  input The input for which an image input is desired.
-     * @return The image input stream, or {@code null}.
-     */
-    static ImageInputStream createImageInputStream(final Object input) throws IOException {
-        ImageInputStream in = ImageIO.createImageInputStream(input);
-        assert CheckedImageInputStream.isValid(in = // Intentional side effect.
-               CheckedImageInputStream.wrap(in));
-        return in;
-    }
-
-    /**
-     * Creates an image input stream from the input. If no suitable input stream can be created,
-     * then this method throws an exception. This method never returns {@code null}.
-     *
-     * @return The image input stream.
-     * @throws IOException if an error occurred while creating the input stream.
-     */
-    private ImageInputStream getInputStream() throws IOException {
-        final Object input = getInput();
-        ImageInputStream stream = createImageInputStream(input);
-        if (stream != null) {
-            return stream;
-        }
-        /*
-         * We tried the input directly in case the user provided some SPI for String
-         * objects. If we have not been able to create a stream from a plain string,
-         * create a URL or a File object from the string and try again.
-         */
-        if (input instanceof CharSequence) {
-            final String path = input.toString();
-            final Object url;
-            if (path.indexOf("://") >= 1) {
-                url = new URL(path);
-            } else {
-                url = new File(path);
-            }
-            stream = createImageInputStream(url);
-            if (stream != null) {
-                return stream;
-            }
-        }
-        /*
-         * In theory ImageIO.createImageInputStream(Object) should have accepted a File input,
-         * so the following check is useless. However if ImageIO.createImageInputStream(Object)
-         * failed, it just returns null; we have no idea why it failed. One possible cause is
-         * "Too many open files", in which case throwing a FileNotFoundException is misleading.
-         * So we try here to create a FileImageInputStream directly, which is likely to fail as
-         * well but this time with a more accurate error message.
-         */
-        if (input instanceof File) {
-            stream = new FileImageInputStream((File) input);
-            return stream;
-        }
-        throw new FileNotFoundException(Errors.format(
-                Errors.Keys.FileDoesNotExist_1, input));
-    }
-
-    /**
      * Returns the input to be given to the image reader for reading this tile.
      *
      * @return The image input.
@@ -851,6 +818,9 @@ public class Tile implements Comparable<Tile>, Serializable {
     private static String getInputName(final Object input) {
         if (input instanceof File) {
             return ((File) input).getName();
+        }
+        if (input instanceof Path) {
+            return ((Path) input).toUri().getPath();
         }
         if (input instanceof URI) {
             return ((URI) input).getPath();
@@ -1298,12 +1268,14 @@ public class Tile implements Comparable<Tile>, Serializable {
      * because they are already {@linkplain Comparable comparable}.
      */
     private static Object toComparable(Object input) {
-        if (input instanceof URL) try {
-            input = ((URL) input).toURI();
-        } catch (URISyntaxException exception) {
-            // Ignores - we will keep it as a URL. Logs with "compare" as source method
-            // name, since it is the public API that invoked this private method.
-            Logging.recoverableException(LOGGER, Tile.class, "compare", exception);
+        if (input instanceof URL) {
+            try {
+                input = ((URL) input).toURI();
+            } catch (URISyntaxException exception) {
+                // Ignores - we will keep it as a URL. Logs with "compare" as source method
+                // name, since it is the public API that invoked this private method.
+                Logging.recoverableException(LOGGER, Tile.class, "compare", exception);
+            }
         } else if (input instanceof CharSequence) {
             input = input.toString();
         }
@@ -1318,17 +1290,21 @@ public class Tile implements Comparable<Tile>, Serializable {
         if (target instanceof URI) {
             if (input instanceof File) {
                 input = ((File) input).toURI();
+            } else if (input instanceof Path) {
+                input = ((Path) input).toUri();
             }
         } else if (target instanceof String) {
-            if (input instanceof File || input instanceof URI) {
+            if (input instanceof File || input instanceof URI || input instanceof Path) {
                 input = input.toString();
             }
+        } if (target instanceof Path) {
+            input = IOUtilities.tryToPath(input);
         }
         return input;
     }
 
     /**
-     * Compares two inputs for order. {@link String}, {@link File} and {@link URI} are comparable.
+     * Compares two inputs for order. {@link String}, {@link Path}, {@link File} and {@link URI} are comparable.
      * {@link URL} are not but can be converted to {@link URI} for comparison purpose.
      */
     @SuppressWarnings({"unchecked","rawtypes"})
@@ -1372,7 +1348,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * <p>
      * This method is consistent with {@link #equals} in the most common case where every
      * tiles to be compared (typically every tiles given to a {@link TileManager} instance)
-     * have inputs of the same kind (preferably {@link File}, {@link URL}, {@link URI} or
+     * have inputs of the same kind (preferably {@link Path}, {@link File}, {@link URL}, {@link URI} or
      * {@link String}), and there is no duplicated ({@linkplain #getInput input},
      * {@linkplain #getImageIndex image index}) pair.
      *

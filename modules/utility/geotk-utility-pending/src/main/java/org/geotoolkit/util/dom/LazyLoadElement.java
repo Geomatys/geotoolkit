@@ -14,8 +14,8 @@ import org.w3c.dom.UserDataHandler;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,11 +31,11 @@ public class LazyLoadElement implements Element {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.util.dom");
 
-    private final File xmlFile;
+    private final Path xmlFile;
     private volatile Element element;
     private volatile boolean loaded = false;
 
-    public LazyLoadElement(File xmlFile) {
+    public LazyLoadElement(Path xmlFile) {
         this.xmlFile = xmlFile;
     }
 

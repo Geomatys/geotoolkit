@@ -26,7 +26,7 @@ import java.util.UUID;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.apache.sis.util.ObjectConverters;

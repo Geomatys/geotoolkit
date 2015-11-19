@@ -41,6 +41,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.nio.file.Path;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,17 +57,21 @@ public class GeoJSONReader implements FeatureReader {
     private final static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.geojson");
     private final Map<Map.Entry<Class, Class>, ObjectConverter> convertersCache = new HashMap<Map.Entry<Class, Class>, ObjectConverter>();
 
-    private GeoJSONParser parser = new GeoJSONParser(true);
     private GeoJSONObject jsonObj = null;
     private Boolean toRead = true;
 
     protected ReadWriteLock rwlock;
     protected FeatureType featureType;
-    protected File jsonFile;
+    protected Path jsonFile;
     protected Feature current = null;
     protected int currentFeatureIdx = 0;
 
+    @Deprecated
     public GeoJSONReader(File jsonFile, FeatureType featureType, ReadWriteLock rwLock) {
+        this(jsonFile.toPath(), featureType, rwLock);
+    }
+
+    public GeoJSONReader(Path jsonFile, FeatureType featureType, ReadWriteLock rwLock) {
         this.jsonFile = jsonFile;
         this.featureType = featureType;
         this.rwlock = rwLock;
@@ -101,7 +106,7 @@ public class GeoJSONReader implements FeatureReader {
         //first call
         if (toRead) {
             try {
-                jsonObj = parser.parse(jsonFile);
+                jsonObj = GeoJSONParser.parse(jsonFile, true);
             } catch (IOException e) {
                 throw new FeatureStoreRuntimeException(e);
             } finally {

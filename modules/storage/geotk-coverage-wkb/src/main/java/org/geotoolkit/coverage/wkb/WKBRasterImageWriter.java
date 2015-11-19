@@ -35,7 +35,7 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 import org.apache.sis.util.ArraysExt;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.Utilities;
 
 /**

@@ -41,8 +41,8 @@ import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.FileUtilities;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -97,7 +97,7 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
     @BeforeClass
     public static void setUpMethod() throws Exception {
         if (Files.isDirectory(directory)) {
-            FileUtilities.deleteDirectory(directory.toFile());
+            IOUtilities.deleteRecursively(directory);
         }
         Files.createDirectory(directory);
 
@@ -131,7 +131,8 @@ public class LuceneTest extends org.geotoolkit.test.TestBase {
                 }
             }
         }
-        FileUtilities.deleteDirectory(directory.toFile());
+
+        IOUtilities.deleteRecursively(directory);
     }
 
 

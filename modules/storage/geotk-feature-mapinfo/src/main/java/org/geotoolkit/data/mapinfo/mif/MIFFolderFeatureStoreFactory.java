@@ -20,17 +20,18 @@ import org.geotoolkit.data.FeatureStoreFinder;
 import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.AbstractFolderFeatureStoreFactory;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.nio.IOUtilities;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.net.URISyntaxException;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.logging.Level;
-import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -91,43 +92,26 @@ public class MIFFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
             return false;
         }
 
-        final URL path = (URL)obj;
-        File pathFile;
+        final Boolean emptyDirectory = (Boolean) params.parameter(EMPTY_DIRECTORY.getName().toString()).getValue();
+        final URL url = (URL)obj;
         try {
-            pathFile = new File(path.toURI());
-        } catch (URISyntaxException e) {
+            Path path = IOUtilities.toPath(url);
+
+            if (Files.exists(path) && Files.isDirectory(path)){
+                if(emptyDirectory){
+                    return true;
+                }
+
+                try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(path, "*.mif")) {
+                    return dirStream.iterator().hasNext();
+                }
+            }
+        } catch (IOException e) {
             // Should not happen if the url is well-formed.
             LOGGER.log(Level.INFO, e.getLocalizedMessage());
-            pathFile = new File(path.toExternalForm());
         }
 
-        final Boolean emptyDirectory = (Boolean) params.parameter(EMPTY_DIRECTORY.getName().toString()).getValue();
-        if (pathFile.exists() && pathFile.isDirectory()){
-            if(emptyDirectory.booleanValue()){
-                return true;
-            }
-            File[] files = pathFile.listFiles(new ExtentionFileNameFilter(".mif"));
-            return files.length>0;
-        }
         return false;
-    }
-
-
-
-
-    //FileNameFilter implementation
-    public static class ExtentionFileNameFilter implements FilenameFilter {
-
-        private String ext;
-
-        public ExtentionFileNameFilter(String ext){
-            this.ext = ext.toLowerCase();
-        }
-        @Override
-        public boolean accept(File dir, String name) {
-            return name.toLowerCase().endsWith(ext);
-        }
-
     }
 
     @Override

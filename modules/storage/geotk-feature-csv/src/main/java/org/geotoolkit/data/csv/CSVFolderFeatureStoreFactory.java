@@ -25,13 +25,15 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 
-import static org.geotoolkit.data.csv.CSVFeatureStore.*;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -105,17 +107,22 @@ public class CSVFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
         }
 
         final URL path = (URL)obj;
-        File pathFile;
+        Path pathFile;
         try {
-            pathFile = new File(path.toURI());
+            pathFile = Paths.get(path.toURI());
         } catch (URISyntaxException e) {
             // Should not happen if the url is well-formed.
             LOGGER.log(Level.INFO, e.getLocalizedMessage());
-            pathFile = new File(path.toExternalForm());
+            pathFile = Paths.get(path.toExternalForm());
         }
-        if (pathFile.exists() && pathFile.isDirectory()){
-            File[] CSVFiles = pathFile.listFiles(new ExtentionFileNameFilter(".csv"));
-            return (CSVFiles.length>0);
+
+        if (Files.exists(pathFile) && Files.isDirectory(pathFile)){
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(pathFile, "*.csv")) {
+                //at least one
+                return stream.iterator().hasNext();
+            } catch (IOException e) {
+                LOGGER.log(Level.FINE, e.getLocalizedMessage());
+            }
         }
         return false;
     }
@@ -125,17 +132,4 @@ public class CSVFolderFeatureStoreFactory extends AbstractFolderFeatureStoreFact
         return new DefaultFactoryMetadata(DataType.VECTOR, true, true, true, false, GEOMS_ALL);
     }
 
-    //FileNameFilter implementation
-    public static class ExtentionFileNameFilter implements FilenameFilter {
-
-        private String ext;
-
-        public ExtentionFileNameFilter(String ext){
-            this.ext = ext.toLowerCase();
-        }
-        @Override
-        public boolean accept(File dir, String name) {
-            return name.toLowerCase().endsWith(ext);
-        }
-    }
 }

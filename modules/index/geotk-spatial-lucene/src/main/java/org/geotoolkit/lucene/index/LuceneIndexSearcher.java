@@ -42,12 +42,12 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.geotoolkit.index.tree.manager.SQLRtreeManager;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.lucene.SearchingException;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
-import org.geotoolkit.util.FileUtilities;
 
 
 /**
@@ -164,7 +164,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 try {
                     this.numericFields          = new HashMap<>();
                     final Path numericFieldFile = currentIndexDirectory.resolve("numericFields.properties");
-                    final Properties prop       = FileUtilities.getPropertiesFromFile(numericFieldFile.toFile());
+                    final Properties prop       = IOUtilities.getPropertiesFromFile(numericFieldFile);
                     for (String fieldName : prop.stringPropertyNames()) {
                         this.numericFields.put(fieldName, ((String)prop.get(fieldName)).charAt(0));
                     }

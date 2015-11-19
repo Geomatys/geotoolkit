@@ -24,8 +24,6 @@ import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,6 +32,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +43,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import org.apache.sis.io.wkt.Convention;
-import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.io.wkt.WKTFormat;
 import org.apache.sis.metadata.iso.citation.Citations;
 
@@ -71,6 +70,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.CommonCRS;
@@ -476,49 +476,45 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
             final StorageFile prjStoragefile = locker.getStorageFile(PRJ);
             final StorageFile cpgStoragefile = locker.getStorageFile(CPG);
 
-            final FileChannel shpChannel = shpStoragefile.getWriteChannel();
-            final FileChannel shxChannel = shxStoragefile.getWriteChannel();
+            try (FileChannel shpChannel = shpStoragefile.getWriteChannel();
+                 FileChannel shxChannel = shxStoragefile.getWriteChannel()) {
 
-            final ShapefileWriter writer = new ShapefileWriter(shpChannel, shxChannel);
-            try {
-                // try to get the domain first
-                final org.opengis.geometry.Envelope domain = org.geotoolkit.referencing.CRS.getEnvelope(crs);
-                if (domain != null) {
-                    writer.writeHeaders(new JTSEnvelope2D(domain), shapeType, 0, 100);
-                } else {
-                    // try to reproject the single overall envelope keeping poles out of the way
-                    final JTSEnvelope2D env = new JTSEnvelope2D(-179, 179, -89, 89, CommonCRS.WGS84.normalizedGeographic());
-                    JTSEnvelope2D transformedBounds;
-                    if (crs != null) {
-                        try {
-                            transformedBounds = env.transform(crs, true);
-                        } catch (Throwable t) {
-                            if (getLogger().isLoggable(Level.WARNING)) {
-                                getLogger().log(Level.WARNING, t.getLocalizedMessage(), t);
-                            }
-                            transformedBounds = env;
-                            crs = null;
-                        }
+                try (ShapefileWriter writer = new ShapefileWriter(shpChannel, shxChannel)) {
+                    // try to get the domain first
+                    final Envelope domain = org.geotoolkit.referencing.CRS.getEnvelope(crs);
+                    if (domain != null) {
+                        writer.writeHeaders(new JTSEnvelope2D(domain), shapeType, 0, 100);
                     } else {
-                        transformedBounds = env;
-                    }
+                        // try to reproject the single overall envelope keeping poles out of the way
+                        final JTSEnvelope2D env = new JTSEnvelope2D(-179, 179, -89, 89, CommonCRS.WGS84.normalizedGeographic());
+                        JTSEnvelope2D transformedBounds;
+                        if (crs != null) {
+                            try {
+                                transformedBounds = env.transform(crs, true);
+                            } catch (Throwable t) {
+                                if (getLogger().isLoggable(Level.WARNING)) {
+                                    getLogger().log(Level.WARNING, t.getLocalizedMessage(), t);
+                                }
+                                transformedBounds = env;
+                                crs = null;
+                            }
+                        } else {
+                            transformedBounds = env;
+                        }
 
-                    writer.writeHeaders(transformedBounds, shapeType, 0, 100);
+                        writer.writeHeaders(transformedBounds, shapeType, 0, 100);
+                    }
+                } finally {
+                    assert !shpChannel.isOpen();
+                    assert !shxChannel.isOpen();
                 }
-            } finally {
-                writer.close();
-                assert !shpChannel.isOpen();
-                assert !shxChannel.isOpen();
             }
 
             final DbaseFileHeader dbfheader = DbaseFileHeader.createDbaseHeader(schema);
             dbfheader.setNumRecords(0);
 
-            final WritableByteChannel dbfChannel = dbfStoragefile.getWriteChannel();
-            try {
+            try (WritableByteChannel dbfChannel = dbfStoragefile.getWriteChannel()) {
                 dbfheader.writeHeader(dbfChannel);
-            } finally {
-                dbfChannel.close();
             }
 
             if (crs != null) {
@@ -529,14 +525,11 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
                 format.setNameAuthority(Citations.ESRI);
                 format.setIndentation(WKTFormat.SINGLE_LINE);
                 final String s = format.format(crs);
-                final FileWriter prjWriter = new FileWriter(prjStoragefile.getFile());
-                try {
-                    prjWriter.write(s);
-                } finally {
-                    prjWriter.close();
-                }
+                IOUtilities.writeString(s, prjStoragefile.getFile(), Charset.forName("ISO-8859-1"));
             } else {
                 getLogger().warning("PRJ file not generated for null CoordinateReferenceSystem");
+                Path prjFile = prjStoragefile.getFile();
+                Files.deleteIfExists(prjFile);
             }
 
             //write dbf encoding .cpg
@@ -591,23 +584,14 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
         }
 
         CoordinateReferenceSystem crs = null;
-        ReadableByteChannel channel = null;
 
         //read the projection
-        try{
-            channel = shpFiles.getReadChannel(PRJ);
-            crs = PrjFiles.read(channel, true);
-        }catch(IOException ex){
-            getLogger().log(Level.WARNING, ex.getMessage(),ex);
-            crs = null;
-        }finally{
-            //todo replace by ARM in JDK 1.7
-            if(channel!= null){
-                try {
-                    channel.close();
-                } catch (IOException ex) {
-                    getLogger().log(Level.WARNING, "failed to close pro channel.",ex);
-                }
+        if (shpFiles.exists(PRJ)) {
+            try (ReadableByteChannel channel = shpFiles.getReadChannel(PRJ)) {
+                crs = PrjFiles.read(channel, true);
+            } catch (IOException ex) {
+                getLogger().log(Level.WARNING, ex.getMessage(), ex);
+                crs = null;
             }
         }
 
@@ -668,15 +652,15 @@ public class ShapefileFeatureStore extends AbstractFeatureStore implements DataF
     }
 
     @Override
-    public File[] getDataFiles() throws DataStoreException {
-        final List<File> files = new ArrayList<>();
+    public Path[] getDataFiles() throws DataStoreException {
+        final List<Path> files = new ArrayList<>();
         for (final ShpFileType type : ShpFileType.values()) {
-            final File f = shpFiles.getFile(type);
-            if (f != null && f.exists()) {
+            final Path f = shpFiles.getPath(type);
+            if (f != null && Files.exists(f)) {
                 files.add(f);
             }
         }
-        return files.toArray(new File[0]);
+        return files.toArray(new Path[files.size()]);
     }
 
     ////////////////////////////////////////////////////////////////////////////

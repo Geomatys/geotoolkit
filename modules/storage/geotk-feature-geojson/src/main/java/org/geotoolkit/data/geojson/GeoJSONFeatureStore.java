@@ -44,10 +44,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.data.geojson.GeoJSONFeatureStoreFactory.*;
 import static org.geotoolkit.data.geojson.binding.GeoJSONGeometry.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -69,8 +72,8 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false, false);
     private GenericName name;
     private FeatureType featureType;
-    private File descFile;
-    private File jsonFile;
+    private Path descFile;
+    private Path jsonFile;
     private Integer coordAccuracy;
     private boolean isLocal = true;
 
@@ -84,23 +87,26 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
         this.coordAccuracy = (Integer) params.parameter(COORDINATE_ACCURACY.getName().toString()).getValue();
 
         final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
+
+        //FIXME
         this.isLocal = url.toExternalForm().toLowerCase().startsWith("file:");
 
-        File tmpFile = null;
+        Path tmpFile = null;
         try {
-            tmpFile = new File(url.toURI());
-        } catch (URISyntaxException ex) {
+            tmpFile = Paths.get(url.toURI());
+        } catch (URISyntaxException | FileSystemNotFoundException ex) {
             throw new DataStoreException(ex);
         }
 
-        if (tmpFile.getName().endsWith(DESC_FILE_SUFFIX)) {
+        final String fileName = tmpFile.getFileName().toString();
+        if (fileName.endsWith(DESC_FILE_SUFFIX)) {
             this.descFile = tmpFile;
-            this.jsonFile = new File(descFile.getParentFile(), tmpFile.getName().replace(DESC_FILE_SUFFIX, ".json"));
+            this.jsonFile = descFile.resolveSibling(fileName.replace(DESC_FILE_SUFFIX, ".json"));
         } else {
             this.jsonFile = tmpFile;
             //search for description json file
             String typeName = GeoJSONUtils.getNameWithoutExt(jsonFile);
-            this.descFile = new File(jsonFile.getParent(), typeName + DESC_FILE_SUFFIX);
+            this.descFile = jsonFile.resolveSibling(typeName + DESC_FILE_SUFFIX);
         }
     }
 
@@ -119,7 +125,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
 
     @Override
     public boolean isWritable(final GenericName typeName) throws DataStoreException {
-        return isLocal && descFile.canWrite() && jsonFile.canWrite();
+        return isLocal && Files.isWritable(descFile) && Files.isWritable(jsonFile);
     }
 
     public GenericName getName() throws DataStoreException{
@@ -138,7 +144,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
         } else {
             try {
                 // try to parse file only if exist and not empty
-                if (jsonFile.exists() && jsonFile.length() != 0) {
+                if (Files.exists(jsonFile) && Files.size(jsonFile) != 0) {
                     featureType = readType();
                     name = featureType.getName();
                 }
@@ -155,11 +161,11 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
      * @throws IOException
      */
     private FeatureType readType() throws DataStoreException, IOException {
-        if (descFile.exists() && descFile.length() != 0) {
+        if (Files.exists(descFile) && Files.size(descFile) != 0) {
             // build FeatureType from description JSON.
             return FeatureTypeUtils.readFeatureType(descFile);
         } else {
-            if(jsonFile.exists() && jsonFile.length() != 0) {
+            if(Files.exists(jsonFile) && Files.size(jsonFile) != 0) {
                 final String name = GeoJSONUtils.getNameWithoutExt(jsonFile);
 
                 final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -167,9 +173,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
                 ftb.setName(name);
 
                 // build FeatureType from the first Feature of JSON file.
-                final GeoJSONParser parser = new GeoJSONParser(true);
-                final GeoJSONObject obj = parser.parse(jsonFile);
-
+                final GeoJSONObject obj = GeoJSONParser.parse(jsonFile, true);
                 if (obj == null) {
                     throw new DataStoreException("Invalid GeoJSON file " + jsonFile.toString());
                 }
@@ -203,7 +207,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
 
                 return ftb.buildFeatureType();
             } else {
-                throw new DataStoreException("Can't create FeatureType from empty/not found Json file "+jsonFile.getName());
+                throw new DataStoreException("Can't create FeatureType from empty/not found Json file "+jsonFile.getFileName().toString());
             }
         }
     }
@@ -258,22 +262,28 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
 
     private void writeType(FeatureType featureType) throws DataStoreException {
         try {
-            if (!jsonFile.exists() || jsonFile.length() == 0) {
-                jsonFile.createNewFile();
-                GeoJSONUtils.writeEmptyFeatureCollection(jsonFile);
-            } else {
-                throw new DataStoreException(String.format("Non empty json file %s can't create new json schema %s",
-                        jsonFile.getName(), featureType.getName()));
+            final boolean jsonExist = Files.exists(jsonFile);
+
+            if (jsonExist && Files.size(jsonFile) != 0) {
+                throw new DataStoreException(String.format("Non empty json file %s can't create new json file %s",
+                        jsonFile.getFileName().toString(), featureType.getName()));
             }
 
+            if (!jsonExist) Files.createFile(jsonFile);
+            //create json with empty collection
+            GeoJSONUtils.writeEmptyFeatureCollection(jsonFile);
+
             //json schema file
-            if (!descFile.exists() || descFile.length() == 0) {
-                descFile.createNewFile();
-                FeatureTypeUtils.writeFeatureType(featureType, descFile);
-            } else {
+            final boolean descExist = Files.exists(descFile);
+
+            if (descExist && Files.size(descFile) != 0) {
                 throw new DataStoreException(String.format("Non empty json schema file %s can't create new json schema %s",
-                        descFile.getName(), featureType.getName()));
+                        descFile.getFileName().toString(), featureType.getName()));
             }
+
+            if (!descExist) Files.createFile(descFile);
+            //create json schema file
+            FeatureTypeUtils.writeFeatureType(featureType, descFile);
 
             this.featureType = featureType;
             this.name = featureType.getName();
@@ -311,9 +321,7 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
         if(QueryUtilities.queryAll(query)){
             try {
                 rwLock.readLock().lock();
-                final GeoJSONParser parser = new GeoJSONParser(true);
-                final GeoJSONObject obj = parser.parse(jsonFile);
-
+                final GeoJSONObject obj = GeoJSONParser.parse(jsonFile, true);
                 final CoordinateReferenceSystem crs = GeoJSONUtils.getCRS(obj);
                 final Envelope envelope = GeoJSONUtils.getEnvelope(obj, crs);
                 if (envelope != null) {
@@ -430,8 +438,9 @@ public class GeoJSONFeatureStore extends AbstractFeatureStore {
 
         try{
             rwLock.writeLock().lock();
-            descFile.delete();
-            jsonFile.createNewFile();
+            Files.deleteIfExists(descFile);
+            Files.deleteIfExists(jsonFile);
+            Files.createFile(jsonFile);
         } catch (IOException e) {
             throw new DataStoreException("Can not delete GeoJSON schema.", e);
         } finally{

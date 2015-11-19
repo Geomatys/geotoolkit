@@ -19,6 +19,9 @@ package org.geotoolkit.internal.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -26,6 +29,7 @@ import java.lang.ref.PhantomReference;
 
 import org.apache.sis.util.Disposable;
 import org.apache.sis.util.logging.Logging;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 
@@ -46,7 +50,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * @since 3.03
  * @module
  */
-public final class TemporaryFile extends PhantomReference<File> implements Disposable {
+public final class TemporaryFile extends PhantomReference<Path> implements Disposable {
     /**
      * The temporary files not yet deleted. Keys are the string returned by {@link File#getPath()}.
      */
@@ -55,7 +59,7 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
     /**
      * The temporary directory, or {@code null} if none.
      */
-    private static File sharedTemporaryDirectory;
+    private static Path sharedTemporaryDirectory;
 
     /**
      * Registers a shutdown hook which will delete every files not yet deleted.
@@ -88,9 +92,9 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
     /**
      * Creates a new reference to a temporary file.
      */
-    private TemporaryFile(final File file) {
+    private TemporaryFile(final Path file) {
         super(file, ReferenceQueueConsumer.DEFAULT.queue);
-        path = file.getPath();
+        path = file.toString();
     }
 
     /**
@@ -98,15 +102,17 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
      *
      * @return The temporary directory to use.
      */
-    public static synchronized File getSharedTemporaryDirectory() {
-        File directory = sharedTemporaryDirectory;
+    public static synchronized Path getSharedTemporaryDirectory() {
+        Path directory = sharedTemporaryDirectory;
         if (directory == null) {
-            directory = new File(System.getProperty("java.io.tmpdir", "/tmp"), "Geotoolkit.org");
-            if (!directory.isDirectory()) {
-                if (!directory.mkdir()) {
+            directory = Paths.get(System.getProperty("java.io.tmpdir", "/tmp"), "Geotoolkit.org");
+            if (!Files.isDirectory(directory)) {
+                try {
+                    Files.createDirectories(directory);
+                } catch (IOException e) {
                     // If we can't create the Geotoolkit subdirectory,
                     // stay in the usual tmp directory.
-                    directory = directory.getParentFile();
+                    directory = directory.getParent();
                 }
             }
             sharedTemporaryDirectory = directory;
@@ -124,18 +130,24 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
      * @return The temporary file.
      * @throws IOException If the file can not be created.
      */
-    public static File createTempFile(String prefix, String suffix, File directory) throws IOException {
-        final File file = File.createTempFile(prefix, suffix, directory);
-        final TemporaryFile ref = new TemporaryFile(file);
+    public static Path createTempFile(String prefix, String suffix, Path directory) throws IOException {
+        Path tmpFile;
+        if (directory == null) {
+            tmpFile = Files.createTempFile(prefix, suffix);
+        } else {
+            tmpFile = Files.createTempFile(directory, prefix, suffix);
+        }
+
+        final TemporaryFile ref = new TemporaryFile(tmpFile);
         synchronized (REFERENCES) {
             if (REFERENCES.put(ref.path, ref) != null) {
                 // Should never happen since File.createTempFile ensures unique filename.
                 // Not that there is a slight risks that this failure happens if the user
-                // invoked File.delete() instead than TemporaryFile.delete(file).
+                // invoked File.delete() instead than TemporaryFile.delete(tmpFile).
                 throw new AssertionError(ref);
             }
         }
-        return file;
+        return tmpFile;
     }
 
     /**
@@ -156,6 +168,24 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
     }
 
     /**
+     * Deletes the given temporary file. This method should be invoked instead of
+     * {@link File#delete()} in order to unregister the given file.
+     *
+     * @param file The file to delete.
+     * @return {@code true} if the file has been deleted.
+     */
+    public static boolean delete(final Path file) {
+        synchronized (REFERENCES) {
+            final TemporaryFile ref = REFERENCES.remove(file.toString());
+            if (ref != null) {
+                ref.clear();
+            }
+        }
+
+        return IOUtilities.deleteSilently(file);
+    }
+
+    /**
      * Deletes the current file. This is invoked by {@link #dispose()}
      * when a {@link File} object has been garbage-collected.
      *
@@ -164,7 +194,9 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
     private boolean delete() {
         synchronized (REFERENCES) {
             if (REFERENCES.remove(path) == this) {
-                return new File(path).delete();
+                final Path filePath = Paths.get(this.path);
+                IOUtilities.deleteSilently(filePath);
+                return new File(this.path).delete();
             }
         }
         return false; // Already deleted by the shutdown hook.
@@ -182,7 +214,7 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
         if (references != null) { // Safety check against weird behavior at shutdown time.
             synchronized (references) {
                 for (final TemporaryFile ref : references.values()) {
-                    deleted |= new File(ref.path).delete();
+                    deleted |= IOUtilities.deleteSilently(Paths.get(ref.path));
                     ref.clear();
                 }
                 references.clear();

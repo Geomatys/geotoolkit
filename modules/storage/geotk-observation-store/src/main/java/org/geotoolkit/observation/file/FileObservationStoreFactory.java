@@ -17,7 +17,9 @@
 
 package org.geotoolkit.observation.file;
 
-import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
@@ -56,12 +58,12 @@ public class FileObservationStoreFactory extends AbstractObservationStoreFactory
     /**
      * url to the file.
      */
-    public static final ParameterDescriptor<File> FILE_PATH =  new ParameterBuilder()
+    public static final ParameterDescriptor<URL> FILE_PATH =  new ParameterBuilder()
             .addName("url")
             .addName(Bundle.formatInternational(Bundle.Keys.paramURLAlias))
             .setRemarks(Bundle.formatInternational(Bundle.Keys.paramURLRemarks))
             .setRequired(true)
-            .create(File.class,null);
+            .create(URL.class, null);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("ObservationFileParameters").createGroup(
@@ -79,12 +81,20 @@ public class FileObservationStoreFactory extends AbstractObservationStoreFactory
 
     @Override
     public ObservationStore open(ParameterValueGroup params) throws DataStoreException {
-        return new FileObservationStore(params);
+        try {
+            return new FileObservationStore(params);
+        } catch (IOException | URISyntaxException e) {
+            throw new DataStoreException(e.getLocalizedMessage(), e);
+        }
     }
 
     @Override
     public ObservationStore create(ParameterValueGroup params) throws DataStoreException {
-        return new FileObservationStore(params);
+        try {
+            return new FileObservationStore(params);
+        } catch (IOException | URISyntaxException e) {
+            throw new DataStoreException(e.getLocalizedMessage(), e);
+        }
     }
     
 }

@@ -20,7 +20,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -29,6 +28,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.*;
 import java.util.Set;
@@ -48,13 +49,14 @@ import org.geotoolkit.feature.type.DefaultPropertyType;
 import org.apache.sis.geometry.Envelopes;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.mathml.xml.*;
+import org.geotoolkit.nio.IOUtilities;
+import org.geotoolkit.nio.ZipUtilities;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.geotoolkit.parameter.Parameters;
 import org.apache.sis.referencing.CRS;
 import org.apache.sis.referencing.IdentifiedObjects;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
-import org.geotoolkit.util.FileUtilities;
 import org.apache.sis.util.ObjectConverters;
 import org.apache.sis.util.UnconvertibleObjectException;
 import static org.geotoolkit.data.AbstractFileFeatureStoreFactory.URLP;
@@ -359,7 +361,7 @@ public class WPSConvertersUtils {
         jsonMap.put("title", layerName);
         jsonMap.put("layers", layerName);
 
-        final File coverageFile = new File((String)params.get(WMS_STORAGE_DIR), layerName+".tiff");
+        final Path coverageFile = Paths.get((String) params.get(WMS_STORAGE_DIR), layerName + ".tiff");
 
         try {
             // Set the envelope crs to 4326 because of client request :
@@ -373,12 +375,13 @@ public class WPSConvertersUtils {
                 crsCode = org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(
                         coverage.getCoordinateReferenceSystem(), false);
 
-            } else if (object instanceof File) {
-                final GridCoverageReader reader = CoverageIO.createSimpleReader(object);
+            } else if (object instanceof File || object instanceof Path) {
+                final Path objPath = (object instanceof File) ? ((File) object).toPath() : (Path) object;
+                final GridCoverageReader reader = CoverageIO.createSimpleReader(objPath);
                 env = Envelopes.transform(reader.getGridGeometry(0).getEnvelope(), outCRS);
                 crsCode = org.geotoolkit.referencing.IdentifiedObjects.lookupEpsgCode(
                         reader.getGridGeometry(0).getCoordinateReferenceSystem(), false);
-                FileUtilities.copy((File) object, coverageFile);
+                IOUtilities.copy(objPath, coverageFile, StandardCopyOption.REPLACE_EXISTING);
 
             } else if (object instanceof GridCoverageReader) {
                 final GridCoverageReader reader = (GridCoverageReader) object;
@@ -388,10 +391,11 @@ public class WPSConvertersUtils {
                 Object in = reader.getInput();
                 if(in == null) {
                     throw new IOException("Input coverage is invalid.");
-                } else if( in instanceof File) {
-                    FileUtilities.copy((File) in, coverageFile);
+                } else if( in instanceof File || in instanceof Path) {
+                    final Path inPath = (in instanceof File) ? ((File) in).toPath() : (Path) in;
+                    IOUtilities.copy(inPath, coverageFile, StandardCopyOption.REPLACE_EXISTING);
                 } else if(in instanceof InputStream) {
-                    FileUtilities.buildFileFromStream((InputStream)in, coverageFile);
+                    IOUtilities.writeStream((InputStream) in, coverageFile);
                 } else {
                     throw new IOException("Input coverage is invalid.");
                 }
@@ -790,24 +794,20 @@ public class WPSConvertersUtils {
      * @return The image file of the archive.
      * @throws IOException If there's a problem while decompression, or if we can't create a new temporary folder.
      */
-    public static File unzipCoverage(File archive) throws IOException {
-        File inputFile = null;
+    public static Path unzipCoverage(Path archive) throws IOException {
+        Path inputFile = null;
         // User should have sent data as a zip archive. What we need to do is unzip it in a folder and identify the image.
-        if (archive == null || !archive.exists()) {
+        if (archive == null || !Files.exists(archive)) {
             throw new IOException("No input data have been found.");
         }
-        String tmpDirPath = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + UUID.randomUUID();
-        File tmpDir = new File(tmpDirPath);
-        tmpDir.mkdir();
+        final Path tmpDir = Files.createTempDirectory(null);
 
-        List<File> inputFiles = null;
-
-        inputFiles = FileUtilities.unzip(archive, tmpDir, null);
+        List<Path> inputFiles = ZipUtilities.unzip(archive, tmpDir, null);
 
         // Try to find the image file to treat
         // TODO : Change for a better verification. Here we should get a specific parameter with the image file name.
-        for (File f : inputFiles) {
-            String path = f.getAbsolutePath();
+        for (Path f : inputFiles) {
+            String path = f.toAbsolutePath().toString();
             if (path.endsWith(".tif") || path.endsWith(".TIF") || path.endsWith(".tiff") || path.endsWith(".TIFF")
                     || path.endsWith("jp2") || path.endsWith("JP2")
                     || path.endsWith(".png") || path.endsWith(".PNG")
@@ -817,7 +817,7 @@ public class WPSConvertersUtils {
             }
         }
         //If list is empty, the source file is not an archive, so we put it as only file for input.
-        if(inputFile == null && (inputFiles == null || inputFiles.isEmpty())) {
+        if(inputFile == null && inputFiles.isEmpty()) {
             inputFile = archive;
         }
         return inputFile;
@@ -847,18 +847,13 @@ public class WPSConvertersUtils {
 
             // Create a temporary file
             final Path tmpFilePath = Files.createTempFile(UUID.randomUUID().toString(), extension);
-            final File tmpFile = tmpFilePath.toFile();
-
             // Copy the content of the remote file into the file on the local filesystem
-            try (FileOutputStream fileStream = new FileOutputStream(tmpFile); InputStream remoteStream = url.openStream()) {
-                int byteRead;
-                while ((byteRead = remoteStream.read()) != -1)
-                    fileStream.write(byteRead);
+            try (InputStream remoteStream = url.openStream()) {
+                IOUtilities.writeStream(remoteStream, tmpFilePath);
             }
 
-            tmpFile.deleteOnExit();
 
-            return tmpFile.toURI().toURL();
+            return tmpFilePath.toUri().toURL();
         }
         else
             return url;
@@ -930,13 +925,12 @@ public class WPSConvertersUtils {
      * @return a GeoJSONObject
      * @throws java.io.IOException on reading errors
      */
-    public static final GeoJSONObject readGeoJSONObjectsFromString(String content) throws IOException {
+    public static GeoJSONObject readGeoJSONObjectsFromString(String content) throws IOException {
         ArgumentChecks.ensureNonEmpty("content", content);
 
         // Parse GeoJSON
-        final GeoJSONParser parser = new GeoJSONParser();
         try (InputStream inputStream = new ByteArrayInputStream(content.getBytes())) {
-            return parser.parse(inputStream);
+            return GeoJSONParser.parse(inputStream);
         }
     }
 
@@ -1031,9 +1025,7 @@ public class WPSConvertersUtils {
      */
     public static Path writeTempJsonFile(String fileContent) throws IOException {
         final Path tmpFilePath = Files.createTempFile(UUID.randomUUID().toString(), ".json");
-        try (final FileOutputStream outputStream = new FileOutputStream(tmpFilePath.toFile())) {
-            outputStream.write(fileContent.getBytes());
-        }
+        IOUtilities.writeString(fileContent, tmpFilePath);
         return tmpFilePath;
     }
 }

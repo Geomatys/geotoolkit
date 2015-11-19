@@ -27,6 +27,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
+import org.geotoolkit.internal.io.JNDI;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
@@ -43,7 +44,6 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.metadata.extent.VerticalExtent;
 import org.opengis.metadata.spatial.Georectified;
-import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.quality.DataQuality;
 import org.opengis.metadata.ExtendedElementInformation;
 import org.opengis.parameter.ParameterValue;

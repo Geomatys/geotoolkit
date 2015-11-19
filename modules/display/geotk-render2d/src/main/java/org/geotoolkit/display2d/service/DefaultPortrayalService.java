@@ -85,7 +85,6 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -94,7 +93,7 @@ import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.display2d.canvas.J2DCanvasSVG;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 
 /**
  * Default implementation of portrayal service.
@@ -856,7 +855,7 @@ public final class DefaultPortrayalService implements PortrayalService{
             Object output = outputDef.getOutput();
             final ImageWriterSpi spi = writer.getOriginatingProvider();
 
-            if (!ImageIOUtilities.isValidType(spi.getOutputTypes(), output)) {
+            if (!XImageIO.isValidType(spi.getOutputTypes(), output)) {
                 output = ImageIO.createImageOutputStream(output);
             }
             writer.setOutput(output);
@@ -866,7 +865,7 @@ public final class DefaultPortrayalService implements PortrayalService{
                 throw new IOException(ex.getLocalizedMessage()+toImageInformation(image), ex);
             }
         }finally{
-            ImageIOUtilities.releaseWriter(writer);
+            XImageIO.dispose(writer);
         }
     }
 

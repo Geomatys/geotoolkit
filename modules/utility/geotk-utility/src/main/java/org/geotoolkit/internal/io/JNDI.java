@@ -16,7 +16,8 @@
  */
 package org.geotoolkit.internal.io;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -63,12 +64,16 @@ public final class JNDI implements EventContext, InitialContextFactory {
         // define at least the derby folder if not set
         boolean reload = false;
         if (System.getProperty("derby.system.home") == null) {
-            final File path = Installation.SIS.directory(true);
-            if (!path.exists()) {
-                path.mkdirs();
+            final Path path = Installation.SIS.directory(true);
+            if (!Files.exists(path)) {
+                try {
+                    Files.createDirectories(path);
+                } catch (IOException ex) {
+                    throw new IllegalStateException(ex);
+                }
             }
-            if (path.isDirectory()) {
-                System.setProperty("derby.system.home", path.getPath());
+            if (Files.isDirectory(path)) {
+                System.setProperty("derby.system.home", path.toAbsolutePath().toString());
                 reload = true;
             }
         }

@@ -40,23 +40,23 @@ public final strictfp class DialectTest extends org.geotoolkit.test.TestBase {
      */
     @Test
     public void testCreateURL() throws SQLException {
-        final String databaseURL = Dialect.HSQL.createURL(new File("Geotoolkit.org/EPSG/HSQL"));
+        final String databaseURL = Dialect.HSQL.createURL(new File("Geotoolkit.org/EPSG/HSQL").toPath());
         assertTrue(databaseURL, databaseURL.startsWith(Dialect.HSQL.protocol + "file:"));
         assertTrue(databaseURL, databaseURL.endsWith("/Geotoolkit.org/EPSG/HSQL"));
     }
 
     /**
-     * Tests the {@link Dialect#getFile(String)} method for the HSQL database.
+     * Tests the {@link Dialect#getPath(String)} method for the HSQL database.
      */
     @Test
     public void testGetFile() {
-        assertEquals(new File("Geotoolkit.org/EPSG/HSQL"),
-                Dialect.HSQL.getFile("jdbc:hsqldb:file:Geotoolkit.org/EPSG/HSQL"));
-        assertEquals(new File("Geotoolkit.org/EPSG/HSQL"),
-                Dialect.HSQL.getFile("JDBC:HSQLDB:FILE:Geotoolkit.org/EPSG/HSQL"));
-        assertEquals(new File("Geotoolkit.org/EPSG/HSQL"),
-                Dialect.HSQL.getFile("jdbc:hsqldb:Geotoolkit.org/EPSG/HSQL"));
-        assertNull(Dialect.HSQL.getFile("jdbc:hsqldb:mem:Geotoolkit.org/EPSG/HSQL"));
-        assertNull(Dialect.HSQL.getFile("jdbc:derby:file:Geotoolkit.org/EPSG/HSQL"));
+        assertEquals(new File("Geotoolkit.org/EPSG/HSQL").toPath(),
+                Dialect.HSQL.getPath("jdbc:hsqldb:file:Geotoolkit.org/EPSG/HSQL"));
+        assertEquals(new File("Geotoolkit.org/EPSG/HSQL").toPath(),
+                Dialect.HSQL.getPath("JDBC:HSQLDB:FILE:Geotoolkit.org/EPSG/HSQL"));
+        assertEquals(new File("Geotoolkit.org/EPSG/HSQL").toPath(),
+                Dialect.HSQL.getPath("jdbc:hsqldb:Geotoolkit.org/EPSG/HSQL"));
+        assertNull(Dialect.HSQL.getPath("jdbc:hsqldb:mem:Geotoolkit.org/EPSG/HSQL"));
+        assertNull(Dialect.HSQL.getPath("jdbc:derby:file:Geotoolkit.org/EPSG/HSQL"));
     }
 }

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.Iterator;
 import java.io.File;
@@ -58,7 +59,7 @@ public final strictfp class NetcdfImageWriterTest extends ImageWriterTestCase {
      * The temporary file created by the test, or {@code null} if none.
      * This file will be deleted after each test execution.
      */
-    private File temporaryFile;
+    private Path temporaryFile;
 
     /**
      * Creates a new {@link NetcdfImageWriter} instance and set its output to a temporary file.

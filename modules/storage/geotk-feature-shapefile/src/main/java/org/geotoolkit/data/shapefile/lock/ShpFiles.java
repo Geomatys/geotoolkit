@@ -23,12 +23,15 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.Map;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
+
 import org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory;
 import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.ENCODING;
 import static org.geotoolkit.data.shapefile.ShapefileFeatureStoreFactory.LOGGER;
@@ -68,14 +71,14 @@ public final class ShpFiles {
      * The urls for each type of file that is associated with the shapefile. The
      * key is the type of file
      */
-    private final Map<ShpFileType, URL> urls = new EnumMap<ShpFileType, URL>(ShpFileType.class);
+    private final Map<ShpFileType, URL> urls = new EnumMap<>(ShpFileType.class);
 
     /**
      * A read/write lock, so that we can have concurrent readers
      */
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
-    private final WeakHashSet<AccessManager> managers = new WeakHashSet<AccessManager>(AccessManager.class);
+    private final WeakHashSet<AccessManager> managers = new WeakHashSet<>(AccessManager.class);
 
     private final boolean loadQuadTree;
 
@@ -102,11 +105,18 @@ public final class ShpFiles {
                 url = new URL(path.toString());
             } catch (MalformedURLException e) {
                 try {
-                    url = new File(path.toString()).toURI().toURL();
+                    url = Paths.get(path.toString()).toUri().toURL();
                 } catch (MalformedURLException ex) {
                     throw new IllegalArgumentException(
                             "Path object can not be converted to a valid URL",ex);
                 }
+            }
+        }else if(path instanceof Path){
+            try {
+                url = ((Path) path).toUri().toURL();
+            } catch (MalformedURLException ex) {
+                throw new IllegalArgumentException(
+                        "Path object can not be converted to a valid URL",ex);
             }
         }else if(path instanceof File){
             try {
@@ -197,7 +207,7 @@ public final class ShpFiles {
      * @return the URLs (in string form) of all the files for the shapefile datastore.
      */
     public Map<ShpFileType, String> getFileNames() {
-        final Map<ShpFileType, String> result = new EnumMap<ShpFileType, String>(ShpFileType.class);
+        final Map<ShpFileType, String> result = new EnumMap<>(ShpFileType.class);
 
         for (final Entry<ShpFileType, URL> entry : urls.entrySet()) {
             result.put(entry.getKey(), entry.getValue().toExternalForm());
@@ -245,6 +255,27 @@ public final class ShpFiles {
         }
         final URL url = getURL(type);
         return toFile(url);
+    }
+
+    /**
+     * Acquire a Path for read only purposes. It is recommended that get*Stream or
+     * get*Channel methods are used when reading or writing to the file is
+     * desired.
+     *
+     *
+     * @see #getInputStream(ShpFileType, FileReader)
+     * @see #getReadChannel(ShpFileType, FileReader)
+     * @see #getWriteChannel(org.geotoolkit.data.shapefile.ShpFileType, org.geotoolkit.data.shapefile.FileWriter)
+     *
+     * @param type
+     *                the type of the file desired.
+     * @return the Path type requested
+     */
+    public Path getPath(final ShpFileType type) {
+        if(!isLocal() ){
+            throw new IllegalStateException("This method only applies if the files are local");
+        }
+        return toPath(getURL(type));
     }
 
     /**
@@ -511,6 +542,8 @@ public final class ShpFiles {
             String base = null;
             if(obj instanceof File) {
                 base = type.toBase( (File)obj);
+            } else if(obj instanceof Path) {
+                base = type.toBase( (Path)obj );
             } else if(obj instanceof URL) {
                 base = type.toBase( (URL)obj );
             }
@@ -527,27 +560,53 @@ public final class ShpFiles {
      * exemple : Shp, SHP, Shp, ShP etc...
      */
     private static URL findExistingFile(final URL value) {
-        final File file = toFile(value);
-        final File directory = file.getParentFile();
-        if( directory==null || !directory.exists() ) {
+        final Path file = toPath(value);
+        final Path directory = file.getParent();
+        if( directory==null || !Files.exists(directory) ) {
             // doesn't exist
             return null;
         }
-        final File[] files = directory.listFiles(new FilenameFilter(){
-            @Override
-            public boolean accept(File dir, String name) {
-                return file.getName().equalsIgnoreCase(name);
-            }
 
-        });
-        if(files.length>0){
+        List<Path> matchingPaths = new ArrayList<>();
+        final String baseFileName = file.getFileName().toString();
+        try (final DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
+            for (Path path : directoryStream) {
+                final String filename = IOUtilities.filename(path);
+                if (baseFileName.equalsIgnoreCase(filename)) {
+                    matchingPaths.add(path);
+                }
+            }
+        } catch (IOException e) {
+            ShapefileFeatureStoreFactory.LOGGER.log(Level.SEVERE, e.getLocalizedMessage(), e);
+        }
+
+        if(!matchingPaths.isEmpty()){
             try {
-                return files[0].toURI().toURL();
+                return matchingPaths.get(0).toUri().toURL();
             } catch (MalformedURLException e) {
                 ShapefileFeatureStoreFactory.LOGGER.log(Level.SEVERE, "", e);
             }
         }
         return null;
+    }
+
+
+    /**
+     * Try to convert an URL into a Path.
+     * @param url
+     * @return
+     */
+    public static Path toPath(final URL url) {
+        try {
+            return Paths.get(url.toURI());
+        } catch (URISyntaxException e) {
+            try {
+                return IOUtilities.toPath(url, ENCODING);
+            } catch (IOException e1) {
+                //fallback with old api
+                return toFile(url).toPath();
+            }
+        }
     }
 
     public static File toFile(final URL url) {

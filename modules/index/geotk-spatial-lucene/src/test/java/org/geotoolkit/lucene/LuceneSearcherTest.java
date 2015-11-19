@@ -58,10 +58,10 @@ import org.geotoolkit.lucene.analysis.standard.ClassicAnalyzer;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.referencing.CRS;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
 import org.geotoolkit.lucene.index.LuceneIndexSearcher;
-import org.geotoolkit.util.FileUtilities;
 
 import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -103,7 +103,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
     @BeforeClass
     public static void setUpMethod() throws Exception {
         if (Files.isDirectory(directory)) {
-            FileUtilities.deleteDirectory(directory.toFile());
+            IOUtilities.deleteRecursively(directory);
         }
         Files.createDirectory(directory);
 
@@ -136,8 +136,7 @@ public class LuceneSearcherTest extends org.geotoolkit.test.TestBase {
             }
         }
         searcher.destroy();
-
-        FileUtilities.deleteDirectory(directory.toFile());
+        IOUtilities.deleteRecursively(directory);
     }
 
 

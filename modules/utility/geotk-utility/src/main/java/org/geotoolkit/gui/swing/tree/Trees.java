@@ -38,7 +38,7 @@ import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Static;
 import org.apache.sis.util.ArraysExt;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 
 
 /**

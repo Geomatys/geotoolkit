@@ -12,15 +12,16 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.util.FileUtilities;
 import org.opengis.coverage.grid.GridCoverage;
 
 import java.awt.image.RenderedImage;
-import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 
 public class CoverageReaderDemo {
@@ -31,9 +32,10 @@ public class CoverageReaderDemo {
         Demos.init();
 
         // Create a temp file to extract data from jar file.
-        final File tempData = Files.createTempFile("tempCvg", ".grb").toFile();
-        FileUtilities.buildFileFromStream(
-                CoverageReaderDemo.class.getResourceAsStream("/data/grib/Atlantic.wave.grb"), tempData);
+        final Path tempData = Files.createTempFile("tempCvg", ".grb");
+        try (InputStream stream = CoverageReaderDemo.class.getResourceAsStream("/data/grib/Atlantic.wave.grb")) {
+            IOUtilities.writeStream(stream, tempData);
+        }
 
         /*
          * DEFERRED READING

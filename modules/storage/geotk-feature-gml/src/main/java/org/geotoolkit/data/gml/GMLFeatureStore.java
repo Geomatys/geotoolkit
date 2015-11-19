@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,7 +63,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
 
     static final QueryCapabilities CAPABILITIES = new DefaultQueryCapabilities(false);
 
-    private final File file;
+    private final Path file;
     private String name;
     private FeatureType featureType;
     private Boolean longitudeFirst;
@@ -69,7 +71,15 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     //all types
     private final Map<GenericName, Object> cache = new HashMap<>();
 
+    /**
+     * @deprecated use {@link #GMLFeatureStore(Path)} or {@link #GMLFeatureStore(ParameterValueGroup)} instead
+     */
+    @Deprecated
     public GMLFeatureStore(final File f) throws MalformedURLException, DataStoreException{
+        this(f.toPath());
+    }
+
+    public GMLFeatureStore(final Path f) throws MalformedURLException, DataStoreException{
         this(toParameters(f));
     }
 
@@ -78,7 +88,7 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
 
         final URL url = (URL) params.parameter(GMLFeatureStoreFactory.URLP.getName().toString()).getValue();
         try {
-            this.file = new File(url.toURI());
+            this.file = Paths.get(url.toURI());
         } catch (URISyntaxException ex) {
             throw new DataStoreException(ex);
         }
@@ -93,9 +103,9 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
         this.longitudeFirst = (Boolean) params.parameter(GMLFeatureStoreFactory.LONGITUDE_FIRST.getName().toString()).getValue();
     }
 
-    private static ParameterValueGroup toParameters(final File f) throws MalformedURLException{
+    private static ParameterValueGroup toParameters(final Path f) throws MalformedURLException{
         final ParameterValueGroup params = GMLFeatureStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(GMLFeatureStoreFactory.URLP, params).setValue(f.toURL());
+        Parameters.getOrCreate(GMLFeatureStoreFactory.URLP, params).setValue(f.toUri().toURL());
         return params;
     }
 
@@ -143,8 +153,8 @@ public class GMLFeatureStore extends AbstractFeatureStore implements DataFileSto
     }
 
     @Override
-    public File[] getDataFiles() throws DataStoreException {
-        return new File[]{file};
+    public Path[] getDataFiles() throws DataStoreException {
+        return new Path[]{file};
     }
 
     @Override

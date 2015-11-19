@@ -18,11 +18,11 @@
 package org.geotoolkit.index.quadtree.fs;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.nio.file.Path;
 import java.util.logging.Level;
 
 import org.geotoolkit.index.quadtree.AbstractNode;
@@ -30,6 +30,8 @@ import org.geotoolkit.index.quadtree.IndexStore;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
 
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.WRITE;
 import static org.geotoolkit.index.quadtree.fs.IndexHeader.*;
 
 /**
@@ -41,7 +43,7 @@ import static org.geotoolkit.index.quadtree.fs.IndexHeader.*;
  */
 public class FileSystemIndexStore implements IndexStore {
 
-    private final File file;
+    private final Path file;
     private byte byteOrder;
 
     /**
@@ -49,9 +51,9 @@ public class FileSystemIndexStore implements IndexStore {
      * 
      * @param file
      */
+    @Deprecated
     public FileSystemIndexStore(final File file) {
-        this.file = file;
-        this.byteOrder = NEW_MSB_ORDER;
+        this(file.toPath(), NEW_MSB_ORDER);
     }
 
     /**
@@ -60,11 +62,21 @@ public class FileSystemIndexStore implements IndexStore {
      * @param file
      * @param byteOrder
      */
+    @Deprecated
     public FileSystemIndexStore(final File file, final byte byteOrder) {
+       this(file.toPath(), byteOrder);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param file
+     * @param byteOrder
+     */
+    public FileSystemIndexStore(final Path file, final byte byteOrder) {
         this.file = file;
         this.byteOrder = byteOrder;
     }
-
     /**
      * {@inheritDoc }
      */
@@ -73,13 +85,7 @@ public class FileSystemIndexStore implements IndexStore {
         // For efficiency, trim the tree
         tree.trim();
 
-        // Open the stream...
-        FileOutputStream fos = null;
-        FileChannel channel = null;
-
-        try {
-            fos = new FileOutputStream(file);
-            channel = fos.getChannel();
+        try (FileChannel channel = FileChannel.open(file, CREATE, WRITE)){
 
             final ByteBuffer buf = ByteBuffer.allocate(8);
 
@@ -106,18 +112,6 @@ public class FileSystemIndexStore implements IndexStore {
             this.writeNode(tree, tree.getRoot(), channel, order);
         } catch (IOException e) {
             throw new StoreException(e);
-        } finally {
-            try {
-                channel.close();
-            } catch (IOException e) {
-                throw new StoreException(e);
-            }finally{
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    throw new StoreException(e);
-                }
-            }
         }
     }
 
@@ -203,7 +197,7 @@ public class FileSystemIndexStore implements IndexStore {
 
         try {
             if (QuadTree.LOGGER.isLoggable(Level.FINEST)) {
-                QuadTree.LOGGER.log(Level.FINEST, "Opening QuadTree {0}", this.file.getCanonicalPath());
+                QuadTree.LOGGER.log(Level.FINEST, "Opening QuadTree {0}", this.file);
             }
 
             tree = FileSystemQuadTree.load(file);

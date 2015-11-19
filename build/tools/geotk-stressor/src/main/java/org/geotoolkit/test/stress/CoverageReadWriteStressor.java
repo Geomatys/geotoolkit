@@ -19,7 +19,6 @@ package org.geotoolkit.test.stress;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.awt.image.RenderedImage;
 import javax.imageio.ImageIO;
@@ -27,6 +26,8 @@ import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.Locale;
 
@@ -197,15 +198,15 @@ public class CoverageReadWriteStressor extends Stressor {
      * @return A potentially modified input to give to the image reader.
      */
     static Object createReaderInput(Object input) throws CoverageStoreException {
-        if (input instanceof File) {
-            File file = (File) input;
+        if (input instanceof File || input instanceof Path) {
+            Path file = (input instanceof File) ? ((File) input).toPath() : (Path) input;
             LOGGER.log(Level.INFO, "Loading {0}", file);
             try {
                 input = TileManagerFactory.DEFAULT.create(file);
-                if (!file.isFile() || !file.getName().endsWith(".serialized")) {
-                    file = new File(file, TileManager.SERIALIZED_FILENAME);
+                if (!Files.isRegularFile(file) || !file.getFileName().toString().endsWith(".serialized")) {
+                    file = file.resolve(TileManager.SERIALIZED_FILENAME);
                     LOGGER.log(Level.INFO, "Saving {0}", file);
-                    try (ObjectOutputStream bs = new ObjectOutputStream(new FileOutputStream(file))) {
+                    try (ObjectOutputStream bs = new ObjectOutputStream(Files.newOutputStream(file))) {
                         bs.writeObject(input);
                     }
                 }

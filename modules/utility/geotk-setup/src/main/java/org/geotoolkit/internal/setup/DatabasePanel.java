@@ -24,9 +24,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -42,6 +42,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.geotoolkit.internal.io.Installation;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -423,8 +424,13 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
         }
         final Properties settings = this.settings;
         if (isAutomatic()) {
-            final File file = new File(installation.directory(true), Installation.DATASOURCE_FILE);
-            file.delete();
+            final Path file = installation.directory(true).resolve(Installation.DATASOURCE_FILE);
+            try {
+                Files.delete(file);
+            } catch (IOException e) {
+                //ignore error
+                e.printStackTrace();
+            }
             settings.clear();
             if (isAutomatic != null) {
                 isOriginalAutomatic = true;
@@ -444,10 +450,8 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
                     }
                 }
                 try {
-                    final File file = new File(installation.validDirectory(true), Installation.DATASOURCE_FILE);
-                    try (FileOutputStream out = new FileOutputStream(file)) {
-                        settings.store(out, "Connection parameters to the " + name + " database");
-                    }
+                    final Path file = installation.validDirectory(true).resolve(Installation.DATASOURCE_FILE);
+                    IOUtilities.storeProperties(settings, file, "Connection parameters to the " + name + " database");
                 } catch (IOException ex) {
                     error(Errors.Keys.CantWriteFile_1, ex);
                     return;

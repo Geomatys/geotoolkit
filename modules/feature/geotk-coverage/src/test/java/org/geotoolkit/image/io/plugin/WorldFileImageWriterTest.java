@@ -17,8 +17,10 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Locale;
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -27,14 +29,13 @@ import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.RenderedImage;
 
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.image.io.TextImageWriterTestBase;
 import org.geotoolkit.image.io.mosaic.TileTest;
 import org.geotoolkit.image.io.XImageIO;
 
 import org.junit.*;
-import static org.junit.Assume.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 
@@ -108,10 +109,9 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
      * and ensure that this file does not exist. If a file with that name exists, the test
      * will be stopped but is will not be considered a failure.
      */
-    private static File changeExtension(final File mainFile, final String extension) throws IOException {
-        final File file = (File) IOUtilities.changeExtension(mainFile, extension);
-        assumeTrue(file.createNewFile());
-        return file;
+    private static Path changeExtension(final Path mainFile, final String extension) throws IOException {
+        final Path file = (Path) IOUtilities.changeExtension(mainFile, extension);
+        return Files.createFile(file);
     }
 
     /**
@@ -163,28 +163,28 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
         final IIOImage image = createImage(true);
         clearUserObjects(image.getMetadata());
         final WorldFileImageWriter writer = (WorldFileImageWriter) this.writer;
-        final File file = TemporaryFile.createTempFile("TEST", ".txt", null);
-        File fileTFW = null, filePRJ = null;
+        final Path file = TemporaryFile.createTempFile("TEST", ".txt", null);
+        Path fileTFW = null, filePRJ = null;
         try {
             fileTFW = changeExtension(file, "ttw");
             filePRJ = changeExtension(file, "prj");
             writer.setOutput(file);
             writer.write(image);
-            assertTrue("The main file should contains data.", file   .length() > 0);
-            assertTrue("The TFW file should contains data.",  fileTFW.length() > 0);
-            assertTrue("The PRJ file should contains data.",  filePRJ.length() > 0);
+            assertTrue("The main file should contains data.", Files.size(file) > 0);
+            assertTrue("The TFW file should contains data.",  Files.size(fileTFW) > 0);
+            assertTrue("The PRJ file should contains data.", Files.size(filePRJ) > 0);
             assertMultilinesEquals(
-                "100.0\n" +
-                "0.0\n" +
-                "0.0\n" +
-                "-100.0\n" +
-                "-500.0\n" +
-                "400.0\n", TestData.readLatinText(fileTFW));
+                    "100.0\n" +
+                    "0.0\n" +
+                    "0.0\n" +
+                    "-100.0\n" +
+                    "-500.0\n" +
+                    "400.0\n", IOUtilities.toString(fileTFW, Charset.forName("ISO-8859-1")));
             /*
              * In the test for CRS, we will insert some new lines in the WKT
              * for making easier the debugging in case of comparison failure.
              */
-            String wkt = TestData.readLatinText(filePRJ);
+            String wkt = IOUtilities.toString(filePRJ, Charset.forName("ISO-8859-1"));
             wkt = wkt.replace("], ", "],\n");
             assertMultilinesEquals(decodeQuotes(
                 "PROJCS[“WGS 84 / World Mercator”, " +
@@ -207,10 +207,10 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
             writer.dispose();
             assertTrue(TemporaryFile.delete(file));
             if (fileTFW != null) {
-                assertTrue(fileTFW.delete());
+                assertTrue(IOUtilities.deleteSilently(fileTFW));
             }
             if (filePRJ != null) {
-                assertTrue(filePRJ.delete());
+                assertTrue(IOUtilities.deleteSilently(filePRJ));
             }
         }
     }
@@ -228,11 +228,11 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
     public void testImageIO() throws IOException {
         // We use A2.png because it is the smallest file of the mosaic test-data directory.
         final RenderedImage image = ImageIO.read(TestData.file(TileTest.class, "A2.png"));
-        final File file = TemporaryFile.createTempFile("TEST", ".png", null);
+        final Path file = TemporaryFile.createTempFile("TEST", ".png", null);
         WorldFileImageWriter.Spi.registerDefaults(null);
         try {
-            assertTrue("Should use the standard image writer.", ImageIO.write(image, "png", file));
-            assertTrue(file.length() != 0);
+            assertTrue("Should use the standard image writer.", ImageIO.write(image, "png", file.toFile()));
+            assertTrue(Files.size(file) != 0);
             /*
              * When using the XImageIO methods, the WorldFileImageWriter plugin
              * should be selected if the output is a file.
@@ -241,7 +241,7 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
             assertTrue(writer instanceof WorldFileImageWriter);
             writer.write(image);
             writer.dispose();
-            assertTrue(file.length() != 0);
+            assertTrue(Files.size(file) != 0);
             /*
              * If the output is a stream, then the standard writer should be selected.
              */

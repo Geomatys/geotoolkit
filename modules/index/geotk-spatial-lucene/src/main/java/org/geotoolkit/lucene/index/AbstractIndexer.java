@@ -49,8 +49,8 @@ import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
-import static org.geotoolkit.lucene.index.IndexLucene.LOGGER;
-import org.geotoolkit.util.FileUtilities;
+
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 
@@ -170,7 +170,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                 if (isIndexDir(indexDirectory, serviceID)) {
                     final String dirName = indexDirectory.getFileName().toString();
                     if (!dirName.equals(currentDirName)) {
-                        FileUtilities.deleteDirectory(indexDirectory.toFile());
+                        IOUtilities.deleteRecursively(indexDirectory);
                     }
                 }
             }
@@ -366,7 +366,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     private void stopIndexation(final IndexWriter writer, final String serviceID) throws IOException {
         // writer.optimize(); no longer justified
         writer.close();
-        FileUtilities.deleteDirectory(getFileDirectory().toFile());
+        IOUtilities.deleteRecursively(getFileDirectory());
         if (indexationToStop.contains(serviceID)) {
             indexationToStop.remove(serviceID);
         }
@@ -384,7 +384,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         final Properties prop       = new Properties();
         prop.putAll(numericFields);
         try {
-            FileUtilities.storeProperties(prop, numericFieldFile.toFile());
+            IOUtilities.storeProperties(prop, numericFieldFile, null);
         } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Unable to store the numeric fields properties file.", ex);
         }

@@ -24,6 +24,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import org.geotoolkit.data.FeatureReader;
@@ -43,6 +45,8 @@ import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import static org.geotoolkit.data.shapefile.lock.ShpFiles.toFile;
+import static org.geotoolkit.data.shapefile.lock.ShpFiles.toPath;
+
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
 import org.geotoolkit.data.shapefile.shx.ShxReader;

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.shapefile.lock;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -28,6 +27,9 @@ import java.nio.channels.FileLock;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -180,7 +182,7 @@ public final class AccessManager {
         ReadableByteChannel rbc = null;
         try {
             rbc = toClosingChannel(files.getReadChannel(url),true);
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             rbc = storage.getWriteChannel();
         }
 
@@ -204,7 +206,7 @@ public final class AccessManager {
         if (baseName.length() < 3) { // min prefix length for createTempFile
             baseName = baseName + "___".substring(0, 3 - baseName.length());
         }
-        final File tmp = File.createTempFile(baseName, type.extensionWithPeriod);
+        final Path tmp = Files.createTempFile(baseName, type.extensionWithPeriod);
         final StorageFile tempFile = new StorageFile(files, tmp, type);
         tempFiles.add(tempFile);
         return tempFile;

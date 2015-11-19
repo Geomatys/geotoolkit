@@ -34,6 +34,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.sis.internal.storage.IOUtilities;
 import org.apache.sis.util.iso.SimpleInternationalString;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.NamesExt;
 import org.geotoolkit.feature.type.DefaultPropertyType;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
@@ -41,7 +42,6 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.feature.type.PropertyType;
-import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalGraphic;
 import org.openide.util.Exceptions;
@@ -132,7 +132,7 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
                 if ("svg".equalsIgnoreCase(ext)) {
                     mimeType = "image/svg";
                 } else {
-                    mimeType = ImageIOUtilities.fileExtensionToMimeType(ext);
+                    mimeType = XImageIO.fileExtensionToMimeType(ext);
                 }
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);

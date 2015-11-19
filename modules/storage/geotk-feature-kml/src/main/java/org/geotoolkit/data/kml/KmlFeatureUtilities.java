@@ -26,7 +26,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.ZipUtilities;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.FeatureFactory;
 import org.geotoolkit.feature.Property;
@@ -34,9 +34,11 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.type.FeatureType;
 import org.opengis.referencing.operation.TransformException;
 
-import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,55 +66,63 @@ public class KmlFeatureUtilities {
      * @param directory folder which have kml files
      * @return a {@link SimpleFeature} {@link List}
      */
-    public static List<Feature> getAllKMLGeometriesEntries(final File directory) {
+    public static List<Feature> getAllKMLGeometriesEntries(final Path directory) throws IOException {
         final List<Feature> results = new ArrayList<>();
-        final KmlReader reader = new KmlReader();
 
-        //first loop to unzip kmz files
-        for (File f : directory.listFiles()) {
-            final String fileName = f.getName();
-            if (fileName.endsWith(".kmz")) {
-                try {
-                    if(LOGGER.isLoggable(Level.FINE)){
-                        LOGGER.log(Level.FINE, "getAllKMLGeometriesEntries unzipping kmz file : {0}", fileName);
+        if (Files.isDirectory(directory)) {
+
+            //first loop to unzip kmz files
+            try(DirectoryStream<Path> filteredStream = Files.newDirectoryStream(directory, "*.kmz")) {
+                for (Path path : filteredStream) {
+                    if (LOGGER.isLoggable(Level.FINE)) {
+                        LOGGER.log(Level.FINE, "getAllKMLGeometriesEntries unzipping kmz file : {0}", path.getFileName().toString());
                     }
-                    FileUtilities.unzip(f, null);
-
-                } catch (Exception ex) {
-                    LOGGER.log(Level.WARNING, "Error on unzip kmz file", ex);
+                    ZipUtilities.unzip(path, null);
                 }
+
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Error on unzip kmz file", ex);
             }
-        }
 
-        //loop on kml files
-        for (final File f : directory.listFiles()) {
-            final String fileName = f.getName();
-            if (fileName.endsWith(".kml")) {
-                if(LOGGER.isLoggable(Level.FINE)){
-                    LOGGER.log(Level.FINE, "getAllKMLGeometriesEntries  proceed to extract features for kml : {0}", fileName);
-                }
+            final KmlReader reader = new KmlReader();
+            try {
+                //first loop to unzip kmz files recursively
+                Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 
+                        final String ext = org.apache.sis.internal.storage.IOUtilities.extension(file);
+
+                        if ("kml".equalsIgnoreCase(ext)) {
+                            if (LOGGER.isLoggable(Level.FINE)) {
+                                LOGGER.log(Level.FINE, "getAllKMLGeometriesEntries  proceed to extract features for kml : {0}",
+                                        file.getFileName().toString());
+                            }
+
+                            try {
+                                // create kml reader for current file
+                                reader.setInput(file);
+                                reader.setUseNamespace(false);
+                                final Kml kmlObject = reader.read();
+
+                                // find features and add it on lisr
+                                final List<Feature> simplefeatList = resolveFeaturesFromKml(kmlObject);
+                                results.addAll(simplefeatList);
+                            } catch (Exception ex) {
+                                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                            }
+                        }
+
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            } finally {
                 try {
-                    // create kml reader for current file
-                    reader.setInput(f);
-                    reader.setUseNamespace(false);
-                    final Kml kmlObject = reader.read();
-
-                    // find features and add it on lisr
-                    final List<Feature> simplefeatList = resolveFeaturesFromKml(kmlObject);
-                    results.addAll(simplefeatList);
+                    reader.dispose();
                 } catch (Exception ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 }
-            } else if (f.isDirectory()) {
-                //recursive call to find other kml/kmz files
-                results.addAll(getAllKMLGeometriesEntries(f));
             }
-        }
-        try {
-            reader.dispose();
-        } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
         }
         return results;
     }

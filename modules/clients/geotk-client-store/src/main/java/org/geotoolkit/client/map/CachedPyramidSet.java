@@ -49,7 +49,6 @@ import org.geotoolkit.client.Client;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.coverage.*;
-import org.geotoolkit.util.ImageIOUtilities;
 import org.apache.sis.util.collection.Cache;
 import org.geotoolkit.image.io.XImageIO;
 import org.apache.sis.util.logging.Logging;
@@ -474,7 +473,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             try{
                 img = reader.read(ref.getImageIndex());
             }finally{
-                ImageIOUtilities.releaseReader(reader);
+                XImageIO.dispose(reader);
             }
 
             final TileReference tr = new DefaultTileReference(ref.getImageReaderSpi(), img, 0, ref.getPosition());

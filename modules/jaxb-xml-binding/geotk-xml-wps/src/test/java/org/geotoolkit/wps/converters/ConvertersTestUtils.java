@@ -31,6 +31,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,7 +52,7 @@ import org.geotoolkit.data.geojson.utils.GeoJSONParser;
 import org.geotoolkit.feature.Feature;
 import org.geotoolkit.feature.GeometryAttribute;
 import org.geotoolkit.feature.Property;
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_PATH;
 import static org.geotoolkit.wps.converters.WPSObjectConverter.TMP_DIR_URL;
 import org.geotoolkit.wps.io.WPSIO;
@@ -351,7 +352,7 @@ public final class ConvertersTestUtils {
         final InputStream inputStream = clazz.getResourceAsStream(url);
         assertNotNull(inputStream);
         try {
-            final String content = FileUtilities.getStringFromStream(inputStream);
+            final String content = IOUtilities.toString(inputStream);
             return content;
         }
         finally {
@@ -379,9 +380,8 @@ public final class ConvertersTestUtils {
      * @throws IOException
      * @throws FactoryException
      */
-    public static final Geometry[] getGeometryArrayFromInputStream(final InputStream inputStream) throws IOException, FactoryException {
-        final GeoJSONParser parser = new GeoJSONParser();
-        final GeoJSONObject geoJsonObject = parser.parse(inputStream);
+    public static Geometry[] getGeometryArrayFromInputStream(final InputStream inputStream) throws IOException, FactoryException {
+        final GeoJSONObject geoJsonObject = GeoJSONParser.parse(inputStream);
         if (!(geoJsonObject instanceof GeoJSONGeometry.GeoJSONGeometryCollection))
             fail();
 
@@ -401,9 +401,8 @@ public final class ConvertersTestUtils {
      * @throws IOException on IO errors when reading the file
      * @throws FactoryException when the crs of the geometry cannot be retrieved
      */
-    public static final Geometry getGeometryFromGeoJsonContent(final String path) throws IOException, FactoryException {
-        final GeoJSONParser parser = new GeoJSONParser();
-        final GeoJSONObject geoJsonObject = parser.parse(new File(path));
+    public static Geometry getGeometryFromGeoJsonContent(final String path) throws IOException, FactoryException {
+        final GeoJSONObject geoJsonObject = GeoJSONParser.parse(Paths.get(path));
         GeoJSONGeometry geoJsonGeometry = null;
 
         if (geoJsonObject instanceof GeoJSONFeature) {

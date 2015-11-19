@@ -22,7 +22,9 @@ import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
-import java.io.File;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -40,6 +42,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.xml.MarshallerPool;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.storage.coverage.AbstractPyramidalCoverageReference;
 import org.geotoolkit.storage.coverage.GridMosaic;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -59,6 +62,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.image.internal.PlanarConfiguration;
 import org.geotoolkit.image.internal.SampleType;
+
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 
 /**
  * XML implementation of {@link PyramidalCoverageReference}.
@@ -200,7 +207,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     private ColorModel colorModel;
 
     private String id;
-    private File mainfile;
+    private Path mainfile;
     //caches
     private List<GridSampleDimension> cacheDimensions = null;
 
@@ -240,14 +247,11 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         this.set.setRef(this);
     }
 
-    void initialize(File mainFile) throws DataStoreException {
+    void initialize(Path mainFile) throws DataStoreException {
         this.mainfile = mainFile;
         //calculate id based on file name
-        id = mainfile.getName();
-        int index = id.lastIndexOf('.');
-        if (index > 0) {
-            id = id.substring(0, index);
-        }
+        id = IOUtilities.filenameWithoutExtension(mainFile);
+
         // In case we created the reference by unmarshalling a file, the pyramid set is not bound to its parent coverage reference.
         final XMLPyramidSet set = getPyramidSet();
         if (set.getRef() == null) {
@@ -274,15 +278,15 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
     /**
      * @return xml file where the pyramid set definition is stored.
      */
-    public File getMainfile() {
+    public Path getMainfile() {
         return mainfile;
     }
 
     /**
      * @return Folder where each pyramid is stored.
      */
-    public File getFolder(){
-        return new File(mainfile.getParentFile(), getId());
+    public Path getFolder(){
+        return mainfile.getParent().resolve(getId());
     }
 
     @Override
@@ -325,13 +329,15 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
             //0b10 flag was not set, no thread was currently saving so we must take this role.
             while(updateAndGet(save)!=0){
                 //keep saving un 0b01 flag is set to zero
-                try {
+                try (OutputStream os = Files.newOutputStream(getMainfile(), CREATE, WRITE, TRUNCATE_EXISTING))  {
                     final Marshaller marshaller = POOL.acquireMarshaller();
                     marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-                    marshaller.marshal(this, getMainfile());
+                    marshaller.marshal(this, os);
                     POOL.recycle(marshaller);
                 } catch (JAXBException ex) {
                     Logging.getLogger("org.geotoolkit.coverage.xmlstore").log(Level.WARNING, ex.getMessage(), ex);
+                } catch (IOException e) {
+                    throw new DataStoreException("Unable to save pyramid definition : "+e.getLocalizedMessage(), e);
                 }
             }
         }
@@ -358,12 +364,32 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
      * @throws JAXBException if an error occured while reading descriptor file.
      * @throws org.apache.sis.storage.DataStoreException if the file describe a pyramid, but it contains an invalid CRS.
      */
+    @Deprecated
     public static XMLCoverageReference read(File file) throws JAXBException, DataStoreException {
         final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
         final XMLCoverageReference ref;
         ref = (XMLCoverageReference) unmarshaller.unmarshal(file);
         POOL.recycle(unmarshaller);
-        ref.initialize(file);
+        ref.initialize(file.toPath());
+        return ref;
+    }
+
+    /**
+     * Read the given Path and return an XMLCoverageReference.
+     *
+     * @param file
+     * @return
+     * @throws JAXBException if an error occurred while reading descriptor file.
+     * @throws org.apache.sis.storage.DataStoreException if the file describe a pyramid, but it contains an invalid CRS.
+     */
+    public static XMLCoverageReference read(Path file) throws JAXBException, DataStoreException, IOException {
+        final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
+        final XMLCoverageReference ref;
+        try (InputStream is = Files.newInputStream(file)) {
+            ref = (XMLCoverageReference) unmarshaller.unmarshal(is);
+            POOL.recycle(unmarshaller);
+            ref.initialize(file);
+        }
         return ref;
     }
 

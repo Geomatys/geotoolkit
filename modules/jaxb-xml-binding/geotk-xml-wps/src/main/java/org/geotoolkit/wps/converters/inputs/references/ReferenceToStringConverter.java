@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wps.converters.inputs.references;
 
-import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.apache.sis.util.UnconvertibleObjectException;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 
@@ -62,7 +62,7 @@ public final class ReferenceToStringConverter extends AbstractReferenceInputConv
         try {
 
             in = getInputStreamFromReference(source);
-            result = FileUtilities.getStringFromStream(in);
+            result = IOUtilities.toString(in);
 
         } catch (IOException ex) {
             throw new UnconvertibleObjectException("Reference file invalid input : IO", ex);

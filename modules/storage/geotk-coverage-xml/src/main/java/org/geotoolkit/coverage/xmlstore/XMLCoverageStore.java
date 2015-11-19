@@ -17,10 +17,15 @@
 package org.geotoolkit.coverage.xmlstore;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
@@ -47,43 +52,46 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class XMLCoverageStore extends AbstractCoverageStore {
 
-    private final File root;
+    private final Path root;
     private final DataNode rootNode = new DefaultDataNode();
 
     final boolean cacheTileState;
 
-    public XMLCoverageStore(File root) throws URISyntaxException, MalformedURLException {
+    @Deprecated
+    public XMLCoverageStore(File root) throws URISyntaxException, IOException {
+        this(root.toPath(),true);
+    }
+
+    public XMLCoverageStore(Path root) throws URISyntaxException, IOException {
         this(root,true);
     }
     
-    public XMLCoverageStore(URL rootPath) throws URISyntaxException {
+    public XMLCoverageStore(URL rootPath) throws URISyntaxException, IOException {
         this(rootPath, true);
     }
 
-    public XMLCoverageStore(File root, boolean cacheTileStateInMemory) throws URISyntaxException, MalformedURLException {
-        this(toParameters(root,cacheTileStateInMemory));
+    @Deprecated
+    public XMLCoverageStore(File root, boolean cacheTileStateInMemory) throws URISyntaxException, IOException {
+        this(toParameters(root.toURI().toURL(),cacheTileStateInMemory));
     }
 
-    public XMLCoverageStore(URL rootPath, boolean cacheTileStateInMemory) throws URISyntaxException {
-        this(toParameters(rootPath,cacheTileStateInMemory));
+    public XMLCoverageStore(Path root, boolean cacheTileStateInMemory) throws URISyntaxException, IOException {
+        this(toParameters(root.toUri().toURL(),cacheTileStateInMemory));
+    }
+
+    public XMLCoverageStore(URL rootPath, boolean cacheTileStateInMemory) throws URISyntaxException, IOException {
+        this(toParameters(rootPath, cacheTileStateInMemory));
     }
         
-    public XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException {
+    public XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException, IOException {
         super(params);
         final URL rootPath = Parameters.value(XMLCoverageStoreFactory.PATH, params);
-        root = new File(rootPath.toURI());
+        root = Paths.get(rootPath.toURI());
         Boolean tmpCacheState = Parameters.value(XMLCoverageStoreFactory.CACHE_TILE_STATE, params);
         cacheTileState = (tmpCacheState == null)? true : tmpCacheState;
         explore();
     }
 
-    private static ParameterValueGroup toParameters(File root, boolean cacheState) throws MalformedURLException {
-        final ParameterValueGroup params = XMLCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
-        Parameters.getOrCreate(XMLCoverageStoreFactory.PATH, params).setValue(root.toURI().toURL());
-        Parameters.getOrCreate(XMLCoverageStoreFactory.CACHE_TILE_STATE, params).setValue(cacheState);
-        return params;
-    }
-    
     private static ParameterValueGroup toParameters(URL rootPath, boolean cacheState) {
         final ParameterValueGroup params = XMLCoverageStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         Parameters.getOrCreate(XMLCoverageStoreFactory.PATH, params).setValue(rootPath);
@@ -104,31 +112,33 @@ public class XMLCoverageStore extends AbstractCoverageStore {
     /**
      * Search all xml files in the folder which define a pyramid model.
      */
-    private void explore() {
+    private void explore() throws IOException {
 
-        if (!root.exists()) {
-            root.mkdirs();
+        if (!Files.exists(root)) {
+            Files.createDirectories(root);
         }
 
-        if (root.isFile()) {
+        if (Files.isRegularFile(root)) {
             createReference(root);
         } else {
-            final File[] children = root.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File pathname) {
-                    return pathname.isFile() && pathname.getName().toLowerCase().endsWith(".xml");
+            List<Path> paths = new ArrayList<>();
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(root)) {
+                for (Path path : stream) {
+                    if (Files.isRegularFile(path) && path.getFileName().toString().toLowerCase().endsWith(".xml")) {
+                        paths.add(path);
+                    }
                 }
-            });
-            if (children != null) {
-                for (File f : children) {
+            }
+            if (!paths.isEmpty()) {
+                for (Path candidate : paths) {
                     //try to parse the file
-                    createReference(f);
+                    createReference(candidate);
                 }
             }
         }
     }
 
-    private void createReference(File refDescriptor) {
+    private void createReference(Path refDescriptor) {
         try {
             //TODO useless copy here
             final XMLCoverageReference set = XMLCoverageReference.read(refDescriptor);
@@ -137,9 +147,11 @@ public class XMLCoverageStore extends AbstractCoverageStore {
             ref.copy(set);
             rootNode.getChildren().add(ref);
         } catch (JAXBException ex) {
-            getLogger().log(Level.INFO, "file is not a pyramid : {0}", refDescriptor.getPath());
+            getLogger().log(Level.INFO, "file is not a pyramid : {0}", refDescriptor.toString());
         } catch (DataStoreException ex) {
-            getLogger().log(Level.WARNING, "Pyramid descriptor contains an invalid CRS : "+refDescriptor.getAbsolutePath(), ex);
+            getLogger().log(Level.WARNING, "Pyramid descriptor contains an invalid CRS : "+refDescriptor.toAbsolutePath().toString(), ex);
+        } catch (IOException e) {
+            getLogger().log(Level.WARNING, "Unable to read pyramid file description : {0}", refDescriptor.toString());
         }
     }
 
@@ -163,7 +175,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
      * @throws DataStoreException
      */
     public CoverageReference create(GenericName name, ViewType packMode, String preferredFormat) throws DataStoreException {
-        if (root.isFile()) {
+        if (Files.isRegularFile(root)) {
             throw new DataStoreException("Store root is a file, not a directory, no reference creation allowed.");
         }
         name = NamesExt.create(getDefaultNamespace(), name.tip().toString());
@@ -174,7 +186,7 @@ public class XMLCoverageStore extends AbstractCoverageStore {
 
         final XMLPyramidSet set = new XMLPyramidSet();
         final XMLCoverageReference ref = new XMLCoverageReference(this,name,set);
-        ref.initialize(new File(root, name.tip().toString()+".xml"));
+        ref.initialize(root.resolve(name.tip().toString()+".xml"));
 
         if (packMode != null) {
             ref.setPackMode(packMode);

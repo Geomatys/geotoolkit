@@ -19,6 +19,8 @@ package org.geotoolkit.image.io.plugin;
 
 import java.io.*;
 import java.nio.channels.Channels;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,8 +47,6 @@ import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferDouble;
 import java.awt.image.IndexColorModel;
 import java.lang.reflect.Array;
-import java.net.URI;
-import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Path;
@@ -83,7 +83,7 @@ import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.internal.ImageUtils;
 import org.geotoolkit.internal.image.io.SupportFiles;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.nio.IOUtilities;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.lang.SystemOverride;
 import org.geotoolkit.metadata.geotiff.GeoTiffExtension;
@@ -410,11 +410,7 @@ public class TiffImageReader extends SpatialImageReader {
 
         fillRootMetadataNode(layerIndex);
 
-        if ((input instanceof File)
-            || (input instanceof CharSequence)
-            || (input instanceof URL)
-            || (input instanceof URI)
-            || (input instanceof Path)) {
+        if (IOUtilities.canProcessAsPath(input)) {
 
             //-- stack use to store any CRS or TFW informationif exist.
             GeoTiffMetaDataStack stack = null;
@@ -1089,7 +1085,7 @@ public class TiffImageReader extends SpatialImageReader {
         rawImageType   = null;
         if (imageStream != null) {
             // If given input was a stream or an ImageInputStream, it's the owner of the stream who should close it.
-            if (currentInput instanceof File) {
+            if (IOUtilities.canProcessAsPath(currentInput)) {
                 imageStream.close();
             }
             imageStream = null;
@@ -1097,7 +1093,7 @@ public class TiffImageReader extends SpatialImageReader {
         }
 
         if (channel != null) {
-            if (currentInput instanceof File) {
+            if (IOUtilities.canProcessAsPath(currentInput)) {
                 channel.close();
             }
             channel = null;
@@ -1123,11 +1119,11 @@ public class TiffImageReader extends SpatialImageReader {
         //-- to force open
         try {
             if (imageStream != null) {
-                if (currentInput instanceof File) imageStream.close();
+                if (IOUtilities.canProcessAsPath(currentInput)) imageStream.close();
             }
 
             if (channel != null) {
-                if (currentInput instanceof File) channel.close();
+                if (IOUtilities.canProcessAsPath(currentInput)) imageStream.close();
             }
         } catch (IOException ex) {
             Logging.getLogger("org.geotoolkit.image.io.plugin").log(Level.SEVERE, null, ex);
@@ -3834,9 +3830,16 @@ public class TiffImageReader extends SpatialImageReader {
             if (imageStream != null) return imageStream;
             else if (currentInput instanceof ImageInputStream) return (ImageInputStream) currentInput;
         }
-        if (channel != null && currentInput instanceof File) channel.close();
+        //close previous channel if currentInput is not a stream
+        if (channel != null && IOUtilities.canProcessAsPath(currentInput)) {
+            channel.close();
+        }
         channel = openChannel(currentInput);
-        if (currentInput instanceof FileInputStream) ((SeekableByteChannel)channel).position(fileChannelPositionBegin);
+
+        //reset position
+        if (currentInput instanceof FileInputStream) {
+            ((SeekableByteChannel)channel).position(fileChannelPositionBegin);
+        }
         buffer = null;
 
         final boolean containData;
@@ -3869,6 +3872,10 @@ public class TiffImageReader extends SpatialImageReader {
             IIS.reset(); IIS.mark();
             return Channels.newChannel(new InputStreamAdapter((ImageInputStream) input));
         } else {
+            if (IOUtilities.canProcessAsPath(input)) {
+                final Path path = IOUtilities.toPath(input);
+                return Files.newByteChannel(path, StandardOpenOption.READ);
+            }
             throw new IOException("Input object is not a valid file or input stream.");
         }
     }
@@ -3945,7 +3952,7 @@ public class TiffImageReader extends SpatialImageReader {
          * The list of valid input types.
          */
         private static final Class<?>[] INPUT_TYPES = new Class<?>[] {
-            File.class, String.class, InputStream.class, ImageInputStream.class
+                Path.class, File.class, String.class, InputStream.class, ImageInputStream.class
         };
 
         /**
@@ -4044,7 +4051,7 @@ public class TiffImageReader extends SpatialImageReader {
                 return true;
             } finally {
                 if (channel instanceof SeekableByteChannel) ((SeekableByteChannel) channel).position(position);
-                if (source instanceof File) channel.close();
+                if (IOUtilities.canProcessAsPath(source)) channel.close();
             }
         }
 
