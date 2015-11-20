@@ -69,8 +69,8 @@ public class PGTreeWrapper implements Tree {
     }
 
     @Override
-    public void insert(Object object) throws StoreIndexException {
-        rTree.insert(object);
+    public int insert(Object object) throws StoreIndexException {
+        return rTree.insert(object);
     }
 
     @Override

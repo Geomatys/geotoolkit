@@ -42,46 +42,46 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * Object which store Tree informations in memory or on hard disk.
      */
     protected final TreeAccess treeAccess;
-    
+
     /**
      * Maximum element authorized per Node.
      */
     private final int maxElementPerNode;
-    
+
     /**
      * data {@link CoordinateReferenceSystem}.
      */
     protected final CoordinateReferenceSystem crs;
-    
+
     /**
      * Object which effectuate compute needed by tree to store datas.
      */
     protected final Calculator calculator;
-    
+
     /**
      * Object which link data and Tree identifier.
      */
     private final TreeElementMapper<E> treeEltMap;
-    
+
     /**
      * identifier use by tree which is linked at a data.<br/>
      * Each identifier is link on only one distinct data.
      */
     protected int treeIdentifier;
-    
+
     /**
      * Data number stored in this Tree.
      */
     protected int eltCompteur;
-    
+
     /**
      * Tree trunk. Root Node.
      */
     private Node root;
-    
+
     /**
      * Tree fundation implementation.
-     * 
+     *
      * @param treeAccess to store Tree informations in memory or on hard disk.
      * @param crs data {@link CoordinateReferenceSystem}.
      * @param treeEltMap to link data and Tree identifier.
@@ -116,7 +116,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
             }
         }
         return new int[0];
-    }    
+    }
 
     /**
      * {@inheritDoc }.
@@ -127,12 +127,12 @@ public abstract class AbstractTree<E> implements Tree<E> {
         final double[] regSearch = TreeUtilities.getCoords(regionSearch);
         return new TreeIntegerIdentifierIterator(treeAccess, regSearch);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public void insert(final E object) throws IllegalArgumentException , StoreIndexException{
+    public int insert(final E object) throws IllegalArgumentException , StoreIndexException{
         try {
             ArgumentChecks.ensureNonNull("insert : object", object);
             final Envelope env = treeEltMap.getEnvelope(object);
@@ -145,11 +145,12 @@ public abstract class AbstractTree<E> implements Tree<E> {
             treeEltMap.setTreeIdentifier(object, treeIdentifier);
             insert(treeIdentifier, coordinates);
             treeIdentifier++;
+            return treeIdentifier - 1;
         } catch (IOException ex) {
             throw new StoreIndexException(ex);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -172,12 +173,12 @@ public abstract class AbstractTree<E> implements Tree<E> {
             throw new StoreIndexException(this.getClass().getName()+"Tree.insert(), impossible to add element.", ex);
         }
     }
-    
+
     /**
      * Insert data in the current {@link Node}.<br/><br/>
-     * 
-     * In some case, parent candidate Node is modify and it is returned during recursively travel up. 
-     * 
+     *
+     * In some case, parent candidate Node is modify and it is returned during recursively travel up.
+     *
      * @param candidate current Node in travel down insertion.
      * @param identifier data tree identifier.
      * @param coordinates data boundary
@@ -185,7 +186,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * @throws IOException if problem during hard drive writing.
      */
     protected abstract Node nodeInsert(final Node candidate, final int identifier, final double ...coordinates) throws IOException;
-    
+
     /**
      * Find appropriate {@code Node} to insert data.<br/><br/>
      * To define appropriate Node, criterion are :<br/>
@@ -251,7 +252,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         }
         return result;
     }
-    
+
     /**
      * Split a overflow {@code Node} in accordance with R-Tree properties.
      *
@@ -266,24 +267,24 @@ public abstract class AbstractTree<E> implements Tree<E> {
         final Node[] children          = candidate.getChildren();
         final byte candidateProperties = candidate.getProperties();
         final int splitIndex           = defineSplitAxis(children);
-        
+
         final int size      = children.length;
         final double size04 = size * 0.4;
         final int demiSize  = (int) ((size04 >= 1) ? size04 : 1);
         double[] unionTabA, unionTabB;
-        
-        // find a solution where overlaps between 2 groups is the smallest. 
+
+        // find a solution where overlaps between 2 groups is the smallest.
         double bulkTemp;
         double bulkRef = Double.POSITIVE_INFINITY;
-        
+
         // in case where overlaps equal 0 (no overlaps) find the smallest group area.
         double areaTemp;
         double areaRef = Double.POSITIVE_INFINITY;
-        
+
         // solution
         int index = 0;
         boolean lower_or_upper = true;
-        
+
         int cut2;
         //compute with lower and after upper
         for(int lu = 0; lu < 2; lu++) {
@@ -321,13 +322,13 @@ public abstract class AbstractTree<E> implements Tree<E> {
                 }
             }
         }
-        
-        // best organization solution 
+
+        // best organization solution
         calculator.sort(splitIndex, lower_or_upper, children);
         final int lengthResult2      = size - index;
         final Node[] result1Children = new Node[index];
         final Node[] result2Children = new Node[lengthResult2];
-                
+
         final Node result1, result2;
         final boolean isLeaf = candidate.isLeaf();
         if (!isLeaf && index == 1) {
@@ -350,8 +351,8 @@ public abstract class AbstractTree<E> implements Tree<E> {
         assert result1.checkInternal() : "splitNode : result1.";
         assert result2.checkInternal() : "splitNode : result2.";
         return new Node[]{result1, result2};
-    }    
-    
+    }
+
     /**
      * Compute and define which axis to split {@code Node} candidate.
      *
@@ -370,12 +371,12 @@ public abstract class AbstractTree<E> implements Tree<E> {
      */
     protected int defineSplitAxis(final Node[] children) throws IOException {
         ArgumentChecks.ensureNonNull("candidate : ", children);
-        
+
         final int size               = children.length;
         final double[][] childsBound = new double[size][];
         int cbID = 0;
         for (Node nod : children) childsBound[cbID++] = nod.getBoundary();
-        
+
         final double size04 = size * 0.4;
         final int demiSize  = (int) ((size04 >= 1) ? size04 : 1);
         double[][] splitTabA, splitTabB;
@@ -385,7 +386,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         int index      = 0;
         final double[] globalEltsArea = getEnvelopeMin(childsBound);
         final int dim = globalEltsArea.length >> 1;
-        
+
         // if glogaleArea.span(currentDim) == 0 || if all elements have same span
         // value as global area on current ordinate, impossible to split on this axis.
         unappropriateOrdinate :
@@ -421,7 +422,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         }
         return index;
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -449,10 +450,10 @@ public abstract class AbstractTree<E> implements Tree<E> {
                     throw new IllegalArgumentException("coordinates contain at least one NAN value");
             return remove(entry, coordinates);
     }
-    
+
     /**
      * Remove data.
-     * 
+     *
      * @param identifier data tree identifier.
      * @param coordinates data boundary
      * @return true if data have been correctively removed else false.
@@ -474,7 +475,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         }
         return false;
     }
-    
+
     /**
      * Travel {@code Tree}, find data if it exist and remove it.
      *
@@ -511,7 +512,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         }
         return false;
     }
-    
+
     /**
      * Condense R-Tree.
      *
@@ -521,7 +522,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
      * @throws IllegalArgumentException if candidate is null.
      */
     protected abstract void trim(final Node candidate) throws IllegalArgumentException, IOException, StoreIndexException ;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -554,7 +555,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
             eltCompteur = 0;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -593,7 +594,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
     public TreeElementMapper getTreeElementMapper() {
         return treeEltMap;
     }
-    
+
     /**
      * {@inheritDoc }.
      */
@@ -627,11 +628,11 @@ public abstract class AbstractTree<E> implements Tree<E> {
     public boolean isClosed() {
         return treeAccess.isClose();
     }
-    
+
     TreeAccess getTreeAccess() {
         return treeAccess;
-    }    
-    
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -640,7 +641,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         final Node node = getRoot();
         return (node == null) ? null : node.getBoundary().clone();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -650,7 +651,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
         final String strRoot = (root == null || root.isEmpty()) ?"null":root.toString();
         return Classes.getShortClassName(this) + "\n" + strRoot;
     }
-    
+
     /**
      * Create a {@link Node} in accordance with RTree properties.
      *
