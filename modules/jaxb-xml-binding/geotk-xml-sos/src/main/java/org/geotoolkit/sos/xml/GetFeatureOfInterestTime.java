@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,25 +16,14 @@
  */
 package org.geotoolkit.sos.xml;
 
-import java.util.List;
 import org.geotoolkit.ows.xml.RequestBase;
-import org.opengis.filter.Filter;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface GetFeatureOfInterest extends RequestBase {
+public interface GetFeatureOfInterestTime extends RequestBase {
+
+    String getFeatureOfInterestId();
     
-    List<Filter> getSpatialFilters();
-    
-    List<Filter> getTemporalFilters();
-    
-    List<String> getFeatureOfInterestId();
-    
-    List<String> getProcedure();
-    
-    List<String> getObservedProperty();
-    
-    String getResponseFormat();
 }

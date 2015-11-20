@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
     "featureOfInterestId"
 })
 @XmlRootElement(name = "GetFeatureOfInterestTime")
-public class GetFeatureOfInterestTime extends RequestBaseType {
+public class GetFeatureOfInterestTime extends RequestBaseType implements org.geotoolkit.sos.xml.GetFeatureOfInterestTime {
 
     @XmlElement(name = "FeatureOfInterestId", required = true)
     @XmlSchemaType(name = "anyURI")
@@ -69,10 +69,11 @@ public class GetFeatureOfInterestTime extends RequestBaseType {
     /**
      * Gets the value of the featureOfInterestId property.
      */
+    @Override
     public String getFeatureOfInterestId() {
         return featureOfInterestId;
     }
-
+    
     /**
      * Verify if this entry is identical to the specified object.
      */

@@ -113,7 +113,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
 
      public GetFeatureOfInterest(final String version, final String service, final String featureId) {
         super(version, service);
-        this.featureOfInterestId = new ArrayList<String>();
+        this.featureOfInterestId = new ArrayList<>();
         if (featureId != null) {
             this.featureOfInterestId.add(featureId);
         }
@@ -145,7 +145,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
     @Override
     public List<String> getFeatureOfInterestId() {
         if (featureOfInterestId == null) {
-            featureOfInterestId = new ArrayList<String>();
+            featureOfInterestId = new ArrayList<>();
         }
         return featureOfInterestId;
     }
@@ -156,7 +156,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
      */
     public List<EventTime> getEventTime() {
         if (eventTime == null) {
-            eventTime = new ArrayList<EventTime>();
+            eventTime = new ArrayList<>();
         }
         return eventTime;
     }
@@ -179,7 +179,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
     
     @Override
     public List<Filter> getSpatialFilters() {
-        final List<Filter> results = new ArrayList<Filter>();
+        final List<Filter> results = new ArrayList<>();
         if (location != null) {
             results.add(location.getSpatialOperator());
         }
@@ -188,7 +188,7 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
     
     @Override
     public List<Filter> getTemporalFilters() {
-        final List<Filter> results = new ArrayList<Filter>();
+        final List<Filter> results = new ArrayList<>();
         if (eventTime != null) {
             for (EventTime time : eventTime) {
                 results.add(time.getFilter());
@@ -199,12 +199,17 @@ public class GetFeatureOfInterest extends RequestBaseType implements org.geotool
     
     @Override
     public List<String> getProcedure() {
-        return new ArrayList<String>(); // no procedure filter in v 1.0.0
+        return new ArrayList<>(); // no procedure filter in v 1.0.0
     }
 
     @Override
     public List<String> getObservedProperty() {
-        return new ArrayList<String>(); // no observedProperty filter in v 1.0.0
+        return new ArrayList<>(); // no observedProperty filter in v 1.0.0
+    }
+    
+    @Override
+    public String getResponseFormat() {
+        return "text/xml";
     }
     
     /**

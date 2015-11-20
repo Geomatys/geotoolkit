@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.SpatialOpsType;
@@ -82,6 +83,7 @@ import org.opengis.filter.Filter;
     "featureOfInterest",
     "spatialFilter"
 })
+@XmlRootElement(name="GetResult")
 public class GetResultType extends ExtensibleRequestType implements GetResult {
 
     @XmlElement(required = true)
@@ -107,7 +109,7 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
             final List<TemporalOpsType> timeFilter, final SpatialOpsType spatialFilter, final List<String> featureOfInterest){
        super(version, "SOS");
        if (timeFilter != null) {
-            this.temporalFilter = new ArrayList<TemporalFilterType>();
+            this.temporalFilter = new ArrayList<>();
             for (TemporalOpsType tfilter : timeFilter) {
                 this.temporalFilter.add(new TemporalFilterType(tfilter));
             }
@@ -173,9 +175,9 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
     @Override
     public List<Filter> getTemporalFilter() {
         if (temporalFilter == null) {
-            temporalFilter = new ArrayList<TemporalFilterType>();
+            temporalFilter = new ArrayList<>();
         }
-        final List<Filter> result = new ArrayList<Filter>();
+        final List<Filter> result = new ArrayList<>();
         for (TemporalFilterType tf : temporalFilter) {
             if (tf.getTemporalOps() != null) {
                 result.add(tf.getTemporalOps());
@@ -186,7 +188,7 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
     
     public void addTemporalFilter(final TemporalOpsType temporal) {
         if (temporalFilter == null) {
-            temporalFilter = new ArrayList<TemporalFilterType>();
+            temporalFilter = new ArrayList<>();
         }
         temporalFilter.add(new TemporalFilterType(temporal));
     }
@@ -197,9 +199,10 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
      * {@link String }
      * 
      */
+    @Override
     public List<String> getFeatureOfInterest() {
         if (featureOfInterest == null) {
-            featureOfInterest = new ArrayList<String>();
+            featureOfInterest = new ArrayList<>();
         }
         return this.featureOfInterest;
     }
@@ -212,8 +215,12 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
      *     {@link GetResultType.SpatialFilter }
      *     
      */
-    public SpatialFilterType getSpatialFilter() {
-        return spatialFilter;
+    @Override
+    public Filter getSpatialFilter() {
+        if (spatialFilter != null) {
+            return spatialFilter.getSpatialOps();
+        }
+        return null;
     }
 
     /**
@@ -236,5 +243,18 @@ public class GetResultType extends ExtensibleRequestType implements GetResult {
     @Override
     public String getObservationTemplateId() {
         return null;
+    }
+    
+    @Override
+    public String getResponseFormat() {
+        for (Object ext : getExtension()) {
+            if (ext instanceof String) {
+                String outputFormat = (String) ext;
+                if (outputFormat.startsWith("responseFormat=")) {
+                    return outputFormat.substring(15);
+                }
+            }
+        }
+        return "text/xml";
     }
 }

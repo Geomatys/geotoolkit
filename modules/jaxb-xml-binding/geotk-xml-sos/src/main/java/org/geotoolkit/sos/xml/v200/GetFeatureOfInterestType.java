@@ -19,15 +19,11 @@ package org.geotoolkit.sos.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.ogc.xml.v200.FilterType;
-import org.geotoolkit.ogc.xml.v200.SpatialOpsType;
 import org.geotoolkit.sos.xml.GetFeatureOfInterest;
 import org.geotoolkit.swes.xml.v200.ExtensibleRequestType;
 import org.opengis.filter.Filter;
@@ -90,7 +86,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
     public GetFeatureOfInterestType(final String version, final String service, final String featureId) {
         super(version, service);
         if (featureId != null) {
-            this.featureOfInterest = new ArrayList<String>();
+            this.featureOfInterest = new ArrayList<>();
             this.featureOfInterest.add(featureId);
         }
     }
@@ -102,7 +98,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
         this.procedure         = procedure;
         this.featureOfInterest = featureId;
         if (location != null) {
-            this.spatialFilter = new ArrayList<SpatialFilterType>();
+            this.spatialFilter = new ArrayList<>();
             this.spatialFilter.add(new SpatialFilterType(location));
         }
     }
@@ -115,7 +111,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
     public GetFeatureOfInterestType(final String version, final String service, final Filter location) {
         super(version, service);
         if (location != null) {
-            this.spatialFilter = new ArrayList<SpatialFilterType>();
+            this.spatialFilter = new ArrayList<>();
             this.spatialFilter.add(new SpatialFilterType(location));
         }
      }
@@ -130,7 +126,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
     @Override
     public List<String> getProcedure() {
         if (procedure == null) {
-            procedure = new ArrayList<String>();
+            procedure = new ArrayList<>();
         }
         return this.procedure;
     }
@@ -145,7 +141,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
     @Override
     public List<String> getObservedProperty() {
         if (observedProperty == null) {
-            observedProperty = new ArrayList<String>();
+            observedProperty = new ArrayList<>();
         }
         return this.observedProperty;
     }
@@ -160,7 +156,7 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
     @Override
     public List<String> getFeatureOfInterestId() {
         if (featureOfInterest == null) {
-            featureOfInterest = new ArrayList<String>();
+            featureOfInterest = new ArrayList<>();
         }
         return this.featureOfInterest;
     }
@@ -174,14 +170,14 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
      */
     public List<SpatialFilterType> getRealSpatialFilter() {
         if (spatialFilter == null) {
-            spatialFilter = new ArrayList<SpatialFilterType>();
+            spatialFilter = new ArrayList<>();
         }
         return this.spatialFilter;
     }
 
     @Override
     public List<Filter> getSpatialFilters() {
-        final List<Filter> results = new ArrayList<Filter>();
+        final List<Filter> results = new ArrayList<>();
         if (spatialFilter != null) {
             for (SpatialFilterType sp : spatialFilter) {
                 results.add(sp.getSpatialOps());
@@ -196,6 +192,19 @@ public class GetFeatureOfInterestType extends ExtensibleRequestType implements G
      */
     @Override
     public List<Filter> getTemporalFilters() {
-        return new ArrayList<Filter>();
+        return new ArrayList<>();
+    }
+
+    @Override
+    public String getResponseFormat() {
+        for (Object ext : getExtension()) {
+            if (ext instanceof String) {
+                String outputFormat = (String) ext;
+                if (outputFormat.startsWith("responseFormat=")) {
+                    return outputFormat.substring(15);
+                }
+            }
+        }
+        return "text/xml";
     }
 }

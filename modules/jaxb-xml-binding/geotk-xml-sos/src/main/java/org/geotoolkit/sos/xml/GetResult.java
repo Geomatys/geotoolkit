@@ -33,4 +33,10 @@ public interface GetResult extends RequestBase {
     String getObservedProperty();
     
     String getObservationTemplateId();
+    
+    List<String> getFeatureOfInterest();
+    
+    Filter getSpatialFilter();
+    
+    String getResponseFormat();
 }

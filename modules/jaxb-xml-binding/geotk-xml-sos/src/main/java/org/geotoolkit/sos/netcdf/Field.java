@@ -44,7 +44,16 @@ public class Field implements Serializable {
             this.dimension      = dimension;
             this.dimensionLabel = dimensionLabel;
         }
-
+        
+        public Field(final String label, final Type type, final int dimension, final String dimensionLabel, final Number fillValue, final String unit) {
+            this.label          = label;
+            this.type           = type;
+            this.dimensionLabel = dimensionLabel;
+            this.dimension      = dimension;
+            this.fillValue      = fillValue;
+            this.unit           = unit;
+        }
+        
         @Override
         public String toString() {
             String dimLabel = "";
