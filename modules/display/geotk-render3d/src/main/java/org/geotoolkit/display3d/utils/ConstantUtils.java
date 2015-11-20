@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.display3d.utils;
 
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
-import javax.media.opengl.GL2;
 
 /**
  * @author Thomas Rouby (Geomatys)

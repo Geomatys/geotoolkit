@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display3d.scene.quadtree;
 
+import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.texture.TextureData;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -23,7 +24,6 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.geotoolkit.math.XMath;
 import org.opengis.geometry.Envelope;
 
-import javax.media.opengl.GLAutoDrawable;
 import javax.vecmath.Point3i;
 import java.util.Arrays;
 import org.geotoolkit.display3d.Map3D;

@@ -16,7 +16,8 @@
  */
 package org.geotoolkit.display3d.scene;
 
-import javax.media.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLAutoDrawable;
+
 
 /**
  *

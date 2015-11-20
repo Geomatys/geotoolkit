@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.display3d.phase;
 
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 
-import javax.media.opengl.GL;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;

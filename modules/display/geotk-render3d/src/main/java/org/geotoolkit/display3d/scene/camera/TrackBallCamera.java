@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.display3d.scene.camera;
 
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import org.apache.sis.geometry.GeneralDirectPosition;
 
-import javax.media.opengl.fixedfunc.GLMatrixFunc;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector3d;
 import java.nio.FloatBuffer;
