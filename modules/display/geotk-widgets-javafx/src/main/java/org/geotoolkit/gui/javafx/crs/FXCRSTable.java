@@ -31,6 +31,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -42,10 +43,12 @@ import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.util.Callback;
+import org.apache.sis.io.wkt.FormattableObject;
 import org.apache.sis.metadata.iso.citation.Citations;
 import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.font.IconBuilder;
@@ -118,6 +121,7 @@ public class FXCRSTable extends ScrollPane{
         uiTable.getColumns().add(new TypeColumn());
         uiTable.getColumns().add(new CodeColumn());
         uiTable.getColumns().add(new DescColumn());
+        uiTable.getColumns().add(new WKTColumn());
         
         
         //load list
@@ -275,6 +279,58 @@ public class FXCRSTable extends ScrollPane{
             setCellValueFactory((TableColumn.CellDataFeatures<Code, String> param) -> new SimpleObjectProperty<>(param.getValue().getDescription()));
         }
         
+    }
+
+    private static class WKTColumn extends TableColumn<Code, Code>{
+
+        private static final Image ICON = SwingFXUtils.toFXImage(IconBuilder.createImage(FontAwesomeIcons.ICON_FILE_TEXT,16,COLOR),null);
+
+        public WKTColumn() {
+            super("");
+            setEditable(false);
+            setPrefWidth(26);
+            setMinWidth(26);
+            setMaxWidth(26);
+            setCellValueFactory((CellDataFeatures<Code, Code> param) -> new SimpleObjectProperty<>(param.getValue()));
+            setCellFactory(new Callback<TableColumn<Code, Code>, TableCell<Code, Code>>() {
+
+                @Override
+                public TableCell<Code, Code> call(TableColumn<Code, Code> param) {
+                    return new TableCell<Code,Code>(){
+
+                        {
+                            setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                @Override
+                                public void handle(MouseEvent event) {
+                                    final Code item = getItem();
+                                    if(item!=null){
+                                        try {
+                                            final IdentifiedObject obj = getItem().createObject();
+                                            if(obj instanceof FormattableObject){
+                                                FXFormattableObjectPane.showDialog(this, (FormattableObject) obj);
+                                            }
+                                        } catch (FactoryException ex) {
+                                            Loggers.JAVAFX.log(Level.INFO,ex.getMessage(),ex);
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+                        @Override
+                        protected void updateItem(Code item, boolean empty) {
+                            super.updateItem(item, empty);
+                            if(item !=null && !empty){
+                                setGraphic(new ImageView(ICON));
+                            }else{
+                                setGraphic(null);
+                            }
+                        }
+                    };
+                }
+            });
+        }
+
     }
     
 }
