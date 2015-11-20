@@ -16,13 +16,16 @@
  */
 package org.geotoolkit.display3d.scene;
 
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLException;
+import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.InputStream;
 import javax.measure.converter.ConversionException;
-import javax.media.opengl.*;
 
 import org.geotoolkit.display.PortrayalException;
 import org.geotoolkit.display3d.Map3D;

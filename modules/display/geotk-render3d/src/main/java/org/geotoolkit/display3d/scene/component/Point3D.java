@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.display3d.scene.component;
 
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLException;
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLException;
 import org.geotoolkit.display3d.Map3D;
 
 /**

@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.display3d.scene;
 
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLException;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLException;
 import org.geotoolkit.display.primitive.SceneNode;
 import org.geotoolkit.display3d.Map3D;
 

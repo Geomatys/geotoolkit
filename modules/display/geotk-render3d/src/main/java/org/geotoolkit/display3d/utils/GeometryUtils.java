@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.display3d.utils;
 
-import javax.media.opengl.GL2;
+import com.jogamp.opengl.GL2;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 

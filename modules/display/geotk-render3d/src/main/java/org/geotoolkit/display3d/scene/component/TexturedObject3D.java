@@ -17,9 +17,10 @@
 package org.geotoolkit.display3d.scene.component;
 
 import com.jogamp.common.nio.Buffers;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.texture.TextureData;
 
-import javax.media.opengl.*;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
