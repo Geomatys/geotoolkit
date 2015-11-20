@@ -37,4 +37,6 @@ public interface GetResult extends RequestBase {
     List<String> getFeatureOfInterest();
     
     Filter getSpatialFilter();
+    
+    String getResponseFormat();
 }

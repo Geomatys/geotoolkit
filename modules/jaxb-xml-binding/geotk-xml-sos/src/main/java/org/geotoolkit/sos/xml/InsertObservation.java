@@ -32,4 +32,6 @@ public interface InsertObservation extends RequestBase {
     
     List<String> getOffering();
     
+    String getResponseFormat();
+    
 }

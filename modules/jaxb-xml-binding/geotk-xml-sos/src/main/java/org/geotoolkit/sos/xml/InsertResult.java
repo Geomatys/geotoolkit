@@ -27,4 +27,6 @@ public interface InsertResult extends RequestBase {
     String getTemplate();
     
     String getResultValues();
+    
+    String getResponseFormat();
 }

@@ -173,4 +173,9 @@ public class GetResult extends RequestBaseType implements org.geotoolkit.sos.xml
         }
         return  s.toString();
     }
+    
+    @Override
+    public String getResponseFormat() {
+        return "text/xml";
+    }
 }

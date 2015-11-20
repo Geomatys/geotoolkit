@@ -30,4 +30,6 @@ public interface GetObservationById extends RequestBase {
      List<String> getObservation();
      
      QName getResultModel();
+     
+     String getResponseFormat();
 }

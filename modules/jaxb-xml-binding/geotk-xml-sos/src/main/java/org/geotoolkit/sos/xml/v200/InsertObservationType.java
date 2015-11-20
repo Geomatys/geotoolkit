@@ -127,6 +127,19 @@ public class InsertObservationType extends ExtensibleRequestType implements org.
         }
         return result;
     }
+    
+    @Override
+    public String getResponseFormat() {
+        for (Object ext : getExtension()) {
+            if (ext instanceof String) {
+                String outputFormat = (String) ext;
+                if (outputFormat.startsWith("responseFormat=")) {
+                    return outputFormat.substring(15);
+                }
+            }
+        }
+        return "text/xml";
+    }
 
 
     /**

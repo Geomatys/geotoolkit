@@ -26,4 +26,6 @@ import org.geotoolkit.ows.xml.RequestBase;
 public interface InsertResultTemplate extends RequestBase {
     
     ResultTemplate getTemplate();
+    
+    String getResponseFormat();
 }

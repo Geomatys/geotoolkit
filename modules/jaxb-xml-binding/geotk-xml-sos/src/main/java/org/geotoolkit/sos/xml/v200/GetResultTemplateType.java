@@ -17,6 +17,7 @@
 
 package org.geotoolkit.sos.xml.v200;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -78,6 +79,12 @@ public class GetResultTemplateType extends ExtensibleRequestType implements GetR
         this.offering         = offering;
     }
     
+    public GetResultTemplateType(final String version, final String service, final String offering, final String observedProperty, final List<Object> extension) {
+        super(version, service, extension);
+        this.observedProperty = observedProperty;
+        this.offering         = offering;
+    }
+    
     /**
      * Gets the value of the offering property.
      * 
@@ -128,4 +135,16 @@ public class GetResultTemplateType extends ExtensibleRequestType implements GetR
         this.observedProperty = value;
     }
 
+    @Override
+    public String getResponseFormat() {
+        for (Object ext : getExtension()) {
+            if (ext instanceof String) {
+                String outputFormat = (String) ext;
+                if (outputFormat.startsWith("responseFormat=")) {
+                    return outputFormat.substring(15);
+                }
+            }
+        }
+        return "text/xml";
+    }
 }

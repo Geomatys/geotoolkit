@@ -147,4 +147,9 @@ public class InsertObservation extends RequestBaseType implements org.geotoolkit
     public List<String> getOffering() {
         return null;
     }
+
+    @Override
+    public String getResponseFormat() {
+        return "text/xml";
+    }
 }
