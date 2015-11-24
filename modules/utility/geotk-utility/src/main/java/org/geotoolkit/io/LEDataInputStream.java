@@ -31,10 +31,19 @@ public class LEDataInputStream extends InputStream implements DataInput {
     private final DataInputStream ds; 
     private final InputStream in; 
     private final byte buffer[] = new byte[8];
+    private long position = 0;
         
     public LEDataInputStream(final InputStream in) {
         this.in = in;
         this.ds = new DataInputStream(in);
+    }
+
+    /**
+     * Get current stream position from the first written byte.
+     * @return stream position
+     */
+    public long getPosition() {
+        return position;
     }
 
     @Override
@@ -44,6 +53,7 @@ public class LEDataInputStream extends InputStream implements DataInput {
 
     @Override
     public final short readShort() throws IOException {
+        position+=2;
         ds.readFully(buffer, 0, 2);
         return (short) ((buffer[1] & 0xff) << 8
                 | (buffer[0] & 0xff));
@@ -51,12 +61,14 @@ public class LEDataInputStream extends InputStream implements DataInput {
 
     @Override
     public final int readUnsignedShort() throws IOException {
+        position+=2;
         ds.readFully(buffer, 0, 2);
         return ((buffer[1] & 0xff) << 8 | (buffer[0] & 0xff));
     }
 
     @Override
     public final char readChar() throws IOException {
+        position+=2;
         ds.readFully(buffer, 0, 2);
         return (char) ((buffer[1] & 0xff) << 8
                 | (buffer[0] & 0xff));
@@ -64,6 +76,7 @@ public class LEDataInputStream extends InputStream implements DataInput {
 
     @Override
     public final int readInt() throws IOException {
+        position+=4;
         ds.readFully(buffer, 0, 4);
         return (buffer[3]) << 24
                 | (buffer[2] & 0xff) << 16
@@ -73,6 +86,7 @@ public class LEDataInputStream extends InputStream implements DataInput {
 
     @Override
     public final long readLong() throws IOException {
+        position+=8;
         ds.readFully(buffer, 0, 8);
         return (long) (buffer[7]) << 56
                 | (long) (buffer[6] & 0xff) << 48
@@ -96,41 +110,51 @@ public class LEDataInputStream extends InputStream implements DataInput {
 
     @Override
     public final int read(byte b[], int off, int len) throws IOException {
-        return in.read(b, off, len);
+        int nb = in.read(b, off, len);
+        position+=nb;
+        return nb;
     }
 
     @Override
     public final void readFully(byte b[]) throws IOException {
         ds.readFully(b, 0, b.length);
+        position+=b.length;
     }
 
     @Override
     public final void readFully(byte b[], int off, int len) throws IOException {
         ds.readFully(b, off, len);
+        position+=len;
     }
 
     @Override
     public final int skipBytes(int n) throws IOException {
-        return ds.skipBytes(n);
+        int nb = ds.skipBytes(n);
+        position+=nb;
+        return nb;
     }
 
     @Override
     public final boolean readBoolean() throws IOException {
+        position++;
         return ds.readBoolean();
     }
 
     @Override
     public final byte readByte() throws IOException {
+        position++;
         return ds.readByte();
     }
 
     @Override
     public int read() throws IOException {
+        position++;
         return in.read();
     }
 
     @Override
     public final int readUnsignedByte() throws IOException {
+        position++;
         return ds.readUnsignedByte();
     }
 
