@@ -20,6 +20,9 @@ package org.geotoolkit.coverage.io;
 import java.util.Objects;
 import java.io.IOException;
 import java.awt.image.ColorModel;
+import java.io.File;
+import java.nio.charset.Charset;
+import java.util.Locale;
 import javax.imageio.ImageTypeSpecifier;
 
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -56,7 +59,9 @@ final class SampleDimensionPalette extends Palette {
      * {@link org.geotoolkit.image.io.SpatialImageReader#getImageType}. However before to
      * invoke any factory method, the {@link #BANDS} field must be set.
      */
-    static final PaletteFactory FACTORY = new PaletteFactory() {
+    static final PaletteFactory FACTORY = new PaletteFactory(null, PaletteFactory.class, new File("colors"), ".pal",
+            Charset.forName("ISO-8859-1"), Locale.US)
+    {
         @Override
         public Palette getPalette(final String name, final int lower, final int upper,
                 final int size, final int numBands, final int visibleBand)
