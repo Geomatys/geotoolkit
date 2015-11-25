@@ -31,18 +31,18 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 abstract class WritableStarRTreeTest extends AbstractTreeTest {
 
     /**
-     * 
+     *
      */
     protected final File inOutFile;
-    
+
     /**
-     * 
+     *
      */
     protected final File treeMapperFile;
-    
+
     /**
      * Create a generic StarRTree Test suite, stored on File, with {@link CoordinateReferenceSystem} define by user.
-     * 
+     *
      * @param crs
      * @throws StoreIndexException during Tree creation.
      * @throws IOException if problem during TreeElementMapper or Tree head writing.
@@ -52,6 +52,6 @@ abstract class WritableStarRTreeTest extends AbstractTreeTest {
         inOutFile      = File.createTempFile("starRTree", "tree", tempDir);
         treeMapperFile = File.createTempFile("mapper", "test", tempDir);
         tEM = new FileTreeElementMapperTest(crs, treeMapperFile);
-        tree = new FileStarRTree(inOutFile, 4, crs, tEM);
+        tree = new FileStarRTree(inOutFile.toPath(), 4, crs, tEM);
     }
 }

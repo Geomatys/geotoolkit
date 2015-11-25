@@ -17,7 +17,6 @@
 
 package org.geotoolkit.index.tree.manager;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,7 +50,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
         Tree<NamedEnvelope> tree = CACHED_TREES.get(directory);
         if (tree == null || tree.isClosed()) {
             if (existTree(directory)) {
-                
+
                 if (System.getProperty(JDBC_TYPE_KEY)!= null){
 
                     // postgres
@@ -61,17 +60,17 @@ public class SQLRtreeManager extends AbstractRtreeManager {
                             TreeElementMapper treeMapper = new LucenePostgresSQLTreeEltMapper(DEFAULT_CRS, ds, directory);
                             byte[] data                  = TreeAccessSQLByteArray.getData(directory, ds);
                             tree                         = new PGTreeWrapper(data, directory, ds, treeMapper);
-                            
+
                         } catch ( SQLException | StoreIndexException | IOException | ClassNotFoundException | NoSuchAlgorithmException e) {
                             LOGGER.log(Level.SEVERE, null, e);
                             return null;
                         }
-                        
+
                     // other DB not yet implemented
                     } else {
                         throw new IllegalArgumentException("Unexpected JDBC type: " + JDBC_TYPE_KEY);
                     }
-                    
+
 
                 } else {
                     // derby DB as default
@@ -79,14 +78,14 @@ public class SQLRtreeManager extends AbstractRtreeManager {
                         final Path treeFile          = directory.resolve("tree.bin");
                         DataSource ds                = LuceneDerbySQLTreeEltMapper.getDataSource(directory);
                         TreeElementMapper treeMapper = new LuceneDerbySQLTreeEltMapper(DEFAULT_CRS, ds);
-                        tree                         = new FileStarRTree<>(treeFile.toFile(), treeMapper);
-                
+                        tree                         = new FileStarRTree<>(treeFile.toFile().toPath(), treeMapper);
+
                     } catch (ClassNotFoundException | IllegalArgumentException | StoreIndexException | IOException e) {
                         LOGGER.log(Level.SEVERE, null, e);
                         return null;
                     }
                 }
-                
+
             } else {
                 tree = buildNewTree(directory);
             }
@@ -115,10 +114,10 @@ public class SQLRtreeManager extends AbstractRtreeManager {
                 if ("postgres".equals(System.getProperty(JDBC_TYPE_KEY))) {
                     TreeElementMapper treeMapper = LucenePostgresSQLTreeEltMapper.createTreeEltMapperWithDB(directory);
                     return new PGTreeWrapper(directory, PGDataSource.getDataSource(), treeMapper, DEFAULT_CRS);
-                    
+
                 } else {
                     TreeElementMapper treeMapper = LuceneDerbySQLTreeEltMapper.createTreeEltMapperWithDB(directory);
-                    return new FileStarRTree(treeFile.toFile(), 5, DEFAULT_CRS, treeMapper);
+                    return new FileStarRTree(treeFile.toFile().toPath(), 5, DEFAULT_CRS, treeMapper);
                 }
 
             } catch (IOException ex) {
@@ -157,7 +156,7 @@ public class SQLRtreeManager extends AbstractRtreeManager {
         return get(directory, owner);
     }
 
-    
+
     private static boolean existTree(final Path directory) {
         if (System.getProperty(JDBC_TYPE_KEY) != null) {
 
@@ -165,13 +164,13 @@ public class SQLRtreeManager extends AbstractRtreeManager {
             if (System.getProperty(JDBC_TYPE_KEY).equals("postgres")) {
                 DataSource ds = PGDataSource.getDataSource();
                 return LucenePostgresSQLTreeEltMapper.treeExist(ds, directory);
-            
+
             // other DB not yet implemented
             } else {
                 throw new IllegalArgumentException("Unexpected JDBC type: " + JDBC_TYPE_KEY);
             }
         } else {
-            
+
             // derby DB as default
             final Path treeFile   = directory.resolve("tree.bin");
             return Files.exists(treeFile);

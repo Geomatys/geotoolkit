@@ -32,7 +32,7 @@ abstract class WritableBasicRTreeTest extends AbstractTreeTest {
 
     /**
      * Create a generic BasicRTree Test suite, stored on File,  with {@link CoordinateReferenceSystem} define by user.
-     * 
+     *
      * @param crs
      * @throws StoreIndexException during Tree creation.
      * @throws IOException if problem during TreeElementMapper or Tree head writing.
@@ -42,8 +42,6 @@ abstract class WritableBasicRTreeTest extends AbstractTreeTest {
         final File inOutFile = File.createTempFile("tree", "test", tempDir);
         final File treeMapperFile = File.createTempFile("mapper", "test", tempDir);
         tEM  = new FileTreeElementMapperTest(crs, treeMapperFile);
-        tree = new FileBasicRTree(inOutFile, 4, crs, SplitCase.LINEAR, tEM);
+        tree = new FileBasicRTree(inOutFile.toPath(), 4, crs, SplitCase.LINEAR, tEM);
     }
-
-
 }

@@ -37,7 +37,7 @@ abstract class ReadeableBasicRTreeTest extends AbstractTreeTest {
     /**
      * Create a generic BasicRTree Test suite with file already filled by tree architecture
      * and a {@link CoordinateReferenceSystem} define by user.
-     * 
+     *
      * @param crs
      * @throws IOException if problem during head reading from already filled file.
      * @throws StoreIndexException if file isn't already filled by {@link BasicRTree} implementation.
@@ -48,14 +48,14 @@ abstract class ReadeableBasicRTreeTest extends AbstractTreeTest {
         final File inOutFile = File.createTempFile("test", "tree", tempDir);
         final File treeMapperFile = File.createTempFile("test", "mapper", tempDir);
         tEM  = new FileTreeElementMapperTest(crs, treeMapperFile);
-        tree = new FileBasicRTree(inOutFile, 3, crs, SplitCase.LINEAR, tEM);
-        
+        tree = new FileBasicRTree(inOutFile.toPath(), 3, crs, SplitCase.LINEAR, tEM);
+
         insert();
         tree.close();
         tEM.close();
         assertTrue(tree.isClosed());
         assertTrue(tEM.isClosed());
-        tEM  = new FileTreeElementMapperTest(treeMapperFile, crs);
-        tree = new FileBasicRTree(inOutFile, tEM);
+        tEM  = new FileTreeElementMapperTest(crs, treeMapperFile);
+        tree = new FileBasicRTree(inOutFile.toPath(), tEM);
     }
 }

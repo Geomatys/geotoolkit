@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.lucene;
 
+import java.nio.file.DirectoryStream;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -24,7 +25,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import java.util.logging.Logger;
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,6 +40,7 @@ import org.apache.lucene.search.Filter;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.apache.sis.geometry.Envelopes;
 import org.apache.sis.geometry.GeneralEnvelope;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.tree.Tree;
@@ -121,8 +122,14 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
         // postgres
         if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY) != null) {
             if (System.getProperty(SQLRtreeManager.JDBC_TYPE_KEY).equals("postgres")) {
-                if (Files.isDirectory(directory) && Files.newDirectoryStream(directory).iterator().hasNext()) {
-                    LucenePostgresSQLTreeEltMapper.resetDB(Files.newDirectoryStream(directory).iterator().next());
+
+                if (Files.isDirectory(directory)) {
+                    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory)) {
+                        final Iterator<Path> iterator = directoryStream.iterator();
+                        if (iterator.hasNext()) {
+                            LucenePostgresSQLTreeEltMapper.resetDB(iterator.next());
+                        }
+                    }
                 }
             }
         }
@@ -408,7 +415,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(7, 30),
             new Coordinate(7, -30),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.intersects(GEOMETRY_PROPERTY,FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -426,11 +433,12 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
         /*
          * case 4: same line diferent CRS
          */
+        final CoordinateReferenceSystem CRS3395 = CRS.decode("EPSG:3395");
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(775978.5043848383, 3339584.723798207),
             new Coordinate(775978.5043848383, -3339584.723798207),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1));
+        JTS.setCRS(geom, CRS3395);
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -452,7 +460,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(40, 40),
             new Coordinate(40, -30),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -473,7 +481,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(4452779.631730943, 4838471.398061137),
             new Coordinate(4452779.631730943, -3339584.723798207),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1));
+        JTS.setCRS(geom, CRS3395);
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -522,7 +530,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(0, 0),
             new Coordinate(25, 0),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -540,7 +548,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          * case 3: point
          */
         geom = GF.createPoint(new Coordinate(-10, 10));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -587,7 +595,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(-25, 5),
             new Coordinate(-15, 5),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.contains(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -605,7 +613,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          * case 3: BOX/point
          */
         geom = GF.createPoint(new Coordinate(-25, 5));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.contains(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -623,7 +631,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          * case 4: Line/point
          */
         geom = GF.createPoint(new Coordinate(20, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),0.00001,"m");
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -643,7 +651,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(20, 0),
             new Coordinate(15, 0),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),TOLERANCE,"m");
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -668,7 +676,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(-25, 5));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -692,7 +700,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -719,7 +727,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(-40, 0),
             new Coordinate(30, 0),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -744,7 +752,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(7, 40),
             new Coordinate(7, -20),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -820,7 +828,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -838,7 +846,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(-30, 5));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -857,7 +865,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(-25, -50));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -876,7 +884,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, -10));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -896,7 +904,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(40, 20));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -918,7 +926,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(7, 30),
             new Coordinate(7, 0),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -939,7 +947,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(-15, 3),
             new Coordinate(30, 4),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1063,7 +1071,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(-40, 30),
             new Coordinate(40, 20),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.within(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1093,7 +1101,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(40, 10),
             new Coordinate(40, 30),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1116,7 +1124,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(40, 10),
             new Coordinate(-5, -5),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1138,7 +1146,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(-25, 5),
             new Coordinate(-35, -45),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1158,7 +1166,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1180,7 +1188,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(5, 13));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1283,7 +1291,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(7, 40),
             new Coordinate(6, -40),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
         List<Filter> filters3     = new ArrayList<>();
@@ -1365,7 +1373,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5.0,"kilometers");
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1383,7 +1391,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),1500.0,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1403,7 +1411,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),1500000,"meters");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1423,7 +1431,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),2000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1444,7 +1452,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),4000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1466,7 +1474,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1489,7 +1497,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),6000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1579,7 +1587,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(-50, -45),
             new Coordinate(60, -43),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1674,7 +1682,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),5,"kilometers");
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1698,7 +1706,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),1500,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1721,7 +1729,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),1500000,"meters");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1744,7 +1752,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),2000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1765,7 +1773,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),4000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1785,7 +1793,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),5000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1804,7 +1812,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
          *
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),6000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1881,7 +1889,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(-50, -45),
             new Coordinate(60, -43),
         });
-        geom.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom, WGS84);
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),5,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2105,7 +2113,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
             new Coordinate(40, 30),
             new Coordinate(40, -30),
         });
-        geom1.setSRID(SRIDGenerator.toSRID(WGS84, Version.V1));
+        JTS.setCRS(geom1, WGS84);
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom1));
         SpatialQuery interQuery = new SpatialQuery(wrap(filter));
 
@@ -2174,12 +2182,12 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
 
         // re-add the document
 
-        final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
+        final CoordinateReferenceSystem CRS3395 = CRS.decode("EPSG:3395");
         Document doc = new Document();
         doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
         doc.add(new StringField("docid", 66 + "", Field.Store.YES));
         doc.add(new StringField("metafile", "doc", Field.Store.YES));
-        NamedEnvelope env = addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395);
+        NamedEnvelope env = addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, CRS3395);
         envelopes.put("box 2 projected", env); // attention !! reprojeté
 
         indexer = new DocumentIndexer(directory, null, analyzer);
@@ -2205,14 +2213,13 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
     private static List<DocumentEnvelope> fillTestData() throws Exception {
 
         final List<DocumentEnvelope> docs = new ArrayList<>();
-        final int srid4326 = SRIDGenerator.toSRID(WGS84, Version.V1);
-        final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
+        final CoordinateReferenceSystem CRS3395 = CRS.decode("EPSG:3395");
 
         Document doc = new Document();
         doc.add(new StringField("id", "box 1", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
         doc.add(new StringField("metafile", "doc", Field.Store.YES));
-        NamedEnvelope env = addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326);
+        NamedEnvelope env = addBoundingBox(doc,           -40,                -25,           -50,               -40, WGS84);
         envelopes.put("box 1", env);
         docs.add(new DocumentEnvelope(doc, env));
 
@@ -2220,7 +2227,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
         doc.add(new StringField("id", "box 2", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
         doc.add(new StringField("metafile", "doc", Field.Store.YES));
-        env = addBoundingBox(doc,             5,                 10,            10,                15, srid4326);
+        env = addBoundingBox(doc,             5,                 10,            10,                15, WGS84);
         envelopes.put("box 2", env);
         docs.add(new DocumentEnvelope(doc, env));
 
@@ -2228,7 +2235,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
         doc.add(new StringField("id", "box 2 projected", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
         doc.add(new StringField("metafile", "doc", Field.Store.YES));
-        env = addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395);
+        env = addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, CRS3395);
         envelopes.put("box 2 projected", env); // attention !! reprojeté
         docs.add(new DocumentEnvelope(doc, env));
 
@@ -2236,7 +2243,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
         doc.add(new StringField("id", "box 3", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
         doc.add(new StringField("metafile", "doc", Field.Store.YES));
-        env = addBoundingBox(doc,            30,                 50,             0,                15, srid4326);
+        env = addBoundingBox(doc,            30,                 50,             0,                15, WGS84);
         envelopes.put("box 3", env);
         docs.add(new DocumentEnvelope(doc, env));
 
@@ -2244,7 +2251,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
         doc.add(new StringField("id", "box 4", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
         doc.add(new StringField("metafile", "doc", Field.Store.YES));
-        env = addBoundingBox(doc,           -30,                -15,             0,                10, srid4326);
+        env = addBoundingBox(doc,           -30,                -15,             0,                10, WGS84);
         envelopes.put("box 4", env);
         docs.add(new DocumentEnvelope(doc, env));
 
@@ -2252,7 +2259,7 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
         doc.add(new StringField("id", "box 5", Field.Store.YES));
         doc.add(new StringField("docid", docs.size() + "", Field.Store.YES));
         doc.add(new StringField("metafile", "doc", Field.Store.YES));
-        env = addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326);
+        env = addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, WGS84);
         envelopes.put("box 5", env);
         docs.add(new DocumentEnvelope(doc, env));
 
@@ -2269,9 +2276,9 @@ public class LuceneSearcherEnvelopeOnlyTest extends org.geotoolkit.test.TestBase
      * @param maxy the maximum Y coordinate of the bounding box.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) throws FactoryException, TransformException {
+    private static NamedEnvelope addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final CoordinateReferenceSystem crs) throws FactoryException, TransformException {
 
-        final Geometry poly = LuceneUtils.getPolygon(minx, maxx, miny, maxy, srid);
+        final Geometry poly = LuceneUtils.getPolygon(minx, maxx, miny, maxy, crs);
         final String id = doc.get("id");
         final NamedEnvelope namedBound = LuceneUtils.getNamedEnvelope(id, poly, treeCrs);
 

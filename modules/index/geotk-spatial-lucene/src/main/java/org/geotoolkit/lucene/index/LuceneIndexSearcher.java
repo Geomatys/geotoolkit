@@ -145,9 +145,7 @@ public class LuceneIndexSearcher extends IndexLucene {
             long maxTime = 0;
             Path currentIndexDirectory = null;
             if (configDir != null && Files.isDirectory(configDir)) {
-                Iterator<Path> iterator = Files.newDirectoryStream(configDir).iterator();
-                while (iterator.hasNext()) {
-                    Path indexDirectory = iterator.next();
+                for (Path indexDirectory : Files.newDirectoryStream(configDir)) {
                     String suffix = indexDirectory.getFileName().toString();
                     suffix = suffix.substring(suffix.lastIndexOf('-') + 1);
                     try {

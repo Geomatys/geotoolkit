@@ -33,5 +33,9 @@ public enum SpatialFilterType {
     DWITHIN, // not implemented in TreeX
     WITHIN,
     TOUCHES,
-    OVERLAPS,
+    OVERLAPS;
+    
+    public boolean isDistance() {
+        return this == DWITHIN || this == BEYOND;
+    }
 }

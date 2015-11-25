@@ -18,6 +18,7 @@
 package org.geotoolkit.lucene.index;
 
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
@@ -37,6 +38,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
+import org.geotoolkit.geometry.jts.JTS;
 
 // Geotoolkit dependencies
 import org.geotoolkit.index.tree.StoreIndexException;
@@ -109,19 +111,19 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             Path currentIndexDirectory = null;
             if (configDirectory != null && Files.exists(configDirectory) && Files.isDirectory(configDirectory)) {
 
-                Iterator<Path> iterator = Files.newDirectoryStream(configDirectory).iterator();
-                while (iterator.hasNext()) {
-                    Path indexDirectory = iterator.next();
-                    String suffix = indexDirectory.getFileName().toString();
-                    suffix = suffix.substring(suffix.lastIndexOf('-') + 1);
-                    try {
-                        long currentTime = Long.parseLong(suffix);
-                        if (currentTime > maxTime) {
-                            maxTime = currentTime;
-                            currentIndexDirectory = indexDirectory;
+                try (final DirectoryStream<Path> dirStream = Files.newDirectoryStream(configDirectory)) {
+                    for (Path indexDirectory : dirStream) {
+                        String suffix = indexDirectory.getFileName().toString();
+                        suffix = suffix.substring(suffix.lastIndexOf('-') + 1);
+                        try {
+                            long currentTime = Long.parseLong(suffix);
+                            if (currentTime > maxTime) {
+                                maxTime = currentTime;
+                                currentIndexDirectory = indexDirectory;
+                            }
+                        } catch (NumberFormatException ex) {
+                            LOGGER.log(Level.WARNING, "Unable to parse the timestamp:{0}", suffix);
                         }
-                    } catch(NumberFormatException ex) {
-                        LOGGER.log(Level.WARNING, "Unable to parse the timestamp:{0}", suffix);
                     }
                 }
             }
@@ -163,17 +165,16 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * Replace the precedent index directory by another pre-generated.
      */
     private void deleteOldIndexDir(final Path configDirectory, final String serviceID, final String currentDirName) throws IOException {
-        Iterator<Path> iterator = Files.newDirectoryStream(configDirectory).iterator();
-        while (iterator.hasNext()) {
-            Path indexDirectory = iterator.next();
-            if (isIndexDir(indexDirectory, serviceID)) {
-                final String dirName = indexDirectory.getFileName().toString();
-                if (!dirName.equals(currentDirName)) {
-                    FileUtilities.deleteDirectory(indexDirectory.toFile());
+        try (final DirectoryStream<Path> dirStream = Files.newDirectoryStream(configDirectory)) {
+            for (Path indexDirectory : dirStream) {
+                if (isIndexDir(indexDirectory, serviceID)) {
+                    final String dirName = indexDirectory.getFileName().toString();
+                    if (!dirName.equals(currentDirName)) {
+                        FileUtilities.deleteDirectory(indexDirectory.toFile());
+                    }
                 }
             }
         }
-        
     }
     
     protected abstract Collection<String> getAllIdentifiers() throws IndexingException;
@@ -465,16 +466,16 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param maxx a list of maximal X coordinate.
      * @param miny a list of minimal Y coordinate.
      * @param maxy a list of maximal Y coordinate.
-     * @param srid coordinate spatial reference identifier.
+     * @param crs coordinate spatial reference.
      */
-    protected void addBoundingBox(final Document doc, final List<Double> minx, final List<Double> maxx, final List<Double> miny, final List<Double> maxy, final int srid) {
-        final Polygon[] polygons = LuceneUtils.getPolygons(minx, maxx, miny, maxy, srid);
+    protected void addBoundingBox(final Document doc, final List<Double> minx, final List<Double> maxx, final List<Double> miny, final List<Double> maxy, final CoordinateReferenceSystem crs) {
+        final Polygon[] polygons = LuceneUtils.getPolygons(minx, maxx, miny, maxy, crs);
         Geometry geom;
         if (polygons.length == 1) {
             geom = polygons[0];
         } else if (polygons.length > 1 ){
             geom = LuceneUtils.GF.createGeometryCollection(polygons);
-            geom.setSRID(srid);
+            JTS.setCRS(geom, crs);
         } else {
             return;
         }

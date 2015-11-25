@@ -41,7 +41,7 @@ public class FileRtreeManager extends AbstractRtreeManager {
             if (Files.exists(treeFile)) {
 
                 try {
-                    tree = new FileStarRTree<>(treeFile.toFile(), new LuceneFileTreeEltMapper(mapperFile.toFile()));//ecrire crs dans constructeur
+                    tree = new FileStarRTree<>(treeFile.toFile().toPath(), new LuceneFileTreeEltMapper(mapperFile.toFile(), DEFAULT_CRS));//ecrire crs dans constructeur
                 } catch (ClassNotFoundException | IllegalArgumentException | StoreIndexException | IOException ex) {
                     LOGGER.log(Level.SEVERE, null, ex);
                 }
@@ -70,7 +70,7 @@ public class FileRtreeManager extends AbstractRtreeManager {
                 final Path mapperFile = directory.resolve("mapper.bin");
                 Files.createFile(treeFile);
                 Files.createFile(mapperFile);
-                return new FileStarRTree(treeFile.toFile(), 5, DEFAULT_CRS, new LuceneFileTreeEltMapper(DEFAULT_CRS, mapperFile.toFile()));
+                return new FileStarRTree(treeFile, 5, DEFAULT_CRS, new LuceneFileTreeEltMapper(DEFAULT_CRS, mapperFile.toFile()));
 
             } catch (IOException ex) {
                 LOGGER.log(Level.WARNING, "Unable to create file to write Tree", ex);
@@ -89,7 +89,7 @@ public class FileRtreeManager extends AbstractRtreeManager {
         final Path mapperFile = directory.resolve("mapper.bin");
         Files.deleteIfExists(treeFile);
         Files.deleteIfExists(mapperFile);
-            
+
         return get(directory, owner);
     }
 }

@@ -16,19 +16,18 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.internal.tree.TreeUtilities;
-import org.geotoolkit.internal.tree.CalculatorND;
-import org.geotoolkit.internal.tree.Calculator;
 import java.io.IOException;
 import java.util.Arrays;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.Classes;
-import org.geotoolkit.index.tree.hilbert.HilbertAccessByteArray;
-import static org.geotoolkit.internal.tree.TreeUtilities.*;
-import org.geotoolkit.internal.tree.TreeAccess;
-import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.internal.tree.TreeUtilities;
+import org.geotoolkit.internal.tree.CalculatorND;
+import org.geotoolkit.internal.tree.Calculator;
+import org.geotoolkit.internal.tree.TreeAccess;
+import org.geotoolkit.referencing.CRS;
+import static org.geotoolkit.internal.tree.TreeUtilities.*;
 
 /**
  * Create an abstract Tree.
@@ -154,7 +153,7 @@ public abstract class AbstractTree<E> implements Tree<E> {
     /**
      * {@inheritDoc}
      */
-    protected void insert(final int identifier, final double... coordinates) throws IllegalArgumentException, StoreIndexException {
+    public void insert(final int identifier, final double... coordinates) throws IllegalArgumentException, StoreIndexException {
         try {
             eltCompteur++;
             Node root = getRoot();
