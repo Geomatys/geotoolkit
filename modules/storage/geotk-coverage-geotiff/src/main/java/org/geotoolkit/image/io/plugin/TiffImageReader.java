@@ -2653,12 +2653,12 @@ public class TiffImageReader extends SpatialImageReader {
                             //-- write sample in target array if its necessary --//
                             if (samplePos == posRef) {
                                 switch (dataType) {
-                                    case DataBuffer.TYPE_BYTE   : Array.setByte(targetArray, bankID, (byte) (prediPix[b])); break;
+                                    case DataBuffer.TYPE_BYTE   : ((byte[])targetArray)[bankID] = (byte) (prediPix[b]); break;
                                     case DataBuffer.TYPE_SHORT  :
-                                    case DataBuffer.TYPE_USHORT : Array.setShort(targetArray, bankID, (short) (prediPix[b])); break;
-                                    case DataBuffer.TYPE_INT    : Array.setInt(targetArray, bankID, (int) (prediPix[b])); break;
-                                    case DataBuffer.TYPE_FLOAT  : Array.setFloat(targetArray, bankID, Float.intBitsToFloat((int) (prediPix[b]))); break;
-                                    case DataBuffer.TYPE_DOUBLE : Array.setDouble(targetArray, bankID, Double.longBitsToDouble(prediPix[b])); break;
+                                    case DataBuffer.TYPE_USHORT : ((short[])targetArray)[bankID] = (short) (prediPix[b]); break;
+                                    case DataBuffer.TYPE_INT    : ((int[])targetArray)[bankID] = (int) (prediPix[b]); break;
+                                    case DataBuffer.TYPE_FLOAT  : ((float[])targetArray)[bankID] = Float.intBitsToFloat((int)(prediPix[b])); break;
+                                    case DataBuffer.TYPE_DOUBLE : ((double[])targetArray)[bankID] = Double.longBitsToDouble(prediPix[b]); break;
                                     default: throw new AssertionError(dataType);
                                 }
                                 bankID += planarDenum;
