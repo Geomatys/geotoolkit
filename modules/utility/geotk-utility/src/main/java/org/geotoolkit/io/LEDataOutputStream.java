@@ -57,7 +57,6 @@ public class LEDataOutputStream extends FilterOutputStream implements DataOutput
     @Override
     public void writeBoolean(boolean b) throws IOException {
         this.write( b ? 1 : 0 );
-        position++;
     }
 
     @Override
