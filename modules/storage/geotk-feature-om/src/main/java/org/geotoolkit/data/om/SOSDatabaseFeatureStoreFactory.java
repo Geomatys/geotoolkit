@@ -35,8 +35,8 @@ import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -118,7 +118,7 @@ public class SOSDatabaseFeatureStoreFactory extends AbstractFeatureStoreFactory 
              new DefaultParameterDescriptor<>("password","Password", String.class, null, false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("SOSDBParameters",
+            new ParameterBuilder().addName("SOSDBParameters").createGroup(
                 IDENTIFIER,DBTYPE,HOST,PORT,DATABASE,USER,PASSWD,NAMESPACE, SGBDTYPE, DERBYURL);
 
     @Override

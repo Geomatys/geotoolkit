@@ -20,12 +20,12 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -61,8 +61,7 @@ public final class CoverageToVectorDescriptor extends AbstractProcessDescriptor 
             new DefaultParameterDescriptor<Integer>("band","Band to transform",Integer.class,0,false);
 
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                COVERAGE,RANGES,BAND);
+            new ParameterBuilder().addName(NAME+"InputParameters").createGroup(COVERAGE,RANGES,BAND);
 
     /**
      * Mandatory - Result of vectorisation
@@ -72,8 +71,7 @@ public final class CoverageToVectorDescriptor extends AbstractProcessDescriptor 
 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"OutputParameters",
-                GEOMETRIES);
+            new ParameterBuilder().addName(NAME+"OutputParameters").createGroup(GEOMETRIES);
     
     public static final ProcessDescriptor INSTANCE = new CoverageToVectorDescriptor();
 

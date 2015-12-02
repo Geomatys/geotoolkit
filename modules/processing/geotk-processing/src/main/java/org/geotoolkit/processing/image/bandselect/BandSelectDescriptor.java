@@ -19,8 +19,8 @@ package org.geotoolkit.processing.image.bandselect;
 import java.awt.image.RenderedImage;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -71,7 +71,7 @@ public class BandSelectDescriptor extends AbstractProcessDescriptor {
         propertiesInBands.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandselect_inBandsDesc));
         IN_BANDS = new DefaultParameterDescriptor<int[]>(propertiesInBands, int[].class, null, null, null, null, null, true);
         
-        INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_IMAGE, IN_BANDS);
+        INPUT_DESC = new ParameterBuilder().addName(NAME + "InputParameters").createGroup(IN_IMAGE, IN_BANDS);
 
         Map<String, Object> propertiesOutCov = new HashMap<String, Object>();
         propertiesOutCov.put(IdentifiedObject.NAME_KEY,        "result");
@@ -79,7 +79,7 @@ public class BandSelectDescriptor extends AbstractProcessDescriptor {
         propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandselect_outImageDesc));
         OUT_IMAGE = new DefaultParameterDescriptor<RenderedImage>(propertiesOutCov, RenderedImage.class, null, null, null, null, null, true);
 
-        OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_IMAGE);
+        OUTPUT_DESC  = new ParameterBuilder().addName(NAME + "OutputParameters").createGroup(OUT_IMAGE);
     }
 
     public static final ProcessDescriptor INSTANCE = new BandSelectDescriptor();

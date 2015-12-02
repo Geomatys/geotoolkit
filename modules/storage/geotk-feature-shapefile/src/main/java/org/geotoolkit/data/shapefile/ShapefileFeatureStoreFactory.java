@@ -30,7 +30,6 @@ import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileFeatureStore;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.util.logging.Logging;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 
@@ -133,7 +132,7 @@ public class ShapefileFeatureStoreFactory extends AbstractFileFeatureStoreFactor
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("ShapefileParameters",
+            new ParameterBuilder().addName("ShapefileParameters").createGroup(
                 IDENTIFIER,URLP,NAMESPACE,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX);
 
     @Override

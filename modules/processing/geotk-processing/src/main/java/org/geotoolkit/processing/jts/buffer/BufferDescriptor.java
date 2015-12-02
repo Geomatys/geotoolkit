@@ -17,15 +17,14 @@
 package org.geotoolkit.processing.jts.buffer;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.jts.JTSProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -52,8 +51,7 @@ public class BufferDescriptor extends AbstractProcessDescriptor{
             new DefaultParameterDescriptor("endstyle", "The end cap style used. 1 -> Round, 2 -> Flat, 3 -> Square.", Integer.class, 2, false);
    
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{GEOM,DISTANCE,SEGMENTS,ENDSTYLE});
+            new ParameterBuilder().addName("InputParameters").createGroup(GEOM,DISTANCE,SEGMENTS,ENDSTYLE);
     
     /**
      * OutputParameters
@@ -61,8 +59,7 @@ public class BufferDescriptor extends AbstractProcessDescriptor{
     public static final ParameterDescriptor<Geometry> RESULT_GEOM =
             new DefaultParameterDescriptor("result_geom", "Buffered geometry result", Geometry.class, null, true);
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{RESULT_GEOM});
+            new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_GEOM);
 
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new BufferDescriptor();

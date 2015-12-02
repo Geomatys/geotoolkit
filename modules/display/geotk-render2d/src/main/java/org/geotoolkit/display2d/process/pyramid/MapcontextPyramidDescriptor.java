@@ -17,12 +17,12 @@
 package org.geotoolkit.display2d.process.pyramid;
 
 import java.awt.Dimension;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.coverage.PyramidalCoverageReference;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -102,7 +102,7 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             new DefaultParameterDescriptor<Boolean>("update", "Update mode.", Boolean.class, false, false);
     
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"InputParameters",
+            new ParameterBuilder().addName(NAME+"InputParameters").createGroup(
                 IN_MAPCONTEXT,IN_EXTENT,IN_TILE_SIZE,IN_SCALES,IN_NBPAINTER,IN_CONTAINER,IN_HINTS, IN_UPDATE);
 
     public static final ParameterDescriptor<PyramidalCoverageReference> OUT_CONTAINER =
@@ -110,7 +110,7 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             "The container which will receive the tiles.",PyramidalCoverageReference.class,null,true);
     
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"OutputParameters", OUT_CONTAINER);
+            new ParameterBuilder().addName(NAME+"OutputParameters").createGroup(OUT_CONTAINER);
     
     public static final ProcessDescriptor INSTANCE = new MapcontextPyramidDescriptor();
 

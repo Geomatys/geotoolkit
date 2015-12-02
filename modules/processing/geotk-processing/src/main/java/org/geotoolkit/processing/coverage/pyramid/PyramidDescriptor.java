@@ -18,10 +18,10 @@ package org.geotoolkit.processing.coverage.pyramid;
 
 import java.awt.Dimension;
 import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -116,11 +116,11 @@ public class PyramidDescriptor extends AbstractProcessDescriptor{
     /**************************************************************************/
     //Input group
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"InputParameters",
+            new ParameterBuilder().addName(NAME+"InputParameters").createGroup(
                 IN_COVERAGEREF, IN_COVERAGESTORE, IN_PYRAMID_NAME, IN_TILE_SIZE, IN_INTERPOLATIONCASE, IN_RES_PER_ENVELOPE, IN_FILLVALUES, IN_REUSETILES);
     //Output group
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"OutputParameters", OUT_COVERAGESTORE);
+            new ParameterBuilder().addName(NAME+"OutputParameters").createGroup(OUT_COVERAGESTORE);
     /**************************************************************************/
 
     public static final ProcessDescriptor INSTANCE = new PyramidDescriptor();

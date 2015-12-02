@@ -23,7 +23,6 @@ import org.geotoolkit.data.FileFeatureStoreFactory;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -35,6 +34,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.sis.parameter.ParameterBuilder;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -64,7 +64,7 @@ public class MIFFeatureStoreFactory extends AbstractFileFeatureStoreFactory impl
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("MIFParameters", IDENTIFIER,URLP,NAMESPACE);
+            new ParameterBuilder().addName("MIFParameters").createGroup(IDENTIFIER,URLP,NAMESPACE);
 
     @Override
     public CharSequence getDisplayName() {

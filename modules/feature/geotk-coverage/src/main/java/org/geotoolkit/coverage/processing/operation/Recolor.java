@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.processing.operation;
 
 import java.util.Collections;
 import java.awt.Color;
+import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
@@ -28,7 +29,6 @@ import org.geotoolkit.coverage.processing.ColorMap;
 import org.geotoolkit.coverage.processing.IndexColorOperation;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.referencing.NamedIdentifier;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 

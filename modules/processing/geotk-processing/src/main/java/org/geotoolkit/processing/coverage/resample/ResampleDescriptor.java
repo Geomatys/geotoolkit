@@ -18,13 +18,13 @@ package org.geotoolkit.processing.coverage.resample;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.interpolation.InterpolationCase;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -218,7 +218,7 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
         IN_COVERAGE = new DefaultParameterDescriptor<>(properties, GridCoverage2D.class,
                         null, null, null, null, null, true);
                 
-        INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", 
+        INPUT_DESC = new ParameterBuilder().addName(NAME + "InputParameters").createGroup(
                 IN_COVERAGE, IN_INTERPOLATION_TYPE, IN_COORDINATE_REFERENCE_SYSTEM, IN_GRID_GEOMETRY, IN_BACKGROUND);
 
         final Map<String, Object> propertiesOut = new HashMap<>();
@@ -228,7 +228,7 @@ public class ResampleDescriptor extends AbstractProcessDescriptor {
         OUT_COVERAGE = new DefaultParameterDescriptor<>(
                 propertiesOut, Coverage.class, null, null, null, null, null, true);
 
-        OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_COVERAGE);
+        OUTPUT_DESC  = new ParameterBuilder().addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);
     }
 
     /**

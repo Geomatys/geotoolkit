@@ -18,8 +18,8 @@ package org.geotoolkit.processing.coverage.metadataextractor;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -61,7 +61,7 @@ public class ExtractionDescriptor extends AbstractProcessDescriptor {
         propertiesIn.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_metaextract_inCoverageDesc));
 
         IN_SOURCE  = new DefaultParameterDescriptor<Object>(propertiesIn, Object.class, null, null, null, null, null, true);
-        INPUT_DESC = new DefaultParameterDescriptorGroup(NAME+"InputParameters", IN_SOURCE);
+        INPUT_DESC = new ParameterBuilder().addName(NAME+"InputParameters").createGroup(IN_SOURCE);
 
         Map<String, Object> propertiesOut = new HashMap<String, Object>();
         propertiesOut.put(IdentifiedObject.NAME_KEY,        "Result");
@@ -69,7 +69,7 @@ public class ExtractionDescriptor extends AbstractProcessDescriptor {
         propertiesOut.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_metaextract_outMetaDesc));
 
         OUT_METADATA = new DefaultParameterDescriptor<Metadata>(propertiesOut, Metadata.class, null, null, null, null, null, true);
-        OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_METADATA);
+        OUTPUT_DESC  = new ParameterBuilder().addName(NAME + "OutputParameters").createGroup(OUT_METADATA);
     }
 
     public static final ProcessDescriptor INSTANCE = new ExtractionDescriptor();

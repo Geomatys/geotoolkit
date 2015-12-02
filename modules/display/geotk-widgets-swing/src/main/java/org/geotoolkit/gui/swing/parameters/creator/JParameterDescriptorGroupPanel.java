@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.border.EmptyBorder;
+import org.apache.sis.parameter.ParameterBuilder;
 
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.font.FontAwesomeIcons;
@@ -35,7 +36,6 @@ import org.geotoolkit.gui.swing.resource.FontIconJButton;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.gui.swing.util.SwingUtilities;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -314,7 +314,7 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
      * @param evt 
      */
     private void guiNewGroupBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiNewGroupBtnActionPerformed
-         final ParameterDescriptorGroup newGroup = new DefaultParameterDescriptorGroup(nextPrefixCode(GROUP_PREFIX), new GeneralParameterDescriptor[]{});
+         final ParameterDescriptorGroup newGroup = new ParameterBuilder().addName(nextPrefixCode(GROUP_PREFIX)).createGroup();
          final JParameterDescriptorGroupPanel groupPanel = new JParameterDescriptorGroupPanel(newGroup, null, this, focusListener);
          groupParameters.add(groupPanel);
          

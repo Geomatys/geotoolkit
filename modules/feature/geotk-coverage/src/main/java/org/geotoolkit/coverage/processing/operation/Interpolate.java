@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.processing.operation;
 import java.util.Collections;
 import java.lang.reflect.Array;
 import javax.media.jai.Interpolation;
+import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
@@ -32,7 +33,6 @@ import org.geotoolkit.coverage.grid.Interpolator2D;
 import org.geotoolkit.coverage.processing.Operation2D;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.geotoolkit.image.internal.ImageUtilities;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;

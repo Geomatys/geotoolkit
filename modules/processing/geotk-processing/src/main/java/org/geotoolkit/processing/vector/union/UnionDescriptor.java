@@ -16,14 +16,13 @@
  */
 package org.geotoolkit.processing.vector.union;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -66,12 +65,10 @@ public final class UnionDescriptor extends VectorDescriptor {
             new DefaultParameterDescriptor("union_geometry_name", "Union geometry property name", String.class, null, false);
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, FEATURE_UNION, INPUT_GEOMETRY_NAME, UNION_GEOMETRY_NAME});
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, FEATURE_UNION, INPUT_GEOMETRY_NAME, UNION_GEOMETRY_NAME);
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new UnionDescriptor();
 

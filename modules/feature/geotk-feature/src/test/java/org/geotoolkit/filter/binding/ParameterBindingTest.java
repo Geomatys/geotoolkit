@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.filter.binding;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -38,7 +38,7 @@ public class ParameterBindingTest {
         final ParameterDescriptor p1 = new DefaultParameterDescriptor("age", Integer.class, null, null);
         final ParameterDescriptor p2 = new DefaultParameterDescriptor("name", String.class, null, null);
         final ParameterDescriptor p3 = new DefaultParameterDescriptor("human", Boolean.class, null, null);
-        final ParameterDescriptorGroup desc = new DefaultParameterDescriptorGroup("ele",p1,p2,p3);        
+        final ParameterDescriptorGroup desc = new ParameterBuilder().addName("ele").createGroup(p1,p2,p3);
         final ParameterValueGroup param = desc.createValue();
         param.parameter("age").setValue(45);
         param.parameter("name").setValue("marcel");
@@ -61,7 +61,7 @@ public class ParameterBindingTest {
         final ParameterDescriptor p1 = new DefaultParameterDescriptor("age", Integer.class, null, null);
         final ParameterDescriptor p2 = new DefaultParameterDescriptor("name", String.class, null, null);
         final ParameterDescriptor p3 = new DefaultParameterDescriptor("human", Boolean.class, null, null);
-        final ParameterDescriptorGroup desc = new DefaultParameterDescriptorGroup("ele",p1,p2,p3);        
+        final ParameterDescriptorGroup desc = new ParameterBuilder().addName("ele").createGroup(p1,p2,p3);
         final ParameterValueGroup param = desc.createValue();
         param.parameter("age").setValue(45);
         param.parameter("name").setValue("marcel");

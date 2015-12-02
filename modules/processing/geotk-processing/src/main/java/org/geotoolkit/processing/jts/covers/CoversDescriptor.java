@@ -17,15 +17,14 @@
 package org.geotoolkit.processing.jts.covers;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.jts.JTSProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -48,8 +47,7 @@ public class CoversDescriptor extends AbstractProcessDescriptor{
             new DefaultParameterDescriptor("geom2", "Geometry JTS", Geometry.class, null, true);
     
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{GEOM1,GEOM2});
+            new ParameterBuilder().addName("InputParameters").createGroup(GEOM1,GEOM2);
     
     /**
      * OutputParameters
@@ -58,8 +56,7 @@ public class CoversDescriptor extends AbstractProcessDescriptor{
             new DefaultParameterDescriptor("result", "Covered by result", Boolean.class, null, true);
     
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{RESULT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(RESULT);
 
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new CoversDescriptor();

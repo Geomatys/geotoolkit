@@ -5,8 +5,8 @@ package org.geotoolkit.filter.function;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.internal.simple.SimpleParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
@@ -77,12 +77,12 @@ public class AbstractFunctionFactory implements FunctionFactory{
             for(int i=0;i<cstParams.length;i++){
                 cstParams[i] = new SimpleParameterDescriptor(Object.class, "", "param"+(i+1));
             }
-            final ParameterDescriptorGroup params = new DefaultParameterDescriptorGroup(name, cstParams);
+            final ParameterDescriptorGroup params = new ParameterBuilder().addName(name).createGroup(cstParams);
             return params;
         }catch(Exception ex){
-            return new DefaultParameterDescriptorGroup(name);
+            return new ParameterBuilder().addName(name).createGroup();
         }catch(Error ex){
-            return new DefaultParameterDescriptorGroup(name);
+            return new ParameterBuilder().addName(name).createGroup();
         }
     }
 

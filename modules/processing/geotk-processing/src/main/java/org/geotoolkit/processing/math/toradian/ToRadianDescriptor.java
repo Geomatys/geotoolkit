@@ -16,15 +16,14 @@
  */
 package org.geotoolkit.processing.math.toradian;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.math.MathProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -45,8 +44,7 @@ public class ToRadianDescriptor extends AbstractProcessDescriptor {
             new DefaultParameterDescriptor("first", "first number", Double.class, null, true);
     
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FIRST_NUMBER});
+            new ParameterBuilder().addName("InputParameters").createGroup(FIRST_NUMBER);
     
     /**
      * OutputParameters
@@ -54,8 +52,7 @@ public class ToRadianDescriptor extends AbstractProcessDescriptor {
     public static final ParameterDescriptor<Double> RESULT_NUMBER =
             new DefaultParameterDescriptor("result", "Radian result", Double.class, null, true);
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{RESULT_NUMBER});
+            new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_NUMBER);
 
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new ToRadianDescriptor();

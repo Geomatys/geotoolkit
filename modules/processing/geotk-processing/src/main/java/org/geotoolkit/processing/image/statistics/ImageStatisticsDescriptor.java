@@ -18,14 +18,13 @@ package org.geotoolkit.processing.image.statistics;
 
 import java.awt.image.RenderedImage;
 import org.apache.sis.math.Statistics;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -60,15 +59,13 @@ public class ImageStatisticsDescriptor extends AbstractProcessDescriptor {
      * Input parameters. 
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{INPUT_IMAGE});
+            new ParameterBuilder().addName("InputParameters").createGroup(INPUT_IMAGE);
     
     /**
      * Output parameters.
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{OUTPUT_STATS});
+            new ParameterBuilder().addName("OutputParameters").createGroup(OUTPUT_STATS);
     
     /**
      * Instance.

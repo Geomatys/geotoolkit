@@ -26,8 +26,8 @@ import java.util.Map;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -158,8 +158,7 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
             paramDescs[index] = desc;
             index++;
         }
-        final ParameterDescriptorGroup group = new DefaultParameterDescriptorGroup(name,paramDescs);
-        return group;
+        return new ParameterBuilder().addName(name).createGroup(paramDescs);
     }
 
     public static ParameterDescriptor convertParameterDtoToParameterDescriptor(final Parameter param, final boolean realType) {

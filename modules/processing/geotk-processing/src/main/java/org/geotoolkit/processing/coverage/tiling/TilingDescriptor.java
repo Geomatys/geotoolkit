@@ -19,10 +19,10 @@ package org.geotoolkit.processing.coverage.tiling;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import javax.imageio.ImageReader;
+import org.apache.sis.parameter.ParameterBuilder;
 
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -67,7 +67,7 @@ public final class TilingDescriptor extends AbstractProcessDescriptor {
 
 
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"InputParameters",
+            new ParameterBuilder().addName(NAME+"InputParameters").createGroup(
                 IN_SOURCE_FILE,IN_SOURCE_READER,IN_TILES_FOLDER,IN_GRID_TO_CRS);
 
     /**
@@ -84,7 +84,7 @@ public final class TilingDescriptor extends AbstractProcessDescriptor {
 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"OutputParameters",
+            new ParameterBuilder().addName(NAME+"OutputParameters").createGroup(
                 OUT_TILE_MANAGER,OUT_CRS);
     
     public static final ProcessDescriptor INSTANCE = new TilingDescriptor();

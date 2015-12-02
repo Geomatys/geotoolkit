@@ -16,18 +16,17 @@
  */
 package org.geotoolkit.processing.coverage.isoline2;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.ProcessBundle;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -81,8 +80,7 @@ public class IsolineDescriptor2 extends AbstractProcessDescriptor {
 
      /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{COVERAGE_REF, READ_PARAM, FEATURE_STORE, FEATURE_NAME, INTERVALS});
+            new ParameterBuilder().addName("InputParameters").createGroup(COVERAGE_REF, READ_PARAM, FEATURE_STORE, FEATURE_NAME, INTERVALS);
 
     /*
      * FeatureCollection of isoline
@@ -92,8 +90,7 @@ public class IsolineDescriptor2 extends AbstractProcessDescriptor {
             new DefaultParameterDescriptor("outFeatureCollection", OUT_FCOLL_PARAM_REMARKS, FeatureCollection.class, null, true);
 
     /**Output parameters */
-    public static final ParameterDescriptorGroup OUTPUT_DESC = new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FCOLL});
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder().addName("OutputParameters").createGroup(FCOLL);
 
 
     public static final ProcessDescriptor INSTANCE = new IsolineDescriptor2();

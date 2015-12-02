@@ -19,8 +19,8 @@ package org.geotoolkit.processing.image.bandcombine;
 import java.awt.image.RenderedImage;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -61,7 +61,7 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
         propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandcombine_inImagesDesc));
         IN_IMAGES = new DefaultParameterDescriptor<RenderedImage[]>(propertiesInCov, RenderedImage[].class, null, null, null, null, null, true);
         
-        INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_IMAGES);
+        INPUT_DESC = new ParameterBuilder().addName(NAME + "InputParameters").createGroup(IN_IMAGES);
 
         Map<String, Object> propertiesOutCov = new HashMap<String, Object>();
         propertiesOutCov.put(IdentifiedObject.NAME_KEY,        "result");
@@ -69,7 +69,7 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
         propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandcombine_outImageDesc));
         OUT_IMAGE = new DefaultParameterDescriptor<RenderedImage>(propertiesOutCov, RenderedImage.class, null, null, null, null, null, true);
 
-        OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_IMAGE);
+        OUTPUT_DESC  = new ParameterBuilder().addName(NAME + "OutputParameters").createGroup(OUT_IMAGE);
     }
 
     public static final ProcessDescriptor INSTANCE = new BandCombineDescriptor();

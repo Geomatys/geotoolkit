@@ -23,8 +23,8 @@ import org.geotoolkit.storage.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -87,7 +87,7 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory {
              new DefaultParameterDescriptor<String>("rootDirectory","local data directory root",String.class,null,true);
 
     
-    public static final ParameterDescriptorGroup PARAMETERS = new DefaultParameterDescriptorGroup("CoverageDatabase", 
+    public static final ParameterDescriptorGroup PARAMETERS = new ParameterBuilder().addName("CoverageDatabase").createGroup(
             IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWORD,ROOTDIRECTORY,NAMESPACE);
 
     @Override

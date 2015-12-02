@@ -22,11 +22,11 @@ import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.observation.AbstractObservationStoreFactory;
 import org.geotoolkit.observation.Bundle;
 import org.geotoolkit.observation.ObservationStore;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -62,7 +62,7 @@ public class FileObservationStoreFactory extends AbstractObservationStoreFactory
                     File.class,null,null,null,null,null,true);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("ObservationFileParameters",
+            new ParameterBuilder().addName("ObservationFileParameters").createGroup(
                 IDENTIFIER,NAMESPACE,FILE_PATH);
     
     @Override

@@ -17,14 +17,13 @@
 package org.geotoolkit.processing.io.unpackfile;
 
 import java.net.URL;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.io.IOProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -70,8 +69,7 @@ public final class UnpackFileDescriptor extends AbstractProcessDescriptor {
      * Input Parameters 
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{SOURCE_IN,TARGET_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(SOURCE_IN,TARGET_IN);
 
     /**
      * Mandatory - result files
@@ -84,7 +82,7 @@ public final class UnpackFileDescriptor extends AbstractProcessDescriptor {
      * Output Parameters 
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",RESULT_OUT);
+            new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_OUT);
     
     public static final ProcessDescriptor INSTANCE = new UnpackFileDescriptor();
 

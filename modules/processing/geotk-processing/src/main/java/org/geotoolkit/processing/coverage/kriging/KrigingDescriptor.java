@@ -17,10 +17,10 @@
 package org.geotoolkit.processing.coverage.kriging;
 
 import java.awt.Dimension;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -73,7 +73,7 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
 
 
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"InputParameters",
+            new ParameterBuilder().addName(NAME+"InputParameters").createGroup(
                 IN_POINTS, IN_CRS, IN_STEP, IN_DIMENSION);
     
     /**
@@ -92,7 +92,7 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"OutputParameters",
+            new ParameterBuilder().addName(NAME+"OutputParameters").createGroup(
                 OUT_COVERAGE,OUT_LINES);
     
     public static final ProcessDescriptor INSTANCE = new KrigingDescriptor();

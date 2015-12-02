@@ -17,16 +17,15 @@
 package org.geotoolkit.processing.vector.convexhull;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorProcessingRegistry;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -65,12 +64,10 @@ public final class ConvexHullDescriptor extends AbstractProcessDescriptor {
             new DefaultParameterDescriptor("geometry_out", "Convex Hull geometry", Geometry.class, null, false);
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, GEOMETRY_NAME});
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, GEOMETRY_NAME);
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{GEOMETRY_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(GEOMETRY_OUT);
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new ConvexHullDescriptor();
 

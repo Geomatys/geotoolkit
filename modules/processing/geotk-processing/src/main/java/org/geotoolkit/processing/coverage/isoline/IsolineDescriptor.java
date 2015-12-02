@@ -16,16 +16,15 @@
  */
 package org.geotoolkit.processing.coverage.isoline;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.ProcessBundle;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -59,8 +58,7 @@ public class IsolineDescriptor extends AbstractProcessDescriptor {
 
      /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{COVERAGE, INTERVALS});
+            new ParameterBuilder().addName("InputParameters").createGroup(COVERAGE, INTERVALS);
 
     /*
      * FeatureCollection of isoline
@@ -71,8 +69,8 @@ public class IsolineDescriptor extends AbstractProcessDescriptor {
             new DefaultParameterDescriptor(OUT_FCOLL_PARAM_NAME, OUT_FCOLL_PARAM_REMARKS, FeatureCollection.class, null, true);
 
     /**Output parameters */
-    public static final ParameterDescriptorGroup OUTPUT_DESC = new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FCOLL});
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder().addName(
+            "OutputParameters").createGroup(FCOLL);
 
 
     public static final ProcessDescriptor INSTANCE = new IsolineDescriptor();

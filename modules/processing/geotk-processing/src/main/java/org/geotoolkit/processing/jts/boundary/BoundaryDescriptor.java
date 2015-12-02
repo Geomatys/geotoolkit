@@ -17,15 +17,14 @@
 package org.geotoolkit.processing.jts.boundary;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.jts.JTSProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -46,8 +45,7 @@ public class BoundaryDescriptor extends AbstractProcessDescriptor{
             new DefaultParameterDescriptor("geom", "Geometry JTS", Geometry.class, null, true);
     
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{GEOM});
+            new ParameterBuilder().addName("InputParameters").createGroup(GEOM);
     
     /**
      * OutputParameters
@@ -56,8 +54,7 @@ public class BoundaryDescriptor extends AbstractProcessDescriptor{
             new DefaultParameterDescriptor("result_geom", "Boundary geometry result", Geometry.class, null, true);
     
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{RESULT_GEOM});
+            new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_GEOM);
 
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new BoundaryDescriptor();

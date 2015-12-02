@@ -19,9 +19,9 @@ package org.geotoolkit.processing.image.dynamicrange;
 import java.awt.image.RenderedImage;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.ProcessBundle;
@@ -85,7 +85,7 @@ public class DynamicRangeStretchDescriptor extends AbstractProcessDescriptor {
         propertiesInRanges.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inRangesDesc));
         IN_RANGES = new DefaultParameterDescriptor<double[][]>(propertiesInRanges, double[][].class, null, null, null, null, null, true);
         
-        INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_IMAGE, IN_BANDS, IN_RANGES);
+        INPUT_DESC = new ParameterBuilder().addName(NAME + "InputParameters").createGroup(IN_IMAGE, IN_BANDS, IN_RANGES);
 
         Map<String, Object> propertiesOutCov = new HashMap<String, Object>();
         propertiesOutCov.put(IdentifiedObject.NAME_KEY,        "result");
@@ -93,7 +93,7 @@ public class DynamicRangeStretchDescriptor extends AbstractProcessDescriptor {
         propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_outImageDesc));
         OUT_IMAGE = new DefaultParameterDescriptor<RenderedImage>(propertiesOutCov, RenderedImage.class, null, null, null, null, null, true);
 
-        OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_IMAGE);
+        OUTPUT_DESC  = new ParameterBuilder().addName(NAME + "OutputParameters").createGroup(OUT_IMAGE);
     }
 
     public static final ProcessDescriptor INSTANCE = new DynamicRangeStretchDescriptor();

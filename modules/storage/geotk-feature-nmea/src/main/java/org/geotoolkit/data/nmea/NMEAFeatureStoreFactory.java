@@ -20,11 +20,11 @@ import java.util.Collections;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import org.geotoolkit.data.AbstractFileFeatureStoreFactory;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -54,7 +54,7 @@ public class NMEAFeatureStoreFactory extends AbstractFileFeatureStoreFactory {
 
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("NMEAParameters",
+            new ParameterBuilder().addName("NMEAParameters").createGroup(
                 IDENTIFIER,URLP,NAMESPACE);
     @Override
     public Identification getIdentification() {

@@ -24,6 +24,7 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
@@ -31,7 +32,6 @@ import static org.geotoolkit.data.AbstractFeatureStoreFactory.NAMESPACE;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.createFixedIdentifier;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -69,7 +69,7 @@ public class OMXmlFeatureStoreFactory extends AbstractFeatureStoreFactory {
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("ObservationXmlFileParameters",IDENTIFIER,NAMESPACE,FILE_PATH);
+            new ParameterBuilder().addName("ObservationXmlFileParameters").createGroup(IDENTIFIER,NAMESPACE,FILE_PATH);
 
     @Override
     public Identification getIdentification() {

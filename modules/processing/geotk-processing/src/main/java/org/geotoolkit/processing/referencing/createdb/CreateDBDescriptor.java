@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.processing.referencing.createdb;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -48,12 +48,11 @@ public final class CreateDBDescriptor extends AbstractProcessDescriptor{
     
         
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                DBURL,USER,PASSWORD);
+            new ParameterBuilder().addName(NAME+"InputParameters").createGroup(DBURL,USER,PASSWORD);
 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"OutputParameters");
+            new ParameterBuilder().addName(NAME+"OutputParameters").createGroup();
     
     public static final ProcessDescriptor INSTANCE = new CreateDBDescriptor();
 

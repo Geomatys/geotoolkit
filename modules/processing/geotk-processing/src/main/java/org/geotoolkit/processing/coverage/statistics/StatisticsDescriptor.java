@@ -21,18 +21,17 @@ import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
 
 import java.awt.image.RenderedImage;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.ProcessBundle;
 
 /**
@@ -95,8 +94,8 @@ public class StatisticsDescriptor extends AbstractProcessDescriptor {
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-                    new GeneralParameterDescriptor[]{IMAGE, COVERAGE, REF, READER, IMAGE_IDX, EXCLUDE_NO_DATA});
+            new ParameterBuilder().addName("InputParameters").createGroup(
+                    IMAGE, COVERAGE, REF, READER, IMAGE_IDX, EXCLUDE_NO_DATA);
 
     /*
      * Coverage result
@@ -107,8 +106,8 @@ public class StatisticsDescriptor extends AbstractProcessDescriptor {
             new DefaultParameterDescriptor(OUT_COVERAGE_PARAM_NAME, OUT_COVERAGE_PARAM_REMARKS, ImageStatistics.class, null, true);
 
     /**Output parameters */
-    public static final ParameterDescriptorGroup OUTPUT_DESC = new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{OUTCOVERAGE});
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder().addName("OutputParameters")
+            .createGroup(OUTCOVERAGE);
 
 
     public static final ProcessDescriptor INSTANCE = new StatisticsDescriptor();

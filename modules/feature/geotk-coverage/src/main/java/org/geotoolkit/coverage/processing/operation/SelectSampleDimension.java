@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.processing.operation;
 
 import javax.media.jai.operator.BandSelectDescriptor;
+import org.apache.sis.parameter.ParameterBuilder;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterValueGroup;
@@ -29,7 +30,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.processing.Operation2D;
 import org.geotoolkit.metadata.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 
 
 /**
@@ -129,7 +129,7 @@ public class SelectSampleDimension extends Operation2D {
      * Constructs a default {@code "SelectSampleDimension"} operation.
      */
     public SelectSampleDimension() {
-        super(new DefaultParameterDescriptorGroup("SelectSampleDimension",
+        super(new ParameterBuilder().addName("SelectSampleDimension").createGroup(
                 SOURCE_0, SAMPLE_DIMENSIONS, VISIBLE_SAMPLE_DIMENSION));
     }
 

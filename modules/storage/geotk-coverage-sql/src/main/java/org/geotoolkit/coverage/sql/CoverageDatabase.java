@@ -48,9 +48,9 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.util.Localized;
 import org.geotoolkit.util.DateRange;
 import org.apache.sis.measure.MeasurementRange;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.NullArgumentException;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -122,7 +122,7 @@ public class CoverageDatabase implements Localized {
             final ConfigurationKey key = keys[i];
             param[i] = new DefaultParameterDescriptor<>(key.key, null, String.class, key.defaultValue, false);
         }
-        PARAMETERS = new DefaultParameterDescriptorGroup("CoverageDatabase", param);
+        PARAMETERS = new ParameterBuilder().addName("CoverageDatabase").createGroup(param);
     }
 
     /**

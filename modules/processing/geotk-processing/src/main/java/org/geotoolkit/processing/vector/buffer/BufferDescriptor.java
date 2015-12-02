@@ -19,14 +19,13 @@ package org.geotoolkit.processing.vector.buffer;
 import java.util.HashMap;
 import java.util.Map;
 import javax.measure.unit.SI;
+import org.apache.sis.parameter.ParameterBuilder;
 
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -72,13 +71,11 @@ public final class BufferDescriptor extends VectorDescriptor {
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, DISTANCE_IN, LENIENT_TRANSFORM_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, DISTANCE_IN, LENIENT_TRANSFORM_IN);
 
     /**Output parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
 
     /**Instance */
     public static final ProcessDescriptor INSTANCE = new BufferDescriptor();

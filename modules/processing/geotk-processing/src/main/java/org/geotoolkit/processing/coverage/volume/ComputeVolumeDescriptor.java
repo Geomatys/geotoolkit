@@ -17,10 +17,10 @@
 package org.geotoolkit.processing.coverage.volume;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -108,11 +108,11 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
     /**************************************************************************/
     //Input group
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
+            new ParameterBuilder().addName("InputParameters").createGroup(
                 IN_GRIDCOVERAGE_READER, IN_JTSGEOMETRY, IN_GEOMETRY_CRS, IN_INDEX_BAND, IN_GEOMETRY_ALTITUDE, IN_MAX_ALTITUDE_CEILING);
     //Output group
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters", OUT_VOLUME_RESULT);
+            new ParameterBuilder().addName("OutputParameters").createGroup(OUT_VOLUME_RESULT);
     /**************************************************************************/
     
     public static final ProcessDescriptor INSTANCE = new ComputeVolumeDescriptor();

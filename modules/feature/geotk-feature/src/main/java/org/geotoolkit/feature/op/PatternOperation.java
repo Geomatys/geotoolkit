@@ -39,7 +39,7 @@ import org.opengis.util.GenericName;
  */
 public class PatternOperation extends AbstractOperation {
 
-    private static final DefaultParameterDescriptorGroup PARAMS =
+    private static final ParameterDescriptorGroup PARAMS =
             new DefaultParameterDescriptorGroup(Collections.singletonMap("name", "noargs"), 0, 1);
     private static final AttributeType RESULTTYPE = new DefaultAttributeType(Collections.singletonMap("name", "value"), String.class, 1, 1, null);
 

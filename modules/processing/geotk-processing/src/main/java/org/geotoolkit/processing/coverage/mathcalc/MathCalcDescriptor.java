@@ -17,16 +17,15 @@
 
 package org.geotoolkit.processing.coverage.mathcalc;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.ProcessBundle;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.opengis.coverage.Coverage;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -75,12 +74,10 @@ public class MathCalcDescriptor extends AbstractProcessDescriptor {
     
      /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{IN_COVERAGES, IN_FORMULA, IN_MAPPING, IN_RESULT_COVERAGE});
+            new ParameterBuilder().addName("InputParameters").createGroup(IN_COVERAGES, IN_FORMULA, IN_MAPPING, IN_RESULT_COVERAGE);
 
     /**Output parameters */
-    public static final ParameterDescriptorGroup OUTPUT_DESC = new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{});
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder().addName("OutputParameters").createGroup();
     
     public MathCalcDescriptor() {
         super(NAME, CoverageProcessingRegistry.IDENTIFICATION, 
