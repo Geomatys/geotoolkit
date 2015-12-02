@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.math.min;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -40,8 +39,11 @@ public class MinDescriptor extends AbstractProcessDescriptor {
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<Double[]> SET =
-            new DefaultParameterDescriptor("set", "Set of double", Double[].class, null, true);
+    public static final ParameterDescriptor<Double[]> SET = new ParameterBuilder()
+            .addName("set")
+            .setRemarks("Set of double")
+            .setRequired(true)
+            .create(Double[].class, null);
     
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(SET);
@@ -49,8 +51,11 @@ public class MinDescriptor extends AbstractProcessDescriptor {
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Double> RESULT_NUMBER =
-            new DefaultParameterDescriptor("result", "Min double result", Double.class, null, true);
+    public static final ParameterDescriptor<Double> RESULT_NUMBER = new ParameterBuilder()
+            .addName("result")
+            .setRemarks("Min double result")
+            .setRequired(true)
+            .create(Double.class, null);
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_NUMBER);
 

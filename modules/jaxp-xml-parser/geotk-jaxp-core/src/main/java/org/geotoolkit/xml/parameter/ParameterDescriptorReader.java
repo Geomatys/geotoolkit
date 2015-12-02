@@ -24,8 +24,8 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.DefaultInternationalString;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.apache.sis.referencing.NamedIdentifier;
 import org.apache.sis.util.ObjectConverters;
 import org.geotoolkit.xml.StaxStreamReader;
@@ -239,15 +239,22 @@ public class ParameterDescriptorReader extends StaxStreamReader {
         if (topology == ValuesTopology.INTERVAL) {
             // Is there minimum and/or maximum boundarie ?
             if (minimum == null && maximum == null) {
-                return new DefaultParameterDescriptor(
-                        descriptorCodeName, remarks, c, defaultValue, minOcc != 0);
+                return new ParameterBuilder()
+                        .addName(descriptorCodeName)
+                        .setRemarks(remarks)
+                        .setRequired(minOcc!=0)
+                        .create(c, defaultValue);
             } else {
-                return new DefaultParameterDescriptor(
-                        authority, descriptorCodeName, c, null, defaultValue, minimum, maximum, null, minOcc != 0);
+                return new ParameterBuilder()
+                        .addName(authority, descriptorCodeName)
+                        .setRequired(minOcc!=0)
+                        .createBounded(c, minimum, maximum, (Comparable)defaultValue);
             }
         } else {
-            return new DefaultParameterDescriptor(
-                    authority, descriptorCodeName, c, valuesTab, defaultValue, minimum, maximum, null, minOcc != 0);
+            return new ParameterBuilder()
+                    .addName(authority, descriptorCodeName)
+                    .setRequired(minOcc!=0)
+                    .createEnumerated(c, valuesTab, defaultValue);
         }
     }
 

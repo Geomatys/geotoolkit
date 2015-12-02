@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.vector.startoffset;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -48,8 +47,11 @@ public final class StartOffsetDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Start offset iteration on the FeatureCollection
      */
-    public static final ParameterDescriptor<Integer> OFFSET_IN =
-            new DefaultParameterDescriptor("offset_in", "Start offset iteration on the FeatureCollection", Integer.class, null, true);
+    public static final ParameterDescriptor<Integer> OFFSET_IN = new ParameterBuilder()
+            .addName("offset_in")
+            .setRemarks("Start offset iteration on the FeatureCollection")
+            .setRequired(true)
+            .create(Integer.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

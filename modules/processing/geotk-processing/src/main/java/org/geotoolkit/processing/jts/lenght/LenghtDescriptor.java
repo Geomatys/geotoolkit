@@ -18,7 +18,6 @@ package org.geotoolkit.processing.jts.lenght;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -41,8 +40,11 @@ public class LenghtDescriptor extends AbstractProcessDescriptor{
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<Geometry> GEOM =
-            new DefaultParameterDescriptor("geom", "Geometry JTS source", Geometry.class, null, true);
+    public static final ParameterDescriptor<Geometry> GEOM = new ParameterBuilder()
+            .addName("geom")
+            .setRemarks("Geometry JTS source")
+            .setRequired(true)
+            .create(Geometry.class, null);
     
     
     public static final ParameterDescriptorGroup INPUT_DESC =
@@ -51,8 +53,11 @@ public class LenghtDescriptor extends AbstractProcessDescriptor{
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Double> RESULT =
-            new DefaultParameterDescriptor("result", "Lenght result", Double.class, null, true);
+    public static final ParameterDescriptor<Double> RESULT = new ParameterBuilder()
+            .addName("result")
+            .setRemarks("Lenght result")
+            .setRequired(true)
+            .create(Double.class, null);
     
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT);

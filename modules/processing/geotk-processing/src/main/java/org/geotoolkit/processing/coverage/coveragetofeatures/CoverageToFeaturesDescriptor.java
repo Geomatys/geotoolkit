@@ -19,7 +19,6 @@ package org.geotoolkit.processing.coverage.coveragetofeatures;
 import java.util.Collection;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -50,13 +49,19 @@ public final class CoverageToFeaturesDescriptor extends AbstractProcessDescripto
     /**
      * Mandatory - CoverageReader
      */
-    public static final ParameterDescriptor<GridCoverageReader> READER_IN =
-            new DefaultParameterDescriptor("reader_in", "Inpute GridCoverageReader", GridCoverageReader.class, null, true);
+    public static final ParameterDescriptor<GridCoverageReader> READER_IN = new ParameterBuilder()
+            .addName("reader_in")
+            .setRemarks("Inpute GridCoverageReader")
+            .setRequired(true)
+            .create(GridCoverageReader.class, null);
     /**
      * Mandatory - Resulting Feature Collection
      */
-    public static final ParameterDescriptor<Collection<Feature>> FEATURE_OUT =
-            new DefaultParameterDescriptor("feature_out", "Outpute Feature", Collection.class, null, true);
+    public static final ParameterDescriptor<Collection<Feature>> FEATURE_OUT = (ParameterDescriptor)new ParameterBuilder()
+            .addName("feature_out")
+            .setRemarks("Outpute Feature")
+            .setRequired(true)
+            .create(Collection.class, null);
     
     /**Process name : coveragetofeatures */
     public static final String NAME = "coveragetofeatures";

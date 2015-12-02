@@ -18,7 +18,6 @@ package org.geotoolkit.processing.jts.buffer;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -41,14 +40,26 @@ public class BufferDescriptor extends AbstractProcessDescriptor{
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<Geometry> GEOM =
-            new DefaultParameterDescriptor("geom", "Geometry JTS", Geometry.class, null, true);
-    public static final ParameterDescriptor<Double> DISTANCE =
-            new DefaultParameterDescriptor("distance", "Distance used to make buffer.", Double.class, null, true);
-    public static final ParameterDescriptor<Integer> SEGMENTS =
-            new DefaultParameterDescriptor("segments", "Number of segments used to represent a quadrant of a circle.", Integer.class, 0, false);
-    public static final ParameterDescriptor<Integer> ENDSTYLE =
-            new DefaultParameterDescriptor("endstyle", "The end cap style used. 1 -> Round, 2 -> Flat, 3 -> Square.", Integer.class, 2, false);
+    public static final ParameterDescriptor<Geometry> GEOM = new ParameterBuilder()
+            .addName("geom")
+            .setRemarks("Geometry JTS")
+            .setRequired(true)
+            .create(Geometry.class, null);
+    public static final ParameterDescriptor<Double> DISTANCE = new ParameterBuilder()
+            .addName("distance")
+            .setRemarks("Distance used to make buffer.")
+            .setRequired(true)
+            .create(Double.class, null);
+    public static final ParameterDescriptor<Integer> SEGMENTS = new ParameterBuilder()
+            .addName("segments")
+            .setRemarks("Number of segments used to represent a quadrant of a circle.")
+            .setRequired(false)
+            .create(Integer.class, 0);
+    public static final ParameterDescriptor<Integer> ENDSTYLE = new ParameterBuilder()
+            .addName("endstyle")
+            .setRemarks("The end cap style used. 1 -> Round, 2 -> Flat, 3 -> Square.")
+            .setRequired(false)
+            .create(Integer.class, 2);
    
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM,DISTANCE,SEGMENTS,ENDSTYLE);
@@ -56,8 +67,11 @@ public class BufferDescriptor extends AbstractProcessDescriptor{
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Geometry> RESULT_GEOM =
-            new DefaultParameterDescriptor("result_geom", "Buffered geometry result", Geometry.class, null, true);
+    public static final ParameterDescriptor<Geometry> RESULT_GEOM = new ParameterBuilder()
+            .addName("result_geom")
+            .setRemarks("Buffered geometry result")
+            .setRequired(true)
+            .create(Geometry.class, null);
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_GEOM);
 

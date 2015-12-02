@@ -18,7 +18,6 @@ package org.geotoolkit.processing.jts.convexhull;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -41,8 +40,11 @@ public class ConvexHullDescriptor extends AbstractProcessDescriptor{
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<Geometry> GEOM =
-            new DefaultParameterDescriptor("geom", "Geometry JTS", Geometry.class, null, true);
+    public static final ParameterDescriptor<Geometry> GEOM = new ParameterBuilder()
+            .addName("geom")
+            .setRemarks("Geometry JTS")
+            .setRequired(true)
+            .create(Geometry.class, null);
      
     
     public static final ParameterDescriptorGroup INPUT_DESC =
@@ -51,8 +53,11 @@ public class ConvexHullDescriptor extends AbstractProcessDescriptor{
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Geometry> RESULT_GEOM =
-            new DefaultParameterDescriptor("result_geom", "ConvexHull geometry result", Geometry.class, null, true);
+    public static final ParameterDescriptor<Geometry> RESULT_GEOM = new ParameterBuilder()
+            .addName("result_geom")
+            .setRemarks("ConvexHull geometry result")
+            .setRequired(true)
+            .create(Geometry.class, null);
     
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_GEOM);

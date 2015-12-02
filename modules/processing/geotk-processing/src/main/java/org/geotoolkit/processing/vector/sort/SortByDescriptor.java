@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.vector.sort;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -48,8 +47,11 @@ public final class SortByDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Array of SortBy used give the order
      */
-    public static final ParameterDescriptor<org.opengis.filter.sort.SortBy[]> SORTER_IN =
-            new DefaultParameterDescriptor("sorter_in", "Array of SortBy used give the order", org.opengis.filter.sort.SortBy[].class, null, true);
+    public static final ParameterDescriptor<org.opengis.filter.sort.SortBy[]> SORTER_IN = new ParameterBuilder()
+            .addName("sorter_in")
+            .setRemarks("Array of SortBy used give the order")
+            .setRequired(true)
+            .create(org.opengis.filter.sort.SortBy[].class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

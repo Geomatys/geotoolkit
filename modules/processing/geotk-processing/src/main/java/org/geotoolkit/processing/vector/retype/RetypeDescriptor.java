@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.vector.retype;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -50,8 +49,11 @@ public final class RetypeDescriptor extends VectorDescriptor {
     /**
      * Mandatory - FeatureType used to as a mask to retype the FeatureCollection
      */
-    public static final ParameterDescriptor<FeatureType> MASK_IN =
-            new DefaultParameterDescriptor("mask_in", "FeatureType used to as a mask to retype the FeatureCollection", FeatureType.class, null, true);
+    public static final ParameterDescriptor<FeatureType> MASK_IN = new ParameterBuilder()
+            .addName("mask_in")
+            .setRemarks("FeatureType used to as a mask to retype the FeatureCollection")
+            .setRequired(true)
+            .create(FeatureType.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

@@ -19,7 +19,6 @@ package org.geotoolkit.processing.vector.extendfeature;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.data.memory.GenericExtendFeatureIterator.FeatureExtend;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -52,14 +51,20 @@ public final class ExtendFeatureDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Feature Extend
      */
-    public static final ParameterDescriptor<FeatureExtend> EXTEND_IN =
-            new DefaultParameterDescriptor("extend_in", "Feature extension", FeatureExtend.class, null, true);
+    public static final ParameterDescriptor<FeatureExtend> EXTEND_IN = new ParameterBuilder()
+            .addName("extend_in")
+            .setRemarks("Feature extension")
+            .setRequired(true)
+            .create(FeatureExtend.class, null);
 
     /**
      * Mandatory - Hints
      */
-    public static final ParameterDescriptor<Hints> HINTS_IN =
-            new DefaultParameterDescriptor("hint_in", "Hints", Hints.class, null, true);
+    public static final ParameterDescriptor<Hints> HINTS_IN = new ParameterBuilder()
+            .addName("hint_in")
+            .setRemarks("Hints")
+            .setRequired(true)
+            .create(Hints.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

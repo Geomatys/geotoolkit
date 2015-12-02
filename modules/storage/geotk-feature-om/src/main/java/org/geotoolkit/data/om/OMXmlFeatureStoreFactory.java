@@ -31,7 +31,6 @@ import static org.geotoolkit.data.AbstractFeatureStoreFactory.GEOMS_ALL;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.NAMESPACE;
 import static org.geotoolkit.data.AbstractFeatureStoreFactory.createFixedIdentifier;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -64,8 +63,11 @@ public class OMXmlFeatureStoreFactory extends AbstractFeatureStoreFactory {
     /**
      * Parameter for database port
      */
-    public static final ParameterDescriptor<File> FILE_PATH =
-             new DefaultParameterDescriptor<>("url","url",File.class,null, true);
+    public static final ParameterDescriptor<File> FILE_PATH = new ParameterBuilder()
+            .addName("url")
+            .setRemarks("url")
+            .setRequired(true)
+            .create(File.class, null);
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =

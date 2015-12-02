@@ -18,7 +18,6 @@ package org.geotoolkit.processing.jts.intersection;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -42,10 +41,16 @@ public class IntersectionSurfaceDescriptor extends AbstractProcessDescriptor {
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<Geometry> GEOM1 =
-            new DefaultParameterDescriptor("geom1", "Geometry JTS source", Geometry.class, null, true);
-    public static final ParameterDescriptor<Geometry> GEOM2 =
-            new DefaultParameterDescriptor("geom2", "Geometry JTS", Geometry.class, null, true);
+    public static final ParameterDescriptor<Geometry> GEOM1 = new ParameterBuilder()
+            .addName("geom1")
+            .setRemarks("Geometry JTS source")
+            .setRequired(true)
+            .create(Geometry.class, null);
+    public static final ParameterDescriptor<Geometry> GEOM2 = new ParameterBuilder()
+            .addName("geom2")
+            .setRemarks("Geometry JTS")
+            .setRequired(true)
+            .create(Geometry.class, null);
 
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM1,GEOM2);
@@ -53,8 +58,11 @@ public class IntersectionSurfaceDescriptor extends AbstractProcessDescriptor {
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Geometry> RESULT_SURFACE =
-            new DefaultParameterDescriptor("result_surface", "The intersection surface result", Double.class, null, true);
+    public static final ParameterDescriptor<Double> RESULT_SURFACE = new ParameterBuilder()
+            .addName("result_surface")
+            .setRemarks("The intersection surface result")
+            .setRequired(true)
+            .create(Double.class, null);
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_SURFACE);

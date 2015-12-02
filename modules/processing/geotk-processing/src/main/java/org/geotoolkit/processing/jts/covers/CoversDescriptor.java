@@ -18,7 +18,6 @@ package org.geotoolkit.processing.jts.covers;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -41,10 +40,16 @@ public class CoversDescriptor extends AbstractProcessDescriptor{
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<Geometry> GEOM1 =
-            new DefaultParameterDescriptor("geom1", "Geometry JTS source", Geometry.class, null, true);
-    public static final ParameterDescriptor<Geometry> GEOM2 =
-            new DefaultParameterDescriptor("geom2", "Geometry JTS", Geometry.class, null, true);
+    public static final ParameterDescriptor<Geometry> GEOM1 = new ParameterBuilder()
+            .addName("geom1")
+            .setRemarks("Geometry JTS source")
+            .setRequired(true)
+            .create(Geometry.class, null);
+    public static final ParameterDescriptor<Geometry> GEOM2 = new ParameterBuilder()
+            .addName("geom2")
+            .setRemarks("Geometry JTS")
+            .setRequired(true)
+            .create(Geometry.class, null);
     
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM1,GEOM2);
@@ -52,8 +57,11 @@ public class CoversDescriptor extends AbstractProcessDescriptor{
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Boolean> RESULT =
-            new DefaultParameterDescriptor("result", "Covered by result", Boolean.class, null, true);
+    public static final ParameterDescriptor<Boolean> RESULT = new ParameterBuilder()
+            .addName("result")
+            .setRemarks("Covered by result")
+            .setRequired(true)
+            .create(Boolean.class, null);
     
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT);

@@ -22,7 +22,6 @@ import javax.imageio.ImageReader;
 import org.apache.sis.parameter.ParameterBuilder;
 
 import org.geotoolkit.image.io.mosaic.TileManager;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -47,23 +46,35 @@ public final class TilingDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Coverage to process
      */
-    public static final ParameterDescriptor<File> IN_SOURCE_FILE =
-            new DefaultParameterDescriptor<File>("source","Coverage to tile.",File.class,null,true);
+    public static final ParameterDescriptor<File> IN_SOURCE_FILE = new ParameterBuilder()
+            .addName("source")
+            .setRemarks("Coverage to tile.")
+            .setRequired(true)
+            .create(File.class,null);
     
-    public static final ParameterDescriptor<ImageReader> IN_SOURCE_READER =
-            new DefaultParameterDescriptor<ImageReader>("sourceReader","An image reader for the input",ImageReader.class,null,false);
+    public static final ParameterDescriptor<ImageReader> IN_SOURCE_READER = new ParameterBuilder()
+            .addName("sourceReader")
+            .setRemarks("An image reader for the input")
+            .setRequired(false)
+            .create(ImageReader.class,null);
 
     /**
      * Mandatory - Output folder
      */
-    public static final ParameterDescriptor<File> IN_TILES_FOLDER =
-            new DefaultParameterDescriptor<File>("target","Folder where tiles will be stored.",File.class,null,true);
+    public static final ParameterDescriptor<File> IN_TILES_FOLDER = new ParameterBuilder()
+            .addName("target")
+            .setRemarks("Folder where tiles will be stored.")
+            .setRequired(true)
+            .create(File.class,null);
 
     /**
      * Optional - Grid to CRS
      */
-    public static final ParameterDescriptor<AffineTransform> IN_GRID_TO_CRS =
-            new DefaultParameterDescriptor<AffineTransform>("gridToCRS","MathTransform from grid to crs.",AffineTransform.class,null,false);
+    public static final ParameterDescriptor<AffineTransform> IN_GRID_TO_CRS = new ParameterBuilder()
+            .addName("gridToCRS")
+            .setRemarks("MathTransform from grid to crs.")
+            .setRequired(false)
+            .create(AffineTransform.class,null);
 
 
     public static final ParameterDescriptorGroup INPUT_DESC =
@@ -73,14 +84,20 @@ public final class TilingDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Resulting tile manager
      */
-    public static final ParameterDescriptor<TileManager> OUT_TILE_MANAGER =
-            new DefaultParameterDescriptor<TileManager>("manager","Tile manager.",TileManager.class,null,true);
+    public static final ParameterDescriptor<TileManager> OUT_TILE_MANAGER = new ParameterBuilder()
+            .addName("manager")
+            .setRemarks("Tile manager.")
+            .setRequired(true)
+            .create(TileManager.class,null);
 
     /**
      * Optional - Coordinate Reference system of the tile manager.
      */
-    public static final ParameterDescriptor<CoordinateReferenceSystem> OUT_CRS =
-            new DefaultParameterDescriptor<CoordinateReferenceSystem>("crs","Tile manager's coordinate reference system.",CoordinateReferenceSystem.class,null,false);
+    public static final ParameterDescriptor<CoordinateReferenceSystem> OUT_CRS = new ParameterBuilder()
+            .addName("crs")
+            .setRemarks("Tile manager's coordinate reference system.")
+            .setRequired(false)
+            .create(CoordinateReferenceSystem.class,null);
 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =

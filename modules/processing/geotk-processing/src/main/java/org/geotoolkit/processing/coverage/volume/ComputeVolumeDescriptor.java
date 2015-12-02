@@ -20,7 +20,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -45,51 +44,63 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
     /**
      * Input {@link GridCoverageReader} which will be studied.
      */
-    public static final ParameterDescriptor<GridCoverageReader> IN_GRIDCOVERAGE_READER =
-            new DefaultParameterDescriptor<>(INPUT_READER_NAME,
-            "GridCoverageReader which contain Digital Elevation model to compute bulk.", GridCoverageReader.class, null, true);
+    public static final ParameterDescriptor<GridCoverageReader> IN_GRIDCOVERAGE_READER = new ParameterBuilder()
+            .addName(INPUT_READER_NAME)
+            .setRemarks("GridCoverageReader which contain Digital Elevation model to compute bulk.")
+            .setRequired(true)
+            .create(GridCoverageReader.class, null);
     
     public static final String INPUT_JTS_GEOMETRY_NAME = "Geometry";
     /**
      * Geometry which represent area where compute volume.
      */
-    public static final ParameterDescriptor<Geometry> IN_JTSGEOMETRY =
-            new DefaultParameterDescriptor<>(INPUT_JTS_GEOMETRY_NAME,
-            "Geomatry which represent area where compute bulk.", Geometry.class, null, true);
+    public static final ParameterDescriptor<Geometry> IN_JTSGEOMETRY = new ParameterBuilder()
+            .addName(INPUT_JTS_GEOMETRY_NAME)
+            .setRemarks("Geomatry which represent area where compute bulk.")
+            .setRequired(true)
+            .create(Geometry.class, null);
     
     public static final String INPUT_GEOMETRY_CRS_NAME = "Geometry CRS";
     /**
      * Geometry Coordinate Reference System.
      */
-    public static final ParameterDescriptor<CoordinateReferenceSystem> IN_GEOMETRY_CRS =
-            new DefaultParameterDescriptor<>(INPUT_GEOMETRY_CRS_NAME,
-            "Define in which CRS geometry is defined.", CoordinateReferenceSystem.class, null, false);
+    public static final ParameterDescriptor<CoordinateReferenceSystem> IN_GEOMETRY_CRS = new ParameterBuilder()
+            .addName(INPUT_GEOMETRY_CRS_NAME)
+            .setRemarks("Define in which CRS geometry is defined.")
+            .setRequired(false)
+            .create(CoordinateReferenceSystem.class, null);
     
     public static final String INPUT_BAND_INDEX_NAME = "D E M band index.";
     /**
      * DEM band index where volume is computed.
      */
-    public static final ParameterDescriptor<Integer> IN_INDEX_BAND =
-            new DefaultParameterDescriptor<>(INPUT_BAND_INDEX_NAME,
-            "D E M band index which will be use to compute volume.", Integer.class, 0, false);
+    public static final ParameterDescriptor<Integer> IN_INDEX_BAND = new ParameterBuilder()
+            .addName(INPUT_BAND_INDEX_NAME)
+            .setRemarks("D E M band index which will be use to compute volume.")
+            .setRequired(false)
+            .create(Integer.class, 0);
     
     public static final String INPUT_GEOMETRY_ALTITUDE_NAME = "Minimum Altitude ceiling value.";
     /**
      * Altitude ceiling value.<br/>
      * Bulk which will be compute between area formed by Geometry area and this altitude ceiling value.
      */
-    public static final ParameterDescriptor<Double> IN_GEOMETRY_ALTITUDE =
-            new DefaultParameterDescriptor<>(INPUT_GEOMETRY_ALTITUDE_NAME,
-            "Minimal altitude value. Volume is computed between ground formed by geometry at this value and Maximum altitude value.", Double.class, 0.00, false);
+    public static final ParameterDescriptor<Double> IN_GEOMETRY_ALTITUDE = new ParameterBuilder()
+            .addName(INPUT_GEOMETRY_ALTITUDE_NAME)
+            .setRemarks("Minimal altitude value. Volume is computed between ground formed by geometry at this value and Maximum altitude value.")
+            .setRequired(false)
+            .create(Double.class, 0.00);
     
     public static final String INPUT_MAX_CEILING_NAME = "Maximum Altitude ceiling value.";
     /**
      * Altitude ceiling value.<br/>
      * volume which will be compute between area formed by Geometry area and this altitude ceiling value.
      */
-    public static final ParameterDescriptor<Double> IN_MAX_ALTITUDE_CEILING =
-            new DefaultParameterDescriptor<>(INPUT_MAX_CEILING_NAME,
-            "Maximal altitude value. Volume is computed between ground formed by geometry at minimum ceiling value and its value.", Double.class, 0.00, true);
+    public static final ParameterDescriptor<Double> IN_MAX_ALTITUDE_CEILING = new ParameterBuilder()
+            .addName(INPUT_MAX_CEILING_NAME)
+            .setRemarks("Maximal altitude value. Volume is computed between ground formed by geometry at minimum ceiling value and its value.")
+            .setRequired(true)
+            .create(Double.class, 0.00);
     /**************************************************************************/
     
                                     /*Output*/
@@ -99,9 +110,11 @@ public class ComputeVolumeDescriptor extends AbstractProcessDescriptor {
      * Altitude ceiling value.<br/>
      * Volume which will be compute between area formed by Geometry area and this altitude ceiling value.
      */
-    public static final ParameterDescriptor<Double> OUT_VOLUME_RESULT =
-            new DefaultParameterDescriptor<>(OUTPUT_VOLUME_NAME,
-            "Result of volume computing.", Double.class, 0.00, true);
+    public static final ParameterDescriptor<Double> OUT_VOLUME_RESULT = new ParameterBuilder()
+            .addName(OUTPUT_VOLUME_NAME)
+            .setRemarks("Result of volume computing.")
+            .setRequired(true)
+            .create(Double.class, 0.00);
     /**************************************************************************/
     
                                       /*GROUP*/

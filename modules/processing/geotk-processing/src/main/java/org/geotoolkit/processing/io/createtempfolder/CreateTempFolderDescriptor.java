@@ -18,7 +18,6 @@ package org.geotoolkit.processing.io.createtempfolder;
 
 import java.net.URL;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -53,9 +52,11 @@ public final class CreateTempFolderDescriptor extends AbstractProcessDescriptor 
     /**
      * Optional - file prefix
      */
-    public static final ParameterDescriptor<String> PREFIX_IN =
-            new DefaultParameterDescriptor("prefix", "The folder prefix", 
-            String.class, "temp", false);
+    public static final ParameterDescriptor<String> PREFIX_IN = new ParameterBuilder()
+            .addName("prefix")
+            .setRemarks("The folder prefix")
+            .setRequired(false)
+            .create(String.class, "temp");
             
     /** 
      * Input Parameters 
@@ -66,9 +67,11 @@ public final class CreateTempFolderDescriptor extends AbstractProcessDescriptor 
     /**
      * Mandatory - temporary output folder
      */
-    public static final ParameterDescriptor<URL> FILE_OUT =
-            new DefaultParameterDescriptor("folder", "Created temp folder", 
-            URL.class, null, true);
+    public static final ParameterDescriptor<URL> FILE_OUT = new ParameterBuilder()
+            .addName("folder")
+            .setRemarks("Created temp folder")
+            .setRequired(true)
+            .create(URL.class, null);
     
     /** 
      * Output Parameters 

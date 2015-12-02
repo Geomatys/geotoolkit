@@ -19,7 +19,6 @@ package org.geotoolkit.processing.vector.merge;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -50,11 +49,17 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Array of FeatureCollection
      */
-    public static final ParameterDescriptor<FeatureCollection[]> FEATURES_IN =
-            new DefaultParameterDescriptor("features_in", "Inpute array of FeatureCollection", FeatureCollection[].class, null, true);
+    public static final ParameterDescriptor<FeatureCollection[]> FEATURES_IN = new ParameterBuilder()
+            .addName("features_in")
+            .setRemarks("Inpute array of FeatureCollection")
+            .setRequired(true)
+            .create(FeatureCollection[].class, null);
 
-    public static final ParameterDescriptor<FeatureCollection> FEATURE_OUT =
-            new DefaultParameterDescriptor("feature_out", "The merged FeatureCollection", FeatureCollection.class, null, false);
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_OUT = new ParameterBuilder()
+            .addName("feature_out")
+            .setRemarks("The merged FeatureCollection")
+            .setRequired(false)
+            .create(FeatureCollection.class, null);
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(FEATURES_IN);

@@ -18,7 +18,6 @@ package org.geotoolkit.processing.vector.intersection;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -51,14 +50,20 @@ public final class IntersectionDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Feature Collection for clipping
      */
-    public static final ParameterDescriptor<FeatureCollection> FEATURE_INTER =
-            new DefaultParameterDescriptor("feature_inter", "Inpute FeatureCollection for the intersection", FeatureCollection.class, null, true);
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_INTER = new ParameterBuilder()
+            .addName("feature_inter")
+            .setRemarks("Inpute FeatureCollection for the intersection")
+            .setRequired(true)
+            .create(FeatureCollection.class, null);
 
     /**
      * Optional - Geometry property name. Refer to the geometry to use for the intersection process
      */
-    public static final ParameterDescriptor<String> GEOMETRY_NAME =
-            new DefaultParameterDescriptor("geometry_name", "Geometry property name", String.class, null, false);
+    public static final ParameterDescriptor<String> GEOMETRY_NAME = new ParameterBuilder()
+            .addName("geometry_name")
+            .setRemarks("Geometry property name")
+            .setRequired(false)
+            .create(String.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

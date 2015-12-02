@@ -18,7 +18,6 @@ package org.geotoolkit.processing.vector.spatialjoin;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -51,14 +50,20 @@ public final class SpatialJoinDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Target FeatureCollection
      */
-    public static final ParameterDescriptor<FeatureCollection> FEATURE_TARGET =
-            new DefaultParameterDescriptor("feature_target", "Target Features", FeatureCollection.class, null, true);
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_TARGET = new ParameterBuilder()
+            .addName("feature_target")
+            .setRemarks("Target Features")
+            .setRequired(true)
+            .create(FeatureCollection.class, null);
 
      /**
      * Optional - Method used. true => Intersection, false => Nearest
      */
-    public static final ParameterDescriptor<Boolean> INTERSECT =
-            new DefaultParameterDescriptor("intersect", "Method used, intersect or nearest", Boolean.class, true, false);
+    public static final ParameterDescriptor<Boolean> INTERSECT = new ParameterBuilder()
+            .addName("intersect")
+            .setRemarks("Method used, intersect or nearest")
+            .setRequired(false)
+            .create(Boolean.class, true);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

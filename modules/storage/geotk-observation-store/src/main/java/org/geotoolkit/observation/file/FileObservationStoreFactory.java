@@ -56,10 +56,12 @@ public class FileObservationStoreFactory extends AbstractObservationStoreFactory
     /**
      * url to the file.
      */
-    public static final ParameterDescriptor<File> FILE_PATH = createDescriptor("url",
-                    Bundle.formatInternational(Bundle.Keys.paramURLAlias),
-                    Bundle.formatInternational(Bundle.Keys.paramURLRemarks),
-                    File.class,null,null,null,null,null,true);
+    public static final ParameterDescriptor<File> FILE_PATH =  new ParameterBuilder()
+            .addName("url")
+            .addName(Bundle.formatInternational(Bundle.Keys.paramURLAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramURLRemarks))
+            .setRequired(true)
+            .create(File.class,null);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new ParameterBuilder().addName("ObservationFileParameters").createGroup(

@@ -21,7 +21,6 @@ import java.util.Map;
 import javax.measure.unit.SI;
 import org.apache.sis.parameter.ParameterBuilder;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -63,22 +62,29 @@ public final class DouglasPeuckerDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Simplification accuracy
      */
-    public static final ParameterDescriptor<Double> ACCURACY_IN=
-            new DefaultParameterDescriptor(ACCURACY_PROPERTIES, Double.class, null, 1.0, null, null, SI.METRE, true);
+    public static final ParameterDescriptor<Double> ACCURACY_IN = new ParameterBuilder()
+            .addName("accuracy_in")
+            .setRemarks("Input simplification accuracy.")
+            .setRequired(true)
+            .create(1.0, SI.METRE);
     
      /**
      * Optional - Simplification behavior
      */
-    public static final ParameterDescriptor<Boolean> DEL_SMALL_GEO_IN=
-            new DefaultParameterDescriptor("del_small_geo_in", "Input boolean to set process behavior with small geometry",
-                                            Boolean.class, false, false);
+    public static final ParameterDescriptor<Boolean> DEL_SMALL_GEO_IN = new ParameterBuilder()
+            .addName("del_small_geo_in")
+            .setRemarks("Input boolean to set process behavior with small geometry")
+            .setRequired(false)
+            .create(Boolean.class, false);
 
     /**
      * Optional - Simplification behavior
      */
-    public static final ParameterDescriptor<Boolean> LENIENT_TRANSFORM_IN=
-            new DefaultParameterDescriptor("lenient_transform_in", "Input boolean to set accuracy CRS transformation",
-                                            Boolean.class, true, false);
+    public static final ParameterDescriptor<Boolean> LENIENT_TRANSFORM_IN = new ParameterBuilder()
+            .addName("lenient_transform_in")
+            .setRemarks("Input boolean to set accuracy CRS transformation")
+            .setRequired(false)
+            .create(Boolean.class, true);
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

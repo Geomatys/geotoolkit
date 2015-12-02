@@ -27,7 +27,6 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -137,8 +136,11 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
             final ParameterDescriptor desc;
             if (realType) {
                 final Class type = param.getType().getRealClass();
-                desc = new DefaultParameterDescriptor(param.getCode(), param.getRemarks(), type,
-                        convertDefaultValueInClass(param.getDefaultValue(), type), param.getMinOccurs()!=0);
+                desc = new ParameterBuilder()
+                        .addName(param.getCode())
+                        .setRemarks(param.getRemarks())
+                        .setRequired(param.getMinOccurs()!=0)
+                        .create(type, convertDefaultValueInClass(param.getDefaultValue(), type));
             } else {
                 final Map<String, Object> ext = new HashMap<String,Object>();
                 ext.put(KEY_DISTANT_CLASS, param.getType());
@@ -164,8 +166,11 @@ public class ChainProcessDescriptor extends AbstractProcessDescriptor{
     public static ParameterDescriptor convertParameterDtoToParameterDescriptor(final Parameter param, final boolean realType) {
         if (realType) {
             final Class type = param.getType().getRealClass();
-            return new DefaultParameterDescriptor(param.getCode(), param.getRemarks(), type,
-                    convertDefaultValueInClass(param.getDefaultValue(), type), param.getMinOccurs()!=0);
+            return new ParameterBuilder()
+                    .addName(param.getCode())
+                    .setRemarks(param.getRemarks())
+                    .setRequired(param.getMinOccurs()!=0)
+                    .create(type, convertDefaultValueInClass(param.getDefaultValue(), type));
         }
 
         final Map<String, Object> ext = new HashMap<String,Object>();

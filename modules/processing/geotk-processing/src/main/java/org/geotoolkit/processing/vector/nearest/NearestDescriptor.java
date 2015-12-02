@@ -18,7 +18,6 @@ package org.geotoolkit.processing.vector.nearest;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -49,8 +48,11 @@ public final class NearestDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Intersection geometry
      */
-    public static final ParameterDescriptor<Geometry> GEOMETRY_IN =
-            new DefaultParameterDescriptor("geometry_in", "Input geometry", Geometry.class, null, true);
+    public static final ParameterDescriptor<Geometry> GEOMETRY_IN = new ParameterBuilder()
+            .addName("geometry_in")
+            .setRemarks("Input geometry")
+            .setRequired(true)
+            .create(Geometry.class, null);
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, GEOMETRY_IN);

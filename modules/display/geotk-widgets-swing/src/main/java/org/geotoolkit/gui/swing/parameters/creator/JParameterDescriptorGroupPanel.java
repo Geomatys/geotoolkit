@@ -35,7 +35,6 @@ import org.geotoolkit.font.FontAwesomeIcons;
 import org.geotoolkit.gui.swing.resource.FontIconJButton;
 import org.geotoolkit.font.IconBuilder;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.gui.swing.util.SwingUtilities;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -328,7 +327,9 @@ public final class JParameterDescriptorGroupPanel extends GeneralParameterDescri
      * @param evt 
      */
     private void guiNewParamBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiNewParamBtnActionPerformed
-        final ParameterDescriptor newDesc = new DefaultParameterDescriptor(nextPrefixCode(PARAM_PREFIX), String.class, null, null);
+        final ParameterDescriptor newDesc = new ParameterBuilder()
+                .addName(nextPrefixCode(PARAM_PREFIX))
+                .create(String.class, null);
         final JParameterDescriptorPanel panel = new JParameterDescriptorPanel(newDesc, this, null);
         simpleParameters.add(panel);
         

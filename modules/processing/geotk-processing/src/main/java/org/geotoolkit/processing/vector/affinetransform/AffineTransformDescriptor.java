@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.vector.affinetransform;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -49,8 +48,11 @@ public final class AffineTransformDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Feature Collection for clipping
      */
-    public static final ParameterDescriptor<java.awt.geom.AffineTransform> TRANSFORM_IN =
-            new DefaultParameterDescriptor("transform_in", "The affine transformation to apply on Features geometries", java.awt.geom.AffineTransform.class, null, true);
+    public static final ParameterDescriptor<java.awt.geom.AffineTransform> TRANSFORM_IN = new ParameterBuilder()
+            .addName("transform_in")
+            .setRemarks("The affine transformation to apply on Features geometries")
+            .setRequired(true)
+            .create(java.awt.geom.AffineTransform.class, null);
 
 
     /** Input Parameters */

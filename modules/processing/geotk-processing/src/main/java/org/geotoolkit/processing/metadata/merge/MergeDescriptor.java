@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.metadata.merge;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -55,17 +54,21 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
      * Mandatory - first metadata
      */
     public static final String FIRST_IN_NAME = "first";
-    public static final ParameterDescriptor<Metadata> FIRST_IN =
-            new DefaultParameterDescriptor(FIRST_IN_NAME, "First metadata file",
-            Metadata.class, null, true);
+    public static final ParameterDescriptor<Metadata> FIRST_IN = new ParameterBuilder()
+            .addName(FIRST_IN_NAME)
+            .setRemarks("First metadata file")
+            .setRequired(true)
+            .create(Metadata.class, null);
 
     /**
      * Mandatory - second metadata
      */
     public static final String SECOND_IN_NAME = "second";
-    public static final ParameterDescriptor<Metadata> SECOND_IN =
-            new DefaultParameterDescriptor(SECOND_IN_NAME, "Second metadata file",
-            Metadata.class, null, true);
+    public static final ParameterDescriptor<Metadata> SECOND_IN = new ParameterBuilder()
+            .addName(SECOND_IN_NAME)
+            .setRemarks("Second metadata file")
+            .setRequired(true)
+            .create(Metadata.class, null);
 
     /**
      * Input Parameters
@@ -77,9 +80,11 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
      * Mandatory - merged metadata
      */
     public static final String RESULT_OUT_NAME = "result";
-    public static final ParameterDescriptor<Metadata> RESULT_OUT =
-            new DefaultParameterDescriptor(RESULT_OUT_NAME, "Merged metadata",
-            Metadata.class, null, true);
+    public static final ParameterDescriptor<Metadata> RESULT_OUT = new ParameterBuilder()
+            .addName(RESULT_OUT_NAME)
+            .setRemarks("Merged metadata")
+            .setRequired(true)
+            .create(Metadata.class, null);
     
     /** 
      * Output Parameters 

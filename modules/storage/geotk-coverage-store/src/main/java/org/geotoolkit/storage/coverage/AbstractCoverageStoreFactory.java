@@ -69,20 +69,12 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
      * @return an identifier descriptor. 
      */
     public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
-            return new DefaultParameterDescriptor<String>(
-            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,
-                                 IDENTIFIER.getName().getCode(),
-                                 DefaultParameterDescriptor.ALIAS_KEY,
-                                 IDENTIFIER.getAlias().iterator().next(),
-                                 DefaultParameterDescriptor.REMARKS_KEY,
-                                 IDENTIFIER.getRemarks()),
-            String.class,
-            new String[]{idValue},
-            idValue,
-            null,
-            null,
-            null,
-            true);
+        return new ParameterBuilder()
+                    .addName(IDENTIFIER.getName().getCode())
+                    .addName(IDENTIFIER.getAlias().iterator().next())
+                    .setRemarks(IDENTIFIER.getRemarks())
+                    .setRequired(true)
+                    .createEnumerated(String.class, new String[]{idValue}, idValue);
     }
             
     /** Default Implementation abuses the naming convention.

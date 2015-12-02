@@ -29,9 +29,7 @@ import org.geotoolkit.db.dialect.SQLDialect;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.collection.MapUtilities;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -166,14 +164,12 @@ public abstract class AbstractJDBCFeatureStoreFactory extends AbstractFeatureSto
      * @return a databse port descriptor.
      */
     public static ParameterDescriptor<Integer> createFixedPort(Integer value) {
-            return new DefaultParameterDescriptor<Integer>(
-            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,
-                                 PORT.getName().getCode(),
-                                 DefaultParameterDescriptor.ALIAS_KEY,
-                                 PORT.getAlias().iterator().next(),
-                                 DefaultParameterDescriptor.REMARKS_KEY,
-                                 PORT.getRemarks()),
-            Integer.class,null,value,null,null,null,true);
+        return new ParameterBuilder()
+                    .addName(PORT.getName().getCode())
+                    .addName(PORT.getAlias().iterator().next())
+                    .setRemarks(PORT.getRemarks())
+                    .setRequired(true)
+                    .create(Integer.class, value);
     }
 
     @Override

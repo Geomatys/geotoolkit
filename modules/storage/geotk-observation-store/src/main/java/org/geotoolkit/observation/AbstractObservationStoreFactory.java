@@ -19,14 +19,12 @@ package org.geotoolkit.observation;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import javax.measure.unit.Unit;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.util.Classes;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.util.collection.MapUtilities;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -35,7 +33,6 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.IdentifiedObject;
 
 /**
  * Abstract Observation Store Factory.
@@ -48,19 +45,23 @@ public abstract class AbstractObservationStoreFactory extends Factory implements
      * Identifier, Mandatory.
      * Subclasses should redeclared this parameter with a different default value.
      */
-    public static final ParameterDescriptor<String> IDENTIFIER = createDescriptor("identifier",
-                    Bundle.formatInternational(Bundle.Keys.paramIdentifierAlias),
-                    Bundle.formatInternational(Bundle.Keys.paramIdentifierRemarks),
-                    String.class,null,null,null,null,null,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
+            .addName("identifier")
+            .addName(Bundle.formatInternational(Bundle.Keys.paramIdentifierAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramIdentifierRemarks))
+            .setRequired(true)
+            .create(String.class, null);
 
     /**
      * Namespace, Optional.
      * Default namespace used for feature type.
      */
-    public static final ParameterDescriptor<String> NAMESPACE = createDescriptor("namespace",
-                    Bundle.formatInternational(Bundle.Keys.paramNamespaceAlias),
-                    Bundle.formatInternational(Bundle.Keys.paramNamespaceRemarks),
-                    String.class,null,null,null,null,null,false);
+    public static final ParameterDescriptor<String> NAMESPACE = new ParameterBuilder()
+            .addName("namespace")
+            .addName(Bundle.formatInternational(Bundle.Keys.paramNamespaceAlias))
+            .setRemarks(Bundle.formatInternational(Bundle.Keys.paramNamespaceRemarks))
+            .setRequired(false)
+            .create(String.class, null);
     
     /**
      * {@inheritDoc }
@@ -213,21 +214,6 @@ public abstract class AbstractObservationStoreFactory extends Factory implements
     }
     
     /**
-     * Convinient method to open a parameter descriptor with an additional alias.
-     */
-    protected static <T> ParameterDescriptor<T> createDescriptor(final String name,
-            final CharSequence alias, final CharSequence remarks, final Class<T> clazz,
-            final T[] possibleValues, final T defaultValue, final Comparable<T> min,
-            final Comparable<T> max, final Unit unit, final boolean requiered){
-        final Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(IdentifiedObject.NAME_KEY, name);
-        properties.put(IdentifiedObject.ALIAS_KEY, alias);
-        properties.put(IdentifiedObject.REMARKS_KEY, remarks);
-        return new DefaultParameterDescriptor(properties, clazz,
-                possibleValues, defaultValue, min, max, unit, requiered);
-    }
-    
-    /**
      * Create the identifier descriptor, and set only one valid value, the one in parameter.
      *
      * TODO : Maybe change the string in parameter to string array.
@@ -236,17 +222,10 @@ public abstract class AbstractObservationStoreFactory extends Factory implements
      * @return an identifier descriptor.
      */
     public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
-            return new DefaultParameterDescriptor<String>(
-            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,
-                                 IDENTIFIER.getName().getCode(),
-                                 DefaultParameterDescriptor.REMARKS_KEY,
-                                 IDENTIFIER.getRemarks()),
-            String.class,
-            new String[]{idValue},
-            idValue,
-            null,
-            null,
-            null,
-            true);
+        return new ParameterBuilder()
+                    .addName(IDENTIFIER.getName().getCode())
+                    .setRemarks(IDENTIFIER.getRemarks())
+                    .setRequired(true)
+                    .createEnumerated(String.class, new String[]{idValue}, idValue);
     }
 }

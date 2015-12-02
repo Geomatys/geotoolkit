@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.vector.regroup;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -50,14 +49,20 @@ public final class RegroupDescriptor extends VectorDescriptor {
     /**
      * Optional - Attribute name to apply the regroup process
      */
-    public static final ParameterDescriptor<String> REGROUP_ATTRIBUTE =
-            new DefaultParameterDescriptor("regroup_attribute", "Attribute name used for the regroup process", String.class, null, false);
+    public static final ParameterDescriptor<String> REGROUP_ATTRIBUTE = new ParameterBuilder()
+            .addName("regroup_attribute")
+            .setRemarks("Attribute name used for the regroup process")
+            .setRequired(false)
+            .create(String.class, null);
 
     /**
      * Optional - Geometry property name. Refer to the geometry used for the regroup process
      */
-    public static final ParameterDescriptor<String> GEOMETRY_NAME =
-            new DefaultParameterDescriptor("geometry_name", "Geometry property name", String.class, null, false);
+    public static final ParameterDescriptor<String> GEOMETRY_NAME = new ParameterBuilder()
+            .addName("geometry_name")
+            .setRemarks("Geometry property name")
+            .setRequired(false)
+            .create(String.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

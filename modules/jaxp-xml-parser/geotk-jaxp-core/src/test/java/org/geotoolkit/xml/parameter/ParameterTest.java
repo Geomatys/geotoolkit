@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.apache.sis.referencing.NamedIdentifier;
@@ -34,6 +33,7 @@ import org.opengis.parameter.GeneralParameterValue;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.DefaultInternationalString;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -209,26 +209,30 @@ public class ParameterTest {
         final String value1 = "salut";
         final String def1 = "defaut";
         final String[] valid1 = new String[]{"defaut", "salut"};
-        final ParameterDescriptor descriptor1 = new DefaultParameterDescriptor(
-                "nameD1", value1.getClass(), valid1, def1);
+        final ParameterDescriptor descriptor1 = new ParameterBuilder()
+                .addName("nameD1")
+                .createEnumerated(String.class, valid1, def1);
         final GeneralParameterValue parameter1 = new Parameter(descriptor1, value1);
 
         // PARAMETER VALUE 2
         final String value2 = "cuisine";
         final String def2 = "sauce";
         final CharSequence remarks = "remarks";
-        final ParameterDescriptor descriptor2 = new DefaultParameterDescriptor(
-                "nameD2", remarks, value2.getClass(), def2, true);
+        final ParameterDescriptor descriptor2 = new ParameterBuilder()
+                .addName("nameD2")
+                .setRemarks(remarks)
+                .setRequired(true)
+                .create(String.class, def2);
         final GeneralParameterValue parameter2 = new Parameter(descriptor2, value2);
 
         // PARAMETER VALUE 3
         final String value3 = "oiseau";
-        final Map<String, Object> properties3 = new HashMap<String, Object>();
-        properties3.put("name", "nameD3");
         final String def3 = "autruche";
         final String[] valid3 = new String[]{"autruche", "oiseau", "poulet"};
-        final ParameterDescriptor descriptor3 = new DefaultParameterDescriptor(
-                properties3, value3.getClass(), valid3, def3, null, null, null, true);
+        final ParameterDescriptor descriptor3 = new ParameterBuilder()
+                .addName("nameD3")
+                .setRequired(true)
+                .createEnumerated(String.class, valid3, def3);
         final GeneralParameterValue parameter3 = new Parameter(descriptor3, value3);
 
         // PARAMETER VALUE 4
@@ -236,8 +240,10 @@ public class ParameterTest {
         final String def4 = "voiture";
         final String[] valid4 = new String[]{"train", "transport", "voiture"};
         final Citation authority4 = null;//new DefaultCitation("myTitle");
-        final ParameterDescriptor descriptor4 = new DefaultParameterDescriptor(
-                authority4, "nameD4", value4.getClass(), valid4, def4, null, null, null, true);
+        final ParameterDescriptor descriptor4 = new ParameterBuilder()
+                .addName(authority4, "nameD4")
+                .setRequired(true)
+                .createEnumerated(String.class, valid4, def4);
         final GeneralParameterValue parameter4 = new Parameter(descriptor4, value4);
 
         // PARAMETER VALUE 5
@@ -245,8 +251,10 @@ public class ParameterTest {
         final Double def5 = 4.3;
         //ResponsibleParty party = new DefaultResponsibleParty(Role.USER);
         final Citation authority5 = null;// new DefaultCitation("myTitle");//new DefaultCitation(party);
-        final ParameterDescriptor descriptor5 = new DefaultParameterDescriptor(
-                authority5, "nameD5", value5.getClass(), null, def5, 4.1, 7.2, null, true);
+        final ParameterDescriptor descriptor5 = new ParameterBuilder()
+                .addName(authority5, "nameD5")
+                .setRequired(true)
+                .createBounded(Double.class, 4.1, 7.2, def5);
         final GeneralParameterValue parameter5 = new Parameter(descriptor5, value5);
 
         // PARAMETER VALUE 6
@@ -254,8 +262,10 @@ public class ParameterTest {
         final Boolean def6 = false;
         //ResponsibleParty party = new DefaultResponsibleParty(Role.USER);
         final Citation authority6 = null;//new DefaultCitation("myTitle");//new DefaultCitation(party);
-        final ParameterDescriptor descriptor6 = new DefaultParameterDescriptor(
-                authority6, "nameD6", value6.getClass(), null, def6, false, true, null, true);
+        final ParameterDescriptor descriptor6 = new ParameterBuilder()
+                .addName(authority6, "nameD6")
+                .setRequired(true)
+                .createBounded(Boolean.class, false,true,def6);
         final GeneralParameterValue parameter6 = new Parameter(descriptor6, value6);
 
         // PARAMETER VALUE 7
@@ -263,8 +273,10 @@ public class ParameterTest {
         final String def7 = "chocobo";
         //ResponsibleParty party = new DefaultResponsibleParty(Role.USER);
         final Citation authority7 = null; //new DefaultCitation("myTitle");//new DefaultCitation(party);
-        final ParameterDescriptor descriptor7 = new DefaultParameterDescriptor(
-                authority7, "nameD7", value7.getClass(), null, def7, "Alphabet", "zanzibar", null, true);
+        final ParameterDescriptor descriptor7 = new ParameterBuilder()
+                .addName(authority7, "nameD7")
+                .setRequired(true)
+                .createBounded(String.class, "Alphabet", "zanzibar", def7);
         final GeneralParameterValue parameter7 = new Parameter(descriptor7, value7);
 
         // PARAMETER VALUE GROUP

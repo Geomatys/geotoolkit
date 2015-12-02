@@ -18,7 +18,6 @@ package org.geotoolkit.processing.coverage.copy;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.coverage.CoverageStore;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -42,28 +41,38 @@ public class CopyCoverageStoreDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - CoverageStore
      */
-    public static final ParameterDescriptor<CoverageStore> STORE_IN =
-            new DefaultParameterDescriptor("store_in", "Input coverage store", CoverageStore.class, null, true);
+    public static final ParameterDescriptor<CoverageStore> STORE_IN = new ParameterBuilder()
+            .addName("store_in")
+            .setRemarks("Input coverage store")
+            .setRequired(true)
+            .create(CoverageStore.class, null);
 
     /**
      * Mandatory - CoverageStore
      */
-    public static final ParameterDescriptor<CoverageStore> STORE_OUT =
-            new DefaultParameterDescriptor("store_out", "Output coverage store", CoverageStore.class, null, true);
+    public static final ParameterDescriptor<CoverageStore> STORE_OUT = new ParameterBuilder()
+            .addName("store_out")
+            .setRemarks("Output coverage store")
+            .setRequired(true)
+            .create(CoverageStore.class, null);
 
     /**
      * Mandatory - drop before insertion or not.
      */
-    public static final ParameterDescriptor<Boolean> ERASE =
-            new DefaultParameterDescriptor("erase", "Erase type if already presents.",
-            Boolean.class, false, true);
+    public static final ParameterDescriptor<Boolean> ERASE = new ParameterBuilder()
+            .addName("erase")
+            .setRemarks("Erase type if already presents.")
+            .setRequired(true)
+            .create(Boolean.class, false);
     
     /**
      * Optional - reduce to domain, true by default.
      */
-    public static final ParameterDescriptor<Boolean> REDUCE_TO_DOMAIN =
-            new DefaultParameterDescriptor("reduceToDomain", "Reduce to domain.",
-            Boolean.class, true, false);
+    public static final ParameterDescriptor<Boolean> REDUCE_TO_DOMAIN = new ParameterBuilder()
+            .addName("reduceToDomain")
+            .setRemarks("Reduce to domain.")
+            .setRequired(false)
+            .create(Boolean.class, true);
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

@@ -18,7 +18,6 @@ package org.geotoolkit.process.mapfile;
 
 import java.io.File;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -40,10 +39,16 @@ public class MapfileToSLDDescriptor extends AbstractProcessDescriptor{
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<File> IN_FILE =
-            new DefaultParameterDescriptor("source", "mapfile", File.class, null, true);
-    public static final ParameterDescriptor<File> IN_OUTPUT =
-            new DefaultParameterDescriptor("target", "output sld", File.class, null, true);
+    public static final ParameterDescriptor<File> IN_FILE = new ParameterBuilder()
+            .addName("source")
+            .setRemarks("mapfile")
+            .setRequired(true)
+            .create(File.class, null);
+    public static final ParameterDescriptor<File> IN_OUTPUT = new ParameterBuilder()
+            .addName("target")
+            .setRemarks("output sld")
+            .setRequired(true)
+            .create(File.class, null);
   
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(IN_FILE,IN_OUTPUT);

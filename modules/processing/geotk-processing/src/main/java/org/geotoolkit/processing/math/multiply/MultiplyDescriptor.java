@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.math.multiply;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -40,18 +39,27 @@ public class MultiplyDescriptor extends AbstractProcessDescriptor {
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<Double> FIRST_NUMBER =
-            new DefaultParameterDescriptor("first", "first number", Double.class, null, true);
-    public static final ParameterDescriptor<Double> SECOND_NUMBER =
-            new DefaultParameterDescriptor("second", "second number", Double.class, null, true);
+    public static final ParameterDescriptor<Double> FIRST_NUMBER = new ParameterBuilder()
+            .addName("first")
+            .setRemarks("first number")
+            .setRequired(true)
+            .create(Double.class, null);
+    public static final ParameterDescriptor<Double> SECOND_NUMBER = new ParameterBuilder()
+            .addName("second")
+            .setRemarks("second number")
+            .setRequired(true)
+            .create(Double.class, null);
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(FIRST_NUMBER,SECOND_NUMBER);
     
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Double> RESULT_NUMBER =
-            new DefaultParameterDescriptor("result", "multiply result", Double.class, null, true);
+    public static final ParameterDescriptor<Double> RESULT_NUMBER = new ParameterBuilder()
+            .addName("result")
+            .setRemarks("multiply result")
+            .setRequired(true)
+            .create(Double.class, null);
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_NUMBER);
 

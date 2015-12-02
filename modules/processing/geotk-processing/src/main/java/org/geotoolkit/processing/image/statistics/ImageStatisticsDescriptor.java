@@ -20,7 +20,6 @@ import java.awt.image.RenderedImage;
 import org.apache.sis.math.Statistics;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -43,16 +42,22 @@ public class ImageStatisticsDescriptor extends AbstractProcessDescriptor {
     /**
      * Input image.
      */
-    public static final ParameterDescriptor<RenderedImage> INPUT_IMAGE =
-            new DefaultParameterDescriptor(INPUT_IMAGE_PARAM_NAME, "Input image", RenderedImage.class, null, true);
+    public static final ParameterDescriptor<RenderedImage> INPUT_IMAGE = new ParameterBuilder()
+            .addName(INPUT_IMAGE_PARAM_NAME)
+            .setRemarks("Input image")
+            .setRequired(true)
+            .create(RenderedImage.class, null);
     
     public static final String OUTPUT_STATS_PARAM_NAME = "statistic_out";
     
     /**
      * Output statistic object.
      */
-    public static final ParameterDescriptor<Statistics[]> OUTPUT_STATS =
-            new DefaultParameterDescriptor(OUTPUT_STATS_PARAM_NAME, "Output statistic", Statistics[].class, null, true);
+    public static final ParameterDescriptor<Statistics[]> OUTPUT_STATS = new ParameterBuilder()
+            .addName(OUTPUT_STATS_PARAM_NAME)
+            .setRemarks("Output statistic")
+            .setRequired(true)
+            .create(Statistics[].class, null);
     
     
     /**

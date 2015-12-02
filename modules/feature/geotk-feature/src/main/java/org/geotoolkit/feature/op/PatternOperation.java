@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.sis.feature.DefaultAttributeType;
 import org.apache.sis.feature.AbstractOperation;
-import org.apache.sis.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.Names;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.AttributeType;
@@ -39,8 +39,7 @@ import org.opengis.util.GenericName;
  */
 public class PatternOperation extends AbstractOperation {
 
-    private static final ParameterDescriptorGroup PARAMS =
-            new DefaultParameterDescriptorGroup(Collections.singletonMap("name", "noargs"), 0, 1);
+    private static final ParameterDescriptorGroup PARAMS = new ParameterBuilder().addName("noargs").createGroup(0, 1);
     private static final AttributeType RESULTTYPE = new DefaultAttributeType(Collections.singletonMap("name", "value"), String.class, 1, 1, null);
 
     private final GenericName[] refs;

@@ -16,12 +16,9 @@
  */
 package org.geotoolkit.processing.vector.buffer;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.measure.unit.SI;
 import org.apache.sis.parameter.ParameterBuilder;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -29,7 +26,6 @@ import org.geotoolkit.processing.vector.VectorDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.IdentifiedObject;
 
 /**
  * Parameters description for Buffer process.
@@ -53,21 +49,21 @@ public final class BufferDescriptor extends VectorDescriptor {
     /**Process name : buffer */
     public static final String NAME = "buffer";
     
-    private static final Map DISTANCE_PROPERTIES = new HashMap();
-    static{
-        DISTANCE_PROPERTIES.put(IdentifiedObject.NAME_KEY, "distance_in");
-        DISTANCE_PROPERTIES.put(IdentifiedObject.REMARKS_KEY, "Input buffer distance in meters.");
-    }
     /**
      * Mandatory - Buffer distance in meters
      */
-    public static final ParameterDescriptor<Double> DISTANCE_IN = 
-            new DefaultParameterDescriptor(DISTANCE_PROPERTIES, Double.class, null, 1.0, null, null, SI.METRE, true);
+    public static final ParameterDescriptor<Double> DISTANCE_IN = new ParameterBuilder()
+            .addName("distance_in")
+            .setRemarks("Input buffer distance in meters.")
+            .setRequired(true)
+            .create(1.0,SI.METRE);
 
   
-    public static final ParameterDescriptor<Boolean> LENIENT_TRANSFORM_IN=
-            new DefaultParameterDescriptor("lenient_transform_in", "Input boolean to set accuracy CRS transformation",
-                                            Boolean.class, true, false);
+    public static final ParameterDescriptor<Boolean> LENIENT_TRANSFORM_IN = new ParameterBuilder()
+            .addName("lenient_transform_in")
+            .setRemarks("Input boolean to set accuracy CRS transformation")
+            .setRequired(false)
+            .create(Boolean.class, true);
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

@@ -18,7 +18,6 @@ package org.geotoolkit.processing.jts.area;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -41,8 +40,11 @@ public class AreaDescriptor extends AbstractProcessDescriptor {
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<Geometry> GEOM =
-            new DefaultParameterDescriptor("geom", "Geometry JTS", Geometry.class, null, true);
+    public static final ParameterDescriptor<Geometry> GEOM =new ParameterBuilder()
+            .addName("geom")
+            .setRemarks("Geometry JTS")
+            .setRequired(true)
+            .create(Geometry.class, null);
     
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(GEOM);
@@ -50,8 +52,11 @@ public class AreaDescriptor extends AbstractProcessDescriptor {
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Double> RESULT =
-            new DefaultParameterDescriptor("result", "Area result", Double.class, 0.0, true);
+    public static final ParameterDescriptor<Double> RESULT = new ParameterBuilder()
+            .addName("result")
+            .setRemarks("Area result")
+            .setRequired(true)
+            .create(Double.class, 0.0);
     
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT);

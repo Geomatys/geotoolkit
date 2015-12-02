@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -46,30 +45,38 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
     /**
      * Mandatory - Source points
      */
-    public static final ParameterDescriptor<DirectPosition[]> IN_POINTS =
-            new DefaultParameterDescriptor<DirectPosition[]>("points",
-            "points used to general the grid",DirectPosition[].class,null,true);
+    public static final ParameterDescriptor<DirectPosition[]> IN_POINTS = new ParameterBuilder()
+            .addName("points")
+            .setRemarks("points used to general the grid")
+            .setRequired(true)
+            .create(DirectPosition[].class,null);
     
     /**
      * Mandatory - stepping for line generation.
      * use 0 or negative to not generate them
      */
-    public static final ParameterDescriptor<Double> IN_STEP =
-            new DefaultParameterDescriptor<Double>("step",
-            "step for isolines",Double.class,0d,true);
+    public static final ParameterDescriptor<Double> IN_STEP = new ParameterBuilder()
+            .addName("step")
+            .setRemarks("step for isolines")
+            .setRequired(true)
+            .create(Double.class,0d);
     /**
      * Optional - maximum size of the image.
      */
-    public static final ParameterDescriptor<Dimension> IN_DIMENSION =
-            new DefaultParameterDescriptor<Dimension>("dimension",
-            "Result grid size",Dimension.class,null,false);
+    public static final ParameterDescriptor<Dimension> IN_DIMENSION = new ParameterBuilder()
+            .addName("dimension")
+            .setRemarks("Result grid size")
+            .setRequired(false)
+            .create(Dimension.class,null);
 
     /**
      * Mandatory - Coverage crs
      */
-    public static final ParameterDescriptor<CoordinateReferenceSystem> IN_CRS =
-            new DefaultParameterDescriptor<CoordinateReferenceSystem>("crs",
-            "CRS used for the output coverage",CoordinateReferenceSystem.class,null,true);
+    public static final ParameterDescriptor<CoordinateReferenceSystem> IN_CRS = new ParameterBuilder()
+            .addName("crs")
+            .setRemarks("CRS used for the output coverage")
+            .setRequired(true)
+            .create(CoordinateReferenceSystem.class,null);
 
 
     public static final ParameterDescriptorGroup INPUT_DESC =
@@ -79,16 +86,20 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
     /**
      * Output coverage.
      */
-    public static final ParameterDescriptor<GridCoverage2D> OUT_COVERAGE =
-            new DefaultParameterDescriptor<GridCoverage2D>("coverage",
-            "Coverage",GridCoverage2D.class,null,false);
+    public static final ParameterDescriptor<GridCoverage2D> OUT_COVERAGE = new ParameterBuilder()
+            .addName("coverage")
+            .setRemarks("Coverage")
+            .setRequired(false)
+            .create(GridCoverage2D.class,null);
     
     /**
      * Output lines.
      */
-    public static final ParameterDescriptor<FeatureCollection> OUT_LINES =
-            new DefaultParameterDescriptor<FeatureCollection>("lines",
-            "Isolines as a featureCollection",FeatureCollection.class,null,false);
+    public static final ParameterDescriptor<FeatureCollection> OUT_LINES = new ParameterBuilder()
+            .addName("lines")
+            .setRemarks("Isolines as a featureCollection")
+            .setRequired(false)
+            .create(FeatureCollection.class,null);
 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =

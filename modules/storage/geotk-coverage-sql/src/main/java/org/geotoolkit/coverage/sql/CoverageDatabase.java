@@ -50,7 +50,6 @@ import org.geotoolkit.util.DateRange;
 import org.apache.sis.measure.MeasurementRange;
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.NullArgumentException;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -120,7 +119,10 @@ public class CoverageDatabase implements Localized {
         final ParameterDescriptor<?>[] param = new ParameterDescriptor<?>[keys.length];
         for (int i=0; i<keys.length; i++) {
             final ConfigurationKey key = keys[i];
-            param[i] = new DefaultParameterDescriptor<>(key.key, null, String.class, key.defaultValue, false);
+            param[i] = new ParameterBuilder()
+                    .addName(key.key)
+                    .setRequired(false)
+                    .create(String.class, key.defaultValue);
         }
         PARAMETERS = new ParameterBuilder().addName("CoverageDatabase").createGroup(param);
     }

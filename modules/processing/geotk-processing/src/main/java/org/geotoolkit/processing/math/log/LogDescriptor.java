@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.math.log;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -40,8 +39,11 @@ public class LogDescriptor extends AbstractProcessDescriptor{
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<Double> FIRST_NUMBER =
-            new DefaultParameterDescriptor("first", "first number", Double.class, null, true);
+    public static final ParameterDescriptor<Double> FIRST_NUMBER = new ParameterBuilder()
+            .addName("first")
+            .setRemarks("first number")
+            .setRequired(true)
+            .create(Double.class, null);
     
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(FIRST_NUMBER);
@@ -49,8 +51,11 @@ public class LogDescriptor extends AbstractProcessDescriptor{
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Double> RESULT_NUMBER =
-            new DefaultParameterDescriptor("result", "Logarithm result", Double.class, null, true);
+    public static final ParameterDescriptor<Double> RESULT_NUMBER = new ParameterBuilder()
+            .addName("result")
+            .setRemarks("Logarithm result")
+            .setRequired(true)
+            .create(Double.class, null);
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_NUMBER);
 

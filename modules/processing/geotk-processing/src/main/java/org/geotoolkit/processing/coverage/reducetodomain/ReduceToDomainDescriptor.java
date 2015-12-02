@@ -18,7 +18,6 @@ package org.geotoolkit.processing.coverage.reducetodomain;
 
 import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -42,14 +41,20 @@ public class ReduceToDomainDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Coverage
      */
-    public static final ParameterDescriptor<Coverage> COVERAGE_IN =
-            new DefaultParameterDescriptor("coverage_in", "Input coverage ", Coverage.class, null, true);
+    public static final ParameterDescriptor<Coverage> COVERAGE_IN = new ParameterBuilder()
+            .addName("coverage_in")
+            .setRemarks("Input coverage ")
+            .setRequired(true)
+            .create(Coverage.class, null);
 
     /**
      * Mandatory - Coverage
      */
-    public static final ParameterDescriptor<Coverage> COVERAGE_OUT =
-            new DefaultParameterDescriptor("coverage_out", "Output coverage ", Coverage.class, null, true);
+    public static final ParameterDescriptor<Coverage> COVERAGE_OUT = new ParameterBuilder()
+            .addName("coverage_out")
+            .setRemarks("Output coverage ")
+            .setRequired(true)
+            .create(Coverage.class, null);
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

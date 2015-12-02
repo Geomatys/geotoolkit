@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.io.delete;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -52,9 +51,11 @@ public final class DeleteDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - path
      */
-    public static final ParameterDescriptor<Object> PATH_IN =
-            new DefaultParameterDescriptor("path", "The path(URI,URL,File,String) to object to delete", 
-            Object.class, null, true);
+    public static final ParameterDescriptor<Object> PATH_IN = new ParameterBuilder()
+            .addName("path")
+            .setRemarks("The path(URI,URL,File,String) to object to delete")
+            .setRequired(true)
+            .create(Object.class, null);
             
     /** 
      * Input Parameters 
@@ -65,9 +66,11 @@ public final class DeleteDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - deletion result
      */
-    public static final ParameterDescriptor<Boolean> RESULT_OUT =
-            new DefaultParameterDescriptor("result", "Success of the deletion", 
-            Boolean.class, null, true);
+    public static final ParameterDescriptor<Boolean> RESULT_OUT =new ParameterBuilder()
+            .addName("result")
+            .setRemarks("Success of the deletion")
+            .setRequired(true)
+            .create(Boolean.class, null);
     
     /** 
      * Output Parameters 

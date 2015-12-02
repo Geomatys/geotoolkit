@@ -63,8 +63,11 @@ public class NetCDFFeatureStoreFactory extends AbstractFeatureStoreFactory {
     /**
      * Parameter for database port
      */
-    public static final ParameterDescriptor<File> FILE_PATH =
-             new DefaultParameterDescriptor<>("url","url",File.class,null, true);
+    public static final ParameterDescriptor<File> FILE_PATH = new ParameterBuilder()
+            .addName("url")
+            .setRemarks("url")
+            .setRequired(true)
+            .create(File.class, null);
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =

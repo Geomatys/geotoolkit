@@ -18,7 +18,6 @@ package org.geotoolkit.processing.io.unpackfile;
 
 import java.net.URL;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -54,16 +53,20 @@ public final class UnpackFileDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - path
      */
-    public static final ParameterDescriptor<Object> SOURCE_IN =
-            new DefaultParameterDescriptor("source", "url,uri,file to read from", 
-            Object.class, null, true);
+    public static final ParameterDescriptor<Object> SOURCE_IN =new ParameterBuilder()
+            .addName("source")
+            .setRemarks("url,uri,file to read from")
+            .setRequired(true)
+            .create(Object.class, null);
     
     /**
      * Mandatory - path
      */
-    public static final ParameterDescriptor<Object> TARGET_IN =
-            new DefaultParameterDescriptor("target", "url,uri,file destination", 
-            Object.class, null, true);
+    public static final ParameterDescriptor<Object> TARGET_IN =new ParameterBuilder()
+            .addName("target")
+            .setRemarks("url,uri,file destination")
+            .setRequired(true)
+            .create(Object.class, null);
             
     /** 
      * Input Parameters 
@@ -74,9 +77,11 @@ public final class UnpackFileDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - result files
      */
-    public static final ParameterDescriptor<URL[]> RESULT_OUT =
-            new DefaultParameterDescriptor("files", "unpacked files", 
-            URL[].class, null, true);
+    public static final ParameterDescriptor<URL[]> RESULT_OUT =new ParameterBuilder()
+            .addName("files")
+            .setRemarks("unpacked files")
+            .setRequired(true)
+            .create(URL[].class, null);
     
     /** 
      * Output Parameters 

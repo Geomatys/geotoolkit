@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.vector.maxlimit;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -49,8 +48,11 @@ public final class MaxLimitDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Number maximum of Feature
      */
-    public static final ParameterDescriptor<Integer> MAX_IN =
-            new DefaultParameterDescriptor("max_in", "Number maximum of Feature", Integer.class, null, true);
+    public static final ParameterDescriptor<Integer> MAX_IN = new ParameterBuilder()
+            .addName("max_in")
+            .setRemarks("Number maximum of Feature")
+            .setRequired(true)
+            .create(Integer.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

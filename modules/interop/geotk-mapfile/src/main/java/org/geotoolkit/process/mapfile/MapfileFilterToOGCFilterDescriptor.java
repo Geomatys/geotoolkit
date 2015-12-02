@@ -17,7 +17,6 @@
 package org.geotoolkit.process.mapfile;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -40,10 +39,16 @@ public class MapfileFilterToOGCFilterDescriptor extends AbstractProcessDescripto
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<String> IN_TEXT =
-            new DefaultParameterDescriptor("text", "mapfile expression", String.class, null, true);
-    public static final ParameterDescriptor<Expression> IN_REFERENCE =
-            new DefaultParameterDescriptor("reference", "Expression might be linked to another value.", Expression.class, null, false);
+    public static final ParameterDescriptor<String> IN_TEXT = new ParameterBuilder()
+            .addName("text")
+            .setRemarks("mapfile expression")
+            .setRequired(true)
+            .create(String.class, null);
+    public static final ParameterDescriptor<Expression> IN_REFERENCE = new ParameterBuilder()
+            .addName("reference")
+            .setRemarks("Expression might be linked to another value.")
+            .setRequired(false)
+            .create(Expression.class, null);
   
     public static final ParameterDescriptorGroup INPUT_DESC =
             new ParameterBuilder().addName("InputParameters").createGroup(IN_TEXT,IN_REFERENCE);
@@ -51,8 +56,12 @@ public class MapfileFilterToOGCFilterDescriptor extends AbstractProcessDescripto
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Object> OUT_OGC =
-            new DefaultParameterDescriptor("expression", "Result OGC filter or expression", Object.class, null, false);
+    public static final ParameterDescriptor<Object> OUT_OGC = new ParameterBuilder()
+            .addName("expression")
+            .setRemarks("Result OGC filter or expression")
+            .setRequired(false)
+            .create(Object.class, null);
+    
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new ParameterBuilder().addName("OutputParameters").createGroup(OUT_OGC);
 

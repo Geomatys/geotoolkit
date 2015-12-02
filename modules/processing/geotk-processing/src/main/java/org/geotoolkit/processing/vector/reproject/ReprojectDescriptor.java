@@ -17,7 +17,6 @@
 package org.geotoolkit.processing.vector.reproject;
 
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -50,8 +49,11 @@ public final class ReprojectDescriptor extends VectorDescriptor {
     /**
      * Mandatory - New CoordinateReferenceSystem
      */
-    public static final ParameterDescriptor<CoordinateReferenceSystem> CRS_IN =
-            new DefaultParameterDescriptor("crs_in", "The target CRS", CoordinateReferenceSystem.class, null, true);
+    public static final ParameterDescriptor<CoordinateReferenceSystem> CRS_IN = new ParameterBuilder()
+            .addName("crs_in")
+            .setRemarks("The target CRS")
+            .setRequired(true)
+            .create(CoordinateReferenceSystem.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

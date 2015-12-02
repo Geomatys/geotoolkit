@@ -19,7 +19,6 @@ package org.geotoolkit.processing.vector.differencegeometry;
 import com.vividsolutions.jts.geom.Geometry;
 import org.apache.sis.parameter.ParameterBuilder;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
@@ -51,8 +50,11 @@ public final class DifferenceGeometryDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Difference Geometry
      */
-    public static final ParameterDescriptor<Geometry> DIFF_GEOMETRY_IN=
-            new DefaultParameterDescriptor("diff_geometry_in", "Inpute clip geometry", Geometry.class, null, true);
+    public static final ParameterDescriptor<Geometry> DIFF_GEOMETRY_IN =new ParameterBuilder()
+            .addName("diff_geometry_in")
+            .setRemarks("Inpute clip geometry")
+            .setRequired(true)
+            .create(Geometry.class, null);
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
