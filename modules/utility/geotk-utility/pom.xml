@@ -95,6 +95,7 @@
       <artifactId>geoapi-pending</artifactId>
     </dependency>
     
+    <!-- TEST DEPENDENCIES--> 
     <dependency>
       <groupId>javax.media</groupId>
       <artifactId>jai_core</artifactId>
@@ -108,6 +109,11 @@
     <dependency>
       <groupId>javax.media</groupId>
       <artifactId>jai_imageio</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -1,0 +1,35 @@
+/* 
+    Created on : 3 déc. 2015, 14:20:18
+    Author     : Alexis Manin (Geomatys)
+*/
+table {
+    width: 100%;    
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black;
+}
+
+tr:nth-child(even) {
+    background-color: #eee;
+}
+
+th {
+    background-color: aliceblue;
+}
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    color: teal;
+}
+
+h3 {
+    color: seagreen;
+}
+
+
