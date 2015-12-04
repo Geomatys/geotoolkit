@@ -35,8 +35,7 @@ import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.apache.sis.storage.DataStoreException;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -71,54 +70,76 @@ public class SOSDatabaseFeatureStoreFactory extends AbstractFeatureStoreFactory 
     /**
      * Parameter for database port
      */
-    public static final ParameterDescriptor<Integer> PORT =
-             new DefaultParameterDescriptor<>("port","Port",Integer.class,5432, false);
+    public static final ParameterDescriptor<Integer> PORT = new ParameterBuilder()
+            .addName("port")
+            .setRemarks("Port")
+            .setRequired(false)
+            .create(Integer.class,5432);
 
     /**
      * Parameter identifying the OM datastore
      */
-    public static final ParameterDescriptor<String> DBTYPE =
-             new DefaultParameterDescriptor<>("dbtype","DbType",String.class, "OM", true);
+    public static final ParameterDescriptor<String> DBTYPE = new ParameterBuilder()
+            .addName("dbtype")
+            .setRemarks("DbType")
+            .setRequired(true)
+            .create(String.class, "OM");
 
     /**
      * Parameter for database type (postgres, derby, ...)
      */
-    public static final ParameterDescriptor<String> SGBDTYPE =
-             new DefaultParameterDescriptor<>(Collections.singletonMap("name", "sgbdtype"),
-            String.class, new String[]{"derby","postgres"},null,null,null,null,true);
+    public static final ParameterDescriptor<String> SGBDTYPE = new ParameterBuilder()
+            .addName("sgbdtype")
+            .setRequired(true)
+            .createEnumerated(String.class, new String[]{"derby","postgres"},null);
 
     /**
      * Parameter for database url for derby database
      */
-    public static final ParameterDescriptor<String> DERBYURL =
-             new DefaultParameterDescriptor<>("derbyurl","DerbyURL",String.class, null,false);
+    public static final ParameterDescriptor<String> DERBYURL = new ParameterBuilder()
+            .addName("derbyurl")
+            .setRemarks("DerbyURL")
+            .setRequired(false)
+            .create(String.class, null);
 
     /**
      * Parameter for database host
      */
-    public static final ParameterDescriptor<String> HOST =
-             new DefaultParameterDescriptor<>("host","Host", String.class, "localhost",false);
+    public static final ParameterDescriptor<String> HOST = new ParameterBuilder()
+            .addName("host")
+            .setRemarks("Host")
+            .setRequired(false)
+            .create(String.class, "localhost");
 
     /**
      * Parameter for database name
      */
-    public static final ParameterDescriptor<String> DATABASE =
-             new DefaultParameterDescriptor<>("database","Database", String.class, null, false);
+    public static final ParameterDescriptor<String> DATABASE = new ParameterBuilder()
+            .addName("database")
+            .setRemarks("Database")
+            .setRequired(false)
+            .create(String.class, null);
 
     /**
      * Parameter for database user name
      */
-    public static final ParameterDescriptor<String> USER =
-             new DefaultParameterDescriptor<>("user","User", String.class, null,false);
+    public static final ParameterDescriptor<String> USER = new ParameterBuilder()
+            .addName("user")
+            .setRemarks("User")
+            .setRequired(false)
+            .create(String.class, null);
 
     /**
      * Parameter for database user password
      */
-    public static final ParameterDescriptor<String> PASSWD =
-             new DefaultParameterDescriptor<>("password","Password", String.class, null, false);
+    public static final ParameterDescriptor<String> PASSWD = new ParameterBuilder()
+            .addName("password")
+            .setRemarks("Password")
+            .setRequired(false)
+            .create(String.class, null);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("SOSDBParameters",
+            new ParameterBuilder().addName("SOSDBParameters").createGroup(
                 IDENTIFIER,DBTYPE,HOST,PORT,DATABASE,USER,PASSWD,NAMESPACE, SGBDTYPE, DERBYURL);
 
     @Override

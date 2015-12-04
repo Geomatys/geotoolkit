@@ -17,14 +17,12 @@
 package org.geotoolkit.processing.io.unpackfile;
 
 import java.net.URL;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.io.IOProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -55,36 +53,41 @@ public final class UnpackFileDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - path
      */
-    public static final ParameterDescriptor<Object> SOURCE_IN =
-            new DefaultParameterDescriptor("source", "url,uri,file to read from", 
-            Object.class, null, true);
+    public static final ParameterDescriptor<Object> SOURCE_IN =new ParameterBuilder()
+            .addName("source")
+            .setRemarks("url,uri,file to read from")
+            .setRequired(true)
+            .create(Object.class, null);
     
     /**
      * Mandatory - path
      */
-    public static final ParameterDescriptor<Object> TARGET_IN =
-            new DefaultParameterDescriptor("target", "url,uri,file destination", 
-            Object.class, null, true);
+    public static final ParameterDescriptor<Object> TARGET_IN =new ParameterBuilder()
+            .addName("target")
+            .setRemarks("url,uri,file destination")
+            .setRequired(true)
+            .create(Object.class, null);
             
     /** 
      * Input Parameters 
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{SOURCE_IN,TARGET_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(SOURCE_IN,TARGET_IN);
 
     /**
      * Mandatory - result files
      */
-    public static final ParameterDescriptor<URL[]> RESULT_OUT =
-            new DefaultParameterDescriptor("files", "unpacked files", 
-            URL[].class, null, true);
+    public static final ParameterDescriptor<URL[]> RESULT_OUT =new ParameterBuilder()
+            .addName("files")
+            .setRemarks("unpacked files")
+            .setRequired(true)
+            .create(URL[].class, null);
     
     /** 
      * Output Parameters 
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",RESULT_OUT);
+            new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_OUT);
     
     public static final ProcessDescriptor INSTANCE = new UnpackFileDescriptor();
 

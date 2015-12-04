@@ -16,15 +16,13 @@
  */
 package org.geotoolkit.processing.metadata.merge;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.metadata.MetadataProcessingRegistry;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.opengis.metadata.Metadata;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -56,38 +54,43 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
      * Mandatory - first metadata
      */
     public static final String FIRST_IN_NAME = "first";
-    public static final ParameterDescriptor<Metadata> FIRST_IN =
-            new DefaultParameterDescriptor(FIRST_IN_NAME, "First metadata file",
-            Metadata.class, null, true);
+    public static final ParameterDescriptor<Metadata> FIRST_IN = new ParameterBuilder()
+            .addName(FIRST_IN_NAME)
+            .setRemarks("First metadata file")
+            .setRequired(true)
+            .create(Metadata.class, null);
 
     /**
      * Mandatory - second metadata
      */
     public static final String SECOND_IN_NAME = "second";
-    public static final ParameterDescriptor<Metadata> SECOND_IN =
-            new DefaultParameterDescriptor(SECOND_IN_NAME, "Second metadata file",
-            Metadata.class, null, true);
+    public static final ParameterDescriptor<Metadata> SECOND_IN = new ParameterBuilder()
+            .addName(SECOND_IN_NAME)
+            .setRemarks("Second metadata file")
+            .setRequired(true)
+            .create(Metadata.class, null);
 
     /**
      * Input Parameters
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FIRST_IN, SECOND_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(FIRST_IN, SECOND_IN);
 
     /**
      * Mandatory - merged metadata
      */
     public static final String RESULT_OUT_NAME = "result";
-    public static final ParameterDescriptor<Metadata> RESULT_OUT =
-            new DefaultParameterDescriptor(RESULT_OUT_NAME, "Merged metadata",
-            Metadata.class, null, true);
+    public static final ParameterDescriptor<Metadata> RESULT_OUT = new ParameterBuilder()
+            .addName(RESULT_OUT_NAME)
+            .setRemarks("Merged metadata")
+            .setRequired(true)
+            .create(Metadata.class, null);
     
     /** 
      * Output Parameters 
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",RESULT_OUT);
+            new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_OUT);
     
     public static final ProcessDescriptor INSTANCE = new MergeDescriptor();
 

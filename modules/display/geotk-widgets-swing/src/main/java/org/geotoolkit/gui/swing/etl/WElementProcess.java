@@ -29,7 +29,7 @@ import javax.swing.JPopupMenu;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -101,8 +101,8 @@ public class WElementProcess extends Widget implements WPositionable {
                     pdesc.getCode(),
                     identification,
                     new SimpleInternationalString("missing"),
-                    new DefaultParameterDescriptorGroup("input"),
-                    new DefaultParameterDescriptorGroup("output")) {
+                    new ParameterBuilder().addName("input").createGroup(),
+                    new ParameterBuilder().addName("output").createGroup()) {
                 @Override
                 public Process createProcess(ParameterValueGroup input) {
                     throw new UnsupportedOperationException("Not supported.");

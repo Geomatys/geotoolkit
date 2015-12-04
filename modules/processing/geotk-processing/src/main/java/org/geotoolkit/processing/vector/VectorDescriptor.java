@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.processing.vector;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -42,13 +42,19 @@ public abstract class VectorDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Feature Collection
      */
-    public static final ParameterDescriptor<FeatureCollection> FEATURE_IN =
-            new DefaultParameterDescriptor("feature_in", "Input FeatureCollection", FeatureCollection.class, null, true);
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_IN = new ParameterBuilder()
+            .addName("feature_in")
+            .setRemarks("Input FeatureCollection")
+            .setRequired(true)
+            .create(FeatureCollection.class, null);
     /**
      * Mandatory - Resulting Feature Collection
      */
-    public static final ParameterDescriptor<FeatureCollection> FEATURE_OUT =
-            new DefaultParameterDescriptor("feature_out", "Output FeatureFeatureCollection", FeatureCollection.class, null, true);
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_OUT = new ParameterBuilder()
+            .addName("feature_out")
+            .setRemarks("Output FeatureFeatureCollection")
+            .setRequired(true)
+            .create(FeatureCollection.class, null);
 
     /**
      * Default constructor

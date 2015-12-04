@@ -9,8 +9,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
@@ -35,13 +34,14 @@ public class FishDatastoreFactory extends AbstractFileFeatureStoreFactory{
         IDENTIFICATION.setCitation(citation);
     }
     
-    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
-                    AbstractFeatureStoreFactory.IDENTIFIER.getName().getCode(),
-                    AbstractFeatureStoreFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = new ParameterBuilder()
+            .addName(AbstractFeatureStoreFactory.IDENTIFIER.getName().getCode())
+            .setRemarks(AbstractFeatureStoreFactory.IDENTIFIER.getRemarks())
+            .setRequired(true)
+            .create(String.class, NAME);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("FishParameters",
-                IDENTIFIER,URLP,NAMESPACE);
+            new ParameterBuilder().addName("FishParameters").createGroup(IDENTIFIER,URLP,NAMESPACE);
 
     @Override
     public Identification getIdentification() {

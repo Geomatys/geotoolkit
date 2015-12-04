@@ -16,11 +16,8 @@
  */
 package org.geotoolkit.processing.coverage.merge;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -31,7 +28,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.IdentifiedObject;
 
 /**
  *  
@@ -45,58 +41,49 @@ public class MergeDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Coverages to merge
      */
-    public static final ParameterDescriptor<Coverage[]> IN_COVERAGES;
+    public static final ParameterDescriptor<Coverage[]> IN_COVERAGES = new ParameterBuilder()
+            .addName("coverages")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inCoverages))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inCoveragesDesc))
+            .setRequired(true)
+            .create(Coverage[].class, null);
     
     /**
      * Mandatory - output coverage envelope
      */
-    public static final ParameterDescriptor<Envelope> IN_ENVELOPE;
+    public static final ParameterDescriptor<Envelope> IN_ENVELOPE = new ParameterBuilder()
+            .addName("envelope")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inEnvelope))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inEnvelopeDesc))
+            .setRequired(true)
+            .create(Envelope.class, null);
     
     /**
      * Mandatory - output coverage resolution
      */
-    public static final ParameterDescriptor<Double> IN_RESOLUTION;
+    public static final ParameterDescriptor<Double> IN_RESOLUTION = new ParameterBuilder()
+            .addName("resolution")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inResolution))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inResolutionDesc))
+            .setRequired(true)
+            .create(Double.class, null);
 
-    public static final ParameterDescriptorGroup INPUT_DESC;
+    public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
+            .addName(NAME + "InputParameters").createGroup(IN_COVERAGES, IN_ENVELOPE, IN_RESOLUTION);
     
     /**
      * Mandatory - Resulting coverage.
      */
-    public static final ParameterDescriptor<Coverage> OUT_COVERAGE;
+    public static final ParameterDescriptor<Coverage> OUT_COVERAGE = new ParameterBuilder()
+            .addName("result")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_outCoverage))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_outCoverageDesc))
+            .setRequired(true)
+            .create(Coverage.class, null);
 
-    public static final ParameterDescriptorGroup OUTPUT_DESC;
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
+            .addName(NAME + "OutputParameters").createGroup(OUT_COVERAGE);
     
-    static {
-        Map<String, Object> propertiesInCov = new HashMap<String, Object>();
-        propertiesInCov.put(IdentifiedObject.NAME_KEY,        "coverages");
-        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inCoverages));
-        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inCoveragesDesc));
-        IN_COVERAGES = new DefaultParameterDescriptor<Coverage[]>(propertiesInCov, Coverage[].class, null, null, null, null, null, true);
-        
-        Map<String, Object> propertiesInEnv = new HashMap<String, Object>();
-        propertiesInEnv.put(IdentifiedObject.NAME_KEY,        "envelope");
-        propertiesInEnv.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inEnvelope));
-        propertiesInEnv.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inEnvelopeDesc));
-        IN_ENVELOPE = new DefaultParameterDescriptor<Envelope>(propertiesInEnv, Envelope.class, null, null, null, null, null, true);
-
-        Map<String, Object> propertiesInResolution = new HashMap<String, Object>();
-        propertiesInResolution.put(IdentifiedObject.NAME_KEY,        "resolution");
-        propertiesInResolution.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inResolution));
-        propertiesInResolution.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_inResolutionDesc));
-        IN_RESOLUTION = new DefaultParameterDescriptor<Double>(propertiesInResolution, Double.class, null, null, null, null, null, true);
-
-        
-        INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_COVERAGES, IN_ENVELOPE, IN_RESOLUTION);
-
-        Map<String, Object> propertiesOutCov = new HashMap<String, Object>();
-        propertiesOutCov.put(IdentifiedObject.NAME_KEY,        "result");
-        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_outCoverage));
-        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_merge_outCoverageDesc));
-        OUT_COVERAGE = new DefaultParameterDescriptor<Coverage>(propertiesOutCov, Coverage.class, null, null, null, null, null, true);
-
-        OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_COVERAGE);
-    }
-
     public static final ProcessDescriptor INSTANCE = new MergeDescriptor();
 
     private MergeDescriptor() {

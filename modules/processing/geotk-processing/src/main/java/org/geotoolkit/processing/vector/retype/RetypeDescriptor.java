@@ -16,14 +16,12 @@
  */
 package org.geotoolkit.processing.vector.retype;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 
 import org.geotoolkit.feature.type.FeatureType;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -51,18 +49,19 @@ public final class RetypeDescriptor extends VectorDescriptor {
     /**
      * Mandatory - FeatureType used to as a mask to retype the FeatureCollection
      */
-    public static final ParameterDescriptor<FeatureType> MASK_IN =
-            new DefaultParameterDescriptor("mask_in", "FeatureType used to as a mask to retype the FeatureCollection", FeatureType.class, null, true);
+    public static final ParameterDescriptor<FeatureType> MASK_IN = new ParameterBuilder()
+            .addName("mask_in")
+            .setRemarks("FeatureType used to as a mask to retype the FeatureCollection")
+            .setRequired(true)
+            .create(FeatureType.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, MASK_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, MASK_IN);
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
     
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new RetypeDescriptor();

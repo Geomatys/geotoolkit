@@ -17,15 +17,13 @@
 
 package org.geotoolkit.processing.coverage.shadedrelief;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.ProcessBundle;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -46,41 +44,51 @@ public class ShadedReliefDescriptor extends AbstractProcessDescriptor {
      */
     public static final String IN_COVERAGE_PARAM_NAME = "inCoverage";
     public static final InternationalString IN_COVERAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_shadedrelief_inCoverage);
-    public static final ParameterDescriptor<GridCoverage2D> COVERAGE =
-            new DefaultParameterDescriptor(IN_COVERAGE_PARAM_NAME, IN_COVERAGE_PARAM_REMARKS, GridCoverage2D.class, null, true);
+    public static final ParameterDescriptor<GridCoverage2D> COVERAGE = new ParameterBuilder()
+            .addName(IN_COVERAGE_PARAM_NAME)
+            .setRemarks(IN_COVERAGE_PARAM_REMARKS)
+            .setRequired(true)
+            .create(GridCoverage2D.class, null);
     
     /*
      * Coverage elevation
      */
     public static final String IN_ELEVATION_PARAM_NAME = "inElevation";
     public static final InternationalString IN_ELEVATION_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_shadedrelief_inElevation);
-    public static final ParameterDescriptor<GridCoverage2D> ELEVATION =
-            new DefaultParameterDescriptor(IN_ELEVATION_PARAM_NAME, IN_ELEVATION_PARAM_REMARKS, GridCoverage2D.class, null, true);
+    public static final ParameterDescriptor<GridCoverage2D> ELEVATION = new ParameterBuilder()
+            .addName(IN_ELEVATION_PARAM_NAME)
+            .setRemarks(IN_ELEVATION_PARAM_REMARKS)
+            .setRequired(true)
+            .create(GridCoverage2D.class, null);
     
     /*
      * Coverage elevation value to meters
      */
     public static final String IN_ELECONV_PARAM_NAME = "inEleEnv";
     public static final InternationalString IN_ELECONV_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_shadedrelief_inElevation);
-    public static final ParameterDescriptor<MathTransform1D> ELECONV =
-            new DefaultParameterDescriptor(IN_ELECONV_PARAM_NAME, IN_ELECONV_PARAM_REMARKS, MathTransform1D.class, null, true);
+    public static final ParameterDescriptor<MathTransform1D> ELECONV = new ParameterBuilder()
+            .addName(IN_ELECONV_PARAM_NAME)
+            .setRemarks(IN_ELECONV_PARAM_REMARKS)
+            .setRequired(true)
+            .create(MathTransform1D.class, null);
 
      /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{COVERAGE, ELEVATION, ELECONV});
+            new ParameterBuilder().addName("InputParameters").createGroup(COVERAGE, ELEVATION, ELECONV);
 
     /*
      * Coverage result
      */
     public static final String OUT_COVERAGE_PARAM_NAME = "outCoverage";
     public static final InternationalString OUT_COVERAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_shadedrelief_outCoverage);
-    public static final ParameterDescriptor<GridCoverage2D> OUTCOVERAGE =
-            new DefaultParameterDescriptor(OUT_COVERAGE_PARAM_NAME, OUT_COVERAGE_PARAM_REMARKS, GridCoverage2D.class, null, true);
+    public static final ParameterDescriptor<GridCoverage2D> OUTCOVERAGE = new ParameterBuilder()
+            .addName(OUT_COVERAGE_PARAM_NAME)
+            .setRemarks(OUT_COVERAGE_PARAM_REMARKS)
+            .setRequired(true)
+            .create(GridCoverage2D.class, null);
 
     /**Output parameters */
-    public static final ParameterDescriptorGroup OUTPUT_DESC = new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{OUTCOVERAGE});
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder().addName("OutputParameters").createGroup(OUTCOVERAGE);
 
 
     public static final ProcessDescriptor INSTANCE = new ShadedReliefDescriptor();

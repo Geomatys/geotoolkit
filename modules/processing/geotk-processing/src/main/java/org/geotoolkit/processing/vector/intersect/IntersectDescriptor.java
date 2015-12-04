@@ -17,13 +17,11 @@
 package org.geotoolkit.processing.vector.intersect;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -51,18 +49,19 @@ public final class IntersectDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Intersection geometry
      */
-    public static final ParameterDescriptor<Geometry> GEOMETRY_IN =
-            new DefaultParameterDescriptor("geometry_in", "Input geometry used to compute the intersection", Geometry.class, null, true);
+    public static final ParameterDescriptor<Geometry> GEOMETRY_IN = new ParameterBuilder()
+            .addName("geometry_in")
+            .setRemarks("Input geometry used to compute the intersection")
+            .setRequired(true)
+            .create(Geometry.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, GEOMETRY_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, GEOMETRY_IN);
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
     
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new IntersectDescriptor();

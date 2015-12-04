@@ -16,13 +16,11 @@
  */
 package org.geotoolkit.processing.vector.reproject;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -51,18 +49,19 @@ public final class ReprojectDescriptor extends VectorDescriptor {
     /**
      * Mandatory - New CoordinateReferenceSystem
      */
-    public static final ParameterDescriptor<CoordinateReferenceSystem> CRS_IN =
-            new DefaultParameterDescriptor("crs_in", "The target CRS", CoordinateReferenceSystem.class, null, true);
+    public static final ParameterDescriptor<CoordinateReferenceSystem> CRS_IN = new ParameterBuilder()
+            .addName("crs_in")
+            .setRemarks("The target CRS")
+            .setRequired(true)
+            .create(CoordinateReferenceSystem.class, null);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, CRS_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, CRS_IN);
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
     
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new ReprojectDescriptor();

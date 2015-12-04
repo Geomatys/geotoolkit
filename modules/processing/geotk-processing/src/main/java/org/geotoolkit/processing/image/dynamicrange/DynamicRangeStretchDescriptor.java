@@ -17,11 +17,8 @@
 package org.geotoolkit.processing.image.dynamicrange;
 
 import java.awt.image.RenderedImage;
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.ProcessBundle;
@@ -29,7 +26,6 @@ import org.geotoolkit.processing.image.ImageProcessingRegistry;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.IdentifiedObject;
 
 /**
  * Color Stretch is a process which calculates color components for each band.
@@ -47,55 +43,47 @@ public class DynamicRangeStretchDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - image.
      */
-    public static final ParameterDescriptor<RenderedImage> IN_IMAGE;
+    public static final ParameterDescriptor<RenderedImage> IN_IMAGE = new ParameterBuilder()
+            .addName("image")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inImage))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inImageDesc))
+            .setRequired(true)
+            .create(RenderedImage.class, null);
     /**
      * Mandatory - bands to select.
      */
-    public static final ParameterDescriptor<int[]> IN_BANDS;
+    public static final ParameterDescriptor<int[]> IN_BANDS = new ParameterBuilder()
+            .addName("bands")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inBands))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inBandsDesc))
+            .setRequired(true)
+            .create(int[].class, null);
     /**
      * Mandatory - bands range for colors.
      */
-    public static final ParameterDescriptor<double[][]> IN_RANGES;
+    public static final ParameterDescriptor<double[][]> IN_RANGES = new ParameterBuilder()
+            .addName("ranges")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inRanges))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inRangesDesc))
+            .setRequired(true)
+            .create(double[][].class, null);
     
-    public static final ParameterDescriptorGroup INPUT_DESC;
+    public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
+            .addName(NAME + "InputParameters").createGroup(IN_IMAGE, IN_BANDS, IN_RANGES);
     
     /**
      * Mandatory - Resulting image.
      */
-    public static final ParameterDescriptor<RenderedImage> OUT_IMAGE;
+    public static final ParameterDescriptor<RenderedImage> OUT_IMAGE = new ParameterBuilder()
+            .addName("result")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_outImage))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_outImageDesc))
+            .setRequired(true)
+            .create(RenderedImage.class, null);
 
-    public static final ParameterDescriptorGroup OUTPUT_DESC;
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
+            .addName(NAME + "OutputParameters").createGroup(OUT_IMAGE);
     
-    static {
-        Map<String, Object> propertiesInCov = new HashMap<String, Object>();
-        propertiesInCov.put(IdentifiedObject.NAME_KEY,        "image");
-        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inImage));
-        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inImageDesc));
-        IN_IMAGE = new DefaultParameterDescriptor<RenderedImage>(propertiesInCov, RenderedImage.class, null, null, null, null, null, true);
-        
-        Map<String, Object> propertiesInBands = new HashMap<String, Object>();
-        propertiesInBands.put(IdentifiedObject.NAME_KEY,        "bands");
-        propertiesInBands.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inBands));
-        propertiesInBands.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inBandsDesc));
-        IN_BANDS = new DefaultParameterDescriptor<int[]>(propertiesInBands, int[].class, null, null, null, null, null, true);
-        
-        Map<String, Object> propertiesInRanges = new HashMap<String, Object>();
-        propertiesInRanges.put(IdentifiedObject.NAME_KEY,        "ranges");
-        propertiesInRanges.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inRanges));
-        propertiesInRanges.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_inRangesDesc));
-        IN_RANGES = new DefaultParameterDescriptor<double[][]>(propertiesInRanges, double[][].class, null, null, null, null, null, true);
-        
-        INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_IMAGE, IN_BANDS, IN_RANGES);
-
-        Map<String, Object> propertiesOutCov = new HashMap<String, Object>();
-        propertiesOutCov.put(IdentifiedObject.NAME_KEY,        "result");
-        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_outImage));
-        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_colorstretch_outImageDesc));
-        OUT_IMAGE = new DefaultParameterDescriptor<RenderedImage>(propertiesOutCov, RenderedImage.class, null, null, null, null, null, true);
-
-        OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_IMAGE);
-    }
-
     public static final ProcessDescriptor INSTANCE = new DynamicRangeStretchDescriptor();
 
     private DynamicRangeStretchDescriptor() {

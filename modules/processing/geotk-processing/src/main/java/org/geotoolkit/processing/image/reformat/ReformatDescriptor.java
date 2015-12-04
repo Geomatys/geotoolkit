@@ -17,10 +17,7 @@
 package org.geotoolkit.processing.image.reformat;
 
 import java.awt.image.RenderedImage;
-import java.util.HashMap;
-import java.util.Map;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -30,7 +27,6 @@ import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.IdentifiedObject;
 
 /**
  *  
@@ -45,46 +41,39 @@ public class ReformatDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Image to reformat.
      */
-    public static final ParameterDescriptor<RenderedImage> IN_IMAGE;
+    public static final ParameterDescriptor<RenderedImage> IN_IMAGE = new ParameterBuilder()
+            .addName("image")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.image_reformat_inImage))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.image_reformat_inImageDesc))
+            .setRequired(true)
+            .create(RenderedImage.class, null);
     
     /**
      * Mandatory - new data type
      */
-    public static final ParameterDescriptor<Integer> IN_DATATYPE;
+    public static final ParameterDescriptor<Integer> IN_DATATYPE = new ParameterBuilder()
+            .addName("datatype")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.image_reformat_inType))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.image_reformat_inTypeDesc))
+            .setRequired(true)
+            .create(Integer.class, null);
 
-    public static final ParameterDescriptorGroup INPUT_DESC;
+    public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
+            .addName(NAME + "InputParameters").createGroup(IN_IMAGE, IN_DATATYPE);
     
     /**
      * Mandatory - Resulting image.
      */
-    public static final ParameterDescriptor<RenderedImage> OUT_IMAGE;
+    public static final ParameterDescriptor<RenderedImage> OUT_IMAGE = new ParameterBuilder()
+            .addName("result")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.image_reformat_outImage))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.image_reformat_outImageDesc))
+            .setRequired(true)
+            .create(RenderedImage.class, null);
 
-    public static final ParameterDescriptorGroup OUTPUT_DESC;
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
+            .addName(NAME + "OutputParameters").createGroup(OUT_IMAGE);
     
-    static {
-        Map<String, Object> propertiesInCov = new HashMap<String, Object>();
-        propertiesInCov.put(IdentifiedObject.NAME_KEY,        "image");
-        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_reformat_inImage));
-        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_reformat_inImageDesc));
-        IN_IMAGE = new DefaultParameterDescriptor<RenderedImage>(propertiesInCov, RenderedImage.class, null, null, null, null, null, true);
-        
-        Map<String, Object> propertiesInType = new HashMap<String, Object>();
-        propertiesInType.put(IdentifiedObject.NAME_KEY,        "datatype");
-        propertiesInType.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_reformat_inType));
-        propertiesInType.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_reformat_inTypeDesc));
-        IN_DATATYPE = new DefaultParameterDescriptor<Integer>(propertiesInType, Integer.class, null, null, null, null, null, true);
-
-        INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_IMAGE, IN_DATATYPE);
-
-        Map<String, Object> propertiesOutCov = new HashMap<String, Object>();
-        propertiesOutCov.put(IdentifiedObject.NAME_KEY,        "result");
-        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_reformat_outImage));
-        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_reformat_outImageDesc));
-        OUT_IMAGE = new DefaultParameterDescriptor<RenderedImage>(propertiesOutCov, RenderedImage.class, null, null, null, null, null, true);
-
-        OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_IMAGE);
-    }
-
     public static final ProcessDescriptor INSTANCE = new ReformatDescriptor();
 
     private ReformatDescriptor() {

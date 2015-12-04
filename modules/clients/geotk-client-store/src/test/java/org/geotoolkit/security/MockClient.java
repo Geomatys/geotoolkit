@@ -19,10 +19,10 @@ package org.geotoolkit.security;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.client.AbstractClient;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.ClientFactory;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.apache.sis.util.logging.Logging;
@@ -36,7 +36,7 @@ public class MockClient extends AbstractClient{
 
     private static final ParameterValueGroup PARAM;
     static {
-        final ParameterDescriptorGroup desc = new DefaultParameterDescriptorGroup("mock",
+        final ParameterDescriptorGroup desc = new ParameterBuilder().addName("mock").createGroup(
                 AbstractClientFactory.URL,AbstractClientFactory.SECURITY);
         PARAM = desc.createValue();
         try {

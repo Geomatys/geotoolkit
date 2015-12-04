@@ -17,10 +17,7 @@
 package org.geotoolkit.processing.image.bandcombine;
 
 import java.awt.image.RenderedImage;
-import java.util.HashMap;
-import java.util.Map;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
@@ -30,7 +27,6 @@ import org.geotoolkit.processing.ProcessBundle;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.IdentifiedObject;
 
 /**
  *
@@ -43,35 +39,29 @@ public class BandCombineDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - Images to combine
      */
-    public static final ParameterDescriptor<RenderedImage[]> IN_IMAGES;
+    public static final ParameterDescriptor<RenderedImage[]> IN_IMAGES = new ParameterBuilder()
+            .addName("images")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandcombine_inImages))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandcombine_inImagesDesc))
+            .setRequired(true)
+            .create(RenderedImage[].class, null);
     
-    public static final ParameterDescriptorGroup INPUT_DESC;
+    public static final ParameterDescriptorGroup INPUT_DESC = new ParameterBuilder()
+            .addName(NAME + "InputParameters").createGroup(IN_IMAGES);
     
     /**
      * Mandatory - Resulting image.
      */
-    public static final ParameterDescriptor<RenderedImage> OUT_IMAGE;
+    public static final ParameterDescriptor<RenderedImage> OUT_IMAGE = new ParameterBuilder()
+            .addName("result")
+            .addName(ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandcombine_outImage))
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandcombine_outImageDesc))
+            .setRequired(true)
+            .create(RenderedImage.class, null);
 
-    public static final ParameterDescriptorGroup OUTPUT_DESC;
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder()
+            .addName(NAME + "OutputParameters").createGroup(OUT_IMAGE);
     
-    static {
-        Map<String, Object> propertiesInCov = new HashMap<String, Object>();
-        propertiesInCov.put(IdentifiedObject.NAME_KEY,        "images");
-        propertiesInCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandcombine_inImages));
-        propertiesInCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandcombine_inImagesDesc));
-        IN_IMAGES = new DefaultParameterDescriptor<RenderedImage[]>(propertiesInCov, RenderedImage[].class, null, null, null, null, null, true);
-        
-        INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_IMAGES);
-
-        Map<String, Object> propertiesOutCov = new HashMap<String, Object>();
-        propertiesOutCov.put(IdentifiedObject.NAME_KEY,        "result");
-        propertiesOutCov.put(IdentifiedObject.ALIAS_KEY,       ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandcombine_outImage));
-        propertiesOutCov.put(IdentifiedObject.REMARKS_KEY,     ProcessBundle.formatInternational(ProcessBundle.Keys.image_bandcombine_outImageDesc));
-        OUT_IMAGE = new DefaultParameterDescriptor<RenderedImage>(propertiesOutCov, RenderedImage.class, null, null, null, null, null, true);
-
-        OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_IMAGE);
-    }
-
     public static final ProcessDescriptor INSTANCE = new BandCombineDescriptor();
 
     private BandCombineDescriptor() {

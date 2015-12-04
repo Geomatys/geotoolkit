@@ -22,13 +22,13 @@ import java.util.Map;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.storage.DataStoreException;
 import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.CoverageClientFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -73,7 +73,7 @@ public class WMTSClientFactory extends AbstractClientFactory implements Coverage
 
 
     public static final ParameterDescriptorGroup PARAMETERS =
-            new DefaultParameterDescriptorGroup("WMTSParameters",
+            new ParameterBuilder().addName("WMTSParameters").createGroup(
                 IDENTIFIER,URL,VERSION, SECURITY, IMAGE_CACHE,NIO_QUERIES,TIMEOUT);
 
     @Override

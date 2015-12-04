@@ -27,7 +27,6 @@ import org.geotoolkit.storage.coverage.CoverageStore;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -78,7 +77,7 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory {
             .create(Boolean.class, Boolean.FALSE);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("XMLCoverageStoreParameters",
+            new ParameterBuilder().addName("XMLCoverageStoreParameters").createGroup(
                 IDENTIFIER, PATH, NAMESPACE, CACHE_TILE_STATE);
 
     @Override

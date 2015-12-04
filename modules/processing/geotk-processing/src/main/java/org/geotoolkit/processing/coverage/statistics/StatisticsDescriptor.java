@@ -20,19 +20,17 @@ import org.geotoolkit.metadata.ImageStatistics;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
 
 import java.awt.image.RenderedImage;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.processing.ProcessBundle;
 
 /**
@@ -52,63 +50,84 @@ public class StatisticsDescriptor extends AbstractProcessDescriptor {
      */
     public static final String IN_IMAGE_PARAM_NAME = "inImage";
     public static final InternationalString IN_IMAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_statistic_inImage);
-    public static final ParameterDescriptor<RenderedImage> IMAGE =
-            new DefaultParameterDescriptor(IN_IMAGE_PARAM_NAME, IN_IMAGE_PARAM_REMARKS, RenderedImage.class, null, false);
+    public static final ParameterDescriptor<RenderedImage> IMAGE = new ParameterBuilder()
+            .addName(IN_IMAGE_PARAM_NAME)
+            .setRemarks(IN_IMAGE_PARAM_REMARKS)
+            .setRequired(false)
+            .create(RenderedImage.class, null);
 
     /*
      * Coverage to analyse
      */
     public static final String IN_COVERAGE_PARAM_NAME = "inCoverage";
     public static final InternationalString IN_COVERAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_statistic_inCoverage);
-    public static final ParameterDescriptor<GridCoverage2D> COVERAGE =
-            new DefaultParameterDescriptor(IN_COVERAGE_PARAM_NAME, IN_COVERAGE_PARAM_REMARKS, GridCoverage2D.class, null, false);
+    public static final ParameterDescriptor<GridCoverage2D> COVERAGE = new ParameterBuilder()
+            .addName(IN_COVERAGE_PARAM_NAME)
+            .setRemarks(IN_COVERAGE_PARAM_REMARKS)
+            .setRequired(false)
+            .create(GridCoverage2D.class, null);
 
     /*
      * CoverageReference to analyse
      */
     public static final String IN_REF_PARAM_NAME = "inReference";
     public static final InternationalString IN_REF_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_statistic_inReference);
-    public static final ParameterDescriptor<CoverageReference> REF =
-            new DefaultParameterDescriptor(IN_REF_PARAM_NAME, IN_REF_PARAM_REMARKS, CoverageReference.class, null, false);
+    public static final ParameterDescriptor<CoverageReference> REF = new ParameterBuilder()
+            .addName(IN_REF_PARAM_NAME)
+            .setRemarks(IN_REF_PARAM_REMARKS)
+            .setRequired(false)
+            .create(CoverageReference.class, null);
 
     /*
     * GridCoverageReader to analyse
     */
     public static final String IN_READER_PARAM_NAME = "inReader";
     public static final InternationalString IN_READER_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_statistic_inReader);
-    public static final ParameterDescriptor<GridCoverageReader> READER =
-            new DefaultParameterDescriptor(IN_READER_PARAM_NAME, IN_READER_PARAM_REMARKS, GridCoverageReader.class, null, false);
+    public static final ParameterDescriptor<GridCoverageReader> READER = new ParameterBuilder()
+            .addName(IN_READER_PARAM_NAME)
+            .setRemarks(IN_READER_PARAM_REMARKS)
+            .setRequired(false)
+            .create(GridCoverageReader.class, null);
 
     public static final String IN_IMAGE_IDX_PARAM_NAME = "inImageIdx";
     public static final InternationalString IN_IMAGE_IDX_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_statistic_inImageIdx);
-    public static final ParameterDescriptor<Integer> IMAGE_IDX =
-            new DefaultParameterDescriptor(IN_IMAGE_IDX_PARAM_NAME, IN_IMAGE_IDX_PARAM_REMARKS, Integer.class, 0, false);
+    public static final ParameterDescriptor<Integer> IMAGE_IDX = new ParameterBuilder()
+            .addName(IN_IMAGE_IDX_PARAM_NAME)
+            .setRemarks(IN_IMAGE_IDX_PARAM_REMARKS)
+            .setRequired(false)
+            .create(Integer.class, 0);
 
     /*
      * Flag to exclude no-data from distribution
      */
     public static final String IN_EXCLUDE_NO_DATA_PARAM_NAME = "inExcludeNoData";
     public static final InternationalString IN_EXCLUDE_NO_DATA_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_statistic_inExcludeNoData);
-    public static final ParameterDescriptor<Boolean> EXCLUDE_NO_DATA =
-            new DefaultParameterDescriptor(IN_EXCLUDE_NO_DATA_PARAM_NAME, IN_EXCLUDE_NO_DATA_PARAM_REMARKS, Boolean.class, true, true);
+    public static final ParameterDescriptor<Boolean> EXCLUDE_NO_DATA = new ParameterBuilder()
+            .addName(IN_EXCLUDE_NO_DATA_PARAM_NAME)
+            .setRemarks(IN_EXCLUDE_NO_DATA_PARAM_REMARKS)
+            .setRequired(true)
+            .create(Boolean.class, true);
 
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-                    new GeneralParameterDescriptor[]{IMAGE, COVERAGE, REF, READER, IMAGE_IDX, EXCLUDE_NO_DATA});
+            new ParameterBuilder().addName("InputParameters").createGroup(
+                    IMAGE, COVERAGE, REF, READER, IMAGE_IDX, EXCLUDE_NO_DATA);
 
     /*
      * Coverage result
      */
     public static final String OUT_COVERAGE_PARAM_NAME = "outStatistic";
     public static final InternationalString OUT_COVERAGE_PARAM_REMARKS = ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_statistic_outCoverage);
-    public static final ParameterDescriptor<ImageStatistics> OUTCOVERAGE =
-            new DefaultParameterDescriptor(OUT_COVERAGE_PARAM_NAME, OUT_COVERAGE_PARAM_REMARKS, ImageStatistics.class, null, true);
+    public static final ParameterDescriptor<ImageStatistics> OUTCOVERAGE = new ParameterBuilder()
+            .addName(OUT_COVERAGE_PARAM_NAME)
+            .setRemarks(OUT_COVERAGE_PARAM_REMARKS)
+            .setRequired(true)
+            .create(ImageStatistics.class, null);
 
     /**Output parameters */
-    public static final ParameterDescriptorGroup OUTPUT_DESC = new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{OUTCOVERAGE});
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder().addName("OutputParameters")
+            .createGroup(OUTCOVERAGE);
 
 
     public static final ProcessDescriptor INSTANCE = new StatisticsDescriptor();

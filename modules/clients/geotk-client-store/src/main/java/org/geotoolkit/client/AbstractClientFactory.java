@@ -25,11 +25,9 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.apache.sis.metadata.iso.quality.DefaultConformanceResult;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.util.collection.MapUtilities;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -81,20 +79,12 @@ public abstract class AbstractClientFactory extends Factory implements ClientFac
      * @return an identifier descriptor.
      */
     public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
-            return new DefaultParameterDescriptor<String>(
-            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,
-                                 IDENTIFIER.getName().getCode(),
-                                 DefaultParameterDescriptor.ALIAS_KEY,
-                                 IDENTIFIER.getAlias().iterator().next(),
-                                 DefaultParameterDescriptor.REMARKS_KEY,
-                                 IDENTIFIER.getRemarks()),
-            String.class,
-            new String[]{idValue},
-            idValue,
-            null,
-            null,
-            null,
-            true);
+            return new ParameterBuilder()
+                    .addName(IDENTIFIER.getName().getCode())
+                    .addName(IDENTIFIER.getAlias().iterator().next())
+                    .setRemarks(IDENTIFIER.getRemarks())
+                    .setRequired(true)
+                    .createEnumerated(String.class, new String[]{idValue},idValue);
     }
 
     /**
@@ -105,20 +95,12 @@ public abstract class AbstractClientFactory extends Factory implements ClientFac
      * @return a version descriptor.
      */
     public static ParameterDescriptor<String> createVersionDescriptor(String[] values, String defaultValue) {
-            return new DefaultParameterDescriptor<String>(
-            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,
-                                 VERSION.getName().getCode(),
-                                 DefaultParameterDescriptor.ALIAS_KEY,
-                                 VERSION.getAlias().iterator().next(),
-                                 DefaultParameterDescriptor.REMARKS_KEY,
-                                 VERSION.getRemarks()),
-            String.class,
-            values,
-            defaultValue,
-            null,
-            null,
-            null,
-            true);
+        return new ParameterBuilder()
+                    .addName(VERSION.getName().getCode())
+                    .addName(VERSION.getAlias().iterator().next())
+                    .setRemarks(VERSION.getRemarks())
+                    .setRequired(true)
+                    .createEnumerated(String.class, values,defaultValue);
     }
 
     /**

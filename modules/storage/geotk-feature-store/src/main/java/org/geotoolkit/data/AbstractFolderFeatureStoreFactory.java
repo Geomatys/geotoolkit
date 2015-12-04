@@ -29,7 +29,6 @@ import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
 import org.apache.sis.parameter.ParameterBuilder;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.logging.Logging;
 import org.opengis.metadata.Identifier;
@@ -181,7 +180,7 @@ public abstract class AbstractFolderFeatureStoreFactory extends AbstractFeatureS
         params.add(2,RECURSIVE);
         params.add(3,EMPTY_DIRECTORY);
 
-        return new DefaultParameterDescriptorGroup(sd.getName().getCode()+"Folder",
+        return new ParameterBuilder().addName(sd.getName().getCode()+"Folder").createGroup(
                 params.toArray(new GeneralParameterDescriptor[params.size()]));
     }
 

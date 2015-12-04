@@ -19,13 +19,12 @@ package org.geotoolkit.processing.coverage.coveragetovector;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.apache.sis.measure.NumberRange;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
@@ -45,35 +44,45 @@ public final class CoverageToVectorDescriptor extends AbstractProcessDescriptor 
     /**
      * Mandatory - Coverage to process
      */
-    public static final ParameterDescriptor<GridCoverage2D> COVERAGE =
-            new DefaultParameterDescriptor<GridCoverage2D>("coverage","Coverage to process.",GridCoverage2D.class,null,true);
+    public static final ParameterDescriptor<GridCoverage2D> COVERAGE = new ParameterBuilder()
+            .addName("coverage")
+            .setRemarks("Coverage to process.")
+            .setRequired(true)
+            .create(GridCoverage2D.class,null);
 
     /**
      * Optional - Ranges to regroup
      */
-    public static final ParameterDescriptor<NumberRange[]> RANGES =
-            new DefaultParameterDescriptor<NumberRange[]>("ranges","Ranges to regroup.",NumberRange[].class,null,false);
+    public static final ParameterDescriptor<NumberRange[]> RANGES = new ParameterBuilder()
+            .addName("ranges")
+            .setRemarks("Ranges to regroup.")
+            .setRequired(false)
+            .create(NumberRange[].class,null);
 
     /**
      * Optional - selected band, default 0
      */
-    public static final ParameterDescriptor<Integer> BAND =
-            new DefaultParameterDescriptor<Integer>("band","Band to transform",Integer.class,0,false);
+    public static final ParameterDescriptor<Integer> BAND = new ParameterBuilder()
+            .addName("band")
+            .setRemarks("Band to transform")
+            .setRequired(false)
+            .create(Integer.class,0);
 
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                COVERAGE,RANGES,BAND);
+            new ParameterBuilder().addName(NAME+"InputParameters").createGroup(COVERAGE,RANGES,BAND);
 
     /**
      * Mandatory - Result of vectorisation
      */
-    public static final ParameterDescriptor<Geometry[]> GEOMETRIES =
-            new DefaultParameterDescriptor<Geometry[]>("geometries","Result of vectorisation.",Geometry[].class,null,true);
+    public static final ParameterDescriptor<Geometry[]> GEOMETRIES = new ParameterBuilder()
+            .addName("geometries")
+            .setRemarks("Result of vectorisation.")
+            .setRequired(true)
+            .create(Geometry[].class,null);
 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"OutputParameters",
-                GEOMETRIES);
+            new ParameterBuilder().addName(NAME+"OutputParameters").createGroup(GEOMETRIES);
     
     public static final ProcessDescriptor INSTANCE = new CoverageToVectorDescriptor();
 

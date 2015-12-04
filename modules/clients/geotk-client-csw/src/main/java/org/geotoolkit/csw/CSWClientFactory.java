@@ -25,7 +25,7 @@ import org.geotoolkit.csw.xml.CSWVersion;
 import org.apache.sis.metadata.iso.DefaultIdentifier;
 import org.apache.sis.metadata.iso.citation.DefaultCitation;
 import org.apache.sis.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.apache.sis.storage.DataStoreException;
@@ -68,7 +68,7 @@ public class CSWClientFactory extends AbstractClientFactory{
     }
 
     public static final ParameterDescriptorGroup PARAMETERS =
-            new DefaultParameterDescriptorGroup("CSWParameters", IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
+            new ParameterBuilder().addName("CSWParameters").createGroup(IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
     public Identification getIdentification() {

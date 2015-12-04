@@ -16,18 +16,16 @@
  */
 package org.geotoolkit.processing.groovy;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.utility.parameter.ExtendedParameterDescriptor;
 
 /**
@@ -43,10 +41,16 @@ public class GroovyDescriptor extends AbstractProcessDescriptor{
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<String> SCRIPT =
-            new DefaultParameterDescriptor("expression", "Script groovy", String.class, null, true);
-    public static final ParameterDescriptor<Map<String,Object>> VARIABLES =
-            new DefaultParameterDescriptor("variables", "Map of binding script variable", Map.class, null, true);
+    public static final ParameterDescriptor<String> SCRIPT = new ParameterBuilder()
+            .addName("expression")
+            .setRemarks("Script groovy")
+            .setRequired(true)
+            .create(String.class, null);
+    public static final ParameterDescriptor<Map> VARIABLES = new ParameterBuilder()
+            .addName("variables")
+            .setRemarks("Map of binding script variable")
+            .setRequired(true)
+            .create(Map.class, null);
     
     public static final String[] BEHAVIOR_KEYS = new String[] { "EXCEPTION", "RESULT"};
     public static final ParameterDescriptor<String> BEHAVIOR =
@@ -54,17 +58,18 @@ public class GroovyDescriptor extends AbstractProcessDescriptor{
             String.class, BEHAVIOR_KEYS, "RESULT", null, null, null, true, null);
                     
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{SCRIPT, VARIABLES, BEHAVIOR});
+            new ParameterBuilder().addName("InputParameters").createGroup(SCRIPT, VARIABLES, BEHAVIOR);
 
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Object> RESULT =
-            new DefaultParameterDescriptor("result", "Result of the expression", Object.class, null, true);
+    public static final ParameterDescriptor<Object> RESULT = new ParameterBuilder()
+            .addName("result")
+            .setRemarks("Result of the expression")
+            .setRequired(true)
+            .create(Object.class, null);
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{RESULT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(RESULT);
 
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new GroovyDescriptor();

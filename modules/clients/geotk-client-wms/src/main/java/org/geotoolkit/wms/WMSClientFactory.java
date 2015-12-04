@@ -25,7 +25,6 @@ import org.geotoolkit.client.AbstractClientFactory;
 import org.geotoolkit.client.CoverageClientFactory;
 import org.geotoolkit.storage.coverage.CoverageStore;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.FactoryMetadata;
 import org.geotoolkit.wms.xml.WMSVersion;
@@ -39,6 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 
 /**
@@ -77,7 +77,7 @@ public class WMSClientFactory extends AbstractClientFactory implements CoverageC
     }
 
     public static final ParameterDescriptorGroup PARAMETERS =
-            new DefaultParameterDescriptorGroup("WMSParameters", IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
+            new ParameterBuilder().addName("WMSParameters").createGroup(IDENTIFIER,URL,VERSION,SECURITY,TIMEOUT);
 
     @Override
     public Identification getIdentification() {

@@ -16,14 +16,12 @@
  */
 package org.geotoolkit.processing.vector.spatialjoin;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.vector.VectorDescriptor;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -52,24 +50,28 @@ public final class SpatialJoinDescriptor extends VectorDescriptor {
     /**
      * Mandatory - Target FeatureCollection
      */
-    public static final ParameterDescriptor<FeatureCollection> FEATURE_TARGET =
-            new DefaultParameterDescriptor("feature_target", "Target Features", FeatureCollection.class, null, true);
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_TARGET = new ParameterBuilder()
+            .addName("feature_target")
+            .setRemarks("Target Features")
+            .setRequired(true)
+            .create(FeatureCollection.class, null);
 
      /**
      * Optional - Method used. true => Intersection, false => Nearest
      */
-    public static final ParameterDescriptor<Boolean> INTERSECT =
-            new DefaultParameterDescriptor("intersect", "Method used, intersect or nearest", Boolean.class, true, false);
+    public static final ParameterDescriptor<Boolean> INTERSECT = new ParameterBuilder()
+            .addName("intersect")
+            .setRemarks("Method used, intersect or nearest")
+            .setRequired(false)
+            .create(Boolean.class, true);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, FEATURE_TARGET,INTERSECT});
+            new ParameterBuilder().addName("InputParameters").createGroup(FEATURE_IN, FEATURE_TARGET,INTERSECT);
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_OUT});
+            new ParameterBuilder().addName("OutputParameters").createGroup(FEATURE_OUT);
 
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new SpatialJoinDescriptor();

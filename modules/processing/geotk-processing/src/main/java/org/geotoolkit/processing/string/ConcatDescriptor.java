@@ -17,12 +17,10 @@
 
 package org.geotoolkit.processing.string;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -41,40 +39,47 @@ public class ConcatDescriptor  extends AbstractProcessDescriptor {
     /**
      * Mandatory - path
      */
-    public static final ParameterDescriptor<String> PREFIX =
-            new DefaultParameterDescriptor("prefix", "Prefix to add to the string value", 
-            String.class, null, false);
+    public static final ParameterDescriptor<String> PREFIX = new ParameterBuilder()
+            .addName("prefix")
+            .setRemarks("Prefix to add to the string value")
+            .setRequired(false)
+            .create(String.class, null);
     
     /**
      * Mandatory - path
      */
-    public static final ParameterDescriptor<String> SUFFIX =
-            new DefaultParameterDescriptor("suffix", "Suffix to add to the string value", 
-            String.class, null, false);
+    public static final ParameterDescriptor<String> SUFFIX = new ParameterBuilder()
+            .addName("suffix")
+            .setRemarks("Suffix to add to the string value")
+            .setRequired(false)
+            .create(String.class, null);
     
-    public static final ParameterDescriptor<String> VALUE =
-            new DefaultParameterDescriptor("value", "The string value", 
-            String.class, null, true);
+    public static final ParameterDescriptor<String> VALUE = new ParameterBuilder()
+            .addName("value")
+            .setRemarks("The string value")
+            .setRequired(true)
+            .create(String.class, null);
             
     /** 
      * Input Parameters 
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{PREFIX, SUFFIX, VALUE});
+            new ParameterBuilder().addName("InputParameters").createGroup(PREFIX, SUFFIX, VALUE);
 
     /**
      * Mandatory - result files
      */
-    public static final ParameterDescriptor<String> RESULT_OUT =
-            new DefaultParameterDescriptor("result", "The concatened string", 
-            String.class, null, true);
+    public static final ParameterDescriptor<String> RESULT_OUT = new ParameterBuilder()
+            .addName("result")
+            .setRemarks("The concatened string")
+            .setRequired(true)
+            .create(String.class, null);
     
     /** 
      * Output Parameters 
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",RESULT_OUT);
+            new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_OUT);
     
     public static final ProcessDescriptor INSTANCE = new ConcatDescriptor();
 

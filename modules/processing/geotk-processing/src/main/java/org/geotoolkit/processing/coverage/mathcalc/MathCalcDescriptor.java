@@ -17,16 +17,14 @@
 
 package org.geotoolkit.processing.coverage.mathcalc;
 
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
 import org.geotoolkit.storage.coverage.CoverageReference;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.processing.ProcessBundle;
 import org.geotoolkit.processing.coverage.CoverageProcessingRegistry;
 import org.opengis.coverage.Coverage;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -42,45 +40,47 @@ public class MathCalcDescriptor extends AbstractProcessDescriptor {
     /**
      * Coverage images
      */
-    public static final ParameterDescriptor<Coverage[]> IN_COVERAGES =
-            new DefaultParameterDescriptor("inCoverages", 
-                    ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inCoverages),
-                    Coverage[].class, null, true);
+    public static final ParameterDescriptor<Coverage[]> IN_COVERAGES = new ParameterBuilder()
+            .addName("inCoverages")
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inCoverages))
+            .setRequired(true)
+            .create(Coverage[].class, null);
     
     /**
      * Mathematic expression
      */
-    public static final ParameterDescriptor<String> IN_FORMULA =
-            new DefaultParameterDescriptor("inFormula", 
-                    ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inFormula),
-                    String.class, null, true);
+    public static final ParameterDescriptor<String> IN_FORMULA = new ParameterBuilder()
+            .addName("inFormula")
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inFormula))
+            .setRequired(true)
+            .create(String.class, null);
     
     /**
      * Mapping of input coverages to formula names.
      */
-    public static final ParameterDescriptor<String[]> IN_MAPPING =
-            new DefaultParameterDescriptor("inMapping", 
-                    ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inMapping),
-                    String[].class, null, true);
+    public static final ParameterDescriptor<String[]> IN_MAPPING = new ParameterBuilder()
+            .addName("inMapping")
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inMapping))
+            .setRequired(true)
+            .create(String[].class, null);
     
     /**
      * Writable coverage where the expression result will be written.
      * 
      * TODO this must be writable
      */
-    public static final ParameterDescriptor<CoverageReference> IN_RESULT_COVERAGE =
-            new DefaultParameterDescriptor("inResultCoverage", 
-                    ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inResultCoverage),
-                    CoverageReference.class, null, true);
+    public static final ParameterDescriptor<CoverageReference> IN_RESULT_COVERAGE = new ParameterBuilder()
+            .addName("inResultCoverage")
+            .setRemarks(ProcessBundle.formatInternational(ProcessBundle.Keys.coverage_mathcalc_inResultCoverage))
+            .setRequired(true)
+            .create(CoverageReference.class, null);
     
      /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{IN_COVERAGES, IN_FORMULA, IN_MAPPING, IN_RESULT_COVERAGE});
+            new ParameterBuilder().addName("InputParameters").createGroup(IN_COVERAGES, IN_FORMULA, IN_MAPPING, IN_RESULT_COVERAGE);
 
     /**Output parameters */
-    public static final ParameterDescriptorGroup OUTPUT_DESC = new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{});
+    public static final ParameterDescriptorGroup OUTPUT_DESC = new ParameterBuilder().addName("OutputParameters").createGroup();
     
     public MathCalcDescriptor() {
         super(NAME, CoverageProcessingRegistry.IDENTIFICATION, 

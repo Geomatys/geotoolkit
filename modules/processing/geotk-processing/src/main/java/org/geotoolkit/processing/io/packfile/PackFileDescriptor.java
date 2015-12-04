@@ -18,13 +18,11 @@
 package org.geotoolkit.processing.io.packfile;
 
 import java.io.File;
+import org.apache.sis.parameter.ParameterBuilder;
 import org.apache.sis.util.iso.SimpleInternationalString;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.processing.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.processing.io.IOProcessingRegistry;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -43,36 +41,41 @@ public class PackFileDescriptor extends AbstractProcessDescriptor {
     /**
      * Mandatory - path
      */
-    public static final ParameterDescriptor<File[]> SOURCE_IN =
-            new DefaultParameterDescriptor("source", "files to pack", 
-            File[].class, null, true);
+    public static final ParameterDescriptor<File[]> SOURCE_IN =new ParameterBuilder()
+            .addName("source")
+            .setRemarks("files to pack")
+            .setRequired(true)
+            .create(File[].class, null);
     
     /**
      * Mandatory - path
      */
-    public static final ParameterDescriptor<File> TARGET_IN =
-            new DefaultParameterDescriptor("target", "zip file destination", 
-            File.class, null, true);
+    public static final ParameterDescriptor<File> TARGET_IN =new ParameterBuilder()
+            .addName("target")
+            .setRemarks("zip file destination")
+            .setRequired(true)
+            .create(File.class, null);
             
     /** 
      * Input Parameters 
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
-            new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{SOURCE_IN,TARGET_IN});
+            new ParameterBuilder().addName("InputParameters").createGroup(SOURCE_IN,TARGET_IN);
 
     /**
      * Mandatory - result files
      */
-    public static final ParameterDescriptor<File> RESULT_OUT =
-            new DefaultParameterDescriptor("zip-file", "packed file", 
-            File.class, null, true);
+    public static final ParameterDescriptor<File> RESULT_OUT = new ParameterBuilder()
+            .addName("zip-file")
+            .setRemarks("packed file")
+            .setRequired(true)
+            .create(File.class, null);
     
     /** 
      * Output Parameters 
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",RESULT_OUT);
+            new ParameterBuilder().addName("OutputParameters").createGroup(RESULT_OUT);
     
     public static final ProcessDescriptor INSTANCE = new PackFileDescriptor();
 

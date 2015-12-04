@@ -29,7 +29,6 @@ import org.geotoolkit.client.AbstractClientFactory;
 import static org.geotoolkit.client.AbstractClientFactory.createVersionDescriptor;
 import org.geotoolkit.client.FeatureClientFactory;
 import org.geotoolkit.data.AbstractFeatureStoreFactory;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataType;
 import org.geotoolkit.storage.DefaultFactoryMetadata;
 import org.geotoolkit.storage.FactoryMetadata;
@@ -91,7 +90,7 @@ public class WFSFeatureStoreFactory extends AbstractFeatureStoreFactory implemen
             .create(Boolean.class, Boolean.FALSE);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("WFSParameters",
+            new ParameterBuilder().addName("WFSParameters").createGroup(
                 IDENTIFIER, AbstractClientFactory.URL, VERSION, AbstractClientFactory.SECURITY,
                 LONGITUDE_FIRST,POST_REQUEST,AbstractClientFactory.TIMEOUT);
 
