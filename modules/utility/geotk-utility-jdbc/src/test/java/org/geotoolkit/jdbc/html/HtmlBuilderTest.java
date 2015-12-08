@@ -1,16 +1,33 @@
-package org.geotoolkit.util.dom;
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2015, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.jdbc.html;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,7 +40,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.sis.test.DependsOnMethod;
 import org.apache.sis.test.TestCase;
 import org.apache.sis.util.logging.Logging;
-import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -215,9 +231,9 @@ public class HtmlBuilderTest extends TestCase {
         con.addRequestProperty("Content-type", "text/html; charset=UTF-8");
         con.setDoOutput(true);
 
-        try {
-            con.getOutputStream().write(Files.readAllBytes(htmlDoc));
-        } catch (UnknownHostException e) {
+        try (final OutputStream stream = con.getOutputStream()) {
+            stream.write(Files.readAllBytes(htmlDoc));
+        } catch (IOException e) {
             Assume.assumeNoException("Cannot reach W3C validator.", e);
         }
 
@@ -226,6 +242,8 @@ public class HtmlBuilderTest extends TestCase {
         try (final InputStream stream = con.getInputStream()) {
             while ((read = stream.read()) >= 0)
                 builder.append((char)read);
+        } catch (IOException e) {
+            Assume.assumeNoException("Cannot reach W3C validator.", e);
         }
 
         if (builder.length() > 0) {
@@ -268,7 +286,6 @@ public class HtmlBuilderTest extends TestCase {
      * @return A simple connection pointing on an empty database in memory, to test db analysis.
      */
     private static Connection createMockConnection() throws SQLException {
-        final DefaultDataSource ds = new DefaultDataSource("jdbc:derby:memory:Test;create=true");
-        return ds.getConnection();
+        return DriverManager.getConnection("jdbc:derby:memory:Test;create=true");
     }
 }

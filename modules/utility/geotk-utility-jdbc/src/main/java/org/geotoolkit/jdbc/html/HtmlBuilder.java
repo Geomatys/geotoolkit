@@ -2,8 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007-2015, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2015, Geomatys
+ *    (C) 2015, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.util.dom;
+package org.geotoolkit.jdbc.html;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +34,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.ResourceBundle;
+import java.util.Locale;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -54,18 +53,29 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import static org.geotoolkit.jdbc.html.Bundle.Keys.*;
+
 /**
+ * Builds Html documents describing database structure pointed by a given jdbc
+ * connection. The builder takes a {@link Path} which must be a directory. If it
+ * does not exists, an attempt to create it will be made at setting.
+ *
+ * About output structure : An "index.html" is created at given folder root.
+ * It contains a list of each catalogs, schema and tables found with connection.
+ * Each listed table is a link to the refering table document.
+ *
+ * For each catalog
+ *
  * Note : each setter of this class can throw {@link IllegalArgumentException} if
  * given object appears not to be valid.
  *
- * TODO : possibility to add css
- * TODO : prrogress monitor
+ * TODO : progress monitor
  *
  * @author Alexis Manin (Geomatys)
  */
 public class HtmlBuilder {
 
-    static final ResourceBundle BUNDLE = ResourceBundle.getBundle(HtmlBuilder.class.getCanonicalName());
+    static final Bundle BUNDLE = Bundle.getResources(Locale.getDefault());
     static final String DEFAULT_NAME = "default";
 
     private Path folder;
@@ -241,48 +251,48 @@ public class HtmlBuilder {
                 }
 
                 // Display list of primary keys.
-                appendChild(doc, body, "h2", BUNDLE.getString("pKeys"));
+                appendChild(doc, body, "h2", BUNDLE.getString(pKeys));
                 try (final ResultSet primaryKeys = source.getPrimaryKeys(catalogName, schemaName, tableName)) {
                     if (primaryKeys.next()) {
                         final String keyName  = primaryKeys.getString(6);
                         if (keyName != null && !keyName.isEmpty())  {
                             appendChild(doc, body, "h3", keyName);
                         }
-                        appendChild(doc, body, "h4", BUNDLE.getString("cols"));
+                        appendChild(doc, body, "h4", BUNDLE.getString(cols));
                         list = appendChild(doc, body, "ul");
                         appendChild(doc, list, "li", primaryKeys.getString(4));
                         while (primaryKeys.next()) {
                             appendChild(doc, list, "li", primaryKeys.getString(4));
                         }
                     } else {
-                        appendChild(doc, body, "p", BUNDLE.getString("noEntry"));
+                        appendChild(doc, body, "p", BUNDLE.getString(noEntry));
                     }
                 }
 
                 // Same for foreign keys
-                appendChild(doc, body, "h2", BUNDLE.getString("fKeys"));
+                appendChild(doc, body, "h2", BUNDLE.getString(fKeys));
                 printForeignKeys(doc, body, catalogName, schemaName, tableName, htmlFile.getParent().relativize(folder));
 
                 // Display a table for column descriptions.
-                appendChild(doc, body, "h2", BUNDLE.getString("cols"));
+                appendChild(doc, body, "h2", BUNDLE.getString(cols));
                 try (final ResultSet columns = source.getColumns(catalogName, schemaName, tableName, null)) {
                     if (columns.next()) {
                         table = appendChild(doc, body, "table");
                         row = appendChild(doc, table, "tr");
-                        appendChild(doc, row, "th", BUNDLE.getString("name"));
-                        appendChild(doc, row, "th", BUNDLE.getString("desc"));
-                        appendChild(doc, row, "th", BUNDLE.getString("type"));
-                        appendChild(doc, row, "th", BUNDLE.getString("defaultVal"));
-                        appendChild(doc, row, "th", BUNDLE.getString("maxLength"));
-                        appendChild(doc, row, "th", BUNDLE.getString("nullable"));
-                        appendChild(doc, row, "th", BUNDLE.getString("autoIncrement"));
-                        appendChild(doc, row, "th", BUNDLE.getString("generated"));
+                        appendChild(doc, row, "th", BUNDLE.getString(name));
+                        appendChild(doc, row, "th", BUNDLE.getString(desc));
+                        appendChild(doc, row, "th", BUNDLE.getString(type));
+                        appendChild(doc, row, "th", BUNDLE.getString(defaultVal));
+                        appendChild(doc, row, "th", BUNDLE.getString(maxLength));
+                        appendChild(doc, row, "th", BUNDLE.getString(nullable));
+                        appendChild(doc, row, "th", BUNDLE.getString(autoIncrement));
+                        appendChild(doc, row, "th", BUNDLE.getString(generated));
                         putTableRow(doc, appendChild(doc, table, "tr"), columns);
                         while (columns.next()) {
                             putTableRow(doc, appendChild(doc, table, "tr"), columns);
                         }
                     } else {
-                        appendChild(doc, body, "p", BUNDLE.getString("noEntry"));
+                        appendChild(doc, body, "p", BUNDLE.getString(noEntry));
                     }
                 }
 
@@ -299,7 +309,7 @@ public class HtmlBuilder {
             final NameComparator comparator = new NameComparator();
             final ArrayList<String> catalogKeys = new ArrayList<>(catalogs.keySet());
             Collections.sort(catalogKeys, comparator);
-            doc = newHtmlDocument(builder, BUNDLE.getString("catalogs"));
+            doc = newHtmlDocument(builder, BUNDLE.getString(Bundle.Keys.catalogs));
             setStyleSheet(doc, htmlFile);
 
             body = (Element) doc.getElementsByTagName("body").item(0);
@@ -520,14 +530,14 @@ public class HtmlBuilder {
         for (final TreeTable.Node tableNode : ttable.getRoot().getChildren()) {
             tablePath = tableNode.getValue(pkTable);
             h4 = appendChild(doc, body, "h4");
-            h4.appendChild(doc.createTextNode(BUNDLE.getString("importedFrom") + " "));
+            h4.appendChild(doc.createTextNode(BUNDLE.getString(importedFrom) + " "));
             pkTableName = tablePath.getFileName().toString();
             link = appendChild(doc, h4, "a", pkTableName);
             link.setAttribute("href", toRootFolder.resolve(Paths.get(tablePath.toString().concat(".html"))).toString());
 
             list = appendChild(doc, body, "ul");
             for (final TreeTable.Node colNode : tableNode.getChildren()) {
-                appendChild(doc, list, "li", colNode.getValue(fkColumn) +" " + BUNDLE.getString("refers") + " " + pkTableName +"."+colNode.getValue(pkColumn));
+                appendChild(doc, list, "li", colNode.getValue(fkColumn) +" " + BUNDLE.getString(refers) + " " + pkTableName +"."+colNode.getValue(pkColumn));
             }
         }
     }
