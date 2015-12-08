@@ -30,7 +30,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -79,6 +81,7 @@ import org.opengis.geometry.Envelope;
 public class XMLMosaic implements GridMosaic {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.xmlstore");
+    private static final NumberFormat DECIMAL_FORMAT = NumberFormat.getInstance(Locale.ENGLISH);
 
     /** Executor used to write images */
     private static final RejectedExecutionHandler LOCAL_REJECT_EXECUTION_HANDLER = new ThreadPoolExecutor.CallerRunsPolicy();
@@ -300,10 +303,12 @@ public class XMLMosaic implements GridMosaic {
         sb.append(scale);
         for(int i=0;i<upperLeft.length;i++){
             sb.append('x');
-            sb.append(upperLeft[i]);
+            synchronized(DECIMAL_FORMAT){
+                sb.append(DECIMAL_FORMAT.format(upperLeft[i]));
+            }
         }
         //avoid local system formating
-        return sb.toString().replace(DecimalFormatSymbols.getInstance().getDecimalSeparator(), 'd');
+        return sb.toString().replace('.', 'd');
     }
 
     public File getFolder() {
