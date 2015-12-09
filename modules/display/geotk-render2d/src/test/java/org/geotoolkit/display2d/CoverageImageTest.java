@@ -19,6 +19,7 @@ package org.geotoolkit.display2d;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -165,7 +166,8 @@ public class CoverageImageTest {
 
         outputImgDim.setSize(proportionalityCoefficient * srcWidth, proportionalityCoefficient * srcHeight);
 
-        hints = new Hints(GO2Hints.KEY_COLOR_MODEL, sourceImage.getColorModel());
+        hints = new Hints(GO2Hints.KEY_COLOR_MODEL, sourceImage.getColorModel(),
+                         RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 
         cdef.setDimension(outputImgDim);
         sdef.setContext(context);
