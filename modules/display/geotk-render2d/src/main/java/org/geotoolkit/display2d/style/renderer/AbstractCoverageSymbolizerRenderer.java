@@ -16,8 +16,11 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Area;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import org.apache.sis.geometry.Envelopes;
@@ -25,6 +28,9 @@ import org.apache.sis.geometry.GeneralEnvelope;
 import org.apache.sis.internal.referencing.j2d.AffineTransform2D;
 import org.apache.sis.util.ArgumentChecks;
 import org.apache.sis.util.NullArgumentException;
+import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.storage.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
@@ -51,6 +57,8 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.opengis.coverage.Coverage;
 import org.geotoolkit.feature.GeometryAttribute;
+import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.image.interpolation.ResampleBorderComportement;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.utility.parameter.ParametersExt;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -62,6 +70,7 @@ import org.geotoolkit.referencing.ReferencingUtilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
@@ -245,7 +254,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
 
         final GridCoverageReader reader = ref.acquireReader();
-        final Envelope dataBBox         = reader.getGridGeometry(ref.getImageIndex()).getEnvelope();
+        final GeneralGridGeometry gridGeometry = reader.getGridGeometry(ref.getImageIndex());
+        final Envelope dataBBox = gridGeometry.getEnvelope();
         ref.recycle(reader);
         
         /*
@@ -299,6 +309,23 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         
         //-- convert resolution adapted to coverage CRS (resolution from rendering context --> coverage resolution)
         final double[] paramRes = ReferencingUtilities.convertResolution(renderingBound, resolution, paramEnvelope.getCoordinateReferenceSystem());
+
+        //-- find most appropriate interpolation
+        final InterpolationCase interpolation;
+        if(RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR.equals(hints.get(RenderingHints.KEY_INTERPOLATION))){
+            //hints forced nearest neighbor interpolation
+            interpolation = InterpolationCase.NEIGHBOR;
+        }else{
+            interpolation = findInterpolationCase(ref, reader);
+        }
+
+        //-- expand param envelope if we use an interpolation
+        switch(interpolation){
+            case BILINEAR : expand(paramEnvelope, 1, gridGeometry); break;
+            case BICUBIC :
+            case BICUBIC2 : expand(paramEnvelope, 2, gridGeometry); break;
+            case LANCZOS : expand(paramEnvelope, 4, gridGeometry); break;
+        }
 
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(paramEnvelope);
@@ -394,10 +421,18 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
 
         final ProcessDescriptor desc = ResampleDescriptor.INSTANCE;
         final ParameterValueGroup params = desc.getInputDescriptor().createValue();
-        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COVERAGE.getName().getCode()).setValue(dataCoverage);
-        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_BACKGROUND.getName().getCode()).setValue(nodata);
-        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM.getName().getCode()).setValue(renderingContextObjectiveCRS2D);
-        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_GRID_GEOMETRY.getName().getCode()).setValue(gg);
+        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COVERAGE
+                .getName().getCode()).setValue(dataCoverage);
+        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_BACKGROUND
+                .getName().getCode()).setValue(nodata);
+        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_COORDINATE_REFERENCE_SYSTEM
+                .getName().getCode()).setValue(renderingContextObjectiveCRS2D);
+        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_GRID_GEOMETRY
+                .getName().getCode()).setValue(gg);
+        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_INTERPOLATION_TYPE
+                .getName().getCode()).setValue(interpolation);
+        ParametersExt.getOrCreateValue(params, ResampleDescriptor.IN_BORDER_COMPORTEMENT_TYPE
+                .getName().getCode()).setValue(ResampleBorderComportement.FILL_VALUE);
 
         final org.geotoolkit.process.Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();
@@ -453,4 +488,46 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
         return result;
     }
+
+    /**
+     * Detect the most appropriate interpolation type based on coverage sample dimensions.
+     * Interpolation is possible only when data do not contain qualitative informations.
+     */
+    private static InterpolationCase findInterpolationCase(CoverageReference ref, GridCoverageReader reader) throws CoverageStoreException{
+        final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
+
+        for(GridSampleDimension sd : sampleDimensions){
+            final List<Category> categories = sd.getCategories();
+            if(categories != null){
+                for(Category cat : categories){
+                    if(!cat.isQuantitative() && !cat.getName().toString(Locale.ENGLISH).equals("No data")){
+                        return InterpolationCase.NEIGHBOR;
+                    }
+                }
+            }
+        }
+        //no information on the data or datas are not qualitative, assume it can be interpolated
+        //TODO : search geotk history for code made by Desruisseaux in old Resample operator,
+        //       it contained such verifications.
+        return InterpolationCase.BILINEAR;
+    }
+
+    /**
+     * Expand the given envelope by the given number of points.
+     *
+     * @param env envelope to expand
+     * @param nbPoint in grid crs to expand the envelope
+     * @param gridGeom coverage grid geometry
+     */
+    private static void expand(GeneralEnvelope env, int nbPoint, GeneralGridGeometry gridGeom) throws TransformException{
+        final MathTransform gridToCRS = gridGeom.getGridToCRS(PixelInCell.CELL_CORNER);
+        final MathTransform crsToGrid = gridToCRS.inverse();
+        final GeneralEnvelope gridEnv = CRS.transform(crsToGrid,env);
+        //we are only interested in the 2D part
+        gridEnv.setRange(0, Math.floor(gridEnv.getMinimum(0)-nbPoint), Math.ceil(gridEnv.getMaximum(0)+nbPoint));
+        gridEnv.setRange(1, Math.floor(gridEnv.getMinimum(1)-nbPoint), Math.ceil(gridEnv.getMaximum(1)+nbPoint));
+        env.setEnvelope(CRS.transform(gridToCRS,gridEnv));
+
+    }
+
 }
