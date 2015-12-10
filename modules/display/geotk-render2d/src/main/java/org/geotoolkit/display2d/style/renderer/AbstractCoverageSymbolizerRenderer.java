@@ -162,21 +162,21 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         }
         return false;
     }
-    
+
     /**
      * Effectuate some operations on source {@link GridCoverage2D} in relation with its internally symbolizer type.
-     * 
+     *
      * @param coverageSource source coverage which will be adapted to resampling.
-     * @param symbolizer 
+     * @param symbolizer
      * @return coverage prepared to resampling.
-     * @see DefaultRasterSymbolizerRenderer#prepareCoverageToResampling(org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.display2d.style.CachedSymbolizer) 
+     * @see DefaultRasterSymbolizerRenderer#prepareCoverageToResampling(org.geotoolkit.coverage.grid.GridCoverage2D, org.geotoolkit.display2d.style.CachedSymbolizer)
      */
     protected abstract GridCoverage2D prepareCoverageToResampling(final GridCoverage2D coverageSource, C symbolizer);
 
      /**
-     * Returns expected {@link GridCoverage2D} from given {@link ProjectedCoverage}, 
+     * Returns expected {@link GridCoverage2D} from given {@link ProjectedCoverage},
      * adapted to asked {@linkplain #renderingContext internally rendering context} situation.
-     * 
+     *
      * @param projectedCoverage Convenient representation of a {@link Coverage} for rendering.
      * @return an expected slice 2D of given {@link ProjectedCoverage}.
      * @throws org.geotoolkit.coverage.io.CoverageStoreException if problem during coverage reading.
@@ -185,17 +185,17 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @throws org.geotoolkit.process.ProcessException if problem during resampling processing.
      * @see ResampleDescriptor
      * @see ResampleProcess
-     * @see ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam) 
+     * @see ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
      */
-    protected final GridCoverage2D getObjectiveCoverage(final ProjectedCoverage projectedCoverage/*, final CanvasType displayOrObjective*/) 
+    protected final GridCoverage2D getObjectiveCoverage(final ProjectedCoverage projectedCoverage/*, final CanvasType displayOrObjective*/)
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
         return getObjectiveCoverage(projectedCoverage, false);
     }
-    
+
     /**
-     * Returns expected {@linkplain GridCoverage2D elevation coverage} from given {@link ProjectedCoverage}, 
+     * Returns expected {@linkplain GridCoverage2D elevation coverage} from given {@link ProjectedCoverage},
      * adapted to asked {@linkplain #renderingContext internally rendering context} situation.
-     * 
+     *
      * @param projectedCoverage Convenient representation of a {@link Coverage} for rendering.
      * @return an expected slice 2D of given {@link ProjectedCoverage}.
      * @throws org.geotoolkit.coverage.io.CoverageStoreException if problem during coverage reading.
@@ -204,17 +204,17 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @throws org.geotoolkit.process.ProcessException if problem during resampling processing.
      * @see ResampleDescriptor
      * @see ResampleProcess
-     * @see ProjectedCoverage#getElevationCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam) 
+     * @see ProjectedCoverage#getElevationCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
      */
-    protected final GridCoverage2D getObjectiveElevationCoverage(final ProjectedCoverage projectedCoverage/*, final CanvasType displayOrObjective*/) 
+    protected final GridCoverage2D getObjectiveElevationCoverage(final ProjectedCoverage projectedCoverage/*, final CanvasType displayOrObjective*/)
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
         return getObjectiveCoverage(projectedCoverage, true);
     }
-    
+
     /**
      * Returns expected {@linkplain GridCoverage2D elevation coverage} or {@linkplain GridCoverage2D coverage}
      * from given {@link ProjectedCoverage}, adapted to asked {@linkplain #renderingContext internally rendering context} situation.
-     * 
+     *
      * @param projectedCoverage Convenient representation of a {@link Coverage} for rendering.
      * @param isElevation {@code true} if we want elevation coverage, else ({@code false}) for read coverage.
      * @return expected {@linkplain GridCoverage2D elevation coverage} or {@linkplain GridCoverage2D coverage}
@@ -222,16 +222,16 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * @throws org.opengis.referencing.operation.TransformException if problem during {@link Envelope} transformation.
      * @throws org.opengis.util.FactoryException if problem during {@link Envelope} study.
      * @throws org.geotoolkit.process.ProcessException if problem during resampling processing.
-     * @see ProjectedCoverage#getElevationCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam) 
-     * @see ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam) 
+     * @see ProjectedCoverage#getElevationCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
+     * @see ProjectedCoverage#getCoverage(org.geotoolkit.coverage.io.GridCoverageReadParam)
      */
-    private GridCoverage2D getObjectiveCoverage(final ProjectedCoverage projectedCoverage, final boolean isElevation/*, final CanvasType displayOrObjective*/) 
+    private GridCoverage2D getObjectiveCoverage(final ProjectedCoverage projectedCoverage, final boolean isElevation/*, final CanvasType displayOrObjective*/)
             throws CoverageStoreException, TransformException, FactoryException, ProcessException {
         ArgumentChecks.ensureNonNull("projectedCoverage", projectedCoverage);
         //-- ArgumentChecks.ensureNonNull("CanvasType", displayOrObjective);
-        
+
         ////////////////////////////////////////////////////////////////////
-        // 1 - Get data                       
+        // 1 - Get data
         ////////////////////////////////////////////////////////////////////
 
         //-- resolution of horizontal Part of CRS
@@ -239,7 +239,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         assert resolution.length == 2 : "DefaultRasterSymboliser : resolution from renderingContext should only defined in 2D.";
 
         Envelope renderingBound = renderingContext.getCanvasObjectiveBounds();
-        
+
         resolution = checkResolution(resolution, renderingBound);
 
         final CoverageMapLayer coverageLayer = projectedCoverage.getLayer();
@@ -257,21 +257,21 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final GeneralGridGeometry gridGeometry = reader.getGridGeometry(ref.getImageIndex());
         final Envelope dataBBox = gridGeometry.getEnvelope();
         ref.recycle(reader);
-        
+
         /*
         * Study rendering context envelope and internal coverage envelope.
-        * We try to define if the two geographic part from the two respectively 
+        * We try to define if the two geographic part from the two respectively
         * coverage and rendering envelope intersect.
         */
         final CoordinateReferenceSystem renderingContextObjectiveCRS2D = renderingContext.getObjectiveCRS2D();
         final GeneralEnvelope renderingBound2D                         = GeneralEnvelope.castOrCopy(Envelopes.transform(renderingBound, renderingContextObjectiveCRS2D));
         final GeneralEnvelope coverageIntoRender2DCRS                  = GeneralEnvelope.castOrCopy(Envelopes.transform(dataBBox, renderingContextObjectiveCRS2D));
-        
-        
+
+
         if (!org.geotoolkit.geometry.Envelopes.containNAN(renderingBound2D)
          && !org.geotoolkit.geometry.Envelopes.containNAN(coverageIntoRender2DCRS)
          && !coverageIntoRender2DCRS.intersects(renderingBound2D, true)) {
-            //-- in future jdk8 version return an Optional<Coverage> 
+            //-- in future jdk8 version return an Optional<Coverage>
             final StringBuilder strB = new StringBuilder(isElevation ? "getObjectiveElevationCoverage()" : "getObjectiveCoverage()");
             strB.append(" : the 2D geographic part of rendering context does not intersect the 2D geographic part of coverage : ");
             strB.append("\n rendering context 2D CRS :  ");
@@ -283,9 +283,9 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             LOGGER.log(Level.FINE, strB.toString());
             return null;
         }
-        //-- else  
+        //-- else
         //-- Note : in the case of NAN values we try later to clip requested envelope with coverage boundary.
-        
+
         /*
          * Study rendering context envelope and internal coverage envelope.
          * For example if we store data with a third dimension or more, with the 2 dimensional renderer
@@ -295,18 +295,18 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final GeneralEnvelope paramEnvelope = org.geotoolkit.referencing.ReferencingUtilities.intersectEnvelopes(dataBBox, renderingBound);
         assert paramEnvelope.getCoordinateReferenceSystem() != null : "DefaultRasterSymbolizerRenderer : CRS from param envelope cannot be null.";
 
-        //-- Check if projected coverage has NAN values on other dimension than geographic 2D part 
+        //-- Check if projected coverage has NAN values on other dimension than geographic 2D part
         if (org.geotoolkit.geometry.Envelopes.containNAN(paramEnvelope)
         && !org.geotoolkit.geometry.Envelopes.containNANInto2DGeographicPart(paramEnvelope))
             throw new DisjointCoverageDomainException("Rendering envelope extra dimensions does not intersect data envelope : " +
                     "has some NAN values on other dimension than geographic part."+paramEnvelope);
 
-        //-- We know we don't have NAN values on other dimension than geographic 
+        //-- We know we don't have NAN values on other dimension than geographic
         //-- We clip envelope with coverage boundary
         clipAndReplaceNANEnvelope(paramEnvelope, dataBBox, paramEnvelope);
-        
+
         assert !org.geotoolkit.geometry.Envelopes.containNAN(paramEnvelope) : "paramEnvelope can't contain NAN values";
-        
+
         //-- convert resolution adapted to coverage CRS (resolution from rendering context --> coverage resolution)
         final double[] paramRes = ReferencingUtilities.convertResolution(renderingBound, resolution, paramEnvelope.getCoordinateReferenceSystem());
 
@@ -334,7 +334,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         GridCoverage2D dataCoverage = (isElevation) ? projectedCoverage.getElevationCoverage(param) : projectedCoverage.getCoverage(param);
 
         if (dataCoverage == null) {
-            //-- in future jdk8 version return an Optional<Coverage> 
+            //-- in future jdk8 version return an Optional<Coverage>
             final StringBuilder strB = new StringBuilder(isElevation ? "getObjectiveElevationCoverage()" : "getObjectiveCoverage()");
             strB.append(" : \n impossible to read coverage ");
             strB.append("with internally projected coverage boundary : ");
@@ -344,16 +344,16 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             LOGGER.log(Level.FINE, strB.toString());
             return null;
         }
-        
+
         ////////////////////////////////////////////////////////////////////
         // 3 - Reproject data                                             //
         ////////////////////////////////////////////////////////////////////
 
         final CoordinateReferenceSystem coverageCRS   = dataCoverage.getCoordinateReferenceSystem();
         assert CRS.equalsIgnoreMetadata(dataBBox.getCoordinateReferenceSystem(), coverageCRS);
-        
+
         final CoordinateReferenceSystem coverageCRS2D = CRSUtilities.getCRS2D(coverageCRS);
-        
+
         /* It appears EqualsIgnoreMetadata can return false sometimes, even if the two CRS are equivalent.
          * But mathematics don't lie, so if they really describe the same transformation, conversion from
          * one to another will give us an identity matrix.
@@ -367,7 +367,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         assert !renderingBound2D.isEmpty() : "2D rendering boundary should not be empty.";
         final GeneralEnvelope coverageEnv2D = new GeneralEnvelope(dataCoverage.getEnvelope2D());
         assert !coverageEnv2D.isEmpty() : "2D coverage boundary should not be empty.";
-        
+
         /*
         * In case where coverage2D envelope into rendering CRS is not empty,
         * try to reproject a coverage which have already been clipped with the objective rendering context boundary.
@@ -379,7 +379,7 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         } else {
             outputRenderingCoverageEnv2D = renderingBound2D;
         }
-        
+
         //----------------------------- DISPLAY -------------------------------//
         //-- compute output grid Envelope into rendering context display
         //-- get destination image size
@@ -393,14 +393,14 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
             return null;
         }
         //-----------------------------------------------------------------------
-        
+
         //-- Use into DefaultRasterSymbolizerRenderer
         //-- force alpha if image do not get any "invalid data" rule (Ex : No-data in image or color map).
         dataCoverage = prepareCoverageToResampling(dataCoverage, symbol);
 
         /*
-         * NODATA 
-         * 
+         * NODATA
+         *
          * 1 : Normally all NODATA for all gridSampleDimension for a same coverage are equals.
          * 2 : Normally all NODATA for each coverage internally samples are equals.
          */
@@ -409,8 +409,8 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         /*
          * If nodata is not know.
          * 1 : find a nodata value out of internal gridSampleDimension categories.
-         * 2 : if category already contain all sample Datatype possible values, 
-         * transform image into a sample type with more bitspersample to define 
+         * 2 : if category already contain all sample Datatype possible values,
+         * transform image into a sample type with more bitspersample to define
          * an appropriate NODATA values out of categories borders.
          */
         if (nodata == null) {
@@ -437,22 +437,22 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
         final org.geotoolkit.process.Process process = desc.createProcess(params);
         final ParameterValueGroup result = process.call();
         dataCoverage = (GridCoverage2D) result.parameter("result").getValue();
-        
+
         return dataCoverage;
     }
-    
+
     /**
      * Clip requested envelope with internally {@link ProjectedCoverage} boundary.
-     * 
+     *
      * <strong>
-     * In some case when the rendering boundary is reprojected into coverage space 
+     * In some case when the rendering boundary is reprojected into coverage space
      * some {@linkplain Double#NaN NAN} values can be computed, which is an expected comportment.
      * To avoid normally exception during coverage reading this method replace NAN values by coverage boundary values.
      * </strong>
-     * 
+     *
      * @param requestedEnvelope envelope which will be clipped.
      * @param coverageEnvelope reference coverage envelope.
-     * @param result set result of clipping into this {@link GeneralEnvelope}, 
+     * @param result set result of clipping into this {@link GeneralEnvelope},
      * a new result envelope is built if it is {@code null}, you should pass the same Envelope as requestedEnvelope.
      * Moreover the result envelope is defined into same CRS than requestedEnvelope.
      * @return requested clipped envelope result.
@@ -462,28 +462,28 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
     private GeneralEnvelope clipAndReplaceNANEnvelope(final Envelope requestedEnvelope, final Envelope coverageEnvelope, GeneralEnvelope result) {
         ArgumentChecks.ensureNonNull("requestedEnvelope", requestedEnvelope);
         ArgumentChecks.ensureNonNull("coverageEnvelope",  coverageEnvelope);
-        
+
         final CoordinateReferenceSystem requestCRS = requestedEnvelope.getCoordinateReferenceSystem();
         if (!CRS.equalsIgnoreMetadata(requestCRS, coverageEnvelope.getCoordinateReferenceSystem()))
             throw new IllegalArgumentException("requestedEnvelope and coverage envelope will be able to have same CRS : "
                     + "\n Expected CRS : "+requestCRS
                     + "\n Found : "+coverageEnvelope.getCoordinateReferenceSystem());
-        
+
         if (result == null) result = new GeneralEnvelope(requestCRS);
-        
+
         for (int d = 0, dim = requestedEnvelope.getDimension(); d < dim; d++) {
-            
+
             final double reqMin = requestedEnvelope.getMinimum(d);
             final double reqMax = requestedEnvelope.getMaximum(d);
-            
-            final double min = (Double.isNaN(reqMin) || Double.isInfinite(reqMin) 
-                    ? coverageEnvelope.getMinimum(d) 
+
+            final double min = (Double.isNaN(reqMin) || Double.isInfinite(reqMin)
+                    ? coverageEnvelope.getMinimum(d)
                     : StrictMath.max(reqMin, coverageEnvelope.getMinimum(d)));
-            
-            final double max = (Double.isNaN(reqMax) || Double.isInfinite(reqMax) 
-                    ? coverageEnvelope.getMaximum(d) 
+
+            final double max = (Double.isNaN(reqMax) || Double.isInfinite(reqMax)
+                    ? coverageEnvelope.getMaximum(d)
                     : StrictMath.min(reqMax, coverageEnvelope.getMaximum(d)));
-            
+
             result.setRange(d, min, max);
         }
         return result;
@@ -494,18 +494,23 @@ public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymboli
      * Interpolation is possible only when data do not contain qualitative informations.
      */
     private static InterpolationCase findInterpolationCase(CoverageReference ref, GridCoverageReader reader) throws CoverageStoreException{
+        ArgumentChecks.ensureNonNull("CoverageReference", ref);
+        ArgumentChecks.ensureNonNull("GridCoverageReader", reader);
         final List<GridSampleDimension> sampleDimensions = reader.getSampleDimensions(ref.getImageIndex());
 
-        for(GridSampleDimension sd : sampleDimensions){
-            final List<Category> categories = sd.getCategories();
-            if(categories != null){
-                for(Category cat : categories){
-                    if(!cat.isQuantitative() && !cat.getName().toString(Locale.ENGLISH).equals("No data")){
-                        return InterpolationCase.NEIGHBOR;
+        if (sampleDimensions != null) {
+            for (GridSampleDimension sd : sampleDimensions) {
+                final List<Category> categories = sd.getCategories();
+                if (categories != null) {
+                    for (Category cat : categories) {
+                        if (!cat.isQuantitative() && !cat.getName().toString(Locale.ENGLISH).equals("No data")) {
+                            return InterpolationCase.NEIGHBOR;
+                        }
                     }
                 }
             }
         }
+
         //no information on the data or datas are not qualitative, assume it can be interpolated
         //TODO : search geotk history for code made by Desruisseaux in old Resample operator,
         //       it contained such verifications.
