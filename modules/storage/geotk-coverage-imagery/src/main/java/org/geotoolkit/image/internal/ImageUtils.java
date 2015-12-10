@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.image.internal;
 
-import org.geotoolkit.image.color.ScaledColorSpace;
+import java.util.Arrays;
+import java.util.Hashtable;
+
 import java.awt.Dimension;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
@@ -28,10 +30,10 @@ import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.SampleModel;
-import java.util.Arrays;
-import java.util.Hashtable;
+
 import javax.imageio.ImageTypeSpecifier;
-import org.apache.sis.util.ArgumentChecks;
+
+import org.geotoolkit.image.color.ScaledColorSpace;
 import org.geotoolkit.image.io.large.WritableLargeRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
@@ -47,84 +49,85 @@ import org.geotoolkit.lang.Static;
  * @see WritableLargeRenderedImage
  */
 public class ImageUtils extends Static{
-    
+
     //---------------- sammple format -------------------//
     /**
      * Define buffer type as IEEE floating point data.
      */
     private final static short SAMPLEFORMAT_IEEEFP = 3;
-    
+
     /**
      * Define buffer type as signed integer point data.
      */
     private final static short SAMPLEFORMAT_INT     = 2;
-    
+
     /**
      * Define buffer type as unsigned integer point data.
      */
     private final static short SAMPLEFORMAT_UINT    = 1;
-    
+
     //------------ Photometric interpretation -----------//
     /**
      * Define image properties for bilevel and grayscale images: 0 is imaged as black.
      */
     private final static short PHOTOMETRIC_MINISBLACK = 1;
-    
+
     /**
      * Define image properties for RGB image.
-     * RGB value of (0,0,0) represents black, and (255,255,255) represents white, assuming 8-bit components. 
+     * RGB value of (0,0,0) represents black, and (255,255,255) represents white, assuming 8-bit components.
      * The components are stored in the indicated order: first Red, then Green, then Blue.
      */
     private final static short PHOTOMETRIC_RGB         = 2;
-    
+
     /**
-     * Define image with Palette color. 
-     * In this model, a color is described with a single component. 
-     * The value of the component is used as an index into the red, 
-     * green and blue curves in the ColorMap field to retrieve an RGB triplet that defines the color. 
+     * Define image with Palette color.
+     * In this model, a color is described with a single component.
+     * The value of the component is used as an index into the red,
+     * green and blue curves in the ColorMap field to retrieve an RGB triplet that defines the color.
      * When PhotometricInterpretation = 3 is used, ColorMap must be present and SamplesPerPixel must be 1.
      */
     private final static short PHOTOMETRIC_PALETTE     = 3;
-    
+
     /**
      * Integer that define planar configuration as interleaved.
      * For example in a RGB image, within the same band, pixel value will be order like follow : RGBRGBRGB ...
      */
     private final static short PLANAR_INTERLEAVED      = 1;
-    
+
     /**
      * Integer that define planar configuration as banded.
-     * For example in a RGB image, within the first band, pixel value will be order 
+     * For example in a RGB image, within the first band, pixel value will be order
      * like follow : RRRRRRRR... and next band : GGGGGGG... and last : BBBBBBB.
      */
     private final static short PLANAR_BANDED           = 2;
-    
+
     /**
      * Returns a {@link BufferedImage} with an internaly palette {@link ColorSpace}, created from given parameters.
-     * 
+     *
      * @param width image width.
      * @param height image height.
-     * @param type type of internal data. 
-     * @param colorMap array which define map when PhotometricInterpretation is type palette.
+     * @param type type of internal data.
+     * @param numband
+     * @param java2DColorMap array which define map when PhotometricInterpretation is type palette.
      * @return created palette {@link BufferedImage}.
      * @throws IllegalArgumentException if colorMap argument is {@code null}.
      * @see SampleType
      * @see PhotometricInterpretation#Palette
      */
-    public static BufferedImage createPaletteImage(final int width, final int height, final SampleType type, 
-                                                           final int numband, final long[] colorMap) {
-        return createImage(width, height, type, numband, PhotometricInterpretation.Palette, PlanarConfiguration.Interleaved, colorMap);
+    public static BufferedImage createPaletteImage(final int width, final int height, final SampleType type,
+                                                           final int numband, final int[] java2DColorMap) {
+        return createImage(width, height, type, numband, PhotometricInterpretation.Palette, PlanarConfiguration.Interleaved, java2DColorMap);
     }
-    
+
     /**
      * Returns a {@link BufferedImage} with an internaly AlphaRGB {@link ColorSpace}, created from given parameters.
-     * 
+     *
      * <p><strong>Moreover : the type of internal image {@link SampleModel} is interleaved.<br/>
      * In other words the internal planar configuration is {@link PlanarConfiguration#Interleaved} type.</strong></p>
-     * 
+     *
      * @param width image width.
      * @param height image height.
-     * @param type type of internal data. 
+     * @param type type of internal data.
      * @return created AlphaRGB {@link BufferedImage}.
      * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
      * @see SampleType
@@ -134,16 +137,16 @@ public class ImageUtils extends Static{
     public static BufferedImage createARGBInterleavedImage(final int width, final int height, final SampleType type) {
         return createImage(width, height, type, 4, PhotometricInterpretation.RGB, PlanarConfiguration.Interleaved, null);
     }
-    
+
     /**
      * Returns a {@link BufferedImage} with an internaly RGB {@link ColorSpace}, created from given parameters.
-     * 
+     *
      * <p><strong>Moreover : the type of internal image {@link SampleModel} is interleaved.<br/>
      * In other words the internal planar configuration is {@link PlanarConfiguration#Interleaved} type.</strong></p>
-     * 
+     *
      * @param width image width.
      * @param height image height.
-     * @param type type of internal data. 
+     * @param type type of internal data.
      * @return created RGB {@link BufferedImage}.
      * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
      * @see SampleType
@@ -153,16 +156,16 @@ public class ImageUtils extends Static{
     public static BufferedImage createRGBInterleavedImage(final int width, final int height, final SampleType type) {
         return createImage(width, height, type, 3, PhotometricInterpretation.RGB, PlanarConfiguration.Interleaved, null);
     }
-    
+
     /**
      * Returns a {@link BufferedImage} with an internaly AlphaRGB {@link ColorSpace}, created from given parameters.
-     * 
+     *
      * <p><strong>Moreover : the type of internal image {@link SampleModel} is banded.<br/>
      * In other words the internal planar configuration is {@link PlanarConfiguration#Banded} type.</strong></p>
-     * 
+     *
      * @param width image width.
      * @param height image height.
-     * @param type type of internal data. 
+     * @param type type of internal data.
      * @return created AlphaRGB {@link BufferedImage}.
      * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
      * @see SampleType
@@ -172,16 +175,16 @@ public class ImageUtils extends Static{
     public static BufferedImage createARGBBandedImage(final int width, final int height, final SampleType type) {
         return createImage(width, height, type, 4, PhotometricInterpretation.RGB, PlanarConfiguration.Banded, null);
     }
-    
+
     /**
      * Returns a {@link BufferedImage} with an internaly RGB {@link ColorSpace}, created from given parameters.
-     * 
+     *
      * <p><strong>Moreover : the type of internal image {@link SampleModel} is banded.<br/>
      * In other words the internal planar configuration is {@link PlanarConfiguration#Banded} type.</strong></p>
-     * 
+     *
      * @param width image width.
      * @param height image height.
-     * @param type type of internal data. 
+     * @param type type of internal data.
      * @return created RGB {@link BufferedImage}.
      * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
      * @see SampleType
@@ -191,13 +194,13 @@ public class ImageUtils extends Static{
     public static BufferedImage createRGBBandedImage(final int width, final int height, final SampleType type) {
         return createImage(width, height, type, 3, PhotometricInterpretation.RGB, PlanarConfiguration.Banded, null);
     }
-    
+
     /**
      * Returns a {@link BufferedImage} with an internaly gray scaled {@link ColorSpace}, created from given parameters.
-     * 
+     *
      * <p><strong>Moreover : the type of internal image {@link SampleModel} is banded.<br/>
      * In other words the internal planar configuration is {@link PlanarConfiguration#Banded} type.</strong></p>
-     * 
+     *
      * @param width image width.
      * @param height image height.
      * @param type type of internal data.
@@ -211,13 +214,13 @@ public class ImageUtils extends Static{
     public static BufferedImage createScaledBandedImage(final int width, final int height, final SampleType type, final int numBand) {
         return createImage(width, height, type, numBand, PhotometricInterpretation.GrayScale, PlanarConfiguration.Banded, null);
     }
-    
+
     /**
      * Returns a {@link BufferedImage} with an internaly gray scaled {@link ColorSpace}, created from given parameters.
-     * 
+     *
      * <p><strong>Moreover : the type of internal image {@link SampleModel} is pixel interleaved.<br/>
      * In other words the internal planar configuration is {@link PlanarConfiguration#Interleaved} type.</strong></p>
-     * 
+     *
      * @param width image width.
      * @param height image height.
      * @param type type of internal data.
@@ -231,18 +234,18 @@ public class ImageUtils extends Static{
     public static BufferedImage createScaledInterleavedImage(final int width, final int height, final SampleType type, final int numBand) {
         return createImage(width, height, type, numBand, PhotometricInterpretation.GrayScale, PlanarConfiguration.Interleaved, null);
     }
-    
+
     /**
      * Returns a {@link WritableLargeRenderedImage} with an internaly palette {@link ColorSpace}, created from given parameters.
-     * 
+     *
      * <p><strong>Moreover : the type of internal image {@link SampleModel} is pixel interleaved.<br/>
      * In other words the internal planar configuration is {@link PlanarConfiguration#Interleaved} type.</strong></p>
-     * 
+     *
      * @param width image width.
      * @param height image height.
      * @param type type of internal data.
      * @param numBand band number.
-     * @param colorMap array which define map when PhotometricInterpretation is type palette.
+     * @param java2DColorMap array which define map when PhotometricInterpretation is type palette.
      * @return created palette {@link WritableLargeRenderedImage}.
      * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
      * @throws IllegalArgumentException if colorMap argument is {@code null}.
@@ -250,17 +253,18 @@ public class ImageUtils extends Static{
      * @see WritableLargeRenderedImage
      * @see PhotometricInterpretation#Palette
      */
-    public static WritableLargeRenderedImage createPaletteLargeImage(final int width, final int height, final SampleType type, final int numBand, final long[] colorMap) {
-        final ColorModel cm = createColorModel(type, numBand, PhotometricInterpretation.Palette, colorMap);
+    public static WritableLargeRenderedImage createPaletteLargeImage(final int width, final int height, final SampleType type,
+                                                                     final int numBand, final int[] java2DColorMap) {
+        final ColorModel cm = createColorModel(type, numBand, PhotometricInterpretation.Palette, java2DColorMap);
         return new WritableLargeRenderedImage(width, height, cm);
     }
-    
+
     /**
      * Returns a {@link WritableLargeRenderedImage} with an internaly AlphaRGB {@link ColorSpace} and 4 bands, created from given parameters.
-     * 
+     *
      * <p><strong>Moreover : the type of internal image {@link SampleModel} is pixel interleaved.<br/>
      * In other words the internal planar configuration is {@link PlanarConfiguration#Interleaved} type.</strong></p>
-     * 
+     *
      * @param width image width.
      * @param height image height.
      * @param type type of internal data.
@@ -275,13 +279,13 @@ public class ImageUtils extends Static{
         final ColorModel cm = createColorModel(type, 4, PhotometricInterpretation.RGB, null);
         return new WritableLargeRenderedImage(width, height, cm);
     }
-    
+
     /**
      * Returns a {@link WritableLargeRenderedImage} with an internaly RGB {@link ColorSpace} and 3 bands, created from given parameters.
-     * 
+     *
      * <p><strong>Moreover : the type of internal image {@link SampleModel} is pixel interleaved.<br/>
      * In other words the internal planar configuration is {@link PlanarConfiguration#Interleaved} type.</strong></p>
-     * 
+     *
      * @param width image width.
      * @param height image height.
      * @param type type of internal data.
@@ -296,13 +300,13 @@ public class ImageUtils extends Static{
         final ColorModel cm = createColorModel(type, 3, PhotometricInterpretation.RGB, null);
         return new WritableLargeRenderedImage(width, height, cm);
     }
-    
+
     /**
      * Returns a {@link WritableLargeRenderedImage} with an internaly gray scaled {@link ColorSpace}, created from given parameters.
-     * 
+     *
      * <p><strong>Moreover : the type of internal image {@link SampleModel} is pixel interleaved.<br/>
      * In other words the internal planar configuration is {@link PlanarConfiguration#Interleaved} type.</strong></p>
-     * 
+     *
      * @param width image width.
      * @param height image height.
      * @param type type of internal data.
@@ -314,24 +318,24 @@ public class ImageUtils extends Static{
      * @see WritableLargeRenderedImage
      * @see PhotometricInterpretation#GrayScale
      */
-    public static WritableLargeRenderedImage createScaledLargeImage(final int width, final int height, 
+    public static WritableLargeRenderedImage createScaledLargeImage(final int width, final int height,
                                                                     final SampleType type, final int numBand) {
         final ColorModel cm = createColorModel(type, numBand, PhotometricInterpretation.GrayScale, null);
         return new WritableLargeRenderedImage(width, height, cm);
     }
-    
+
     /**
      * Returns a {@link WritableLargeRenderedImage} created from given parameters.
-     * 
+     *
      * <p><strong>Moreover : the type of internal image {@link SampleModel} is pixel interleaved.<br/>
      * In other words the internal planar configuration is {@link PlanarConfiguration#Interleaved} type.</strong></p>
-     * 
+     *
      * @param width image width.
      * @param height image height.
      * @param type type of internal data.
      * @param numBand band number.
-     * @param pI define type of {@link ColorModel}, for example RGB, palette etc. 
-     * @param colorMap array which define map when PhotometricInterpretation is type palette, or should be {@code null}.
+     * @param pI define type of {@link ColorModel}, for example RGB, palette etc.
+     * @param java2DColorMap array which define map when PhotometricInterpretation is type palette, or should be {@code null}.
      * @return created {@link WritableLargeRenderedImage}.
      * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
      * @throws IllegalArgumentException if colorMap argument is {@code null} when PhotometricInterpretation is type palette.
@@ -339,29 +343,29 @@ public class ImageUtils extends Static{
      * @see PhotometricInterpretation
      * @see WritableLargeRenderedImage
      */
-    public static WritableLargeRenderedImage createLargeImage(final int width, final int height, final SampleType type, final int numBand, 
-                                                              final PhotometricInterpretation pI, final long[] colorMap) {
-        final ColorModel cm = createColorModel(type, numBand, pI, colorMap);
+    public static WritableLargeRenderedImage createLargeImage(final int width, final int height, final SampleType type, final int numBand,
+                                                              final PhotometricInterpretation pI, final int[] java2DColorMap) {
+        final ColorModel cm = createColorModel(type, numBand, pI, java2DColorMap);
         return new WritableLargeRenderedImage(width, height, cm);
     }
-    
+
     /**
      * Returns a {@link WritableLargeRenderedImage} created from given parameters.
-     * 
+     *
      * <p><strong>Moreover : the type of internal image {@link SampleModel} is pixel interleaved.<br/>
      * In other words the internal planar configuration is {@link PlanarConfiguration#Interleaved} type.</strong></p>
-     * 
+     *
      * @param minx minimum image coordinate in X direction.
      * @param miny minimum image coordinate in Y direction.
      * @param width image width.
      * @param height image height.
-     * @param tileSize size of internal image tiles. 
+     * @param tileSize size of internal image tiles.
      * @param type type of internal data.
      * @param numBand band number.
      * @param tilegridXOffset
      * @param tilegridYOffset
-     * @param pI define type of {@link ColorModel}, for example RGB, palette etc. 
-     * @param colorMap array which define map when PhotometricInterpretation is type palette, or should be {@code null}.
+     * @param pI define type of {@link ColorModel}, for example RGB, palette etc.
+     * @param java2DColorMap array which define map when PhotometricInterpretation is type palette, or should be {@code null}.
      * @return created {@link WritableLargeRenderedImage}.
      * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
      * @throws IllegalArgumentException if colorMap argument is {@code null} when PhotometricInterpretation is type palette.
@@ -369,22 +373,24 @@ public class ImageUtils extends Static{
      * @see PhotometricInterpretation
      * @see WritableLargeRenderedImage
      */
-    public static WritableLargeRenderedImage createLargeImage(final int minx, final int miny, final int width, final int height, final Dimension tileSize, final SampleType type, final int numBand, 
-                                                 final int tilegridXOffset, final int tilegridYOffset, final PhotometricInterpretation pI, final long[] colorMap) {
-        final ColorModel cm = createColorModel(type, numBand, pI, colorMap);
+    public static WritableLargeRenderedImage createLargeImage(final int minx, final int miny, final int width, final int height,
+                                                              final Dimension tileSize, final SampleType type, final int numBand,
+                                                              final int tilegridXOffset, final int tilegridYOffset,
+                                                              final PhotometricInterpretation pI, final int[] java2DColorMap) {
+        final ColorModel cm = createColorModel(type, numBand, pI, java2DColorMap);
         return new WritableLargeRenderedImage(minx, miny, width, height, tileSize, tilegridXOffset, tilegridYOffset, cm);
     }
-    
+
     /**
      * Returns a {@link BufferedImage} created from given parameters.
-     * 
+     *
      * @param width image width.
      * @param height image height.
      * @param type type of internal data.
      * @param numBand band number.
-     * @param pI define type of {@link ColorModel}, for example RGB, palette etc. 
+     * @param pI define type of {@link ColorModel}, for example RGB, palette etc.
      * @param pC define type of internal {@link SampleModel}, banded or interleaved.
-     * @param colorMap array which define map when PhotometricInterpretation is type palette, or should be {@code null}.
+     * @param java2DColorMap array which define map when PhotometricInterpretation is type palette, or should be {@code null}.
      * @return created {@link BufferedImage}.
      * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
      * @throws IllegalArgumentException if colorMap argument is {@code null} when PhotometricInterpretation is type palette.
@@ -392,20 +398,20 @@ public class ImageUtils extends Static{
      * @see PhotometricInterpretation
      * @see PlanarConfiguration
      */
-    public static BufferedImage createImage(final int width, final int height, final SampleType type, final int numBand, 
-                                                    final PhotometricInterpretation pI, final PlanarConfiguration pC, final long[] colorMap) {
-        final ImageTypeSpecifier imgTypeSpec = buildImageTypeSpecifier(type, numBand, pI, pC, colorMap);
+    public static BufferedImage createImage(final int width, final int height, final SampleType type, final int numBand,
+                                            final PhotometricInterpretation pI, final PlanarConfiguration pC, final int[] java2DColorMap) {
+        final ImageTypeSpecifier imgTypeSpec = buildImageTypeSpecifier(type, numBand, pI, pC, java2DColorMap);
         return imgTypeSpec.createBufferedImage(width, height);
     }
-    
+
     /**
      * Returns an appropriate {@link ImageTypeSpecifier} built from given parameters.
-     * 
+     *
      * @param type type of internal data.
      * @param numBand band number.
-     * @param pI define type of {@link ColorModel}, for example RGB, palette etc. 
+     * @param pI define type of {@link ColorModel}, for example RGB, palette etc.
      * @param pC define type of internal {@link SampleModel}, banded or interleaved.
-     * @param colorMap array which define map when PhotometricInterpretation is type palette, or should be {@code null}.
+     * @param java2DColorMap array which define map when PhotometricInterpretation is type palette, or should be {@code null}.
      * @return {@link ImageTypeSpecifier} built from given parameters.
      * @throws UnsupportedOperationException if problem during internal {@link ColorModel} creation.
      * @throws IllegalArgumentException if colorMap argument is {@code null} when PhotometricInterpretation is type palette.
@@ -414,18 +420,18 @@ public class ImageUtils extends Static{
      * @see PlanarConfiguration
      */
     public static ImageTypeSpecifier buildImageTypeSpecifier(final SampleType type, final int numBand, final PhotometricInterpretation pI,
-                                                             final PlanarConfiguration pC, final long[] colorMap) throws UnsupportedOperationException {
-        
+                                                             final PlanarConfiguration pC, final int[] java2DColorMap) throws UnsupportedOperationException {
+
         final int sampleBitSize;
         final short sampleFormat;
-        
+
         switch (type) {
             case Byte : {
                 sampleBitSize = java.lang.Byte.SIZE;
                 sampleFormat  = SAMPLEFORMAT_UINT;
                 break;
             }
-            case  Short : 
+            case  Short :
             case UShort : {
                 sampleBitSize = java.lang.Short.SIZE;
                 sampleFormat  = SAMPLEFORMAT_UINT;
@@ -448,7 +454,7 @@ public class ImageUtils extends Static{
             }
             default : throw new IllegalArgumentException("Unknow sample type.");
         }
-        
+
         final short photometricInterpret;
         switch(pI) {
             case GrayScale : {
@@ -461,34 +467,34 @@ public class ImageUtils extends Static{
             }
             case Palette : {
                 photometricInterpret = PHOTOMETRIC_PALETTE;
-                if (colorMap == null) throw new IllegalArgumentException("colorMap should not be null with palette photometric interpretation.");
+                if (java2DColorMap == null) throw new IllegalArgumentException("colorMap should not be null with palette photometric interpretation.");
                 break;
             }
             default : throw new IllegalArgumentException("Unknow photometric Interpretation.");
         }
-        
+
         final short planarConfig = (pC.equals(PlanarConfiguration.Banded)) ? PLANAR_BANDED : PLANAR_INTERLEAVED;
-        return buildImageTypeSpecifier(sampleBitSize, numBand, photometricInterpret, sampleFormat, planarConfig, colorMap);
+        return buildImageTypeSpecifier(sampleBitSize, numBand, photometricInterpret, sampleFormat, planarConfig, java2DColorMap);
     }
-    
+
      /**
       *  Returns {@link ColorModel} create from given parameters.
-      * 
+      *
       * @param type type of data within {@link ColorModel}.
       * @param numBand band nmber.
-      * @param pI define type of {@link ColorModel}, for example RGB, palette etc. 
-      * @param colorMap array which define map when PhotometricInterpretation is type palette, or should be {@code null}.
+      * @param pI define type of {@link ColorModel}, for example RGB, palette etc.
+      * @param java2DColorMap array which define map when PhotometricInterpretation is type palette, or should be {@code null}.
       * @return created {@link ColorModel}.
-      * @throws UnsupportedOperationException if problem during {@link ColorModel} creation. 
+      * @throws UnsupportedOperationException if problem during {@link ColorModel} creation.
       * @throws IllegalArgumentException if colorMap argument is {@code null} when PhotometricInterpretation is type palette.
       * @see SampleType
       * @see PhotometricInterpretation
       */
-    public static ColorModel createColorModel(final SampleType type, final int numBand, 
-                                               final PhotometricInterpretation pI, final long[] colorMap) { 
+    public static ColorModel createColorModel(final SampleType type, final int numBand,
+                                               final PhotometricInterpretation pI, final int[] java2DColorMap) {
          final int sampleBitSize;
         final short sampleFormat;
-        
+
         switch (type) {
             case Byte : {
                 sampleBitSize = java.lang.Byte.SIZE;
@@ -518,7 +524,7 @@ public class ImageUtils extends Static{
             }
             default : throw new IllegalArgumentException("Unknow sample type.");
         }
-        
+
         final short photometricInterpret;
         switch(pI) {
             case GrayScale : {
@@ -531,14 +537,14 @@ public class ImageUtils extends Static{
             }
             case Palette : {
                 photometricInterpret = PHOTOMETRIC_PALETTE;
-                if (colorMap == null) throw new IllegalArgumentException("colorMap should not be null with palette photometric interpretation.");
+                if (java2DColorMap == null) throw new IllegalArgumentException("colorMap should not be null with palette photometric interpretation.");
                 break;
             }
             default : throw new IllegalArgumentException("Unknow photometric Interpretation.");
         }
-        return createColorModel(sampleBitSize, numBand, photometricInterpret, sampleFormat, colorMap);
+        return createColorModel(sampleBitSize, numBand, photometricInterpret, sampleFormat, java2DColorMap);
     }
-    
+
     /**
      * Define photometric interpretation tiff tag in function of {@link ColorModel} properties.
      *
@@ -571,7 +577,7 @@ public class ImageUtils extends Static{
     public static PhotometricInterpretation getEnumPhotometricInterpretation(final ColorModel cm) {
         return PhotometricInterpretation.valueOf(getPhotometricInterpretation(cm));
     }
-    
+
     /**
      * Define appropriate tiff tag value for planar configuration from {@link SampleModel} properties.
      *
@@ -592,20 +598,20 @@ public class ImageUtils extends Static{
         }
         return PLANAR_INTERLEAVED;
     }
-    
+
     /**
      * Define appropriate {@link PlanarConfiguration} enum from its integer planarConfiguration into tiff specification.
-     * 
+     *
      * @param sm needed {@link SampleModel} to define planar configuration.
      * @return {@link PlanarConfiguration#Interleaved} for an interleaved sampleModel or {@link PlanarConfiguration#Banded}.
      * @see #PLANAR_INTERLEAVED
      * @see #PLANAR_BANDED
-     * @see #getPlanarConfiguration(java.awt.image.SampleModel) 
+     * @see #getPlanarConfiguration(java.awt.image.SampleModel)
      */
     public static PlanarConfiguration getEnumPlanarConfiguration(final SampleModel sm) {
         return PlanarConfiguration.valueOf(getPlanarConfiguration(sm));
     }
-    
+
     /**
      * Define appropriate tiff tag value for planar configuration from {@link SampleModel} properties.
      *
@@ -616,12 +622,12 @@ public class ImageUtils extends Static{
      * @see #SAMPLEFORMAT_IEEEFP
      */
     public static int getSampleFormat(final SampleModel sm) {
-        
+
         //-- bitpersamples
         final int[] sampleSize = sm.getSampleSize();// sample size in bits
         int samplePerPixel = sampleSize.length;
         assert samplePerPixel == sm.getNumBands() : "samplePerPixel = "+samplePerPixel+". sm.getnumDataElement = "+sm.getNumBands();
-        
+
         for (int i = 1; i < samplePerPixel; i++) {
             if (sampleSize[i-1] != sampleSize[i]) {
                 throw new IllegalStateException("different sample size is not supported in tiff format.");
@@ -639,25 +645,27 @@ public class ImageUtils extends Static{
             case DataBuffer.TYPE_INT   : {
                 return SAMPLEFORMAT_INT; //-- type signed 32 bits Int --//
             }
-            default : { return SAMPLEFORMAT_UINT;} //-- type UInt or UShort--//            
+            default : { return SAMPLEFORMAT_UINT;} //-- type UInt or UShort--//
         }
     }
-    
+
     /**
      * Return an appropriate {@link ImageTypeSpecifier} built from given parameter.
-     * 
+     *
      * @param sampleBitsSize bit size for each sample.
      * @param numBand expected band number
-     * @param photometricInterpretation 
+     * @param photometricInterpretation
      * @param sampleFormat
      * @param planarConfiguration define planar configuration of asked {@link ImageTypeSpecifier}, 1 for interveaved 2 for banded sampleModel.
-     * @param colorMap
+     * @param java2DColorMap
      * @return {@link ImageTypeSpecifier}.
      */
-    public static ImageTypeSpecifier buildImageTypeSpecifier(final int sampleBitsSize, final int numBand, 
-            final short photometricInterpretation, final short sampleFormat, final short planarConfiguration, final  long[] colorMap) throws UnsupportedOperationException {
-        final ColorModel cm = createColorModel(sampleBitsSize, numBand, photometricInterpretation, sampleFormat, colorMap);
-        final SampleModel sm; 
+    public static ImageTypeSpecifier buildImageTypeSpecifier(final int sampleBitsSize, final int numBand,
+                                                             final short photometricInterpretation, final short sampleFormat,
+                                                             final short planarConfiguration, final int[] java2DColorMap)
+                                                             throws UnsupportedOperationException {
+        final ColorModel cm = createColorModel(sampleBitsSize, numBand, photometricInterpretation, sampleFormat, java2DColorMap);
+        final SampleModel sm;
         switch (planarConfiguration) {
             case 1 : {
                 sm = cm.createCompatibleSampleModel(1, 1);
@@ -675,18 +683,19 @@ public class ImageUtils extends Static{
         }
         return new ImageTypeSpecifier(cm, sm);
     }
-    
+
     /**
      * Create and returns appropriate {@link SampleModel} built from given parameters.
-     * 
-     * @param planarConfiguration define planar configuration of asked {@link SampleModel}, 
+     *
+     * @param planarConfiguration define planar configuration of asked {@link SampleModel},
      * 1 for {@link PixelInterleavedSampleModel} and 2 for {@link BandedSampleModel}
      * @param colorModel the associate {@link ColorModel}.
      * @return {@link ImageTypeSpecifier}.
      * @see #PLANAR_INTERLEAVED
      * @see #PLANAR_BANDED
      */
-    public static SampleModel createSampleModel(final short planarConfiguration, final ColorModel colorModel) throws UnsupportedOperationException {
+    public static SampleModel createSampleModel(final short planarConfiguration, final ColorModel colorModel)
+            throws UnsupportedOperationException {
         final int numBand        = colorModel.getNumComponents();
         final int sampleBitsSize = colorModel.getComponentSize()[0];
         switch (planarConfiguration) {
@@ -701,79 +710,62 @@ public class ImageUtils extends Static{
             default : throw new IllegalArgumentException("unknow planarConfiguration type. Expected 1 for interleaved or 2 for banded. Found : "+planarConfiguration);
         }
     }
-    
+
     /**
      * Create and returns an adapted {@link ColorModel} from given parameters.
-     * 
-     * @param sampleBitsSize
-     * @param numBand
-     * @param photometricInterpretation
-     * @param sampleFormat
-     * @param colorMap associate color map array in case where a palette color model is define.
-     * @return an adapted {@link ColorModel} from given parameters.
-     * @throws IllegalArgumentException if photometric interpretation is define 
-     * as palette (photometricInterpretation == 3) and colorMap is {@code null}.
-     */
-    public static ColorModel createColorModel(final int sampleBitsSize, final int numBand, final short photometricInterpretation, 
-                                               final short sampleFormat, final  long[] colorMap) throws UnsupportedOperationException { 
-        return createColorModel(sampleBitsSize, numBand, photometricInterpretation, sampleFormat, null, null, colorMap);
-    }
-    
-    /**
-     * Create and returns an adapted {@link ColorModel} from given parameters.
-     * 
-     * @param sampleBitsSize
-     * @param numBand
-     * @param photometricInterpretation
-     * @param sampleFormat
-     * @param minSampleValue minimum raster sample value to build needed {@link ColorSpace}, 
-     * may be {@code null}, if null the default choosen value will be {@link Double#MIN_VALUE}.
-     * @param maxSampleValue maximum raster sample value to build needed {@link ColorSpace}, 
-     * may be {@code null}, if null the default choosen value will be {@link Double#MAX_VALUE}.
-     * @param colorMap associate color map array in case where a palette color model is define.
-     * @return an adapted {@link ColorModel} from given parameters.
-     * @throws IllegalArgumentException if photometric interpretation is define 
-     * as palette (photometricInterpretation == 3) and colorMap is {@code null}.
-     * @throws IllegalArgumentException if minSampleValue or maxSampleValue is(are) equals to {@link Double#NaN}.
-     * @see ScaledColorSpace
      *
-     * @deprecated This method is specific to GeoTIFF format.
+     * @param sampleBitsSize
+     * @param numBand
+     * @param photometricInterpretation
+     * @param sampleFormat
+     * @param java2DColorMap associate color map array in case where a palette color model is define.
+     * @return an adapted {@link ColorModel} from given parameters.
+     * @throws IllegalArgumentException if photometric interpretation is define
+     * as palette (photometricInterpretation == 3) and colorMap is {@code null}.
      */
-    @Deprecated
-    public static ColorModel createColorModel(final int sampleBitsSize, final int numBand,
-                                              final short photometricInterpretation, final short sampleFormat,
-                                              final Double minSampleValue, final Double maxSampleValue,
-                                              final long[] colorMap)
-            throws UnsupportedOperationException {
-        return createColorModel(sampleBitsSize, numBand,photometricInterpretation, sampleFormat,
-        minSampleValue, maxSampleValue,colorMap,null);
+    public static ColorModel createColorModel(final int sampleBitsSize, final int numBand, final short photometricInterpretation,
+                                               final short sampleFormat, final int[] java2DColorMap) throws UnsupportedOperationException {
+        return createColorModel(sampleBitsSize, numBand, photometricInterpretation, sampleFormat, null, null, java2DColorMap);
     }
 
     /**
+     * Create and returns an adapted {@link ColorModel} from given parameters.
      *
-     * @deprecated This method is specific to GeoTIFF format.
+     * @param sampleBitsSize
+     * @param numBand
+     * @param photometricInterpretation
+     * @param sampleFormat
+     * @param minSampleValue minimum raster sample value to build needed {@link ColorSpace},
+     * may be {@code null}, if null the default choosen value will be {@link Double#MIN_VALUE}.
+     * @param maxSampleValue maximum raster sample value to build needed {@link ColorSpace},
+     * may be {@code null}, if null the default choosen value will be {@link Double#MAX_VALUE}.
+     * @param java2DColorMap associate color map array in case where a palette color model is define.
+     * @return an adapted {@link ColorModel} from given parameters.
+     * @throws IllegalArgumentException if photometric interpretation is define
+     * as palette (photometricInterpretation == 3) and colorMap is {@code null}.
+     * @throws IllegalArgumentException if minSampleValue or maxSampleValue is(are) equals to {@link Double#NaN}.
+     * @see ScaledColorSpace
      */
-    @Deprecated
-    public static ColorModel createColorModel(final int sampleBitsSize, final int numBand, 
+    public static ColorModel createColorModel(final int sampleBitsSize, final int numBand,
                                               final short photometricInterpretation, final short sampleFormat,
-                                              final Double minSampleValue, final Double maxSampleValue, 
-                                              final long[] geotiffColorMap, int[] java2DColorMap)
-                                              throws UnsupportedOperationException { 
+                                              final Double minSampleValue, final Double maxSampleValue,
+                                              /*final long[] geotiffColorMap,*/ int[] java2DColorMap)
+                                              throws UnsupportedOperationException {
         if (minSampleValue != null) {
             if (Double.isNaN(minSampleValue))
                 throw new IllegalArgumentException("invalid minimum raster sample value, it should not be Double.NAN");
         }
-        
+
         if (maxSampleValue != null) {
             if (Double.isNaN(maxSampleValue))
                 throw new IllegalArgumentException("invalid minimum raster sample value, it should not be Double.NAN");
         }
-        
+
         final int dataBufferType;
-        
+
         if (sampleFormat == 3) {
             /*
-             * Case to defferency 32 bits Float to 32 bits Integer. 
+             * Case to defferency 32 bits Float to 32 bits Integer.
              */
             switch (sampleBitsSize) {
                 case Float.SIZE  : dataBufferType = DataBuffer.TYPE_FLOAT; break;
@@ -803,8 +795,8 @@ public class ImageUtils extends Static{
         switch (photometricInterpretation) {
             case 0 :   //--minIsWhite
             case 1 : { //-- minIsBlack
-                if (numBand > 1 
-                 || dataBufferType == DataBuffer.TYPE_FLOAT 
+                if (numBand > 1
+                 || dataBufferType == DataBuffer.TYPE_FLOAT
                  || dataBufferType == DataBuffer.TYPE_DOUBLE) {
                     final double minCs = (minSampleValue != null) ? minSampleValue : Double.MIN_VALUE;
                     final double maxCs = (maxSampleValue != null) ? maxSampleValue : Double.MAX_VALUE;
@@ -819,10 +811,9 @@ public class ImageUtils extends Static{
                 break;
             }
             case 3 : {//-- palette
-                if (java2DColorMap == null) {
-                    if (geotiffColorMap == null) throw new IllegalArgumentException("Impossible to build palette color model with null color map array.");
-                    java2DColorMap = buildColorMapArray(geotiffColorMap);
-                }
+                if (java2DColorMap == null) 
+                     throw new IllegalArgumentException("Impossible to build palette color model with null color map array.");
+
                 final ColorModel cm = new IndexColorModel(sampleBitsSize, java2DColorMap.length, java2DColorMap, 0, true, -1, dataBufferType);
                 /*
                  * Create a SampleModel with size of 1x1 volontary just to know image properties.
@@ -843,10 +834,10 @@ public class ImageUtils extends Static{
     /**
      * Returns {@link BufferedImage} with the {@link ColorModel} replaced by another better color model if it is possible.<br>
      * This method is efficient only for float or double {@linkplain SampleModel#getDataType() data buffer type}.<br><br>
-     * 
+     *
      * In java 2d when {@link ColorSpace} is define for float or double values, rasters values will not be able to greater than 1.<br>
      * This method replace current color model from Buffered image parameter with an appropriate {@link ScaledColorSpace}.
-     * 
+     *
      * @param image study image.
      * @return image with color model updated or not.
      */
@@ -856,7 +847,7 @@ public class ImageUtils extends Static{
         if ((DataBuffer.TYPE_FLOAT != databufferType && DataBuffer.TYPE_DOUBLE != databufferType)
           || (cm instanceof IndexColorModel))
             return image;
-        
+
         double min = Double.POSITIVE_INFINITY;
         double max = Double.NEGATIVE_INFINITY;
         final PixelIterator pix = PixelIteratorFactory.createDefaultIterator(image);
@@ -864,57 +855,14 @@ public class ImageUtils extends Static{
             min = StrictMath.min(min, pix.getSampleDouble());
             max = StrictMath.max(max, pix.getSampleDouble());
         }
-        
+
         //-- ici si les valeur min et max sont entre [0; 1] faire un colorSpace cs_gray
-        
+
         final ColorSpace cs = new ScaledColorSpace(cm.getNumComponents(), 0, min, max);
-        
+
         final ComponentColorModel cm2 = new ComponentColorModel(cs, cm.hasAlpha(), false, (cm.hasAlpha())
                                                                                     ? Transparency.TRANSLUCENT
                                                                                     : Transparency.OPAQUE, databufferType);
         return new BufferedImage(cm2, image.getRaster(), image.isAlphaPremultiplied(), new Hashtable<>());
-    }
-    /**
-     * Convert and return color map array from tiff file to an Integer array adapted to build {@link IndexColorModel} in java.
-     *
-     * @param colorMap array given by tiff reading.
-     * @return an Integer array adapted to build {@link IndexColorModel} in java.
-     */
-    private static int[] buildColorMapArray(final long[] colorMap) {
-        ArgumentChecks.ensureNonNull("color map array", colorMap);
-        final int indexLength = colorMap.length;
-        assert (indexLength % 3 == 0) : "color map array length should be modulo 3";
-        final int length_3 = indexLength / 3;
-        final int[] result = new int[length_3];
-
-        //-- color map in a tiff file : N Red values -> N Green values -> N Blue values
-        int idR = 0;
-        int idG = length_3;
-        int idB = length_3 << 1;// = 2 * length_3
-
-        /*
-         * mask applied to avoid the low-order bits from the red color overlaps the bits of green color.
-         * Moreover to avoid the low-order bits from the green color overlaps the bits of blue color.
-         */
-        final int mask = 0x0000FF00;
-
-        /*
-         * In indexed color model in java, values to defind palette for each color are between 0 -> 255.
-         * To build integer value in palette, we need to shift red value by 16 bits, green value by 8 bits and no shift to blue.
-         *
-         * In our case we build a color model from color map (tiff palette) values define between 0 -> 65535.
-         * Then build integer value in palette we will shift each color value by normaly shift minus 8, to bring back all values between 0 -> 256.
-         */
-
-        final int alpha = 0xFF000000;
-
-        //-- pixel : 1111 1111 | R | G | B
-        for (int i = 0; i < length_3; i++) {
-            final int r = ((int) (colorMap[idR++] & mask) << 8);
-            final int g = ((int) colorMap[idG++] & mask);
-            final int b = ((int) colorMap[idB++] >> 8) ;
-            result[i] = alpha | r | g | b;
-        }
-        return result;
     }
 }

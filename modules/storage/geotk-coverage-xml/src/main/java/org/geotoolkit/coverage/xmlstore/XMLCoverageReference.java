@@ -445,7 +445,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
                 }
                 colorModel = ImageUtils.createColorModel(bitPerSample, nbBands,
                         (short) photometricInterpretation, (short) sampleFormat,
-                        minColorSampleValue, maxColorSampleValue, null, colorMap);
+                        minColorSampleValue, maxColorSampleValue, colorMap);
             }
         }
         return colorModel;

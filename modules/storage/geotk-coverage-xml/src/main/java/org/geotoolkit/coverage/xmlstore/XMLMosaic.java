@@ -261,16 +261,18 @@ public class XMLMosaic implements GridMosaic {
                 SampleModel sampleModel = ref.getSampleModel();
 
                 if (colorModel != null && sampleModel != null) {
-                    long[] colorMap = null;
+                    int[] java2DColorMap = null;
                     if (colorModel instanceof IndexColorModel) {
                         final IndexColorModel indexColorMod = (IndexColorModel) colorModel;
                         final int mapSize = indexColorMod.getMapSize();
-                        int[] rgbs  = new int[mapSize];
-                        indexColorMod.getRGBs(rgbs);
-                        colorMap = new long[mapSize];
-                        for (int p = 0; p < mapSize; p++) colorMap[p] = rgbs[p];
+                        java2DColorMap  = new int[mapSize];
+                        indexColorMod.getRGBs(java2DColorMap);
+//                        colorMap = new long[mapSize];
+//                        for (int p = 0; p < mapSize; p++) colorMap[p] = rgbs[p];
                     }
-                    emptyTile = ImageUtils.createImage(tileWidth, tileHeight, SampleType.valueOf(sampleModel.getDataType()), sampleModel.getNumBands(), ImageUtils.getEnumPhotometricInterpretation(colorModel), ImageUtils.getEnumPlanarConfiguration(sampleModel), colorMap);
+                    emptyTile = ImageUtils.createImage(tileWidth, tileHeight, SampleType.valueOf(sampleModel.getDataType()),
+                            sampleModel.getNumBands(), ImageUtils.getEnumPhotometricInterpretation(colorModel),
+                            ImageUtils.getEnumPlanarConfiguration(sampleModel), java2DColorMap);
 
                 } else {
                     emptyTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
