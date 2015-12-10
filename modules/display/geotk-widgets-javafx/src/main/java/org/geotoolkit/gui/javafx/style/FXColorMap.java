@@ -110,7 +110,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     private static final NumberFormat FORMATTER = new DecimalFormat("#0.000");
 
     private static final Literal TRS = new DefaultLiteral(new Color(0, 0, 0, 0));
-    
+
     @FXML
     private CheckBox uiInvert;
     @FXML
@@ -152,8 +152,8 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
     private Value1Column value1Col;
     private Value2Column value2Col;
     private ColorColumn colorCol;
-    
-    
+
+
     @FXML
     private void methodChange(ActionEvent event) {
         final String method = uiMethod.getSelectionModel().getSelectedItem();
@@ -173,7 +173,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                 uiTable.getItems().clear();
             }
             function = Interpolate.class;
-            
+
         }else if("Categorize".equals(method)){
             if(Categorize.class.isAssignableFrom(function)){
                 //nothing to do
@@ -201,11 +201,11 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             function = Jenks.class;
         }
         postParse();
-        
+
         //ensure the NaN is set as defined
         nanChange(null);
     }
-    
+
     @FXML
     private void nanChange(ActionEvent event) {
 
@@ -237,7 +237,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             postParse();
         }
     }
-    
+
     @FXML
     private void fitToData(ActionEvent event) {
         if(!(layer instanceof CoverageMapLayer)) return;
@@ -494,7 +494,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         return ((Number)uiBand.getSpinner().valueProperty().get()).intValue();
     }
 
-    private List<InterOrCategorize> getInterpolationPoints(final double min, final double max, 
+    private List<InterOrCategorize> getInterpolationPoints(final double min, final double max,
             List<Entry<Double, Color>> steps) throws CoverageStoreException {
         final List<InterOrCategorize> lsts = new ArrayList<>();
         for(int s=0,l=steps.size();s<l;s++){
@@ -503,7 +503,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         }
         return lsts;
     }
-    
+
     @Override
     public Class<ColorMap> getEditedClass() {
         return ColorMap.class;
@@ -548,7 +548,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
 
         postParse();
     }
-    
+
     private static List<InterOrCategorize> toInterOrCategorize(Collection cdts){
         final List<InterOrCategorize> lst = new ArrayList<>();
         for(Object obj : cdts){
@@ -562,7 +562,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         }
         return lst;
     }
-    
+
     private void postParse(){
         uiInvert.setDisable(false);
         uiMinimum.getSpinner().setEditable(true);
@@ -653,10 +653,10 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         uiGenerate.setDisable(da);
         uiDivision.setDisable(da);
         uiDivisionLbl.setDisable(da);
-        
+
         updateColumns();
     }
-    
+
     private void initBandSpinner() {
         //update nbBands spinner
         try {
@@ -709,11 +709,11 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         super.setLayer(layer);
         initBandSpinner();
     }
-    
+
     @Override
     public void initialize() {
         super.initialize();
-        
+
         value1Col = new Value1Column();
         value2Col = new Value2Column();
         colorCol = new ColorColumn();
@@ -725,25 +725,27 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         uiBand.getSpinner().setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0, 1));
         uiMinimum.valueProperty().set(0.0);
         uiMaximum.valueProperty().set(1.0);
+        uiMinimum.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0, 1));
+        uiMaximum.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0, 1));
         uiNaN.setSelected(true);
-        
-        uiPalette.setItems(FXCollections.observableList(FXUtilities.PALETTES));        
+
+        uiPalette.setItems(FXCollections.observableList(FXUtilities.PALETTES));
         uiPalette.setCellFactory((ListView<Object> param) -> new FXPaletteCell());
         uiPalette.setButtonCell((new FXPaletteCell()));
         if(!uiPalette.getItems().isEmpty()){
             uiPalette.getSelectionModel().select(0);
         }
-        
+
         final List<String> methods = new ArrayList<>();
         methods.add("Interpolate");
         methods.add("Categorize");
         //methods.add(Jenks.class); //TODO
-        
+
         uiMethod.setItems(FXCollections.observableList(methods));
         function = Interpolate.class;
-        
+
         uiTable.setItems(FXCollections.observableArrayList());
-        
+
         uiTable.itemsProperty().addListener((ObservableValue<? extends ObservableList<InterOrCategorize>> observable, ObservableList<InterOrCategorize> oldValue, ObservableList<InterOrCategorize> newValue) -> {
             valueProperty().set(buildColorMap());
         });
@@ -752,7 +754,7 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         uiMethod.getSelectionModel().select("Interpolate");
         updateColumns();
     }
-        
+
     private ColorMap buildColorMap(){
         return null;
     }
@@ -770,32 +772,32 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         }
         return null;
     }
-    
-    
+
+
     private static class InterOrCategorize {
         private final ObjectProperty<Expression> value = new SimpleObjectProperty<>();
         private final ObjectProperty<Expression> color = new SimpleObjectProperty<>();
 
         public InterOrCategorize() {
         }
-        
+
         public InterOrCategorize(Double value, Color color) {
             this.value.set(getFilterFactory().literal(value));
             this.color.set(getStyleFactory().literal(color));
         }
-        
+
         public InterOrCategorize(Expression value, Expression color) {
             this.value.set(value);
             this.color.set(color);
         }
-        
+
         public InterOrCategorize(Map.Entry<Expression,Expression> entry) {
             this.value.set(entry.getKey());
             this.value.set(entry.getValue());
         }
-        
+
     }
-    
+
     private class Value1Column extends TableColumn<InterOrCategorize, Expression>{
         public Value1Column() {
             setText(GeotkFX.getString(FXColorMap.class, "valmin"));
@@ -808,9 +810,9 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
                 }
             });
         }
-        
+
     }
-    
+
     private class Value2Column extends TableColumn<InterOrCategorize, Expression>{
         public Value2Column() {
             setText(GeotkFX.getString(FXColorMap.class, "valmax"));
@@ -889,6 +891,8 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
             setGraphic(field);
             setAlignment(Pos.CENTER_RIGHT);
             setContentDisplay(ContentDisplay.CENTER);
+            field.getSpinner().setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0, 1));
+
         }
 
         @Override
@@ -955,5 +959,5 @@ public class FXColorMap extends FXStyleElementController<ColorMap> {
         }
 
     }
-    
+
 }
