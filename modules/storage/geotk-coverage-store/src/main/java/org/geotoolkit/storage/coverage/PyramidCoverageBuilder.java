@@ -465,6 +465,7 @@ public class PyramidCoverageBuilder {
 
             //final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(baseImg), interpolationCase, lanczosWindow);
 
+            int lastPrc = -1;
             for (int cTY = startTileY; cTY < endTileY; cTY++) {
                 for (int cTX = startTileX; cTX < endTileX; cTX++) {
                     final int destMinX = cTX * tileWidth;
@@ -483,7 +484,13 @@ public class PyramidCoverageBuilder {
                     }
 
                     if (processListener != null) {
-                        processListener.progressing(new ProcessEvent(fakeProcess, (++niemeTile) + "/" + globalTileNumber, (niemeTile * 100 / globalTileNumber)));
+                        niemeTile++;
+                        //do not send too much events, one every percent
+                        int prc = (niemeTile * 100 / globalTileNumber);
+                        if(prc!= lastPrc){
+                            lastPrc = prc;
+                            processListener.progressing(new ProcessEvent(fakeProcess, (niemeTile) + "/" + globalTileNumber, prc));
+                        }
                     }
 
                     //-- dest grid --> dest envelope coordinate --> base envelope --> base grid
@@ -793,6 +800,7 @@ public class PyramidCoverageBuilder {
 
             //final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(baseImg), interpolationCase, lanczosWindow);
 
+            int lastPrc = -1;
             for (int cTY = startTileY; cTY < endTileY; cTY++) {
                 for (int cTX = startTileX; cTX < endTileX; cTX++) {
                     final int destMinX = cTX * tileWidth;
@@ -811,7 +819,13 @@ public class PyramidCoverageBuilder {
                     }
 
                     if (processListener != null) {
-                        processListener.progressing(new ProcessEvent(fakeProcess, (++niemeTile) + "/" + globalTileNumber, (niemeTile * 100 / globalTileNumber)));
+                        niemeTile++;
+                        //do not send too much events, one every percent
+                        int prc = (niemeTile * 100 / globalTileNumber);
+                        if(prc!= lastPrc){
+                            lastPrc = prc;
+                            processListener.progressing(new ProcessEvent(fakeProcess, (niemeTile) + "/" + globalTileNumber, prc));
+                        }
                     }
 
                     //dest grid --> dest envelope coordinate --> base envelope --> base grid
