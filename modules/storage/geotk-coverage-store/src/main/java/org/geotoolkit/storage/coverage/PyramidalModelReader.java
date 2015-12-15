@@ -23,6 +23,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -31,6 +34,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import org.apache.sis.geometry.Envelopes;
 
@@ -523,16 +527,20 @@ public class PyramidalModelReader extends GridCoverageReader{
 
                     if (image == null) {
                         ColorModel cm = null;
+                        SampleModel sm = null;
                         if (ref instanceof PyramidalCoverageReference) {
                             final PyramidalCoverageReference pyramRef = (PyramidalCoverageReference) ref;
                             cm = pyramRef.getColorModel();
+                            sm = pyramRef.getSampleModel();
                         }
                         if(cm==null) {
                             cm = tileImage.getColorModel();
+                            sm = tileImage.getSampleModel();
                         }
-                        image = new BufferedImage(cm,
-                                cm.createCompatibleWritableRaster((int)(tileMaxCol-tileMinCol)*tileSize.width,
-                                                                                       (int)(tileMaxRow-tileMinRow)*tileSize.height),
+                        sm = sm.createCompatibleSampleModel((int)(tileMaxCol-tileMinCol)*tileSize.width,
+                                                               (int)(tileMaxRow-tileMinRow)*tileSize.height);
+                        final WritableRaster raster = WritableRaster.createWritableRaster(sm, null);
+                        image = new BufferedImage(cm,raster,
                                 cm.isAlphaPremultiplied(), new Hashtable<>());
                     }
                     //-- write current read tile into destination image.

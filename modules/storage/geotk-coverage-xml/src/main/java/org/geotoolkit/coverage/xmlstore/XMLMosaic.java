@@ -634,6 +634,9 @@ public class XMLMosaic implements GridMosaic {
 
      void writeTiles(final RenderedImage image, final Rectangle area, final boolean onlyMissing, final ProgressMonitor monitor) throws DataStoreException{
 
+        final int offsetX = image.getMinTileX();
+        final int offsetY = image.getMinTileY();
+
         final int startX = (int)area.getMinX();
         final int startY = (int)area.getMinY();
         final int endX = (int)area.getMaxX();
@@ -652,18 +655,21 @@ public class XMLMosaic implements GridMosaic {
                     return;
                 }
 
-                if(onlyMissing && !isMissing(x, y)){
+                final int tx = offsetX+x;
+                final int ty = offsetY+y;
+
+                if(onlyMissing && !isMissing(tx, ty)){
                     continue;
                 }
 
-                final int tileIndex = getTileIndex(x, y);
-                checkPosition(x, y);
+                final int tileIndex = getTileIndex(tx, ty);
+                checkPosition(tx, ty);
 
 
-                File f = getTileFile(x, y);
-                if (f == null) f = getDefaultTileFile(x, y);
+                File f = getTileFile(tx, ty);
+                if (f == null) f = getDefaultTileFile(tx, ty);
                 f.getParentFile().mkdirs();
-                Future fut = TILEWRITEREXECUTOR.submit(new TileWriter(f, image, x, y, tileIndex, image.getColorModel(), getPyramid().getPyramidSet().getFormatName(), monitor));
+                Future fut = TILEWRITEREXECUTOR.submit(new TileWriter(f, image, tx, ty, tileIndex, image.getColorModel(), getPyramid().getPyramidSet().getFormatName(), monitor));
                 futurs.add(fut);
             }
         }
@@ -842,7 +848,7 @@ public class XMLMosaic implements GridMosaic {
                 } else {
                     //encapsulate image in a buffered image with parent color model
                     final BufferedImage buffer = new BufferedImage(
-                            cm, (WritableRaster) raster, true, null);
+                            cm, (WritableRaster) raster, cm.isAlphaPremultiplied(), null);
                     writer.write(buffer);
                 }
 
