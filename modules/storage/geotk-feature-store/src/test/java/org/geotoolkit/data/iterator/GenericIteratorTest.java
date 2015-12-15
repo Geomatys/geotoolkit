@@ -22,17 +22,12 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import junit.framework.TestCase;
+import org.apache.sis.referencing.CommonCRS;
 import org.apache.sis.storage.DataStoreException;
-import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureStoreUtilities;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericCachedFeatureIterator;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
@@ -50,148 +45,52 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.*;
+import org.geotoolkit.feature.type.AttributeDescriptor;
+import org.geotoolkit.feature.type.FeatureType;
+import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.geotoolkit.util.NamesExt;
-import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.referencing.CRS;
-import org.apache.sis.referencing.CommonCRS;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.geotoolkit.feature.Feature;
-import org.geotoolkit.feature.FeatureFactory;
-import org.geotoolkit.feature.Property;
-import org.geotoolkit.feature.type.AttributeDescriptor;
-import org.geotoolkit.feature.type.FeatureType;
-import org.opengis.util.GenericName;
-import org.geotoolkit.feature.type.PropertyDescriptor;
 import org.opengis.feature.MismatchedFeatureException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.opengis.util.GenericName;
+
+import java.util.*;
+
+import static junit.framework.Assert.*;
 
 /**
  * Tests of the different iterators.
  *
  * @author Johann Sorel (Geomatys)
  */
-public class GenericIteratorTest extends TestCase{
+public class GenericIteratorTest {
 
     protected static final FeatureFactory AF = FeatureFactory.LENIENT;
 
     private static final double DELTA = 0.000001d;
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     private static final GeometryFactory GF = new GeometryFactory();
+    private static final String COMPLEX_ID_1 = "complex-1";
+    private static final String COMPLEX_ID_2 = "complex-2";
+    private static final GenericName NAME = NamesExt.create("http://test.com", "TestSchema");
 
-    private final FeatureCollection collection;
-    private final FeatureCollection collectionComplex;
-    private final GenericName name;
-    private final FeatureType originalType;
-    private final FeatureType reducedType;
-    private final FeatureType reprojectedType;
-    private final String id1;
-    private final String id2;
-    private final String id3;
-    private final String cid1;
-    private final String cid2;
+    private final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
-    private final Feature sf1;
-    private final Feature sf2;
-    private final Feature sf3;
+    private final String id1 = NAME.tip().toString()+"."+0;
+    private final String id2 = NAME.tip().toString()+"."+1;
+    private final String id3 = NAME.tip().toString()+"."+2;
 
-    public GenericIteratorTest() throws NoSuchAuthorityCodeException, FactoryException{
-        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        name = NamesExt.create("http://test.com", "TestSchema");
-        builder.reset();
-        builder.setName(name);
-        builder.add("att_geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
-        builder.add("att_string", String.class);
-        builder.add("att_double", Double.class);
-        originalType = builder.buildSimpleFeatureType();
-
-        //build a reduced type for retype iterator
-        builder.reset();
-        builder.setName(name);
-        builder.add("att_double", Double.class);
-        reducedType = builder.buildSimpleFeatureType();
-
-        //build a reprojected type for reproject iterator
-        builder.reset();
-        builder.setName(name);
-        builder.add("att_geom", Point.class, CRS.decode("EPSG:4326"));
-        builder.add("att_string", String.class);
-        builder.add("att_double", Double.class);
-        reprojectedType = builder.buildSimpleFeatureType();
-
-
-        collection = FeatureStoreUtilities.collection("id", originalType);
-
-        sf1 = FeatureUtilities.defaultFeature(originalType, "");
-        sf1.setPropertyValue("att_geom", GF.createPoint(new Coordinate(3, 0)));
-        sf1.setPropertyValue("att_string", "bbb");
-        sf1.setPropertyValue("att_double", 3d);
-        collection.add(sf1);
-        id1 = name.tip().toString()+"."+0;
-
-        sf2 = FeatureUtilities.defaultFeature(originalType, "");
-        sf2.setPropertyValue("att_geom", GF.createPoint(new Coordinate(1, 0)));
-        sf2.setPropertyValue("att_string", "ccc");
-        sf2.setPropertyValue("att_double", 1d);
-        collection.add(sf2);
-        id2 = name.tip().toString()+"."+1;
-
-        sf3 = FeatureUtilities.defaultFeature(originalType, "");
-        sf3.setPropertyValue("att_geom", GF.createPoint(new Coordinate(2, 0)));
-        sf3.setPropertyValue("att_string", "aaa");
-        sf3.setPropertyValue("att_double", 2d);
-        collection.add(sf3);
-        id3 = name.tip().toString()+"."+2;
-
-        builder.reset();
-        builder.setName(name);
-        builder.add("att_string", String.class,0,1,false,null);
-        builder.add("att_double", Double.class,0,1,false,null);
-        FeatureType ct = builder.buildFeatureType();
-
-        collectionComplex = FeatureStoreUtilities.collection("cid", ct);
-
-        cid1 = "complex-1";
-        cid2 = "complex-2";
-        Collection<Property> props = new ArrayList<Property>();
-        props.add(AF.createAttribute("aaaa", (AttributeDescriptor) ct.getDescriptor("att_string"), null));
-        props.add(AF.createAttribute(12, (AttributeDescriptor) ct.getDescriptor("att_double"), null));
-        collectionComplex.add(AF.createFeature(props, ct, cid1));
-
-        props = new ArrayList<Property>();
-        props.add(AF.createAttribute("bbbb", (AttributeDescriptor) ct.getDescriptor("att_string"), null));
-        props.add(AF.createAttribute(7, (AttributeDescriptor) ct.getDescriptor("att_double"), null));
-        collectionComplex.add(AF.createFeature(props, ct, cid2));
-
-    }
-
-    private void testIterationOnNext(final FeatureIterator ite, final int size){
-
-        //check that there is no iteration on hasnext()
-        for(int i=0; i<size+10; i++){
-            if(!ite.hasNext()){
-                fail("hasNext() has changed to false, suspicious iteration on hasNext call.");
-            }
-        }
-
-        //check iteration on next, whithout calling hasNext()
-        Feature last = ite.next();
-        for(int i=1;i<size;i++){
-            Feature current = ite.next();
-            assertFalse(last.equals(current));
-            last = current;
-        }
-
-    }
 
     @Test
     public void testEmptyIterator(){
@@ -218,6 +117,7 @@ public class GenericIteratorTest extends TestCase{
 
     @Test
     public void testEmptyReader(){
+        FeatureCollection collection = buildSimpleFeatureCollection();
         final FeatureReader iterator = GenericEmptyFeatureIterator.createReader(collection.getFeatureType());
 
         assertEquals(iterator.getFeatureType(), collection.getFeatureType());
@@ -242,6 +142,7 @@ public class GenericIteratorTest extends TestCase{
 
     @Test
     public void testEmptyWriter(){
+        FeatureCollection collection = buildSimpleFeatureCollection();
         final FeatureWriter iterator = GenericEmptyFeatureIterator.createWriter(collection.getFeatureType());
 
         assertEquals(iterator.getFeatureType(), collection.getFeatureType());
@@ -265,7 +166,9 @@ public class GenericIteratorTest extends TestCase{
     }
 
     @Test
+    @Ignore("See #GEOTK-489")
     public void testCacheIterator(){
+        FeatureCollection collection = buildSimpleFeatureCollection();
         FeatureIterator ite = GenericCachedFeatureIterator.wrap(collection.iterator(), 1);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
@@ -274,6 +177,7 @@ public class GenericIteratorTest extends TestCase{
         int mask = 0;
         Feature f;
         while(ite.hasNext()){
+
             f = ite.next();
             final String id = f.getIdentifier().getID();
                         
@@ -285,7 +189,7 @@ public class GenericIteratorTest extends TestCase{
                 mask |= 1<<2;
             }
         }
-
+        ite.close();
         if(mask!=7){
             fail("missing features in iterations");
         }
@@ -294,6 +198,7 @@ public class GenericIteratorTest extends TestCase{
 
     @Test
     public void testFilterIterator(){
+        FeatureCollection collection = buildSimpleFeatureCollection();
         FeatureIterator ite = GenericFilterFeatureIterator.wrap(collection.iterator(), Filter.INCLUDE);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
@@ -327,6 +232,7 @@ public class GenericIteratorTest extends TestCase{
 
     @Test
     public void testMaxIterator(){
+        FeatureCollection collection = buildSimpleFeatureCollection();
         FeatureIterator ite = GenericMaxFeatureIterator.wrap(collection.iterator(), 10);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
@@ -357,6 +263,8 @@ public class GenericIteratorTest extends TestCase{
 
     @Test
     public void testModifyIterator(){
+        FeatureCollection collection = buildSimpleFeatureCollection();
+        FeatureType originalType = collection.getFeatureType();
         Filter filter = Filter.INCLUDE;
         Map<PropertyDescriptor,Object> values = new HashMap<PropertyDescriptor, Object>();
         values.put(originalType.getDescriptor("att_string"), "toto");
@@ -412,8 +320,11 @@ public class GenericIteratorTest extends TestCase{
 
     @Test
     public void testReprojectFeatureIterator() throws DataStoreException, FactoryException, MismatchedFeatureException{
+
+        FeatureCollection collection = buildSimpleFeatureCollection();
+        FeatureType reprojectedType = buildReprojectFT();
         QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(originalType.getName());
+        qb.setTypeName(collection.getFeatureType().getName());
         Query query = qb.buildQuery();
         FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
@@ -465,6 +376,7 @@ public class GenericIteratorTest extends TestCase{
 
     @Test
     public void testTransformFeatureIterator() throws DataStoreException{
+        FeatureType originalType = buildOriginalFT();
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         final GenericName name = NamesExt.create("http://test.com", "TestSchema");
         builder.reset();
@@ -558,8 +470,11 @@ public class GenericIteratorTest extends TestCase{
 
     @Test
     public void testRetypeFeatureIterator() throws DataStoreException{
+
+        FeatureCollection collection = buildSimpleFeatureCollection();
+        FeatureType reducedType = buildReduceFT();
         QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(originalType.getName());
+        qb.setTypeName(collection.getFeatureType().getName());
         Query query = qb.buildQuery();
         FeatureReader reader = collection.getSession().getFeatureStore().getFeatureReader(query);
 
@@ -612,6 +527,7 @@ public class GenericIteratorTest extends TestCase{
             FF.sort("att_string", SortOrder.ASCENDING)
         };
 
+        FeatureCollection collection = buildSimpleFeatureCollection();
         FeatureIterator ite = GenericSortByFeatureIterator.wrap(collection.iterator(), sorts);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
@@ -644,6 +560,8 @@ public class GenericIteratorTest extends TestCase{
     @Test
     public void testSortByIteratorOnComplex(){
 
+        FeatureCollection collectionComplex = buildComplexFeatureCollection();
+        FeatureCollection collection = buildSimpleFeatureCollection();
         //test string sort -----------------------------------------------------
         SortBy[] sorts = new SortBy[]{
             FF.sort("att_string", SortOrder.DESCENDING)
@@ -653,8 +571,8 @@ public class GenericIteratorTest extends TestCase{
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
-        assertEquals(ite.next().getIdentifier().getID(),cid2);
-        assertEquals(ite.next().getIdentifier().getID(),cid1);
+        assertEquals(ite.next().getIdentifier().getID(),COMPLEX_ID_2);
+        assertEquals(ite.next().getIdentifier().getID(),COMPLEX_ID_1);
 
         try{
             ite.next();
@@ -672,8 +590,8 @@ public class GenericIteratorTest extends TestCase{
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
-        assertEquals(ite.next().getIdentifier().getID(),cid1);
-        assertEquals(ite.next().getIdentifier().getID(),cid2);
+        assertEquals(ite.next().getIdentifier().getID(),COMPLEX_ID_1);
+        assertEquals(ite.next().getIdentifier().getID(),COMPLEX_ID_2);
 
         try{
             ite.next();
@@ -691,8 +609,8 @@ public class GenericIteratorTest extends TestCase{
         assertEquals(2, FeatureStoreUtilities.calculateCount(ite));
 
         ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
-        assertEquals(ite.next().getIdentifier().getID(),cid2);
-        assertEquals(ite.next().getIdentifier().getID(),cid1);
+        assertEquals(ite.next().getIdentifier().getID(),COMPLEX_ID_2);
+        assertEquals(ite.next().getIdentifier().getID(),COMPLEX_ID_1);
 
         try{
             ite.next();
@@ -706,6 +624,7 @@ public class GenericIteratorTest extends TestCase{
         ite = GenericSortByFeatureIterator.wrap(collectionComplex.iterator(), sorts);
         testIterationOnNext(ite, 2);
 
+
         //check sub iterator is properly closed
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(collection.iterator());
         assertFalse(checkIte.isClosed());
@@ -717,6 +636,7 @@ public class GenericIteratorTest extends TestCase{
 
     @Test
     public void testStartIndexIterator(){
+        FeatureCollection collection = buildSimpleFeatureCollection();
         FeatureIterator ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 0);
         assertEquals(3, FeatureStoreUtilities.calculateCount(ite));
 
@@ -748,6 +668,7 @@ public class GenericIteratorTest extends TestCase{
     @Test
     public void testWrapIterator(){
 
+        FeatureCollection collection = buildSimpleFeatureCollection();
         //check has next do not iterate
         FeatureIterator ite = GenericWrapFeatureIterator.wrapToIterator(collection.iterator());
         testIterationOnNext(ite, 3);
@@ -763,6 +684,7 @@ public class GenericIteratorTest extends TestCase{
 
     @Test
     public void testWrapReader(){
+        FeatureCollection collection = buildSimpleFeatureCollection();
         //check has next do not iterate
         FeatureReader reader = GenericWrapFeatureIterator.wrapToReader(collection.iterator(),collection.getFeatureType());
         testIterationOnNext(reader, 3);
@@ -776,5 +698,99 @@ public class GenericIteratorTest extends TestCase{
         assertTrue(checkIte.isClosed());
     }
 
+    private FeatureType buildReprojectFT() throws FactoryException {
+        //build a reprojected type for reproject iterator
+        builder.reset();
+        builder.setName(NAME);
+        builder.add("att_geom", Point.class, CRS.decode("EPSG:4326"));
+        builder.add("att_string", String.class);
+        builder.add("att_double", Double.class);
+        FeatureType reprojectedType = builder.buildSimpleFeatureType();
+        return reprojectedType;
+    }
 
+    private FeatureType buildReduceFT() {
+        //build a reduced type for retype iterator
+        builder.reset();
+        builder.setName(NAME);
+        builder.add("att_double", Double.class);
+        FeatureType reducedType = builder.buildSimpleFeatureType();
+        return reducedType;
+    }
+
+    private FeatureCollection buildComplexFeatureCollection() {
+        builder.reset();
+        builder.setName(NAME);
+        builder.add("att_string", String.class,0,1,false,null);
+        builder.add("att_double", Double.class,0,1,false,null);
+        FeatureType ct = builder.buildFeatureType();
+
+        FeatureCollection collectionComplex = FeatureStoreUtilities.collection("cid", ct);
+
+        Collection<Property> props = new ArrayList<Property>();
+        props.add(AF.createAttribute("aaaa", (AttributeDescriptor) ct.getDescriptor("att_string"), null));
+        props.add(AF.createAttribute(12, (AttributeDescriptor) ct.getDescriptor("att_double"), null));
+        collectionComplex.add(AF.createFeature(props, ct, COMPLEX_ID_1));
+
+        props = new ArrayList<Property>();
+        props.add(AF.createAttribute("bbbb", (AttributeDescriptor) ct.getDescriptor("att_string"), null));
+        props.add(AF.createAttribute(7, (AttributeDescriptor) ct.getDescriptor("att_double"), null));
+        collectionComplex.add(AF.createFeature(props, ct, COMPLEX_ID_2));
+        return collectionComplex;
+    }
+
+    private FeatureCollection buildSimpleFeatureCollection() {
+        FeatureType originalType = buildOriginalFT();
+        FeatureCollection collection = FeatureStoreUtilities.collection("id", originalType);
+
+        String id1 = NAME.tip().toString()+"."+0;
+        Feature sf1 = FeatureUtilities.defaultFeature(originalType, id1);
+        sf1.setPropertyValue("att_geom", GF.createPoint(new Coordinate(3, 0)));
+        sf1.setPropertyValue("att_string", "bbb");
+        sf1.setPropertyValue("att_double", 3d);
+        collection.add(sf1);
+
+        String id2 = NAME.tip().toString()+"."+1;
+        Feature sf2 = FeatureUtilities.defaultFeature(originalType, id2);
+        sf2.setPropertyValue("att_geom", GF.createPoint(new Coordinate(1, 0)));
+        sf2.setPropertyValue("att_string", "ccc");
+        sf2.setPropertyValue("att_double", 1d);
+        collection.add(sf2);
+
+        String id3 = NAME.tip().toString()+"."+2;
+        Feature sf3 = FeatureUtilities.defaultFeature(originalType, id3);
+        sf3.setPropertyValue("att_geom", GF.createPoint(new Coordinate(2, 0)));
+        sf3.setPropertyValue("att_string", "aaa");
+        sf3.setPropertyValue("att_double", 2d);
+        collection.add(sf3);
+        return collection;
+    }
+
+    private FeatureType buildOriginalFT() {
+        builder.reset();
+        builder.setName(NAME);
+        builder.add("att_geom", Point.class, CommonCRS.WGS84.normalizedGeographic());
+        builder.add("att_string", String.class);
+        builder.add("att_double", Double.class);
+        return builder.buildSimpleFeatureType();
+    }
+
+    private void testIterationOnNext(final FeatureIterator ite, final int size){
+
+        //check that there is no iteration on hasnext()
+        for(int i=0; i<size+10; i++){
+            if(!ite.hasNext()){
+                fail("hasNext() has changed to false, suspicious iteration on hasNext call.");
+            }
+        }
+
+        //check iteration on next, whithout calling hasNext()
+        Feature last = ite.next();
+        for(int i=1;i<size;i++){
+            Feature current = ite.next();
+            assertFalse(last.equals(current));
+            last = current;
+        }
+
+    }
 }
