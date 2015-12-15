@@ -30,11 +30,11 @@ import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
@@ -103,7 +103,7 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
      * We subclass the map to keep track of the used memory.
      */
     private final AtomicLong usedCapacity = new AtomicLong(0);
-    private final LinkedHashMap<Point, TileRasterCache> tiles = new LinkedHashMap<Point, TileRasterCache>(16, 0.75f, true){
+    private final Map<Point, TileRasterCache> tiles = new LinkedHashMap<Point, TileRasterCache>(16, 0.75f, true){
         @Override
         public TileRasterCache put(Point key, TileRasterCache value) {
             final TileRasterCache last = super.put(key, value);
@@ -419,45 +419,35 @@ final class ImageTilesCache extends PhantomReference<RenderedImage> {
     private void checkMap() throws IOException {
         final long maxCacheSize = cache.getCacheSizePerImage();
 
-        // While the cache size is exceeded, we flush tiles, beginning with the oldest one.
-        final Point[] keys;
-        synchronized(tiles) {
-            keys = tiles.keySet().toArray(new Point[tiles.size()]);
-        }
+        final boolean swap = cache.isEnableSwap();
 
-        long currentCapacity = usedCapacity.get();
+        for(long currentCapacity = usedCapacity.get(); currentCapacity>maxCacheSize; currentCapacity = usedCapacity.get()){
 
-        int idTile = 0;
-        while (currentCapacity > maxCacheSize) {
+            Point key = null;
+            synchronized(tiles){
+                //get oldest key
+                Iterator<Point> ite = tiles.keySet().iterator();
+                if(ite.hasNext()){
+                    key = ite.next();
+                }
+            }
+            if(key==null) continue;
 
-            ReadWriteLock rwl = getLock((Point) keys[idTile]);
+            final ReadWriteLock rwl = getLock(key);
             rwl.writeLock().lock();
-
             try {
                 final TileRasterCache tr;
                 synchronized (tiles) {
-                    tr = tiles.remove(keys[idTile]);
+                    tr = tiles.remove(key);
                 }
 
-                if (tr != null) {
+                if (tr != null && swap) {
                     writeRaster(tr);
                 }
-                else {
-                    LOGGER.log(Level.FINE, "Impossible to delete Tile at key id : "
-                                                        +((Point) keys[idTile])+"from image tile cache.");
-                }
-                currentCapacity = usedCapacity.get();
-
             } finally {
                 rwl.writeLock().unlock();
             }
-            if (++idTile == keys.length) break;
         }
 
-        if (usedCapacity.get() > maxCacheSize)
-             throw new IllegalStateException("Impossible to put Tiles into swap cache. "
-                     + "The LargeCache capacity has not beeing discrease."
-                     + "Maximum allowed cache capacity = "+maxCacheSize
-                     + "Current used cache capacity = "+usedCapacity.get());
     }
 }
