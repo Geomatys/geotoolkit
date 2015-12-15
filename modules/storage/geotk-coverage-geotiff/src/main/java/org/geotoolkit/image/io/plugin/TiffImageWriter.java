@@ -608,7 +608,7 @@ public class TiffImageWriter extends SpatialImageWriter {
      */
     @Override
     public boolean canWriteRasters() {
-        return true;
+        return false;
     }
 
     /**
