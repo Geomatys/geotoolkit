@@ -571,24 +571,21 @@ public class TiffImageReader extends SpatialImageReader {
     /**
      * Invokes {@link #createInput(String)} and verifies if the returned file exists.
      * If it does not exist, then returns {@code null}.
-     *
-     * @todo Current implementation checks only {@link File} object.
-     *       We should check URL as well.
      */
     private Object getVerifiedInput(final String part) throws IOException {
         /*
-         * Replaces the input by a File object if possible,
+         * Replaces the input by a Path object if possible,
          * for allowing us to check if the file exists.
          */
-        Object newCRSInput = IOUtilities.tryToFile(input);
+        if (IOUtilities.canProcessAsPath(input)) {
+            Path newCRSInput = IOUtilities.toPath(input);
+            Object in = createInput(newCRSInput, part);
 
-        Object in = createInput(newCRSInput, part);
-        if (in instanceof File) {
-            if (!((File) in).isFile()) {
-                in = null;
+            if (in != null && Files.isRegularFile(IOUtilities.toPath(in))) {
+                return in;
             }
         }
-        return in;
+        return null;
     }
 
     /**
@@ -631,7 +628,7 @@ public class TiffImageReader extends SpatialImageReader {
     private Object createInput(Object currentInput, final String readerID) throws IOException {
         if ("main".equalsIgnoreCase(readerID)) return null;
 
-        return SupportFiles.changeExtension(currentInput, readerID);
+        return IOUtilities.changeExtension(currentInput, readerID);
     }
 
     /**
@@ -1083,6 +1080,7 @@ public class TiffImageReader extends SpatialImageReader {
         bitsPerSample  = null;
         tileOffsets    = null;
         rawImageType   = null;
+
         if (imageStream != null) {
             // If given input was a stream or an ImageInputStream, it's the owner of the stream who should close it.
             if (IOUtilities.canProcessAsPath(currentInput)) {
@@ -1118,12 +1116,9 @@ public class TiffImageReader extends SpatialImageReader {
 
         //-- to force open
         try {
-            if (imageStream != null) {
-                if (IOUtilities.canProcessAsPath(currentInput)) imageStream.close();
-            }
-
-            if (channel != null) {
-                if (IOUtilities.canProcessAsPath(currentInput)) imageStream.close();
+            if (IOUtilities.canProcessAsPath(currentInput)) {
+                if (imageStream != null) imageStream.close();
+                if (channel != null) channel.close();
             }
         } catch (IOException ex) {
             Logging.getLogger("org.geotoolkit.image.io.plugin").log(Level.SEVERE, null, ex);

@@ -33,15 +33,8 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRenderedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.io.*;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Random;
@@ -52,11 +45,16 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
+
 import org.apache.sis.test.TestUtilities;
+import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.image.color.ScaledColorSpace;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.iterator.*;
+import org.geotoolkit.nio.IOUtilities;
 import org.junit.After;
 import org.junit.Test;
 
@@ -207,7 +205,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
     @Test
 //    @Ignore
     public void default1BandTest() throws IOException {
-        File fileTest = File.createTempFile("default1BandTest", "tiff", tempDir);
+        Path fileTest = Files.createTempFile(tempDir.toPath(),"default1BandTest", "tiff");
         
         //-- test : 1 band type : byte grayscale --//
         defaultTest("default1BandTest : 1 band type : Byte grayscale : ", fileTest,
@@ -238,7 +236,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
     @Test
     @Ignore
     public void default4BandTest() throws IOException {
-        File fileTest = File.createTempFile("default1BandTest", "tiff", tempDir);
+        Path fileTest = Files.createTempFile(tempDir.toPath(),"default4BandTest", "tiff");
         
         //-- test : 1 band type : byte grayscale --//
         defaultTest("default1BandTest : 1 band type : Byte grayscale : ", fileTest, 
@@ -269,7 +267,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
     @Test
 //    @Ignore
     public void defaultRGBTest() throws IOException {
-        File fileTest = File.createTempFile("defaultRGBTest", "tiff", tempDir);
+        Path fileTest = Files.createTempFile(tempDir.toPath(),"defaultRGBTest", "tiff");
         
         //-- test : 3 bands type : byte RGB --//
         defaultTest("defaultRGBTest : 3 bands type : Byte RGB: ", fileTest, 
@@ -288,7 +286,7 @@ public strictfp abstract class TestTiffImageReaderWriter {
     @Test
 //    @Ignore
     public void defaultColorMapTest() throws IOException {
-        File fileTest = File.createTempFile("defaultColorMapTest", "tiff", tempDir);
+        Path fileTest = Files.createTempFile(tempDir.toPath(),"defaultColorMapTest", "tiff");
         
         //-- test : 3 bands type : byte RGB --//
         defaultTest("defaultColorMapTest : 3 bands type : Byte Palette: ", fileTest,  
@@ -379,30 +377,30 @@ public strictfp abstract class TestTiffImageReaderWriter {
         generalTest(message+" : 1 band, type : byte.", fileTest, Byte.SIZE, 1,
                 PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT, imageOrientation);
         //-- type short
-        generalTest(message+" : 1 band, type : short.", fileTest, Short.SIZE, 1,
+        generalTest(message + " : 1 band, type : short.", fileTest, Short.SIZE, 1,
                 PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT, imageOrientation);
         //-- type int
-        generalTest(message+" : 1 band, type : int.", fileTest, Integer.SIZE, 1,
+        generalTest(message + " : 1 band, type : int.", fileTest, Integer.SIZE, 1,
                 PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_UINT, imageOrientation);
         //-- type Float
-        generalTest(message+" : 1 band, type : float.", fileTest, Float.SIZE, 1,
+        generalTest(message + " : 1 band, type : float.", fileTest, Float.SIZE, 1,
                 PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP, imageOrientation);
         //-- type double
-        generalTest(message+" : 1 band, type : double.", fileTest, Double.SIZE, 1,
+        generalTest(message + " : 1 band, type : double.", fileTest, Double.SIZE, 1,
                 PHOTOMETRIC_MINISBLACK, SAMPLEFORMAT_IEEEFP, imageOrientation);
         
         //-- RGB --//
         //-- type Byte RGB
         generalTest(message+" : 3 bands RGB, type : Byte.", fileTest, Byte.SIZE, 3,
                 PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT, imageOrientation);
-        generalTest(message+" : 4 bands RGB, type : Byte.", fileTest, Byte.SIZE, 4,
+        generalTest(message + " : 4 bands RGB, type : Byte.", fileTest, Byte.SIZE, 4,
                 PHOTOMETRIC_RGB, SAMPLEFORMAT_UINT, imageOrientation);
         
         //-- color Map --//
         //-- type Byte RGB 
-        generalTest(message+" : 3 bands ColorMap, type : Byte.", fileTest, Byte.SIZE, 3,
+        generalTest(message + " : 3 bands ColorMap, type : Byte.", fileTest, Byte.SIZE, 3,
                 PHOTOMETRIC_PALETTE, SAMPLEFORMAT_UINT, imageOrientation);
-        generalTest(message+" : 4 bands ColorMap, type : Byte.", fileTest, Byte.SIZE, 4,
+        generalTest(message + " : 4 bands ColorMap, type : Byte.", fileTest, Byte.SIZE, 4,
                 PHOTOMETRIC_PALETTE, SAMPLEFORMAT_UINT, imageOrientation);
     }
     
@@ -432,44 +430,90 @@ public strictfp abstract class TestTiffImageReaderWriter {
      * @see #SAMPLEFORMAT_UINT
      * @throws IOException if problem during reading/writing action.
      */
-    private void defaultTest(final String message, final File fileTest, final int sampleBitsSize, final int numBand, 
+    private void defaultTest(final String message, final Path fileTest, final int sampleBitsSize, final int numBand,
             final short photometricInterpretation, final short sampleFormat) throws IOException {
         
         final int width  = random.nextInt(256) + 16;
         final int height = random.nextInt(256) + 16;
         final RenderedImage expected = createImageTest(width, height, sampleBitsSize, numBand, photometricInterpretation, sampleFormat);
-        
-        final int outType = random.nextInt(2);
-        final Object out  = (outType == 0) ? new FileOutputStream(fileTest) : fileTest ;
-        
-        writer.setOutput(out); //-- to initialize writer
-        writer.write(expected, writerParam);
-        writer.dispose();
-        
-        if (outType == 0) ((FileOutputStream) out).close();
-        
-        Object in;
-        final int inType = random.nextInt(3);
-        
-        switch (inType) {
-            case 0  : in = new FileImageInputStream(fileTest); break;
-            case 1  : in = new FileInputStream(fileTest);      break;
-            case 2  :
-            default : in = fileTest;
+
+        String messageSize = message + "\n Test image size(w/h) "+width+"/"+height+".";
+
+        //test writing with different output type from Spi
+        for (Class type : writer.getOriginatingProvider().getOutputTypes()) {
+
+            Object out = null;
+            try {
+                if (type.equals(Path.class)) {
+                    out = fileTest;
+                } else if (type.equals(File.class)) {
+                    out = fileTest.toFile();
+                } else if (type.equals(String.class)) {
+                    out = fileTest.toString();
+                } else if (type.equals(OutputStream.class)) {
+                    out = Files.newOutputStream(fileTest, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+                } else if (type.equals(ImageOutputStream.class)) {
+                    out = CoverageIO.createImageOutputStream(fileTest);
+                } else if (type.equals(FileOutputStream.class)) {
+                    out = new FileImageOutputStream(fileTest.toFile());
+                }
+
+                writer.setOutput(out); //-- to initialize writer
+                writer.write(expected, writerParam);
+                writer.dispose();
+
+                //close if output is a closable stream
+                if (out != null && !IOUtilities.canProcessAsPath(out) && out instanceof Closeable) {
+                    ((Closeable) out).close();
+                }
+
+                //test image (read using Path input)
+                reader.setInput(fileTest); //-- to initialize reader
+                final RenderedImage tested = reader.read(0);
+                reader.close();
+
+                //test image
+                checkImage(messageSize, expected, tested);
+            } catch (Exception e) {
+                String messageType = messageSize + "\n Writer output : "+type.getCanonicalName()
+                        + "\n Reader input : "+fileTest.getClass().getCanonicalName()+"."
+                        + "\n Cause : "+e.getMessage();
+                fail(messageType);
+            }
         }
-        
-        reader.setInput(in); //-- to initialize reader
-        final RenderedImage tested = reader.read(0);
-        reader.close();
-        
-        switch (inType) {
-            case 0  : ((ImageInputStream)in).close(); break;
-            case 1  : ((InputStream)in).close();      break;
-            case 2  :
-            default : ;
+
+        //test reading with every reader spy inputTypes (except Path because already tested)
+        for (Class type : reader.getOriginatingProvider().getInputTypes()) {
+
+            Object in = null;
+            try {
+                if (type.equals(File.class)) {
+                    in = fileTest.toFile();
+                } else if (type.equals(String.class)) {
+                    in = fileTest.toString();
+                } else if (type.equals(InputStream.class)) {
+                    in = Files.newInputStream(fileTest);
+                } else if (type.equals(ImageInputStream.class)) {
+                    in = CoverageIO.createImageInputStream(fileTest);
+                }
+
+                reader.setInput(fileTest); //-- to initialize reader
+                final RenderedImage tested = reader.read(0);
+                reader.close();
+
+                //close if input is a closable stream
+                if (in != null && !IOUtilities.canProcessAsPath(in) && in instanceof Closeable) {
+                    ((Closeable) in).close();
+                }
+
+                //test image
+                checkImage(messageSize, expected, tested);
+            } catch (Exception e) {
+                String messageType = messageSize + "\n Reader input : "+type.getCanonicalName()+"."
+                        + "\n Cause : "+e.getMessage();
+                fail(messageType);
+            }
         }
-        
-        checkImage(message, expected, tested);
     }
     
     /**
@@ -540,11 +584,22 @@ public strictfp abstract class TestTiffImageReaderWriter {
         final int subsampleYOffset = Math.max(0, random.nextInt(subsampleY) - 1);
         
         final Point destOffset = new Point(random.nextInt(width), random.nextInt(height));
-        
-         final RenderedImage testedImage = effectuateTest(fileTest, sourceImage, sourceRegion, 
-                subsampleX, subsampleY, subsampleXOffset, subsampleYOffset, destOffset);
-        
-        checkImages(message, sourceImage, sourceRegion, subsampleX, subsampleXOffset, subsampleY, subsampleYOffset, destOffset, testedImage);
+
+        StringBuilder seedMessage = new StringBuilder(message);
+        seedMessage.append("\n").append("Test image size (w/h) : ").append(width).append("/").append(height).append("\n");
+        seedMessage.append("SourceRegion : ").append(sourceRegion).append("\n");
+        seedMessage.append("subsampleX/subsampleY : ").append(subsampleX).append("/").append(subsampleY).append("\n");
+        seedMessage.append("subsampleXOffset/subsampleYOffset : ").append(subsampleXOffset).append("/").append(subsampleYOffset).append("\n");
+        seedMessage.append("destOffset : ").append(destOffset).append("\n");
+
+        try {
+            final RenderedImage testedImage = effectuateTest(fileTest, sourceImage, sourceRegion,
+                    subsampleX, subsampleY, subsampleXOffset, subsampleYOffset, destOffset);
+
+            checkImages(message, sourceImage, sourceRegion, subsampleX, subsampleXOffset, subsampleY, subsampleYOffset, destOffset, testedImage);
+        } catch (Exception e) {
+            fail(seedMessage.toString()+"Cause : "+e.getMessage());
+        }
     }
     
     /**
