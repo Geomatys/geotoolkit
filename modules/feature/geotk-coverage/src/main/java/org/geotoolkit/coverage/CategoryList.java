@@ -1175,8 +1175,8 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
                         if (category == null) {
                             category = nodata;
                         }
-                        maximum = (category!=categoryMax) ? category.maximum : POSITIVE_INFINITY;
-                        minimum = (category!=categoryMin) ? category.minimum : NEGATIVE_INFINITY;
+                        maximum = category.maximum;
+                        minimum = category.minimum;
                         rawBits = doubleToRawLongBits(minimum);
                         tr      = category.transform;
                         if (overflowFallback != null) {
