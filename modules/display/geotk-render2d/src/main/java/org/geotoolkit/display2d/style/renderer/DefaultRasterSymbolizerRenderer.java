@@ -429,14 +429,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //cheat on the colormap if we have only one band and no colormap
         recolorCase:
         if ((recolor == null || recolor.getFunction() == null)) {
-            
-            coverage    = (hasView(coverage, ViewType.GEOPHYSICS)) ? coverage.view(ViewType.GEOPHYSICS) 
-                                                                   : coverage;
+
+            //if there is no geophysic, the same coverage is returned
+            coverage    = coverage.view(ViewType.GEOPHYSICS);
             
             final RenderedImage ri      = coverage.getRenderedImage();
             final SampleModel sampleMod = ri.getSampleModel();
             final ColorModel riColorModel = ri.getColorModel();
-            final int riDatatype        = sampleMod.getDataType();
             
             /**
              * Break computing statistic if indexcolormodel is already adapted for java 2d interpretation
@@ -567,8 +566,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
          && recolor.getFunction() != null) {
             
             //color map is applied on geophysics view
-            coverage    = (hasView(coverage, ViewType.GEOPHYSICS)) ? coverage.view(ViewType.GEOPHYSICS) 
-                                                                   : coverage;
+            //if there is no geophysic, the same coverage is returned
+            coverage    = coverage.view(ViewType.GEOPHYSICS);
             resultImage = coverage.getRenderedImage();
 
             final Function fct = recolor.getFunction();
@@ -632,30 +631,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         
         //-- is RGB or ARGB Byte
         return sampleSize != 8;
-    } 
-    
-    /**
-     * Returns {@code true} if {@link GridCoverage2D} own a view given in parameter, else {@code false}.<br><br>
-     * 
-     * Note : if {@link GridCoverage2D#getViewTypes() } is {@code null} return {@code false}.
-     * 
-     * @param coverage 
-     * @param expectedView expected view type.
-     * @return {@code true} if coverage should be read with expected view, else {@code false}.
-     * @see GridCoverage2D#getViewTypes() 
-     * @see ViewType
-     */
-    private static boolean hasView(final GridCoverage2D coverage, final ViewType expectedView) {
-        ArgumentChecks.ensureNonNull("coverage", coverage);
-        ArgumentChecks.ensureNonNull("expectedView", expectedView);
-        final Set<ViewType> covViewTypes = coverage.getViewTypes();
-        if (covViewTypes == null) return false;
-        for (ViewType vt : coverage.getViewTypes()) 
-            if (vt.equals(expectedView)) return true;
-        
-        return false;
     }
-    
+
     private static int getBandIndice(final String name, final Coverage coverage) throws PortrayalException{
         try{
             return Integer.parseInt(name);

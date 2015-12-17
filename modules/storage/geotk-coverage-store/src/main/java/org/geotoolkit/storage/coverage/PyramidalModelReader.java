@@ -535,6 +535,11 @@ public class PyramidalModelReader extends GridCoverageReader{
                         }
                         if(cm==null) {
                             cm = tileImage.getColorModel();
+                        }
+                        if(sm==null){
+                            //if sample model is null, we need to have a coherent relation with
+                            //the color model. we reuse the tile models.
+                            cm = tileImage.getColorModel();
                             sm = tileImage.getSampleModel();
                         }
                         sm = sm.createCompatibleSampleModel((int)(tileMaxCol-tileMinCol)*tileSize.width,
