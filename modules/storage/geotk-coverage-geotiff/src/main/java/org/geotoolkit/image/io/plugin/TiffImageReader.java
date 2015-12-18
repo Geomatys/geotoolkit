@@ -75,6 +75,7 @@ import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.internal.ImageUtils;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.io.IOUtilities;
@@ -905,7 +906,11 @@ public class TiffImageReader extends SpatialImageReader {
             assert samplFormat > 0;
             final Double minSV  = (minSampleValue == null) ? null : (double) minSampleValue;
             final Double maxSV  = (maxSampleValue == null) ? null : (double) maxSampleValue;
-            final ColorModel cm = ImageUtils.createColorModel(sampleBitSize, samplesPerPixel, photoInter, samplFormat, minSV, maxSV, index);
+            int[] java2DPaletteColorMap = null;
+            if (index != null) {
+                java2DPaletteColorMap = convertColorMapArray(index);
+            }
+            final ColorModel cm = ImageUtils.createColorModel(sampleBitSize, samplesPerPixel, photoInter, samplFormat, minSV, maxSV, java2DPaletteColorMap);
 
             /*
             * Create a SampleModel with size of 1x1 volontary just to know image properties.
@@ -915,6 +920,50 @@ public class TiffImageReader extends SpatialImageReader {
             sourceDataBufferType = rawImageType.getSampleModel().getDataType();
         }
         return rawImageType;
+    }
+
+    /**
+     * Convert and return color map array from tiff file to an Integer array adapted to build {@link IndexColorModel} in java.
+     *
+     * @param colorMap array given by tiff reading.
+     * @return an Integer array adapted to build {@link IndexColorModel} in java.
+     */
+    private static int[] convertColorMapArray(final long[] colorMap) {
+        ArgumentChecks.ensureNonNull("color map array", colorMap);
+        final int indexLength = colorMap.length;
+        assert (indexLength % 3 == 0) : "color map array length should be modulo 3";
+        final int length_3 = indexLength / 3;
+        final int[] result = new int[length_3];
+
+        //-- color map in a tiff file : N Red values -> N Green values -> N Blue values
+        int idR = 0;
+        int idG = length_3;
+        int idB = length_3 << 1;// = 2 * length_3
+
+        /*
+         * mask applied to avoid the low-order bits from the red color overlaps the bits of green color.
+         * Moreover to avoid the low-order bits from the green color overlaps the bits of blue color.
+         */
+        final int mask = 0x0000FF00;
+
+        /*
+         * In indexed color model in java, values to defind palette for each color are between 0 -> 255.
+         * To build integer value in palette, we need to shift red value by 16 bits, green value by 8 bits and no shift to blue.
+         *
+         * In our case we build a color model from color map (tiff palette) values define between 0 -> 65535.
+         * Then build integer value in palette we will shift each color value by normaly shift minus 8, to bring back all values between 0 -> 256.
+         */
+
+        final int alpha = 0xFF000000;
+
+        //-- pixel : 1111 1111 | R | G | B
+        for (int i = 0; i < length_3; i++) {
+            final int r = ((int) (colorMap[idR++] & mask) << 8);
+            final int g = ((int) colorMap[idG++] & mask);
+            final int b = ((int) colorMap[idB++] >> 8) ;
+            result[i] = alpha | r | g | b;
+        }
+        return result;
     }
 
     /**
@@ -1708,7 +1757,7 @@ public class TiffImageReader extends SpatialImageReader {
             final short type   = (short) defTab[1];
             final int count    = (int) defTab[2];
             //-- in tiff spec offset or data are always unsigned
-            final long offset  = defTab[3] & 0xFFFFFFFFFFFFFFFFL; 
+            final long offset  = defTab[3] & 0xFFFFFFFFFFFFFFFFL;
             final Map<String, Object> tagAttributs = new HashMap<>();
             tagAttributs.put(ATT_NAME, getName(tag));
             tagAttributs.put(ATT_TYPE, type);
@@ -1717,14 +1766,16 @@ public class TiffImageReader extends SpatialImageReader {
             imageStream.seek(offset);
             final Object result;
             if (type == TYPE_DOUBLE || type == TYPE_FLOAT || type == TYPE_RATIONAL || type == TYPE_URATIONAL) {
-                result = new double[count];
+                final double[] array = new double[count];
+                result = array;
                 for (int i = 0; i < count; i++) {
-                    Array.setDouble(result, i, readAsDouble(type));
+                    array[i] = readAsDouble(type);
                 }
             } else {
-                result = new long[count];
+                final long[] array = new long[count];
+                result = array;
                 for (int i = 0; i < count; i++) {
-                    Array.setLong(result, i, read(type));
+                    array[i] = read(type);
                 }
             }
             tagAttributs.put(ATT_VALUE, result);
@@ -2897,12 +2948,12 @@ public class TiffImageReader extends SpatialImageReader {
                             if (maskCount == bitpersampl) {
                                 if (xpos == xref && xref < srcMaxx) {
                                     switch (dataType) {
-                                        case DataBuffer.TYPE_BYTE   : Array.setByte(targetArray, bankID, (byte) dataContainer); break;
+                                        case DataBuffer.TYPE_BYTE   : ((byte[])targetArray)[bankID] = (byte) dataContainer; break;
                                         case DataBuffer.TYPE_SHORT  :
-                                        case DataBuffer.TYPE_USHORT : Array.setShort(targetArray, bankID, (short) dataContainer); break;
-                                        case DataBuffer.TYPE_INT    : Array.setInt(targetArray, bankID, (int) dataContainer); break;
-                                        case DataBuffer.TYPE_FLOAT  : Array.setFloat(targetArray, bankID, Float.intBitsToFloat((int) dataContainer)); break;
-                                        case DataBuffer.TYPE_DOUBLE : Array.setDouble(targetArray, bankID, Double.longBitsToDouble(dataContainer)); break;
+                                        case DataBuffer.TYPE_USHORT : ((short[])targetArray)[bankID] = (short) dataContainer; break;
+                                        case DataBuffer.TYPE_INT    : ((int[])targetArray)[bankID] = (int) dataContainer; break;
+                                        case DataBuffer.TYPE_FLOAT  : ((float[])targetArray)[bankID] = Float.intBitsToFloat((int) dataContainer); break;
+                                        case DataBuffer.TYPE_DOUBLE : ((double[])targetArray)[bankID] = Double.longBitsToDouble(dataContainer); break;
                                         default: throw new AssertionError(dataType);
                                     }
                                     bankID += planarDenum;
@@ -2965,12 +3016,12 @@ public class TiffImageReader extends SpatialImageReader {
                                 if (maskCount == bitpersampl) {
                                     if (xpos == xref && xref < srcMaxx) {
                                         switch (dataType) {
-                                            case DataBuffer.TYPE_BYTE   : Array.setByte(targetArray, bankID, (byte) dataContainer); break;
-                                            case DataBuffer.TYPE_SHORT  :
-                                            case DataBuffer.TYPE_USHORT : Array.setShort(targetArray, bankID, (short) dataContainer); break;
-                                            case DataBuffer.TYPE_INT    : Array.setInt(targetArray, bankID, (int) dataContainer); break;
-                                            case DataBuffer.TYPE_FLOAT  : Array.setFloat(targetArray, bankID, Float.intBitsToFloat((int) dataContainer)); break;
-                                            case DataBuffer.TYPE_DOUBLE : Array.setDouble(targetArray, bankID, Double.longBitsToDouble(dataContainer)); break;
+                                        case DataBuffer.TYPE_BYTE   : ((byte[])targetArray)[bankID] = (byte) dataContainer; break;
+                                        case DataBuffer.TYPE_SHORT  :
+                                        case DataBuffer.TYPE_USHORT : ((short[])targetArray)[bankID] = (short) dataContainer; break;
+                                        case DataBuffer.TYPE_INT    : ((int[])targetArray)[bankID] = (int) dataContainer; break;
+                                        case DataBuffer.TYPE_FLOAT  : ((float[])targetArray)[bankID] = Float.intBitsToFloat((int) dataContainer); break;
+                                        case DataBuffer.TYPE_DOUBLE : ((double[])targetArray)[bankID] = Double.longBitsToDouble(dataContainer); break;
                                             default: throw new AssertionError(dataType);
                                         }
                                         bankID += planarDenum;
@@ -3406,12 +3457,12 @@ public class TiffImageReader extends SpatialImageReader {
                                     //-- write sample in target array if its necessary --//
                                     if (samplePos == posRef) {
                                         switch (dataType) {
-                                             case DataBuffer.TYPE_BYTE   : Array.setByte(targetArray, targetPos, (byte) (prediPix[b])); break;
+                                            case DataBuffer.TYPE_BYTE   : ((byte[])targetArray)[targetPos] = (byte) (prediPix[b]); break;
                                             case DataBuffer.TYPE_SHORT  :
-                                            case DataBuffer.TYPE_USHORT : Array.setShort(targetArray, targetPos, (short) (prediPix[b])); break;
-                                            case DataBuffer.TYPE_INT    : Array.setInt(targetArray, targetPos, (int) (prediPix[b])); break;
-                                            case DataBuffer.TYPE_FLOAT  : Array.setFloat(targetArray, targetPos, Float.intBitsToFloat((int) (prediPix[b]))); break;
-                                            case DataBuffer.TYPE_DOUBLE : Array.setDouble(targetArray, targetPos, Double.longBitsToDouble(prediPix[b])); break;
+                                            case DataBuffer.TYPE_USHORT : ((short[])targetArray)[targetPos] = (short) (prediPix[b]); break;
+                                            case DataBuffer.TYPE_INT    : ((int[])targetArray)[targetPos] =  (int) (prediPix[b]); break;
+                                            case DataBuffer.TYPE_FLOAT  : ((float[])targetArray)[targetPos] = Float.intBitsToFloat((int) (prediPix[b])); break;
+                                            case DataBuffer.TYPE_DOUBLE : ((double[])targetArray)[targetPos] = Double.longBitsToDouble(prediPix[b]); break;
                                             default: throw new AssertionError(dataType);
                                         }
                                         targetPos += planarDenum;

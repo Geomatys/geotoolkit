@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.imageio.ImageReader;
 import javax.swing.ProgressMonitor;
 import org.apache.sis.geometry.Envelopes;
@@ -53,6 +55,7 @@ import org.geotoolkit.coverage.combineIterator.GridCombineIterator;
 import org.geotoolkit.referencing.ReferencingUtilities;
 import org.geotoolkit.image.BufferedImages;
 import org.geotoolkit.image.internal.ImageUtilities;
+import org.geotoolkit.image.io.large.AbstractLargeRenderedImage;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
@@ -117,6 +120,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Rémi Marechal (Geomatys).
  * @author Quentin Boileau (Geomatys).
+ * @author Johann Sorel (Geomatys).
  */
 public class PyramidCoverageBuilder {
 
@@ -263,7 +267,7 @@ public class PyramidCoverageBuilder {
             throws DataStoreException, TransformException, FactoryException, IOException {
         create(gridCoverage, coverageStore, coverageName, resolution_Per_Envelope, fillValue, null, null);
     }
-    
+
     /**
      * <p>Effectuate resampling, re-projection, tile cutting and insertion in datastore on {@link GridCoverage}.<br/><br/>
      *
@@ -313,12 +317,12 @@ public class PyramidCoverageBuilder {
 
         pm.setSampleDimensions(coverageSampleDims);
         //----------------------------------------------------------------------
-        
+
         final GridGeometry currentgridGeometry = gridReader.getGridGeometry(imageIndex);
-        
+
         //-- init listener ---
         if (processListener != null) initListener(resolution_Per_Envelope, currentgridGeometry, processListener);
-        
+
         for (Envelope outEnv : resolution_Per_Envelope.keySet()) {
             final CoordinateReferenceSystem crs = outEnv.getCoordinateReferenceSystem();
             final int minOrdi0 = CRSUtilities.firstHorizontalAxis(crs);
@@ -337,20 +341,20 @@ public class PyramidCoverageBuilder {
                 //-- temporary reprojection
                 //-- try later to concatene gridtocrs + findmathtransform srcCrs -> outCrs
                 final GeneralEnvelope envDest = GeneralEnvelope.castOrCopy(Envelopes.transform(gcEnv, crs));
-                
+
                 //set upperLeft ordinate
                 for (int d = 0; d < outDim; d++) {
                     if (d != minOrdi0 && d != minOrdi1) {
                         upperLeft.setOrdinate(d, envDest.getMedian(d));
                     } else {
-                        //-- set horizontal crs part coordinates from out envelope into destination envelope  
+                        //-- set horizontal crs part coordinates from out envelope into destination envelope
                         envDest.setRange(d, outEnv.getMinimum(d), outEnv.getMaximum(d));
                     }
                 }
                 final GridCoverageReadParam rp = new GridCoverageReadParam();
                 rp.setEnvelope(envDest);
                 rp.setDeferred(true);
-                
+
                 resample(pm, pyram.getId(), gridReader, imageIndex, rp, resolution_Per_Envelope.get(outEnv), upperLeft, envDest, minOrdi0, minOrdi1, fillValue, processListener);
             }
         }
@@ -379,9 +383,9 @@ public class PyramidCoverageBuilder {
      * @throws TransformException
      * @throws DataStoreException
      */
-    private void resample (PyramidalCoverageReference pm, String pyramidID, GridCoverageReader coverageReader, 
-            int imageIndex, GridCoverageReadParam readParam, double[] scaleLevel, DirectPosition upperLeft, 
-            Envelope envDest, int widthAxis, int heightAxis, double[] fillValue, ProcessListener processListener)
+    private void resample (final PyramidalCoverageReference pm, String pyramidID, GridCoverageReader coverageReader,
+            int imageIndex, GridCoverageReadParam readParam, double[] scaleLevel, DirectPosition upperLeft,
+            Envelope envDest, int widthAxis, int heightAxis, double[] fillValue, final ProcessListener processListener)
             throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException, IOException {
 
         final GeneralGridGeometry ggg = coverageReader.getGridGeometry(imageIndex);
@@ -390,26 +394,26 @@ public class PyramidCoverageBuilder {
             if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
             throw ex;
         }
-        
+
         final GridGeometry2D gg2d   = (GridGeometry2D) ggg;
         final Envelope covEnv       = gg2d.getEnvelope2D();
-        
+
         // work on pixels coordinates.
         final double envWidth       = envDest.getSpan(widthAxis);
         final double envHeight      = envDest.getSpan(heightAxis);
         final double min0           = envDest.getMinimum(widthAxis);
         final double max1           = envDest.getMaximum(heightAxis);
-        
+
         //MathTransform2D
         CoordinateReferenceSystem envDestCRS2D = CRSUtilities.getCRS2D(envDest.getCoordinateReferenceSystem());
         GeneralEnvelope envDest2D = GeneralEnvelope.castOrCopy(CRS.transform(envDest, envDestCRS2D));
         final MathTransform destCrs_to_coverageCRS = CRS.findMathTransform(envDestCRS2D, gg2d.getCoordinateReferenceSystem2D(), true);
-        
+
         final Dimension tileSize              = new Dimension(tileWidth, tileHeight);
-        
+
         final GeneralEnvelope covEnvInDestCRS = CRS.transform(destCrs_to_coverageCRS.inverse(), covEnv);
         final GeneralEnvelope clipEnv   = ReferencingUtilities.intersectEnvelopes(covEnvInDestCRS, envDest2D);
-        
+
         //------------------- param resolution configuration -------------------
         final int paramDim;
         final CoordinateReferenceSystem paramCrs = readParam.getCoordinateReferenceSystem();
@@ -425,32 +429,32 @@ public class PyramidCoverageBuilder {
         final double[] res = new double[paramDim];
         Arrays.fill(res, 1.0);
         //----------------------------------------------------------------------
-        
+
         //-- one mosaic for each level scale
         for (double pixelScal : scaleLevel) {
             res[widthAxis] = res[heightAxis] = pixelScal;
             //-- output image size
             readParam.setResolution(res);
-            assert CRS.equalsIgnoreMetadata(readParam.getCoordinateReferenceSystem(), ggg.getCoordinateReferenceSystem()) 
+            assert CRS.equalsIgnoreMetadata(readParam.getCoordinateReferenceSystem(), ggg.getCoordinateReferenceSystem())
                     : "PyramidCoverageBuilder : requested CRS into GridCoverageReadParam must be same than Coverage";
-            
+
             final GridCoverage2D gridCoverage2D = (GridCoverage2D) coverageReader.read(imageIndex, readParam);//-- normaly with a gridGeometry2D --> gridCoverage2D
             final RenderedImage baseImg = gridCoverage2D.getRenderedImage();
             final MathTransform2D coverageCRS_to_grid = gridCoverage2D.getGridGeometry().getGridToCRS2D(PixelOrientation.CENTER).inverse();
             final MathTransform destCrs_to_covGrid     = MathTransforms.concatenate(destCrs_to_coverageCRS, coverageCRS_to_grid).inverse();
 
             final double[] fill    = getFillValue(gridCoverage2D, fillValue);
-            
-                final double imgWidth  = envWidth  / pixelScal;
-                final double imgHeight = envHeight / pixelScal;
+
+            final double imgWidth  = envWidth  / pixelScal;
+            final double imgHeight = envHeight / pixelScal;
             final double sx        = envWidth  / imgWidth;
             final double sy        = envHeight / imgHeight;
             final MathTransform2D globalGridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0, max1);
-                
-                //-- mosaic size
-                final int nbrTileX  = (int) Math.ceil(imgWidth  / tileWidth);
-                final int nbrTileY  = (int) Math.ceil(imgHeight / tileHeight);
-                
+
+            //-- mosaic size
+            final int nbrTileX  = (int) Math.ceil(imgWidth  / tileWidth);
+            final int nbrTileY  = (int) Math.ceil(imgHeight / tileHeight);
+
             //-- coverage extent on mosaic space
             final GeneralEnvelope coverageExtent = Envelopes.transform(globalGridDest_to_crs.inverse(), clipEnv);
 
@@ -459,44 +463,32 @@ public class PyramidCoverageBuilder {
             final int startTileY = (int) coverageExtent.getMinimum(heightAxis)  / tileHeight;
             final int endTileX   = (int) (coverageExtent.getMaximum(widthAxis)  + tileWidth - 1)  / tileWidth;
             final int endTileY   = (int) (coverageExtent.getMaximum(heightAxis) + tileHeight - 1) / tileHeight;
-            
+
             final GridMosaic mosaic = getOrCreateMosaic(pm, pyramidID, new Dimension(nbrTileX, nbrTileY), tileSize, upperLeft, pixelScal);
             final String mosaicId   = mosaic.getId();
 
-            //final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(baseImg), interpolationCase, lanczosWindow);
+            final AtomicInteger inc = new AtomicInteger();
+            final RenderedImage img = new BuildImage(
+                    startTileX*tileWidth,
+                    startTileY*tileHeight,
+                    (endTileX-startTileX)*tileWidth,
+                    (endTileY-startTileY)*tileHeight,
+                    tileSize, baseImg, mosaic,
+                    processListener,
+                    inc,fill,destCrs_to_covGrid,
+                    sx,sy,min0,max1
+                    );
 
-            for (int cTY = startTileY; cTY < endTileY; cTY++) {
-                for (int cTX = startTileX; cTX < endTileX; cTX++) {
-                    final int destMinX = cTX * tileWidth;
-                    final int destMinY = cTY * tileHeight;
-                    boolean noFill = false;
-
-                    WritableRenderedImage destImg;
-                    if (reuseTiles && !mosaic.isMissing(cTX, cTY)) {
-                        TileReference tile = mosaic.getTile(cTX, cTY, null);
-                        destImg = getImageFromTile(tile);
-                        noFill = true;
-                    } else {
-                        destImg = BufferedImages.createImage(tileWidth, tileHeight, baseImg);
-                        //-- ensure fill value is set.
-                        ImageUtilities.fill(destImg, fill[0]);
-                    }
-
-                    if (processListener != null) {
-                        processListener.progressing(new ProcessEvent(fakeProcess, (++niemeTile) + "/" + globalTileNumber, (niemeTile * 100 / globalTileNumber)));
-                    }
-
-                    //-- dest grid --> dest envelope coordinate --> base envelope --> base grid
-                    //-- concatene : dest grid_to_crs, dest_crs_to_coverageCRS, coverageCRS_to_grid coverage
-                    final MathTransform2D gridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0 + sx * (destMinX + 0.5), max1 - sy * (destMinY + 0.5)).inverse();
-                    final MathTransform mt = MathTransforms.concatenate(destCrs_to_covGrid, gridDest_to_crs);
-
-                    final Resample resample = new Resample(mt.inverse(), destImg, baseImg, interpolationCase, lanczosWindow,
-                            ResampleBorderComportement.FILL_VALUE, (noFill ? null : fill));
-                    resample.fillImage();
-                    pm.writeTile(pyramidID, mosaicId, cTX, cTY, destImg);
+            try{
+                pm.writeTiles(pyramidID, mosaicId, img, false, null);
+            }catch(ImagingOpException ex){
+                if(processListener!=null){
+                    float prc = (float)niemeTile / globalTileNumber;
+                    processListener.failed(new ProcessEvent(fakeProcess, "writing tiles", prc, ex));
                 }
+                throw new DataStoreException(ex.getMessage(), ex);
             }
+
         }
     }
 
@@ -530,7 +522,7 @@ public class PyramidCoverageBuilder {
         ArgumentChecks.ensureNonNull("resolution_Per_Envelope", resolution_Per_Envelope);
 
         final GridGeometry gg = gridCoverage.getGridGeometry();
-        
+
         if (!(gg instanceof GridGeometry2D)) {
             final IllegalArgumentException ex = new IllegalArgumentException("GridGeometry not instance of GridGeometry2D");
             if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
@@ -548,11 +540,11 @@ public class PyramidCoverageBuilder {
             if (processListener != null) processListener.failed(new ProcessEvent(fakeProcess, "", 0, ex));
             throw ex;
         }
-        
+
         if (processListener != null) initListener(resolution_Per_Envelope, gg, processListener);
-        
+
         final PyramidalCoverageReference pm     = (PyramidalCoverageReference) cv;
-        
+
         //------------------------ add sampleDimension -------------------------
         final int nbSampleDimension                     = gridCoverage.getNumSampleDimensions();
         final ArrayList<GridSampleDimension> sampleList = new ArrayList<GridSampleDimension>();
@@ -571,8 +563,8 @@ public class PyramidCoverageBuilder {
 
         pm.setSampleDimensions(sampleList);
         //----------------------------------------------------------------------
-        
-        
+
+
         //Image
         fillValue = getFillValue((GridCoverage2D)gridCoverage, fillValue);
 
@@ -650,7 +642,7 @@ public class PyramidCoverageBuilder {
 
         final GridGeometry currentGridGeometry = reader.getGridGeometry(0);
         if (processListener != null) initListener(resolution_Per_Envelope, currentGridGeometry, processListener);
-        
+
         final GridCoverageReadParam rp = new GridCoverageReadParam();
 
         //one coverageReference for each reader.
@@ -662,7 +654,7 @@ public class PyramidCoverageBuilder {
             throw ex;
         }
         final PyramidalCoverageReference pm = (PyramidalCoverageReference) cv;
-        
+
         //----------------------- sample dimensions-----------------------------
         List<GridSampleDimension> coverageSampleDims = reader.getSampleDimensions(0);
         if (!isDimensionsCompatible(pm, coverageSampleDims))
@@ -686,13 +678,13 @@ public class PyramidCoverageBuilder {
             final GridCombineIterator gitenv = new GridCombineIterator(new GeneralGridGeometry(currentGridGeometry));
             while (gitenv.hasNext()) {
                 final GeneralEnvelope envDest = GeneralEnvelope.castOrCopy(Envelopes.transform(gitenv.next(), crs));
-                
+
                 for (int d = 0; d < outDim; d++) {
                     if (d != minOrdi0 && d != minOrdi1) {
                         //set upperLeft ordinate
                         upperLeft.setOrdinate(d, envDest.getMedian(d));
                     } else {
-                        //-- set horizontal crs part coordinates from out envelope into destination envelope  
+                        //-- set horizontal crs part coordinates from out envelope into destination envelope
                         envDest.setRange(d, outEnv.getMinimum(d), outEnv.getMaximum(d));
                     }
                 }
@@ -736,8 +728,8 @@ public class PyramidCoverageBuilder {
      * @throws TransformException
      * @throws DataStoreException
      */
-    private void resample (PyramidalCoverageReference pm, String pyramidID, GridCoverage2D gridCoverage2D, double[] scaleLevel,
-            DirectPosition upperLeft, Envelope envDest, int widthAxis, int heightAxis, double[] fillValue, ProcessListener processListener)
+    private void resample (final PyramidalCoverageReference pm, String pyramidID, GridCoverage2D gridCoverage2D, double[] scaleLevel,
+            DirectPosition upperLeft, Envelope envDest, int widthAxis, int heightAxis, double[] fillValue, final ProcessListener processListener)
             throws NoninvertibleTransformException, FactoryException, TransformException, DataStoreException, IOException {
 
         final GridGeometry2D gg2d       = gridCoverage2D.getGridGeometry();
@@ -753,7 +745,7 @@ public class PyramidCoverageBuilder {
 //        final int dataType          = baseImg.getSampleModel().getDataType();
         final double min0           = envDest.getMinimum(widthAxis);
         final double max1           = envDest.getMaximum(heightAxis);
-        
+
         //-- MathTransform2D
         CoordinateReferenceSystem envDestCRS2D = CRSUtilities.getCRS2D(envDest.getCoordinateReferenceSystem());
         GeneralEnvelope envDest2D = GeneralEnvelope.castOrCopy(CRS.transform(envDest, envDestCRS2D));
@@ -764,13 +756,13 @@ public class PyramidCoverageBuilder {
 
         final GeneralEnvelope covEnvInDestCRS = CRS.transform(destCrs_to_coverageCRS.inverse(), covEnv);
         final GeneralEnvelope clipEnv   = ReferencingUtilities.intersectEnvelopes(covEnvInDestCRS, envDest2D);
-        
+
         //one mosaic for each level scale
         for (double pixelScal : scaleLevel) {
             //output image size
-            
-                final double imgWidth  = envWidth / pixelScal;
-                final double imgHeight = envHeight / pixelScal;
+
+            final double imgWidth  = envWidth / pixelScal;
+            final double imgHeight = envHeight / pixelScal;
             final double sx     = envWidth  / imgWidth;
             final double sy     = envHeight / imgHeight;
             final MathTransform2D globalGridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0, max1);
@@ -781,7 +773,7 @@ public class PyramidCoverageBuilder {
 
             //coverage extent on mosaic space
             final GeneralEnvelope coverageExtent = Envelopes.transform(globalGridDest_to_crs.inverse(), clipEnv);
-                
+
             //coverage intersection tile index
             final int startTileX = (int)coverageExtent.getMinimum(widthAxis) / tileWidth;
             final int startTileY = (int)coverageExtent.getMinimum(heightAxis) / tileHeight;
@@ -791,40 +783,32 @@ public class PyramidCoverageBuilder {
             final GridMosaic mosaic = getOrCreateMosaic(pm, pyramidID, new Dimension(nbrTileX, nbrTileY), tileSize, upperLeft, pixelScal);
             final String mosaicId   = mosaic.getId();
 
-            //final Interpolation interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(baseImg), interpolationCase, lanczosWindow);
+            final AtomicInteger inc = new AtomicInteger();
+            final AtomicReference<Exception> exps = new AtomicReference<>();
 
-            for (int cTY = startTileY; cTY < endTileY; cTY++) {
-                for (int cTX = startTileX; cTX < endTileX; cTX++) {
-                    final int destMinX = cTX * tileWidth;
-                    final int destMinY = cTY * tileHeight;
-                    boolean noFill = false;
+            final RenderedImage img = new BuildImage(
+                    startTileX*tileWidth,
+                    startTileY*tileHeight,
+                    (endTileX-startTileX)*tileWidth,
+                    (endTileY-startTileY)*tileHeight,
+                    tileSize, baseImg, mosaic,
+                    processListener,
+                    inc,fill,destCrs_to_covGrid,
+                    sx,sy,min0,max1
+                    );
 
-                    WritableRenderedImage destImg;
-                    if (reuseTiles && !mosaic.isMissing(cTX, cTY)) {
-                        TileReference tile = mosaic.getTile(cTX, cTY, null);
-                        destImg = getImageFromTile(tile);
-                        noFill = true;
-                    } else {
-                        destImg = BufferedImages.createImage(tileWidth, tileHeight, baseImg);
-                        //ensure fill value is set.
-                        ImageUtilities.fill(destImg, fill[0]);
-                    }
-
-                    if (processListener != null) {
-                        processListener.progressing(new ProcessEvent(fakeProcess, (++niemeTile) + "/" + globalTileNumber, (niemeTile * 100 / globalTileNumber)));
-                    }
-
-                    //dest grid --> dest envelope coordinate --> base envelope --> base grid
-                    //concatene : dest grid_to_crs, dest_crs_to_coverageCRS, coverageCRS_to_grid coverage
-                    final MathTransform2D gridDest_to_crs = new AffineTransform2D(sx, 0, 0, -sy, min0 + sx * (destMinX + 0.5), max1 - sy * (destMinY + 0.5)).inverse();
-                    final MathTransform mt = MathTransforms.concatenate(destCrs_to_covGrid, gridDest_to_crs);
-
-                    final Resample resample = new Resample(mt.inverse(), destImg, baseImg, interpolationCase, lanczosWindow,
-                            ResampleBorderComportement.FILL_VALUE, (noFill ? null : fill));
-                    resample.fillImage();
-                    pm.writeTile(pyramidID, mosaicId, cTX, cTY, destImg);
+            try{
+                pm.writeTiles(pyramidID, mosaicId, img, false, null);
+            }catch(ImagingOpException ex){
+                if(processListener!=null){
+                    float prc = (float)niemeTile / globalTileNumber;
+                    processListener.failed(new ProcessEvent(fakeProcess, "writing tiles", prc, ex));
                 }
+                throw new DataStoreException(ex.getMessage(), ex);
             }
+
+            pm.writeTiles(pyramidID, mosaicId, img, false, null);
+
         }
     }
 
@@ -879,7 +863,7 @@ public class PyramidCoverageBuilder {
      * @param resolution_Per_Envelope reprojection and resampling attibuts.
      * @param processListener
      */
-    private void initListener(final Map<Envelope, double[]> resolution_Per_Envelope, final GridGeometry currentGridGeom, 
+    private void initListener(final Map<Envelope, double[]> resolution_Per_Envelope, final GridGeometry currentGridGeom,
                               final ProcessListener processListener) throws TransformException {
         assert resolution_Per_Envelope != null : "resolution_Per_Envelope should not be null";
         assert processListener         != null : "processListener should not be null";
@@ -897,11 +881,11 @@ public class PyramidCoverageBuilder {
                     final GeneralEnvelope envDest = GeneralEnvelope.castOrCopy(Envelopes.transform(envGit, crs));
                     for (int d = 0; d < outDim; d++) {
                     if (d == minOrdi0 || d == minOrdi1) {
-                        //-- set horizontal crs part coordinates from out envelope into destination envelope  
+                        //-- set horizontal crs part coordinates from out envelope into destination envelope
                         envDest.setRange(d, outEnv.getMinimum(d), outEnv.getMaximum(d));
                     }
                 }
-                    //-- set horizontal crs part coordinates from out envelope into destination envelope  
+                    //-- set horizontal crs part coordinates from out envelope into destination envelope
                     for (double pixelScal : resolution_Per_Envelope.get(outEnv)) {
                         final int nbrtx   = (int) Math.ceil((envDest.getSpan(minOrdi0) / pixelScal) / tileWidth);
                         final int nbrty   = (int) Math.ceil((envDest.getSpan(minOrdi1) / pixelScal) / tileHeight);
@@ -975,14 +959,14 @@ public class PyramidCoverageBuilder {
      * <strong>
      * Note : an exception is thrown if tile does not exist.
      * </strong>
-     * 
+     *
      * @param pm {@link PyramidalCoverageReference} where the requested {@link GridMosaic} is looking for.
      * @param pyramidID {@link Pyramid} identifier of the requested {@link GridMosaic}.
      * @param envDest requested {@link Envelope} in relation with needed {@link GridMosaic}.
      * @param pixelScal requested scale in relation with needed {@link GridMosaic}.
      * @return a {@link GridMosaic} which already exist.
-     * @throws DataStoreException if pyramid does not match with the pyramid_ID or 
-     * also if requested {@link GridMosaic} was not found. 
+     * @throws DataStoreException if pyramid does not match with the pyramid_ID or
+     * also if requested {@link GridMosaic} was not found.
      */
     public static synchronized GridMosaic getMosaic(final PyramidalCoverageReference pm,
             String pyramidID, Envelope envDest, double pixelScal) throws DataStoreException {
@@ -997,7 +981,7 @@ public class PyramidCoverageBuilder {
         }
         throw new DataStoreException("getOrCreateMosaic : with reuse tile. No already built mosaic can contains new data.");
     }
-    
+
 
     /**
      * Check if two GridSampleDimension list are compatible.
@@ -1048,11 +1032,11 @@ public class PyramidCoverageBuilder {
     private boolean isDimensionCompatible(final GridSampleDimension gsd1, final GridSampleDimension gsd2) {
         ArgumentChecks.ensureNonNull("gsd1", gsd1);
         ArgumentChecks.ensureNonNull("gsd2", gsd2);
-        
+
         NumberRange range1 = gsd1.getRange();
         NumberRange range2 = gsd2.getRange();
-        
-        if (range1 == null) return range2 == null; 
+
+        if (range1 == null) return range2 == null;
 
         if (!range1.containsAny(range2)) return false;
 
@@ -1074,4 +1058,82 @@ public class PyramidCoverageBuilder {
         //TODO compare categories
         return true;
     }
+
+    /**
+     * Inner class that extend {@link AbstractLargeRenderedImage#getTile(int, int)}
+     * that resample on the fly mosaic tiles.
+     */
+    private class BuildImage extends AbstractLargeRenderedImage{
+
+        private final ProcessListener processListener;
+        private final AtomicInteger lastProc;
+        private final RenderedImage baseImg;
+        private final GridMosaic mosaic;
+        private final double[] fill;
+        private final MathTransform destCrs_to_covGrid;
+        private final double[] affArgs;
+
+        private BuildImage(int minX, int minY, int width, int height, Dimension tileSize,
+                           RenderedImage baseImg, GridMosaic mosaic, ProcessListener processListener,
+                           AtomicInteger lastProc, double[] fill, MathTransform destCrs_to_covGrid,
+                           double... affArgs){
+            super(minX,minY,width,height,tileSize,0,0,baseImg.getColorModel());
+            this.baseImg = baseImg;
+            this.mosaic = mosaic;
+            this.processListener = processListener;
+            this.lastProc = lastProc;
+            this.fill = fill;
+            this.destCrs_to_covGrid = destCrs_to_covGrid;
+            this.affArgs = affArgs;
+        }
+
+        @Override
+        public SampleModel getSampleModel() {
+            return baseImg.getSampleModel();
+        }
+
+        @Override
+        public Raster getTile(int cTX, int cTY) {
+            final int destMinX = cTX * getTileWidth();
+            final int destMinY = cTY * getTileHeight();
+            boolean noFill = false;
+
+            try{
+                WritableRenderedImage destImg;
+                if (reuseTiles && !mosaic.isMissing(cTX, cTY)) {
+                    TileReference tile = mosaic.getTile(cTX, cTY, null);
+                    destImg = getImageFromTile(tile);
+                    noFill = true;
+                } else {
+                    destImg = BufferedImages.createImage(tileWidth, tileHeight, baseImg);
+                    //-- ensure fill value is set.
+                    ImageUtilities.fill(destImg, fill[0]);
+                }
+
+                if (processListener != null) {
+                    niemeTile++;
+                    //do not send too much events, one every percent
+                    int prc = (niemeTile * 100 / globalTileNumber);
+                    if(prc!= lastProc.getAndSet(prc)){
+                        processListener.progressing(new ProcessEvent(fakeProcess, (niemeTile) + "/" + globalTileNumber, prc));
+                    }
+                }
+
+                //-- dest grid --> dest envelope coordinate --> base envelope --> base grid
+                //-- concatene : dest grid_to_crs, dest_crs_to_coverageCRS, coverageCRS_to_grid coverage
+                final MathTransform2D gridDest_to_crs = new AffineTransform2D(affArgs[0], 0, 0, -affArgs[1], affArgs[2] + affArgs[0] * (destMinX + 0.5), affArgs[3] - affArgs[1] * (destMinY + 0.5)).inverse();
+                final MathTransform mt = MathTransforms.concatenate(destCrs_to_covGrid, gridDest_to_crs);
+
+
+                final Resample resample = new Resample(mt.inverse(), destImg, baseImg, interpolationCase, lanczosWindow,
+                        ResampleBorderComportement.FILL_VALUE, (noFill ? null : fill));
+                resample.fillImage();
+                return destImg.getTile(0, 0);
+            }catch(Exception ex){
+                throw new ImagingOpException(ex.getMessage());
+            }
+        }
+    };
+
+
 }

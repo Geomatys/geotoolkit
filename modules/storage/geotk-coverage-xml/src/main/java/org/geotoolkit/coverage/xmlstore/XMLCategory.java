@@ -165,7 +165,9 @@ public class XMLCategory {
      * Copy informations from given category.
      * @param category
      */
-    public void fill(final Category category){
+    public void fill(Category category){
+        //we store the category in packed type
+        category = category.geophysics(false);
         final Color[] cols = category.getColors();
         colors = new String[cols.length];
         for(int i=0;i<cols.length;i++){
@@ -192,8 +194,7 @@ public class XMLCategory {
                 throw new IllegalArgumentException("Unsupported 1D transform : "+trs);
             }
         }
-            
-        category.getRange();
+        
     }
 
     /**
