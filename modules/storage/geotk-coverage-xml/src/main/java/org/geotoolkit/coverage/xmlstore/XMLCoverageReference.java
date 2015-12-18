@@ -399,6 +399,7 @@ public class XMLCoverageReference extends AbstractPyramidalCoverageReference {
         if (sampleDimensions == null) sampleDimensions = new CopyOnWriteArrayList<>();
         sampleDimensions.clear();
         for (GridSampleDimension dimension : dimensions) {
+            dimension = dimension.geophysics(false);
             final SampleDimensionType sdt = dimension.getSampleDimensionType();
             final XMLSampleDimension dim  = new XMLSampleDimension();
             dim.fill(dimension);
